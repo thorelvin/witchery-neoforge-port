@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.drawing_circles",
+  "icon": "witchery:chalk_golden",
+  "category": "witchery:circle_magic",
+  "sortnum": 1,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/drawing_circles.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.drawing_circles.page1" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.drawing_circles.sizes.title", "text": "witchery.book.entry.drawing_circles.sizes" }
+  ]
+}

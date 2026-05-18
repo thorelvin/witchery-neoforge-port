@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FMF",
+    "MNM",
+    "DMD"
+  ],
+  "key": {
+    "F": "minecraft:magma_cream",
+    "M": "minecraft:magma_cream",
+    "N": "minecraft:nether_star",
+    "D": "minecraft:diamond"
+  },
+  "result": {
+    "id": "witchery:null_catalyst",
+    "count": 1
+  }
+}

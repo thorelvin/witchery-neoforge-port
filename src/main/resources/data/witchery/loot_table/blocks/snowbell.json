@@ -1,0 +1,1 @@
+{"type":"minecraft:block","pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":"witchery:snowbell"}]},{"rolls":{"type":"minecraft:uniform","min":0,"max":2},"entries":[{"type":"minecraft:item","name":"witchery:snowbell"}],"conditions":[{"condition":"minecraft:block_state_property","block":"witchery:snowbell","properties":{"age":"4"}}]}]}

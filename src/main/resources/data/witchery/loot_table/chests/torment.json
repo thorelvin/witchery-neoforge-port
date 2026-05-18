@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": { "type": "minecraft:uniform", "min": 2, "max": 5 },
+      "entries": [
+        { "type": "minecraft:item", "name": "witchery:spectral_dust",         "weight": 20 },
+        { "type": "minecraft:item", "name": "witchery:demon_heart",            "weight": 10 },
+        { "type": "minecraft:item", "name": "witchery:infernal_animus",        "weight": 8  },
+        { "type": "minecraft:item", "name": "witchery:condensed_fear",         "weight": 15 },
+        { "type": "minecraft:item", "name": "witchery:demonic_blood",          "weight": 15 },
+        { "type": "minecraft:item", "name": "witchery:refined_evil",           "weight": 12 },
+        { "type": "minecraft:item", "name": "witchery:torment_scroll",         "weight": 3  },
+        { "type": "minecraft:item", "name": "witchery:soul_of_the_world",      "weight": 5  },
+        { "type": "minecraft:item", "name": "witchery:anointing_paste",        "weight": 10 },
+        { "type": "minecraft:item", "name": "minecraft:gold_ingot",            "weight": 15 },
+        { "type": "minecraft:item", "name": "minecraft:bone",                  "weight": 20 },
+        { "type": "minecraft:item", "name": "minecraft:gunpowder",             "weight": 15 },
+        { "type": "minecraft:item", "name": "minecraft:nether_wart",           "weight": 20 },
+        { "type": "minecraft:item", "name": "minecraft:blaze_powder",          "weight": 12 },
+        { "type": "minecraft:item", "name": "minecraft:book",                  "weight": 8  }
+      ]
+    },
+    {
+      "rolls": { "type": "minecraft:uniform", "min": 0, "max": 1 },
+      "entries": [
+        { "type": "minecraft:item", "name": "witchery:torment_scroll",         "weight": 5  },
+        { "type": "minecraft:item", "name": "witchery:infernal_animus",        "weight": 10 },
+        { "type": "minecraft:item", "name": "minecraft:enchanted_book",        "weight": 15 },
+        { "type": "minecraft:empty",                                            "weight": 70 }
+      ]
+    }
+  ]
+}

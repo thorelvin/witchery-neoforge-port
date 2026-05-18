@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.hobgoblin",
+  "icon": "witchery:koboldite_ingot",
+  "category": "witchery:creatures",
+  "sortnum": 2,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/creatures.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.hobgoblin.page1" },
+    { "type": "patchouli:entity", "entity": "witchery:hobgoblin", "text": "witchery.book.entry.hobgoblin.trades" }
+  ]
+}

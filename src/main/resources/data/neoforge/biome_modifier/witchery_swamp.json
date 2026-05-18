@@ -1,0 +1,15 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "#minecraft:is_swamp",
+    "#minecraft:is_jungle"
+  ],
+  "features": [
+    "witchery:wild_glint_weed",
+    "witchery:wild_spanish_moss",
+    "witchery:wild_blood_rose",
+    "witchery:wild_mandrake",
+    "witchery:bramble_patch"
+  ],
+  "step": "vegetal_decoration"
+}

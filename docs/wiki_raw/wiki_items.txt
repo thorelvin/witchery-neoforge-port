@@ -1,0 +1,13501 @@
+
+============================================================
+# Alder Wood Door
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Alder Wood Door
+
+Name
+
+Alder Wood Door
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+No
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+An 
+Alder Wood Door
+ is a block added by 
+Witchery
+ mod. When placed in the world, it looks the same as a 
+Wooden Door
+. Unlike a Wooden Door, the Alder Wood Door will emit a redstone signal when opened, which could be useful for creating traps.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Alluring Skull
+============================================================
+Alluring Skull
+
+Name
+
+Alluring Skull
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Unknown
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Alluring Skull
+ is the product of Necromantic magic, 
+creating an object that attracts the attention of otherwise passive 
+undead creatures. When placed in the world right-click on the skull with
+ 
+Necromantic Stone
+
+ to activate it. When activated it will pull undead mobs towards itself.
+ The skull can be broken by using Necromantic Stone on it.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Altar
+============================================================
+Altar
+
+Name
+
+Altar
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+An 
+Altar
+ is a 2x3x1 multi-block structure added by the 
+Witchery
+ mod. It is the only power source for Witchery utilities like brews and Circle Magic Rituals.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Placement
+
+The Altar multi-block is complete when a red cloth recovers the whole structure.
+
+It continuously scans its environment in a 14 block radius (cube 
+shaped) and searches life to draw power from. The last altar block 
+placed is the center of this range.
+
+The most important factor is variety.
+
+Upgrading
+
+The 
+Altar
+ can be upgraded by placing specific items on its surface.
+
+Upgrades are additive (Infinity egg and pentacle recharge bonuses
+ are multiplicative), Player head (x3) and filled chalice (x2) is: 1 
+(base altar) + 3 + 2 = x6 power multiplier. Only one of each type of 
+item (skull/head, chalice, etc.) will have an effect.
+
+Recharge Rate
+
+Power Boost
+
+Range Boost
+
+Skeleton Skull
+
++x1
+
++x1
+
+Wither Skeleton Skull
+
++x2
+
++x2
+
+Player Head
+
++x3
+
++x3
+
+Torch
+
++x1
+
+Candelabra
+
++x2
+
+Pentacle
+
+x2
+[
+1
+]
+
+Chalice
+
++x1
+
+Chalice (Filled)
+
++x2
+
+Arthana
+
++x2
+[
+2
+]
+
+Infinity Egg
+
+x10
+[
+1
+]
+
++x1
+
+↑ 
+Jump up to: 
+1.0
+ 
+1.1
+ 
+
+ These bonuses multiply other bonuses on an altar. (EG a player head 
+(x3)+base altar (x1)= x4, adding a pentacle will make this x8 instead.
+
+↑
+ 
+ Arthana's range boost is only for distribution, not for gathering power.
+
+Power Sources
+
+The altar can draw power from a number of block types within a 14 block radius (placing an 
+Arthana
+ on the altar does 
+NOT
+
+ increase the range it will draw power from).
+Each instance of the blocks below within the radius add to the altar's 
+maximum power. However, there is a limit to the number of blocks of each
+ type that can contribute to the altar's power. For example, each 
+melon
+
+ near the altar adds +4 to its maximum power, but an altar cannot 
+benefit from more than 20 melons (for +80 power total); adding more 
+melons after 80 will not increase the altar's maximum power. Therefore, 
+the altar must be surrounded with a large variety of the blocks listed 
+in the table below in order to store enough power to perform more 
+demanding rituals.
+
+Note that some small sets of blocks are considered to be 
+equivalent to the altar, and the limit on their number applies to all 
+combinations of those equivalent blocks. For example, 
+dirt
+ and 
+podzol
+
+ are considered equivalent, so an altar cannot benefit from more than 80
+ total blocks of both, whether it's 40 dirt + 40 podzol, 60 dirt + 20 
+podzol, 80 dirt + 0 podzol, etc.
+
+block
+
+power per block
+
+max # blocks
+
+max power
+
+equivalent blocks
+
+dirt or podzol
+
++1
+
+80
+
++80
+
+dirt, podzol
+
+farmland
+
++1
+
+100
+
++100
+
+mycelium
+
++1
+
+80
+
++80
+
+water
+
++1
+
+50
+
++50
+
+water source block, flowing water
+
+grass
+
++2
+
+80
+
++160
+
+early Minecraft woods
+
++2
+
+50
+
++100
+
+birch wood, jungle wood, oak wood, spruce wood
+
+later Minecraft woods
+
++2
+
+50
+
++100
+
+acacia wood, dark oak wood
+
+vines
+
++2
+
+50
+
++100
+
+blood poppy
+
++2
+
+10
+
++20
+
+critter snare
+
++2
+
+10
+
++20
+
+glint weed
+
++2
+
+20
+
++40
+
+grassper
+
++2
+
+10
+
++20
+
+tall grass or fern
+
++3
+
+50
+
++150
+
+tall grass, fern
+
+early Minecraft leaves
+
++3
+
+100
+
++300
+
+birch leaves, jungle leaves, oak leaves, spruce leaves
+
+later Minecraft leaves
+
++3
+
+100
+
++300
+
+acacia leaves, dark oak leaves
+
+cactus
+
++3
+
+50
+
++150
+
+sugar cane
+
++3
+
+50
+
++150
+
+gray mushroom
+
++3
+
+20
+
++60
+
+red mushroom
+
++3
+
+20
+
++60
+
+gray mushroom block ("mushroom 99")
+
++3
+
+20
+
++60
+
+red mushroom block ("mushroom 100")
+
++3
+
+20
+
++60
+
+Witchery woods
+
++3
+
+100
+
++300
+
+alder wood, hawthorn wood, rowan wood
+
+spanish moss
+
++3
+
+20
+
++60
+
+wispy cotton
+
++3
+
+20
+
++60
+
+wheat crop
+
++4
+
+20
+
++80
+
+carrot crop
+
++4
+
+20
+
++80
+
+potato crop
+
++4
+
+20
+
++80
+
+melon
+
++4
+
+20
+
++80
+
+pumpkin
+
++4
+
+20
+
++80
+
+vanilla sapling
+
++4
+
+20
+
++80
+
+all vanilla Minecraft saplings (acacia, birch, dark oak, jungle, oak, spruce)
+
+Witchery saplings
+
++4
+
+20
+
++80
+
+alder sapling, hawthorn sapling, rowan sapling
+
+dandelion
+
++4
+
+30
+
++120
+
+flower
+
++4
+
+30
+
++120
+
+most vanilla Minecraft flowers except dandelions: allium, azure 
+bluet, blue orchid, orange tulip, oxeye daisy, pink tulip, poppy, red 
+tulip, white tulip
+
+Witchery leaves
+
++4
+
+50
+
++200
+
+alder leaves, hawthorn leaves, rowan leaves
+
+belladonna
+
++4
+
+20
+
++80
+
+ember moss
+
++4
+
+20
+
++80
+
+mandrake
+
++4
+
+20
+
++80
+
+snowbell
+
++4
+
+20
+
++80
+
+water artichoke
+
++4
+
+20
+
++80
+
+Demon Heart
+
++100
+
+2
+
++200
+
+Dragon Egg
+
++250
+
+1
+
++250
+
+infinity egg (Creative mode only)
+
++6000
+
+1
+
++6000
+
+Hypothetically, if the maximum number of all of the above blocks (except the 
+Infinity Egg
+)
+ were placed near an altar, that altar would have 3,980 maximum power, 
+before applying any upgrades. There would be 1,510 of these blocks 
+(excluding blocks that must be empty, e.g. air above crops), which is 
+rather insignificant compared to the total volume available in a roughly
+ 30x30x30 area around the altar: 27,000 blocks.
+
+Notably, the following blocks 
+do not
+ add to an altar's power, but deserve mention because it's reasonable to expect that they should:
+
+double tallgrass
+
+large fern
+
+lilac
+
+peony
+
+rosebush
+
+sunflower
+
+minedrake
+
+wolfsbane
+
+wormwood
+
+Placement Tips
+
+The growth stage of crops does not affect how much power they 
+provide the altar; they provide just as much when they are freshly 
+planted as they do when they are ready to harvest.
+
+If you are using saplings or mushrooms to power your altar, make 
+sure they cannot grow into trees or giant mushrooms, as those are 
+composed of completely different blocks.
+
+Don't bury grass, mycelium, or farmland under other blocks, or they will revert to dirt.
+
+Make sure farmland is placed within 4 blocks of water so that it 
+does not dry out and revert to dirt (but you should probably plant 
+something on it anyway for even more power).
+
+If you are using a mod that disables vanilla crops, these may still be placeable by a Dispenser.
+
+Make sure leaf blocks are connected (either directly or through other leaves) to wood blocks to keep them from decaying.
+
+Video
+
+Witchery Explained: Episode 6, The Altar! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Arthana
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Arthana
+
+Name
+
+Arthana
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:arthana
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+251
+
+The 
+Arthana
+ is a weapon item added by the 
+Witchery
+ mod. It is primarly used to increase the loot chances of Witchery's items (e.g. 
+Wool of Bat
+, 
+Tongue of Dog
+, etc.) if used on specific mobs, but can also be used as a range upgrade for the 
+Altar
+.
+
+It is also used in some rituals as an ingredient and isn't consumed during the process.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Feed The Beast Infinity Evolved Expert Mode
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Arthana can be used to create the following items:
+ 
+Dagger of Sacrifice
+
+Video
+
+Witchery Explained: Episode 5, The Arthana! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Baba Yaga's Hat
+============================================================
+Baba Yaga's Hat
+
+Name
+
+Baba Yaga's Hat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:babashat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+Baba Yaga's Hat
+ is an armor item added by the 
+Witchery
+ mod. It offers a leather level of protection and can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+ or with an anvil with regular leather.
+It also becomes invisible with the player even thought it is only a visual change that only influence other players.
+
+Wearing it while brewing potions offers 25% chance of getting a second brew and another 25% chance for getting a 
+third
+ brew. These percentages stack with 
+Witches Robes
+.
+
+Baba Yaga's Hat can only be acquired as a drop from one of the 
+Baba Yaga sisters themselves but good luck convincing them to give it to
+ you!
+
+============================================================
+# Bark Belt
+============================================================
+Bark Belt
+
+Name
+
+Bark Belt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:barkbelt
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+Tooltip
+
+So this is how an Ent feels.
+Grow bark pieces when standing on grass or mycelium.
+Bark pieces mitigate hits.
+
+The 
+Bark Belt
+ is an armor item added by the 
+Witchery
+
+ mod, it is clothing that is placed in the leg slot. It gives the same 
+armor and durability as leather and can be enchanted. It can be repaired
+ with regular 
+Leather
+ in an anvil or by crafting it with four 
+Impregnated Leather
+. When the player is invisible the belt is also invisible to other players but not to mobs.
+
+When standing on grass or mycelium this armor will grow bark over
+ the wearer, this bark will take damage for the player and shows up as 
+sticks on the armor bar. If the player wears any kind of armor or 
+clothing not made from 
+Impregnated Leather
+ like the 
+Witches Hat
+, 
+Witches Robes
+, 
+Necromancer Robes
+, 
+Icy Slippers
+, 
+Ruby Slippers
+, or 
+Seeping Shoes
+,
+ then the bark will not grow over it but if those pieces of clothing are
+ worn it grows two pieces of stick armor points per piece of correct 
+clothing.
+
+Being hit by anything other than wooden weaponry while having the
+ bark protection will only make the wearer lose one to two piece of bark
+ protection and will negate all damage while the bark protection still 
+is there.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Beartrap
+============================================================
+Beartrap
+
+Name
+
+Beartrap
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Beartrap
+ is a placeable item added by the 
+Witchery
+ mod. It is able to capture and hold in place most mobs.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Beartrap can be used to create the following items:
+ 
+Wolftrap
+
+============================================================
+# Binky's Skull
+============================================================
+Binky
+
+Name
+
+Binky
+
+Health
+
+53 (
+ x 26.5)
+
+Hostility
+
+Neutral
+
+Spawn
+
+From using 
+Binky's Skull
+
+Drops
+
+Binky's Skull
+
+Source Mod
+
+Witchery
+
+Binky's Skull
+ is an item added by the 
+Witchery
+ mod. It can be acquired as a drop from killing 
+Death
+.
+
+Binky is the steed of 
+Death
+ himself.
+
+To summon Binky, the player must right click the ground with 
+Binky's Skull, to unsummon Binky just kill Binky and collect his skull 
+for later resummoning.
+
+============================================================
+# Biome Note
+============================================================
+Biome Note
+
+Name
+
+Biome Note
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Biome Notes
+ are items added by the 
+Witchery
+ mod. It is made to contain the specific details of a certain biome for the 
+Rite of Shifting Seasons
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+The Book of Biomes (Extended Edition) remembers which page 
+within it was last viewed before the book was closed; this can be seen 
+on the tooltip displayed by hovering over the item with the mouse 
+pointer whilst it is in the inventory. The Biome Note crafted will 
+correspond to this last viewed page.
+
+Note that the Book of Biomes (Extended Edition) is not consumed by crafting a Biome Note and will be returned to the player.
+
+============================================================
+# Biting Belt
+============================================================
+Biting Belt
+
+Name
+
+Biting Belt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:bitingbelt
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+Tooltip
+
+Careful... it bites.
+Craft with up to 2 potions that get administered when hit
+
+The 
+Biting Belt
+ is an armor item added by the 
+Witchery
+
+ mod. It is clothing that is placed in the leg slot. It gives the same 
+armor and durability as leather and can be enchanted. It can be repaired
+ with regular 
+Leather
+ in an anvil or by crafting it with four 
+Impregnated Leather
+ and can be dyed. When the player is invisible the belt is also invisible to other players but not to mobs.
+
+This armor takes the natural abilities of the 
+Parasytic Louse
+
+ and lets the wearer use it! Craft the belt with the potions wanted to 
+be added and buffs/heals will apply to the wearer while debuffs/harms 
+will apply to the attacker when the wearer gets attacked.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Biting Belt can be used to create the following items:
+ 
+Bark Belt
+
+============================================================
+# Blood-stained Wool
+============================================================
+Blood-stained Wool
+
+Name
+
+Blood-stained Wool
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Blood-stained Wool
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration or can be cooked into 
+Woven Cruor
+ for blood-based clothing and weapons.
+
+Recipe
+
+This is only craftable by a 
+vampire
+ who right clicks a block of wool with a 
+Bone Needle
+, this process drains some of the vampire's spare blood as long as they are level four or higher and it uses 125 units of blood.
+
+============================================================
+# Blooded Waystone
+============================================================
+Blooded Waystone
+
+Name
+
+Blooded Waystone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+A Blooded Waystone is an item used in 
+Witchery
+. When 
+bound
+ it targets specific mobs or players, the mob or player must be near when casting this binding rite.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+500
+
+Video
+
+Witchery Explained: Episode 13, The Rite of Binding!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Boline
+============================================================
+This article is in need of a 
+clean-up.
+ You can help the wiki by cleaning up the article.
+
+Boline
+
+Name
+
+Boline
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Tool
+
+Stackable
+
+Unknown
+
+Boline
+ is a tool added by the 
+Witchery
+ mod. It functions like a set of shears on plant matter, but it is able to harvest some things that shears cannot, like 
+Cobwebs
+.
+ It is also used in various circle magic rituals connected to 
+necromancy. Finally, the boline can be used as a weapon in a pinch, 
+attacking with the damage of a wooden sword but the durability of an 
+iron one.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Trivia
+
+The boline is a real implement. It is a crescent-shaped knife used in
+ herbalism, Wicca and other alternative faiths and practices for 
+hundreds of years.
+
+Usage
+
+Boline can be used to create the following items:
+Disorientation Fetish
+ 
+Disorientation Fetish
+
+============================================================
+# Bone Bolt
+============================================================
+Bone Bolt
+
+Name
+
+Bone Bolt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Yes (64)
+
+Bone Bolts
+ are an item added by the 
+Witchery
+ mod. It is used by the 
+Witch Hunter Crossbow Pistol
+.
+
+They deal six damage to the victim and deal fifty percent more 
+damage when attacking demons or the undead. The fifty percent applies to
+ enchantments too.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Book of Biomes (Extended Edition)
+============================================================
+Book of Biomes (Extended Edition)
+
+Name
+
+Book of Biomes (Extended Edition)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Book of Biomes (Extended Edition)
+ is a descriptive book added by the 
+Witchery
+ mod. This book is more explanatory than the lesser version and as such 
+notes
+ can be made of the different biomes for components for the 
+Rite of Shifting Seasons
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Book of Biomes
+============================================================
+Book of Biomes
+
+Name
+
+Book of Biomes
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Book of Biomes
+ is a descriptive book added by the 
+Witchery
+ mod. It lists the Foci Items and Glowstone Dust cost of changing a biome with the 
+Rite of Shifting Seasons
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Bound Waystone
+============================================================
+Bound Waystone
+
+Name
+
+Bound Waystone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+A Bound Waystone is an item used in 
+Witchery
+. When 
+bound
+
+ it is set to a specific coordinate. Waystones are used to bind 
+locations for spellcasting. If an already bound waystone is added to the
+ spell it will copy the location to the unbound waystone.
+
+A Bound Waystone can also be bound using a 3x3 Otherwhere Chalk circle, and dropping up to 8 waystones inside.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+500
+
+Video
+
+Witchery Explained: Episode 13, The Rite of Binding!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brazier
+============================================================
+Brazier
+
+Name
+
+Brazier
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brazier
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+_
+
+Hardness
+
+_
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Brazier
+ is an item added by the 
+Witchery
+ mod. It is used in advanced witchcraft outlined in the book: 
+Conjuration & Fetishes
+ . The 
+Brazier
+ allows the user to conjure various spectral undead for use in 
+Rite of Binding
+ to create Fetishes. It can also perform certain rituals. 
+
+Wormwood is used in all spectral undead conjurations.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Brazier has no known uses in crafting.
+
+============================================================
+# Brew Bag
+============================================================
+Brew Bag
+
+Name
+
+Brew Bag
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brewbag
+
+Type
+
+Storage
+
+Stackable
+
+No
+
+The 
+Brew Bag
+ is an item added by the 
+Witchery
+ mod. It is used by witches to carry their brews and can hold a full stack of up to eight brews. It is dyeable.
+
+Sneak right-click to open the bag but just regular right-click to
+ show a menu of the brews in the bag and you can move the mouse forward 
+to select a particular brew and let go of the right click to throw the 
+selected brew.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Brew of Flowing Spirit
+============================================================
+Brew of Flowing Spirit
+
+Name
+
+Brew of Flowing Spirit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:96
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Flowing Spirit
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion full of the essence of the 
+Spirit Form
+
+ in liquid and when thrown it creates a source block of the liquid. This
+ source block can be picked up in a bucket and moved or the liquid 
+itself can slowly heal all non-demonic or undead entities. Dowsing 
+Nightmares
+ in the liquid is the only way to make Nightmares not invulnerable!
+
+A pool of flowing spirit near a 
+Dream Weaver of Nightmares
+ helps decrease the chance of a nightmare by for each source block by ten percent with a maximum of thirty percent.
+
+Recipe
+
+Collapse
+ 
+Ingredients for the brew
+
+ 
+Fanciful Thread
+, 
+ 
+Spanish Moss
+, 
+ 
+Water Artichoke Globe
+, 
+ 
+Glint Weed
+, 
+ 
+Mandrake Root
+, and 
+ 
+Wool of Bat
+Only can be brewed in the 
+Spirit World
+.
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Video
+
+Witchery Explained: Episode 9, That Voodoo You Do Part Two! Poppets. Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brew of Hollow Tears
+============================================================
+Brew of Hollow Tears
+
+Name
+
+Brew of Hollow Tears
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:115
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Hollow Tears
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that drops the Hollow Tears liquid. It is the opposite of the 
+Flowing Spirit liquid
+ in that it buffs certain undead and demons with the Regeneration effect and weakens players with the Weakness II effect.
+
+Throwing a 
+Solidifying Brew
+ at the liquid's source block will turn the source block into a different material depending on the Solidifying Brew used.
+
+Recipe
+
+Distillery
+
+Usage
+
+Brew of Hollow Tears has no known uses in crafting.
+
+============================================================
+# Broom (Witchery)
+============================================================
+Broom
+
+Name
+
+Broom
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Broom
+ is an item added by the 
+Witchery
+ mod. It is used in the creation of the 
+Enchanted Broom
+. It can also be used to clear previously drawn glyphs faster. It allows the player to fly.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Candelabra
+============================================================
+Candelabra
+
+Name
+
+Candelabra
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Candelabra
+ is an item added by the 
+Witchery
+ mod. It is used to improve the power regeneration of the 
+Altar
+ and add 2x base recharge rate. It won't accumulate with other Torch type upgrades.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Cane Sword
+============================================================
+Cane Sword
+
+Name
+
+Cane Sword
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:canesword
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+1562
+
+Cane Sword
+ is a weapon item added by the 
+Witchery
+ mod.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Cane Sword has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Chalice (Filled)
+============================================================
+Chalice (Filled)
+
+Name
+
+Chalice (Filled)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Chalice (Filled)
+ is an item added by the 
+Witchery
+ mod. It is used to improve the power capacity of the 
+Altar
+ and add 1x base power. It won't accumulate with other Chalice type upgrades.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Chalice (Filled) has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 6, The Altar! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Chalice
+============================================================
+Chalice
+
+Name
+
+Chalice
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Chalice
+ is an item added by the 
+Witchery
+ mod. It is used to improve the power capacity 
+Altar
+ and add 1x base power. It won't cumulate with other Chalice type upgrades.
+
+It can be improved into a 
+Chalice (Filled)
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Chalice can be used to create the following items:
+ 
+Chalice (Filled)
+
+Video
+
+Witchery Explained: Episode 6, The Altar! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Coffin
+============================================================
+Coffin
+
+Name
+
+Coffin
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Coffin
+ is an item added by the 
+Witchery
+ mod. This item is designed for 
+vampires
+ to replace 
+beds
+,
+ but any player can use it to sleep in. Due to vampires' sun allergy 
+vampires are inclined to want to sleep through the day favoring the 
+moonlight, with this coffin the player can sleep through the day and 
+awaken during the night.
+
+To sleep in the coffin it must be open, shift right click to open the coffin.
+
+Taglock Kits
+ can still be gathered from a coffin.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Oak logs and oak planks can be substituted for any other logs or planks.
+
+============================================================
+# Creative Bat Wolf Token
+============================================================
+Creative Bat/Wolf Token
+
+Name
+
+Creative Bat/Wolf Token
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The Creative Bat/Wolf Token can increase the user's 
+lycantrophy
+ and 
+vampirism
+
+ levels (hold shift) by one every time the token is used, once it hits 
+the tenth level it will reset to zero which is considered not infected 
+by the curse at all.
+
+This item is only available through creative mode or means 
+similar to acquiring through creative mode and is not intended for 
+regular play.
+
+============================================================
+# Crystal Ball
+============================================================
+Crystal Ball
+
+Name
+
+Crystal Ball
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:crystalball
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Crystal Ball
+ is a block added by the 
+Witchery
+ mod.
+
+The Crystal Ball provides a way to see the future or see through someone's eyes. Using a 
+Taglock Kit
+ with the taglock of another Player 
+[
+1
+]
+, 'Right-click' and  hold on the Crystal Ball to see through this Player's eyes 
+[
+2
+]
+;  holding a 
+Waystone
+
+ allows to see the area bounded to the Waystone from a bird's eye 
+perspective. Using the Crystal Ball placed within the active radius of 
+an 
+Altar
+ will predict the future, or more accurately, cause it to happen at some later time as per the random message displayed.
+
+Recipe
+
+11×11
+
++0
+
+Altar Power: 
+2000
+
+Message
+
+The Crystal Ball may display one the following random message:
+
+Error Message
+
+Collapse
+
+The crystal ball is inert for the moment.
+
+The crystal ball cannot get enough power from a nearby altar.
+
+You gaze into the crystal ball, but do not know how to interpret what you see.
+
+You gaze into the crystal ball, but 
+PlayerName'
+s future is too murky at the moment.
+
+Random 'Prediction' Message
+
+Collapse
+
+You gaze into the crystal ball: 
+PlayerName
+ will chance upon the undead.
+
+You gaze into the crystal ball: 
+PlayerName
+ will be struck by an arrow.
+
+You gaze into the crystal ball: 
+PlayerName
+ will encounter a walking tree.
+
+You gaze into the crystal ball: 
+PlayerName
+ will stumble and fall.
+
+You gaze into the crystal ball: 
+PlayerName
+ will find buried treasure.
+
+You gaze into the crystal ball: 
+PlayerName
+ will be inundated with iron.
+
+You gaze into the crystal ball: 
+PlayerName
+ will find shinies.
+
+You gaze into the crystal ball: 
+PlayerName
+ has sparked the interest of the crone (and her sisters).
+
+You gaze into the crystal ball: 
+PlayerName
+ has angered the crone (and her sisters).
+
+You gaze into the crystal ball: 
+PlayerName
+ will make a new friend.
+
+You gaze into the crystal ball: 
+PlayerName
+ will be saved by a stranger.
+
+You gaze into the crystal ball: 
+PlayerName
+ will take a trip to the nether.
+
+A 
+Demon
+ has been watching you and transposed you to the Nether.
+
+You gaze into the crystal ball: 
+PlayerName
+ will get wet.
+
+You gaze into the crystal ball: 
+PlayerName
+ will meet a dark and handsome stranger.
+
+Usage
+
+Crystal Ball has no known uses in crafting.
+
+Note
+
+↑
+ 
+If the Taglock Kit contains the taglock of the player using it, an expanding bird's eye view will be shown.
+
+↑
+ 
+This Player must be within a radius of 100 to 150 blocks away.
+
+============================================================
+# Dandelion of Ink
+============================================================
+Dandelion of Ink
+
+Name
+
+Dandelion of Ink
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:5
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Dandelion of Ink
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that bursts into an explosion of ink, blinding players and other mobs in an area of effect range.
+
+Depending on where in relation to the center of the hit of the 
+potion determines the duration of the blindness effect. Creatures with 
+no eyes such as slimes and powerful demonic entities will not be 
+affected by this.
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Dandelion of Ink has no known uses in crafting.
+
+============================================================
+# Dandelion of Sprouting
+============================================================
+Dandelion of Sprouting
+
+Name
+
+Dandelion of Sprouting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:7
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Dandelion of Sprouting
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that causes a large branch of tree to grow out away from any surface hit.
+
+It is a way to instantly create bridges across ravines or the 
+like and if thrown under the player it is a nice and quick way to ascend
+ to maybe avoid a creeper blast. 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Dandelion of Sprouting has no known uses in crafting.
+
+============================================================
+# Dandelion of Thorns
+============================================================
+Dandelion of Thorns
+
+Name
+
+Dandelion of Thorns
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:6
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Dandelion of Thorns
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow a cactus instantly at four blocks high to grow where it lands.
+
+Hitting a creature with the brew will grow cacti one block high surrounding the creature 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Dandelion of Thorns has no known uses in crafting.
+
+============================================================
+# Dandelion of Webs
+============================================================
+Dandelion of Webs
+
+Name
+
+Dandelion of Webs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:6
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Dandelion of Thorns
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow a cactus instantly at four blocks high to grow where it lands.
+
+Hitting a creature with the brew will grow cacti one block high surrounding the creature 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Dandelion of Webs has no known uses in crafting.
+
+============================================================
+# Death's Footwear
+============================================================
+Death's Footwear
+
+Name
+
+Death's Footwear
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:deathsfeet
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+196
+
+Armor
+
+2 (
+)
+
+Tooltip
+
+Walk on water.
+
+Death's Footwear
+ is an item added by the 
+Witchery
+ mod. It offers an iron level of protection with a diamond level of durability. It can be repaired with an anvil with 
+Iron Ingots
+. It can be acquired as a drop from killing 
+Death
+.
+
+Wearing Death's Footwear will allow the wearer to walk on water 
+and other liquids but be careful! When hit the wearer may loose footing 
+and sink in the liquid.
+
+If someone is wearing all of 
+Death
+'s gear and equipment, a witch who is summoning Death might summon that player instead.
+
+============================================================
+# Death's Hood
+============================================================
+Death's Hood
+
+Name
+
+Death's Hood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:deathscowl
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+166
+
+Armor
+
+2 (
+)
+
+Death's Hood
+ is an armor item added by the 
+Witchery
+ mod. It offers an iron level of protection with a diamond level of durability. It can be repaired with an anvil with 
+Iron Ingots
+. It can be acquired as a drop from killing 
+Death
+.
+
+Wearing Death's Hood will change the player's face to appear as though they are 
+Death
+.
+
+It grants 
+Night Vision
+ to the witch when in dark places and during night and grants 
+Slowness
+ to anything the wearer stares at!
+
+If someone is wearing all of 
+Death
+'s gear and equipment, a witch who is summoning Death might summon that player instead.
+
+============================================================
+# Death's Robe
+============================================================
+Death's Robe
+
+Name
+
+Death's Robe
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:deathsrobe
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+241
+
+Armor
+
+6 (
+)
+
+Death's Robe
+ is an armor item added by the 
+Witchery
+ mod. It offers an iron level of protection with a diamond level of durability. It can be repaired with an anvil with 
+Iron Ingots
+. It can be acquired as a drop from killing 
+Death
+.
+
+Wearing Death's Robe will change the player's upper body to appear as though they are 
+Death
+.
+
+It grants full 
+Fire Resistance
+ for fire and lava immunity!
+
+If someone is wearing all of 
+Death
+'s gear and equipment, a witch who is summoning Death might summon that player instead.
+
+============================================================
+# Distillery (Witchery)
+============================================================
+Distillery
+
+Name
+
+Distillery
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Distillery
+ is an item added by the 
+Witchery
+ mod. It allows the extraction of higher tiers essences and use a nearby 
+Altar
+ as a power source.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Recipes
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Distillery
+
+Video
+
+Witchery Explained: Episode 7, Distillery! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Duplication Grenade
+============================================================
+Duplication Grenade
+
+Name
+
+Duplication Grenade
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:duplicationgrenade
+
+Type
+
+Item
+
+Stackable
+
+Yes (16)
+
+Duplication Grenade
+ is an item added by the 
+Witchery
+ mod. It is created by clicking on a 
+mirror
+ still with the reflection inside to collect your reflections. Upon throwing, the reflection will spawn and attack targers.
+
+Usage
+
+Duplication Grenade has no known uses in crafting.
+
+============================================================
+# Earmuffs
+============================================================
+Earmuffs
+
+Name
+
+Earmuffs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:earmuffs
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+Earmuffs
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection and can be enchanted. 
+Earmuffs are great for the herbologist witch who is tired of the 
+deafening effects of their 
+mandrakes
+. Earmuffs will silence a lot of things and can even be somewhat helpful against 
+banshees
+!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Enchanted Broom
+============================================================
+Enchanted Broom
+
+Name
+
+Enchanted Broom
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Enchanted Broom
+ is an item added by the 
+Witchery
+ mod. It is used in the creation of the 
+Enchanted Broom
+. It can also be used to clear previously drawn glyphs faster. It allows the player to fly.
+
+All brooms are able to clear glyphs faster than other manners tried.
+
+Enchanted Brooms much be destroyed in order to be able to pick them up again.
+
+Witches with an 
+owl
+ familiar have better control over flight with Enchanted Brooms.
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+3000
+
+============================================================
+# Ender Bramble
+============================================================
+Ender Bramble
+
+Name
+
+Ender Bramble
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Trap
+
+Stackable
+
+Unknown
+
+This strange bramble keeps creatures at bay; for when they get 
+close it teleports them away. Mutate this plant from sugar cane and 
+spanish moss.
+
+Ender Bramble
+ is an item added by the 
+Witchery
+
+ mod. It is an otherworldly plant that will teleport anyone that passes 
+through it to a random location within 500 blocks and it quite difficult
+ to break without a golden axe or removing the dirt it is on.
+
+Recipe
+
+Ender Brambles are created by mutating a 
+Sugar Canes
+ with 
+Spanish Moss
+.
+ To do so, place a Sugar Cane down (sixteen sugar canes on top of each 
+other is the best and cheapest way to do it) and surround it in the 
+North, South, East, and West directions with 
+Spanish Moss
+ and below the moss place 
+Water
+ source blocks, in the rest of the surrounding spaces place four 
+Grasspers
+ all holding one 
+Ender Pearl
+, then use a 
+Mutating Sprig
+ on the bottommost sugar cane.
+
+============================================================
+# Filtered Fume Funnel
+============================================================
+Filtered Fume Funnel
+
+Name
+
+Filtered Fume Funnel
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Filtered Fume Funnel
+ is an item added by the 
+Witchery
+ mod. It is used to upgrade the 
+Witches Oven
+.
+ It both ups the speed by ten percent, and ups the chances of a fume 
+byproduct success rate by thirty percent. This gives the Filtered Fume 
+Funnel a five percent better chance than the plain Fume Funnel. If there
+ are two Filtered Fume Funnels to the left and right of the Witches 
+Oven, the increase stacks for a total of a ten percent better chance. Up
+ to three Filtered Fume Funnels can be used for one Witches Oven, but 
+must be placed above, to the right, and to the left for it to work. 
+Note: the Filtered Fume Funnel placed on top of the Witches Oven will 
+not up the possibility of fume byproduct success rates, only the speed.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Filtered Fume Funnel has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 1, Gathering Fumes! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Fume Filter
+============================================================
+Fume Filter
+
+Name
+
+Fume Filter
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:73
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Fume Filter
+ is an item added by the 
+Witchery
+ mod. It is used to upgrade 
+Fume Funnels
+ into 
+Filtered Fume Funnels
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Fume Filter can be used to create the following items:
+ 
+Filtered Fume Funnel
+
+Video
+
+Witchery Explained: Episode 1, Gathering Fumes! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Fume Funnel
+============================================================
+Fume Funnel
+
+Name
+
+Fume Funnel
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Fume Funnel
+ is an item added by the 
+Witchery
+ mod. It is used to upgrade the 
+Witches Oven
+.
+ It both ups the speed by ten percent and ups the chances of a fume 
+byproduct success rate twenty-five percent. Up to three Fume Funnels can
+ be used for one Witches Oven but must be place above or to the right or
+ left for it to work but the Fume Funnel placed on top of the Witches 
+Oven will not up the possibility of fume byproduct success rates, only 
+the speed.
+
+Fume Filters
+ can upgrade the Fume Funnels into 
+Filtered Fume Funnels
+ for additional boosts.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Fume Funnel can be used to create the following items:
+ 
+Filtered Fume Funnel
+
+Video
+
+Witchery Explained: Episode 1, Gathering Fumes! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Garlic Garland
+============================================================
+Garlic Garland
+
+Name
+
+Garlic Garland
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Garlic Garland
+ is a decorative block added by the 
+Witchery
+ mod. It wards against vampires and player vampires will burn if they break or pick this up.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Glass Goblet (full)
+============================================================
+Glass Goblet (full)
+
+Name
+
+Glass Goblet (full)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Glass Goblet (full)
+ is an item added by the 
+Witchery
+ mod. It may be used to start becoming a vampire with chicken blood and also by a level 9 
+Vampire
+ to fill it with their own blood in order to turn villager or another player into a vampire.
+
+To become a vampire pour the chicken blood onto the ritual skull to summon 
+Elle
+ and convince her to give her own blood.
+
+To turn a villager into a vampire, the player must be vampire level 9, take the villager to a safe place near a 
+Coffin
+,
+ must almost fully drain the villager of blood, then mesmerize the 
+villager, use the empty Glass Goblet, to fill it, and then must use the 
+full Glass Goblet on the Villager.
+
+Recipe
+
+Butcher a 
+chicken
+ with a 
+boline
+ over a skeleton skull surrounded in a 3x3 circle of 
+redstone
+ which itself is surrounded in a 7x7 square of 
+string
+ with the corners being 
+torches
+ but the string square going inward around the torches and holding a 
+glass goblet
+ to collect the blood.
+
+Or a level nine vampire can right click an empty 
+glass goblet
+ to collect their own blood and fill it.
+
+============================================================
+# Glass Goblet
+============================================================
+Glass Goblet
+
+Name
+
+Glass Goblet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Glass Goblet
+ is an item added by the 
+Witchery
+ mod. It may be used to start becoming a vampire with chicken blood and also by a level 9 
+Vampire
+ to fill it with their own blood in order to turn villager or another player into a vampire.
+
+To become a vampire pour the chicken blood onto the ritual skull to summon 
+Elle
+ and convince her to give her own blood.
+
+To turn a villager into a vampire, the player must be vampire level 9, take the villager to a safe place near a 
+Coffin
+,
+ must almost fully drain the villager of blood, then mesmerize the 
+villager, use the empty Glass Goblet, to fill it, and then must use the 
+full Glass Goblet on the Villager.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+ •  
+Glass Goblet (full)
+
+============================================================
+# Golden Chalk
+============================================================
+Golden Chalk
+
+Name
+
+Golden Chalk
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Golden Chalk
+ is an item added by the 
+Witchery
+ mod. It is used to draw the center golden glyph in the creation of 
+Circle Rituals
+.
+It has no other uses.
+
+The Witch's Cauldron needs to be close enough to an 
+Altar
+ that has at least 3000 power in order to craft the Golden Chalk.
+
+Recipe
+
+Witch's Cauldron
+
+Altar Power: 
+3000
+
+Usage
+
+Golden Chalk can be used to create the following items:
+ 
+Alchemy Catalyst
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Gulg's Gurdle
+============================================================
+Gulg's Gurdle
+
+Name
+
+Gulg's Gurdle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:gurdleofgulg
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+Gulg's Gurdle
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection but it has around the iron
+ level of durability for leather. and can be enchanted. It grants a 
+special kind of knockback to the wearer when punching someone with their
+ bare hand that actually knocks the victim up more than back, up ten 
+blocks which is far enough up for them to take fall damage from it. It 
+also gives the wearer a slight Strength boost that lets the wearer deal 
+twice as much damage with a bare punch, four damage and it applies a 
+Resistance
+ buff for those using it while next to someone with 
+Mog's Quiver
+.
+
+It is acquired as a drop from 
+Gulg
+.
+
+============================================================
+# Hand of Death
+============================================================
+Hand of Death
+
+Name
+
+Hand of Death
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+No
+
+Tooltip
+
+Spectral touch ignores armor
+Death set bonus: Summon Death's Scythe for AOE and hunger-based damage
+
+The 
+Hand of Death
+ is an item added by the 
+Witchery
+ mod. It can be acquired as a drop from killing 
+Death
+.
+
+When attacking a creature with the Hand of Death, they will be 
+hit with Chill Touch which damages about 15% of the target's maximum 
+health, bypassing armor. 
+
+Death's Scythe can be summoned with this Hand by anyone wearing 
+all of the Death's armor. Left clicking with the Hand will summon it but
+ holding Death's Scythe will cause a great hunger to the player and 
+degrade one hunger point every second. This aside, any attacks with the 
+Scythe will cause an AoE damage attack with the Chill Touch effect and 
+whenever anything gets attacked with it it does feed the user for each 
+successful hit. 
+
+If someone is wearing all of 
+Death
+'s gear and equipment, a witch who is summoning Death might summon that player instead.
+
+============================================================
+# Hellhound Head
+============================================================
+Hellhound Head
+
+Name
+
+Hellhound Head
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:wolfhead:1
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+Hellhound Head
+ is a block added by the 
+Witchery
+ mod. It is dropped from a 
+Hellhound
+ when they are killed and are used in crafting recipes. Like other 
+Heads
+, it can be worn as a helmet.
+
+Usage
+
+Hellhound Head can be used to create the following items:
+ 
+Wolf Altar
+
+============================================================
+# Horn of the Hunt
+============================================================
+Horn of the Hunt
+
+Name
+
+Horn of the Hunt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hornofthehunt
+
+Type
+
+Item
+
+Stackable
+
+No
+
+A 
+Horn of the Hunt
+ is item added by 
+Witchery
+ mod. This item is obtained during the 
+Wolf Alter
+ quest chain.
+
+Using this horn summons a 
+Horned Huntsman
+, but if the huntsman doesn't show up you may need a more open area.
+
+============================================================
+# Ice Door
+============================================================
+Ice Door
+
+Name
+
+Ice Door
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+An 
+Ice Door
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration for your house.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Fence
+============================================================
+Ice Fence
+
+Name
+
+Ice Fence
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:icefence
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+15.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Unknown
+
+An 
+Ice Fence
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Ice Fence has no known uses in crafting.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Gate
+============================================================
+Ice Gate
+
+Name
+
+Ice Gate
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+An 
+Ice Gate
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Pressure Plate
+============================================================
+Ice Pressure Plate
+
+Name
+
+Ice Pressure Plate
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:icepressureplate
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+15.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+An 
+Ice Pressure Plate
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration or just as an alternate pressure plate.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Slab (Witchery)
+============================================================
+Ice Slab
+
+Name
+
+Ice Slab
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:iceslab
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+15.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+An 
+Ice Slab
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Ice Slab (Witchery) has no known uses in crafting.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Stairs
+============================================================
+Ice Stairs
+
+Name
+
+Ice Stairs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+An 
+Ice Stairs
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Ice Stockade
+============================================================
+Ice Stockade
+
+Name
+
+Ice Stockade
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+An 
+Ice Stockade
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+To make an Ice Door you have to hit a normal door with a 
+Brew of Ice World
+. This brew is a 
+custom witchery brew
+ so it has no default recipe, but if you want to make it in the cheapest available way, here is the recipe
+[
+1
+]
+:
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Icy Slippers
+============================================================
+Icy Slippers
+
+Name
+
+Icy Slippers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:iceslippers
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+Icy Slippers
+ are worn in the foot slot and have the same durability and protection as 
+Leather Boots
+. They can be dyed and enchanted like leather boots too.
+
+Icy slippers will immediately freeze any 
+Water
+ they come into contact with, allowing the wearer to effectively walk on water. Icy slippers will also turn 
+Lava
+ into 
+Obsidian
+
+ when walked over. This can be problematic because it will also damage 
+the slippers, and there is always a risk of being set on fire (however 
+small).
+
+Icy slippers will turn invisible when the player is invisible. 
+This is only a visual change, mobs will still react as if normal shoes 
+were worn. Other players however will not be able to see the slippers.
+
+Crafting damaged slippers with four Impregnated Leather will repair the slippers. Alternatively use an 
+anvil
+ and normal 
+leather
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Infernal Chalk
+============================================================
+Infernal Chalk
+
+Name
+
+Infernal Chalk
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Infernal Chalk
+ is an item added by the 
+Witchery
+ mod. It is used to draw infernal red glyphs in the creation of 
+Circle Rituals
+. This chalk is usually used for spells that involve the Nether, fire, or demons.
+
+Recipe
+
+Witch's Cauldron
+
+Usage
+
+Infernal Chalk has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Kettle
+============================================================
+Kettle
+
+Name
+
+Kettle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:kettle
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Unknown
+
+The 
+Kettle
+ is the basic machine used to make witch's brews and infusions.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Feed The Beast Infinity Evolved Expert Mode
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+For a kettle to work properly, a fire needs to be set under the 
+kettle, the kettle needs to be filled with water from a bucket, then 
+requiring the ingredients of the brew being brewed to be thrown into it,
+ and finally it needs a glass bottle to be used on the kettle to bottle 
+the completed brew.
+
+The fire needs to be constantly burning while preparing a brew, 
+otherwise it would not work and need to be redone. Swirl particles 
+coming from the kettle shows that it is running fine, while white swirl 
+particles means the brew is complete. Black smoke coming from the kettle
+ with the brew turning brown signals that something has gone wrong and 
+the brew has been ruined. When a brew is brown and ruined, the kettle 
+must either be emptied with a glass bottle or simply refilled with more 
+water.
+
+Sometimes a brew also requires magical energy from a nearby 
+Altar
+
+ before it can finish brewing. If a brew gets bottled too early and 
+there is not enough energy available for it, the brew will ruin. Black 
+swirl particles means that there is not enough power and it needs more. A
+ kettle needs to be about 15 blocks from an Altar in order to obtain 
+power from it, and only one Altar can supply power per brew.
+
+Use the 
+Witchcraft: Brews & Infusions
+ book to find all recipes for the kettle.
+
+============================================================
+# Koboldite Pickaxe
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Koboldite Pickaxe
+
+Name
+
+Koboldite Pickaxe
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Tool
+
+Stackable
+
+No
+
+The 
+Koboldite Pickaxe
+ is a tool added by the 
+Witchery
+ mod. For the player it behaves like normal diamond pickaxe. When given to a 
+Hobgoblin
+ it increases his mining speed, slicing liquids and auto smelting ores. It also increases chance of getting 
+Koboldite Dust
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Witchery Explained: Episode 25, Hobgolins, Koboldite Dust, Ingots, and Pickaxe!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Lava Diviner
+============================================================
+Lava Diviner
+
+Name
+
+Lava Diviner
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:divinerlava
+
+Type
+
+Weapon
+
+Stackable
+
+No
+
+The 
+Lava Diviner
+ is an item added by the 
+Witchery
+ mod. It is used to divine sources of 
+lava
+.
+
+When standing on a block and holding it down for a few seconds, 
+the block will exude blue-green particles if there is lava anywhere 
+beneath that block. If there is NOT lava anywhere beneath that block, it
+ will exude black particles. Either way, durability will be used.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Lava Diviner has no known uses in crafting.
+
+============================================================
+# Leech Chest
+============================================================
+Leech Chest
+
+Name
+
+Leech Chest
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Storage
+
+27
+
+The 
+Leech Chest
+ is an item added by the 
+Witchery
+ mod. It is used to store items but does bite and stores blood samples in its pouches for a crafty witch to collect in 
+Taglock Kits
+!
+ It stores up to four samples but to prevent sneaky people from taking 
+away their own blood sample the leech chest will not allow witches to 
+remove their own blood. Picking up the chest will keep the stored blood 
+inside.
+
+Recipe
+
+Leech chests are created by mutating a 
+Trapped Chest
+ with 
+Vines
+.
+ To do so, place a Chest down and surround it in the North, South, East,
+ and West directions with vines and below the vines place 
+Water
+ source blocks, then use a 
+Mutating Sprig
+ on the Chest.
+
+============================================================
+# Mog's Quiver
+============================================================
+Mog's Quiver
+
+Name
+
+Mog's Quiver
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:quiverofmog
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+Mog's Quiver
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection but it has around the iron
+ level of durability for leather. and can be enchanted. It provides the 
+Infinity
+
+ enchantment but without the need for at least one arrow, as well as 
+making arrows fired with it equipped go faster and damage greatly 
+creatures that are currently in the air. It also applies a 
+Weakness
+ debuff for those hit by it and a 
+Resistance
+ buff for those using it while next to someone with 
+Gulg's Gurdle
+.
+
+It is acquired as a drop from 
+Mog
+.
+
+============================================================
+# Mystic Branch
+============================================================
+Mystic Branch
+
+Name
+
+Mystic Branch
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Witchery:mysticbranch
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Mystic Branch
+ is an item added by the 
+Witchery
+ mod. A wand used by a Witch (aka Player), who has successfully applied a 
+Rite of Infusion
+, to draw symbols into the air to cast a spell 
+[
+1
+]
+.
+ Each spell uses up infused power and some may require different 
+infusions to cast. A spell is cast by holding the 'use' key and waving 
+the Mystic Branch around in different directions each showing an arrow 
+symbol in the air. If the symbols drawn represent the pattern of a 
+spell, the name of the spell will appear with the symbols. The spell is 
+cast on key release. The Mystic Branch can also deflect certain incoming
+ spells from another user of a Mystic Branch.
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+3000
+
+Spell
+
+Demonic Spell
+
+Some spells of a demonic level can only be learned by dealing with a 
+Flame Imp
+ or the 
+Lord of Torment
+.
+
+Boosting Spell
+
+Spell power can be boosted by binding a 
+Statue of Hobgoblin Patron
+ and getting 
+Hobgoblins
+ to worship it instead of their 
+Mog
+ and 
+Gulg
+. This worship gives the Witch more power but too many Hobgoblins may cause Mog and Gulg to notice and attack the Witch.
+
+Spell Gesture
+
+Spoiler warning!
+This article contains 
+detailed information of discoveries, recipes, or secrets, which are 
+intended to be discovered through in-game mechanics.
+
+Collapse
+ 
+Table of Spell Gestures
+
+Name
+
+Description
+
+Gesture
+
+Attraho
+
+Pulls the victim towards the Witch
+
+Swish Up, Swish Up, Swish Up, Swish Right, Swish Right, Swish Down, Swish Left
+
+Carnosa Diem
+
+Restores some of infusion power and damage the caster 
+[
+2
+]
+
+Swish Right, Swish Right, Swish Up, Swish Down, Swish Down
+
+Disarm
+
+Disarms victim
+
+Swish Up, Swish Up, Swish Down
+
+Ignianima
+
+Damages the victim 
+[
+3
+]
+
+Swish Left, Swish Left, Swish Up, Swish Down, Swish Down
+
+Morsmordre
+
+Summons a dark mark that scares mobs away 
+[
+4
+]
+
+Swish Up, Swish Up, Swish Left, Swish Right, Swish Right
+
+Pushback
+
+Swish Right, Swish Right, Swish Left
+
+Shield
+
+ground target
+
+Swish Down, Swish Down, Swish Down, Swish Down, Swish Up, Swish Up, Swish Up
+
+Stun
+
+Slows victim to a crawl
+
+Swish Right, Swish Right, Swish Up, Swish Left, Swish Up, Swish Right
+
+Torment
+
+Sends the victim to the Torment dimension 
+[
+5
+]
+
+Swish Down, Swish Down, Swish Left, Swish Right, Swish Right
+
+Nox
+
+Break light source blocks
+
+Swish Up, Swish Up, Swish Right, Swish Down, Swish Right, Swish Up
+
+Confundus
+
+Cause confusion
+
+Swish Left, Swish Left, Swish Up, Swish Up, Swish Right
+
+Cause minor damage
+(restricted use, expensive)
+
+Swish Down, Swish Left, Swish Down, Swish Down, Swish Right
+
+Control creature
+(restricted use, expensive)
+
+Swish Right, Swish Down, Swish Down, Swish Down, Swish Down
+
+Lumos
+
+Create light source blocks
+
+Swish Down, Swish Down, Swish Down, Swish Right
+
+Augamenti
+
+Create water
+
+Swish Up, Swish Up, Swish Right, Swish Right, Swish Down
+
+Deflect branch effects
+
+'Left-click'
+
+Defodio
+
+Dig a block
+
+Swish Up, Swish Up, Swish Left, Swish Down
+
+Fortify a base by upgrading material type based on hardness
+
+Swish Up, Swish Left, Swish Up, Swish Up, Swish Right
+
+Accio
+
+Grab item entity in the world
+
+Swish Left, Swish Up, Swish Right, Swish Right, Swish Down
+
+Episkey
+
+Heal at the cost of Hunger
+
+Swish Right, Swish Up, Swish Left, Swish Down, Swish Down, Swish Right
+
+Lock a door by converting it to a harder to open door
+
+Swish Left, Swish Left, Swish Down, Swish Down, Swish Right
+
+Alohomora
+
+Open a door
+
+Swish Right, Swish Up, Swish Right, Swish Right, Swish Down
+
+Ennervate
+
+Remove stun effects
+
+Swish Up, Swish Left, Swish Up, Swish Right, Swish Left, Swish Up, Swish Right
+
+Slows incoming Player
+
+Swish Left, Swish Left, Swish Right
+
+Incendio
+
+Start fire on block
+
+Swish Left, Swish Up, Swish Up, Swish Down, Swish Down
+
+Meteolojinx Recanto
+
+Stop rain (very expensive)
+
+Swish Up, Swish Up, Swish Up, Swish Right, Swish Right, Swish Down, Swish Up, Swish Right, Swish Right, Swish Down, Swish Down
+
+Caelum
+
+Casts a potion from 
+Leonard's Urn
+
+Swish Right, Swish Up, Swish Left, Swish Left, Swish Down
+
+Baratrum
+
+Casts the second potion from 
+Leonard's Urn
+
+Swish Left, Swish Down, Swish Right, Swish Right, Swish Up
+
+Ortus
+
+Casts the third potion from 
+Leonard's Urn
+
+Swish Down, Swish Right, Swish Up, Swish Up, Swish Left
+
+Occasus
+
+Casts the fourth potion from 
+Leonard's Urn
+
+Swish Up, Swish Left, Swish Down, Swish Down, Swish Right
+
+Usage
+
+Mystic Branch has no known uses in crafting.
+
+Note
+
+↑
+ 
+The spell that is cast with the Mystic Branch is not as powerful as a spell cast by other methods.
+
+↑
+ 
+Soul of Hunger Demon is needed for this spell.
+
+↑
+ 
+The more damage done to the Witch, the more damage is transferred to the victim.  Soul of Anguish Demon is needed for this spell
+
+↑
+ 
+Soul of Fear Demon is needed for this spell
+
+↑
+ 
+Has a 30 minute cool down period. 
+Soul of Torment Demon
+ needed for this spell.
+
+============================================================
+# Necromancer Robes
+============================================================
+Necromancer Robes
+
+Name
+
+Necromancer Robes
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:necromancerrobe
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Necromancer Robes
+ is an armor item added by the 
+Witchery
+ mod. It offers a leather level of protection and can be enchanted. It can be repaired either by crafting it with 4 
+Impregnated Leather
+ or with an anvil with regular leather.
+It also becomes invisible with the player even thought it is only a visual change that only influence other players.
+
+Wearing it while brewing necromantic potions offers 45% chance of getting an extra brew. Stacks with 
+Witches Hat
+.
+
+While wearing it, undead mobs may not attack you.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Necromantic Stone
+============================================================
+Necromantic Stone
+
+Name
+
+Necromantic Stone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Necromantic Stone
+ is an item added by the 
+Witchery
+ mod. It is created from an 
+Attuned Stone
+ with the 
+Rite of Necromancy
+ and can be used to control various undead monsters when using a 
+Brew of Raising
+ to raise some undead or when releasing bound ghosts from a spectral stone.
+
+Point the stone at a target mob, player, or block and the 
+monsters under the witch's control will either attack the mob or player 
+or will just move to that block.
+
+Necromantic Stones are the only way to turn off and on an 
+Alluring Skull
+.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+This spell must be cast during the night.
+
+Usage
+
+Necromantic Stone can be used to create the following items:
+ 
+Alluring Skull
+ 
+Brazier
+Disorientation Fetish
+ 
+Disorientation Fetish
+ 
+Necromancer Robes
+
+Video
+
+Witchery Explained: Episode 14, Spectral Stones
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Nullifying Bolt
+============================================================
+Nullifying Bolt
+
+Name
+
+Nullifying Bolt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Yes (64)
+
+Nullifying Bolts
+ are an item added by the 
+Witchery
+ mod. It is used by the 
+Witch Hunter Pistol Crossbow
+.
+
+They deal six damage to the victim and penetrates the protection of the Bark Belt and Baba Yaga's thorns, like the 
+Wooden Bolt
+. When fired by someone in the full set of 
+Witch Hunter armor
+ it drains a third of the victim's infusion power and ignores any possible protection 
+poppets
+ the victim may be using and removes all potion effects besides 
+Poison
+ and 
+Wither
+. Also it costs some infusion power from the wielder to shoot them.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Otherwhere Chalk
+============================================================
+Otherwhere Chalk
+
+Name
+
+Otherwhere Chalk
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Otherware Chalk
+ is an item added by the 
+Witchery
+ mod. It is used to draw otherwhere purple glyphs in the creation of 
+Circle Rituals
+. This chalk is usually used for spells that often concern transposition and The End dimension.
+
+Recipe
+
+Witch's Cauldron
+
+Usage
+
+Otherwhere Chalk has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Pentacle
+============================================================
+Pentacle
+
+Name
+
+Pentacle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Pentacle
+ is an item added by the 
+Witchery
+ mod. It is used to improve the power capacity of the 
+Altar
+ and adds 2x recharge rate. It is a standalone type upgrade and will stack with any other altar upgrades.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Pentacle has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 25, Hobgolins, Koboldite Dust, Ingots, and Pickaxe!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+Witchery Explained: Episode 6, The Altar! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Perpetual Ice
+============================================================
+Perpetual Ice
+
+Name
+
+Perpetual Ice
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:perpetualice
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+15.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Drops
+
+Nothing
+
+Required Tool
+
+Any tool
+
+Perpetual Ice
+ is an item added by the 
+Witchery
+ mod. It can be used in places where regular ice cannot as this ice will not melt.
+
+Recipe
+
+To make a Perpetual Ice, you have to cast the 
+Rite of Icy Expansion
+ and a sphere of perpetual ice will form around the altar, this ice can be gathered with a silk touch tool.
+
+7x7
+
++2+
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 18, Rite of Icy Expansion
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Player Compass
+============================================================
+Player Compass
+
+Name
+
+Player Compass
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:playercompass
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Player Compass
+ is an item added by 
+Witchery
+ mod.
+
+Craft it together with someone's 
+Taglock Kit
+ and then compass will show the direction where the bound person is.
+
+Recipe
+
+Witch's Cauldron
+
+============================================================
+# Poppet Shelf
+============================================================
+Poppet Shelf
+
+Name
+
+Poppet Shelf
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Poppet Shelf
+ is a block added by the 
+Witchery
+ mod. It allows 
+Poppets
+ that are stored in it to be active even out of a player's inventory.
+
+A maximum of 9 poppets can be stored.
+
+Note that the 
+Poppet Shelf
+ will keep the chunk containing it loaded.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppet Shelf has no known uses in crafting.
+
+============================================================
+# Poppet Shelf Compass
+============================================================
+Poppet Shelf Compass
+
+Name
+
+Poppet Shelf Compass
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Poppet Shelf Compass
+ is an item added by 
+Witchery
+ mod. When held it can detect a 
+Poppet Shelf
+
+ up to 128 blocks away, ignoring height. When a Poppet Shelf is 128 
+blocks or fewer away one of the lights will light up, more lights light 
+up the closer the user gets to a Poppet Shelf.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Poppy of Ink
+============================================================
+Poppy of Ink
+
+Name
+
+Poppy of Ink
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:1
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Poppy of Ink
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that bursts into an explosion of ink, blinding players and other mobs in an area of effect range.
+
+Depending on where in relation to the center of the hit of the 
+potion determines the duration of the blindness effect. Creatures with 
+no eyes such as slimes and powerful demonic entities will not be 
+affected by this.
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppy of Ink has no known uses in crafting.
+
+============================================================
+# Poppy of Sprouting
+============================================================
+Poppy of Sprouting
+
+Name
+
+Poppy of Sprouting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:3
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Poppy of Sprouting
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that causes a large branch of tree to grow out away from any surface hit.
+
+It is a way to instantly create bridges across ravines or the 
+like and if thrown under the player it is a nice and quick way to ascend
+ to maybe avoid a creeper blast. 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppy of Sprouting has no known uses in crafting.
+
+============================================================
+# Poppy of Thorns
+============================================================
+Poppy of Thorns
+
+Name
+
+Poppy of Thorns
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:2
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Poppy of Thorns
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow a cactus instantly at four blocks high to grow where it lands.
+
+Hitting a creature with the brew will grow cacti one block high surrounding the creature 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppy of Thorns has no known uses in crafting.
+
+============================================================
+# Poppy of Webs
+============================================================
+Poppy of Webs
+
+Name
+
+Poppy of Webs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:6
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Poppy of Webs
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow 
+cobwebs
+ instantly at four blocks high to grow where it lands.
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppy of Webs has no known uses in crafting.
+
+============================================================
+# Ritual Chalk
+============================================================
+Ritual Chalk
+
+Name
+
+Ritual Chalk
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Ritual Chalk
+ is an item added by the 
+Witchery
+ mod. It is used to draw the white glyphs in the creation of 
+Circle Rituals
+.
+It is also used in several ritual related recipes.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Ritual Chalk can be used to create the following items:
+ 
+Golden Chalk
+ 
+Infernal Chalk
+ 
+Otherwhere Chalk
+ 
+Ritual Diviner
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rowan Door Key
+============================================================
+Rowan Door Key
+
+Name
+
+Rowan Door Key
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+A 
+Rowan Door Key
+ is an item added by the 
+Witchery
+ mod. A player receives the key when crafting a 
+Rowan Wood Door
+. The key can be used to open that specific door after it is placed in the world. Multiple keys can be crafted together into a 
+Rowan Keyring
+ as many times as wanted to make a single item instead of multiple keys.
+
+Usage
+
+Rowan Door Key can be used to create the following items:
+ 
+Rowan Keyring
+
+============================================================
+# Rowan Keyring
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Rowan Keyring
+
+Name
+
+Rowan Keyring
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+A Rowan Keyring is an item added by the 
+Witchery
+ mod. It's created by crafting multiple 
+Rowan Door Keys
+ together.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Rowan Wood Door
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Rowan Wood Door
+
+Name
+
+Rowan Wood Door
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Unknown
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+A 
+Rowan Wood Door
+ is a block added by the 
+Witchery
+ mod. When placed in the world, the player receives a 
+Rowan Door Key
+, which is used to open the door. You can also open Rowan Door using 
+Alohomora
+ spell casted with 
+Mystic Branch
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Ruby Slippers
+============================================================
+Ruby Slippers
+
+Name
+
+Ruby Slippers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:rubyslippers
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+Tooltip
+
+There's no place like home.
+Teleport using a waystone (1 min cooldown)
+Teleport to bed (30 min cooldown)
+
+Ruby Slippers
+ are worn in the foot slot and have the same durability and protection as 
+Leather Boots
+. They cannot be dyed but can be enchanted.
+
+Infused players
+ wearing these slippers can chant in the chat window:
+
+/chant there's no place like home
+
+and will be teleported back to the spawn point of that dimension they
+ are in or their bed if it is in the same dimension. This works once 
+every thirty minutes and costs forty percent of the total infused power 
+but if done across different dimensions it costs sixty percent of the 
+total infused power.
+
+Or this can be done with a dropped 
+Bound Waystone
+
+ and will teleport the caster to the waystone location, consuming the 
+waystone. Doing this is an easier way to cast the Rite of Transposition 
+by bypassing the Rite entirely but does cost twenty percent of the 
+player's total infused power and forty percent if teleporting to another
+ dimensional.
+
+Crafting damaged slippers with four Impregnated Leather will repair the slippers. Alternatively use an 
+anvil
+ and normal 
+leather
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Trivia
+
+This item originates from "The Wizard of Oz". Near the beginning of 
+the story, the protagonist Dorothy obtained a pair of ruby slippers when
+ her house crushed a witch. At the end, she found that she was able to 
+click her heels together and chant "There's no place like home," and 
+wake up in her bed.
+
+============================================================
+# Seeping Shoes
+============================================================
+Seeping Shoes
+
+Name
+
+Seeping Shoes
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:seepingshoes
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+Tooltip
+
+Cave spider's bane.
+Remove poison effects when standing on ground
+
+Seeping Shoes
+ are worn in the foot slot and have the same durability and protection as 
+Leather Boots
+. They can be dyed and enchanted.
+
+When wearing these shows and standing on the ground, if the 
+wearer gets poisoned the poison instead seeps into the ground and 
+bonemeals the surrounding area.
+
+Crafting damaged slippers with four Impregnated Leather will repair the slippers. Alternatively use an 
+anvil
+ and normal 
+leather
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Seeping Shoes can be used to create the following items:
+ 
+Ruby Slippers
+
+============================================================
+# Seer Stone (Witchery)
+============================================================
+Seer Stone
+
+Name
+
+Seer Stone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:seerstone
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Seer Stone
+ is an item added by the 
+Witchery
+ mod.
+
+The Seer Stone provides a way to summon a witch's coven. This is 
+useful for casting spells that require a coven to cast, it brings them 
+all to the witch to cast it instead of letting them wander around like 
+they usually do.
+
+A Seer Stone though can also be used to check a witch's levels in the various forms of witchcraft and other things magical.
+
+Recipe
+
+7×7
+
++0
+
+Altar Power: 
+2000
+
+Usage
+
+Seer Stone (Witchery) has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 12, Coven Witches and their Quests!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Shrub of Ink
+============================================================
+Shrub of Ink
+
+Name
+
+Shrub of Ink
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:9
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Shrub of Ink
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that bursts into an explosion of ink, blinding players and other mobs in an area of effect range.
+
+Depending on where in relation to the center of the hit of the 
+potion determines the duration of the blindness effect. Creatures with 
+no eyes such as slimes and powerful demonic entities will not be 
+affected by this.
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Shrub of Ink has no known uses in crafting.
+
+============================================================
+# Shrub of Sprouting
+============================================================
+Shrub of Sprouting
+
+Name
+
+Shrub of Sprouting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:11
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Shrub of Sprouting
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that causes a large branch of tree to grow out away from any surface hit.
+
+It is a way to instantly create bridges across ravines or the 
+like and if thrown under the player it is a nice and quick way to ascend
+ to maybe avoid a creeper blast. 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Shrub of Sprouting has no known uses in crafting.
+
+============================================================
+# Shrub of Thorns
+============================================================
+Shrub of Thorns
+
+Name
+
+Shrub of Thorns
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:10
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Shrub of Thorns
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow a cactus instantly at four blocks high to grow where it lands.
+
+Hitting a creature with the brew will grow cacti one block high surrounding the creature 
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Shrub of Thorns has no known uses in crafting.
+
+============================================================
+# Shrub of Webs
+============================================================
+Shrub of Webs
+
+Name
+
+Shrub of Webs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:plantmine:6
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+3000.0
+
+Hardness
+
+6.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Shrub of Webs
+ is an item added by the 
+Witchery
+ mod. It is a trapped plant that will grow 
+cobwebs
+ instantly at four blocks high to grow where it lands.
+
+Be careful! Only a 
+Boline
+ can safely harvest these without damaging them!
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Shrub of Webs has no known uses in crafting.
+
+============================================================
+# Silver Bolt (Witchery)
+============================================================
+Silver Bolt
+
+Name
+
+Silver Bolt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Yes (64)
+
+Silver Bolts
+ are an item added by the 
+Witchery
+ mod. It is used by the 
+Witch Hunter Pistol Crossbow
+.
+
+These bolts are basically the same as 
+Wooden Bolts
+ in that they still deal six damage and are still the weakness for 
+Bark Belt
+ and 
+Baba Yaga
+'s thorns, but these are also a weakness for 
+werewolves
+ and bypasses the werewolf's natural resistance to attacks while also dealing double the normal damage.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Optional for packs that have 
+Silver Ingots
+
+Video
+
+Witchery Explained: Episode 3, Silver Collecting! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Silver Sword (Witchery)
+============================================================
+Silver Sword
+
+Name
+
+Silver Sword
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:silversword
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+33
+
+The 
+Silver Sword
+ is a weapon item added by the 
+Witchery
+
+ mod. It is primarily used as a weapon against werewolves because it can
+ bypass their damage resistance and any damage done with the sword to 
+them is double due to their silver weakness.
+
+The sword has the same stats as the golden sword used to make it 
+except the silver degrades its enchantability down to iron levels.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+This recipe is only available in modpacks that include silver ingots
+
+Video
+
+Witchery Explained: Episode 3, Silver Collecting! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Silver Vat
+============================================================
+Silver Vat
+
+Name
+
+Silver Vat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Silver Vat
+ is an item added by the 
+Witchery
+ mod. It is used in the collection of 
+Silver Deposits
+ when placed next to a furnace smelting 
+Gold Ore
+. When silver is available to be collected tiny cubes will appear in the vat until the vat is right clicked to collect them.
+
+Adding up to four silver vats can produce more 
+silver collection
+, silver collection is usually about 25% per gold ore.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Witchery Explained: Episode 3, Silver Collecting! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Snow Pressure Plate
+============================================================
+Snow Pressure Plate
+
+Name
+
+Snow Pressure Plate
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Snow Pressure Plate
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Snow Slab (Witchery)
+============================================================
+Snow Slab
+
+Name
+
+Snow Slab
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Snow Slab
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Snow Stairs
+============================================================
+Snow Stairs
+
+Name
+
+Snow Stairs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Snow Stairs
+ is an item added by the 
+Witchery
+ mod. It can be used as a decoration.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Spectral Stone
+============================================================
+Spectral Stone
+
+Name
+
+Spectral Stone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Spectral Stone
+ is an item added by the 
+Witchery
+ mod. It is created from an attuned stone with the 
+Rite of Binding
+ and can store up to three ghosts of the same kind: 
+Banshees
+, 
+Poltergeists
+, or 
+Spectres
+. Storing these ghosts in the spectral stone will bind the ghosts to the player and can then be controlled via 
+Necromantic Stone
+.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+6000
+
+This spell must be cast during the night.
+
+Usage
+
+Spectral Stone has no known uses in crafting.
+
+Video
+
+Witchery Explained: Episode 14, Spectral Stones
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Spinning Wheel (Witchery)
+============================================================
+Spinning Wheel
+
+Name
+
+Spinning Wheel
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:spinningwheel
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+17.5
+
+Hardness
+
+3.5
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Unknown
+
+Spinning Wheel
+ is a block added by the 
+Witchery
+ mod. It is used to make strings and threads.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Spinning Wheel (Witchery) has no known uses in crafting.
+
+Trivia
+
+It appears to originate from the fairytale "Rumpelstiltskin", where 
+the main character used a spinning wheel to turn hay into golden cloth.
+
+============================================================
+# Splitting Bolt
+============================================================
+Splitting Bolt
+
+Name
+
+Splitting Bolt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Yes (64)
+
+Splitting Bolts
+ are an item added by the 
+Witchery
+ mod. It is used by the 
+Witch Hunter Pistol Crossbow
+.
+
+These bolts are actually three 
+Wooden Bolts
+
+ tied together that split midflight but because of this they only deal 
+half the damage each so that is a total of nine damage, three for each 
+bolt. Since they are still wooden bolts these also are the weakness for 
+Bark Belt
+ and 
+Baba Yaga
+'s thorns.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Staff of Duplication
+============================================================
+Staff of Duplication
+
+Name
+
+Staff of Duplication
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Staff of Duplication
+ is an item added by 
+Witchery
+
+ mod. It is not intended for use with regular play as it is a dev tool 
+that the mod author left in the game. It can create schematics and 
+duplicate portions of the world. To use one would right click a point in
+ the world which starts the selection and to close the selection right 
+click on another point which selects and remembers every point in that 
+rectangular prism selected though it may not be visible. To duplicate 
+one would right click and from that point right clicked the duplicated 
+area will appear but clicking again can make it rotate and sneak right 
+clicking will clear the remembered selection.
+
+============================================================
+# Statue of Hobgoblin Patron
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Statue of Hobgoblin Patron
+
+Name
+
+Statue of Hobgoblin Patron
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The Statue of Hobgoblin Patron is a block added by 
+Witchery
+ mod.
+This statue is worshiped by 
+Hobgoblins
+. It can be bound to a player to increase the power of their 
+Mystic Branch
+ spells. Doing so can anger 
+Mog
+ and 
+Gulg
+, causing them to attack the player.
+
+Recipe
+
+TBD
+
+============================================================
+# Statue of The Goddess
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Statue of The Goddess
+
+Name
+
+Statue of The Goddess
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Statue Of The Goddess is a block added by 
+Witchery
+ mod.
+The statue of the goddess can remove every curse except 
+vampirism
+ and 
+Curse of the Wolf
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Note that recipe can be disabled in the config file.
+
+============================================================
+# Sun Collector
+============================================================
+Sun Collector
+
+Name
+
+Sun Collector
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Unknown
+
+The 
+Sun Collector
+ is an block added by the 
+Witchery
+ mod. It is used to create the 
+Sun Grenades
+.
+
+To create Sun Grenades the Sun Collector has to be next to a 
+Daylight Sensor
+ and a 
+Quartz Sphere
+
+ needs to be placed in the Sun Collector for the sunlight to collect in 
+to. It takes a full day from sunrise to sunset for the Quartz Sphere to 
+fully charge, if interrupted it will reset and need to wait for another 
+full day.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Sun Collector has no known uses in crafting.
+
+============================================================
+# Sun Grenade
+============================================================
+Sun Grenade
+
+Name
+
+Sun Grenade
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:sungrenade
+
+Type
+
+Item
+
+Stackable
+
+Yes (16)
+
+Sun Grenade
+ is an item added by the 
+Witchery
+
+ mod. It is a tool used by vampire hunters. It is created by placing a 
+quartz sphere inside a sunlight collector that is next to a 
+Daylight Sensor
+.
+ The grenade will begin charging, but requires that the detector begins 
+its count at zero. In about fifteen minutes of the quartz sphere being 
+inside the sunlight collector, you will receive the sunlight grenade, 
+which, upon throwing, after a moment will create a sphere of sunlight, 
+burning any and all vampires that come in contact with it to a crisp.
+
+Usage
+
+Sun Grenade has no known uses in crafting.
+
+============================================================
+# Taglock Kit
+============================================================
+Taglock Kit
+
+Name
+
+Taglock Kit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:7
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Taglock Kit
+ is an item added by the 
+Witchery
+ mod. It is used in several recipes mostly as an identifier for the bound player or mob.
+
+To use on yourself, sleep in a bed and then right click the bed 
+with the kit, you will hear a ding and the kit will be full and show the
+ name of the person tagged. To use on others you can do likewise, or 
+sneak behind them and right click them, but doing this may result in 
+failed attempts which will notify the person being tagged.
+
+They may also be obtained from a 
+Blood Poppy
+ or a 
+Leech Chest
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Taglock Kit can be used to create the following items:
+ 
+Armor Protection Poppet
+ 
+Death Protection Poppet
+ 
+Earth Protection Poppet
+ 
+Fire Protection Poppet
+ 
+Hunger Protection Poppet
+ 
+Poppet Protection Poppet
+ 
+Tool Protection Poppet
+ 
+Vampiric Poppet
+ 
+Voodoo Poppet
+ 
+Voodoo Protection Poppet
+ 
+Water Protection Poppet
+
+============================================================
+# Twisting Band
+============================================================
+Twisting Band
+
+Name
+
+Twisting Band
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:kobolditehelm
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+166
+
+Armor
+
+2 (
+)
+
+Tooltip
+
+Disorientates observers.
+
+The 
+Twisting Band
+ is an armor item added by the 
+Witchery
+
+ mod, it is armor that is placed in the head slot. It gives the same 
+armor levels as iron and the durability of diamond and can be enchanted.
+ It can be repaired with 
+Koboldite Ingots
+ in an anvil.
+
+When a mob is looked at by the wearer they will have the Weakness
+ effect applied to them and when a player looks at the wearer they will 
+have the Hunger effect and they will be forced to look away.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Witchery Explained: Episode 25, Hobgolins, Koboldite Dust, Ingots, and Pickaxe!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Vampire Chain Coat (Ladies)
+============================================================
+Vampire Chain Coat (Ladies)
+
+Name
+
+Vampire Chain Coat (Ladies)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirechaincoat_female
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Vampire Chain Coat (Ladies)
+ is an armor item from the mod 
+Witchery
+. It is crafted using 
+Vampire Dress Jacket (Ladies)
+ and four 
+Iron Ingots
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Chain Coat (Ladies) has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Chain Coat
+============================================================
+Vampire Chain Coat
+
+Name
+
+Vampire Chain Coat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirechaincoat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Vampire Chain Coat
+ is an armor item from the mod 
+Witchery
+. It is crafted using 
+Iron Ingot
+ x4 and 
+Vampire Dress Coat
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Chain Coat has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Dress Coat
+============================================================
+Vampire Dress Coat
+
+Name
+
+Vampire Dress Coat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirecoat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Vampire Dress Coat
+ is an armor item from the mod 
+Witchery
+. It is crafted using 
+Woven Cruor
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Dress Coat can be used to create the following items:
+ 
+Vampire Chain Coat
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Dress Jacket (Ladies)
+============================================================
+Vampire Dress Jacket (Ladies)
+
+Name
+
+Vampire Dress Jacket (Ladies)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirecoat_female
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Vampire Dress Jacket (Ladies)
+ is an armor item from the mod 
+Witchery
+. It is crafted using 
+Woven Cruor
+ and 
+Leather
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Dress Jacket (Ladies) can be used to create the following items:
+ 
+Vampire Chain Coat (Ladies)
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Helmet
+============================================================
+Vampire Helmet
+
+Name
+
+Vampire Helmet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirehelmet
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+The 
+Vampire Helmet
+ is an armor item from the mod 
+Witchery
+. It is crafted using a 
+Vampire Top Hat
+ and 
+Iron Ingots
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Helmet has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Oxford Boots
+============================================================
+Vampire Oxford Boots
+
+Name
+
+Vampire Oxford Boots
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampireboots
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+The 
+Vampire Oxford Boots
+ are an armor item from the mod 
+Witchery
+. It is crafted using 
+Woven Cruor
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Oxford Boots has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Skirted Trousers
+============================================================
+Vampire Skirted Trousers
+
+Name
+
+Vampire Skirted Trousers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirelegs_kilt
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+The 
+Vampire Skirted Trousers
+ are an armor item from the mod 
+Witchery
+. They are crafted using 
+Woven Cruor
+ and 
+Leather
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Skirted Trousers has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Top Hat
+============================================================
+Vampire Top Hat
+
+Name
+
+Vampire Top Hat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirehat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+The 
+Vampire Top Hat
+ is an armor item from the mod 
+Witchery
+. It is crafted using 
+Woven Cruor
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Top Hat can be used to create the following items:
+ 
+Vampire Helmet
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Vampire Trousers
+============================================================
+Vampire Trousers
+
+Name
+
+Vampire Trousers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:vampirelegs
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+The 
+Vampire Trousers
+ are an armor item from the mod 
+Witchery
+. They are crafted using 
+Woven Cruor
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampire Trousers has no known uses in crafting.
+
+See Also
+
+ 
+Vampire Top Hat
+
+ 
+Vampire Helmet
+
+ 
+Vampire Dress Coat
+
+ 
+Vampire Chain Coat
+
+ 
+Vampire Dress Jacket (Ladies)
+
+ 
+Vampire Chain Coat (Ladies)
+
+ 
+Vampire Trousers
+
+ 
+Vampire Skirted Trousers
+
+ 
+Vampire Oxford Boots
+
+ 
+Cane Sword
+
+============================================================
+# Void Bramble
+============================================================
+Void Bramble
+
+Name
+
+Void Bramble
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Trap
+
+Stackable
+
+Unknown
+
+This strange bramble keeps creatures at bay; for when they get 
+close it teleports them away. Created and fueled with magic no rituals 
+will function near to it.
+
+Void Bramble
+ is an item added by the 
+Witchery
+
+ mod. It is a heavily mutated plant that both negates all circle magic 
+within 32 blocks of the bramble and also randomly teleports anyone who 
+walks into it to somewhere within five hundred blocks. This protects an 
+area from circle magic.
+
+This bramble can only be broken by the player who placed it and 
+will not break for anyone else except for players in creative mode.
+
+These brambles can be disabled in the config file for Witchery to prevent them from being craftable.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Water Diviner
+============================================================
+Water Diviner
+
+Name
+
+Water Diviner
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:divinerwater
+
+Type
+
+Weapon
+
+Stackable
+
+No
+
+The 
+Water Diviner
+ is an item added by the 
+Witchery
+ mod. It is used to divine sources of 
+Water
+.
+
+When standing on a block and using it, it will exude black 
+particles if there is water anywhere beneath that block, if there is not
+ it will exude nothing and will not use up durability.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Water Diviner can be used to create the following items:
+ 
+Lava Diviner
+ 
+Water Sigil
+
+============================================================
+# Waystone
+============================================================
+Waystone
+
+Name
+
+Waystone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+A 
+Waystone
+ is an item used in 
+Witchery
+ 
+rite of binding
+. When 
+bound
+ it turns into either a Bound Waystone or Blooded Waystone depending on the method of 
+binding
+ used.
+
+Bound Waystones
+ are waystones set to a specific coordinate.
+
+Blooded Waystones
+ are waystones set to a specific mob or player.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Feed The Beast Infinity Evolved Expert Mode
+
+Usage
+
+Waystone can be used to create the following items:
+ 
+Blood Letter's Pack
+ 
+Blood Rune
+
+Video
+
+Witchery Explained: Episode 13, The Rite of Binding!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Wild Bramble
+============================================================
+Wild Bramble
+
+Name
+
+Wild Bramble
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Trap
+
+Stackable
+
+Unknown
+
+This thorny bramble spreads around, when you try to pull it down. Mutate this plant from cactus and spanish moss.
+
+Wild Bramble
+ is an item added by the 
+Witchery
+
+ mod. It is a thorny plant that will damage anyone or anything that 
+passes through it and it quite difficult to break without a golden axe 
+or removing the dirt is on because if broken any other way, it will 
+spread.
+
+Recipe
+
+Wild Brambles are created by mutating a 
+Cactus
+ with 
+Spanish Moss
+.
+ To do so, place a Cactus block down (four cacti blocks on top of each 
+other is the best and cheapest way to do it) and surround it in the 
+North, South, East, and West directions with 
+Spanish Moss
+ and below the moss place 
+Water
+ source blocks, in the rest of the surrounding spaces place four 
+Grasspers
+ with two 
+Blaze Powder
+ and two 
+Bonemeal
+, then use a 
+Mutating Sprig
+ on the bottommost cactus.
+
+============================================================
+# Witch Hunter Boots (Silvered)
+============================================================
+Witch Hunter Boots (Silvered)
+
+Name
+
+Witch Hunter Boots (Silvered)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterbootssilvered
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+The 
+Silvered Witch Hunter Boots
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a slightly better than leather level of protection and 
+can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. Against werewolves its 
+protection increases by two, it lights enemies one fire briefly, and the
+ armor is very durable against them.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Boots
+============================================================
+Witch Hunter Boots
+
+Name
+
+Witch Hunter Boots
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterboots
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+66
+
+Armor
+
+1 (
+)
+
+The 
+Witch Hunter Boots
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection with an iron level of 
+durability and can be enchanted. It can be repaired with regular 
+Leather
+.
+It also is able to be dyed like leather armor.
+
+When wearing the full Witch Hunter set, there is a twenty-five 
+percent chance to quell general magical damage, a twenty-five percent 
+chance to quell the effects of a voodoo poppet, a ninety percent chance 
+to quell the Curse of Waking Nightmare, a ninety percent chance to quell
+ the Curse of Misfortune, a ninety percent chance to prevent being 
+summoned with a Rite of Transposition, and a one hundred percent chance 
+to quell the effects of a Vampiric Poppet but all Protection Poppets 
+bound to a wearer of the full set will also have a one hundred percent 
+chance of not working.
+
+Using a 
+Witch Hunter Pistol Crossbow
+ with 
+Nullifying Bolts
+ while wearing the full Witch Hunter set is the only way for the Nullifying Bolts' effects to work, otherwise it will not work.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witch Hunter Boots can be used to create the following items:
+ 
+Witch Hunter Boots (Silvered)
+
+============================================================
+# Witch Hunter Coat (Silvered)
+============================================================
+Witch Hunter Coat (Silvered)
+
+Name
+
+Witch Hunter Coat (Silvered)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:huntercoatsilvered
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Silvered Witch Hunter Coat
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a slightly better than leather level of protection and 
+can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. Against werewolves its 
+protection increases by two, it lights enemies on fire briefly, and the 
+armor is very durable against them.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Coat
+============================================================
+Witch Hunter Coat
+
+Name
+
+Witch Hunter Coat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:huntercoat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Witch Hunter Coat
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection with an iron level of 
+durability and can be enchanted. It can be repaired with regular 
+Leather
+.
+It also is able to be dyed like leather armor.
+
+When wearing the full Witch Hunter set, there is a twenty-five 
+percent chance to quell general magical damage, a twenty-five percent 
+chance to quell the effects of a voodoo poppet, a ninety percent chance 
+to quell the Curse of Waking Nightmare, a ninety percent chance to quell
+ the Curse of Misfortune, a ninety percent chance to prevent being 
+summoned with a Rite of Transposition, and a one hundred percent chance 
+to quell the effects of a Vampiric Poppet but all Protection Poppets 
+bound to a wearer of the full set will also have a one hundred percent 
+chance of not working.
+
+Using a 
+Witch Hunter Pistol Crossbow
+ with 
+Nullifying Bolts
+ while wearing the full Witch Hunter set is the only way for the Nullifying Bolts' effects to work, otherwise it will not work.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witch Hunter Coat can be used to create the following items:
+ 
+Witch Hunter Coat (Silvered)
+
+============================================================
+# Witch Hunter Dawn Boots
+============================================================
+Witch Hunter Dawn Boots
+
+Name
+
+Witch Hunter Dawn Boots
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Armor
+
+1 (
+)
+
+The 
+Witch Hunter Dawn Coat
+ is an armor item added by the 
+Witchery
+ mod. It it the ultimate form of Witch Hunter armor. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. This armor still lights 
+werewolves on fire briefly but against both werewolves and vampires it 
+also doubles its armor rating and heavily lessens the damage the armor 
+takes from the attack.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Dawn Coat
+============================================================
+Witch Hunter Dawn Coat
+
+Name
+
+Witch Hunter Dawn Coat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Armor
+
+3 (
+)
+
+The 
+Witch Hunter Dawn Coat
+ is an armor item added by the 
+Witchery
+ mod. It it the ultimate form of Witch Hunter armor. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. This armor still lights 
+werewolves on fire briefly but against both werewolves and vampires it 
+also doubles its armor rating and heavily lessens the damage the armor 
+takes from the attack.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Dawn Hat
+============================================================
+Witch Hunter Dawn Hat
+
+Name
+
+Witch Hunter Dawn Hat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Armor
+
+1 (
+)
+
+The 
+Witch Hunter Dawn Hat
+ is an armor item added by the 
+Witchery
+ mod. It it the ultimate form of Witch Hunter armor. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. This armor still lights 
+werewolves on fire briefly but against both werewolves and vampires it 
+also doubles its armor rating and heavily lessens the damage the armor 
+takes from the attack.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Dawn Trousers
+============================================================
+Witch Hunter Dawn Trousers
+
+Name
+
+Witch Hunter Dawn Trousers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Armor
+
+2 (
+)
+
+The 
+Witch Hunter Dawn Trousers
+ is an armor item added by the 
+Witchery
+ mod. It it the ultimate form of Witch Hunter armor. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. This armor still lights 
+werewolves on fire briefly but against both werewolves and vampires it 
+also doubles its armor rating and heavily lessens the damage the armor 
+takes from the attack.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Hat (Silvered)
+============================================================
+Witch Hunter Hat (Silvered)
+
+Name
+
+Witch Hunter Hat (Silvered)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterhatsilvered
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+The 
+Silvered Witch Hunter Hat
+ is a armor item added by the 
+Witchery
+
+ mod. It offers a slightly better than leather level of protection and 
+can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. Against werewolves its 
+protection increases by two, it lights enemies one fire briefly, and the
+ armor is very durable against them.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Hat
+============================================================
+Witch Hunter Hat
+
+Name
+
+Witch Hunter Hat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterhat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+The 
+Witch Hunter Hat
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection with an iron level of 
+durability and can be enchanted. It can be repaired with regular 
+Leather
+.
+It also is able to be dyed like leather armor.
+
+When wearing the full Witch Hunter set, there is a twenty-five 
+percent chance to quell general magical damage, a twenty-five percent 
+chance to quell the effects of a voodoo poppet, a ninety percent chance 
+to quell the Curse of Waking Nightmare, a ninety percent chance to quell
+ the Curse of Misfortune, a ninety percent chance to prevent being 
+summoned with a Rite of Transposition, and a one hundred percent chance 
+to quell the effects of a Vampiric Poppet but all Protection Poppets 
+bound to a wearer of the full set will also have a one hundred percent 
+chance of not working.
+
+Using a 
+Witch Hunter Pistol Crossbow
+ with 
+Nullifying Bolts
+ while wearing the full Witch Hunter set is the only way for the Nullifying Bolts' effects to work, otherwise it will not work.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witch Hunter Hat can be used to create the following items:
+ 
+Witch Hunter Hat (Silvered)
+
+============================================================
+# Witch Hunter Pistol Crossbow
+============================================================
+Witch Hunter Pistol Crossbow
+
+Name
+
+Witch Hunter Pistol Crossbow
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Unknown
+
+The 
+Witch Hunter Pistol Crossbow
+ is an item added by the 
+Witchery
+ mod. It is used by 
+Witch Hunters
+ and is their (and anyone else who wears Witch Hunter armor)'s weakness.
+
+The crossbow can use various bolts, 
+Wooden Bolts
+, 
+Bone Bolts
+, 
+Nullifying Bolts
+, 
+Splitting Bolts
+, and 
+Silver Bolts
+ can all be crafted for use with the crossbow and all deal damage in different ways.
+
+To load the crossbow make sure there is a bolt in your inventory 
+to load it with, sneak right-click for a couple seconds (this can be 
+repeated to switch the bolt out with a different one), then fire it by 
+right clicking.
+
+The 
+Infinity
+
+ enchantment doesn't work the same with this crossbow, it only has a 25%
+ chance of not using the bolt loaded in it instead of free bolts.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witch Hunter Pistol Crossbow has no known uses in crafting.
+
+============================================================
+# Witch Hunter Trousers (Silvered)
+============================================================
+Witch Hunter Trousers (Silvered)
+
+Name
+
+Witch Hunter Trousers (Silvered)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterlegssilvered
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+The 
+Silvered Witch Hunter Trousers
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a slightly better than leather level of protection and 
+can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+
+ or with an anvil with regular leather. Against werewolves its 
+protection increases by two, it lights enemies one fire briefly, and the
+ armor is very durable against them.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witch Hunter Trousers
+============================================================
+Witch Hunter Trousers
+
+Name
+
+Witch Hunter Trousers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:hunterlegs
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+76
+
+Armor
+
+2 (
+)
+
+The 
+Witch Hunter Trousers
+ is an armor item added by the 
+Witchery
+
+ mod. It offers a leather level of protection with an iron level of 
+durability and can be enchanted. It can be repaired with regular 
+Leather
+.
+It also is able to be dyed like leather armor.
+
+When wearing the full Witch Hunter set, there is a twenty-five 
+percent chance to quell general magical damage, a twenty-five percent 
+chance to quell the effects of a voodoo poppet, a ninety percent chance 
+to quell the Curse of Waking Nightmare, a ninety percent chance to quell
+ the Curse of Misfortune, a ninety percent chance to prevent being 
+summoned with a Rite of Transposition, and a one hundred percent chance 
+to quell the effects of a Vampiric Poppet but all Protection Poppets 
+bound to a wearer of the full set will also have a one hundred percent 
+chance of not working.
+
+Using a 
+Witch Hunter Pistol Crossbow
+ with 
+Nullifying Bolts
+ while wearing the full Witch Hunter set is the only way for the Nullifying Bolts' effects to work, otherwise it will not work.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witch Hunter Trousers can be used to create the following items:
+ 
+Witch Hunter Trousers (Silvered)
+
+============================================================
+# Witch's Cauldron
+============================================================
+Witch's Cauldron
+
+Name
+
+Witch's Cauldron
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:cauldron
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The Witch's Cauldron is a device from 
+Witchery
+, used to create some items and 
+simple brews
+. It is also used for some rituals and other tasks in the mod.
+
+The Witch's Cauldron is created by using 
+Anointing Paste
+ on a 
+Cauldron
+ in the world.
+
+In order to operate this block requires a couple of things:
+
+A roaring fire underneath it. Using a flint and steel lit netherrack will do.
+
+Full of water. Up to 3 buckets worth at maximum. Water can be pumped
+ in via modded pipes or using Brew of Endless Water in a dispenser.
+
+One of the first things you will end up making in this device is 
+Mutandis
+. Made by throwing a Mandrake Root, an Exhale of the Horned One, and an Egg.
+
+For a full list of brews and items you can make with the Witch's Cauldron make the book "Witchcraft: Brews & Infusions".
+
+See also
+
+Kettle
+
+Video
+
+Witchery Explained: Episode 2, Mutation Magic part 1, Mutandis! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Witchcraft  Collecting Fumes
+============================================================
+Witchcraft: Collecting Fumes
+
+Name
+
+Witchcraft: Collecting Fumes
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:46
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The book 
+Witchcraft: Collecting Fumes
+ is an item added by the 
+Witchery
+ mod.
+
+A descriptive book that explains how to use the 
+Witches Oven
+ to collect fumes with 
+Clay Jars
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Contents
+
+Witchcraft:
+ Collecting Fumes
+
+The witches oven gives a practitioner of the art, the opportunity to collect the fumes that may be produced when cooking. 
+
+Remember that the oven cannot smelt ore, but it does cook a little faster than a furnace.
+
+Place the 
+Clay Jars
+ into the oven when cooking to collect the fumes: Both food and wood give 
+Foul Fumes
+ while cooking Saplings produces 
+Wood Ash
+ and may also release the gaseous essence of the tree.
+
+Sapling Fumes
+
+Oak - 
+Exhale of the Horned One
+
+Birch - 
+Breath of the Goddess
+
+Spruce - 
+Hint of Rebirth
+
+Rowan - 
+Whiff of Magic
+
+Hawthorn - 
+Odour of Purity
+
+Alder - 
+Reek of Misfortune
+
+Usage
+
+Witchcraft: Collecting Fumes has no known uses in crafting.
+
+============================================================
+# Witches Hand
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Witches Hand
+
+Name
+
+Witches Hand
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Witches Hand
+ is an item added by 
+Witchery
+. It can be obtained by killing a 
+Witch
+ and is used to perform magic. Only players 
+infused with magic
+ can use the Witches Hand.  Used to control teleportation with the 
+Infusion of Otherwhere
+, metals and earth with the 
+Infusion of the Overworld
+, light with 
+Infusion of Light
+, or mobs with 
+Infernal Infusion
+.
+
+Usage
+
+Witches Hand can be used to create the following items:
+ 
+Rotten Flesh
+ 
+Seeping Shoes
+
+See Also
+
+The following items may also be of interest:
+
+ 
+Mystic Branch
+
+============================================================
+# Witches Oven
+============================================================
+Witches Oven
+
+Name
+
+Witches Oven
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchesovenidle
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+17.5
+
+Hardness
+
+3.5
+
+Solid
+
+Yes
+
+Transparent
+
+Yes
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Witches Oven
+ is an item added by the 
+Witchery
+
+ mod. It is the starting point for any witch/warlock. It allows the 
+extraction of various essences as by-products. Be careful when building 
+it in your house, there is a chance that your ceiling will be smothered 
+away and a hole is left.
+
+Adding up to three 
+Fume Funnels
+ or 
+Filtered Fume Funnels
+ can contribute to both speeding up the Witches Oven and making the likelihood of a fume byproduct more likely.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Feed The Beast Infinity Evolved Expert Mode
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Prior to 1.7.10
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Witchery Explained: Episode 1, Gathering Fumes! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Witches Robes
+============================================================
+Witches Robes
+
+Name
+
+Witches Robes
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchrobe
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+81
+
+Armor
+
+3 (
+)
+
+The 
+Witches Robes
+ is an armor item added by the 
+Witchery
+ mod. It offers a leather level of protection and can be enchanted. It can be repaired either by crafting it with 4 
+Impregnated Leather
+ or with an anvil with regular leather.
+It also becomes invisible with the player even thought it is only a visual change that only influence other players.
+
+Wearing it while brewing potions offers 35% chance of getting an extra brew. Stacks with 
+Witches Hat
+.
+
+While wearing it, 
+Creepers
+ may not attack you.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Witches' Hat
+============================================================
+Witches' Hat
+
+Name
+
+Witches' Hat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchhat
+
+Type
+
+Item
+
+Stackable
+
+No
+
+Durability
+
+56
+
+Armor
+
+1 (
+)
+
+The 
+Witches Hat
+ is an armor item added by the 
+Witchery
+ mod. It offers a leather level of protection and can be enchanted. It can be repaired either by crafting it with 3 
+Impregnated Leather
+ or with an anvil with regular leather.
+It also becomes invisible with the player even thought it is only a visual change that only influence other players.
+
+Wearing it while brewing potions offers 35% chance of getting an extra brew. Stacks with 
+Witches Robes
+.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Witches' Hat can be used to create the following items:
+ 
+Brew of Summon Leonard
+
+============================================================
+# Wolf Altar
+============================================================
+Wolf Altar
+
+Name
+
+Wolf Altar
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Wolf Altar
+ is an item added by the 
+Witchery
+ mod. It is used by werewolves as a means to communicate with the god who granted them their wolf abilities.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+The Wolf Heads and Hellhound Heads are interchangeable.
+
+Quests
+
+Once someone is 
+cursed
+
+ they can craft a Wolf Altar to pray to the wolf god that granted them 
+this curse in order to fully master it. The wolf god grant quests: 30 
+Raw Lambchops
+, 10 
+Dog Tongues
+, the death of the 
+Horned Huntsman
+, and to deal 10 critical hits.
+
+Awaken the Wolf
+
+This curse can also be spread in other ways, by using a 
+wolftrap
+ to trap a 
+wolfman
+
+ right in front of a Wolf Altar during a full moon will bless the 
+werewolf into being able to spread its curse by bringing someone to near
+ death.
+
+============================================================
+# Wolf Head (Witchery)
+============================================================
+Wolf Head
+
+Name
+
+Wolf Head
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:wolfhead
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+The 
+Wolf Head
+ is an item added by the 
+Witchery
+ mod. It is dropped from a 
+Wolf
+
+ when it is killed and is used in crafting. It can also be worn as an 
+helmet or used in a Wolf Altar to turn the Player into a Werewolf 
+(requires 3 Wolf Heads).
+
+Usage
+
+Wolf Head (Witchery) can be used to create the following items:
+ 
+Wolf Altar
+
+============================================================
+# Wolftrap
+============================================================
+Wolftrap
+
+Name
+
+Wolftrap
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Wolftrap
+ is a placeable item added by the 
+Witchery
+ mod. It is able to capture and hold in place most mobs but is designed for werewolves.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Wolftrap has no known uses in crafting.
+
+============================================================
+# Wooden Bolt
+============================================================
+Wooden Bolt
+
+Name
+
+Wooden Bolt
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Weapon
+
+Stackable
+
+Yes (64)
+
+Wooden Bolts
+ are an item added by the 
+Witchery
+ mod. It is used by the 
+Witch Hunter Crossbow Pistol
+.
+
+It is the weakness for 
+Bark Belt
+ and 
+Baba Yaga
+'s thorns and deals six damage to the victim.
+
+Recipe
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Collapse
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Optional for packs that have 
+Silver Ingots

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "filled=false": { "model": "witchery:block/chalice" },
+    "filled=true":  { "model": "witchery:block/chalice_filled" }
+  }
+}

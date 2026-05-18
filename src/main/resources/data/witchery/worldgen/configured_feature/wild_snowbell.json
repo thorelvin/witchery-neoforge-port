@@ -1,0 +1,44 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 4,
+    "xspread": 6,
+    "yspread": 3,
+    "zspread": 6,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "witchery:snowbell",
+              "Properties": {
+                "age": "4"
+              }
+            }
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:matching_blocks",
+            "blocks": [
+              "minecraft:grass_block",
+              "minecraft:dirt",
+              "minecraft:snow_block",
+              "minecraft:podzol"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

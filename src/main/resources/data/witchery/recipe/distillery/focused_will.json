@@ -1,0 +1,14 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:subdued_spirit"
+  },
+  "ingredient2": {
+    "id": "witchery:attuned_stone"
+  },
+  "result": {
+    "id": "witchery:focused_will",
+    "count": 1
+  },
+  "cookingtime": 300
+}

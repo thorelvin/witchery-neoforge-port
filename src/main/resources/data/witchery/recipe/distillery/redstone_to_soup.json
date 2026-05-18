@@ -1,0 +1,7 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {"id": "minecraft:redstone"},
+  "ingredient2": {"id": "minecraft:glass_bottle"},
+  "result": {"id": "witchery:redstone_soup", "count": 4},
+  "cookingtime": 300
+}

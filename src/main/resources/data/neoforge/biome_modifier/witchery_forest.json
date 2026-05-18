@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_forest",
+  "features": [
+    "witchery:witch_tree",
+    "witchery:rowan_tree",
+    "witchery:wild_belladonna",
+    "witchery:wild_mandrake",
+    "witchery:wild_wormwood",
+    "witchery:wild_blood_rose",
+    "witchery:bramble_patch"
+  ],
+  "step": "vegetal_decoration"
+}

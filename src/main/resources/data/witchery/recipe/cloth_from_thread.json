@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:fanciful_thread",
+    "witchery:fanciful_thread",
+    "witchery:fanciful_thread",
+    "witchery:fanciful_thread"
+  ],
+  "result": {
+    "id": "minecraft:white_wool",
+    "count": 1
+  }
+}

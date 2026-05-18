@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.witch_hunter",
+  "icon": "witchery:hunter_hat",
+  "category": "witchery:creatures",
+  "sortnum": 1,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/creatures.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.witch_hunter.page1" },
+    { "type": "patchouli:entity", "entity": "witchery:witch_hunter", "text": "witchery.book.entry.witch_hunter.desc" }
+  ]
+}

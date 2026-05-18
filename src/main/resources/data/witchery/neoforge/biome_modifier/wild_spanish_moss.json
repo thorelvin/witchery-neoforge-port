@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": ["minecraft:swamp", "minecraft:mangrove_swamp"],
+  "features": "witchery:wild_spanish_moss",
+  "step": "vegetal_decoration"
+}

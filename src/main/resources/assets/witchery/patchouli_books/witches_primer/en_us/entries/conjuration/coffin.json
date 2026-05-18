@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.coffin",
+  "icon": "witchery:coffin",
+  "category": "witchery:conjuration",
+  "sortnum": 2,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/conjuration.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.coffin.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:coffin", "text": "witchery.book.entry.coffin.recipe" }
+  ]
+}

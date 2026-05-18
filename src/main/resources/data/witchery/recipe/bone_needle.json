@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:bone",
+    "minecraft:flint"
+  ],
+  "result": {
+    "id": "witchery:bone_needle",
+    "count": 8
+  }
+}

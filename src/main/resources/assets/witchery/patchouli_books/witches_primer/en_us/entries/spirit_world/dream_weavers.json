@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.dream_weavers",
+  "icon": "witchery:dream_catcher",
+  "category": "witchery:spirit_world",
+  "sortnum": 1,
+  "pages": [
+    { "type": "patchouli:text", "text": "witchery.book.entry.dream_weavers.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:dream_catcher", "text": "witchery.book.entry.dream_weavers.recipe" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "minecraft:ender_pearl"
+  },
+  "jars": 6,
+  "outputs": [
+    {
+      "id": "witchery:ender_dew",
+      "count": 2
+    },
+    {
+      "id": "witchery:ender_dew",
+      "count": 2
+    },
+    {
+      "id": "witchery:ender_dew"
+    },
+    {
+      "id": "witchery:whiff_of_magic"
+    }
+  ],
+  "cookingtime": 800
+}

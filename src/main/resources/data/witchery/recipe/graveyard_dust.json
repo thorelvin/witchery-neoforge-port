@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:spectral_dust",
+    "minecraft:bone_meal",
+    "witchery:mutandis"
+  ],
+  "result": {
+    "id": "witchery:graveyard_dust",
+    "count": 1
+  }
+}

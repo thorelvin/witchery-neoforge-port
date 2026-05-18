@@ -1,0 +1,205 @@
+package com.emoniph.witchery.entity;
+
+import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+import java.util.UUID;
+
+/**
+ * Nightmare — personal Spirit World hunter.
+ * Targets only the assigned victim player.
+ * Becomes temporarily defended after taking damage (unless standing in Flowing Spirit).
+ * Defense timer: 80t in Spirit World, 40t outside.
+ * Strips random armor on hit (unless victim has Charm of Disrupted Dreams).
+ * Caps incoming damage at 15 per hit.
+ * Drops Mellifluous Hunger only in Spirit World.
+ */
+public class NightmareEntity extends Monster {
+
+    private int defenseTimer = 0;
+    private boolean defended  = false;
+    private int attackTimer   = 0;
+
+    // Victim tracking — only this player is targeted
+    private UUID victimUUID = null;
+    private String victimName = "";
+
+    public NightmareEntity(EntityType<? extends NightmareEntity> type, Level level) {
+        super(type, level);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.ATTACK_DAMAGE, 4.0)
+                .add(Attributes.FOLLOW_RANGE, 32.0)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+    }
+
+    // ── Victim assignment ─────────────────────────────────────────────────────
+
+    public void setVictim(ServerPlayer player) {
+        this.victimUUID = player.getUUID();
+        this.victimName = player.getGameProfile().name();
+    }
+
+    public UUID getVictimUUID() { return victimUUID; }
+
+    private boolean isMyVictim(Player player) {
+        if (victimUUID != null) return player.getUUID().equals(victimUUID);
+        if (victimName != null && !victimName.isBlank())
+            return player.getGameProfile().name().equalsIgnoreCase(victimName);
+        return true; // no victim set → target any player
+    }
+
+    // ── Goals ─────────────────────────────────────────────────────────────────
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.7));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // Only target the assigned victim
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(
+                this, Player.class, true, (e, sl) -> e instanceof Player p && isMyVictim(p)));
+    }
+
+    // ── Tick ─────────────────────────────────────────────────────────────────
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide()) {
+            if (defenseTimer > 0 && --defenseTimer == 0) defended = false;
+            if (attackTimer > 0) attackTimer--;
+
+            // Despawn if victim is gone, dead, or in wrong state
+            if (tickCount % 40 == 0 && victimUUID != null && level() instanceof ServerLevel sl) {
+                Player victim = sl.getPlayerByUUID(victimUUID);
+                if (victim == null || !victim.isAlive()
+                        || distanceToSqr(victim) > 1024) { // > 32 blocks
+                    discard();
+                    return;
+                }
+            }
+
+            // Relentless teleport pursuit
+            if (tickCount % 100 == 0) {
+                LivingEntity target = this.getTarget();
+                if (target instanceof Player && distanceToSqr(target) > 144.0) {
+                    double angle = random.nextDouble() * Math.PI * 2;
+                    double dist  = 2 + random.nextDouble() * 3;
+                    teleportTo(target.getX() + dist * Math.cos(angle),
+                               target.getY(),
+                               target.getZ() + dist * Math.sin(angle));
+                    playSound(SoundEvents.ENDERMAN_TELEPORT, 0.8f, 0.6f);
+                }
+            }
+        }
+    }
+
+    // ── Damage handling ───────────────────────────────────────────────────────
+
+    @Override
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (defended) return false;
+
+        if (!standingInFlowingSpirit()) {
+            defended = true;
+            defenseTimer = this.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD) ? 80 : 40;
+        }
+
+        if (amount >= this.getHealth() && source.getEntity() instanceof ServerPlayer attacker) {
+            var data = com.emoniph.witchery.init.WitcheryAttachments.get(attacker);
+            data.setLastNightmareKillGameTime(this.level().getGameTime());
+        }
+
+        return super.hurtServer(level, source, Math.min(amount, 15.0f));
+    }
+
+    private boolean standingInFlowingSpirit() {
+        BlockPos feet = this.blockPosition();
+        return this.level().getBlockState(feet).is(WitcheryBlocks.FLOWING_SPIRIT.get());
+    }
+
+    // ── Attack behavior ───────────────────────────────────────────────────────
+
+    @Override
+    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel _level, Entity target) {
+        attackTimer = 15;
+        boolean result = super.doHurtTarget(_level, target);
+        if (result && target instanceof Player player && !player.level().isClientSide()) {
+            // Damage reduction outside Spirit World
+            if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+                player.heal(3.5f); // effectively reduces 4 to ~0.5 net
+            }
+            stripRandomArmor(player);
+        }
+        return result;
+    }
+
+    private void stripRandomArmor(Player player) {
+        EquipmentSlot[] slots = { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
+        EquipmentSlot slot = slots[random.nextInt(slots.length)];
+        ItemStack armor = player.getItemBySlot(slot);
+        if (!armor.isEmpty()) {
+            player.setItemSlot(slot, ItemStack.EMPTY);
+            player.drop(armor, true);
+        }
+    }
+
+    public int getAttackTimer() { return attackTimer; }
+
+    // ── Drops ─────────────────────────────────────────────────────────────────
+
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        if (level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            int looting = recentlyHit ? 1 : 0;
+            int cap = Math.max(10 - looting, 5);
+            int qty = level.random.nextInt(cap) == 0 ? 2 : 1;
+            spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), new ItemStack(WitcheryItems.MELLIFLUOUS_HUNGER.get(), qty));
+        }
+    }
+
+    // ── NBT ───────────────────────────────────────────────────────────────────
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (victimUUID != null) tag.putString("VictimUUID", victimUUID.toString());
+        tag.putString("VictimName", victimName != null ? victimName : "");
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        String vStr = tag.getStringOr("VictimUUID", "");
+        victimUUID = vStr.isEmpty() ? null : java.util.UUID.fromString(vStr);
+        victimName = tag.getStringOr("VictimName", "");
+    }
+}

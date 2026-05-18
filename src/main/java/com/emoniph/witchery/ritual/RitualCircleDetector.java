@@ -1,0 +1,113 @@
+package com.emoniph.witchery.ritual;
+
+import com.emoniph.witchery.init.WitcheryBlockTags;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Scans for chalk circle patterns around a given center position.
+ *
+ * All rings sit one block above the floor tile that was right-clicked.
+ * The center tile itself is NOT a circle block — it's where the witch stands.
+ *
+ * To activate: right-click the floor block at the center with the arthana.
+ */
+public class RitualCircleDetector {
+
+    /** 3×3 outer ring — 8 chalk marks. */
+    private static final int[][] SMALL_RING = {
+        {-1,-1},{0,-1},{1,-1},
+        {-1, 0},      {1, 0},
+        {-1, 1},{0, 1},{1, 1}
+    };
+
+    /** 5×5 outer ring — 16 chalk marks. */
+    private static final int[][] MEDIUM_RING = {
+        {-2,-2},{-1,-2},{0,-2},{1,-2},{2,-2},
+        {-2,-1},                     {2,-1},
+        {-2, 0},                     {2, 0},
+        {-2, 1},                     {2, 1},
+        {-2, 2},{-1, 2},{0, 2},{1, 2},{2, 2}
+    };
+
+    /** 7×7 outer ring — 24 chalk marks. */
+    private static final int[][] LARGE_RING = {
+        {-3,-3},{-2,-3},{-1,-3},{0,-3},{1,-3},{2,-3},{3,-3},
+        {-3,-2},                               {3,-2},
+        {-3,-1},                               {3,-1},
+        {-3, 0},                               {3, 0},
+        {-3, 1},                               {3, 1},
+        {-3, 2},                               {3, 2},
+        {-3, 3},{-2, 3},{-1, 3},{0, 3},{1, 3},{2, 3},{3, 3}
+    };
+
+    public enum CircleSize { SMALL, MEDIUM, LARGE }
+
+    public record DetectionResult(CircleSize size, List<BlockPos> ringBlocks) {}
+
+    public static DetectionResult detect(Level level, BlockPos floorCenter) {
+        BlockPos markLevel = floorCenter.above();
+
+        List<BlockPos> small = collectRing(level, markLevel, SMALL_RING);
+        if (small != null) return new DetectionResult(CircleSize.SMALL, small);
+
+        List<BlockPos> medium = collectRing(level, markLevel, MEDIUM_RING);
+        if (medium != null) return new DetectionResult(CircleSize.MEDIUM, medium);
+
+        List<BlockPos> large = collectRing(level, markLevel, LARGE_RING);
+        if (large != null) return new DetectionResult(CircleSize.LARGE, large);
+
+        return null;
+    }
+
+    private static List<BlockPos> collectRing(Level level, BlockPos origin, int[][] offsets) {
+        List<BlockPos> positions = new ArrayList<>(offsets.length);
+        for (int[] off : offsets) {
+            BlockPos pos = origin.offset(off[0], 0, off[1]);
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(WitcheryBlockTags.CHALK_CIRCLES)) return null;
+            positions.add(pos);
+        }
+        return positions;
+    }
+
+    /**
+     * Scan all three ring sizes independently and return their chalk variants.
+     * Returns int[3] = { smallVariant, mediumVariant, largeVariant }.
+     * Variant encoding: 0 = absent, 1 = glyph, 2 = otherwhere, 3 = infernal.
+     * Used by CircleTalismanItem to store a pattern.
+     */
+    public static int[] detectAllVariants(Level level, BlockPos floorCenter) {
+        BlockPos markLevel = floorCenter.above();
+        int small  = ringVariant(level, markLevel, SMALL_RING);
+        int medium = ringVariant(level, markLevel, MEDIUM_RING);
+        int large  = ringVariant(level, markLevel, LARGE_RING);
+        return new int[]{ small, medium, large };
+    }
+
+    /** Returns the chalk variant of a complete ring, or 0 if the ring is absent/incomplete. */
+    private static int ringVariant(Level level, BlockPos origin, int[][] offsets) {
+        int variant = -1;
+        for (int[] off : offsets) {
+            BlockPos pos = origin.offset(off[0], 0, off[1]);
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(WitcheryBlockTags.CHALK_CIRCLES)) return 0;
+            int v = variantOf(state);
+            if (variant == -1) variant = v;
+            else if (variant != v) return 0; // mixed chalk — not storable
+        }
+        return variant == -1 ? 0 : variant;
+    }
+
+    private static int variantOf(BlockState state) {
+        if (state.is(com.emoniph.witchery.init.WitcheryBlocks.CIRCLE_GLYPH.get()))      return 1;
+        if (state.is(com.emoniph.witchery.init.WitcheryBlocks.CIRCLE_OTHERWHERE.get())) return 2;
+        if (state.is(com.emoniph.witchery.init.WitcheryBlocks.CIRCLE_INFERNAL.get()))   return 3;
+        if (state.is(com.emoniph.witchery.init.WitcheryBlocks.CIRCLE.get()))            return 4;
+        return 0;
+    }
+}

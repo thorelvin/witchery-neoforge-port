@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SCS",
+    " S "
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "C": "minecraft:cobweb"
+  },
+  "result": {
+    "id": "witchery:dense_web",
+    "count": 2
+  }
+}

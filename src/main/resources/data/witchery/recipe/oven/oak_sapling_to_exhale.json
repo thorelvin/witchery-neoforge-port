@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "minecraft:oak_sapling",
+  "result": {
+    "id": "witchery:exhale_of_horned_one",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

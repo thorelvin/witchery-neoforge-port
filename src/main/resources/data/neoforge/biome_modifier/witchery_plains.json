@@ -1,0 +1,15 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "#minecraft:is_plains",
+    "#minecraft:is_savanna"
+  ],
+  "features": [
+    "witchery:rowan_tree",
+    "witchery:wild_belladonna",
+    "witchery:wild_wormwood",
+    "witchery:wild_artichoke",
+    "witchery:bramble_patch"
+  ],
+  "step": "vegetal_decoration"
+}

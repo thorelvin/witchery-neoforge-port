@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 2,
+    "xspread": 5,
+    "yspread": 3,
+    "zspread": 5,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "minecraft:dead_bush",
+              "Properties": {}
+            }
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:matching_blocks",
+            "blocks": [
+              "minecraft:grass_block",
+              "minecraft:dirt",
+              "minecraft:sand"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:icy_needle",
+    "witchery:creeper_heart",
+    "minecraft:ghast_tear"
+  ],
+  "result": {
+    "id": "witchery:frozen_heart",
+    "count": 1
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:null_catalyst",
+    "minecraft:blaze_powder",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "id": "witchery:null_catalyst",
+    "count": 1
+  }
+}

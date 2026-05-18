@@ -1,0 +1,8588 @@
+
+============================================================
+# Brew of Absorb Magic
+============================================================
+Brew of Absorb Magic
+
+Name
+
+Brew of Absorb Magic
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Absorb Magic
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew converts magical damage into 
+Infusion energy
+, rendering the magical damage otherwise ineffective. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Absorb Magic has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Absorption
+============================================================
+Brew of Absorption
+
+Name
+
+Brew of Absorption
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Absorption
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the 
+Absorption
+ buff with the amount of bonus hearts being based off of the strength of the brew. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Absorption has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Air Hike
+============================================================
+Brew of Air Hike
+
+Name
+
+Brew of Air Hike
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Air Hike
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew sends the target flying upwards. Stronger power brews will send the target higher. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+750
+
+Usage
+
+Brew of Air Hike has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Animal Attraction
+============================================================
+Brew of Animal Attraction
+
+Name
+
+Brew of Animal Attraction
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Animal Attraction
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew attracts animals towards the brew's target mob/player and can even tame certain mobs. This brew can be 
+inverted
+ into the 
+Brew of Repulsion
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Animal Attraction has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Animal Repulsion
+============================================================
+Brew of Animal Repulsion
+
+Name
+
+Brew of Animal Repulsion
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Animal Repulsion
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew repels animals away from the brew's target mob/player and can even untame mobs that were tamed by other players. This brew is an 
+inversion
+ of the 
+Brew of Animal Attraction
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+525
+
+Usage
+
+Brew of Animal Repulsion has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Attract Arrows
+============================================================
+Brew of Attract Arrows
+
+Name
+
+Brew of Attract Arrows
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Attract Arrows
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew sends nearby arrows towards the target affected with this brew. Stronger power brews will send further away arrows to the target. This brew is an 
+inversion
+ of the 
+Brew of Reflect Arrows
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+275
+
+Usage
+
+Brew of Attract Arrows has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Bats
+============================================================
+Brew of Bats
+
+Name
+
+Brew of Bats
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:109
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Bats
+ is an item added by the 
+Witchery
+ mod.
+
+It is a throwable potion that induces a cloud of bats to spawn in the vicinity, causing a temporary 
+Slowness
+ effect to any entity within the area of effect. Wearing a 
+Witches Hat
+ or 
+Robes
+ while brewing can help achieve a better yield.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Bats has no known uses in crafting.
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Blast
+============================================================
+Brew of Blast
+
+Name
+
+Brew of Blast
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Blast
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew creates an explosion similar to 
+TNT
+. Stronger power brews create stronger blasts. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Blast has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Blight
+============================================================
+Brew of Blight
+
+Name
+
+Brew of Blight
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Blight
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew kills the land and any crops on it, and any unfortunate 
+villagers
+ who come across this brew will mutate. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Blight has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Blindness
+============================================================
+Brew of Blindness
+
+Name
+
+Brew of Blindness
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Blindness
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew afflicts the target with the 
+Blindness
+ debuff. Stronger power brews make the level of the debuff higher.. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+525
+
+Usage
+
+Brew of Blindness has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Bodega
+============================================================
+Brew of Bodega
+
+Name
+
+Brew of Bodega
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:87
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Bodega
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that explodes on impact in a parliament of owls that attacks the target and vanish when the target dies.
+
+An 
+owl
+ familiar imparts the knowledge to prepare the Brew of Bodega in a 
+kettle
+.
+
+Recipe
+
+Kettle
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Usage
+
+Brew of Bodega has no known uses in crafting.
+
+============================================================
+# Brew of Brew Bottling
+============================================================
+Brew of Brew Bottling
+
+Name
+
+Brew of Brew Bottling
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Brew Bottling
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew makes the likelihood of bottling more brews from one 
+cauldron
+ higher, similar to how wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three in a 
+kettle
+. Stronger power brews make the chances of even more brews bottled to be likelier. This brew can be 
+inverted
+ into the 
+Brew of Insanity
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+5000
+
+Usage
+
+Brew of Brew Bottling has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Brew Gas Immunity
+============================================================
+Brew of Brew Gas Immunity
+
+Name
+
+Brew of Brew Gas Immunity
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Brew Gas Immunity
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew makes the target immune to 
+brew gasses
+ which are brews prepared in a manner to stay as a longer lasting gas. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Brew Gas Immunity has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Combustion
+============================================================
+Brew of Combustion
+
+Name
+
+Brew of Combustion
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brew.fuel
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Creates a potion that may be used as a fuel source in furnaces. The higher the power the longer the burn.
+" 
+
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Combustion
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that cannot be bottled, it is used as a solid. If bottled it just becomes a 
+Brew of Colored Water
+.
+
+This effect cannot be applied to any other brew components besides the 
++1 Capacity
+ component and the 
+Power
+ component.
+
+The Brew of Combustion turns the piece of charcoal 150% to 3100.25% more efficient as a fuel source depending on the ingredients added.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Level II
+
+Witch's Cauldron
+
+Level III
+
+Witch's Cauldron
+
+Level IV
+
+Witch's Cauldron
+
+Usage
+
+The Brew of Combustion is used as a fuel source for 
+furnaces
+ and anything else that uses fuel.
+
+A Level I brew will complete 12 furnace operations.
+
+A Level II brew will complete 25 furnace operations.
+
+A Level III brew will complete 50 furnace operations.
+
+A Level IV brew will complete 250 furnace operations.
+
+Note
+
+↑
+ 
+ ==
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Cursed Leaping
+============================================================
+Brew of Cursed Leaping
+
+Name
+
+Brew of Cursed Leaping
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:86
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Cursed Leaping
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that applies a jump buff on players and mobs caught in the AoE as well as flinging them into the air... but higher than the buff can protect them.
+
+A 
+cat
+ familiar imparts the knowledge to prepare the Brew of Cursed Leaping in a 
+kettle
+.
+
+Recipe
+
+Kettle
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Usage
+
+Brew of Cursed Leaping has no known uses in crafting.
+
+============================================================
+# Brew of Damage Boost
+============================================================
+Brew of Damage Boost
+
+Name
+
+Brew of Damage Boost
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Damage Boost
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Strength
+ buff. Stronger power brews will grant higher versions of the buff. This brew can be 
+inverted
+ into the 
+Brew of Weakness
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Damage Boost has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Demonbane
+============================================================
+Brew of Demonbane
+
+Name
+
+Brew of Demonbane
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Demonbane
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew strongly damages 
+demons
+. Stronger power brews damages them even more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Demonbane has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Disease
+============================================================
+"
+Causes creatures under this effect to be weakened and to spread the disease further.
+" 
+
+Excerpt from 
+Witches' Brews
+
+Brew of Disease
+
+Name
+
+Brew of Disease
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Disease
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew creates puddles of 
+Liquid Disease
+ and anyone infected by these puddles contracts a horrible disease that can easily be spread to any other mobs and weakens their attack power by 0.5 while also changing their texture to look sickly and spawning more puddles of liquid disease to infect others. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Disease has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Dissipate Gas
+============================================================
+Brew of Dissipate Gas
+
+Name
+
+Brew of Dissipate Gas
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Removes gas blocks created by a gas brew. When powered also removes other types of gas blocks. Harms spectral undead.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Dissipate Gas
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Dissipate Gas will remove the gas blocks from a gas brew making it great for PvPing. If powered this brew also affects other kinds of gas blocks and is harmful to spectral undead. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Dissipate Gas has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Drain Magic
+============================================================
+Brew of Drain Magic
+
+Name
+
+Brew of Drain Magic
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Drain Magic
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Drain Magic drains the 
+infusion power
+ of the target. Stronger power brews can drain more. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Drain Magic has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Duration Boost
+============================================================
+Brew of Duration Boost
+
+Name
+
+Brew of Duration Boost
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Duration Boost
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew extends the duration of all currently active effects on a witch. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+5000
+
+Usage
+
+Brew of Duration Boost has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Ender Inhibition
+============================================================
+Brew of Ender Inhibition
+
+Name
+
+Brew of Ender Inhibition
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Prevents teleportation of most creatures. Higher levels may be required to prevent more powerful teleportation effects and rituals.
+" 
+Excerpt from 
+Witches' Brews
+
+The '
+Brew of Ender Inhibition
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Ender Inhibition casts the 
+Ender Inhibition
+ debuff onto the target, this debuff stops the target from teleporting via ender-means which means that both players and endermen will will not be able to teleport. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Ender Inhibition has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Endless Water
+============================================================
+Brew of Endless Water
+
+Name
+
+Brew of Endless Water
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Endless Water
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect component that can be bottled as only the 
+Instant
+ brew type. The Brew of Endless Water is not actually endless, it just holds a lot of water, this is useful for things like refilling your cauldron. It can be made to seem more endless if the 
+Power
+ of the brew is increased as the amount of uses is based on the brew's power. This brew cannot be used with other Effects.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+3000
+
+Usage
+
+Brew of Endless Water has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brew of Erosion
+============================================================
+Brew of Erosion
+
+Name
+
+Brew of Erosion
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:62
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Erosion
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion of a volatile acid that melts a surface upon impact, destroying all nearby blocks except obsidian, lava, and water. Lava and water are unaffected by the acid but obsidian breaks and is not destroyed.
+
+If used as a weapon the target will take a large amount of damage and metal weapons and armor on the target will be significantly damaged on direct hits.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Erosion has no known uses in crafting.
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Extinguish Fires
+============================================================
+Brew of Extinguish Fires
+
+Name
+
+Brew of Extinguish Fires
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Extinguishes fires on blocks and creatures in an area. Harms blazes.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Extinguish Fires
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as only the 
+Instant, Gas, and Liquid
+ brew types. The Brew of Extinguish Fires casts a 3x3 target that puts out all flames in that area and also harms blazes. Stronger power brews will damage blazes more. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Extinguish Fires has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Fast Movement
+============================================================
+Brew of Fast Movement
+
+Name
+
+Brew of Fast Movement
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Fast Movement
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Speed
+ buff. Stronger power brews will grant higher versions of the buff. This brew can be 
+inverted
+ into the 
+Brew of Slow Movement
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Fast Movement has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Fear
+============================================================
+Brew of Fear
+
+Name
+
+Brew of Fear
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Fear
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes nearby mobs to run away from the target similar to how 
+creepers
+ run away from 
+ocelots
+. Stronger power brews make them stay farther away. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Fear has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Fell Tree
+============================================================
+Brew of Fell Tree
+
+Name
+
+Brew of Fell Tree
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Breaks any nearby log blocks, triggering their normal drops.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Fell Tree
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as only the 
+Instant
+ brew type. The Brew of Fell Tree will remove the log blocks from the nearby area with the size dependent on the power of the brew. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Fell Tree has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Fertilize
+============================================================
+Brew of Fertilize
+
+Name
+
+Brew of Fertilize
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Fertilises the blocks in an areas in a similar way to bonemeal.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Fertilize
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can only be bottled as the 
+Instant
+ brew type. The Brew of Fertilize will fully grow all saplings and crops in the area of effect. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+. For rituals this brew requires an additional 100 Altar Power.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Fertilize has no known uses in crafting.
+
+Note
+
+Before the Effect stage, 
+Capacity, Power, Duration, Modifiers, and Dispersals
+ can or must be applied.
+
+↑
+ 
+ ==
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Flames
+============================================================
+Brew of Flames
+
+Name
+
+Brew of Flames
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Flames
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew spews a wide range of fire around the target with the range based on the strength of the brew's power. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+750
+
+Usage
+
+Brew of Flames has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Floating
+============================================================
+Brew of Floating
+
+Name
+
+Brew of Floating
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Floating
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew sends the target flying upwards and keeps them hovering for a period of time. Stronger power brews will send the target higher. When the brew wear off, falling damage can still happen. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Floating has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Flowing Spirit
+============================================================
+Brew of Flowing Spirit
+
+Name
+
+Brew of Flowing Spirit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:96
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Flowing Spirit
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion full of the essence of the 
+Spirit Form
+ in liquid and when thrown it creates a source block of the liquid. This source block can be picked up in a bucket and moved or the liquid itself can slowly heal all non-demonic or undead entities. Dowsing 
+Nightmares
+ in the liquid is the only way to make Nightmares not invulnerable!
+
+A pool of flowing spirit near a 
+Dream Weaver of Nightmares
+ helps decrease the chance of a nightmare by for each source block by ten percent with a maximum of thirty percent.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Fanciful Thread
+, 
+ 
+Spanish Moss
+, 
+ 
+Water Artichoke Globe
+, 
+ 
+Glint Weed
+, 
+ 
+Mandrake Root
+, and 
+ 
+Wool of Bat
+Only can be brewed in the 
+Spirit World
+.
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brew of Fortune
+============================================================
+Brew of Fortune
+
+Name
+
+Brew of Fortune
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Fortune
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target with the 
+Fortune
+ enchant so that any tool the enchant can apply to will be treated as though they have the enchant. Stronger power brews grant stronger levels of the Fortune enchant. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Fortune has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Freeze
+============================================================
+Brew of Freeze
+
+Name
+
+Brew of Freeze
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Freeze
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew slows down targets in its range and harms blazes. Stronger power brews will slow better and harm blazes more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Freeze has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Frog's Leg
+============================================================
+Brew of Frog's Leg
+
+Name
+
+Brew of Frog's Leg
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Frog's Leg
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew uses 
+infusion power
+ to grant double jumps, triple jumps, and etc. to the target. This brew can only be made by a witch who has the 
+toad
+ 
+familiar
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Frog's Leg has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Frogs Tongue
+============================================================
+Brew of Frogs Tongue
+
+Name
+
+Brew of Frogs Tongue
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:85
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Frogs Tongue
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that when hitting something drags all the players and entities in the area to the thrower.
+
+A 
+toad
+ familiar imparts the knowledge to prepare the Brew of Frogs Tongue in a 
+kettle
+.
+
+Recipe
+
+Kettle
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Frost
+============================================================
+Brew of Frost
+
+Name
+
+Brew of Frost
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:76
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Frost
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that bursts into ice blocks when thrown at a target. 
+
+If it hits a player or entity they will be encased in ice, if it hits the ground it forms a wall of ice blocks, and if it hits water that freezes. 
+
+Special things can happen when targeting this potion at certain mobs.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Icy Needle
+, 
+ 
+Glistering Melon
+, 
+ 
+Snowball
+, 
+ 
+Red Mushroom
+, 
+ 
+Water Artichoke Globe
+, and 
+ 
+Odour of Purity
+
+*Also 1000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Fullness
+============================================================
+Brew of Fullness
+
+Name
+
+Brew of Fullness
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Fullness
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew fills the hunger bar of the target in the same way that eating does. Stronger power brews will fill the hunger bar more. This brew is an 
+inversion
+ of the 
+Brew of Wasting
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+525
+
+Usage
+
+Brew of Fullness has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Grow Flowers
+============================================================
+Brew of Grow Flowers
+
+Name
+
+Brew of Grow Flowers
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Causes random flowers to grow on appropriate blocks.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Grow Flowers
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as only the 
+Instant
+ brew type. The Brew of Grow Flowers will grow flowers on blocks that are capable of growing flowers on. The area of effect is based on the brew's power. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Grow Flowers has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Grow Lily
+============================================================
+Brew of Grow Lily
+
+Name
+
+Brew of Grow Lily
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Causes a lily to rapidly grow if triggered in water. The lily may expand depending on the power level.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Grow Lily
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as only the 
+Instant
+ brew type. The Brew of Grow Lily will grow flowers on blocks that are capable of growing flowers on. The area of effect is based on the brew's power. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Grow Lily has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Grow Sapling
+============================================================
+Brew of Grow Sapling
+
+File:Grid Brew of Grow Sapling.png
+
+Name
+
+Brew of Grow Sapling
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Grow Sapling
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as an 
+Instant brew type
+. The brew will grow a tree depending on the sapling used in its recipe. This effect cannot be applied to any other brew components besides the 
++1 Capacity
+ component.
+
+Cheapest Recipes
+ 
+[
+1
+]
+
+Grow Rowan Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Alder Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Hawthorn Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Oak Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Birch Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Spruce Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Jungle Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Acacia Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Grow Dark Oak Tree
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Grow Sapling has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Grue's Prey
+============================================================
+Brew of Grue's Prey
+
+Name
+
+Brew of Grue's Prey
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Grue's Prey
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew attracts the grue to all targets who leave lighted areas causing a slow, constant damage until the targets leave the dark. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+The grue is a sinister, lurking presence in the dark places of the earth. Its favorite diet is adventurers, but its insatiable appetite is tempered by its fear of light. No grue has ever been seen by the light of day, and few have survived its fearsome jaws to tell the tale.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+4000
+
+Usage
+
+Brew of Grue's Prey has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Harm
+============================================================
+Brew of Harm
+
+Name
+
+Brew of Harm
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Harm
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the Instant Damage debuff which instantly applies damage of three hearts times two to the power of the level of the strength of the brew. As with the regular Instant Damage debuff, this brew also heals undead mobs as though with the Instant Health buff. This brew is an 
+inversion
+ of the 
+Brew of Heal
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Usage
+
+Brew of Harm has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Harm Werewolves
+============================================================
+Brew of Harm Werewolves
+
+Name
+
+Brew of Harm Werewolves
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Harm Werewolves
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew damages any 
+werewolf
+ a lot. Stronger power brews damage even more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Harm Werewolves has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Harvest
+============================================================
+Brew of Harvest
+
+Name
+
+Brew of Harvest
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Harvest
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Harvest will harvest plants in the area. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Harvest has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Heal
+============================================================
+Brew of Heal
+
+Name
+
+Brew of Heal
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Heal
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the Instant Health buff which instantly applies healing of two hearts times two to the power of the level of the strength of the brew. As with the regular Instant Health buff, this brew also harms undead mobs as though with the Instant Damage buff. This brew can be 
+inverted
+ into the 
+Brew of Harm
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Heal has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Health Boost
+============================================================
+Brew of Health Boost
+
+Name
+
+Brew of Health Boost
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Health Boost
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants additional total health. Stronger power brews grant more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Health Boost has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Hollow Tears
+============================================================
+Brew of Hollow Tears
+
+Name
+
+Brew of Hollow Tears
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:115
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Hollow Tears
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that drops the Hollow Tears liquid. It is the opposite of the 
+Flowing Spirit liquid
+ in that it buffs certain undead and demons with the Regeneration effect and weakens players with the Weakness II effect.
+
+Throwing a 
+Solidifying Brew
+ at the liquid's source block will turn the source block into a different material depending on the Solidifying Brew used.
+
+Recipe
+
+Distillery
+
+Usage
+
+Brew of Hollow Tears has no known uses in crafting.
+
+============================================================
+# Brew of Ice Shell
+============================================================
+Brew of Ice Shell
+
+Name
+
+Brew of Ice Shell
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Ice Shell
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew creates an icy sphere. Stronger power brews create larger spheres of ice. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Ice Shell has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Ice World
+============================================================
+Brew of Ice World
+
+Name
+
+Brew of Ice World
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Ice World
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew converts the area it targets into ice blocks and even creating a few new ice items like 
+Ice Doors
+, 
+Ice Stockades
+, 
+Ice Fences
+, 
+Ice Pressure Plates
+, and more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Ice World has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Ill Fitting
+============================================================
+Brew of Ill Fitting
+
+Name
+
+Brew of Ill Fitting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Ill Fitting
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew makes pieces of armor not fit on the target anymore and makes them fall off. Stronger power brews can drop more armor. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+8000
+
+Usage
+
+Brew of Ill Fitting has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Infection
+============================================================
+Brew of Infection
+
+Name
+
+Brew of Infection
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Infection
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that infects certain blocks and entities with worms. Hitting stone, stone brick, or cobblestone blocks with this potion infects the block with 
+silverfish
+, hitting 
+Villagers
+ turns them into a 
+Zombie Villager
+, and hitting any other mob or entity freezes them while they clear themselves of the worms.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Toe of Frog
+, 
+ 
+Creeper Heart
+, 
+ 
+Wormy Apple
+, 
+ 
+Belladonna Flower
+, 
+ 
+Rotten Flesh
+, and 
+ 
+Mutandis
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing will 
+not
+ give the player bonus brews -- the above recipe can only give three.
+
+============================================================
+# Brew of Inferno
+============================================================
+Brew of Inferno
+
+Name
+
+Brew of Inferno
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Inferno
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew creates an affliction that spreads to nearby mobs of catching fire. Stronger power brews create stronger blasts. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+If this brew effect is cast as a 
+Cauldron Ritual
+ from a 
+Witch's Cauldron
+ surrounded by two correctly drawn 
+Infernal Chalk
+ circles, then instead of setting nearby mobs on fire, a 
+Demon
+ will be summoned.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+3000
+
+Usage
+
+Brew of Inferno has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Ink
+============================================================
+Brew of Ink
+
+Name
+
+Brew of Ink
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Ink
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that bursts into an explosion of ink, blinding players and other mobs in an area of effect range.
+
+Depending on where in relation to the center of the hit of the potion determines the duration of the blindness effect. Creatures with no eyes such as slimes and powerful demonic entities will not be affected by this.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Ink Sac
+, 
+ 
+Quicklime
+, 
+ 
+Oil of Vitriol
+, 
+ 
+Slimeball
+, 
+ 
+Belladonna
+, and 
+ 
+Rowan Berries
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Insanity
+============================================================
+Brew of Insanity
+
+Name
+
+Brew of Insanity
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Insanity
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes nearby ores in a large radius to just break and fall in item form close to you. Stronger power brews break more ores in an even larger radius. This brew is an 
+inversion
+ of the 
+Brew of Brew Bottling
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+5000
+
+Usage
+
+Brew of Insanity has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Insect Bane
+============================================================
+Brew of Insect Bane
+
+Name
+
+Brew of Insect Bane
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Insect Bane
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Bane of Arthropods
+ enchant, which deals an additional 2.5 hearts of health per strength of the brew to mobs like spiders, cave spiders, silverfish, and endermites. Stronger power brews will grant higher versions of the buff. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Insect Bane has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Invisible
+============================================================
+Brew of Invisible
+
+Name
+
+Brew of Invisible
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Invisible
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the 
+Invisibility
+ buff and is an 
+inversion
+ of the 
+Brew of Night Vision
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Usage
+
+Brew of Invisible has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Jump
+============================================================
+Brew of Jump
+
+Name
+
+Brew of Jump
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Jump
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Jump Boost
+ buff. Stronger power brews will grant higher versions of the buff. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Jump has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Keep Effects
+============================================================
+Brew of Keep Effects
+
+Name
+
+Brew of Keep Effects
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+8
+
+"
+Keep active beneficial potion effects on death.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Keep Effects
+ is an item added by the 
+Witchery
+ mod. It is an eighth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Keep Effects will grant a 
+Keep Effects
+ buff on the target that makes it so when the target dies all of the positive buffs remain on the target. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Keep Effects has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Keep Inventory
+============================================================
+Brew of Keep Inventory
+
+Name
+
+Brew of Keep Inventory
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+8
+
+The 
+Brew of Keep Inventory
+ is an item added by the 
+Witchery
+ mod. It is an eighth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew will make the target not lose their inventory upon death. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+10000
+
+Usage
+
+Brew of Keep Inventory has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Level Land
+============================================================
+Brew of Level Land
+
+Name
+
+Brew of Level Land
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Level Land
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew will level mountains, or at least small inclines or declines. Stronger power brews will level more or an area. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Level Land has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Love
+============================================================
+Brew of Love
+
+Name
+
+Brew of Love
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+Brew Level
+
+4
+
+The 
+Brew of Love
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that mimics the effect that makes animals and villagers to breed. On animals it resets the breeding cooldown between breeding sessions so it is a good idea to breed normally at first then to use the potion. On villagers at least two must be hit by the same brew in order for it to work. On enthralled zombies (using the 
+Brew of Raising
+ or 
+Infernal Infusion
+), this potion causes two hits by it to turn into villager zombies and to produce a baby zombie. Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Love has no known uses in crafting.
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Moonshine
+============================================================
+Brew of Moonshine
+
+Name
+
+Brew of Moonshine
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brew.fuel
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Alcohol makes you feel less pain, but get hungry instead, and occasionally dizzy.
+" 
+
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Moonshine
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+.
+
+The Brew of Moonshine gives its target the 
+Nausea
+ and 
+Feel No Pain
+ status effects. The 
+Feel No Pain
+ status effect let's the user lose hunger points instead of health points at a small rate when damaged.
+
+As with most 
+Custom Brews
+, this brew effect can be combined with most other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+It is recommended to pair Moonshine brews with the 
+Stout Belly
+ effect to remove the 
+Nausea
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Moonshine has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Night Vision
+============================================================
+Brew of Night Vision
+
+Name
+
+Brew of Night Vision
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Night Vision
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the 
+Night Vision
+ buff which allows the target to see as if light levels were at fifteen everywhere and betters sight underwater. This brew can be 
+inverted
+ into the 
+Brew of Invisible
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Usage
+
+Brew of Night Vision has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Nightmare
+============================================================
+Brew of Nightmare
+
+Name
+
+Brew of Nightmare
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Nightmare
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes a dreaded 
+Nightmare
+ from the 
+Spirit World
+ to endlessly chase the target. Since Nightmares are not of the Overworld, summoned Nightmares will be weaker than normal. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+10000
+
+Usage
+
+Brew of Nightmare has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Overheating
+============================================================
+Brew of Overheating
+
+Name
+
+Brew of Overheating
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Overheating
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes the target to get so warm that when they are in hot biomes like a desert they will spontaneously combust enflamed. Stronger power brews damage more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+3000
+
+Usage
+
+Brew of Overheating has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Paralysis
+============================================================
+Brew of Paralysis
+
+Name
+
+Brew of Paralysis
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Paralysis
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes the target to be unable to move. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+750
+
+Usage
+
+Brew of Paralysis has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Part Lava
+============================================================
+Brew of Part Lava
+
+Name
+
+Brew of Part Lava
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Part Lava
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew temporarily removes both still and flowing lava to create a clear pathway through it. Stronger power brews will make a bigger path. It is recommended to extend the 
+Duration
+ of the brew unless the witch wants a quick and safe getaway. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Part Lava has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Part Water
+============================================================
+Brew of Part Water
+
+Name
+
+Brew of Part Water
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Part Water
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Part Water will part water, temporarily. What it does is replaces water blocks with air blocks in the area for some time. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Part Water has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Planting
+============================================================
+Brew of Planting
+
+Name
+
+Brew of Planting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Planting
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Planting will plant seeds in the area if they are on ground they can be planted in like tilled dirt. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Planting has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Poison
+============================================================
+Brew of Poison
+
+Name
+
+Brew of Poison
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Poison
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the 
+Poison
+ debuff with the level based on the strength of the brew. This brew has two forms and one of them is an 
+inversion
+ of the 
+Brew of Regeneration
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipes
+ 
+[
+1
+]
+
+Inversion
+ of 
+Brew of Regeneration
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Cheaper, Alternate Recipe
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Poison has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Poison Toad
+============================================================
+Brew of Poison Toad
+
+Name
+
+Brew of Poison Toad
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Poison Toad
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew summons a poisonous 
+toad
+ that explodes and spreads its poison effects. Stronger power brews create stronger blasts. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Poison Toad has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Poison Weapon
+============================================================
+Brew of Poison Weapon
+
+Name
+
+Brew of Poison Weapon
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Poison Weapon
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes all damage dealt by the target to inflict the 
+Poison
+ debuff as well as dealing normal damage. Stronger power brews will inflict stronger 
+Poison
+ debuffs. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Poison Weapon has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Prune Leaves
+============================================================
+Brew of Prune Leaves
+
+Name
+
+Brew of Prune Leaves
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Prune Leaves
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Planting will remove all the leaf blocks in the area. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Prune Leaves has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Pull
+============================================================
+Brew of Pull
+
+Name
+
+Brew of Pull
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Pull
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes nearby mobs to be pulled in towards the target. Stronger power brews have better range. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Pull has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Pulverize Rock
+============================================================
+Brew of Pulverize Rock
+
+Name
+
+Brew of Pulverize Rock
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Pulverize Rock
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as only the following brew types, 
+Liquid, Gas, and Trigger
+. The Brew of Pulverize Rock when thrown at a 
+Stone
+ block it will turn into 
+Cobblestone
+ which will then turn into 
+Gravel
+ into 
+Sand
+ which will then break. The area of effect is based on the brew's power. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Pulverize Rock has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Push Away
+============================================================
+Brew of Push Away
+
+Name
+
+Brew of Push Away
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Push Away
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew pushes back the target away from the witch using it. Stronger power brews will send the target further. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Push Away has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Raise Dead
+============================================================
+Brew of Raise Dead
+
+Name
+
+Brew of Raise Dead
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Raise Dead
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew summons an undead monster that is friendly. Stronger power brews summon stronger undead. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Raise Dead has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Raise Land
+============================================================
+Brew of Raise Land
+
+Name
+
+Brew of Raise Land
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Raise Land
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes target areas. Stronger power brews raises the land higher. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Raise Land has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Raising
+============================================================
+Brew of Raising
+
+Name
+
+Brew of Raising
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Raising
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that will create an area of effect that raises the undead from the ground it is thrown on. If thrown against a vertical surface it just bounces off and can be picked up again.
+
+The undead that was raised via this potion will not attack the player who used the potion but will act as they normally would otherwise. The player can use a 
+Necromantic Stone
+ to control them.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Wool of Bat
+, 
+ 
+Bone
+, 
+ 
+Rotten Flesh
+, 
+ 
+Oil of Vitriol
+, 
+ 
+Redstone
+, and 
+ 
+Mutandis
+
+*Also 500 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Reflect Arrows
+============================================================
+Brew of Reflect Arrows
+
+Name
+
+Brew of Reflect Arrows
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Reflect Arrows
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew sends nearby arrows towards the target affected with this brew. Stronger power brews will send further away arrows to the target. This brew can be 
+inverted
+ into the 
+Brew of Attract Arrows
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Reflect Arrows has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Reflect Damage
+============================================================
+Brew of Reflect Damage
+
+Name
+
+Brew of Reflect Damage
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+5
+
+The 
+Brew of Reflect Damage
+ is an item added by the 
+Witchery
+ mod. It is a fifth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew casts back a portion of damage received to the one dealing the damage. Stronger power brews send back higher amounts of damage. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Reflect Damage has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Regeneration
+============================================================
+Brew of Regeneration
+
+Name
+
+Brew of Regeneration
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Regeneration
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the 
+Regeneration
+ buff with the power of the level of the strength of the brew. This brew can be 
+inverted
+ into the 
+Brew of Poison
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Regeneration has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Reincarnate
+============================================================
+Brew of Reincarnate
+
+Name
+
+Brew of Reincarnate
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Reincarnate
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. When thrown in an area where an animal has died, the animal will reincarnate. Stronger power brews reincarnate the animals into better animals. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2500
+
+Usage
+
+Brew of Reincarnate has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Remove Buffs
+============================================================
+Brew of Remove Buffs
+
+Name
+
+Brew of Remove Buffs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Remove Buffs
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew removes all buffs on the target just like how drinking 
+Milk
+ removes all status effects but this brew targets the buffs and removes them specifically. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+This brew has a counterpart, the 
+Brew of Remove Debuffs
+, 
+but
+ it is not an 
+inversion
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Remove Buffs has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Remove Debuffs
+============================================================
+Brew of Remove Debuffs
+
+Name
+
+Brew of Remove Debuffs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Remove Debuffs
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew removes all debuffs on the target just like how drinking 
+Milk
+ removes all status effects but this brew targets the debuffs and removes them specifically. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+This brew has a counterpart, the 
+Brew of Remove Buffs
+, 
+but
+ it is not an 
+inversion
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Remove Debuffs has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Repel Attacker
+============================================================
+Brew of Repel Attacker
+
+Name
+
+Brew of Repel Attacker
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Repel Attacker
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew pushes back mobs that collide with the target. Stronger power brews push farther. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Repel Attacker has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Resist Fire
+============================================================
+Brew of Resist Fire
+
+Name
+
+Brew of Resist Fire
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Resist Fire
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Fire Resistance
+ buff which grants immunity from fire damage, lava damage, and damage from 
+Blaze
+ fireballs. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Resist Fire has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Resizing
+============================================================
+Brew of Resizing
+
+Name
+
+Brew of Resizing
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+"
+Changes the size of the hit creature.
+" 
+Excerpt from the 
+Witches' Brews
+ book.
+
+The 
+Brew of Resizing
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Resizing is used to shrink or enlarge the Player in order to fit in small spaces or just for fun.
+
+The Brew of Resizing changes its effects based on its Power level.
+
+Level 1: Reduces the target to 25% of its size.
+
+Level 2: Reduces the target to 50% of its size.
+
+Level 3: Increases the target to 150% of its size.
+
+Level 4: Increases the target to 200% of its size.
+
+As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2500
+
+Usage
+
+Brew of Resizing has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Revealing
+============================================================
+Brew of Revealing
+
+Name
+
+Brew of Revealing
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Revealing
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that bursts an AoE effect turning all invisible players and creatures visible again.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest Recipe
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Revealing has no known uses in crafting.
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Shifting Seasons
+============================================================
+Brew of Shifting Seasons
+
+Name
+
+Brew of Shifting Seasons
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+8
+
+The 
+Brew of Shifting Seasons
+ is an item added by the 
+Witchery
+ mod. It is an eighth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew will alter the biome of the surrounding area to the one chosen from the 
+Biome Note
+ used. Stronger brews will spread the new biome out more. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+5000
+
+Usage
+
+Brew of Shifting Seasons has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Sinking
+============================================================
+Brew of Sinking
+
+Name
+
+Brew of Sinking
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Sinking
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes targets to have difficulty staying afloat in liquids. Stronger power brews make it more difficult. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+3000
+
+Usage
+
+Brew of Sinking has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Sleeping
+============================================================
+Brew of Sleeping
+
+Name
+
+Brew of Sleeping
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Sleeping
+ is an item added by the 
+Witchery
+ mod. It is one of the few drinkable Witchery potions and is the basic way for Witches to enter the 
+Spirit World
+. When drunk the Witch will fall asleep and be able to traverse the Spirit Realm without their body or items on their body.
+
+Warning:
+ With no other preparation all visits to the Spirit World will more than likely result in a Nightmare.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Purified Milk
+, 
+ 
+Cookie
+, 
+ 
+Brew of Love
+, 
+ 
+Whiff of Magic
+, 
+ 
+Icy Needle
+, and 
+ 
+Water Artichoke Globe
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Slow Fall
+============================================================
+Brew of Slow Fall
+
+Name
+
+Brew of Slow Fall
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Slow Fall
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target a buff similar to the 
+Feather Falling
+ enchant only instead of lessening the damage of falling this brew completely negates all falling damage and makes the target fall slower. Stronger power brews will make the target start falling slower more quickly. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Slow Fall has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Slow Movement
+============================================================
+Brew of Slow Movement
+
+Name
+
+Brew of Slow Movement
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Slow Movement
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the 
+Slowness
+ debuff which the power of the level relies on the strength of the brew. This brew is an 
+inversion
+ of the 
+Brew of Fast Movement
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Usage
+
+Brew of Slow Movement has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Snow Burst & Trail
+============================================================
+Brew of Snow Burst & Trail
+
+Name
+
+Brew of Snow Burst & Trail
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brew.fuel
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Causes a light snow covering to burst over hit blocks. Creatures and players will start to leave snow trails (in not too hot biomes). Snowmen may suffer from too much snow.
+" 
+
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Snow Burst & Trail
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew gives its target the 
+Snow Trail
+ status effect while makes anyone with that status effect leave a trail of snow blocks everywhere they go like 
+Snow Golems
+. Also, an 
+Instant
+ brew with this effect will cover the area in snow. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Snow Burst & Trail has no known uses in crafting.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Spread Debuffs
+============================================================
+Brew of Spread Debuffs
+
+Name
+
+Brew of Spread Debuffs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+8
+
+The 
+Brew of Spread Debuffs
+ is an item added by the 
+Witchery
+ mod. It is an eighth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew will afflict the target with debuffs from anyone nearby. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Spread Debuffs has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Sprouting
+============================================================
+Brew of Sprouting
+
+Name
+
+Brew of Sprouting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Sprouting
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that causes a large branch of tree to grow out away from any surface hit. It is a great way to instantly create bridges across ravines or the like and if thrown under the player it is a nice and quick way to ascend to maybe avoid a creeper blast. Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+350
+
+Usage
+
+Brew of Sprouting can be used to create the following items:
+ 
+Brew of Cursed Leaping
+ 
+Dandelion of Sprouting
+ 
+Poppy of Sprouting
+ 
+Shrub of Sprouting
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Steal Buffs
+============================================================
+Brew of Steal Buffs
+
+Name
+
+Brew of Steal Buffs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Steal Buffs
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew removes positive buffs from the target and grants them to the witch who used the brew against the target. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Steal Buffs has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Stout Belly
+============================================================
+Brew of Stout Belly
+
+Name
+
+Brew of Stout Belly
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Stout Belly
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew removes 
+Nausea
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Due to its nature it is recommended to pair the Stout Belly brew with the 
+Moonshine effect
+ to get the benefits of Moonshine without the 
+Nausea
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Stout Belly has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Substitution
+============================================================
+Brew of Substitution
+
+Name
+
+Brew of Substitution
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Substitution
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that will swap out blocks that are placed with blocks on the ground in a spiral pattern.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Ender Dew
+ x2, 
+ 
+Egg
+, 
+ 
+Mutandis Extremis
+, 
+ 
+Magma Cream
+, and 
+ 
+Ent Twig
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Summon Leonard
+============================================================
+Brew of Summon Leonard
+
+Name
+
+Brew of Summon Leonard
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+12
+
+The 
+Brew of Summon Leonard
+ is an item added by the 
+Witchery
+ mod. It is an eighth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew will force a 
+Shade of Leonard
+ into the world and is the only way to summon him. Due to the high amount of power required for this brew, this brew effect cannot be combined with other custom brew effects because the brew can not have enough 
+Capacity
+ for any other effect.
+
+Recipe
+
+Witch's Cauldron
+
+Altar Power: 
+10000
+
+Usage
+
+Brew of Summon Leonard has no known uses in crafting.
+
+Note
+
+============================================================
+# Brew of Swim Speed
+============================================================
+Brew of Swim Speed
+
+Name
+
+Brew of Swim Speed
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Swim Speed
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Swim Speed will cause the target to be able to move through liquids much quicker. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Swim Speed has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of the Depths
+============================================================
+Brew of the Depths
+
+Name
+
+Brew of the Depths
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of the Depths
+ is an item added by the 
+Witchery
+ mod. It is one of the few Witchery drinkable potions and when consumed it gives the user gills, granting them the ability to breathe underwater. The drinker, however, will not be able to breathe air, but only water, for five minutes, unless they drink milk or die to remove the potion effects.
+
+Recipe
+[
+1
+]
+
+Kettle
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of the Grotesque
+============================================================
+Brew of the Grotesque
+
+Name
+
+Brew of the Grotesque
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of the Grotesque
+ is an item added by the 
+Witchery
+ mod. It is one of Witchery's few drinking-only potions and when drunk, all mobs, except Players, Dragons, Demons, Golems, and Witches, will be unable to get close to the drinker due to the horror that has become the player.
+
+The effect lasts for five minutes.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Mutandis Extremis
+, 
+ 
+Mandrake Root
+, 
+ 
+Water Artichoke
+, 
+ 
+Golden Apple
+, 
+ 
+Tongue of Dog
+, and 
+ 
+Poisonous Potato
+
+*Also 500 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Brew of Thorns
+============================================================
+Brew of Thorns
+
+Name
+
+Brew of Thorns
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Thorns
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that will grow a cactus instantly at four blocks high to grow where it lands. 
+
+Hitting a creature with the brew will grow cacti one block high surrounding the creature 
+
+Hitting a wall  with the brew will just bounce off doing nothing and can be picked up again.
+
+Hitting a cactus with the brew will cause it to grow even higher!
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+150
+
+Usage
+
+Brew of Thorns can be used to create the following items:
+ 
+Brew of Bodega
+ 
+Dandelion of Thorns
+ 
+Poppy of Thorns
+ 
+Shrub of Thorns
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Till Land
+============================================================
+Brew of Till Land
+
+Name
+
+Brew of Till Land
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+The 
+Brew of Till Land
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Till Land will hoe and hoe-able block in the area. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Usage
+
+Brew of Till Land has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Tint Skin
+============================================================
+Brew of Tint Skin
+
+Name
+
+Brew of Tint Skin
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:brew.fuel
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Changes the hue of the creature of player's skin to that of the selected dye.
+" 
+
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Tint Skin
+ is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+.
+
+The Brew of Tint Skin tints the skin of the target to the color of whatever dye was used. 
+
+As with most 
+Custom Brews
+, this brew effect can be combined with most other custom brew effects as long as the brew has enough 
+Capacity
+
+Recipe
+
+Witch's Cauldron
+
+Usage
+
+Brew of Tint Skin has no known uses in crafting.
+
+============================================================
+# Brew of Transpose
+============================================================
+Brew of Transpose
+
+Name
+
+Brew of Transpose
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Transpose
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes the target to teleport randomly. It is more intended for Ritual use than for its Brew form because as a Ritual the location of teleportation can be set. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Transpose has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Transpose Ore
+============================================================
+Brew of Transpose Ore
+
+Name
+
+Brew of Transpose Ore
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Transpose Ores
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes nearby ores in a large radius to just break and fall in item form close to you. Stronger power brews break more ores in an even larger radius. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+2000
+
+Usage
+
+Brew of Transpose Ore has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Undead Bane
+============================================================
+Brew of Undead Bane
+
+Name
+
+Brew of Undead Bane
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Undead Bane
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew grants the target the 
+Smite
+ enchant, which deals an additional 2.5 hearts of health per strength of the brew to mobs like skeletons, zombies, withers, wither skeletons, and zombie pigmen. Stronger power brews will grant higher versions of the buff. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Undead Bane has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Undead's Curse
+============================================================
+Brew of Undead's Curse
+
+Name
+
+Brew of Undead's Curse
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+6
+
+The 
+Brew of Undead's Curse
+ is an item added by the 
+Witchery
+ mod. It is a sixth level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes the affected target (or consumer) to catch fire in daylight just as the undead do. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Undead's Curse has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Vines
+============================================================
+Brew of Vines
+
+Name
+
+Brew of Vines
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+Brew Level
+
+2
+
+The 
+Brew of Vines
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that causes a vine to instantly grow up and down the vertical surface it hits, stopping when that vertical plane stops. This brew makes for an excellent instant ladder system for ascending or descending vertical structures.
+
+The vines can climb or descend step formations in rock walls so long as they do not move back more than one block per block risen. A sheer wall that ascends six blocks followed by a step and another ascent of six blocks will therefore be scaled by a single brew's worth of vines. Having a 
+toad
+ familiar increases this to two blocks distance. Vines will tunnel though leaves, allowing an easy way to ascend most trees.
+
+When used on a player vines will still appear but the player will be more susceptible to fire damage.
+
+If the brew does not hit a vertical surface, it will bounce off and can be picked up again.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+150
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Volatility
+============================================================
+Brew of Volatility
+
+Name
+
+Brew of Volatility
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Volatility
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes the target to blow up the next time it gets hit. Stronger power brews make stronger power explosions. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+1000
+
+Usage
+
+Brew of Volatility has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Wasting
+============================================================
+Brew of Wasting
+
+Name
+
+Brew of Wasting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Wasting
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that forces things in its Area of Effect to waste away -- leaves wilt and vanish, though still dropping their normal drops; mobs get withered, and players get hungry.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Wasting has no known uses in crafting.
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Water Breathing
+============================================================
+Brew of Water Breathing
+
+Name
+
+Brew of Water Breathing
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Water Breathing
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant
+[
+1
+]
+, Gas, and Trigger
+. The brew grants the target the 
+Water Breathing
+ buff but does not allow for air breathing. This means that the target will be able to breathe when under
+Water
+, but when above it the target will start drowning. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+100
+
+Usage
+
+Brew of Water Breathing has no known uses in crafting.
+
+Note
+
+↑
+ 
+Only applies to drinkable Instant brews, not to throwable Instant brews.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Weaken Vampires
+============================================================
+Brew of Weaken Vampires
+
+Name
+
+Brew of Weaken Vampires
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Weaken Vampires
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew harms 
+vampires
+ and drains their overall blood level. Stronger power brews harm more and drain more blood levels. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+500
+
+Usage
+
+Brew of Weaken Vampires has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Weakness
+============================================================
+Brew of Weakness
+
+Name
+
+Brew of Weakness
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+2
+
+The 
+Brew of Weakness
+ is an item added by the 
+Witchery
+ mod. It is a second level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew inflicts the 
+Weakness
+ debuff with the power of the level based on the strength of the brew. This brew is an 
+inversion
+ of the 
+Brew of Damage Boost
+. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+225
+
+Usage
+
+Brew of Weakness has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Webs
+============================================================
+Brew of Webs
+
+Name
+
+Brew of Webs
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Brew of Webs
+ is an item added by the 
+Witchery
+ mod. It is a throw-able potion that explodes and creates a wide spread of webs when it hits anything. This brew is effective for slowing down a target, stopping a player from targeting the user, or simply for making sure that the player doesn't encounter fall damage if they fall from a great height. Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Recipe 
+[
+1
+]
+
+Kettle
+
+Cheapest 
+Custom Brew
+ 
+[
+2
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Webs can be used to create the following items:
+ 
+Brew of Frogs Tongue
+ 
+Poppy of Webs
+ 
+Shrub of Webs
+
+Note
+
+↑
+ 
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Werewolf Lock
+============================================================
+Brew of Werewolf Lock
+
+Name
+
+Brew of Werewolf Lock
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+"
+Prevents a Werewolf from shapeshifting, thus locking it in its current form untill the potion wears off.
+" 
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Werewolf Lock
+ (formerly known as Brew of Wolfsbane) is an item added by the 
+Witchery
+ mod. It is a first level 
+Custom Brew
+ effect component that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The Brew of Werewolf Lock will prevent a 
+Werewolf
+ from transforming until the Brew effect passes, although it will not work on a high level Werewolf. As with most Custom Brews, this brew effect can be combined with other custom brew effect as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+250
+
+Usage
+
+Brew of Werewolf Lock has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Brew of Wither
+============================================================
+Brew of Wither
+
+Name
+
+Brew of Wither
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+4
+
+The 
+Brew of Wither
+ is an item added by the 
+Witchery
+ mod. It is a fourth level 
+Custom Brew
+ effect that can be bottled as all brew types, 
+Liquid, Instant, Gas, and Trigger
+. The brew causes a damaging wither effect to the targer. Stronger power brews have a stronger withering. As with most Custom Brews, this brew effect can be combined with other custom brew effects as long as the brew has enough 
+Capacity
+.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+Altar Power: 
+200
+
+Usage
+
+Brew of Wither has no known uses in crafting.
+
+Note
+
+↑
+ 
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Congealed Spirit
+============================================================
+Congealed Spirit
+
+Name
+
+Congealed Spirit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+Congealed Spirit
+ is an item added by the 
+Witchery
+ mod. It is a special ingredient specifically for the 
+Spectral Stone
+.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Brew of Hollow Tears
+ and 
+ 
+Subdued Spirit
+ x5
+
+*Also 2000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Liquid Brew of Colored Water
+============================================================
+Liquid Brew of Colored Water
+
+Name
+
+Liquid Brew of Colored Water
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+Brew Level
+
+1
+
+Altar Power
+
++0
+
+"
+...
+" 
+
+Excerpt from 
+Witches' Brews
+
+The 
+Brew of Colored Water
+ is an item added by the 
+Witchery
+ mod. It is what happens when a witch tries to bottle a 
+Brew of Combustion
+ and is pretty much useless.
+
+Cheapest Recipe
+ 
+[
+1
+]
+
+Witch's Cauldron
+
+*
+
+Then bottle it.
+
+Usage
+
+Liquid Brew of Colored Water has no known uses in crafting.
+
+Note
+
+↑
+ 
+ ==
+The Effect is the final stage of brewing, the ingredients needed for 
+Capacity, Power, Duration, Modifier, and Dispersal
+ must be added first.
+
+============================================================
+# Redstone Soup
+============================================================
+Redstone Soup
+
+Name
+
+Redstone Soup
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Redstone Soup
+ is a potion added by the 
+Witchery
+ mod. It is used for the base item needed for all 
+Rites of Infusion
+ as well as other things. The Soup can be used to turn a 
+Chalice
+ into a 
+Filled Chalice
+, and it can also be drunk for a quick health boost.
+
+Recipe
+
+Kettle
+
+Also 1000 Altar Power is required.
+
+Usage
+
+Redstone Soup can be used to create the following items:
+ 
+Brew of Keep Effects
+ 
+Chalice (Filled)
+ 
+Flying Ointment
+ 
+Red String
+ 
+Seeping Shoes
+ 
+Soul of the World
+
+============================================================
+# Solidifying Brew
+============================================================
+Solidifying Brew
+
+Solidifying Brew (Dirt)
+Solidifying Brew (Stone)
+Solidifying Brew (Sand)
+Solidifying Brew (Sandstone)
+Solidifying Brew (Erosion)
+
+File:Grid Solidifying Brew.png
+
+Name
+
+Solidifying Brew
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Solidifying Brew
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion used to change the 
+Hollow Tears liquid source block
+ into another form based on the type of Solidifying Brew used. 
+
+Using the Solidifying Brew (Erosion) though will remove the Hollow Tears liquid source block and all blocks under.
+
+Recipe
+
+ 
+Ingredients for the brew
+ (Dirt)
+
+ 
+Dirt
+, 
+ 
+Mutandis
+, 
+ 
+Foul Fume
+, 
+ 
+Wood Ash
+, 
+ 
+Odour of Purity
+, and 
+ 
+Spanish Moss
+
+ 
+Ingredients for the brew
+ (Stone)
+
+ 
+Stone
+, 
+ 
+Mutandis
+, 
+ 
+Foul Fume
+, 
+ 
+Wood Ash
+, 
+ 
+Odour of Purity
+, and 
+ 
+Spanish Moss
+
+ 
+Ingredients for the brew
+ (Sand)
+
+ 
+Sand
+, 
+ 
+Mutandis
+, 
+ 
+Foul Fume
+, 
+ 
+Wood Ash
+, 
+ 
+Odour of Purity
+, and 
+ 
+Spanish Moss
+
+ 
+Ingredients for the brew
+ (Sandstone)
+
+ 
+Sandstone
+, 
+ 
+Mutandis
+, 
+ 
+Foul Fume
+, 
+ 
+Wood Ash
+, 
+ 
+Odour of Purity
+, and 
+ 
+Spanish Moss
+
+ 
+Ingredients for the brew
+ (Erosion)
+
+ 
+Brew of Erosion
+, 
+ 
+Mutandis
+, 
+ 
+Foul Fume
+, 
+ 
+Wood Ash
+, 
+ 
+Odour of Purity
+, and 
+ 
+Spanish Moss
+
+*Also 2000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.

@@ -1,0 +1,24 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:demon_heart"
+  },
+  "ingredient2": {
+    "id": "witchery:diamond_vapour"
+  },
+  "jars": 4,
+  "outputs": [
+    {
+      "id": "witchery:demonic_blood",
+      "count": 2
+    },
+    {
+      "id": "witchery:demonic_blood",
+      "count": 2
+    },
+    {
+      "id": "witchery:refined_evil"
+    }
+  ],
+  "cookingtime": 800
+}

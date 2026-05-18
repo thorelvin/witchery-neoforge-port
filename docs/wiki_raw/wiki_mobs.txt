@@ -1,0 +1,2992 @@
+
+============================================================
+# Baba Yaga
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Baba Yaga
+
+Name
+
+Baba Yaga
+
+Health
+
+Unknown
+
+Spawn
+
+Random chance when using a 
+Crystal Ball
+
+Drops
+
+ 
+Baba Yaga's Hat
+
+Source Mod
+
+Witchery
+
+Baba Yaga
+ is a boss in the Witchery mod, who is sometimes 
+considered the easiest. She is a powerful witch who rides around in a 
+large mortar and throws various potions (including Witchery potions) to 
+attack. She has an innate Thorns effect, which can be bypassed by using 
+wooden weaponry or 
+Nullifying Bolts
+.
+
+When using a 
+Crystal Ball
+
+ to look into the future, there is a chance that Baba Yaga will notice. 
+This is indicated by a message appearing in text chat. Some time after 
+this message, Baba Yaga will spawn, after which it is possible to use a 
+Crystal Ball to recieve new predictions again. It is possible for her to
+ spawn alone, or as part of a trio which is indicated by the mention of 
+her sisters. They can be neutral, or hostile, in which case the message 
+will say that the player has angered her.
+
+============================================================
+# Baba Yaga – Feed The Beast Wiki
+============================================================
+Baba Yaga
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+500 (
+ × 250)
+
+The 
+Baba Yaga
+ is a boss monster added by 
+Witchery
+. The Baba Yaga appears to be inside of a mortar, and wields a broomstick. This boss is usually found in a forest, typically nearby to a hut. The Baba Yaga can help or attack players that approach her. She has 500 (
+ × 250) health points and when she is near the sky will darken. She has many ways of attacking, including spawning animals, throwing 
+Brew of Webs
+, and 
+Brew of Thorns
+, and normal splash potions at the player. These potions are typically Instant Damage, Poison, or Slowness. She may also spawn 
+Owls
+ and 
+Cave Spiders
+ to fight for her. Occasionally, she will throw a Jump Boost splash potion at the player, to launch them towards her. Attempting to attack her with a standard melee weapon, or ranged weapon may, and probably will, hurt the attacker more than the Baba Yaga. Attacking her with a 
+Spear of the Huntsman
+ will avoid the hit-back. Slaying her will yield a range of items, typically an 
+Enchanted Book
+, some 
+Toes of Frogs
+, some 
+Owlet's Wings
+, the 
+Baba Yaga's Hat
+, and some brews from Witchery.
+
+============================================================
+# Banshee
+============================================================
+Banshee
+
+Name
+
+Banshee
+
+Health
+
+20 (
+ x 10)
+
+Damage
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere with the 
+Summon Banshee
+ ritual
+
+Drops
+
+Spectral Dust
+
+Source Mod
+
+Witchery
+
+The 
+Banshee
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be forced into the world via a 
+Summon Banshee
+ ritual with a 
+Brazier
+.
+ As the iconic banshees do, these banshees screen for attacks and can 
+damage with their screams. They only scream when someone who is not in 
+their personal whitelist is nearby, including random mobs like cows or 
+zombies.
+
+Banshees can be buffed up to fifty health, two points at a time, with 
+Graveyard Dusts
+ used on them directly.
+
+============================================================
+# Binky's Skull
+============================================================
+Binky
+
+Name
+
+Binky
+
+Health
+
+53 (
+ x 26.5)
+
+Hostility
+
+Neutral
+
+Spawn
+
+From using 
+Binky's Skull
+
+Drops
+
+Binky's Skull
+
+Source Mod
+
+Witchery
+
+Binky's Skull
+ is an item added by the 
+Witchery
+ mod. It can be acquired as a drop from killing 
+Death
+.
+
+Binky is the steed of 
+Death
+ himself.
+
+To summon Binky, the player must right click the ground with 
+Binky's Skull, to unsummon Binky just kill Binky and collect his skull 
+for later resummoning.
+
+============================================================
+# Coven Witch
+============================================================
+Coven Witch
+
+Name
+
+Coven Witch
+
+Health
+
+30 (
+ x 15)
+
+Damage
+
+Throws regular 
+witch
+ 
+potions
+
+Hostility
+
+Neutral
+
+Spawn
+
+Overworld
+
+Drops
+
+Glass Bottle
+, 
+Glowstone Dust
+, 
+Redstone
+, 
+Sugar
+, 
+Gunpowder
+, 
+Spider Eye
+, 
+Stick
+, various 
+potions
+, and 
+Witches Hand
+
+Source Mod
+
+Witchery
+
+The 
+Coven Witch
+ is a mob from the Witchery mod. These witches are similar to the normal 
+witch
+
+ found throughout the world but are not completely evil yet and are open
+ to joining covens with other witches of appropriate power. The 
+appropriate power they are looking for is having a 
+familiar
+,
+ once a witch has a familiar they may speak with a coven witch and the 
+coven witch will give a task to complete to show worth. Successful 
+completion of the quest will have the coven witch join your 
+coven
+!
+
+Example quests include killing undead to show strength, gathering
+ materials for brews, obtaining special magical items, and killing the 
+coven witch's "pet."
+
+Bring me the beating means to master the infernal dimension.
+
+This is a 
+Demon Heart
+.
+
+Defeat my pet and bring me it's eye, flesh, or bones.
+
+This will summon a mob that will have 90 hp, when killed it will drop a renamed drop and that will be what will solve the quest.
+
+Any witch in your coven can be summoned with a 
+Seer Stone
+
+ and can even help out during fights! When not summoned, coven witches 
+in the player's coven will go about their daily business but since a 
+coven is a special bond, a lot of the time they can spend hanging around
+ the player.
+
+Covens are useful when practicing higher leveled 
+Circle Magic
+
+ that requires more than one witch for the spell, using a Seer Stone 
+activates the Heart Glyph to bring them to help out with spellcasting.
+
+Video
+
+Witchery Explained: Episode 12, Coven Witches and their Quests!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Coven Witch – Feed The Beast Wiki
+============================================================
+Coven Witch
+Mod
+Witchery
+Type
+Neutral monster
+Properties
+Health points
+30 (
+ × 15)
+
+The 
+Coven Witch
+ is a creature added by 
+Witchery
+. This creature is neutral, as it can be friendly or aggressive. Coven Witches appear similar to Vanilla Witches. Coven Witches have 30 (
+ × 15) health points and can drop the same items as normal Witches: 
+Glass Bottles
+, 
+Redstone
+, 
+Glowstone Dust
+, and 
+Witches Hands
+. If attacked, they will begin throwing potions at the target, like normal witches. Coven Witches are all named randomly; no Coven Witch will be found with the default name of Coven Witch.
+
+If a Coven Witch is in the player's coven, they may be called upon to help in a fight by using a 
+Seer Stone
+. They will also randomly appear around the player, to keep them company. Using a Seer Stone to activate a 
+heart glyph
+ in circle magic will allow the coven to supply their magical powers to the ritual, which is required and optional for some rites and curses.
+
+A coven can have up to 6 witches in it at a time.
+
+Making a Coven
+
+Talking to one (using an empty hand) may begin the process of creating a coven. This will only happen if the player have enough knowledge and experience in the art of witchcraft. 
+Binding
+ a Familar or 
+infusing
+ themselves will prove the player's experience in the art. Creating a coven will require a minor quest to be completed, usually bringing back supplies for the Coven Witch for use in brewing, or defeating their "pet". 
+
+Minor quests
+
+ 
+
+Request
+
+Item needed
+
+Amount of item
+
+Other requirements and notes
+
+ 
+
+The means to control the dead
+
+ 
+Necromantic Stone
+
+2
+
+ 
+
+Kill 30 skeletons and bring me their bones
+
+ 
+Bone
+
+30
+
+Skeletons do not 
+have
+ to be killed to obtain the bones; they can be found or spawned in.
+
+ 
+
+The beating means to master the infernal dimension
+
+ 
+Demon Heart
+
+1
+
+ 
+
+Defeat my pet and bring me its flesh
+
+ 
+<Coven Witch>'s pet's flesh
+
+1
+
+Though this can be requested in Peaceful mode, it is not possible to complete in that difficulty. The player must kill 
+<Coven Witch>'s pet
+, which is a zombie/skeleton hybrid with 100 (
+ × 50) health points.
+
+ 
+
+I must perform many curses, bring me the necessary brew
+
+ 
+Brew of the Grotesque
+
+5
+
+ 
+
+Defeat my pet and bring me its eye
+
+ 
+<Coven Witch>'s pet's eye
+
+1
+
+Though this can be requested in Peaceful mode, it is not possible to complete in that difficulty. The player must kill 
+<Coven Witch>'s pet
+, which is a spider with 100 (
+ × 50) health points.
+
+ 
+
+I desire to predict the future
+
+ 
+Crystal Ball
+
+1
+
+Gallery
+
+3 coven witches.
+
+============================================================
+# Death
+============================================================
+Death
+
+Name
+
+Death
+
+Health
+
+1000 (
+ x 500)
+
+Damage
+
+4 (
+)
+
+Defense
+
+Constant healing
+
+Hostility
+
+Neutral (Unless someone looks at him)
+
+Spawn
+
+Rite of Binding
+
+Drops
+
+Skeleton Skull
+, 
+Bones
+, some enchanted books, a sword, and a 
+saddle
+
+Rare Drops
+
+Hand of Death
+, 
+Death's Hood
+, 
+Death's Robes
+, 
+Death's Footwear
+, and 
+Binky's Skull
+
+Source Mod
+
+Witchery
+
+Death
+ is a boss mob from the 
+Witchery
+ mod. 
+Death's hand
+ spawns a scythe that deals damage and Death can teleport around his target.
+
+A special 
+Rite of Binding
+ is used to summon Death involving five of each of the three spectral undead being bound to a fetish item.
+
+Wearing all of Death's outfit and wielding a Hand of Death will 
+turn the player fully into Death and as such, anyone who summons Death 
+while the player is dressed as Death can be summoned instead.
+
+Videos
+
+Minecraft - Flux Buddies #145 - BECOMING DEATH (Yogscast Complete Mod Pack)
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Demon (Witchery)
+============================================================
+Demon
+
+Name
+
+Demon
+
+Health
+
+100 (
+ x 50)
+
+Damage
+
+Can fire off 
+Fire Charges
+
+Defense
+
+Immune to fire-based attacks
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere with the 
+Rite of Summoning
+ ritual
+
+Drops
+
+Demon Heart
+, 
+Gunpowder
+, and 
+Magma Cream
+
+Source Mod
+
+Witchery
+
+Demons
+ are a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be forced into the world via a 
+Rite of Summoning
+. They are native to the 
+Nether
+ but cannot be found there by normal means. 
+
+When summoning a demon it is a good idea to be prepared for a 
+fight, or at least to be prepared to defend if one plans on trying to 
+just trade with the demon like trading with 
+villagers
+. A 
+Devils Tongue Charm
+ is required to instigate the trade. 
+Demon Hearts
+
+ are a powerful artifact for most things witch and if one cannot barter 
+with a demon for a spare heart one can always carve out the heart 
+straight from the demon, using an 
+Arthana
+
+ helps with acquiring the heart via carving. Some say though that when 
+trading with a demon for a heart they can trick you so be cautious!
+
+Demon
+
+15x15
+
++0
+
+Altar Power: 
+3000
+
+15x15
+
++0
+
+Altar Power: 
+3000
+
+Inside the circle there must be an area of 7x7x4 with nothing for the demon to spawn.
+
+============================================================
+# Demon (Witchery) – Feed The Beast Wiki
+============================================================
+This page is about the Witchery Demon. For other uses, see 
+Demon
+.
+
+Demon
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+100 (
+ × 50)
+
+The 
+Demon
+ is a hostile monster added by 
+Witchery
+. Demons are evil beings of the 
+Nether
+, though they do not spawn in there. Demons must be summoned using a 
+Rite of Summoning
+ or can be found anywhere in the 
+Spirit World
+ while the player is experiencing a 
+demonic nightmare
+. They have 100 (
+ × 50) health points. In battle, they will launch fireballs, similar to 
+Ghast
+ shots, and punch dealing up to 18 (
+) points of damage. They are, obviously, immune to fire-related attacks. Demons may also be traded with, like villagers, by using a 
+Devils Tongue Charm
+. Slaying a Demon can yield 
+Demon Hearts
+, 
+Gunpowder
+, and 
+Magma Cream
+.
+
+============================================================
+# Demon Heart (Witchery) – Feed The Beast Wiki
+============================================================
+This page is about the Demon Heart added by Witchery. For other uses, see 
+Demon Heart
+.
+
+Demon Heart
+Mod
+Witchery
+Type
+Item
+
+The 
+Demon Heart
+ is an item added by 
+Witchery
+. This item is obtained by either bargaining with a 
+Demon
+ or by slaying one. Eating a Demon Heart will cause a lot of effects: Hunger II, Speed III, Health Boost (adds 20 (
+) temporary health points), Strength III, Nausea, Regeneration II, and Fire Resistance III for about 2 minutes. Additionally, it will set the player on fire. This item is the main ingredient in the 
+Infernal Infusion
+, and many other evil witchcraft rituals. It can be 
+distilled
+ with a 
+Netherrack
+ to create 
+Soul Sand
+. A Demon Heart can be used to buff a 
+Treefyd
+'s health to 150 (
+ × 75), and its damage output to 8 (
+) points of damage. Demon Hearts can be placed in the world by sneak+using them on a block. When placed near a 
+Pool of Flowing Spirit
+ and a 
+Dream Weaver of Nightmares
+, and with a 
+Brew of Sleeping
+ used, the player may enter a 
+Demonic Nightmare
+.
+
+Demon Hearts can be used to increase the chance that the player experiences a nightmare when entering the 
+Spirit World
+. Placing Demon Hearts within an 8 block radius (including on the y-axis) of the player will increase the chance by 35% each, at a maximum of two Demon Hearts (70%).
+
+============================================================
+# Ent (Witchery) – Feed The Beast Wiki
+============================================================
+This page is about the Ent added by Witchery. For other uses, see 
+Ent
+.
+
+Ent
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+200 (
+ × 100)
+
+The 
+Ent
+ is a hostile monster added by 
+Witchery
+. This monster is a large tree, similar to an 
+Alder Tree
+. Their eyes will turn yellow, and they will begin to throw a tantrum when they are aggressive towards players.
+
+Ents have 200 (
+ × 100) health points. Axes are the most effective weapons against Ents that can be used by players. Damage dealt by axes or non-player mobs will be multiplied by 3; however, other forms of damage will be capped at 15 (
+) damage. When killed, they may drop Alder, Hawthorn, and Rowan Saplings, as well as 
+Ent Twigs
+. This is the only way to obtain Ent Twigs.
+
+Ents deal 2 (
+) to 3 (
+) points of damage and can also launch players far up into the air.
+
+Ents will occasionally have a 
+Bone Meal
+ effect on the area of ground that they are standing on.
+
+Breaking 
+Rowan
+, 
+Hawthorn
+, or 
+Alder
+ wood can result in the spawning of an 
+Ent
+. For every neighboring log, the chance increases by 1%. Ents spawn between 8 and 16 blocks away in both horizontal directions, and between 0 and 6 blocks above the log that was broken. When spawned, spell and smoke particles will spawn, and skeleton horse death and harp sounds will play.
+
+============================================================
+# Ent
+============================================================
+Ent
+
+Name
+
+Ent
+
+Health
+
+200 (
+ x 100)
+
+Damage
+
+Can also fling the player into the air
+
+Defense
+
+Weak against 
+Axes
+ and the 
+Spear of the Huntsman
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere when large amounts of Alder, Hawthorn, and Rowan trees are chopped down.
+
+Drops
+
+Alder Sapling
+, 
+Hawthorn Sapling
+, 
+Rowan Sapling
+, 
+Ent Twig
+
+Source Mod
+
+Witchery
+
+The 
+Ent
+ is a mob from the 
+Witchery
+
+ mod. This mob does not spawn naturally, it must be forced into the 
+world via slaughtering so many Alder, Hawthorn, and/or Rowan trees that a
+ woodland spirit feels the requirement to animate a tree to try to 
+protect any future trees from the horrible wood chopper. 
+
+When near a player they will flail in a tantrum and their eyes turn yellow as they attack the player.
+
+============================================================
+# Familiar (Witchery)
+============================================================
+Familiar (Witchery)
+
+Name
+
+Familiar (Witchery)
+
+Health
+
+50 (
+ x 25)
+
+Armor
+
+5 (
+)
+
+Hostility
+
+Neutral
+
+Spawn
+
+Anywhere with the 
+Rite of Binding
+
+Source Mod
+
+Witchery
+
+The 
+Familiar
+ is a special mob from the 
+Witchery
+ mod. This mob does not spawn naturally, it must be bound to a Witch (aka the Player) from a regular mob like a 
+Cat
+, a 
+Toad
+ or an 
+Owl
+ using a 
+Rite of Binding
+.
+ Turning a tamed animal into a Familiar involves binding a minor demon 
+or spirit into the animal, imbuing the animal with more strength and 
+abilities. Some of these strengths and abilities include fire damage 
+immunity, lava swimming capabilities, falling damage immunity, and water
+ breathing. Abilities are also imbued to the Witch such as: better curse
+ control, broom control or brew control depending on the animal. A 
+Familiar shares life with it's bounded Witch, damage received is 
+transferred to the Familiar 
+[
+1
+]
+. If the Familiar dies so will the Witch, and vice versa, although the Familiar can be resummoned again using a 
+Rite of Summoning
+. A Familiar can also be dismissed by 'sneak-clicking' on it, but then, all bonuses gained from having the Familiar goes away.
+
+Rite
+
+Cat
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+Having a Cat Familiar imbues better curse control to the Witch. The 
+Witch's curses become stronger and harder for others to remove while 
+being able to remove others' curses is easier. Also Cat Familiars allow 
+the Witch to make the 
+Curse of Corrupt Poppet
+ as well as the capability of making the 
+Brew of Cursed Leaping
+.
+
+Owl
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+Having an Owl Familiar imbues better broom control to the Witch. The 
+Witch's flight becomes smoother, faster, and better controlled. Also Owl
+ Familiars allow the Witch to make the 
+Brew of Bodega
+.
+
+Toad
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+Having a Toad Familiar imbues better brew control to the Witch, 
+giving an additional 5% chance to produce an extra brew. The Toad 
+Familiar allows the Witch to make the 
+Brew of Thorns
+, the 
+Brew of Sprouting
+, and the 
+Brew of Vines
+ more powerful and inspire to make the 
+Brew of Frogs Tongue
+.
+
+Note
+
+↑
+ 
+Damage transferred is 10% when the Familiar is near and 1% while far.
+
+Video
+
+Witchery Explained: Episode 11, Familiars!!!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Flame Imp
+============================================================
+Flame Imp
+
+Name
+
+Flame Imp
+
+Health
+
+50 (
+ x 25)
+
+Damage
+
+4 (
+)
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere with the 
+Rite of Summoning
+
+Source Mod
+
+Witchery
+
+The 
+Flame Imp
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be forced into the world via a 
+Rite of Summoning
+. Unlike their 
+demon
+
+ cousin, these imps are more magically inclined and less physically 
+inclined. They are good for binding with a contract to cast the special 
+Imp Magic that is fire-themed and not usable without an imp, but they 
+will
+
+ attack whoever they see though so if the witch summoning them wants to 
+bind them with a contract it is a good idea to do it fast.
+
+To bind with the flame imp in a contract a witch needs a 
+Demonic Contract
+ signed in 
+blood
+
+ (craft the two components together) and use the contract on the imp 
+with 25 experience levels to give him as a down payment. Once the 
+contract is binding the imp will not leave the area and will attack 
+anyone who is hostile against the witch it has a contract with.
+
+Feeding an imp a 
+Demon Heart
+
+ can give the imp a temporary larger size and twice as much damage 
+dealt, but all imp magic will be uncastable for a brief thirty minutes 
+or until it is pricked with 
+Icy Needles
+.
+
+Imp Magic
+
+To be able to cast imp magic through a bound imp, spells must be 
+given to the witch from the imp and will be once they are suitably 
+impressed with their witch. To impress an imp, give them various 
+valuable gifts.
+
+Once they are suitably impressed the witch can craft a specific contract for the spell with the 
+taglock
+
+ of the target for the spell and then give the contract to the imp for 
+him to cast. The target must be in the same dimension as the imp in 
+order for the spell to reach the target. A list of possible spell 
+contracts are listed below:
+
+ 
+Fiery Touch
+: This is crafted with 
+Blaze Rod
+, 
+Ember Moss
+, and a 
+Demonic Contract
+. This spell starts fires with blocks that the victim interacts with.
+
+ 
+Melting Touch
+: This is crafted with a 
+Lava Bucket
+ and a 
+Demonic Contract
+. This spell smelts blocks harvested by the victim and can cause double ores too.
+
+ 
+Living Flame
+: This is crafted with 
+Blaze Rod
+, 
+Hint of Rebirth
+, and a 
+Demonic Contract
+. This spell spawns a 
+Blaze
+ to attack the victim.
+
+ 
+Evaporation
+: This is crafted with 
+Blaze Rod
+, 
+Magma Cream
+, and a 
+Demonic Contract
+. This spell removes 
+Water
+ blocks near the victim.
+
+ 
+Fiery Tolerance
+: This is crafted with 
+Blaze Powder
+ and a 
+Demonic Contract
+. This spell imbues the victim with long duration Fire Resistance.
+
+ 
+Torment
+:
+ This is not crafted but gifted to the witch once the imp is happy 
+enough with the witch from all of the gifts the witch has given. This 
+scroll, when used, will summon the 
+Lord of Torment
+.
+
+============================================================
+# Flame Imp – Feed The Beast Wiki
+============================================================
+Flame Imp
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+50 (
+ × 25)
+Damage
+4 (Normal)
+
+8 (with Demon Heart)
+
+The 
+Flame Imp
+ is an aggressive monster added by 
+Witchery
+. They can be summoned using the 
+Rite of Summoning
+. They are not as physically strong as 
+Demons
+, but are much more mischievous. Flame Imps can be easily swayed if they have a personal gain. They have 50 (
+ × 25) health points. It deals 4 (
+) points of damage when attacking
+
+Flame Imps may be tamed at the cost of approximately 25 experience levels. To tame one, the user must create a 
+Demonic Contract
+, and craft it with a 
+Taglock Kit
+
+ bound to his or herself. The contract must be given to the Flame Imp by
+ using it on the Imp. When tamed, the Flame Imp will protect its master 
+from any hostile entities.
+
+Players can give valuable resources to an imp as a gift by right 
+click on them. A full list of accepted gifts are listed below. 
+Occasionally, an imp will give its master a gift in return. The main 
+gifts are 
+Soul of Hunger Demon
+, 
+Soul of Fear Demon
+, and 
+Soul of Anguish Demon
+.
+ Additional gifts are listed below. After the imp gives a gift there is a
+ cool down before the imp will give another gift. The Flame Imp may at 
+some point give the knowledge to summon a 
+Lord of Torment
+. This is more likely to happen if the player gives the Imp valuable resources first.
+
+Flame Imps can be used to perform 
+Imp Magic
+. Imp Magic cannot be performed until the player has given the Imp enough gifts of valuable resources.
+
+Giving a tamed Flame Imp a 
+Demon Heart
+
+ by using it on the imp will cause it to grow in size, and be much 
+stronger for about 30 minutes. During this time, it will be unable to 
+use Imp Magic. Using an 
+Icy Needle
+ will return it to normal size and strength. When the strength is boosted, a Flame Imp will deal 8 (
+) points of damage when attacking. 
+
+1/1
+
+Skip 
+Ad
+
+ 
+
+Continue watching
+after the ad
+Visit Advertiser website
+GO TO PAGE
+Gifts and affection
+
+Valuable resources can be given to the Flame Imp in order to build up
+ their affection. Their affection is built up by giving them valuable 
+items. If they surpass 20 affection levels and 3 minutes have elapsed 
+since they last gave the player a gift, they will give the player an 
+item in response to the player giving them an item. It takes about three
+ minutes for a Flame Imp to gift the player another item, and it 
+requires an affection level of at least 20. Their affection level drops 
+one every 300 seconds (5 minutes), and once dropped to zero, they will 
+vanish.
+
+To the Flame Imp
+
+Item
+
+Affection boost
+
+ 
+Diamond
+
+8
+
+ 
+Diamond Axe
+
+24
+
+ 
+Diamond Hoe
+
+16
+
+ 
+Diamond Sword
+
+16
+
+ 
+Diamond Shovel
+
+8
+
+ 
+Diamond Pickaxe
+
+24
+
+ 
+Emerald
+
+3
+
+ 
+Gold Ingot
+
+1
+
+ 
+Nether Star
+
+16
+
+ 
+Blaze Rod
+
+1
+
+ 
+Ghast Tear
+
+4
+
+ 
+Golden Axe
+
+3
+
+ 
+Golden Sword
+
+2
+
+ 
+Golden Hoe
+
+2
+
+ 
+Golden Shovel
+
+1
+
+ 
+Golden Pickaxe
+
+3
+
+ 
+Block of Gold
+
+9
+
+ 
+Block of Emerald
+
+27
+
+ 
+Block of Diamond
+
+72
+
+ 
+Lapis Lazuli Block
+
+7
+
+ 
+Block of Redstone
+
+5
+
+From the Flame Imp
+
+The first four gifts from the Flame Imp are in a pre-determined order:
+
+ 
+Soul of Hunger Demon
+
+ 
+Soul of Fear Demon
+
+ 
+Soul of Anguish Demon
+
+ 
+Torment
+
+After the player has received these four gifts, the player will begin to receive random miscellaneous items.
+
+ 
+Wool of Bat × 5
+
+ 
+Tongue of Dog × 5
+
+ 
+Toe of Frog × 2
+
+ 
+Owlet's Wing × 2
+
+ 
+Ent Twig × 1
+
+ 
+Infernal Blood × 2
+
+ 
+Creeper Heart × 2
+
+Gallery
+
+A normal Flame Imp
+
+The Flame Imp looks wider in Witchery versions 0.19.1 and above.
+
+The Flame Imp looks taller in Witchery version 0.19.0.
+
+============================================================
+# Flying Monkey
+============================================================
+Flying Monkey
+
+Name
+
+Flying Monkey
+
+Health
+
+5 (
+)
+
+Damage
+
+1 (
+)
+
+Hostility
+
+Neutral
+
+Spawn
+
+Doesn't spawn, must be mutated
+
+Drops
+
+Feather
+
+Source Mod
+
+Witchery
+
+The 
+Flying Monkey
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be mutated from a 
+wolf
+ and an 
+owl
+. Flying Monkeys can be tamed with 
+Raw Beef
+ or 
+Raw Porkchop
+ but are skittish like 
+ocelots
+, once tamed they can be healed the same way and can breed when fully healed and fed the same meat.
+
+Giving a Flying Monkey a 
+Bound Waystone
+ will make the Flying Monkey pick you up and carry you to the coordinates of that waystone.
+
+Flying Monkeys are able to be dyed.
+
+Recipe
+
+Flying Monkeys are created by mutating a 
+wolf
+ with an 
+owl
+. To do so, place a 
+cobweb
+ above a 
+Water
+ source block and surround it in the North, South, East, and West directions with fully grown 
+cocoa pods
+, then place in the North-West, South-West, South-East, and North-East locations four 
+grasspers
+ holding two 
+Mutandis Extremis
+, one holding a 
+poppy
+, and the last one holding an 
+Attuned Stone (Charged)
+. Then lure a wolf and owl into the cobweb and use a 
+Mutating Sprig
+ on the cobweb.
+
+============================================================
+# Hobgoblin
+============================================================
+Hobgoblin
+
+Name
+
+Hobgoblin
+
+Health
+
+20 (
+ x 10)
+
+Damage
+
+3 (
+)
+
+Defense
+
+Immunity to falling damage
+
+Hostility
+
+Hostile towards 
+villagers
+, neutral to players
+
+Spawn
+
+Forest biomes
+
+Source Mod
+
+Witchery
+
+The 
+Hobgoblin
+ is a mob from the 
+Witchery
+ mod. They spawn in forested areas and are known to attack 
+villagers
+. It is assumed that hobgoblins originated from some horrible magical experiment long ago but nowadays they tend to reside in 
+Hobgoblin Huts
+ and are open to trading with players items they have scrounged up. 
+
+Tying them up to force them into servitude with a 
+lead
+
+ will have hobgoblins pick up loose items on the ground and put them in 
+nearby chests. Giving them a pickaxe when tied up makes them dig, when 
+digging they are able to find the rare, 
+Koboldite Dust
+. Koboldite it a material the hobgoblins value very highly and only they can turn the dust into ingots or nuggets.
+
+Hobgoblins are known to worship their gods, 
+Gulg
+ and 
+Mog
+. Their prayers can be harvested by witches who use a 
+Statue of Hobgoblin Patron
+
+ to trick them into praying there. This can bring down the wrath of the 
+two gods though and they might send down avatars to attack any witches 
+foolish enough to steal their worship power.
+
+Trades Available
+
+9 
+Koboldite Dust
+ + 5 
+Gold Nuggets
+ = 1 
+Koboldite Nugget
+
+16 
+Koboldite Dust
+ + 
+Gold Ingot
+ = 2 
+Koboldite Nuggets
+
+9 
+Koboldite Nuggets
+ + 
+Emerald
+ = 
+Koboldite Ingot
+
+8 
+Gold Ingots
+ = 1 
+Emerald
+
+17 
+Coal
+ = 1 
+Koboldite Dust
+
+Trades must be activated in order before they are all available to the player.
+
+Video
+
+Witchery Explained: Episode 25, Hobgolins, Koboldite Dust, Ingots, and Pickaxe!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Horned Huntsman
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+ 
+This article is in need of a 
+clean-up.
+ You can help the wiki by cleaning up the article.
+
+The 
+Horned Huntsman
+ is a boss added by the 
+Witchery
+ mod.
+
+The Horned Huntsman can be summoned in two different variations 
+with 400 health or 200 hearths, it will occasionally spawn hostile 
+wolves with the Resistance effect which will attack the player. It can 
+deal up to 20 damage, both melee and ranged. It can also teleport short 
+distances. On death, it can drop 
+enchanted books
+, 
+Wither Skulls
+, a 
+Spear of the Huntsman
+, and 
+Demonic Blood
+.
+
+This wolf master, powerful and scary looking boss can be summoned on 2 different ways.
+
+1-.
+By making a 
+Wicker-Man
+ out of 
+Bloodied Wicker Bundle
+ on the exact same position including the direction the 
+Wicker-Man
+ hay bales are placed and then firing the 
+Bloodied Wicker Bundle
+ with fire from a lighter, lightning, fire charge, lava and as of version 0.19.0, a 
+Mystic Branch
+ using the Incendio effect can ignite it too.
+
+2-. By having the 
+curse of the wolf
+ and reaching level 5 wolf, you will need to summon the 
+Horned Huntsman
+ using the 
+Horn of the Hunt
+.
+
+On method one, to make the 
+Bloodied Wicker Bundle
+ the player needs 5 
+Wicker Bundle
+ and 1 
+demonic blood
+ to make 5 
+Bloodied Wicker Bundle
+, so the player would need 20 
+Wicker Bundle
+ and 4 
+demonic blood
+ to make 20 
+Bloodied Wicker Bundle
+
+To make 
+Wicker Bundle
+ is just 
+saplings
+ filling the 3X3 crafting grid.
+
+============================================================
+# Lilith
+============================================================
+Lilith
+
+Name
+
+Lilith
+
+Source Mod
+
+Witchery
+
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Lilith
+ is a Boss Mob from the 
+Witchery
+ mod. She is the mother of all 
+Vampires
+ and is a tough boss to beat.
+
+Spoiler warning!
+This article contains 
+detailed information of discoveries, recipes, or secrets, which are 
+intended to be discovered through in-game mechanics.
+
+Summoning
+
+To summon the Lilith, a skull is to be placed down, followed by a 
+small ring of redstone dust around it. Then one space outside the 
+redstone ring, a ring of string should be placed with the string turning
+ inward at the corners, where torches should be placed. A 
+Glass Goblet
+ is then placed in the hotbar and a chicken is placed on top of the skull, with a 
+Boline
+ being used on it. Then the skull should be right-clicked on with the 
+Goblet filled with chicken blood
+. Elle will then be summoned, take her into a large lava lake in the 
+Nether
+ and she will then turn into the Lilith.
+
+Scheme
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Fighting
+
+When the player deflects her fireballs back to her, she stops healing
+ for a while, when she can be hit or shot until she regains power. The 
+Lilith has a strong, constant regeneration capability, hitting her with 
+the fireballs she shoots out will temporarily stop that.
+After the Lilith is defeated, she can be right-clicked on with an item 
+in hand and she will enchant it.
+When clicked with a 
+Glass Goblet
+ she will yield her blood drinking this blood will turn the Player into a vampire.
+When clicked with 
+Garlic
+ she will cure a player of their vampirism.
+
+============================================================
+# Lilith – Feed The Beast Wiki
+============================================================
+Lilith
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+200 (
+ × 100)
+
+Lilith
+ is a boss added by 
+Witchery
+. To summon her, complete the 
+Creatures of the Night
+ ritual to summon Elle. When Elle is led to a large 
+Lava
+ lake in 
+The Nether
+ she will transform into Lilith, which has a total of 200 (
+ × 100) health points. However, she regenerates 5 (
+) health points every second. Lilith will fire fireballs at the player, when they are deflected back at her, she stops healing for a while. When defeated Lilith shrinks and can be given:
+
+a 
+Glass Goblet
+ to fill with her blood, allowing the player to become a vampire.
+
+a 
+Poppy
+ to promote a level 6 vampire player to level 7.
+
+a tool, weapon, or armor piece to bestow a random enchantment on it.
+
+a piece of 
+Garlic
+ to cure the player of their vampirism.
+
+Once one of the aforementioned items are given to Lilith she disappears afterward.
+
+Lilith is capable of casting magic of her own like sending the player flying away, pulling the player towards her, and giving them slowness. She shoots fireballs that take away 6 (
+) health points. Another attack she has is raining fire upon the player from the sky.
+
+Since Lilith has extremely powerful regeneration it is best to knock back her fireballs at her to momentarily stop her regeneration. You should also brew a brew of Demonbane and give it the gas effect to do a lot of damage to Lilith.
+
+============================================================
+# Lord of Torment
+============================================================
+Lord of Torment
+
+Name
+
+Lord of Torment
+
+Health
+
+500 (
+ x 250)
+
+Damage
+
+Fireballs of 
+Slowness
+
+Defense
+
+When at half health the Lord of Torment will teleport himself and the player to 
+Torment
+
+Spawn
+
+Summoned using 
+Imp Magic
+
+Drops
+
+Soul of Torment Demon
+, 
+Demon Hearts
+, 
+Miniature Yellow Hearts
+, and various enchanted books
+
+Source Mod
+
+Witchery
+
+The 
+Lord of Torment
+ is a boss mob from the 
+Witchery
+ mod. He is the ruler of 
+Torment
+, a maze-like dimension of strife.
+
+To summon the Lord of Torment, one needs a 
+Torment
+ Scroll which is the final gift a happy 
+Flame Imp
+ will give its master. Once a witch has the Torment Scroll it needs to be read it in a stone circle.
+
+Eating the dropped 
+Soul of Torment Demon
+ will grant the consumer the ability to send others to 
+Torment
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Lord of Torment – Feed The Beast Wiki
+============================================================
+Lord of Torment
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+500 (
+ × 250)
+
+The 
+Lord of Torment
+ is a boss monster added by 
+Witchery
+ mod. It is summoned with the 
+Torment Scroll
+, which can rarely be obtained by a well-treated tamed 
+Flame Imp
+. It has 500 (
+ × 250) health points. Its primary attack is a fireball that can sometimes inflict Slowness. The Lord of Torment will typically fly high in the air, so it is recommended to have a 
+means of flight
+ or a ranged weapon such as the 
+Witch Hunter Pistol Crossbow
+ when fighting it. 
+
+When it has reached half health (250 (
+ × 125) health points), it will send itself and the player to the 
+Torment
+ dimension. When in the Torment dimension, it will sit in the center waiting for the player to come to it. When the player comes to it, it will try to escape while also shooting fireballs. When slain, it can drop 
+Enchanted Books
+, 
+Demon Hearts
+, 
+Soul of Torment Demon
+, and 
+Miniature Yellow Hearts
+.
+
+============================================================
+# Lost Soul
+============================================================
+Lost Soul
+
+Name
+
+Lost Soul
+
+Hostility
+
+Hostile
+
+Spawn
+
+Spawned by the 
+Shade of Leonard
+ when he hits around below 300 hp
+
+Drops
+
+1 
+Subdued Spirit
+
+Source Mod
+
+Witchery
+
+The information on this page needs to be confirmed.
+
+The 
+Lost Soul
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be summoned into the world via a 
+Shade of Leonard
+.
+ They come in three colors, green, red, and black. The green lost souls 
+can be harmed normally, but the red lost souls can only be harmed 
+through fire or blast damage, while the black lost souls can only be 
+harmed from splash potions or brews of harming.
+
+As long as there is one lost soul still around, the Shade of Leonard cannot be damaged except through brews of Demonbane.
+
+============================================================
+# Mandrake
+============================================================
+Mandrake
+
+Name
+
+Mandrake
+
+Health
+
+20 (
+ x 10)
+
+Damage
+
+Screams that deal Nausea
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere with the 
+Mandrake (Plant)
+ growing
+
+Drops
+
+Mandrake Root
+ and 
+Mandrake Seeds
+
+Source Mod
+
+Witchery
+
+The 
+Mandrake
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be grown from 
+Mandrake Seeds
+ which can be obtained from 
+Tall Grass
+.
+ If the Mandrake plant is harvested when the plant is awake during the 
+day, or if it is woken up during the night it will jump up and run 
+around and attack the player and scream so loud the player gets 
+Nauseated. The Mandrake must be killed before the effect ends. To 
+prevent Nausea, wear 
+Earmuffs
+. When the noise can't be heard, the effect isn't felt.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Mandrake – Feed The Beast Wiki
+============================================================
+Mandrake
+Mod
+Witchery
+Type
+Neutral monster
+Properties
+Health points
+20 (
+)
+
+Witchery
+ Information
+
+Book
+
+ 
+Witchcraft: Herbology
+
+It's
+ 
+[
+sic
+]
+ parsnip-shaped root has the look of a man. Harvest at night, lest it waken and screan. It grows in tilled earth in stages. Tall grass yields seeds.
+
+Ability type
+
+{{{type}}}
+
+Required level
+
+{{{level}}}
+
+Maximum blood
+
+{{{bloodmax}}}
+
+Altar Power produced
+
+{{{altarpowerproduced}}}
+
+Altar Power required
+
+{{{altarpowerneeded}}}
+
+Altar Power required for brew
+
+{{{altarpowerbrew}}}
+
+Altar Power required for ritual
+
+{{{altarpowerritual}}}
+
+Effect level
+
+{{{brewlevel}}}
+
+Brew component type
+
+{{{componenttype}}}
+
+The 
+Mandrake
+ is a creature added by 
+Witchery
+. Mandrakes are summoned by planting, growing, and harvesting 
+Mandrake Seeds
+, which can be found be smashing tall grass. When harvested, a Mandrake will spawn and begin running around. Mandrakes will not damage players, but will screech when running, which will inflict the Nausea II status effect on players. Harvesting a Mandrake plant at night will give a lower chance of a Mandrake spawning, and drop a 
+Mandrake Root
+. Mandrakes have 20 (
+) health points. When slain, they will yield Mandrake Roots and Seeds.
+
+============================================================
+# Minedrake
+============================================================
+Minedrake
+
+Name
+
+Minedrake
+
+Health
+
+4 (
+)
+
+Damage
+
+Minedrakes explode and deal Nausea
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere a 
+Minedrake Bulb
+ is dropped
+
+Drops
+
+Minedrake Bulb
+
+Source Mod
+
+Witchery
+
+The 
+Minedrake
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be mutated from 
+creepers
+ and 
+mandrakes
+, though why anyone would want to mix a creeper with a mandrake no one could know. Dropping a 
+Minedrake Bulb
+ on the ground will wake it up so be quick anytime a bulb falls!
+
+Woken up Minedrakes will target the person who dropped them, if a
+ player did not drop a Minedrake they will walk around until they see a 
+player and go after that player.
+
+Recipe
+
+Minedrakes are created by mutating a 
+creeper
+ with 
+mandrakes
+. To do so, place a 
+cobweb
+ above a 
+Water
+ source block and surround it in the North, South, East, and West directions with fully grown 
+mandrakes
+, then place in the North-West, South-West, South-East, and North-East locations four 
+grasspers
+ holding two 
+Mutandis Extremis
+, an 
+Attuned Stone (Charged)
+, and 
+Focused Will
+. Then lure a creeper into the cobweb and use a 
+Mutating Sprig
+ on the cobweb.
+
+============================================================
+# Mog
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Mog
+
+TBD
+
+Name
+
+Mog
+
+Health
+
+TBD
+
+Damage
+
+TBD
+
+Defense
+
+TBD
+
+Hostility
+
+Hostile
+
+Spawn
+
+Bind yourself to a 
+Statue of Hobgoblin Patron
+ that 
+Hobgoblins
+ worship
+
+Drops
+
+Mog's Quiver
+
+Rare Drops
+
+TBD
+
+Source Mod
+
+Witchery
+
+Mog
+ is a boss mob from the 
+Witchery
+ mod.
+
+============================================================
+# Nightmare (Witchery)
+============================================================
+Nightmare (Witchery)
+
+Name
+
+Nightmare (Witchery)
+
+Health
+
+100 (
+ x 50)
+
+Damage
+
+~ 
+Also flings off the armor of player
+
+Hostility
+
+Hostile
+
+Spawn
+
+Spirit World
+ during a nightmare
+
+Drops
+
+Mellifluous Hunger
+
+Source Mod
+
+Witchery
+
+The 
+Nightmare
+ is a mob from the 
+Witchery
+ mod. This mob can be found in the 
+Spirit World
+
+ during a nightmare and they keep chasing you even if you are to far 
+away cause then they teleport back to you. they are kill able but are 
+difficult to fight cause if they attack you it will rip you armor and 
+they are invincible for a while every time you hit him. and it's kinda 
+useless cause they re spawn again
+Having a 
+Charm of Fanciful Thinking
+ helps in fighting Nightmares, it prevents them from removing armor.
+
+============================================================
+# Nightmare – Feed The Beast Wiki
+============================================================
+Nightmare
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+100 (
+ × 50)
+
+The 
+Nightmare
+ is a hostile creature added by 
+Witchery
+. This creature is found in the 
+Spirit World
+, but only when the player is experiencing a nightmare. The Nightmare monster is a physical representation of the nightmare that the player experiences in their sleep. It will haunt and attack them, dealing 2 (
+) to 4 (
+) points of damage. Nightmares have 100 (
+ × 50) health points and will respawn shortly after being slain. They will always respawn near the player, so attempting to kill it without the desire for its drops is useless. Having a 
+Charm of Fanciful Thinking
+ in the only form of protection from the Nightmare, as dreams strip players of their armor and items. When slain, it can drop 
+Mellifluous Hunger
+.
+
+============================================================
+# Owl
+============================================================
+Owl
+
+Name
+
+Owl
+
+Health
+
+5 (
+)
+
+Damage
+
+1 (
+)
+
+Hostility
+
+Neutral
+
+Spawn
+
+Doesn't spawn, must be mutated
+
+Drops
+
+Feather
+
+Rare Drops
+
+Owlet's Wing
+
+Source Mod
+
+Witchery
+
+The 
+Owl
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be mutated from a 
+wolf
+ and 
+bats
+. Owls can be tamed with 
+Raw Beef
+ or 
+Raw Porkchop
+ but are skittish like 
+ocelots
+, once tamed they can be healed the same way and can breed when fully healed and fed the same meat.
+
+Owls can have fifty health if they are turned into a 
+familiar
+.
+
+Owls will use brews or splash potions they are given.
+
+Owls are able to be dyed.
+
+Recipe
+
+Owls are created by mutating a 
+wolf
+ with 
+bats
+. To do so, place a 
+cobweb
+ above a 
+Water
+ source block and surround it in the North, South, East, and West directions with 
+Critter Snares
+ that have 
+bats
+
+ in two to four of them (the number of bats in critter snares is equal 
+to the number of owls that will be mutated), then place in the 
+North-West, South-West, South-East, and North-East locations four 
+grasspers
+ holding three 
+Mutandis Extremis
+ and the last one holding an 
+Attuned Stone (Charged)
+. Then lure a wolf into the cobweb and use a 
+Mutating Sprig
+ on the cobweb.
+
+============================================================
+# Parasytic Louse
+============================================================
+Parasytic Louse
+
+Name
+
+Parasytic Louse
+
+Health
+
+4 (
+)
+
+Damage
+
+1 (
+)
+
+Hostility
+
+Hostile
+
+Spawn
+
+Doesn't spawn, must be mutated
+
+Source Mod
+
+Witchery
+
+The 
+Parasytic Louse
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be mutated from a 
+Silverfish
+ and 
+Lily Pads
+.
+ They can be picked up by right clicking with an empty hand and then 
+potions can be crafted into them, they then can bite someone and that 
+will apply the potion effects. Be careful when carrying a potion-fed 
+parasytic louse though, if something hits anyone carrying it then the 
+louse will bite the that person.
+
+Recipe
+
+Parasytic lice are created by mutating a 
+Silverfish
+ with small 
+Lily Pads
+. To do so, place a 
+Critter Snare
+ with a silverfish inside it down and surround it in the North, South, East, and West directions with 
+Lilly Pads
+ above a 
+Water
+ source block, then place in the North-West, South-West, South-East, and North-East locations four 
+grasspers
+, two of which holding 
+Mutandis
+, one holding 
+Tongue of Dog
+, and the last one holding an 
+Attuned Stone (Charged)
+. Then use a 
+Mutating Sprig
+ on the cobweb.
+
+============================================================
+# Raven   Bewitchment Wiki   Fandom
+============================================================
+Raven
+
+Health
+
+Spawn
+
+Overworld
+
+Tameable
+
+ Gold Nugget, 
+ Silver Nugget
+
+Breedable
+
+ 
+Seeds
+
+Drops
+
+ Raven's Feather
+
+Ravens are neutral mobs that spawn in the Overworld. They can be tamed as a 
+Familiar
+.
+
+Appearance
+
+Ravens are dark birds, with black feathers that contain a slight blue iridescence. Their legs and beak are pale blue-grey and their eyes are a pale gold.  
+
+Familiar Perks
+
+Once bound as a 
+familiar
+ to one's self, you are granted unique benefits pertaining to their chosen companion. Perks received from this familiar are as listed:
+
+Curses that are cast by the owner; last twice as long.
+
+Curses cast onto the owner, have a 50% chance to rebound back to the caster.
+
+Trivia
+
+In Legacy versions:
+
+If the player uses (right-clicks) on a tamed raven with a Boline, they will harvest a few Raven's Feathers from the bird without damaging it.
+
+Drops a 
+Raven's Feather
+.
+
+============================================================
+# Shade of Leonard
+============================================================
+Shade of Leonard
+
+Name
+
+Shade of Leonard
+
+Health
+
+500 (
+ x 250)
+
+Defense
+
+All projectiles bounce off of the Shade of Leonard
+Mortal Coil
+ curse
+Regeneration
+Lost Souls
+ granting him immunity to all damage
+
+Hostility
+
+Neutral
+
+Spawn
+
+Summoned by performing a 
+Witch's Cauldron
+ ritual
+
+Drops
+
+?
+
+Rare Drops
+
+Leonard's Urn
+
+Source Mod
+
+Witchery
+
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+The 
+Shade of Leonard
+ is a boss mob from the 
+Witchery
+ mod. He is very difficult to kill unless you are greatly prepared for it.
+
+Having the Shade of Leonard around is pretty good because he greatly boosts the range capabilities of 
+cauldron
+ spells which even reaches across dimensions! But... side effects are more likely too...
+
+Summoning
+
+To summon the Shade of Leonard, a witch needs expensive brewing components, the summoning brew requires 12 brew capacity. 
+
+Witch's Cauldron
+
+Altar Power: 
+10000
+
+Fighting
+
+Spoiler warning!
+This article contains 
+detailed information of discoveries, recipes, or secrets, which are 
+intended to be discovered through in-game mechanics.
+
+Once summoned, the Shade of Leonard knows you are no threat to him 
+and will be passive to anyone unless he is attacked. His first measure 
+of attacking back though to curse the player with the 
+Mortal Coil
+ curse, this curse instantly kills the cursed one once the debuff ends and 
+Death Protection Poppets
+ will not protect against it. Once the Shade of Leonard is brought down to a third of his health he will force 
+Lost Souls
+
+ into the world who will make him completely immune while they are 
+around. As long as there is one Lost Soul still around, the Shade of 
+Leonard cannot be defeated.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+How to Beat The Shade of Leonard the Easy Way
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Spectral Familiar
+============================================================
+Spectral Familiar
+
+Name
+
+Spectral Familiar
+
+Health
+
+40 (
+ x 20)
+
+Damage
+
+1 (
+)
+
+Hostility
+
+Passive
+
+Spawn
+
+Anywhere with the 
+Rite of Summoning
+
+Drops
+
+Spectral Dust
+
+Source Mod
+
+Witchery
+
+The 
+Spectral Familiar
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be forced into the world via a 
+Rite of Summoning
+ and is a helping spirit. 
+
+This spirit treats its summoner as having tamed it and likes to 
+search for objects for the summoner. When given coal, any metal ingot, a
+ piece of lapis lazuli, a diamond, or an emerald, this spirit will sniff
+ out where the ore version of that material is after consuming the 
+source material. Be careful though if this is done too many times the 
+spectral spirit may just run off with the given material.
+
+Video
+
+Witchery Explained: Episode 11, Familiars!!!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Spirit
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Spirit
+
+Name
+
+Spirit
+
+Health
+
+20 (
+ x 10)
+
+Spawn
+
+In the  
+Witchery
+ 
+Spirit World
+
+Drops
+
+1 Subdued Spirit
+
+Source Mod
+
+Witchery
+
+The 
+Spirit
+ is a mob from the 
+Witchery
+ mod that spawns only in the 
+Spirit World
+. Upon death, it always drops 1 
+Subdued Spirit
+. The spirit is a passive mob capable of flight and will always attempt to flee from the player.
+
+Trivia
+
+The spirit cannot be captured in a 
+Safari Net
+
+============================================================
+# Toad
+============================================================
+Toad
+
+Name
+
+Toad
+
+Health
+
+5 (
+)
+
+Damage
+
+1 (
+)
+
+Hostility
+
+Neutral
+
+Spawn
+
+Doesn't spawn, must be mutated
+
+Drops
+
+Slimeball
+
+Rare Drops
+
+Toe of Frog
+
+Source Mod
+
+Witchery
+
+The 
+Toad
+ is a Mob from the 
+Witchery
+ mod. This mob does not spawn naturally, it must be mutated. 
+Rotten Flesh
+ is used to tame, heal, breed and feed the Toad. It can have fifty health if it is turned into a 
+familiar
+ and can be dyed different colours.
+
+Mutation
+
+The Toad is created by 'mutating' an 
+Ocelot
+ in a special contraption. 
+
+Place a 
+Cobweb
+ above a 
+Water
+ source block.
+
+Surround it in each cardinal directions with 
+Critter Snares
+ at least 2 containing small 
+Slimes
+ 
+[
+1
+]
+.
+
+Place in each of the diagonal directions, a 
+Grasspers
+ holding,
+
+In 3 directions: 3 
+Mutandis Extremis
+.
+
+In the North-East direction: an 
+Attuned Stone (Charged)
+.
+
+Lure an Ocelot into the Cobweb.
+
+Use a 
+Mutating Sprig
+ on the Cobweb.
+
+Note
+
+↑
+ 
+The amount of Slimes in Critter Snares is equal to the amount of Toads that will be mutated.
+
+Video
+
+Minecraft - Flux Buddies #146 - Making Toads (Yogscast Complete Mod Pack)
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Treefyd
+============================================================
+Treefyd
+
+Name
+
+Treefyd
+
+Health
+
+50 (
+ x 25)
+
+Damage
+
+Blinds opponents
+
+Hostility
+
+Hostile (towards anyone not in whitelist)
+
+Spawn
+
+Anywhere 
+Treefyd Seed
+ is planted
+
+Drops
+
+2-3 
+Roses
+
+Source Mod
+
+Witchery
+
+The 
+Treefyd
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be grown from 
+Treefyd Seeds
+.
+ Treefyds have an internal whitelist that teaches them who to not 
+attack, right clicking a seed on an existing treefyd copies the 
+whitelist from the spawned treefyd, it automatically is passive against 
+the seed's creator and other treefyds. Using a 
+Taglock Kit
+ of a player on a treefyd will add that player to their internal whitelist, this works for one treefyd at a time.
+
+Using a 
+Creeper Heart
+ on a treefyd permanently gives the treefyd 100 health points and lets it deal four damage, while a 
+Demon Heart
+ permanently gives the treefyd 150 health points and lets it deal eight damage.
+
+Snipping the treefyd with a 
+boline
+
+ will teach it to not wander too far but it will run off if it sees 
+something it can attack. Snipping it again with the boline teaches it 
+that roaming is fine.
+
+============================================================
+# Treefyd – Feed The Beast Wiki
+============================================================
+Treefyd
+Mod
+Witchery
+Type
+Hostile monster
+Properties
+Health points
+50 (
+ × 25) (Normal)
+
+100 (
+ × 50) 
+(with Creeper Heart)
+
+150 (
+ × 75) 
+(with Demon Heart)
+
+The 
+Treefyd
+ is both a plant and a hostile monster added by 
+Witchery
+. To spawn a Treefyd monster, plant a 
+Treefyd Seed
+ onto 
+Dirt
+ or 
+Grass
+. This will spawn both a Treefyd and a tall grass. Treefyds have 50 (
+ × 25) health points. They deal 2 (
+) points of damage and also inflict blindness on attack. Slaying a Treefyd will yield a couple of roses. 
+Demon Heart
+ and 
+Creeper Hearts
+ can be used on Treefyds to boost them. A Demon Heart will boost its health to 150 (
+ × 75) points, and it will deal 8 (
+) points of damage when attacking. A Creeper Heart will boost its health to 100 (
+ × 50) points, and it will deal 4 (
+) points of damage when attacking.
+
+Treefyds can be instructed to not wander/begin wandering by using a 
+Boline
+ on them. They will still move toward and attack targets.
+
+Recipe
+
+2
+Shaped Crafting
+
+============================================================
+# Vampire
+============================================================
+Vampirism
+ is a concept added by 
+Witchery
+. It is an affliction that grants increased strength, some active abilities and, most importantly, Immortality.
+
+Vampires have access to 5 new abilities, which and be used by 
+scrolling down from 1 on the hotbar. Most abilities use blood to use 
+such as Bat Form and Speed.
+
+The Abilities are: 
+
+Bite:
+ This ability is what is used to suck the blood from victims, you can see how much blood is in a victim via a Passive Ability.
+
+However, if you drink more than half of a player or Mobs blood, it will begin to deal some damage to the entity.
+
+Night Vision:
+ This ability, which is toggleable, allows the player to see in darkness. 
+Costs no Blood to use.
+
+Speed:
+ This ability grants increased speed and jump 
+height for a short amount of time, as your progress through the various 
+levels of vampirism,
+
+this ability becomes more powerful.
+
+Bat Form:
+ This ability will turn the player into 3 bats, and allows them to walk into 1x1 spaces and fly.

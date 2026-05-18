@@ -1,0 +1,29 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {
+      "id": "witchery:redstone_soup"
+    },
+    {
+      "id": "witchery:brew_of_flowing_spirit"
+    },
+    {
+      "id": "witchery:hint_of_rebirth"
+    },
+    {
+      "id": "witchery:mandrake_root"
+    },
+    {
+      "id": "witchery:bat_wool"
+    },
+    {
+      "id": "witchery:bramble"
+    }
+  ],
+  "result": {
+    "id": "witchery:infused_brew_base",
+    "count": 2
+  },
+  "power": 3000.0,
+  "hatBonus": 1
+}

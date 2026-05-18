@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:witch_hand",
+    "minecraft:book"
+  ],
+  "result": {
+    "id": "witchery:witches_primer",
+    "count": 1
+  }
+}

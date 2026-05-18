@@ -1,0 +1,20 @@
+{
+  "type": "witchery:spinning",
+  "fibre": {
+    "id": "witchery:wispy_cotton",
+    "count": 4
+  },
+  "modifiers": [
+    {
+      "id": "minecraft:string"
+    },
+    {
+      "id": "witchery:odour_of_purity"
+    }
+  ],
+  "result": {
+    "id": "witchery:fanciful_thread",
+    "count": 1
+  },
+  "cookingtime": 300
+}

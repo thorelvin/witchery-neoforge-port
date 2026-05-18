@@ -1,0 +1,14 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:breath_of_goddess"
+  },
+  "ingredient2": {
+    "id": "minecraft:bone_meal"
+  },
+  "result": {
+    "id": "witchery:odour_of_purity",
+    "count": 1
+  },
+  "cookingtime": 300
+}

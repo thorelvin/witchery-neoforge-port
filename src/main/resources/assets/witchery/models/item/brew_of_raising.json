@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/ingredient.brew_raising",
+    "layer1": "minecraft:item/potion"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WAW",
+    "MEB",
+    "WAW"
+  ],
+  "key": {
+    "W": "witchery:wood_ash",
+    "A": "minecraft:bone_meal",
+    "M": "witchery:mandrake_root",
+    "E": "minecraft:egg",
+    "B": "witchery:hint_of_rebirth"
+  },
+  "result": {
+    "id": "witchery:mutandis",
+    "count": 8
+  }
+}

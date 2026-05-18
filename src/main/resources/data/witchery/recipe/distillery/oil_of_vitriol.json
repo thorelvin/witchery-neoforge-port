@@ -1,0 +1,22 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:foul_fume"
+  },
+  "ingredient2": {
+    "id": "witchery:quicklime"
+  },
+  "jars": 1,
+  "outputs": [
+    {
+      "id": "witchery:gypsum"
+    },
+    {
+      "id": "witchery:oil_of_vitriol"
+    },
+    {
+      "id": "minecraft:glass_bottle"
+    }
+  ],
+  "cookingtime": 800
+}

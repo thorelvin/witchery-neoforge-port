@@ -1,0 +1,20 @@
+{
+  "type": "witchery:spinning",
+  "fibre": {
+    "id": "witchery:disturbed_cotton",
+    "count": 4
+  },
+  "modifiers": [
+    {
+      "id": "minecraft:string"
+    },
+    {
+      "id": "witchery:reek_of_misfortune"
+    }
+  ],
+  "result": {
+    "id": "witchery:tormented_twine",
+    "count": 1
+  },
+  "cookingtime": 300
+}

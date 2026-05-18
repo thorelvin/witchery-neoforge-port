@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:glowstone_dust"},
+    {"id": "minecraft:blaze_powder"},
+    {"id": "minecraft:ender_pearl"},
+    {"id": "minecraft:nether_wart"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_revealing", "count": 3},
+  "power": 0.0,
+  "color": -52480
+}

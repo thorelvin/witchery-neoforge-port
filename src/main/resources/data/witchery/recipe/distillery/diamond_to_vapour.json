@@ -1,0 +1,22 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "minecraft:diamond"
+  },
+  "ingredient2": {
+    "id": "witchery:oil_of_vitriol"
+  },
+  "jars": 3,
+  "outputs": [
+    {
+      "id": "witchery:diamond_vapour"
+    },
+    {
+      "id": "witchery:diamond_vapour"
+    },
+    {
+      "id": "witchery:odour_of_purity"
+    }
+  ],
+  "cookingtime": 800
+}

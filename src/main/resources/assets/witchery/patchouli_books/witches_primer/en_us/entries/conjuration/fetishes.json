@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.fetishes",
+  "icon": "witchery:fetish_scarecrow",
+  "category": "witchery:conjuration",
+  "sortnum": 1,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/fetishes.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.fetishes.page1" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.fetishes.effects.title", "text": "witchery.book.entry.fetishes.effects" }
+  ]
+}

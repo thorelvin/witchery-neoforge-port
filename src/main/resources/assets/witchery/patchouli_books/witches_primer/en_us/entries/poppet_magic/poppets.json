@@ -1,0 +1,11 @@
+﻿{
+  "name": "witchery.book.entry.poppets",
+  "icon": "witchery:voodoo_poppet",
+  "category": "witchery:poppet_magic",
+  "sortnum": 1,
+  "pages": [
+    { "type": "patchouli:text", "text": "witchery.book.entry.poppets.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:voodoo_poppet", "text": "witchery.book.entry.poppets.recipe" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.poppets.protection.title", "text": "witchery.book.entry.poppets.protection" }
+  ]
+}

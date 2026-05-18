@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "minecraft:birch_sapling",
+  "result": {
+    "id": "witchery:breath_of_goddess",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

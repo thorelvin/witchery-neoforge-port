@@ -1,0 +1,9 @@
+﻿{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "witchery:wispy_cotton",
+    "witchery:disturbed_cotton"
+  ],
+  "step": "vegetal_decoration"
+}

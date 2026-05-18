@@ -1,0 +1,5 @@
+{
+  "multipart": [
+    { "apply": { "model": "witchery:block/rowan_leaves" } }
+  ]
+}

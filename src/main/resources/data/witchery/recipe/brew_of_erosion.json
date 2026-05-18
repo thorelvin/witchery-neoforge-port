@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:sand"},
+    {"id": "minecraft:gravel"},
+    {"id": "minecraft:flint"},
+    {"id": "minecraft:iron_ingot"},
+    {"id": "minecraft:spider_eye"},
+    {"id": "minecraft:fermented_spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_erosion", "count": 3},
+  "power": 0.0,
+  "color": -4456656
+}

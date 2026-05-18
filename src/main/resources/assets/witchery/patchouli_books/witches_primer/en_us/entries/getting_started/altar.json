@@ -1,0 +1,18 @@
+﻿{
+  "name": "witchery.book.entry.altar",
+  "icon": "witchery:altar",
+  "category": "witchery:getting_started",
+  "sortnum": 1,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/altar.png"],"border":false},
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.altar.page1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:altar",
+      "text": "witchery.book.entry.altar.recipe"
+    }
+  ]
+}
+

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_savanna",
+  "features": "witchery:wild_artichoke",
+  "step": "vegetal_decoration"
+}

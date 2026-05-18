@@ -1,0 +1,10 @@
+{
+  "type": "witchery:torment",
+  "generator": {
+    "type": "witchery:torment_maze",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "witchery:torment"
+    }
+  }
+}

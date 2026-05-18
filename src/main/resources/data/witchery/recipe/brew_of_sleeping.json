@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:wheat"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:spider_eye"},
+    {"id": "minecraft:fermented_spider_eye"},
+    {"id": "minecraft:poppy"},
+    {"id": "minecraft:blue_dye"}
+  ],
+  "result": {"id": "witchery:brew_of_sleeping", "count": 3},
+  "power": 0.0,
+  "color": -14765975
+}

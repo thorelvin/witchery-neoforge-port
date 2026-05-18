@@ -1,0 +1,205 @@
+
+============================================================
+# Spirit Portal (Witchery) – Feed The Beast Wiki
+============================================================
+This page is about the structure added by Witchery. For other uses, see 
+Spirit Portal
+.
+
+Spirit Portal
+Mod
+Witchery
+Type
+Multiblock structure
+
+The 
+Spirit Portal
+ is a multiblock structure from the 
+Witchery
+ mod. It can be created in the 
+Spirit World
+ to easily travel back and forth through the overworld for short durations of time as a ghost. The Spirit Portal is only able to be created if the player has used the 
+Rite of Manifestation
+. Spirit Portals are created with a ring of snow blocks, creating a 2x2 vertical hole. Like the Nether Portal, the corners can be missed. To ignite the portal, place a 
+Flowing Spirit
+ source block on the bottom layer. This can be done by throwing a 
+Brew of Flowing Spirit
+, or using a Spirit Bucket on the block.
+
+============================================================
+# Spirit World – Feed The Beast Wiki
+============================================================
+Spirit World
+Mod
+Witchery
+Type
+Dimension
+
+The 
+Spirit World
+ is an alternate dimension added by 
+Witchery
+. It appears as a mirror of the 
+Overworld
+ in topography. When a player enters the Spirit World, they leave most of their gear and inventory items behind; if 
+Baubles
+ is installed all equipped baubles will transfer over. The Spirit World is the only source of 
+Wispy Cotton
+, 
+Disturbed Cotton
+, and the 
+Mellifluous Hunger
+, the latter of which is dropped by 
+Nightmares
+. Using 
+Mutandis
+ on plants can result in 
+Nether Warts
+, when in this dimension.
+
+Additionally, 
+Brews of Flowing Spirit
+ can only be created in the Spirit World. Circle Magic does not work in the Spirit World, and 
+Endermen
+ do not exist in this dimension.
+
+Entering the Spirit World
+
+Entering the Spirit World can be done in a few ways. A player can eat an 
+Apple of Sleeping
+, drink a 
+Brew of Sleeping
+, or go through a 
+Spirit Portal
+. 
+
+When a player enters the Spirit World, they will enter in either a Dream, or a Nightmare—the latter is more common, especially without proper Dream Weavers. There are also 
+Demonic Nightmares
+, which are much harsher than normal nightmares. Information about them can be found at the bottom of this article.
+
+Nightmares will force the 
+Nightmare
+ monster to spawn, stalk, and attack the player when they are in the world. Nightmares are perpetually in nighttime and Dreams are perpetually in daytime. 
+Icy Needles
+ will always stay in the player's inventory, along with 
+Mutandis
+.
+
+The chance of a Nightmare occurring can be reduced by setting up a proper environment around the player. A variety of different blocks have different effects on whether the player will experience a nightmare or not. Blocks within an eight-block radius (including those on the vertical axis) of the player can have an impact. The table below describes how much different blocks increase or decrease the chance for a nightmare, and the maximum number of blocks of this type which can have an effect. The chance will only be modified if a 
+Dream Weaver of Nightmares
+ is within range.
+
+Block
+
+Chance change
+
+Maximum blocks
+
+ 
+Dream Weaver of Nightmares
+
+-50%
+
+1
+
+ 
+Flowing Spirit
+
+-10%
+
+3
+
+ 
+Wispy Cotton
+
+-10%
+
+2
+
+ 
+Demon Heart
+
++35%
+
+2
+
+Fire
+
++10%
+
+3
+
+Exiting the Spirit World
+
+When a player dies in the Spirit World, they will return to the Overworld. An 
+Icy Needle
+ can also be used to return. If the body of a player travelling in the Spirit World is slain in the Overworld, the player will be forcefully awoken.
+
+The player's equipment in the Spirit World is retained upon returning. Icy Needles will always stay in the player's inventory. Wispy Cotton, Disturbed Cotton, Mellifluous Hunger, and Brews of Flowing Spirit can pass through from the Spirit World to the Overworld but not the other way around. 
+
+Manifestation
+
+The 
+Rite of Manifestation
+ can be used to improve traveling between the Spirit World and the overworld. If a player has used the Rite of Manifestation, they can enter and exit through 
+Spirit Portals
+. 
+
+Demonic Nightmares
+
+Demonic Nightmares are a form of Nightmare that will involve fiery rain and 
+Demons
+. To enter a Demonic Nightmare, the player must drink a 
+Brew of Sleeping
+ near a 
+Dream Weaver of Nightmares
+, a pool of 
+Flowing Spirit
+, and a placed 
+Demon Heart
+. There is only a small chance that a demonic nightmare will occur.
+
+============================================================
+# Torment – Feed The Beast Wiki
+============================================================
+This page is about the Torment dimension. For the Torment item, or scroll, see 
+Torment (Item)
+.
+
+Torment
+Mod
+Witchery
+Type
+Dimension
+
+Torment
+ is an alternate dimension added by  
+Witchery
+. It is a world containing multiple, randomly generated, and horizontally aligned mazes. Newly generated Torment dimensions in 0.20.0 have an indestructible block that appears similar to 
+Mycelium
+ called 
+Torment Stone
+. There are also occasional Mycelium blocks in the floor, which can be used for charging 
+Bark Belts
+. The Mycelium-like block was implemented to prevent an exploit with various bedrock breaking tools, such as the 
+Bedrock Breaker
+ from 
+RotaryCraft
+. There are hidden dungeon loot chests in various places of the maze. These chests contain standard dungeon loot.
+
+Prior to version 0.20.0, the mazes have floors of 
+Bedrock
+, and walls of hard air blocks. This means, without a device that can break bedrock, such as the Bedrock Breaker from RotaryCraft, it is impossible to leave mazes in this manner.
+
+Entering Torment
+
+To initially enter the Torment dimension, the player must summon the 
+Lord of Torment
+ using a 
+Torment Scroll
+. Then, they must battle it until it has half of its health depleted 250 (
+ × 125)). At this point, the player and boss will be teleported into the dimension.
+
+Exiting Torment
+
+When a player dies in Torment, they will be transported back to the Overworld. The other way to leave Torment is to complete the maze and go through the Torment Portal.

@@ -1,0 +1,221 @@
+package com.emoniph.witchery.init;
+
+import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.entity.*;
+import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
+import com.emoniph.witchery.entity.SoulfireProjectile;
+import com.emoniph.witchery.entity.NightmareEntity;
+import com.emoniph.witchery.entity.SpiritEntity;
+import com.emoniph.witchery.entity.BroomEntity;
+import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+@EventBusSubscriber(modid = WitcheryMod.MODID)
+public class WitcheryEntities {
+
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, WitcheryMod.MODID);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<OwlFamiliarEntity>> OWL =
+            ENTITY_TYPES.register("owl", () ->
+                    EntityType.Builder.of(OwlFamiliarEntity::new, MobCategory.CREATURE)
+                            .sized(0.5F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "owl"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CatFamiliarEntity>> FAMILIAR_CAT =
+            ENTITY_TYPES.register("familiar_cat", () ->
+                    EntityType.Builder.of(CatFamiliarEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 0.7F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "familiar_cat"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ToadFamiliarEntity>> TOAD =
+            ENTITY_TYPES.register("toad", () ->
+                    EntityType.Builder.of(ToadFamiliarEntity::new, MobCategory.CREATURE)
+                            .sized(0.7F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "toad"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CovenWitchEntity>> COVEN_WITCH =
+            ENTITY_TYPES.register("coven_witch", () ->
+                    EntityType.Builder.of(CovenWitchEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "coven_witch"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WitchHunterEntity>> WITCH_HUNTER =
+            ENTITY_TYPES.register("witch_hunter", () ->
+                    EntityType.Builder.of(WitchHunterEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "witch_hunter"))));
+
+    // ── Broom ─────────────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BroomEntity>> BROOM =
+            ENTITY_TYPES.register("broom", () ->
+                    EntityType.Builder.<BroomEntity>of(BroomEntity::new, MobCategory.MISC)
+                            .sized(1.2F, 0.5F).clientTrackingRange(10).noSummon().build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "broom"))));
+
+    // ── M27 — Horror + Summoned Entities ─────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BansheeEntity>> BANSHEE =
+            ENTITY_TYPES.register("banshee", () ->
+                    EntityType.Builder.of(BansheeEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "banshee"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SpectreEntity>> SPECTRE =
+            ENTITY_TYPES.register("spectre", () ->
+                    EntityType.Builder.of(SpectreEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spectre"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PoltergeistEntity>> POLTERGEIST =
+            ENTITY_TYPES.register("poltergeist", () ->
+                    EntityType.Builder.of(PoltergeistEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.5F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "poltergeist"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<TreefydEntity>> TREEFYD =
+            ENTITY_TYPES.register("treefyd", () ->
+                    EntityType.Builder.of(TreefydEntity::new, MobCategory.MONSTER)
+                            .sized(0.4F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "treefyd"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntEntity>> ENT =
+            ENTITY_TYPES.register("ent", () ->
+                    EntityType.Builder.of(EntEntity::new, MobCategory.CREATURE)
+                            .sized(1.2F, 3.0F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "ent"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
+            ENTITY_TYPES.register("mandrake_mob", () ->
+                    EntityType.Builder.of(MandrakeEntity::new, MobCategory.MONSTER)
+                            .sized(0.4F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mandrake_mob"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DemonEntity>> DEMON =
+            ENTITY_TYPES.register("demon", () ->
+                    EntityType.Builder.of(DemonEntity::new, MobCategory.MONSTER)
+                            .sized(1.0F, 2.9F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "demon"))));
+
+    // ── Binky — Death's horse ─────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.BinkyEntity>> BINKY =
+            ENTITY_TYPES.register("binky", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.BinkyEntity::new, MobCategory.CREATURE)
+                            .sized(1.4F, 1.6F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "binky"))));
+
+    // ── Death boss ────────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DeathEntity>> DEATH =
+            ENTITY_TYPES.register("death", () ->
+                    EntityType.Builder.of(DeathEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(16).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "death"))));
+
+    // ── Flame Imp ─────────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.FlameImpEntity>> FLAME_IMP =
+            ENTITY_TYPES.register("flame_imp", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.FlameImpEntity::new, MobCategory.MONSTER)
+                            .sized(0.4F, 1.3F).fireImmune().clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "flame_imp"))));
+
+    // ── Lord of Torment boss ──────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LordOfTormentEntity>> LORD_OF_TORMENT =
+            ENTITY_TYPES.register("lord_of_torment", () ->
+                    EntityType.Builder.of(LordOfTormentEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.9F).clientTrackingRange(16).fireImmune().build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "lord_of_torment"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SoulfireProjectile>> SOULFIRE =
+            ENTITY_TYPES.register("soulfire", () ->
+                    EntityType.Builder.<SoulfireProjectile>of(SoulfireProjectile::new, MobCategory.MISC)
+                            .sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "soulfire"))));
+
+    // ── Flying Monkey (M10) ───────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.FlyingMonkeyEntity>> FLYING_MONKEY =
+            ENTITY_TYPES.register("flying_monkey", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.FlyingMonkeyEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 0.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "flying_monkey"))));
+
+    // ── Hobgoblin (M9) ────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.HobgoblinEntity>> HOBGOBLIN =
+            ENTITY_TYPES.register("hobgoblin", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.HobgoblinEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "hobgoblin"))));
+
+    // ── M25b — Spirit World entities ──────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<NightmareEntity>> NIGHTMARE =
+            ENTITY_TYPES.register("nightmare", () ->
+                    EntityType.Builder.of(NightmareEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "nightmare"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SpiritEntity>> SPIRIT =
+            ENTITY_TYPES.register("spirit", () ->
+                    EntityType.Builder.of(SpiritEntity::new, MobCategory.CREATURE)
+                            .sized(0.5F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spirit"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.CorpseEntity>> CORPSE =
+            ENTITY_TYPES.register("corpse", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.CorpseEntity>of(com.emoniph.witchery.entity.CorpseEntity::new, MobCategory.MISC)
+                            .sized(0.6F, 0.2F).clientTrackingRange(10).noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "corpse"))));
+
+    @SubscribeEvent
+    public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(BANSHEE.get(),      SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(SPECTRE.get(),      SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(POLTERGEIST.get(),  SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(MANDRAKE_MOB.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(DEMON.get(),        SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(NIGHTMARE.get(),    SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(HOBGOBLIN.get(),     SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, spawnType, pos, rand) -> level.getBlockState(pos.below())
+                        .is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
+                RegisterSpawnPlacementsEvent.Operation.OR);
+
+        // Spirit World — spirit orb floats freely
+        event.register(SPIRIT.get(),        SpawnPlacementTypes.NO_RESTRICTIONS,  Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.Mob::checkMobSpawnRules,    RegisterSpawnPlacementsEvent.Operation.OR);
+
+        // Ground mobs — humanoids and ground-walkers
+        event.register(COVEN_WITCH.get(),   SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(WITCH_HUNTER.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(TREEFYD.get(),       SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(ENT.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+
+        // Familiars — creature-category animals
+        event.register(OWL.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(FAMILIAR_CAT.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(TOAD.get(),          SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+    }
+
+    @SubscribeEvent
+    public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
+        event.put(OWL.get(),           OwlFamiliarEntity.createAttributes().build());
+        event.put(FAMILIAR_CAT.get(),  CatFamiliarEntity.createAttributes().build());
+        event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
+        event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());
+        event.put(WITCH_HUNTER.get(),  WitchHunterEntity.createAttributes().build());
+        event.put(BANSHEE.get(),       BansheeEntity.createAttributes().build());
+        event.put(SPECTRE.get(),       SpectreEntity.createAttributes().build());
+        event.put(POLTERGEIST.get(),   PoltergeistEntity.createAttributes().build());
+        event.put(TREEFYD.get(),       TreefydEntity.createAttributes().build());
+        event.put(ENT.get(),           EntEntity.createAttributes().build());
+        event.put(MANDRAKE_MOB.get(),  MandrakeEntity.createAttributes().build());
+        event.put(DEMON.get(),         DemonEntity.createAttributes().build());
+        event.put(NIGHTMARE.get(),        NightmareEntity.createAttributes().build());
+        event.put(SPIRIT.get(),           SpiritEntity.createAttributes().build());
+        event.put(BROOM.get(),            BroomEntity.createAttributes().build());
+        event.put(LORD_OF_TORMENT.get(),  LordOfTormentEntity.createAttributes().build());
+        event.put(FLAME_IMP.get(),        com.emoniph.witchery.entity.FlameImpEntity.createAttributes().build());
+        event.put(BINKY.get(),            com.emoniph.witchery.entity.BinkyEntity.createAttributes().build());
+        event.put(DEATH.get(),            DeathEntity.createAttributes().build());
+        event.put(HOBGOBLIN.get(),        com.emoniph.witchery.entity.HobgoblinEntity.createAttributes().build());
+        event.put(FLYING_MONKEY.get(),    com.emoniph.witchery.entity.FlyingMonkeyEntity.createAttributes().build());
+        event.put(CORPSE.get(),           com.emoniph.witchery.entity.CorpseEntity.createAttributes().build());
+    }
+}

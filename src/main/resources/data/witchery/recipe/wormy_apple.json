@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:apple",
+    "minecraft:rotten_flesh",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "witchery:wormy_apple",
+    "count": 1
+  }
+}

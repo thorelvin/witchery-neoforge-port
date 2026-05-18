@@ -1,0 +1,33 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {
+      "id": "witchery:redstone_soup"
+    },
+    {
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_swiftness"
+        }
+      }
+    },
+    {
+      "id": "minecraft:ender_eye"
+    },
+    {
+      "id": "minecraft:ender_eye"
+    },
+    {
+      "id": "witchery:drop_of_luck"
+    },
+    {
+      "id": "witchery:bat_wool"
+    }
+  ],
+  "result": {
+    "id": "witchery:spirit_of_otherwhere",
+    "count": 2
+  },
+  "power": 4000.0
+}

@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:feather"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:wheat"},
+    {"id": "minecraft:pumpkin_seeds"},
+    {"id": "minecraft:apple"},
+    {"id": "minecraft:fermented_spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_soaring", "count": 3},
+  "power": 1000.0,
+  "color": 6750208
+}

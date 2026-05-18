@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "witchery:hawthorn_sapling",
+  "result": {
+    "id": "witchery:odour_of_purity",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

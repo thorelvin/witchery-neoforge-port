@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:snowball"},
+    {"id": "minecraft:ice"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:wheat"},
+    {"id": "minecraft:pumpkin_seeds"},
+    {"id": "minecraft:apple"}
+  ],
+  "result": {"id": "witchery:brew_of_ice", "count": 3},
+  "power": 1000.0,
+  "color": 6750208
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "QBQ",
+    "BGQ",
+    "QBQ"
+  ],
+  "key": {
+    "Q": "minecraft:quartz",
+    "B": "minecraft:quartz_block",
+    "G": "minecraft:glass"
+  },
+  "result": {
+    "id": "witchery:quartz_sphere",
+    "count": 1
+  }
+}

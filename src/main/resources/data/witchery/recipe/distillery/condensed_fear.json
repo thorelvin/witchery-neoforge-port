@@ -1,0 +1,27 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:brew_of_flowing_spirit"
+  },
+  "ingredient2": {
+    "id": "witchery:oil_of_vitriol"
+  },
+  "jars": 2,
+  "outputs": [
+    {
+      "id": "witchery:focused_will"
+    },
+    {
+      "id": "witchery:condensed_fear"
+    },
+    {
+      "id": "witchery:brew_of_hollow_tears",
+      "count": 4
+    },
+    {
+      "id": "witchery:brew_of_hollow_tears",
+      "count": 4
+    }
+  ],
+  "cookingtime": 800
+}

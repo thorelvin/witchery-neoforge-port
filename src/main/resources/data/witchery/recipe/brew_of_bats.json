@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:bat_spawn_egg"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:wheat"},
+    {"id": "minecraft:pumpkin_seeds"},
+    {"id": "minecraft:apple"},
+    {"id": "minecraft:fermented_spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_bats", "count": 3},
+  "power": 1000.0,
+  "color": 8421504
+}

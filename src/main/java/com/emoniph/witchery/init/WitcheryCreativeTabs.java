@@ -1,0 +1,183 @@
+package com.emoniph.witchery.init;
+
+import com.emoniph.witchery.WitcheryMod;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+public class WitcheryCreativeTabs {
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, WitcheryMod.MODID);
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WITCHERY_TAB = TABS.register("witchery_tab", () ->
+            CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.witchery"))
+                    .icon(() -> WitcheryItems.ARTHANA.get().getDefaultInstance())
+                    .displayItems((params, output) -> {
+                        // Guidebook first
+                        output.accept(WitcheryItems.WITCHES_PRIMER.get());
+                        // Blocks
+                        output.accept(WitcheryItems.ROWAN_LOG.get());
+                        output.accept(WitcheryItems.ROWAN_WOOD.get());
+                        output.accept(WitcheryItems.ROWAN_LEAVES.get());
+                        output.accept(WitcheryItems.ROWAN_SAPLING.get());
+                        output.accept(WitcheryItems.BELLADONNA.get());
+                        output.accept(WitcheryItems.MANDRAKE_ROOT.get());
+                        output.accept(WitcheryItems.ARTICHOKE.get());
+                        output.accept(WitcheryItems.COTTON.get());
+                        output.accept(WitcheryItems.WITCH_SEEDS.get());
+                        output.accept(WitcheryItems.SNOWBELL.get());
+                        output.accept(WitcheryItems.BLOOD_ROSE.get());
+                        output.accept(WitcheryItems.EMBER_MOSS.get());
+                        output.accept(WitcheryItems.GLINT_WEED.get());
+                        output.accept(WitcheryItems.SPANISH_MOSS.get());
+                        output.accept(WitcheryItems.BRAMBLE.get());
+                        output.accept(WitcheryItems.VOID_BRAMBLE.get());
+                        output.accept(WitcheryItems.LEAPING_LILY.get());
+                        output.accept(WitcheryItems.GRASSPER.get());
+                        output.accept(WitcheryItems.GLOWGLOBE.get());
+                        output.accept(WitcheryItems.KETTLE.get());
+                        output.accept(WitcheryItems.DISTILLERY.get());
+                        output.accept(WitcheryItems.SPINNING_WHEEL.get());
+                        output.accept(WitcheryItems.WITCHES_OVEN.get());
+                        output.accept(WitcheryItems.ALTAR.get());
+                        output.accept(WitcheryItems.FUME_FUNNEL.get());
+                        output.accept(WitcheryItems.BRAZIER.get());
+                        output.accept(WitcheryItems.POPPET_SHELF.get());
+                        output.accept(WitcheryItems.LEECH_CHEST.get());
+                        output.accept(WitcheryItems.REFILLING_CHEST.get());
+                        output.accept(WitcheryItems.CANDELABRA.get());
+                        output.accept(WitcheryItems.CHALICE.get());
+                        output.accept(WitcheryItems.CRYSTAL_BALL.get());
+                        output.accept(WitcheryItems.DREAM_CATCHER.get());
+                        output.accept(WitcheryItems.WEAVE_FLEET_FOOT.get());
+                        output.accept(WitcheryItems.WEAVE_IRON_ARM.get());
+                        output.accept(WitcheryItems.WEAVE_FASTING.get());
+                        output.accept(WitcheryItems.WEAVE_NIGHTMARES.get());
+                        output.accept(WitcheryItems.WEAVE_INTENSITY.get());
+                        output.accept(WitcheryItems.DEMONIC_CONTRACT.get());
+                        output.accept(WitcheryItems.ICY_NEEDLE.get());
+                        output.accept(WitcheryItems.SOUL_OF_TORMENT.get());
+                        output.accept(WitcheryItems.TORMENT_SCROLL.get());
+                        output.accept(WitcheryItems.ALLURING_SKULL.get());
+                        output.accept(WitcheryItems.DEMON_HEART.get());
+                        output.accept(WitcheryItems.COFFIN.get());
+                        output.accept(WitcheryItems.ROWAN_PLANKS.get());
+                        output.accept(WitcheryItems.ROWAN_DOOR.get());
+                        output.accept(WitcheryItems.ROWAN_DOOR_KEY.get());
+                        output.accept(WitcheryItems.ROWAN_KEYRING.get());
+                        output.accept(WitcheryItems.ICE_DOOR.get());
+                        output.accept(WitcheryItems.ICE_FENCE.get());
+                        output.accept(WitcheryItems.ICE_GATE.get());
+                        output.accept(WitcheryItems.ICE_PRESSURE_PLATE.get());
+                        output.accept(WitcheryItems.FETISH_SCARECROW.get());
+                        output.accept(WitcheryItems.FETISH_TRENT_EFFIGY.get());
+                        output.accept(WitcheryItems.FETISH_WITCHS_LADDER.get());
+                        output.accept(WitcheryItems.STATUE_GODDESS.get());
+                        output.accept(WitcheryItems.WICKER_BUNDLE.get());
+                        output.accept(WitcheryItems.CRITTER_SNARE.get());
+                        output.accept(WitcheryItems.WITCH_DOOR.get());
+                        // Items
+                        output.accept(WitcheryItems.BROOM.get());
+                        output.accept(WitcheryItems.ENCHANTED_BROOM.get());
+                        output.accept(WitcheryItems.ARTHANA.get());
+                        output.accept(WitcheryItems.BOLINE.get());
+                        output.accept(WitcheryItems.CHALK.get());
+                        output.accept(WitcheryItems.MYSTIC_BRANCH.get());
+                        output.accept(WitcheryItems.TAGLOCK_KIT.get());
+                        output.accept(WitcheryItems.POPPET.get());
+                        output.accept(WitcheryItems.DEATH_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.EARTH_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.WATER_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.FIRE_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.HUNGER_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.VOODOO_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.POPPET_PROTECTION_POPPET.get());
+                        output.accept(WitcheryItems.VOODOO_POPPET.get());
+                        output.accept(WitcheryItems.VAMPIRIC_POPPET.get());
+                        output.accept(WitcheryItems.BREW_BAG.get());
+                        output.accept(WitcheryItems.DIVINER.get());
+                        output.accept(WitcheryItems.CIRCLE_TALISMAN.get());
+                        output.accept(WitcheryItems.WITCH_HAND.get());
+                        output.accept(WitcheryItems.FANCIFUL_THREAD.get());
+                        output.accept(WitcheryItems.REDSTONE_SOUP.get());
+                        output.accept(WitcheryItems.DIAMOND_VAPOUR.get());
+                        output.accept(WitcheryItems.BAT_WOOL.get());
+                        output.accept(WitcheryItems.WOOD_ASH.get());
+                        output.accept(WitcheryItems.ROWAN_BERRIES.get());
+                        output.accept(WitcheryItems.WORMWOOD.get());
+                        output.accept(WitcheryItems.EXHALE_OF_HORNED_ONE.get());
+                        output.accept(WitcheryItems.HINT_OF_REBIRTH.get());
+                        output.accept(WitcheryItems.MUTANDIS.get());
+                        output.accept(WitcheryItems.MUTANDIS_EXTREMIS.get());
+                        output.accept(WitcheryItems.MUTATOR.get());
+                        output.accept(WitcheryItems.SPECTRAL_STONE.get());
+                        output.accept(WitcheryItems.POPPET_SHELF_COMPASS.get());
+                        output.accept(WitcheryItems.POLYNESIA_CHARM.get());
+                        output.accept(WitcheryItems.PARASYTIC_LOUSE.get());
+                        output.accept(WitcheryItems.BUCKET_SPIRIT.get());
+                        output.accept(WitcheryItems.HAND_BOW.get());
+                        output.accept(WitcheryItems.HUNTSMAN_SPEAR.get());
+                        output.accept(WitcheryItems.WITCHES_HAT.get());
+                        output.accept(WitcheryItems.WITCHES_ROBE.get());
+                        output.accept(WitcheryItems.WITCHES_SHOES.get());
+                        output.accept(WitcheryItems.HUNTER_HELMET.get());
+                        output.accept(WitcheryItems.HUNTER_CHESTPLATE.get());
+                        output.accept(WitcheryItems.HUNTER_LEGGINGS.get());
+                        output.accept(WitcheryItems.HUNTER_BOOTS.get());
+                        output.accept(WitcheryItems.DEATHS_HOOD.get());
+                        output.accept(WitcheryItems.DEATHS_ROBE.get());
+                        output.accept(WitcheryItems.DEATHS_SHOES.get());
+                        output.accept(WitcheryItems.DEATHS_HAND.get());
+                        // Brews
+                        output.accept(WitcheryItems.BREW_OF_RAISING.get());
+                        output.accept(WitcheryItems.BREW_OF_SLEEPING.get());
+                        output.accept(WitcheryItems.BREW_OF_FLOWING_SPIRIT.get());
+                        output.accept(WitcheryItems.BREW_OF_WASTING.get());
+                        output.accept(WitcheryItems.BREW_OF_EROSION.get());
+                        output.accept(WitcheryItems.BREW_OF_FOULNESS.get());
+                        output.accept(WitcheryItems.BREW_OF_INFECTION.get());
+                        output.accept(WitcheryItems.BREW_OF_LOVE.get());
+                        output.accept(WitcheryItems.BREW_OF_THE_GROTESQUE.get());
+                        output.accept(WitcheryItems.BREW_OF_REVEALING.get());
+                        output.accept(WitcheryItems.BREW_OF_POISON.get());
+                        output.accept(WitcheryItems.BREW_OF_FROST.get());
+                        output.accept(WitcheryItems.BREW_OF_FOAMING.get());
+                        // Infusion brew bases (M19)
+                        output.accept(WitcheryItems.GHOST_OF_THE_LIGHT.get());
+                        output.accept(WitcheryItems.SOUL_OF_THE_WORLD.get());
+                        output.accept(WitcheryItems.SPIRIT_OF_OTHERWHERE.get());
+                        output.accept(WitcheryItems.INFERNAL_ANIMUS.get());
+                        output.accept(WitcheryItems.MYSTIC_UNGUENT.get());
+                        output.accept(WitcheryItems.FLYING_OINTMENT.get());
+                        output.accept(WitcheryItems.HAPPENSTANCE_OIL.get());
+                        output.accept(WitcheryItems.INFUSED_BREW_BASE.get());
+                        output.accept(WitcheryItems.INFUSED_BREW_OF_SOARING.get());
+                        output.accept(WitcheryItems.INFUSED_BREW_OF_THE_GRAVE.get());
+                        // Spawn eggs — NPC
+                        output.accept(WitcheryItems.COVEN_WITCH_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.WITCH_HUNTER_SPAWN_EGG.get());
+                        // Spawn eggs — M27 horror entities
+                        output.accept(WitcheryItems.BANSHEE_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.SPECTRE_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.POLTERGEIST_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.TREEFYD_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.ENT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.MANDRAKE_MOB_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.DEMON_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.NIGHTMARE_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.SPIRIT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.FLAME_IMP_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.LORD_OF_TORMENT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.DEATH_SPAWN_EGG.get());
+                        // Spawn eggs — familiars & sprint-8/9 entities
+                        output.accept(WitcheryItems.OWL_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.FAMILIAR_CAT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.TOAD_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.HOBGOBLIN_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.BINKY_SPAWN_EGG.get());
+                    })
+                    .build());
+}

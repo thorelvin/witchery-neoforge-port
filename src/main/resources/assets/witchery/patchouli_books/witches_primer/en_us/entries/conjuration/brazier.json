@@ -1,0 +1,11 @@
+﻿{
+  "name": "witchery.book.entry.brazier",
+  "icon": "witchery:brazier",
+  "category": "witchery:conjuration",
+  "sortnum": 0,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/conjuration.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.brazier.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:brazier", "text": "witchery.book.entry.brazier.recipe" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.brazier.conjurations.title", "text": "witchery.book.entry.brazier.conjurations" }
+  ]
+}

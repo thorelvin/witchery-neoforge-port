@@ -1,0 +1,25 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:breath_of_goddess"
+  },
+  "ingredient2": {
+    "id": "minecraft:lapis_lazuli"
+  },
+  "jars": 3,
+  "outputs": [
+    {
+      "id": "witchery:tear_of_goddess"
+    },
+    {
+      "id": "witchery:whiff_of_magic"
+    },
+    {
+      "id": "minecraft:glass_bottle"
+    },
+    {
+      "id": "witchery:foul_fume"
+    }
+  ],
+  "cookingtime": 800
+}

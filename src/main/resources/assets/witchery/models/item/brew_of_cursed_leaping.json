@@ -1,0 +1,7 @@
+﻿{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/ingredient.brew_cursed_leaping",
+    "layer1": "minecraft:item/potion"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "#minecraft:is_taiga",
+    "#witchery:is_cold"
+  ],
+  "features": [
+    "witchery:wild_snowbell",
+    "witchery:wild_wormwood",
+    "witchery:rowan_tree"
+  ],
+  "step": "vegetal_decoration"
+}

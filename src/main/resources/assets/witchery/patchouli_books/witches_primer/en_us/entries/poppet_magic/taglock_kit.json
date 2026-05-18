@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.taglock_kit",
+  "icon": "witchery:taglock_kit",
+  "category": "witchery:poppet_magic",
+  "sortnum": 0,
+  "pages": [
+    { "type": "patchouli:text", "text": "witchery.book.entry.taglock_kit.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:taglock_kit", "text": "witchery.book.entry.taglock_kit.recipe" }
+  ]
+}

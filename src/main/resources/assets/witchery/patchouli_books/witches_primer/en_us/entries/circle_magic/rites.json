@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.rites",
+  "icon": "witchery:circle_talisman",
+  "category": "witchery:circle_magic",
+  "sortnum": 2,
+  "pages": [
+    { "type": "patchouli:text", "text": "witchery.book.entry.rites.page1" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.rites.examples.title", "text": "witchery.book.entry.rites.examples" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {
+      "id": "witchery:redstone_soup"
+    },
+    {
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_night_vision"
+        }
+      }
+    },
+    {
+      "id": "minecraft:ender_eye"
+    },
+    {
+      "id": "minecraft:golden_carrot"
+    },
+    {
+      "id": "minecraft:spider_eye"
+    },
+    {
+      "id": "witchery:mandrake_root"
+    }
+  ],
+  "result": {
+    "id": "witchery:happenstance_oil"
+  },
+  "power": 2000.0
+}

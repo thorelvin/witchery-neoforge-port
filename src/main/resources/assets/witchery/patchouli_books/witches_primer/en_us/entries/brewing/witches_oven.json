@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.witches_oven",
+  "icon": "witchery:witches_oven",
+  "category": "witchery:brewing",
+  "sortnum": 1,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/witches_oven.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.witches_oven.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:witches_oven", "text": "witchery.book.entry.witches_oven.recipe" }
+  ]
+}

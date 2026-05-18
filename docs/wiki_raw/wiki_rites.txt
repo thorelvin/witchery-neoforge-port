@@ -1,0 +1,5892 @@
+
+============================================================
+# Anguish of the Dead
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Armor Protection Poppet
+============================================================
+Armor Protection Poppet
+
+Name
+
+Armor Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Armor Protection Poppet
+ is an item added by 
+Witchery
+. It stops a player's armor from breaking, restoring the armor piece back to full durability, but in the process destroys the poppet.
+
+It must be in a players inventory or a 
+Poppet Shelf
+ to function.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a mob or player via a Taglock Kit to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Armor Protection Poppet can be used to create the following items:
+ 
+Armor Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Creatures of the Night
+============================================================
+Creatures of the Night
+
+Name
+
+Creatures of the Night
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+Creatures of the Night
+ is a spell added by 
+Witchery
+. It is one of Witchery's curses that mutates the victim into a vampire. This curse stays with the victim even after death.
+
+Recipe
+
+To apply this curse and turn into a first level vampire, drink the 
+blood
+ of 
+Lilith
+. This instantly changes the victim into a vampire and starts them right on their first quest.
+
+Quests
+
+ •  Level 1: Do the Ritual from 
+Observations of an Immortal
+ and drink the 
+blood
+ of 
+Lilith
+.
+
+ •  Level 2: Feed from 
+villagers
+ and fill up the blood pool.
+
+ •  Level 3: Feed from up to five villagers.
+
+ •  Level 4: Survive 4 nights and read a full copy of the Observations of an Immortal book.
+
+ •  Level 5: Sun grenade yourself ten times.
+
+ •  Level 6: Kill twenty blazes.
+
+ •  Level 7: Repeat the first Ritual used for summoning Lilith, then gift her a poppy.
+
+ •  Level 8: In bat form, fly from one Witchery walled village to another. 
+
+ •  Level 9: Trap villagers in specially made cages built as the book says, transfix them and feed from them.
+
+ •  Level 10: Turn one of the villagers into a vampire minion.
+
+============================================================
+# Curse of Blight
+============================================================
+Curse of Blight
+
+Name
+
+Curse of Blight
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Blight
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's curses that can cause blight in an large 
+area, blight kills the local flora and fauna, the earth itself decays 
+and becomes sand, villagers become infected with zombism, and players 
+will get the Nausea debuff.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+0
+
+============================================================
+# Curse of Blindness
+============================================================
+Curse of Blindness
+
+Name
+
+Curse of Blindness
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Blindness
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that can cause all players in a large area to become blind.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+============================================================
+# Curse of Corrupt Poppet
+============================================================
+Curse of Corrupt Poppet
+
+Name
+
+Curse of Corrupt Poppet
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Corrupt Poppet
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that can targets a specific witch and destroys up to ten of their poppets.
+
+This spell requires having a 
+cat
+ 
+familiar
+.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+7000
+
+Taglock Kit must be bound
+
+This spell requires having a cat familiar.
+
+============================================================
+# Curse of Hell on Earth
+============================================================
+Curse of Hell on Earth
+
+Name
+
+Curse of Hell on Earth
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Hell on Earth
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that opens a doorway to Hell and releases the natives onto the Earth.
+
+The curse can be boosted by having a 
+cat
+ 
+familiar
+, the boost is a wave of fire.
+
+Recipe
+
++0
+
+Altar Power: 
+5000
+
+7x7 circle of infernal glyphs, 11x11 circle of otherwhere glyphs, and 15x15 circle of infernal glyphs.
+
+This spell only works in the Overworld at night.
+
+Costs 200 altar power per second while active, more than an altar can generate without an Infinity Egg.
+
+============================================================
+# Curse of Insanity
+============================================================
+Curse of Insanity
+
+Name
+
+Curse of Insanity
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Insanity
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's curses that can cause horrifying 
+hallucinations of various monsters that aren't there that die slowly to 
+make the victim think there is a monster there, attack it, and the 
+attacks will seem like they are doing damage.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet.
+
+The curse can only be removed with a 
+Rite of Remove Curse
+.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+2000
+
+Taglock kit must be bound.
+
+This spell only works during a storm.
+
+============================================================
+# Curse of Misfortune
+============================================================
+Curse of Misfortune
+
+Name
+
+Curse of Misfortune
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Misfortune
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that will randomly cause random debuffs on the victim until the curse is removed.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet but having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+The curse can only be removed with a 
+Rite of Remove Curse
+
+ but failed attempts to remove will make the curse one level stronger. 
+The level of the curse itself is dependent on the skill of the witch 
+casting the spell but is also buffed up by one by having a cat familiar 
+and it is buffed up by one more for every two witches in the witch's 
+coven.
+
+Recipe
+
+11x11
+
++0+
+
+Altar Power: 
+2000
+
+Taglock kit must be bound.
+
+This spell only works during a storm.
+
+============================================================
+# Curse of Overheating
+============================================================
+Curse of Overheating
+
+Name
+
+Curse of Overheating
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Overheating
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that will randomly cause random spontaneous combustion when the victim is in hot biomes.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet but having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+The curse can only be removed with a 
+Rite of Remove Curse
+
+ but failed attempts to remove will make the curse one level stronger. 
+The level of the curse itself is dependent on the skill of the witch 
+casting the spell but is also buffed up by one by having a cat familiar 
+and it is buffed up by one more for every two witches in the witch's 
+coven.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+2000
+
+Taglock kit must be bound.
+
+This spell only works during a storm.
+
+Trivia
+
+This is probably one of the most sneaky curses to afflict someone 
+with because of how it randomly affects the victim and how it only 
+affects them in specific biomes. If this is done on a server with 
+multiple mods on it they could have a hard time tracking down why they 
+keep spontaneously combusting.
+
+============================================================
+# Curse of Raining Toads
+============================================================
+Curse of Raining Toads
+
+Name
+
+Curse of Raining Toads
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Raining Toads
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that will rain down toads that explode in a poisonous mist upon your chosen location.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet but having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+Recipe
+
+11x11
+
++1
+
+Altar Power: 
+8000
+
+This spell only works with a 
+Seer Stone
+ against the yellow glyph.
+
+============================================================
+# Curse of Sinking
+============================================================
+Curse of Sinking
+
+Name
+
+Curse of Sinking
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Sinking
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that will cause the victim to be heavier in water and force them to sink quicker and rise slower.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet but having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+The curse can only be removed with a 
+Rite of Remove Curse
+ but failed attempts to remove will make the curse one level stronger. The level of the curse itself is dependent on the skill of the witch casting the spell but is also buffed up by one by having a cat familiar and it is buffed up by one more for every two witches in the witch's coven.
+
+Recipe
+
+11x11
+
++0+
+
+Altar Power: 
+2000
+
+Taglock kit must be bound.
+
+This spell only works during a storm.
+
+============================================================
+# Curse of the Wolf
+============================================================
+Curse of the Wolf
+
+Name
+
+Curse of the Wolf
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of the Wolf
+ is a spell added by 
+Witchery
+. It is one of Witchery's curses that mutates the victim into a lycanthrope. This curse stays with the victim even after death.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+, and having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+Recipe
+
+11x11
+
++6
+
+Altar Power: 
+10000
+
+This curse requires a full moon, a 
+cat
+ 
+familiar
+, and the taglock kit to be filled with the victim's contents to cast.
+
+Quests
+
+Once someone is cursed they can craft a 
+Wolf Altar
+ to pray to the wolf god that granted them this curse in order to fully master it. The wolf god will grant quests: collect 30 
+Raw Lambchops
+, then 10 
+Dog Tongues
+, defeat the 
+Horned Huntsman
+, kill 10 hostile mobs with a critical hit, howl in 16 different chunks, tame six wolfs, slay 30 pigmen and kill a player/villager.
+
+Awaken the Wolf
+
+This curse can also be spread in other ways, by using a 
+wolftrap
+ to trap a 
+wolfman
+ right in front of a Wolf Altar during a full moon will bless the werewolf into being able to spread its curse by bringing someone to near death.
+
+============================================================
+# Curse of Waking Nightmare
+============================================================
+Curse of Waking Nightmare
+
+Name
+
+Curse of Waking Nightmare
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Curse of Waking Nightmare
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's curses that bring the victim's 
+Nightmares
+ out of the 
+Spirit World
+. Nightmares not in the Spirit World are weaker.
+
+The curse can be negated with a 
+Voodoo Protection Poppet
+ and that can be negated by having a 
+ cat
+ 
+familiar
+ which can be negated by having a second Voodoo Protection Poppet but having a full set of 
+Witch Hunter
+ armor will give a ninety percent chance of protecting the victim.
+
+Recipe
+
+11x11
+
++1
+
+Altar Power: 
+10000
+
+============================================================
+# Death Protection Poppet
+============================================================
+Death Protection Poppet
+
+Name
+
+Death Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Death Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It prevents the player from dying of most sources, and applies a buff against the cause of the death, being destroyed in the process.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+It is often used to prevent death from the 
+Infusion Ritual
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Death Protection Poppet can be used to create the following items:
+ 
+Death Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Deathly Veil
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Disorientation Fetish
+============================================================
+Disorientation Fetish
+
+Name
+
+Disorientation Fetish
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Disorientation Fetish
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be applied to the 
+Scarecrow
+, 
+Trent Effigy
+, or 
+Witch's Ladder
+.
+
+The spell is cast on players that come near the bound fetish object who are a threat, threats are those who are armored or wielding something.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+============================================================
+# Drain Growth
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Dream Weaver of Fasting
+============================================================
+Dream Weaver of Fasting
+
+Name
+
+Dream Weaver of Fasting
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Decoration
+
+Stackable
+
+Unknown
+
+The 
+Dream Weaver of Fasting
+ is an item added by the 
+Witchery
+ mod. It is a decorative wall hanging item that adds a boost to the player's saturation when they wake up. When used near the Dream Weaver of Nightmares instead adds a 
+Hunger
+ boost.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Dream Weaver of Fleet Foot
+============================================================
+Dream Weaver of Fleet Foot
+
+Name
+
+Dream Weaver of Fleet Foot
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Decoration
+
+Stackable
+
+Unknown
+
+The 
+Dream Weaver of Fleet Foot
+ is an item added by the 
+Witchery
+ mod. It is a decorative wall hanging item that adds a 
+Speed
+ boost to players when they wake up. When used near the Dream Weaver of Nightmares though the boost added is a 
+Slowness
+ one.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Dream Weaver of Intensity
+============================================================
+Dream Weaver of Intensity
+
+Name
+
+Dream Weaver of Intensity
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Decoration
+
+Stackable
+
+Unknown
+
+The 
+Dream Weaver of Intensity
+ is an item added by the 
+Witchery
+ mod. It is a decorative wall hanging item that intensifies all other dream weavers' abilities as well as adds a 
+Night Vision
+ boost to players when they wake up or a  
+Blindess
+ boost when used near the 
+Dream Weaver of Nightmares
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Dream Weaver of Iron Arm
+============================================================
+Dream Weaver of Iron Arm
+
+Name
+
+Dream Weaver of Iron Arm
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Decoration
+
+Stackable
+
+Unknown
+
+The 
+Dream Weaver of Iron Arm
+ is an item added by the 
+Witchery
+ mod. It is a decorative wall hanging item that adds a 
+Strength
+ boost to players when they wake up. When used near the Dream Weaver of Nightmares though the boost added is a 
+Weakness
+ one.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Dream Weaver of Nightmares
+============================================================
+Dream Weaver of Nightmares
+
+Name
+
+Dream Weaver of Nightmares
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Decoration
+
+Stackable
+
+Unknown
+
+The 
+Dream Weaver of Nightmares
+ is an item added by the 
+Witchery
+ mod. It is a decorative wall hanging item that brings the likelihood of entering the Spirit World in a 
+Nightmare
+ when drinking a 
+Brew of Sleeping
+ down 50%.
+
+This dream weaver also corrupts all other dream weavers to give penalties instead of the bonuses the other dream weavers are supposed to give as well as giving a 
+Weakness
+ buff to players when they wake up, unless used near another Dream Weaver of Nightmares and then the buff added is 
+Blindness
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Earth Protection Poppet
+============================================================
+Earth Protection Poppet
+
+Name
+
+Earth Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Earth Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It is capable of redirecting lethal falling damage from a player to the poppet, destroying the poppet in the process.
+
+Note that the Earth Protection Poppet only protects against 
+lethal
+ fall damage. If the fall damage would not have otherwise killed the player, the poppet will not activate.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature/player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Earth Protection Poppet can be used to create the following items:
+ 
+Earth Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Fire Protection Poppet
+============================================================
+Fire Protection Poppet
+
+Name
+
+Fire Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Fire Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It is capable of redirecting lethal fire damage from a player to the poppet, destroying the poppet in the process. When the poppet activates, in addition to preventing the damage which would have killed the player, it also heals the player for five hearts, and gives them a very short fire immunity buff.  Fire damage taken after this is not prevented.
+
+Note that the Fire Protection Poppet only protects against 
+lethal
+ fire damage. If the fire damage would not have otherwise killed the player, the poppet will not activate.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide its protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Fire Protection Poppet can be used to create the following items:
+ 
+Fire Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Flame Imp
+============================================================
+Flame Imp
+
+Name
+
+Flame Imp
+
+Health
+
+50 (
+ x 25)
+
+Damage
+
+4 (
+)
+
+Hostility
+
+Hostile
+
+Spawn
+
+Anywhere with the 
+Rite of Summoning
+
+Source Mod
+
+Witchery
+
+The 
+Flame Imp
+ is a mob from the 
+Witchery
+ mod. This mob does not spawn naturally, they must be forced into the world via a 
+Rite of Summoning
+. Unlike their 
+demon
+ cousin, these imps are more magically inclined and less physically inclined. They are good for binding with a contract to cast the special Imp Magic that is fire-themed and not usable without an imp, but they 
+will
+ attack whoever they see though so if the witch summoning them wants to bind them with a contract it is a good idea to do it fast.
+
+To bind with the flame imp in a contract a witch needs a 
+Demonic Contract
+ signed in 
+blood
+ (craft the two components together) and use the contract on the imp with 25 experience levels to give him as a down payment. Once the contract is binding the imp will not leave the area and will attack anyone who is hostile against the witch it has a contract with.
+
+Feeding an imp a 
+Demon Heart
+ can give the imp a temporary larger size and twice as much damage dealt, but all imp magic will be uncastable for a brief thirty minutes or until it is pricked with 
+Icy Needles
+.
+
+Imp Magic
+
+To be able to cast imp magic through a bound imp, spells must be given to the witch from the imp and will be once they are suitably impressed with their witch. To impress an imp, give them various valuable gifts.
+
+Once they are suitably impressed the witch can craft a specific contract for the spell with the 
+taglock
+ of the target for the spell and then give the contract to the imp for him to cast. The target must be in the same dimension as the imp in order for the spell to reach the target. A list of possible spell contracts are listed below:
+
+ 
+Fiery Touch
+: This is crafted with 
+Blaze Rod
+, 
+Ember Moss
+, and a 
+Demonic Contract
+. This spell starts fires with blocks that the victim interacts with.
+
+ 
+Melting Touch
+: This is crafted with a 
+Lava Bucket
+ and a 
+Demonic Contract
+. This spell smelts blocks harvested by the victim and can cause double ores too.
+
+ 
+Living Flame
+: This is crafted with 
+Blaze Rod
+, 
+Hint of Rebirth
+, and a 
+Demonic Contract
+. This spell spawns a 
+Blaze
+ to attack the victim.
+
+ 
+Evaporation
+: This is crafted with 
+Blaze Rod
+, 
+Magma Cream
+, and a 
+Demonic Contract
+. This spell removes 
+Water
+ blocks near the victim.
+
+ 
+Fiery Tolerance
+: This is crafted with 
+Blaze Powder
+ and a 
+Demonic Contract
+. This spell imbues the victim with long duration Fire Resistance.
+
+ 
+Torment
+: This is not crafted but gifted to the witch once the imp is happy enough with the witch from all of the gifts the witch has given. This scroll, when used, will summon the 
+Lord of Torment
+.
+
+============================================================
+# Flying Ointment
+============================================================
+Flying Ointment
+
+Name
+
+Flying Ointment
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Flying Ointment
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for making a 
+Enchanted Broom
+ but it is not safe for consumption because it is poisonous so do not drink it.
+
+Recipe
+
+Kettle
+
+The Potion Of Swiftness must be the 8 minute version.
+
+Also 3000 Altar Power is required.
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Fortification of the Corpse
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Ghost of the Light
+============================================================
+Ghost of the Light
+
+Name
+
+Ghost of the Light
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Ghost of the Light
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for the 
+Infusion of Light
+.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+Invisibility Potion
+ 
+Invisibility Potion
+ (8:00), 
+Fire Resistance Potion
+ 
+Fire Resistance Potion
+ (8:00), 
+ 
+Fire Protection Poppet
+, 
+ 
+Torch
+, and 
+ 
+Tongue of Dog
+
+*Also 4000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Ghost Walking Fetish
+============================================================
+Ghost Walking Fetish
+
+Name
+
+Ghost Walking Fetish
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Ghost Walking Fetish
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be applied to the 
+Scarecrow
+, 
+Trent Effigy
+, or 
+Witch's Ladder
+.
+
+The spell is cast in an area to allow players who are dreaming in the 
+Spirit World
+ crossed back over to the Overworld as a spirit version of themselves to not wake up as soon as they would as long as they are near the fetish object.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+============================================================
+# Graveyard Mist
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Happenstance Oil
+============================================================
+Happenstance Oil
+
+Name
+
+Happenstance Oil
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Happenstance Oil
+ is an item added by the 
+Witchery
+ mod. It is used as an ingredient for the 
+Crystal Ball
+ and 
+Seer Stone
+.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Potion of Night Vision
+ (8:00), 
+ 
+Eye of Ender
+, 
+ 
+Golden Carrot
+, 
+ 
+Spider Eye
+, and 
+ 
+Mandrake Root
+
+*Also 2000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Hunger Protection Poppet
+============================================================
+Hunger Protection Poppet
+
+Name
+
+Hunger Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Hunger Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It is capable of redirecting lethal starvation damage from a player to the poppet, destroying the poppet in the process.
+
+When the poppet activates, in addition to preventing the damage which would have killed the player, it also heals the player for five hearts, and gives them a 3 second starvation immunity buff. It also refills the player's hunger bar.
+
+Note that the Hunger Protection Poppet only protects against 
+lethal
+ starvation damage. If the damage would not have otherwise killed the player, the poppet will not activate.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide its protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Hunger Protection Poppet can be used to create the following items:
+ 
+Hunger Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Infernal Animus
+============================================================
+Infernal Animus
+
+Name
+
+Infernal Animus
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Infernal Animus
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for the 
+Infernal Infusion
+.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Potion of Harming II
+, 
+ 
+Demon Heart
+, 
+ 
+Voodoo Poppet
+, 
+ 
+Refined Evil
+, and 
+ 
+Blaze Rod
+
+*Also 4000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Infernal Infusion
+============================================================
+Infernal Infusion
+
+File:Grid Infernal Infusion.png
+
+Name
+
+Infernal Infusion
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Enchantment
+
+Stackable
+
+Unknown
+
+The 
+Infernal Infusion
+ infuses the power of the 
+nether
+
+ into the player. This power grants the ability to enthrall creatures to
+ do your bidding, and to optionally sacrifice them to acquire their 
+power for a time.
+
+The Infernal Infusion is an until death duration enchantment applied to the player added by the 
+Witchery
+
+ mod. It infuses the power of the Nether in the player allowing the 
+player enthrall control over creatures and optional sacrifice temporary 
+bonuses from the enthralled creatures. The enchantment is applied via 
+the 
+Rite of Infusion
+ with an 
+Infernal Animus
+.
+
+Passive Abilities
+
+This infusion grants no passive abilities by default but after 
+sacrificing specific creatures passive abilities can be granted, see 
+below.
+
+Active Abilities
+
+These require the 
+Witches Hand
+.
+
+Left-click
+: a close player/mob to command all mobs enthralled nearby to attack.
+
+Left-click while holding shift
+: a close mob to enthrall the mob, this will make any hostile mobs passive towards you.
+
+Left-click while holding shift
+: an enthralled close mob to sacrifice the mob and obtain specific abilities and powers.
+
+Right-click
+: to use the last sacrificed creature's abilities, see below.
+
+Right-click while holding shift
+: the ground to make enthralled mobs nearby that can move (see below), move to that location.
+
+Creature Powers
+
+To acquire creature powers you must sacrifice an enthralled creature 
+to get the powers listed below. Some enthralled creatures are stronger 
+than others, the table below also lists whether or not the creature can 
+be commanded to attack, whether or not creatures of its type will ignore
+ you, and whether or not the creature can be commanded to move.
+
+Creature
+
+Active Power
+
+Passive Powers
+
+Attack
+
+Ignore
+
+Move
+
+Bat
+
+Night vision
+ enchantment
+
+Flight with jump button, fall damage immunity with sneak button
+
+No
+
+Yes
+
+No
+
+Blaze
+
+Shoot three small 
+fire charges
+
+Fire resistance
+ enchantment
+
+Yes
+
+No
+
+No
+
+Cat, dog, horse
+
+Speed
+ enchantment
+
+Small 
+speed
+ enchantment
+
+Yes
+
+Yes
+
+Yes
+
+Chicken, Cow, Pig, Sheep, Villager
+
+Heal
+ potion effect
+
+Yes
+
+Yes
+
+Yes
+
+Creeper
+
+Explode
+
+Lightning bolts refill infusion power
+
+Yes
+
+Yes
+
+Yes
+
+Enderman
+
+Teleportation
+
+Yes
+
+Maybe
+
+No
+
+Ghast
+
+Shoot large 
+fire charges
+
+Fire resistance
+
+Yes
+
+No
+
+No
+
+Silverfish
+
+Speed
+ enchantment
+
+Small 
+speed
+ enchantment
+
+Maybe
+
+No
+
+No
+
+Skeleton
+
+Fire off 
+arrows
+
+Minor underwater breathing capabilities
+
+Yes
+
+Yes
+
+Yes
+
+Slime, magma cube
+
+Jump
+ enchantment
+
+Jump
+ enchantment, immunity to fall damage
+
+No
+
+No
+
+No
+
+Spider, cave spider
+
+Fire off 
+cobwebs
+
+Wall climbing capabilities
+
+Yes
+
+Day
+
+Day
+
+Squid
+
+Blind targets as if with 
+Brew of Ink
+
+Faster swim speed, underwater breathing
+
+No
+
+Yes
+
+Yes
+
+Zombie
+
+Resistance and Damage enchantments
+
+Yes
+
+Yes
+
+Yes
+
+Zombie pigman
+
+Stronger Resistance and Damage enchantments
+
+Fire immunity
+
+Yes
+
+Yes
+
+Yes
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Infused Brew Base
+============================================================
+Infused Brew Base
+
+Name
+
+Infused Brew Base
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Infused Brew Base
+ is an item added by the 
+Witchery
+ mod. It is the base item used in making Infused Brews through a 
+Rite of Infusion
+.
+ Infused Brew Bases can be crafted with two recipes. The second recipe 
+is significantly easier than the first, however, the second recipe 
+requires the use of one Infused Brew Base already.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Toe of Frog
+, 
+ 
+Brew of Flowing Spirit
+, 
+ 
+Owlet's Wing
+, 
+ 
+Creeper Heart
+, and 
+ 
+Tongue of Dog
+
+*Also 3000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Infused Brew Base
+, 
+ 
+Brew of Flowing Spirit
+, 
+ 
+Hint of Rebirth
+, 
+ 
+Mandrake Root
+, 
+ 
+Wool of Bat
+, and 
+ 
+Wild Bramble
+
+Wear a Witches Hat and/or robes while brewing to get more brews than just three.
+
+============================================================
+# Infused Brew of Soaring
+============================================================
+Infused Brew of Soaring
+
+Name
+
+Infused Brew of Soaring
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Infused Brew of Soaring
+ is an item added by the 
+Witchery
+ mod. It can be drank to grant better 
+Broom
+ control to the drinker, meaning faster top speeds, easier turning, and quicker deceleration. 
+
+This effect lasts for 120 minutes server time, not client time and only stacks with the 
+owl
+ 
+familiar
+, they do not stack with themselves.
+
+Recipe
+
+Owl
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+============================================================
+# Infused Brew of the Grave
+============================================================
+Infused Brew of the Grave
+
+Name
+
+Infused Brew of the Grave
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Infused Brew of Grave
+ is an item added by the 
+Witchery
+ mod. It can be drank to use the 
+Necromantic Stone
+
+ to command regular undead monsters. While the effects of this brew is 
+in place on the drinker, killing animals, villagers, and players heals 
+hunger points from eating them.
+
+This effect lasts for 120 minutes server time, not client time 
+and does not stack, drinking it while still under its effect only 
+refreshes the count down.
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+1000
+
+============================================================
+# Infusion of Light
+============================================================
+Infusion of Light
+
+File:Grid Infusion of Light.png
+
+Name
+
+Infusion of Light
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Enchantment
+
+Stackable
+
+Unknown
+
+The 
+Infusion of Light
+ is an until death duration enchantment applied to the player added by the 
+Witchery
+
+ mod. It infuses the power of light control in the player allowing the 
+player control over light to bend it to become invisible and to harden 
+it to make solid walls of light. The enchantment is applied via the 
+Rite of Infusion
+ using a 
+Ghost of the Light
+.
+
+Passive Abilities
+
+This infusion grants no passive abilities.
+
+Active Abilities
+
+These require the 
+Witches Hand
+.
+
+Left-click
+: a close player/mob to raise them up in the air slightly and imprison them temporarily in a prison of light.
+
+Hold right-click
+: to apply an Invisibility enchantment.
+
+Hold right-click while holding shift
+: to create a 3x3 solid 
+wall of light at that location. The direction of the barrier depends on 
+the face of the block right-clicked.
+
+Hold right-click while holding shift
+: a close player/mob to imprison them temporarily in a prison of light.
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Infusion of Otherwhere
+============================================================
+Infusion of Otherwhere
+
+Name
+
+Infusion of Otherwhere
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Enchantment
+
+Stackable
+
+Unknown
+
+The 
+Infusion of Otherwhere
+ is an until death duration enchantment applied to the player added by the 
+Witchery
+
+ mod. It infuses the power of The End in the player allowing the player 
+control over teleportation. The enchantment is applied via the 
+Rite of Infusion
+ using a 
+Spirit of Otherwhere
+.
+
+This type of teleportation can be done from dimension to dimension.
+
+Active Abilities
+
+These require the 
+Witches Hand
+.
+
+Right-click
+: teleport short distance where the cursor is pointed.
+
+Hold right-click
+ teleport long distance where the cursor is pointed.
+
+Hold right-click while holding shift
+: store the current location as a recall point.
+
+Right-click while holding shift
+: teleport to the last saved recall point.
+
+Left-click on close mob/player
+: teleports you and the target into the air.
+
+Left-click while holding shift on close mob/player
+: teleports
+ you and target to last saved recall point. (Make sure the destination 
+chunk is loaded, otherwise the mob has a chance to disappear)
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Infusion of the Overworld
+============================================================
+Infusion of the Overworld
+
+File:Grid Infusion of the Overworld.png
+
+Name
+
+Infusion of the Overworld
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Enchantment
+
+Stackable
+
+Unknown
+
+The 
+Infusion of Overworld
+ is an until death duration enchantment applied to the player added by the 
+Witchery
+
+ mod. It infuses the power of the Overworld in the player allowing the 
+player control over earth and metals. The enchantment is applied via the
+ 
+Rite of Infusion
+ using a 
+Soul of the World
+.
+
+Passive Abilities
+
+This infusion grants the wielder the ability to never take falling damage again at the cost of mining up the block they land on.
+
+Also when falling, holding down shift causes an explosion where the witch lands.
+
+Active Abilities
+
+These require the 
+Witches Hand
+.
+
+Left-click
+: a close player/mob in metal armor to do a strong knockback attack.
+
+Right-click
+: a close player/mob holding a metal item to disarm.
+
+Right-click
+: the ground to raise a column of earth
+
+Right-click
+: the side of a block with nothing blocking it on 
+the other side to fire it in the direction you are facing, damaging 
+where it lands.
+
+Hold right-click
+: to create a shockwave of earth of knockback
+ and damage to players/mobs in the way. The length of time spent holding
+ down the right-click button make the shockwave stronger.
+
+Hold right-click while holding shift
+: pulls dropped metal 
+objects to you which can be good after using the disarm or can also be 
+used to pull the ingots from metal ores.
+
+Right-click
+: on metal ores to pull two ingots out.
+
+Recipe
+
+7 & 11
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Mystic Unguent
+============================================================
+Mystic Unguent
+
+Name
+
+Mystic Unguent
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Mystic Unguent
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for the 
+Mystic Branch
+.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Potion of Strength
+ (8:00), 
+ 
+Diamond
+, 
+ 
+Rowan Sapling
+, 
+ 
+Creeper Heart
+, and 
+ 
+Demonic Blood
+
+*Also 3000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Usage
+
+Mystic Unguent can be used to create the following items:
+ 
+Mystic Branch
+
+============================================================
+# Poppet Protection Poppet
+============================================================
+Poppet Protection Poppet
+
+Name
+
+Poppet Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Poppet Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It protects the player's 
+Voodoo Protection Poppets
+ from being destroyed by the 
+Curse of Corrupt Poppet
+. Whenever that curse is cast on a player with a Poppet Protection Poppet, the curse is prevented, the attacking player is struck by lightning, and the poppet receives damage.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be binded to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Poppet Protection Poppet can be used to create the following items:
+ 
+Poppet Protection Poppet
+
+============================================================
+# Rite of Banishing
+============================================================
+Rite of Banishing
+
+Name
+
+Rite of Banishing
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Banishing
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to send back 
+demons
+ to where it was summoned from.
+
+The spell is cast in an area within the ritual chalk circle and sends all demons inside the circle back.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Rite of Beastial Call
+============================================================
+Rite of Beastial Call
+
+Name
+
+Rite of Beastial Call
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Beastial Call
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can be used to call forth 
+animals from a wide area around the circle to in the circle itself.
+
+If the ritual circle is near someone's ranch this will most likely steal animals from there.
+
+Recipe
+
+15x15
+
++3
+
+Altar Power: 
+6000
+
+============================================================
+# Rite of Binding
+============================================================
+Rite of Binding
+
+Name
+
+Rite of Binding
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Binding
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can be used to bind various 
+things like circle talismans, waystones, familiars, and spectral 
+creatures.
+
+Circle Talisman
+
+Circle talismans will store ritual circles for quick and easy spellcasting.
+
+Any size or kind of circle can be used for this spell, the circle used is what gets stored.
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+Bound Waystone
+
+Waystones are used to bind locations for spellcasting. If an already 
+bound waystone is added to the spell it will copy the location to the 
+unbound waystone.
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+500
+
+Blooded Waystone
+
+This waystone targets specific mobs or players, the mob or player must be near when casting this binding rite.
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+500
+
+Familiar
+
+Rites of binding can bind a minor demon to an animal to grant the witch and animal more power.
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+11x11
+
++0
+
+Altar Power: 
+8000
+
+Spectral Stone
+
+Spectral creatures can be bound to a spectral stone for later use.
+
+11x11
+
++0
+
+Altar Power: 
+5000
+
+11x11
+
++0
+
+Altar Power: 
+5000
+
+11x11
+
++0
+
+Altar Power: 
+5000
+
+Disorientation Fetish
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+Ghost Walking Fetish
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+Sentinel Fetish
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+Shrieking Fetish
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+Voodoo Protection Fetish
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+Video
+
+Witchery Explained: Episode 13, The Rite of Binding!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+Witchery Explained: Episode 11, Familiars!!!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Broiling
+============================================================
+Rite of Broiling
+
+Name
+
+Rite of Broiling
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Broiling
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can cook tons and tons of food
+ for the witch... as long as they are fine with some of the food being a
+ little burnt.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Broken Earth
+============================================================
+Rite of Broken Earth
+
+Name
+
+Rite of Broken Earth
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Broken Earth
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that will create a crevice in the ground.
+
+The crevice will appear outside the circle in the direction of the brew of erosion next to the gold glyph.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 16, Rites of Earth
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Charging
+============================================================
+Rite of Charging
+
+Name
+
+Rite of Charging
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Charging
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that will an item or player with 
+Altar
+ power.
+
+Attuned Stone
+
+Charging an attuned stone will allow the witch to cast certain spells without needing an 
+Altar
+ present.
+
+7 & 11
+
++0
+
+Altar Power: 
+2000
+
+Player
+
+Infused players can recharge their infusion power with 
+Altar
+ power.
+
+7 & 11
+
++0
+
+Altar Power: 
+4000
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Earth's Wrath
+============================================================
+Rite of Earth's Wrath
+
+Name
+
+Rite of Earth's Wrath
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Earth's Wrath
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to call forth the underground lava above ground to form a volcano.
+
+This spell will happen directly in the casting circle and requires a sizable pool of lava underground.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+============================================================
+# Rite of Fertility
+============================================================
+Rite of Fertility
+
+Name
+
+Rite of Fertility
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Fertility
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to bonemeal the area as well as cure certain things.
+
+The spell is cast in a wide area around the chalk circle and any 
+Zombie Villagers
+ or players who have Blindness, Nausea, or Poison all get cured.
+
+Witches with a 
+cat
+ 
+familiar
+ can cast a buffed version of this spell that applies a 
+Regeneration
+ and Saturation buff to players within the spell.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+3000
+
+Video
+
+Witchery Explained: Episode 15, Rite of Fertility
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Glyphic Transformation
+============================================================
+Rite of Glyphic Transformation
+
+Name
+
+Rite of Glyphic Transformation
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Glyphic Transformation
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to change the ritual glyphs to a different type.
+
+The spell is for the lazy, rich witch.
+
+Recipe
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+============================================================
+# Rite of Icy Expansion
+============================================================
+Rite of Icy Expansion
+
+Name
+
+Rite of Icy Expansion
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Icy Expansion
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can be used to create 
+breathable spherical enclosures under liquids like under an ocean.
+
+The spell is cast in an area around the ritual chalk circle and 
+slowly pushes back liquids. Two additional coven witches are required 
+for the base spell but if more witches are involved then the size of the
+ icy expansion gets bigger.
+
+This spell is how to make 
+Perpetual Ice
+.
+
+Recipe
+
+7x7
+
++2
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 18, Rite of Icy Expansion
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Imprisonment
+============================================================
+Rite of Imprisonment
+
+Name
+
+Rite of Imprisonment
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Imprisonment
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to prevent hostile mobs from leaving the spell circle.
+
+The spell has another spell similar to it called the 
+Rite of Sanctity
+.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+500 (+16/second)
+
+============================================================
+# Rite of Infusion
+============================================================
+This article is in need of a 
+clean-up.
+ You can help the wiki by cleaning up the article.
+
+The 
+Rite of Infusion
+ is a concept added by the 
+Witchery
+
+ mod. There are three different things that can be infused: Items, 
+Players, and Brews. These three different things though are all still 
+pretty much doing the same thing, infusing the essence of a dimensional 
+aspect into something or someone.
+
+For infusing items, the 
+Broom
+, 
+twig
+, or 
+quartz sphere
+ can be infused using the Rite of Infusion. The broom can be infused into an 
+Enchanted Broom
+. the twig can be infused into a 
+Mystic Branch
+, and the quartz sphere can be enchanted into either a 
+Crystal Ball
+ or 
+Seer Stone
+.
+
+For infusing players, only one infusion can be apply to a player 
+at a time and infusion does cause death unless the player is using some 
+magical means to prevent death. 
+Infusion of Light
+ grants control over light, the ability to bend light to become invisible and to harden light to create solid barriers. 
+Infusion of the Overworld
+ grants control of the overworld, the ability to manipulate the earth and metals. 
+Infusion of Otherwhere
+ grants power of the End, the ability to teleport. 
+Infernal Infusion
+ grants power of the Nether, the ability to enthrall creatures to do your bidding/to acquire their power for a time.
+
+For infusing brews, the 
+Infused Brew Base
+ is required as the base. There are two brews that can be infused, the 
+Infused Brew of Soaring
+ and 
+Infused Brew of the Grave
+. These brews differ from their regular counterparts only in that they last for a much longer time.
+
+Video
+
+Witchery Explained: Episode 12, Coven Witches and their Quests!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Manifestation
+============================================================
+Rite of Manifestation
+
+Name
+
+Rite of Manifestation
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Manifestation
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to send sleeping beings to the overworld as their dream self.
+
+The spell lasts for two and a half minutes normally but 
+twenty-five seconds per additional coven witch is added to the time 
+frame.
+
+Recipe
+
+7x7
+
++0+
+
+Altar Power: 
+5000
+
+============================================================
+# Rite of Moving Earth
+============================================================
+Rite of Moving Earth
+
+Name
+
+Rite of Moving Earth
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Moving Earth
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to move the earth, up. 
+
+The spell is cast in an area the same diameter as the chalk circle and sends blocks ten down upwards.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+11x11
+
++0
+
+Altar Power: 
+0
+
+15x15
+
++0
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 16, Rites of Earth
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Nature's Power
+============================================================
+Rite of Nature's Power
+
+Name
+
+Rite of Nature's Power
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Nature's Power
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can be used to force nature to
+ grow, growing stuff like pumpkins, melons, ember moss, oak 
+ 
+trees
+,
+ alder trees, hawthorn trees, and rowan trees within the chalk circle. 
+The ground within the chalk circle will be turned into grass blocks if 
+they weren't already.
+
+Flora & Fauna
+The spell is similar in effect to the 
+Rite of the Forest
+.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 17, Rites of Growth
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Necromancy
+============================================================
+Rite of Necromancy
+
+Name
+
+Rite of Necromancy
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Necromancy
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to imbue stones with the ability to control the dead.
+
+The spell can make both a 
+Necromantic Stone
+ and a 
+Spectral Stone
+.
+
+Necromantic Stone
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+This spell must be cast during the night.
+
+Spectral Stone
+
+7x7
+
++0
+
+Altar Power: 
+6000
+
+This spell must be cast during the night.
+
+Video
+
+Witchery Explained: Episode 14, Spectral Stones
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Prior Incarnation
+============================================================
+Rite of Prior Incarnation
+
+Name
+
+Rite of Prior Incarnation
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Prior Incantation
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to recall items lost from death.
+
+The spell must be cast no more than 16 blocks away from the death to work.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+============================================================
+# Rite of Protection
+============================================================
+Rite of Protection
+
+Name
+
+Rite of Protection
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Protection
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to convert 
+altar
+ power into a force field.
+
+The spell is cast in an area surrounding the ritual chalk.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+500 (+24/sec)
+
+11x11
+
++0
+
+Altar Power: 
+1000 (+28/sec)
+
+============================================================
+# Rite of Remove Curse
+============================================================
+Rite of Remove Curse
+
+Name
+
+Rite of Remove Curse
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Remove Curse
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to send back 
+demons
+ to where it was summoned from.
+
+This spell can remove several different curses but be warned, a 
+low-leveled witch might not be able to remove the curse and might 
+instead cause it to get worse!
+
+All 
+Taglock Kits
+ must be bound to the player getting the curse removed.
+
+Curse of Insanity
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Curse of Misfortune
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Curse of Overheating
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Curse of Sinking
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Curse of Waking Nightmares
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+============================================================
+# Rite of Sanctity
+============================================================
+Rite of Sanctity
+
+Name
+
+Rite of Sanctity
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Sanctity
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to prevent hostile mobs from entering the spell circle.
+
+The spell has another spell similar to it called the 
+Rite of Imprisonment
+.
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+500 (+16/second)
+
+============================================================
+# Rite of Shifting Seasons
+============================================================
+Rite of Shifting Seasons
+
+Name
+
+Rite of Shifting Seasons
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Shifting Seasons
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to alter the biome in an area.
+
+The 
+Book of Biomes
+
+ is a handy reference guide to choose which biome you want and it lets 
+you know how many glowstone is needed to select that biome. Just use the
+ item required for the biome and then use zero or more glowstone based 
+on the number associated with the biome. The Book of Biomes book 
+autogenerates based on the biomes in the modpack.
+
+To make the affected area larger, use more witches.
+
+Recipe
+
+15x15
+
++4
+
+Altar Power: 
+0
+
+In addition to the above ingredients, the player must supply
+ an item from the following list to specify which group of biomes the 
+target biome belongs to...
+
+Biome Group
+
+Foci Item
+
+Forest
+
+Oak Sapling
+
+Plains
+
+Tall Grass
+
+Swamp
+
+Slimeball
+
+Desert
+
+Cactus
+
+Frozen
+
+Icy Needle
+
+Jungle
+
+Jungle Sapling
+
+Wasteland
+
+Netherrack
+
+Beach
+
+Sand
+
+Mushroom
+
+Red Mushroom
+
+Magical
+
+Skeleton Skull
+
+Once the biome group is specified, the player must supply a number of 
+Glowstone Dust
+ in order to specify which biome within that group is desired.
+
+An exhaustive listing of all the biomes in the current modpack, which group they belong to and what quantity of 
+Glowstone Dust
+ is required to specify them, can be found by consulting a 
+Book of Biomes
+.
+
+An alternative method of performing this ritual spell is to craft it as a 
+Custom Brew
+ in a 
+Witch's Cauldron
+, using a 
+Biome Note
+
+ to specify the target Biome. Note that this will still require a coven 
+and large amounts of Altar power. Although it is created in a 
+Witch's Cauldron
+, a Brew of Shifting Seasons cannot be bottled and must cast as a ritual by adding either 
+Gunpowder
+ or 
+Water Artichoke Globe
+, then 
+Tongue of Dog
+.
+
+============================================================
+# Rite of Sky's Wrath
+============================================================
+Rite of Sky's Wrath
+
+Name
+
+Rite of Sky's Wrath
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Sky's Wrath
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to call down lightning strikes.
+
+The spell is cast either inside or outside the area of the ritual chalk circle.
+
+Inside the Chalk Circle
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+7x7
+
++0
+
+Altar Power: 
+1000
+
+Outside the Chalk Circle
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+Video
+
+Witchery Explained: Episode 10, Ritual Magic Casting / Circle Magic
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Summoning
+============================================================
+Rite of Summoning
+
+Name
+
+Rite of Summoning
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Summoning
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to summon various beings like demons or even the wither!
+
+Demon
+
+15x15
+
++0
+
+Altar Power: 
+3000
+
+15x15
+
++0
+
+Altar Power: 
+3000
+
+Inside the circle there must be an area of 7x7x4 with nothing for the demon to spawn.
+
+Flame Imp
+
+11x11
+
++1
+
+Altar Power: 
+5000
+
+Wither
+
+15&11
+
++0
+
+Altar Power: 
+4000
+
+15&11
+
++0
+
+Altar Power: 
+4000
+
+Witch
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Spectral Familiar
+
+7x7
+
++0
+
+Altar Power: 
+2000
+
+Dismissed 
+Familiar
+
+11x11
+
++0
+
+Altar Power: 
+1000
+
+Videos
+
+Minecraft - Flux Buddies #140 - Spectre Summoning (Yogscast Complete Mod Pack)
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+Witchery Explained: Episode 11, Familiars!!!
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of the Forest
+============================================================
+Rite of the Forest
+
+Name
+
+Rite of the Forest
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of the Forest
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to create a forest of a specific type of Vanilla or Witchery tree.
+
+The spell is cast on the area outside the chalk circle unless a 
+Bound Waystone
+ is used to choose a specific location.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+11x11
+
++0
+
+Altar Power: 
+4000
+
+Video
+
+Witchery Explained: Episode 17, Rites of Growth
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rite of Total Eclipse
+============================================================
+Rite of Total Eclipse
+
+Name
+
+Rite of Total Eclipse
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Total Eclipse
+ is a spell added by the 
+Witchery
+
+ mod. It is one of Witchery's spells that can be used to eclipse the sun
+ against the planet... essentially it just makes it night by moving the 
+sun to the other side of the planet.
+
+The spell is useful for spells that require it to be night!
+
+Recipe
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+7x7
+
++0
+
+Altar Power: 
+3000
+
+============================================================
+# Rite of Transposition
+============================================================
+Rite of Transposition
+
+Name
+
+Rite of Transposition
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Rite of Transposition
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be used to send entities or ores.
+
+Location
+
+This spell transposes the witch to the location stored in the 
+Bound Waystone
+.
+
+7x7
+
++0
+
+Altar Power: 
+0
+
+Entities
+
+This spell transposes the mob or player stored in the 
+Taglock Kit
+ to the location of the witch casting it. To try to prevent being transposed, cunning witches will wear a full set of 
+Witch Hunter
+ Armor, but it only has a 90% chance of protecting.
+
+11x11
+
++0
+
+Altar Power: 
+3000
+
+Iron Ore
+
+This transposition spell is an interesting one, it takes all of the 
+iron ore in the surrounding area and transposes them to the surface for 
+the witch to collect!
+
+15x15
+
++0
+
+Altar Power: 
+0
+
+============================================================
+# Sentinel Fetish
+============================================================
+Sentinel Fetish
+
+Name
+
+Sentinel Fetish
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Sentinel Fetish
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be applied to the 
+Scarecrow
+, 
+Trent Effigy
+, or 
+Witch's Ladder
+.
+
+The spell is cast on players that come near the bound fetish object, it sends the bound 
+specters
+ after the unwanted or unknown players.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+============================================================
+# Shrieking Fetish
+============================================================
+Shrieking Fetish
+
+Name
+
+Shrieking Fetish
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Shrieking Fetish
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be applied to the 
+Scarecrow
+, 
+Trent Effigy
+, or 
+Witch's Ladder
+.
+
+The spell is cast on players that come near the bound fetish object, the shrieks of the bound 
+banshees
+ alert the witch of the presence and also emits a redstone signal.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+============================================================
+# Soul of the World
+============================================================
+Soul of the World
+
+Name
+
+Soul of the World
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Soul of the World
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for the 
+Infusion of the Overworld
+.
+
+Recipe
+
+Kettle
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Potion of Regeneration
+ (8:00), 
+ 
+Enchanted Golden Apple
+, 
+ 
+Attuned Stone
+, 
+ 
+Mandrake Root
+, and 
+ 
+Rowan Sapling
+
+*Also 4000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Usage
+
+Soul of the World can be used to create the following items:
+ 
+Elven Gateway Core
+ 
+Runic Altar
+ 
+Terrestrial Agglomeration Plate
+
+============================================================
+# Spirit of Otherwhere
+============================================================
+Spirit of Otherwhere
+
+Name
+
+Spirit of Otherwhere
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Potion
+
+Stackable
+
+Unknown
+
+The 
+Spirit of Otherwhere
+ is an item added by the 
+Witchery
+ mod. It is used for the 
+Rite of Infusion
+ for the 
+Infusion of Otherwhere
+.
+
+Recipe
+
+Expand
+ 
+Ingredients for the brew
+
+ 
+Redstone Soup
+, 
+ 
+Potion of Swiftness
+ (8:00), 
+ 
+Eye of Ender
+ x2, 
+ 
+Drop of Luck
+, and 
+ 
+Wool of Bat
+
+*Also 4000 
+Altar
+ power is required
+
+*Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+============================================================
+# Summon Banshee
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Summon Spectre
+============================================================
+There is currently no text in this page.
+You can 
+search for this page title
+ in other pages, or 
+search the related logs
+, but you do not have permission to create this page.
+
+============================================================
+# Tool Protection Poppet
+============================================================
+Tool Protection Poppet
+
+Name
+
+Tool Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Tool Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It is capable of preventing a player's tool from breaking, restoring the tool back to full durability and destroying the poppet in the process.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Tool Protection Poppet can be used to create the following items:
+ 
+Tool Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Vampiric Poppet
+============================================================
+Vampiric Poppet
+
+Name
+
+Vampiric Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Vampiric Poppet
+ is an item added by the 
+Witchery
+ mod.
+
+As long as it is in the player inventory or on a 
+Poppet Shelf
+, any damage that you would take will instead be redirected to the person you are bound to, at the cost of the poppet's durability.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to two creatures or players to function.
+
+The first 
+Taglock Kit
+ represents the protected entity, while the second represents the victim.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Vampiric Poppet can be used to create the following items:
+ 
+Vampiric Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Voodoo Poppet
+============================================================
+Voodoo Poppet
+
+Name
+
+Voodoo Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Voodoo Poppet
+ is an item added by the 
+Witchery
+ mod. It can be used in a variety of ways to cause annoyance and minor harm to it's victim. If the target player or if you are wearing any witch hunter gear though, all poppets won't work.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Voodoo Poppet can be used to create the following items:
+ 
+Alluring Skull
+ 
+Voodoo Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+Uses
+
+Holding the use key with a bound Voodoo Poppet and then releasing it (like a bow) will push the victim in the direction you are facing. Horizontal force is significantly increased if the victim is swimming or in mid air.
+
+Using while sneaking will stick a Bone Needle into the Poppet doing minor damage to the victim and the Poppet.
+
+If the holder waits underwater for a significant amount of time, the victim will take drowning damage.
+
+Using on a lava source will set the victim on fire, damaging the Poppet severely.
+
+============================================================
+# Voodoo Protection Fetish
+============================================================
+Voodoo Protection Fetish
+
+Name
+
+Voodoo Protection Fetish
+
+Source Mod
+
+{{ModLink|Witchery}}
+
+Type
+
+Spell
+
+The 
+Voodoo Protection Fetish
+ is a spell added by the 
+Witchery
+ mod. It is one of Witchery's spells that can be applied to the 
+Scarecrow
+, 
+Trent Effigy
+, or 
+Witch's Ladder
+.
+
+The spell is cast on players that come near the bound fetish object, the power of carried 
+Voodoo Protection Poppets
+ are enhanced by this spell. The enhancement will negate the effects of a 
+cat
+ 
+familiar
+ on curses against the holder and will stop 
+Rite of Transpositions
+ against the holder.
+
+Recipe
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+11x11
+
++0
+
+Altar Power: 
+6000
+
+============================================================
+# Voodoo Protection Poppet
+============================================================
+Voodoo Protection Poppet
+
+Name
+
+Voodoo Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Voodoo Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It protects the player from 
+Voodoo Poppets
+, 
+Vampiric Poppets
+, and 
+Curses
+. Whenever the player would be subject to one of these effects, the effect is prevented, the attacking player is struck by lightning, and the poppet receives damage.
+
+Be wary, however, because the Voodoo Protection Poppet is vulnerable to the 
+Curse of Corrupt Poppet
+.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Voodoo Protection Poppet can be used to create the following items:
+ 
+Poppet Protection Poppet
+ 
+Voodoo Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Water Protection Poppet
+============================================================
+Water Protection Poppet
+
+Name
+
+Water Protection Poppet
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Death Protection Poppet
+ is an item added by the 
+Witchery
+ mod. It is capable of redirecting lethal drowning damage from a player to the poppet, destroying the poppet in the process.
+
+When the poppet activates, in addition to preventing the damage which would have killed the player, it also heals the player for five hearts, and gives them a 3 second water breathing buff.  Once this buff wears out, the player will begin drowning again unless they reach the surface.
+
+Note that the Water Protection Poppet only protects against 
+lethal
+ drowning damage. If the damage would not have otherwise killed the player, the poppet will not activate.
+
+It must be in a player inventory or on a 
+Poppet Shelf
+ to provide it's protection.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Binding
+
+The poppet needs to be bound to a creature or a player to function.
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Water Protection Poppet can be used to create the following items:
+ 
+Water Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss

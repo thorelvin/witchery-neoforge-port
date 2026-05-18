@@ -1,0 +1,11 @@
+﻿{
+  "name": "witchery.book.entry.spirit_world",
+  "icon": "witchery:brew_of_sleeping",
+  "category": "witchery:spirit_world",
+  "sortnum": 0,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/spirit_world.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.spirit_world.page1" },
+    { "type": "patchouli:spotlight", "item": "witchery:brew_of_sleeping", "text": "witchery.book.entry.spirit_world.entry" },
+    { "type": "patchouli:spotlight", "item": "witchery:icy_needle", "text": "witchery.book.entry.spirit_world.exit" }
+  ]
+}

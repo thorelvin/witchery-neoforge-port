@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "witchery:rowan_sapling",
+  "result": {
+    "id": "witchery:whiff_of_magic",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

@@ -1,0 +1,260 @@
+package com.emoniph.witchery.data;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public class WitcheryPlayerData {
+
+    /** Nested record for Spirit World state — keeps the main CODEC under the 16-field DFU limit. */
+    public static class SpiritWorldState {
+        public boolean isDream       = false;
+        public String  inventorySnbt = "";
+        public float   savedHealth   = 20f;
+        public int     savedFood     = 20;
+        public float   savedSat      = 5f;
+        public String  corpseUUID    = "";
+
+        public SpiritWorldState() {}
+
+        private SpiritWorldState(boolean isDream, String inventorySnbt,
+                                  float savedHealth, int savedFood, float savedSat,
+                                  String corpseUUID) {
+            this.isDream        = isDream;
+            this.inventorySnbt  = inventorySnbt;
+            this.savedHealth    = savedHealth;
+            this.savedFood      = savedFood;
+            this.savedSat       = savedSat;
+            this.corpseUUID     = corpseUUID == null ? "" : corpseUUID;
+        }
+
+        public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.BOOL  .optionalFieldOf("is_dream",        false).forGetter(s -> s.isDream),
+            Codec.STRING.optionalFieldOf("inventory_snbt",  "")   .forGetter(s -> s.inventorySnbt),
+            Codec.FLOAT .optionalFieldOf("saved_health",    20f)  .forGetter(s -> s.savedHealth),
+            Codec.INT   .optionalFieldOf("saved_food",      20)   .forGetter(s -> s.savedFood),
+            Codec.FLOAT .optionalFieldOf("saved_sat",       5f)   .forGetter(s -> s.savedSat),
+            Codec.STRING.optionalFieldOf("corpse_uuid",     "")   .forGetter(s -> s.corpseUUID)
+        ).apply(i, SpiritWorldState::new));
+    }
+
+    private boolean vampire = false;
+    private boolean werewolf = false;
+    private int bloodLevel = 0;
+    private float transformationLevel = 0f;
+    private String familiarUUID = "";
+    private String infusionType = "";
+    private long lastDeathPos = Long.MIN_VALUE; // BlockPos.asLong(); MIN_VALUE = no death recorded
+    private String lastDeathDimension = "";
+    // Stored when entering a Witchery dimension so /witchery exit can return the player
+    private long returnPos = Long.MIN_VALUE;
+    private String returnDimension = "";
+    // Spirit World state
+    private boolean inSpiritWorld = false;
+    private SpiritWorldState sw = new SpiritWorldState();
+    // Creature power system
+    private String creaturePowerType = "";
+    private int creaturePowerCharges = 0;
+    // Werewolf progression (0–3)
+    private int wolfMastery = 0;
+    // Soaring brew buff — ticks remaining (120 min = 144000 ticks)
+    // Transient — not persisted, resets on relog
+    private int howlCooldown = 0;
+    private int soaringTicks = 0;
+    // Set each tick by a nearby Ghost Walking fetish; cleared at tick start
+    private boolean ghostWalkerActive = false;
+    // Torment portal cooldown — transient, prevents portal loop teleports
+    private int tormentPortalCooldown = 0;
+    // Spirit World nightmare tracking — transient
+    private boolean demonicNightmare = false;
+    private long lastNightmareKillGameTime = Long.MIN_VALUE;
+
+    public WitcheryPlayerData() {}
+
+    private WitcheryPlayerData(boolean vampire, boolean werewolf, int bloodLevel,
+                                float transformationLevel, String familiarUUID,
+                                String infusionType, long lastDeathPos, String lastDeathDimension,
+                                long returnPos, String returnDimension,
+                                boolean inSpiritWorld, SpiritWorldState sw,
+                                String creaturePowerType, int creaturePowerCharges,
+                                int wolfMastery) {
+        this.vampire = vampire;
+        this.werewolf = werewolf;
+        this.bloodLevel = bloodLevel;
+        this.transformationLevel = transformationLevel;
+        this.familiarUUID = familiarUUID;
+        this.infusionType = infusionType;
+        this.lastDeathPos = lastDeathPos;
+        this.lastDeathDimension = lastDeathDimension;
+        this.returnPos = returnPos;
+        this.returnDimension = returnDimension;
+        this.inSpiritWorld = inSpiritWorld;
+        this.sw = sw != null ? sw : new SpiritWorldState();
+        this.creaturePowerType = creaturePowerType;
+        this.creaturePowerCharges = creaturePowerCharges;
+        this.wolfMastery = wolfMastery;
+    }
+
+    // Codec factory alias
+    private static WitcheryPlayerData fromCodec(boolean vampire, boolean werewolf, int bloodLevel,
+                                                  float transformationLevel, String familiarUUID,
+                                                  String infusionType, long lastDeathPos, String lastDeathDimension,
+                                                  long returnPos, String returnDimension,
+                                                  boolean inSpiritWorld, SpiritWorldState sw,
+                                                  String creaturePowerType, int creaturePowerCharges,
+                                                  int wolfMastery) {
+        return new WitcheryPlayerData(vampire, werewolf, bloodLevel, transformationLevel,
+                familiarUUID, infusionType, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
+                inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wolfMastery);
+    }
+
+    public static final com.mojang.serialization.MapCodec<WitcheryPlayerData> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+        Codec.BOOL.optionalFieldOf("vampire", false).forGetter(d -> d.vampire),
+        Codec.BOOL.optionalFieldOf("werewolf", false).forGetter(d -> d.werewolf),
+        Codec.INT.optionalFieldOf("blood_level", 0).forGetter(d -> d.bloodLevel),
+        Codec.FLOAT.optionalFieldOf("transformation_level", 0f).forGetter(d -> d.transformationLevel),
+        Codec.STRING.optionalFieldOf("familiar_uuid", "").forGetter(d -> d.familiarUUID),
+        Codec.STRING.optionalFieldOf("infusion_type", "").forGetter(d -> d.infusionType),
+        Codec.LONG.optionalFieldOf("last_death_pos", Long.MIN_VALUE).forGetter(d -> d.lastDeathPos),
+        Codec.STRING.optionalFieldOf("last_death_dim", "").forGetter(d -> d.lastDeathDimension),
+        Codec.LONG.optionalFieldOf("return_pos", Long.MIN_VALUE).forGetter(d -> d.returnPos),
+        Codec.STRING.optionalFieldOf("return_dim", "").forGetter(d -> d.returnDimension),
+        Codec.BOOL.optionalFieldOf("in_spirit_world", false).forGetter(d -> d.inSpiritWorld),
+        SpiritWorldState.CODEC.optionalFieldOf("spirit_world", new SpiritWorldState()).forGetter(d -> d.sw),
+        Codec.STRING.optionalFieldOf("creature_power_type", "").forGetter(d -> d.creaturePowerType),
+        Codec.INT.optionalFieldOf("creature_power_charges", 0).forGetter(d -> d.creaturePowerCharges),
+        Codec.INT.optionalFieldOf("wolf_mastery", 0).forGetter(d -> d.wolfMastery)
+    ).apply(i, WitcheryPlayerData::fromCodec));
+
+    // ── Getters ───────────────────────────────────────────────────────────────
+
+    public boolean isVampire()             { return vampire; }
+    public boolean isWerewolf()            { return werewolf; }
+    public int getBloodLevel()             { return bloodLevel; }
+    public float getTransformationLevel()  { return transformationLevel; }
+
+    public Optional<UUID> getFamiliarUUID() {
+        if (familiarUUID.isEmpty()) return Optional.empty();
+        try { return Optional.of(UUID.fromString(familiarUUID)); }
+        catch (IllegalArgumentException e) { return Optional.empty(); }
+    }
+
+    public InfusionType getInfusionType() { return InfusionType.fromString(infusionType); }
+
+    // ── Setters ───────────────────────────────────────────────────────────────
+
+    public void setVampire(boolean v)                     { this.vampire = v; }
+    public void setWerewolf(boolean w)                    { this.werewolf = w; }
+    public void setBloodLevel(int b)                      { this.bloodLevel = Math.clamp(b, 0, 500); }
+    public void addBlood(int amount)                      { setBloodLevel(bloodLevel + amount); }
+    public void setTransformationLevel(float t)           { this.transformationLevel = Math.clamp(t, 0f, 1f); }
+    public void setFamiliarUUID(UUID uuid)                { this.familiarUUID = uuid == null ? "" : uuid.toString(); }
+    public void clearFamiliar()                           { this.familiarUUID = ""; }
+    public void setInfusionType(InfusionType type)        { this.infusionType = type == null ? "" : type.name(); }
+    public void clearInfusion()                           { this.infusionType = ""; }
+
+    public Optional<BlockPos> getLastDeathPos() {
+        if (lastDeathPos == Long.MIN_VALUE) return Optional.empty();
+        return Optional.of(BlockPos.of(lastDeathPos));
+    }
+    public String getLastDeathDimension()                 { return lastDeathDimension; }
+    public void setLastDeathPos(BlockPos pos, ResourceKey<Level> dimension) {
+        this.lastDeathPos = pos.asLong();
+        this.lastDeathDimension = dimension.identifier().toString();
+    }
+
+    public Optional<BlockPos> getReturnPos() {
+        if (returnPos == Long.MIN_VALUE) return Optional.empty();
+        return Optional.of(BlockPos.of(returnPos));
+    }
+    public String getReturnDimension()                    { return returnDimension; }
+    public boolean isInSpiritWorld()                      { return inSpiritWorld; }
+    public boolean isSpiritWorldDream()                   { return sw.isDream; }
+    public String getSavedInventorySnbt()                 { return sw.inventorySnbt; }
+    public void setReturnPos(BlockPos pos, ResourceKey<Level> dimension) {
+        this.returnPos = pos.asLong();
+        this.returnDimension = dimension.identifier().toString();
+    }
+    public void clearReturnPos() {
+        this.returnPos = Long.MIN_VALUE;
+        this.returnDimension = "";
+    }
+    public void setInSpiritWorld(boolean v)               { this.inSpiritWorld = v; }
+    public void setSpiritWorldIsDream(boolean v)          { sw.isDream = v; }
+    public void setSavedInventorySnbt(String snbt)        { sw.inventorySnbt = snbt == null ? "" : snbt; }
+    public float getSavedHealth()                         { return sw.savedHealth; }
+    public int   getSavedFoodLevel()                      { return sw.savedFood; }
+    public float getSavedSaturation()                     { return sw.savedSat; }
+    public java.util.Optional<java.util.UUID> getCorpseUUID() {
+        if (sw.corpseUUID.isEmpty()) return java.util.Optional.empty();
+        try { return java.util.Optional.of(java.util.UUID.fromString(sw.corpseUUID)); }
+        catch (IllegalArgumentException e) { return java.util.Optional.empty(); }
+    }
+    public void setCorpseUUID(java.util.UUID uuid) { sw.corpseUUID = uuid == null ? "" : uuid.toString(); }
+    public void clearCorpseUUID()                  { sw.corpseUUID = ""; }
+
+    public void saveSpiritWorldVitals(float health, int food, float saturation) {
+        sw.savedHealth = Math.max(1f, health);
+        sw.savedFood   = Math.clamp(food, 0, 20);
+        sw.savedSat    = Math.max(0f, saturation);
+    }
+
+    public String getCreaturePowerType()                  { return creaturePowerType; }
+    public int getCreaturePowerCharges()                  { return creaturePowerCharges; }
+    public void setCreaturePower(String type, int charges){ this.creaturePowerType = type; this.creaturePowerCharges = Math.max(0, charges); }
+    public void addCreaturePowerCharges(int n)            { this.creaturePowerCharges = Math.min(100, creaturePowerCharges + n); }
+    public boolean spendCreaturePowerCharge()             { if (creaturePowerCharges <= 0) return false; creaturePowerCharges--; return true; }
+    public void clearCreaturePower()                      { creaturePowerType = ""; creaturePowerCharges = 0; }
+    public int getHowlCooldown()                          { return howlCooldown; }
+    public void setHowlCooldown(int v)                    { howlCooldown = Math.max(0, v); }
+    public int getWolfMastery()                           { return wolfMastery; }
+    public void setWolfMastery(int v)                     { wolfMastery = Math.clamp(v, 0, 3); }
+    public int getSoaringTicks()                          { return soaringTicks; }
+    public boolean hasSoaringBuff()                       { return soaringTicks > 0; }
+    public void setSoaringTicks(int v)                    { soaringTicks = Math.max(0, v); }
+    public void tickSoaring()                             { if (soaringTicks > 0) soaringTicks--; }
+    public boolean isGhostWalkerActive()                  { return ghostWalkerActive; }
+    public void setGhostWalkerActive(boolean v)           { ghostWalkerActive = v; }
+    public int getTormentPortalCooldown()                 { return tormentPortalCooldown; }
+    public void setTormentPortalCooldown(int v)           { tormentPortalCooldown = Math.max(0, v); }
+    public void tickTormentPortal()                       { if (tormentPortalCooldown > 0) tormentPortalCooldown--; }
+    public boolean isDemonicNightmare()                   { return demonicNightmare; }
+    public void setDemonicNightmare(boolean v)            { this.demonicNightmare = v; }
+    public boolean isNightmare()                          { return !sw.isDream; }
+    public long getLastNightmareKillGameTime()            { return lastNightmareKillGameTime; }
+    public void setLastNightmareKillGameTime(long t)      { this.lastNightmareKillGameTime = t; }
+
+    // Copy-from for respawn carry-over
+    public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
+        this.vampire = other.vampire;
+        this.werewolf = other.werewolf;
+        this.transformationLevel = other.transformationLevel;
+        this.familiarUUID = other.familiarUUID;
+        this.infusionType = other.infusionType;
+        this.lastDeathPos = other.lastDeathPos;
+        this.lastDeathDimension = other.lastDeathDimension;
+        this.returnPos = other.returnPos;
+        this.returnDimension = other.returnDimension;
+        this.inSpiritWorld = other.inSpiritWorld;
+        this.sw = other.sw;
+        this.creaturePowerType = other.creaturePowerType;
+        this.creaturePowerCharges = other.creaturePowerCharges;
+        this.wolfMastery  = other.wolfMastery;
+        this.soaringTicks = other.soaringTicks;
+        if (keepOnDeath) {
+            this.bloodLevel = other.bloodLevel;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "WitcheryPlayerData{vampire=" + vampire + ", werewolf=" + werewolf
+                + ", blood=" + bloodLevel + ", transform=" + transformationLevel
+                + ", infusion=" + infusionType + "}";
+    }
+}

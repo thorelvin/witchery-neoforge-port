@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings",
+    "#minecraft:saplings"
+  ],
+  "result": {
+    "id": "witchery:wicker_bundle",
+    "count": 1
+  }
+}

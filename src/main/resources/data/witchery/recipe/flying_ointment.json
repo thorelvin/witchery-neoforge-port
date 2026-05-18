@@ -1,0 +1,13 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:redstone_soup"},
+    {"id": "minecraft:potion", "components": {"minecraft:potion_contents": {"potion": "minecraft:long_swiftness"}}},
+    {"id": "minecraft:diamond"},
+    {"id": "minecraft:feather"},
+    {"id": "witchery:bat_wool"},
+    {"id": "witchery:belladonna"}
+  ],
+  "result": {"id": "witchery:flying_ointment"},
+  "power": 3000.0
+}

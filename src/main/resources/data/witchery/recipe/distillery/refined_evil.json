@@ -1,0 +1,25 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:diamond_vapour"
+  },
+  "ingredient2": {
+    "id": "minecraft:ghast_tear"
+  },
+  "jars": 3,
+  "outputs": [
+    {
+      "id": "witchery:odour_of_purity"
+    },
+    {
+      "id": "witchery:reek_of_misfortune"
+    },
+    {
+      "id": "witchery:foul_fume"
+    },
+    {
+      "id": "witchery:refined_evil"
+    }
+  ],
+  "cookingtime": 800
+}

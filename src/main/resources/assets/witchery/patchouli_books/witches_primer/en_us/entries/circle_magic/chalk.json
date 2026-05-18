@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.chalk",
+  "icon": "witchery:chalk",
+  "category": "witchery:circle_magic",
+  "sortnum": 0,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/circle_magic.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.chalk.page1" },
+    { "type": "patchouli:spotlight", "item": "witchery:chalk", "text": "witchery.book.entry.chalk.variants" }
+  ]
+}

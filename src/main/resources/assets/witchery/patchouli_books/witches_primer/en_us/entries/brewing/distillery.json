@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.distillery",
+  "icon": "witchery:distillery",
+  "category": "witchery:brewing",
+  "sortnum": 2,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/distillery.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.distillery.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:distillery", "text": "witchery.book.entry.distillery.recipe" }
+  ]
+}

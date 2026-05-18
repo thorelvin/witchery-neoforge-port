@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:apple",
+    "witchery:belladonna"
+  ],
+  "result": {
+    "id": "witchery:apple_of_sleeping",
+    "count": 1
+  }
+}

@@ -1,0 +1,19 @@
+﻿{
+  "name": "witchery.book.entry.first_steps",
+  "icon": "witchery:rowan_sapling",
+  "category": "witchery:getting_started",
+  "sortnum": 0,
+  "priority": true,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/getting_started.png"],"border":true},
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.first_steps.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "witchery.book.entry.first_steps.page2.title",
+      "text": "witchery.book.entry.first_steps.page2"
+    }
+  ]
+}
+

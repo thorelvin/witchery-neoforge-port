@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:whiff_of_magic",
+    "minecraft:diamond",
+    "minecraft:lava_bucket"
+  ],
+  "result": {
+    "id": "witchery:attuned_stone",
+    "count": 1
+  }
+}

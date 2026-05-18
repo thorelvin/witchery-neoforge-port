@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:hunter_helmet",
+    "witchery:silver_ingot",
+    "witchery:silver_ingot"
+  ],
+  "result": {
+    "id": "witchery:hunter_helmet_silvered"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:blaze_powder"},
+    {"id": "minecraft:ender_pearl"},
+    {"id": "minecraft:glowstone_dust"},
+    {"id": "minecraft:nether_wart"},
+    {"id": "minecraft:ghast_tear"},
+    {"id": "minecraft:sugar"}
+  ],
+  "result": {"id": "witchery:brew_of_flowing_spirit", "count": 3},
+  "power": 0.0,
+  "color": -5570561,
+  "dimension": "witchery:spirit_world"
+}

@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "minecraft:spruce_sapling",
+  "result": {
+    "id": "witchery:hint_of_rebirth",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

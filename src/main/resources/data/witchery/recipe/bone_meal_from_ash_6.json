@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:bone",
+    "witchery:rowan_wood",
+    "witchery:rowan_wood",
+    "witchery:rowan_wood",
+    "witchery:rowan_wood",
+    "witchery:rowan_wood",
+    "witchery:rowan_wood"
+  ],
+  "result": {
+    "id": "minecraft:bone_meal",
+    "count": 6
+  }
+}

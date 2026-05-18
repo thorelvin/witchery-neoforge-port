@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.kettle",
+  "icon": "witchery:kettle",
+  "category": "witchery:brewing",
+  "sortnum": 0,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/brewing.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.kettle.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:kettle", "text": "witchery.book.entry.kettle.recipe" }
+  ]
+}

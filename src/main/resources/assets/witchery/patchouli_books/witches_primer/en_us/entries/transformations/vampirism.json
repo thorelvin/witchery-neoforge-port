@@ -1,0 +1,11 @@
+﻿{
+  "name": "witchery.book.entry.vampirism",
+  "icon": "witchery:brew_of_infection",
+  "category": "witchery:transformations",
+  "sortnum": 0,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/transformations.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.vampirism.page1" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.vampirism.abilities.title", "text": "witchery.book.entry.vampirism.abilities" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.vampirism.weaknesses.title", "text": "witchery.book.entry.vampirism.weaknesses" }
+  ]
+}

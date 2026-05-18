@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:string"},
+    {"id": "minecraft:cobweb"},
+    {"id": "minecraft:white_wool"},
+    {"id": "minecraft:snow_block"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:slime_ball"}
+  ],
+  "result": {"id": "witchery:brew_of_foaming", "count": 3},
+  "power": 0.0,
+  "color": -1
+}

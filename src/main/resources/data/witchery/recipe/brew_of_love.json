@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:dirt"},
+    {"id": "minecraft:cocoa_beans"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:apple"},
+    {"id": "minecraft:lily_pad"},
+    {"id": "minecraft:poppy"}
+  ],
+  "result": {"id": "witchery:brew_of_love", "count": 3},
+  "power": 0.0,
+  "color": -23044
+}

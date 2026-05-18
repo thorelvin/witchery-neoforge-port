@@ -1,0 +1,33 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {
+      "id": "witchery:redstone_soup"
+    },
+    {
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_regeneration"
+        }
+      }
+    },
+    {
+      "id": "minecraft:enchanted_golden_apple"
+    },
+    {
+      "id": "witchery:attuned_stone"
+    },
+    {
+      "id": "witchery:mandrake_root"
+    },
+    {
+      "id": "witchery:rowan_sapling"
+    }
+  ],
+  "result": {
+    "id": "witchery:soul_of_the_world",
+    "count": 2
+  },
+  "power": 4000.0
+}

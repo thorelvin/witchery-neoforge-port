@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_jungle",
+  "features": "witchery:wild_ember_moss",
+  "step": "vegetal_decoration"
+}

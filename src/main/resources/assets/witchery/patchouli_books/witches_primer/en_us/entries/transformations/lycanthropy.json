@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.lycanthropy",
+  "icon": "witchery:wolfsbane_flower",
+  "category": "witchery:transformations",
+  "sortnum": 1,
+  "pages": [
+    { "type": "patchouli:text", "text": "witchery.book.entry.lycanthropy.page1" },
+    { "type": "patchouli:text", "title": "witchery.book.entry.lycanthropy.abilities.title", "text": "witchery.book.entry.lycanthropy.abilities" }
+  ]
+}

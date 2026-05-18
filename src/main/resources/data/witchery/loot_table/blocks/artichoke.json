@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "witchery:artichoke"}]
+    },
+    {
+      "rolls": {"type": "minecraft:uniform", "min": 0, "max": 2},
+      "entries": [{"type": "minecraft:item", "name": "witchery:artichoke"}],
+      "conditions": [
+        {"condition": "minecraft:block_state_property", "block": "witchery:artichoke", "properties": {"age": "4"}}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "minecraft:dark_oak_sapling",
+  "result": {
+    "id": "witchery:reek_of_misfortune",
+    "count": 1
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

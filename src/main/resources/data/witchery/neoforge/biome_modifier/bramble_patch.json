@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_forest",
+  "features": "witchery:bramble_patch",
+  "step": "vegetal_decoration"
+}

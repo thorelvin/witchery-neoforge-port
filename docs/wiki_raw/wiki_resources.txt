@@ -1,0 +1,7889 @@
+
+============================================================
+# Alder Sapling
+============================================================
+Alder Sapling
+
+Name
+
+Alder Sapling
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchsapling:1
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Alder Sapling
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant like tall grass.
+
+It is used in several recipes.
+
+In a 
+Witches Oven
+ the Alder Saplings can make 
+Reek of Misfortune
+ specially as well as 
+Wood Ash
+ in a Witches Oven.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Alder Sapling can be used to create the following items:
+ 
+Brew of Sprouting
+ 
+Reek of Misfortune
+ 
+Rune of Spring
+ 
+Sigil of the Green Grove
+
+Video
+
+Witchery Explained: Episode 2, Mutation Magic part 1, Mutandis! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Alder Wood
+============================================================
+Alder Wood
+
+Name
+
+Alder Wood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchlog:1
+
+OreDict
+ Name
+
+logWood
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Burn Time
+
+300 ticks (1.5 Items)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Alder Wood
+ is wood that has been chopped down from 
+Witchery
+'s Alder trees.
+
+Usage
+
+Alder Wood has no known uses in crafting.
+
+============================================================
+# Anointing Paste
+============================================================
+Anointing Paste
+
+Name
+
+Anointing Paste
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:153
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Anointing Paste
+ is an item added by the 
+Witchery
+ mod. It is used in the anointing of a 
+cauldron
+ to turn it into a 
+Witch's Cauldron
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Feed The Beast Infinity Evolved Expert Mode
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Place down a cauldron in the world, right click the cauldron with the Anointing Paste to anoint it into a Witch's Cauldron.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Attuned Stone
+============================================================
+Attuned Stone
+
+Name
+
+Attuned Stone
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:10
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Attuned Stone
+ is an item added by the 
+Witchery
+ mod. It can be 
+ charged
+ to serve as a portable container of 
+Altar
+ power in order to activate 
+Rites
+ away from one's base. It also serves as a crafting component for many of Witchery's devices.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Regrowth
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Attuned Stone can be used to create the following items:
+ 
+Attuned Stone (Charged)
+ 
+Blood Altar
+ 
+Candelabra
+ 
+Chalice
+Disorientation Fetish
+ 
+Disorientation Fetish
+ 
+Distillery (Witchery)
+ 
+Kettle
+ 
+Mana Tablet
+ 
+Poppet Shelf
+ 
+Ruby Slippers
+ 
+Runic Matrix
+ 
+Soul of the World
+ 
+Spinning Wheel (Witchery)
+
+============================================================
+# Belladonna
+============================================================
+Belladonna
+
+Name
+
+Belladonna
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:belladonna
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+Belladonna
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Belladonna Seeds
+ and when harvested it will yield 
+Belladonna Flower
+ and 
+Belladonna Seeds
+.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass Block|Mycelium}}
+
+Usage
+
+Belladonna has no known uses in crafting.
+
+============================================================
+# Belladonna Flower
+============================================================
+Belladonna Flower
+
+Name
+
+Belladonna Flower
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:21
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Belladonna is an ingredient used in many recipes. It is harvested from a fully grown Belladonna plant that must be grown from Belladonna seeds.
+
+Farming
+
+To grow, Belladonna Seeds must be planted in tilled soil. It has three growth stages. Left clicking removes the entire plant, and drops Belladonna and Belladonna Seeds. The plant can then be replanted using the seed.
+
+Usage
+
+Belladonna Flower can be used to create the following items:
+ 
+Anointing Paste
+ 
+Brew of Cursed Leaping
+ 
+Brew of Erosion
+ 
+Brew of Wasting
+ 
+Brew of Webs
+ 
+Flying Ointment
+ 
+Nullifying Bolt
+ 
+Redstone Soup
+ 
+Ultimate Stew
+ 
+Voodoo Poppet
+ 
+Voodoo Protection Poppet
+ 
+Witchcraft: Collecting Fumes
+
+============================================================
+# Belladonna Seeds
+============================================================
+Belladonna Seeds
+
+Name
+
+Belladonna Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Belladonna Seeds
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by punching 
+Tall Grass
+.
+
+It is used to grow 
+Belladonna Flowers
+ and 
+Belladonna
+.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Blood Poppy
+============================================================
+Blood Poppy
+
+Name
+
+Blood Poppy
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:bloodrose
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+None
+
+The 
+Blood Poppy
+ is an item added by the 
+Witchery
+ mod. It is a thorny flower that snags those who traverse over it. The blood can then be gathered with a 
+Taglock Kit
+ on the poppy.
+
+Be careful! Only a 
+Boline
+ can safely harvest blood poppies without damaging them!
+
+Recipe
+
+Blood poppies are created by mutating a 
+Leech Chest
+ with 
+Poppies
+. To do so, place a Leech Chest above a 
+Water
+ source block and surround it in the North, South, East, and West directions with the poppies, then use a 
+Mutating Sprig
+ on the Leech Chest.
+
+Usage
+
+Blood Poppy has no known uses in crafting. It is used for gathering the blood of trespassers in a 
+Taglock Kit
+ or just whoever the witch convinces to walk through them.
+
+============================================================
+# Bloodied Wicker Bundle
+============================================================
+Bloodied Wicker Bundle
+
+Name
+
+Bloodied Wicker Bundle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:wickerbundle:1
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+2.5
+
+Hardness
+
+0.5
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Unknown
+
+The 
+Bloodied Wicker Bundle
+ is an item added by the 
+Witchery
+ mod. It is used in a structure-based recipe to summon the 
+Horned Huntsman
+ by burning down a wickerman-shaped structure. 
+
+It is decorative and similar to the 
+Hay Bale
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+The 
+Demonic Blood
+ can be applied directly to placed 
+Wicker Bundles
+, but this is wasteful compared to the regular recipe.
+
+Usage
+
+Place the Bloodied Wicker Bundles in a 1x4x7 pattern arranged from the bottom per row as: two in the middle, two in the middle, four, four, four, two in the middle, and two in the middle, for a total of 20 Bloodied Wicker Bundles. Then set it on fire, this can summon the Horned Huntsman!
+
+============================================================
+# Bone Needle
+============================================================
+Bone Needle
+
+Name
+
+Bone Needle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:7
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Bone Needle
+ is an item added by the 
+Witchery
+ mod. It is used in several recipes and with the 
+Voodoo Poppet
+ to inflict half a heart to the bound player.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Bone Needle can be used to create the following items:
+ 
+Poppet
+ 
+Taglock Kit
+ 
+Waystone
+ 
+Witch Hunter Pistol Crossbow
+
+============================================================
+# Breath of the Goddess
+============================================================
+Breath of the Goddess
+
+Name
+
+Breath of the Goddess
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:32
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Breath of the Goddess
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Witches Oven
+
+Usage
+
+Breath of the Goddess can be used to create the following items:
+ 
+Altar
+ 
+Brew of Air Hike
+ 
+Leaping Lily
+ 
+Tear of the Goddess
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brew of Flowing Spirit
+============================================================
+Brew of Flowing Spirit
+
+Name
+
+Brew of Flowing Spirit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:96
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Flowing Spirit
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion full of the essence of the 
+Spirit Form
+ in liquid and when thrown it creates a source block of the liquid. This source block can be picked up in a bucket and moved or the liquid itself can slowly heal all non-demonic or undead entities. Dowsing 
+Nightmares
+ in the liquid is the only way to make Nightmares not invulnerable!
+
+A pool of flowing spirit near a 
+Dream Weaver of Nightmares
+ helps decrease the chance of a nightmare by for each source block by ten percent with a maximum of thirty percent.
+
+Recipe
+
+ 
+Ingredients for the brew
+
+ 
+Fanciful Thread
+, 
+ 
+Spanish Moss
+, 
+ 
+Water Artichoke Globe
+, 
+ 
+Glint Weed
+, 
+ 
+Mandrake Root
+, and 
+ 
+Wool of Bat
+Only can be brewed in the 
+Spirit World
+.
+
+Wearing a 
+Witches Hat
+ and/or 
+Robes
+ while brewing can yield more brews than three.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Brew of Hollow Tears
+============================================================
+Brew of Hollow Tears
+
+Name
+
+Brew of Hollow Tears
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:115
+
+Type
+
+Potion
+
+Stackable
+
+Yes (64)
+
+The 
+Brew of Hollow Tears
+ is an item added by the 
+Witchery
+ mod. It is a throwable potion that drops the Hollow Tears liquid. It is the opposite of the 
+Flowing Spirit liquid
+ in that it buffs certain undead and demons with the Regeneration effect and weakens players with the Weakness II effect.
+
+Throwing a 
+Solidifying Brew
+ at the liquid's source block will turn the source block into a different material depending on the Solidifying Brew used.
+
+Recipe
+
+Distillery
+
+Usage
+
+Brew of Hollow Tears has no known uses in crafting.
+
+============================================================
+# Circle Talisman
+============================================================
+Circle Talisman
+
+Name
+
+Circle Talisman
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:circletalisman
+
+Type
+
+Item
+
+Stackable
+
+Yes (16)
+
+The Circle Talisman is used to store and transport ritual circles. By using the 
+Rite of Binding
+, the circle will be stored within the Circle Talisman.  In order to retrieve the circle, simply right-click the Circle Talisman on the ground.
+
+The Rite of Binding can be used in two ways.  One when near an 
+Altar
+, and another when in the field.
+
+Recipe
+
+Any size or kind of circle can be used for this spell, the circle used is what gets stored.
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+0
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+-Any-
+
++0
+
+Altar Power: 
+1000
+
+Usage
+
+Circle Talisman has no known uses in crafting.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Clay Jar
+============================================================
+Clay Jar
+
+Name
+
+Clay Jar
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:27
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Clay Jar
+ is an item added by the 
+Witchery
+ mod. It is used in the extraction of 
+Witches Oven
+ by-products.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+Usage
+
+Clay Jar can be used to create the following items:
+ 
+Breath of the Goddess
+ 
+Brew of Hollow Tears
+ 
+Coal Ore (Minecraft)
+ 
+Condensed Fear
+ 
+Cooked Meat Block
+ 
+Demonic Blood
+ 
+Diamond Vapor
+ 
+Distillery (Witchery)
+ 
+Ender Dew
+ 
+Exhale of the Horned One
+ 
+Focused Will
+ 
+Foul Fume
+ 
+Glowstone Dust
+ 
+Gypsum (Witchery)
+ 
+Hint of Rebirth
+ 
+Mushroom (Brown)
+ 
+Mushroom (Red)
+ 
+Odour of Purity
+ 
+Oil of Vitriol
+ 
+Potato
+ 
+Purified Milk
+ 
+Raw Meaty Stew
+ 
+Raw Salmon (Minecraft)
+ 
+Reek of Misfortune
+… full list
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Concentrated Bat Ball
+============================================================
+Concentrated Bat Ball
+
+Name
+
+Concentrated Bat Ball
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:108
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Concentrated Bat Ball
+ is an item added by the 
+Witchery
+ mod. It is a heavily condensed ball of slime and bats. 
+
+This item can be thrown quite far but be careful, because of how heavily condensed it is it can be dropped if the person carrying it gets hit.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Concentrated Bat Ball can be used to create the following items:
+ 
+Brew of Bats
+
+============================================================
+# Condensed Fear
+============================================================
+Condensed Fear
+
+Name
+
+Condensed Fear
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:114
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Condensed Fear
+ is an item added by the 
+Witchery
+ mod. It is used to create a 
+Spectral Stone
+ using the 
+Rite of Necromancy
+, as well as brew the 
+Brew of Drain Magic
+.
+
+Recipe
+
+Distillery
+
+Usage
+
+Condensed Fear has no known uses in crafting.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Cooked Lambchop (Witchery)
+============================================================
+Cooked Lambchop
+
+Name
+
+Cooked Lambchop
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:159
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Food
+
+6 (
+)
+
+Cooked Lambchop
+ is an item added by the 
+Witchery
+ mod.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+============================================================
+# Cooked Porkchop
+============================================================
+Cooked Porkchop?
+
+Name
+
+Cooked Porkchop?
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:51
+
+Type
+
+Food
+
+Stackable
+
+Yes (64)
+
+Food
+
+8 (
+)
+
+Cooked Porkchop?
+ is an item added by the 
+Witchery
+ mod.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+Usage
+
+Cooked Porkchop? can be used to create the following items:
+ 
+Cooked Porkchop
+
+============================================================
+# Creeper Heart
+============================================================
+Creeper Heart
+
+Name
+
+Creeper Heart
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:74
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Creeper Heart
+ is from the 
+Witchery
+ mod.  It can be used to craft a 
+Frozen Heart
+ or 5 
+Gunpowder
+.
+
+It is found dropped from 
+creepers
+.
+
+Usage
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Critter Snare
+============================================================
+Critter Snare
+
+Name
+
+Critter Snare
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:crittersnare
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+The 
+Critter Snare
+ is an item added by the 
+Witchery
+ mod. It can be used to hold mobs to use for recipes.
+
+Captured mobs can be released by right-clicking while sneaking but you can move the snares with mobs caught in it by just breaking it.
+
+Recipe
+
+Critter snares are created by mutating 
+Alder Saplings
+ with 
+zombies
+. To do so, place a 
+cobweb
+ above a 
+Water
+ source block and surround it in the North, South, East, and West directions with the alder saplings, then lure a zombie into the cobweb and use a 
+Mutating Sprig
+ on the cobweb.
+
+Usage
+
+Critter Snare can be used to create the following items:
+ 
+Concentrated Bat Ball
+
+============================================================
+# Demon Heart
+============================================================
+Demon Heart
+
+Name
+
+Demon Heart
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:23
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Demon Heart
+ is very evil and very powerful. One can acquire such an item only from demons themselves either through trading with a demon or killing a demon. As with most special Witchery drops, killing a demon with an 
+Arthana
+ would give better chances of it dropping.
+
+Usage
+
+Demon Hearts can be used for imbuing oneself with the 
+Infernal Infusion
+, or for many others rituals.
+
+They can be placed as decoration and will provide power for nearby 
+Altars
+ (max 2), demon heart will also increase chance of nightmare(35% each). 
+
+Eating a demon heart will grant demon powers temporarily to the eater, giving Speed III, Health boost, Stengh III, Regen II, Fire resistance III for 2 minutes, it also give debuffs, Hunger II, nausea and set player on fire.
+
+it can also be fed to a 
+Treefyd
+ to increase its heath to 75 hearts and its damage to 8 points. 
+
+Demon Heart can be used to create the following items:
+ 
+Brew of Paralysis
+ 
+Demonic Blood
+ 
+Devils Tongue Charm
+ 
+Refined Evil
+ 
+Soul Sand
+ 
+Statue of The Goddess
+
+============================================================
+# Demonic Blood
+============================================================
+Demonic Blood
+
+Name
+
+Demonic Blood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:80
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Demonic Blood
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipes.
+
+Recipe
+
+Distillery
+
+Distillery
+
+Usage
+
+Demonic Blood can be used to create the following items:
+ 
+Bloodied Wicker Bundle
+ 
+Brew of Fear
+ 
+Complex Spell Crystal
+ 
+Netherrack
+ 
+Ruby Slippers
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Demonic Contract
+============================================================
+Demonic Contract
+
+Name
+
+Demonic Contract
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:140
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Demonic Contract
+ is an item added by the 
+Witchery
+ mod. It is used in the creation of contracts that are used with a 
+Flame Imp
+ to 
+cast spells
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Dense Web
+============================================================
+Dense Web
+
+Name
+
+Dense Web
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:56
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Dense Web
+ is an item added by the 
+Witchery
+ mod. It is a heavily dense cobweb.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Dense Web can be used to create the following items:
+ 
+Brew of Webs
+
+============================================================
+# Diamond Vapor
+============================================================
+Diamond Vapor
+
+Name
+
+Diamond Vapor
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:29
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Diamond Vapor
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipies.
+
+Recipe
+
+Distillery
+
+Usage
+
+Diamond Vapor can be used to create the following items:
+ 
+Armor Protection Poppet
+ 
+Brew of Duration Boost
+ 
+Brew of Fortune
+ 
+Brew of Ill Fitting
+ 
+Brew of Keep Effects
+ 
+Brew of Keep Inventory
+ 
+Brew of Reincarnate
+ 
+Brew of Resizing
+ 
+Brew of Shifting Seasons
+ 
+Brew of Spread Debuffs
+ 
+Brew of Steal Buffs
+ 
+Brew of Summon Leonard
+ 
+Brew of Undead's Curse
+ 
+Death Protection Poppet
+ 
+Demonic Blood
+ 
+Dream Weaver of Fasting
+ 
+Dream Weaver of Fleet Foot
+ 
+Dream Weaver of Intensity
+ 
+Dream Weaver of Iron Arm
+ 
+Dream Weaver of Nightmares
+ 
+Empty Socket
+ 
+Icy Slippers
+ 
+Impregnated Leather
+ 
+Nether Wart
+… full list
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Disturbed Cotton
+============================================================
+Disturbed Cotton
+
+Name
+
+Disturbed Cotton
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:99
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Disturbed Cotton
+ is an item added by the 
+Witchery
+ mod. It can be obtained by harvesting 
+Wispy Cotton
+ during a nightmare in the 
+Spirit World
+. Unlike Wispy Cotton, Disturbed Cotton cannot be replanted. Wispy Cotton stays in inventories when leaving the Spirit World.
+
+Usage
+
+Disturbed Cotton can be used to create the following items:
+ 
+Brew of Sinking
+ 
+Tormented Twine
+
+============================================================
+# Drop of Luck
+============================================================
+Drop of Luck
+
+Name
+
+Drop of Luck
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:39
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Drop of Luck
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipies and 
+Circle Rituals
+.
+
+Recipe
+
+Witch's Cauldron
+
+Altar Power: 
+7000
+
+Usage
+
+Drop of Luck can be used to create the following items:
+ 
+Armor Protection Poppet
+ 
+Brew of Brew Bottling
+ 
+Brew of Insanity
+ 
+Death Protection Poppet
+ 
+Poppet Protection Poppet
+ 
+Redstone Soup
+ 
+Tool Protection Poppet
+ 
+Void Bramble
+
+============================================================
+# Ember Moss
+============================================================
+Ember Moss
+
+Name
+
+Ember Moss
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:embermoss
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+Yes (6)
+
+Flammable
+
+No
+
+Required Tool
+
+The 
+Ember Moss
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant, and can only be harvested with 
+Shears
+. It gets its name because it sets ablaze any who tread upon it. It can be placed on most surfaces and spreads to grow more of itself.
+It is used in several recipes.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass Block|Mycelium}}
+
+Usage
+
+Ember Moss can be used to create the following items:
+ 
+Brew of Overheating
+ 
+Brew of Wasting
+ 
+Fire Protection Poppet
+ 
+Treefyd Seed
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Ender Dew
+============================================================
+Ender Dew
+
+Name
+
+Ender Dew
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:67
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+An Ender Dew is an item added by the 
+Witchery
+ mod. It is a component of several recipies and Circle Magic Rituals.
+
+Recipe
+
+Distillery
+
+Usage
+
+Ender Dew can be used to create the following items:
+ 
+Brew of Ender Inhibition
+ 
+Elven Gateway Core
+ 
+Natura Pylon
+ 
+Poppet Protection Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Ent Twig
+============================================================
+Ent Twig
+
+Name
+
+Ent Twig
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:82
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Ent Twig
+ is an item added by the 
+Witchery
+ mod. It is a magical stick dropped from the remains of living trees, the 
+Ents
+.
+
+Usage
+
+Ent Twig can be used to create the following items:
+ 
+Bark Belt
+ 
+Brew of Sprouting
+ 
+Mystic Branch
+
+============================================================
+# Exhale of the Horned One
+============================================================
+Exhale of the Horned One
+
+Name
+
+Exhale of the Horned One
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:31
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Exhale of the Horned One
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Witches Oven
+
+Usage
+
+Exhale of the Horned One can be used to create the following items:
+ 
+Altar
+ 
+Mutandis
+ 
+Vampiric Poppet
+ 
+Voodoo Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Fanciful Thread
+============================================================
+Fanciful Thread
+
+Name
+
+Fanciful Thread
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Fanciful Thread
+ is an item added by the 
+Witchery
+ mod. It serves as a crafting component for some of Witchery's devices.
+
+Recipe
+
+Spinning Wheel
+
+Usage
+
+Fanciful Thread can be used to create the following items:
+ 
+Charm of Fanciful Thinking
+ 
+Dream Weaver of Fasting
+ 
+Dream Weaver of Fleet Foot
+ 
+Dream Weaver of Intensity
+ 
+Dream Weaver of Iron Arm
+
+============================================================
+# Focused Will
+============================================================
+Focused Will
+
+Name
+
+Focused Will
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:113
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Focused Will
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipes.
+
+Recipe
+
+Distillery
+
+Usage
+
+Focused Will can be used to create the following items:
+ 
+Brew of Keep Inventory
+ 
+Conjuration Catalyst
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Foul Fume
+============================================================
+Foul Fume
+
+Name
+
+Foul Fume
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:28
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Foul Fume
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Any Logs can be used in the following recipie.
+
+Witches Oven
+
+Any meats can be used in the following recipie.
+
+Witches Oven
+
+Witches Oven
+
+Usage
+
+Foul Fume can be used to create the following items:
+ 
+Brew of Stout Belly
+ 
+Gypsum (Witchery)
+ 
+Oil of Vitriol
+ 
+Slimeball
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Frozen Heart
+============================================================
+Frozen Heart
+
+Name
+
+Frozen Heart
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:79
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Frozen Heart
+ is an item added by the 
+Witchery
+ mod. It is used in recipes.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Fume Filter
+============================================================
+Fume Filter
+
+Name
+
+Fume Filter
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:73
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Fume Filter
+ is an item added by the 
+Witchery
+ mod. It is used to upgrade 
+Fume Funnels
+ into 
+Filtered Fume Funnels
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Fume Filter can be used to create the following items:
+ 
+Filtered Fume Funnel
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Glint Weed
+============================================================
+Glint Weed
+
+Name
+
+Glint Weed
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:glintweed
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+Yes (14)
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+The 
+Glint Weed
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant. It gets its name because it is a great natural light source that can be placed on most surfaces as well as walls and ceilings but it only spreads to grow more of itself on surfaces.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass Block|Mycelium}}
+
+Usage
+
+Glint Weed can be used to create the following items:
+ 
+Brew of Flames
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Golden Thread (Witchery)
+============================================================
+Golden Thread
+
+Name
+
+Golden Thread
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:102
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Golden Thread
+ is an item added by the 
+Witchery
+ mod. It serves as a crafting component for some of Witchery's devices.
+
+Recipe
+
+Spinning Wheel
+
+Usage
+
+Golden Thread (Witchery) can be used to create the following items:
+ 
+Biting Belt
+ 
+Brew Bag
+ 
+Enchanted Fabric (Thaumcraft 4)
+ 
+Gold Nugget
+ 
+Icy Slippers
+ 
+Necromancer Robes
+ 
+Ruby Slippers
+ 
+Seeping Shoes
+ 
+Witches Robes
+
+============================================================
+# Grassper
+============================================================
+Grassper
+
+Name
+
+Grassper
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:grassper
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+The 
+Grassper
+ is an item added by the 
+Witchery
+ mod. It is a grasping plant that can be used to hold items for casting spells or for just decoration really. The grassper is also required for many mutation spells for holding in place the material components.
+
+Recipe
+
+Grasspers are created by mutating a 
+Chest
+ with 
+Grass
+. To do so, place a Chest above a 
+Water
+ source block and surround it in the North, South, East, and West directions with the tall grass, then use a 
+Mutating Sprig
+ on the Chest.
+
+Usage
+
+Grassper has no known uses in crafting.
+
+============================================================
+# Graveyard Dust
+============================================================
+Graveyard Dust
+
+Name
+
+Graveyard Dust
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:128
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Graveyard Dust
+ is an item added by the 
+Witchery
+ mod. It is used in recipes and can be mutated from 
+Bone Meal
+ and 
+Spectral Dust
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Graveyard Dust has no known uses in crafting.
+
+============================================================
+# Gypsum (Witchery)
+============================================================
+Gypsum
+
+Name
+
+Gypsum
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:17
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Gypsum
+ is an item added by the 
+Witchery
+ mod. It is used in the crafting of 
+Ritual Chalks
+.
+
+Recipe
+
+Distillery
+
+Usage
+
+Gypsum (Witchery) can be used to create the following items:
+ 
+Ritual Chalk
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Hawthorn Sapling
+============================================================
+Hawthorn Sapling
+
+Name
+
+Hawthorn Sapling
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchsapling:2
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Hawthorn Sapling
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant like tall grass.
+
+It is used in several recipes.
+
+In a 
+Witches Oven
+ the Hawthorn Saplings can make 
+Odour of Purity
+ specially as well as 
+Wood Ash
+ in a Witches Oven.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Hawthorn Sapling can be used to create the following items:
+ 
+Brew of Sprouting
+ 
+Broom (Witchery)
+ 
+Odour of Purity
+ 
+Rune of Spring
+
+Video
+
+Witchery Explained: Episode 2, Mutation Magic part 1, Mutandis! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Hawthorn Wood
+============================================================
+Hawthorn Wood
+
+Name
+
+Hawthorn Wood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchlog:2
+
+OreDict
+ Name
+
+logWood
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Burn Time
+
+300 ticks (1.5 Items)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Hawthorn Wood
+ is wood that has been chopped down from 
+Witchery
+'s Hawthorn trees.
+
+Usage
+
+Hawthorn Wood has no known uses in crafting.
+
+============================================================
+# Hint of Rebirth
+============================================================
+Hint of Rebirth
+
+Name
+
+Hint of Rebirth
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:33
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Hint of Rebirth
+ is an item added by the 
+Witchery
+ mod. It is used in various recipes.
+
+Recipe
+
+Witches Oven
+
+Usage
+
+Hint of Rebirth can be used to create the following items:
+ 
+Brew of Reincarnate
+ 
+Mutandis
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Icy Needle
+============================================================
+Icy Needle
+
+Name
+
+Icy Needle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:78
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Icy Needle
+ is an item added by the 
+Witchery
+ mod. It is a sharp prick that can be used to wake oneself up from the 
+Spirit World
+, it is sometimes dropped from 
+Snowbells
+.
+
+Usage
+
+Icy Needle can be used to create the following items:
+ 
+Anointing Paste
+ 
+Brew of Freeze
+ 
+Frozen Heart
+
+============================================================
+# Impregnated Leather
+============================================================
+Impregnated Leather
+
+Name
+
+Impregnated Leather
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:72
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Impregnated Leather
+ is an item added by the 
+Witchery
+ mod. It is an upgraded form of the 
+leather
+ that has been upgraded with diamonds and magic itself. It has many crafting uses.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Impregnated Leather can be used to create the following items:
+ 
+Biting Belt
+ 
+Brew Bag
+ 
+Icy Slippers
+ 
+Necromancer Robes
+ 
+Seeping Shoes
+ 
+Sojourner's Sash
+ 
+Tectonic Girdle
+ 
+Witches Robes
+
+============================================================
+# Koboldite Dust
+============================================================
+Koboldite Dust
+
+Name
+
+Koboldite Dust
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Koboldite Dust
+ is an item added by 
+Witchery
+. It is mined by 
+Hobgoblins
+ in dust form. Hobgoblins can be paid to convert the dust into nuggets and then paid again to convert it to ingots. Koboldite ingots can then be used for recipes while Koboldite nuggets can be used for one recipe.
+
+Usage
+
+Koboldite Dust can be traded to 
+Hobgoblins
+ for 
+Koboldite Nuggets
+ and 
+Koboldite Ingots
+.
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Koboldite Ingot
+============================================================
+Koboldite Ingot
+
+Name
+
+Koboldite Ingot
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Koboldite Ingot
+ is an item added by 
+Witchery
+. It is the ingot form of 
+Koboldite Dust
+ which can only be processed into ingots or nuggets by 
+Hobgoblin
+ for a price once a witch has traded two specific trades, first with nine koboldite dust, then with sixteen koboldite dust. After that koboldite ingot trades will become available.
+
+Usage
+
+Koboldite Ingot can be used to create the following items:
+ 
+Infinity Catalyst
+ 
+Koboldite Pickaxe
+ 
+Pentacle
+ 
+Twisting Band
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Koboldite Nugget
+============================================================
+Koboldite Nugget
+
+Name
+
+Koboldite Nugget
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+Koboldite Ingot
+ is an item added by 
+Witchery
+. It is the ingot form of 
+Koboldite Dust
+ which can only be processed into nuggets or ingots by 
+Hobgoblin
+ for a price instantly but once a witch has traded two specific trades, first with nine koboldite dust, then with sixteen koboldite dust then this unlocks the ability to trade for koboldite ingots too.
+
+Usage
+
+Koboldite Nugget can be used to create the following items:
+ 
+Pentacle
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Leaping Lily
+============================================================
+Leaping Lily
+
+Name
+
+Leaping Lily
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:leapinglily
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+Yes (6)
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+The 
+Leaping Lily
+ is from the 
+Witchery
+
+ mod.  It can be placed on most surfaces and when placed it gives anyone
+ going across it a short speed and jump boost. This can be used for good
+ roads.
+
+Recipe
+
+Expand
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Potion of Speed
+
+Usage
+
+Leaping Lily has no known uses in crafting.
+
+============================================================
+# Mandrake (Plant)
+============================================================
+Mandrake (Plant)
+
+Name
+
+Mandrake (Plant)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:mandrake
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+Mandrake
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Mandrake Seeds
+ and when harvested it will either spawn a 
+Mandrake
+ or will yield 
+Mandrake Root
+ and Mandrake Seeds.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Mandrake (Plant) has no known uses in crafting.
+
+============================================================
+# Mandrake Root
+============================================================
+Mandrake Root
+
+Name
+
+Mandrake Root
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:22
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Mandrake root is a plant grown from Mandrake seeds and used in many 
+Witchery
+
+ crafting recipes. If harvested during daylight, the Mandrake will come 
+to life and scream, which gives you the Nausea effect. This will only 
+stop when the Mandrake is killed; not easy, as vision becomes blurred 
+and they run about in all directions. Mandrakes sleep at night, so 
+harvesting during the hours of darkness gives a reduced chance of this 
+happening, but it sill could. 
+Earmuffs
+ will protect from the sound which means the effect is not felt.
+
+Usage
+
+Mandrake Root can be used to create the following items:
+ 
+Anointing Paste
+ 
+Brew of Blast
+ 
+Brew of Combustion
+ 
+Brew of Demonbane
+ 
+Brew of Dissipate Gas
+ 
+Brew of Ender Inhibition
+ 
+Brew of Erosion
+ 
+Brew of Extinguish Fires
+ 
+Brew of Fell Tree
+ 
+Brew of Fertilize
+ 
+Brew of Grow Flowers
+ 
+Brew of Grow Lily
+ 
+Brew of Harvest
+ 
+Brew of Ice Shell
+ 
+Brew of Ice World
+ 
+Brew of Inferno
+ 
+Brew of Moonshine
+ 
+Brew of Part Water
+ 
+Brew of Poison Toad
+ 
+Brew of Prune Leaves
+ 
+Brew of Pulverize Rock
+ 
+Brew of Reflect Damage
+ 
+Brew of Snow Burst & Trail
+ 
+Brew of Sprouting
+… full list
+
+============================================================
+# Mandrake Seeds
+============================================================
+Mandrake Seeds
+
+Name
+
+Mandrake Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Mandrake Seeds
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by punching 
+Tall Grass
+.
+
+It is used to grow 
+Mandrakes
+ and 
+Mandrake Root
+.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Mellifluous Hunger
+============================================================
+Mellifluous Hunger
+
+Name
+
+Mellifluous Hunger
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:103
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Mellifluous Hunger
+ is an item added by the 
+Witchery
+ mod. It can only be obtained by killing a 
+Nightmare
+ in the 
+Spirit World
+.
+
+It is used in the creation of 
+Dream Weavers
+.
+
+It is dropped by 
+Nightmares
+.
+
+Usage
+
+Mellifluous Hunger can be used to create the following items:
+ 
+Biting Belt
+ 
+Brew of Nightmare
+ 
+Brew of Wasting
+ 
+Dream Weaver of Fasting
+
+============================================================
+# Minedrake (Plant)
+============================================================
+Minedrake (Plant)
+
+File:Grid Minedrake (Plant).png
+
+Name
+
+Minedrake (Plant)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Crop
+
+Stackable
+
+Unknown
+
+Minedrake
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Minedrake Bulbs
+ and it has a chance to create two Mandrake Bulbs.
+
+============================================================
+# Minedrake Bulb
+============================================================
+Minedrake Bulb
+
+Name
+
+Minedrake Bulb
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Minedrake Bulb
+ is an item added by the 
+Witchery
+ mod. Dropping a Minedrake Bulb on the ground will wake it up so be quick anytime a bulb falls!
+
+Woken up 
+Minedrakes
+
+ will target the person who dropped them, if a player did not drop a 
+Minedrake they will walk around until they see a player and go after 
+that player. 
+
+It is used to grow 
+Minedrakes
+.
+
+============================================================
+# Mutandis
+============================================================
+Mutandis
+
+Name
+
+Mutandis
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:14
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Mutandis
+ is an item added by the 
+Witchery
+ mod. 
+
+It is an important part of the mod as it is the only one of two ways to obtain key ingredients. Using it on small plants will randomly turn them into other plants. Mutandis  may be upgraded to 
+Mutandis Extremis
+, which may be used to transform meat. It is the only way to get 
+Glint Weed
+, 
+Spanish Moss
+, 
+Ember Moss
+, 
+Rowan Saplings
+, 
+Hawthorn Saplings
+, and 
+Alder Saplings
+, but can also produce other vanilla plants like mushrooms and spruce saplings.
+
+Recipe
+
+Witch's Cauldron
+
+Prior to 1.7.10
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Mutandis can be used to create the following items:
+ 
+Alder Sapling
+ 
+Cooked Chicken
+ 
+Cooked Porkchop
+ 
+Dandelion (Minecraft)
+ 
+Ember Moss
+ 
+Glint Weed
+ 
+Grass Block
+ 
+Graveyard Dust
+ 
+Hawthorn Sapling
+ 
+Mutandis Extremis
+ 
+Mycelium
+ 
+Nether Wart
+ 
+Poppy (Minecraft)
+ 
+Raw Beef
+ 
+Raw Chicken
+ 
+Raw Porkchop
+ 
+Raw Porkchop?
+ 
+Rowan Sapling
+ 
+Spanish Moss
+ 
+Steak
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Mutandis Extremis
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Mutandis Extremis
+
+Name
+
+Mutandis Extremis
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:15
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Mutandis Extremis
+ is an item added by the 
+Witchery
+ mod. 
+
+It is an important part of the mod as it is the only one of two ways to obtain key ingredients. This is the higher form of the 
+Mutandis
+.  Mutandis Extremis is able to mutate multi-staged growth plants like Cactus, Sugar Cane, and Wheat. This can useful when the Player needs Cactus but cannot find a nearby desert. It can still transform everything that Mutandis can.
+
+It is also used in some Witchery crafting recipes.
+
+Recipe
+
+Witch's Cauldron
+
+7 & 11
+
+Altar Power: 
+7000
+
+Witch's Cauldron
+
+Altar Power: 
+8000
+
+Usage
+
+Mutandis Extremis can be used to create the following items:
+ 
+Alder Sapling
+ 
+Belladonna
+ 
+Cactus
+ 
+Cooked Chicken
+ 
+Cooked Porkchop
+ 
+Dandelion (Minecraft)
+ 
+Drop of Luck
+ 
+Ember Moss
+ 
+End Stone
+ 
+Glint Weed
+ 
+Grass Block
+ 
+Hawthorn Sapling
+ 
+Mandrake (Plant)
+ 
+Mycelium
+ 
+Poppy (Minecraft)
+ 
+Raw Beef
+ 
+Raw Chicken
+ 
+Raw Porkchop
+ 
+Rowan Sapling
+ 
+Snowbell
+ 
+Spanish Moss
+ 
+Steak
+ 
+Treefyd Seed
+ 
+Void Bramble
+… full list
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Null Catalyst
+============================================================
+Null Catalyst
+
+Name
+
+Null Catalyst
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:130
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Null Catalyst
+ is an item from the 
+Witchery
+ mod. It is an important crafting material for recipes of items that nullify effects. This item can produce more of itself with relatively cheap materials once one has already been made.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+Shapeless
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+Shapeless
+
+Feed The Beast Infinity Evolved Expert Mode
+
+Usage
+
+Null Catalyst can be used to create the following items:
+ 
+Arcane Plinth
+ 
+Conjuration Catalyst
+ 
+Crystal Cluster
+ 
+Null Catalyst
+ 
+Nullified Leather
+ 
+Nullifying Bolt
+ 
+Poppet Shelf Compass
+ 
+The Everlasting Guilty Pool
+ 
+Wolftrap
+
+============================================================
+# Nullified Leather
+============================================================
+Nullified Leather
+
+Name
+
+Nullified Leather
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:131
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Nullified Leather
+ is an item added by the 
+Witchery
+ mod. It is fortified with nullifying components to give those who hunt down horrible witches nullifying protection against witchcraft.
+
+Usage
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Odour of Purity
+============================================================
+Odour of Purity
+
+Name
+
+Odour of Purity
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:36
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Odour of Purity
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Witches Oven
+
+Usage
+
+Odour of Purity can be used to create the following items:
+ 
+Brew of Revealing
+ 
+Brew of Thorns
+ 
+Brew of the Depths
+ 
+Fanciful Thread
+ 
+Icy Slippers
+ 
+Polynesia Charm
+ 
+Purified Milk
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Oil of Vitriol
+============================================================
+Oil of Vitriol
+
+Name
+
+Oil of Vitriol
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:30
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Oil of Vitriol
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipes.
+
+Recipe
+
+Distillery
+
+Usage
+
+Oil of Vitriol can be used to create the following items:
+ 
+Brew of Erosion
+ 
+Brew of Hollow Tears
+ 
+Brew of Thorns
+ 
+Condensed Fear
+ 
+Diamond Vapor
+ 
+Focused Will
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Owlet's Wing
+============================================================
+Owlet's Wing
+
+Name
+
+Owlet's Wing
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:89
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Owlet's Wing
+ is an item added by the 
+Witchery
+ mod. It is acquired through killing 
+owls
+ and is used for crafting.
+
+Usage
+
+Owlet's Wing can be used to create the following items:
+ 
+Brew of Bodega
+
+============================================================
+# Poisoned Apple
+============================================================
+General
+
+A 
+Poisoned Apple
+ can be eaten to allow a player to enter the Spirit World. Eating this apple always results in a nightmare, regardless of the presence of dream weavers, 
+Wispy Cotton
+, etc.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Notes
+
+The 
+Poisoned Apple
+ is most likely a reference to the tale of Snow White and the Seven Dwarves, wherein the heroine is put to sleep by a poisoned apple
+
+============================================================
+# Purified Milk
+============================================================
+Purified Milk
+
+Name
+
+Purified Milk
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:105
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Purified Milk
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Purified Milk can be used to create the following items:
+ 
+Brew of Remove Debuffs
+
+============================================================
+# Quartz Sphere
+============================================================
+Quartz Sphere
+
+Name
+
+Quartz Sphere
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:92
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Quartz Sphere
+ is an item added by the 
+Witchery
+ mod. It is used to create the 
+Seer Stone
+ with the corresponding 
+infusion ritual
+ as well as 
+other
+ 
+items
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Quartz Sphere can be used to create the following items:
+ 
+Crystal Ball
+ 
+Sacrificial Orb
+ 
+Seer Stone (Witchery)
+ 
+Unbound Crystal
+
+============================================================
+# Quicklime (Witchery)
+============================================================
+Quicklime
+
+Name
+
+Quicklime
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:16
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Quicklime
+ is an item added by the 
+Witchery
+ mod. It is made by refining 
+Wood Ash
+ through a crafting table. It is used in recipes.
+
+Thaumcraft 4
+ research aspects in this item
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+Shapeless
+
+Usage
+
+Quicklime (Witchery) can be used to create the following items:
+ 
+Attuned Stone (Charged)
+ 
+Brew of Erosion
+ 
+Gypsum (Witchery)
+ 
+Oil of Vitriol
+ 
+Slimeball
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Raw Lambchop (Witchery)
+============================================================
+Raw Lambchop
+
+Name
+
+Raw Lambchop
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:158
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Food
+
+1 (
+)
+
+Raw Lambchop
+ is an item added by the 
+Witchery
+ mod. It is acquired only by killing lambs when in a wolf form.
+
+It is used in many Wolf Altar quests.
+
+Usage
+
+Raw Lambchop (Witchery) can be used to create the following items:
+ 
+Cooked Lambchop (Witchery)
+ 
+Raw Meaty Stew
+
+============================================================
+# Raw Porkchop
+============================================================
+Raw Porkchop?
+
+Name
+
+Raw Porkchop?
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:50
+
+Type
+
+Food
+
+Stackable
+
+Yes (64)
+
+Food
+
+3 (
+)
+
+Raw Porkchop?
+ is an item added by the 
+Witchery
+ mod. It is used in the creation of 
+Demonic Contracts
+, can be eaten to restore three hunger points, or can be cooked to be eaten.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Raw Porkchop? can be used to create the following items:
+ 
+Cooked Porkchop
+ 
+Cooked Porkchop?
+ 
+Demonic Contract
+ 
+Raw Porkchop
+
+============================================================
+# Reek of Misfortune
+============================================================
+Reek of Misfortune
+
+Name
+
+Reek of Misfortune
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:35
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Reek of Misfortune
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Witches Oven
+
+Distillery
+
+Distillery
+
+Usage
+
+Reek of Misfortune can be used to create the following items:
+ 
+Armor Protection Poppet
+ 
+Brew of Remove Buffs
+ 
+Brew of Vines
+ 
+Tool Protection Poppet
+ 
+Tormented Twine
+ 
+Treefyd Seed
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Refined Evil
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Refined Evil
+
+Name
+
+Refined Evil
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:38
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Refined Evil
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipies and 
+Circle Rituals
+.
+
+Recipe
+
+Distillery
+
+Distillery
+
+Note that in survival mode the player will always have to use the first recipe (the one featuring a Ghast Tear) the first time they craft Refined Evil. This is because Refined Evil is required as an ingredient for all the possible methods of summoning a Demon, and fighting or trading with Demons is the only way to obtain Demon Hearts (the required ingredient for the second recipe).
+
+Usage
+
+Refined Evil can be used to create the following items:
+ 
+Brew of Inferno
+ 
+Devils Tongue Charm
+ 
+Drop of Luck
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rock
+============================================================
+Rock
+
+Name
+
+Rock
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:55
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Rock
+ is an item added by the 
+Witchery
+ mod.
+
+Usage
+
+Rock has no known uses in crafting.
+
+============================================================
+# Rowan Berries
+============================================================
+Rowan Berries
+
+Name
+
+Rowan Berries
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:63
+
+Type
+
+Food
+
+Stackable
+
+Yes (64)
+
+Food
+
+1 (
+)
+
+Rowan Berries
+ is a food item added by the 
+Witchery
+ mod. It is dropped from Rowan trees and fills one hunger point per berry.
+
+Usage
+
+Rowan Berries has no known uses in crafting.
+
+============================================================
+# Rowan Sapling
+============================================================
+Rowan Sapling
+
+Name
+
+Rowan Sapling
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchsapling
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Rowan Sapling
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant like tall grass.
+
+It is used in several recipes.
+
+Rowan trees can grow 
+Rowan Berries
+.
+
+In a 
+Witches Oven
+ the Rowan Saplings can make 
+Whiff of Magic
+ specially as well as 
+Wood Ash
+ in a Witches Oven.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Rowan Sapling can be used to create the following items:
+ 
+Brew of Sprouting
+ 
+Rune of Spring
+ 
+Sigil of the Green Grove
+ 
+Soul of the World
+ 
+Whiff of Magic
+
+Video
+
+Witchery Explained: Episode 2, Mutation Magic part 1, Mutandis! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Rowan Wood
+============================================================
+Rowan Wood
+
+Name
+
+Rowan Wood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:witchlog
+
+OreDict
+ Name
+
+logWood
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+10.0
+
+Hardness
+
+2.0
+
+Burn Time
+
+300 ticks (1.5 Items)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Rowan Wood
+ is wood that has been chopped down from 
+Witchery
+'s Rowan trees.
+
+============================================================
+# Silver Deposits
+============================================================
+Silver Deposits
+
+Name
+
+Silver Deposits
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:157
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Silver Deposits
+ is an item added by the 
+Witchery
+ mod.
+
+It is a natural bane for those afflicted with the 
+Curse of the Wolf
+ and is collected as a by-product of smelting 
+Gold Ore
+ using a 
+Silver Vat
+ placed adjacent to a 
+Furnace
+, which will extend a spigot over the Vat and slowly produce Silver Deposits at the approximate rate of 18%. Each Vat added to the Furnace will produce this amount of by product from the same amount of Ore smelted, effectively multiplying the yield of Silver Deposits.
+
+Recipe
+
+Usage
+
+Silver Deposits can be used to create the following items:
+ 
+Brew of Harm Werewolves
+ 
+Silver Bolt (Witchery)
+ 
+Silver Sword (Witchery)
+ 
+Witch Hunter Boots (Silvered)
+ 
+Witch Hunter Coat (Silvered)
+ 
+Witch Hunter Hat (Silvered)
+ 
+Witch Hunter Trousers (Silvered)
+ 
+Wolftrap
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Snowbell
+============================================================
+Snowbell
+
+Name
+
+Snowbell
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Crop
+
+Stackable
+
+Unknown
+
+Snowbell
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Snowbell Seeds
+ and when harvested it will yield 
+Snowbell Seeds
+, 
+Snowballs
+, and sometimes 
+Icy Needles
+.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Snowbell has no known uses in crafting.
+
+============================================================
+# Snowbell Seeds
+============================================================
+Snowbell Seeds
+
+Name
+
+Snowbell Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Snowbell Seeds
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by punching 
+Tall Grass
+.
+
+It is used to grow 
+Snowballs
+ and 
+Icy Needles
+.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Soft Clay Jar
+============================================================
+Soft Clay Jar
+
+Name
+
+Soft Clay Jar
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:26
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Soft Clay Jar
+ is an item added by the 
+Witchery
+ mod. It is used in the creation of 
+Clay Jars
+, an important part of the 
+Witches Oven
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Soft Clay Jar can be used to create the following items:
+ 
+Clay Jar
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Soul of Torment Demon
+============================================================
+Soul of Torment Demon
+
+Name
+
+Soul of Torment Demon
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+No
+
+The 
+Soul of Torment Demon
+ is very evil and very powerful. One can only acquire such an item from striking down the 
+Lord of Torment
+ himself.
+
+Usage
+
+After consuming the Soul of Torment Demon, the player will be able to send others into 
+Torment
+ itself, a maze-filled dimension of strife.
+
+============================================================
+# Spanish Moss
+============================================================
+Spanish Moss
+
+Name
+
+Spanish Moss
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:spanishmoss
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+1.0
+
+Hardness
+
+0.2
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Any tool
+
+The 
+Spanish Moss
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by using 
+Mutandis
+ on any small plant, and can only be harvested with 
+Shears
+. It grows like vines, downward.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Spanish Moss can be used to create the following items:
+ 
+Poppet
+
+Video
+
+Witchery Explained: Episode 2, Mutation Magic part 1, Mutandis! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Spectral Dust
+============================================================
+Spectral Dust
+
+Name
+
+Spectral Dust
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:66
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Spectral Dust
+ is an item added by the 
+Witchery
+ mod. It is dropped by 
+Spectral Familiars
+, or as a rare drop by regular undead when using the 
+Arthana
+.
+
+Usage
+
+Spectral Dust can be used to create the following items:
+ 
+Brew of Reflect Damage
+ 
+Graveyard Dust
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Subdued Spirit
+============================================================
+Subdued Spirit
+
+Name
+
+Subdued Spirit
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:112
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Subdued Spirit
+ is an item added by the 
+Witchery
+ mod. It is dropped when hitting a 
+Spirit
+ enough times that it becomes subdued. The Subdued Spirit can be brought from the Spirit World to the Overworld for use in spellcasting.
+
+Usage
+
+Subdued Spirit can be used to create the following items:
+ 
+Brew of Fullness
+ 
+Brew of Wasting
+
+============================================================
+# Tear of the Goddess
+============================================================
+Tear of the Goddess
+
+Name
+
+Tear of the Goddess
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:37
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Tear of the Goddess
+ is an item added by the 
+Witchery
+ mod. It is a component of several recipies.
+
+Recipe
+
+Distillery
+
+Usage
+
+Tear of the Goddess can be used to create the following items:
+ 
+Brew of Absorb Magic
+ 
+Brew of Absorption
+ 
+Brew of Blast
+ 
+Brew of Blight
+ 
+Brew of Brew Bottling
+ 
+Brew of Demonbane
+ 
+Brew of Disease
+ 
+Brew of Duration Boost
+ 
+Brew of Fear
+ 
+Brew of Flames
+ 
+Brew of Fortune
+ 
+Brew of Frog's Leg
+ 
+Brew of Fullness
+ 
+Brew of Grue's Prey
+ 
+Brew of Harm Werewolves
+ 
+Brew of Ice Shell
+ 
+Brew of Ice World
+ 
+Brew of Ill Fitting
+ 
+Brew of Inferno
+ 
+Brew of Insanity
+ 
+Brew of Keep Effects
+ 
+Brew of Keep Inventory
+ 
+Brew of Love
+ 
+Brew of Nightmare
+… full list
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Toe of Frog
+============================================================
+Toe of Frog
+
+Name
+
+Toe of Frog
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:90
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Toe of Frog
+ is an item added by the 
+Witchery
+ mod. It is acquired through killing 
+toads
+ and is used for crafting.
+
+Usage
+
+Toe of Frog can be used to create the following items:
+ 
+Brew of Frog's Leg
+ 
+Brew of Frogs Tongue
+ 
+Poppet Protection Poppet
+
+============================================================
+# Tongue of Dog
+============================================================
+Tongue of Dog
+
+Name
+
+Tongue of Dog
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:25
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Tongue of Dog
+ is an item added by the 
+Witchery
+ mod. It can be obtained by killing 
+wolves
+, pet dogs, and 
+hellhounds
+. By using an 
+Arthana
+, the drop rate of the item can be increased.
+
+Usage
+
+Tongue of Dog can be used to create the following items:
+ 
+Brew of Sprouting
+ 
+Brew of Vines
+ 
+Devils Tongue Charm
+ 
+Redstone Soup
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Tormented Twine
+============================================================
+Tormented Twine
+
+Name
+
+Tormented Twine
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Unknown
+
+The 
+Tormented Twine
+ is an item added by the 
+Witchery
+ mod. It serves as a crafting component for some of Witchery's devices.
+
+Recipe
+
+Spinning Wheel
+
+Usage
+
+Tormented Twine can be used to create the following items:
+ 
+Dream Weaver of Fasting
+ 
+Dream Weaver of Fleet Foot
+ 
+Dream Weaver of Intensity
+ 
+Dream Weaver of Iron Arm
+ 
+Dream Weaver of Nightmares
+
+============================================================
+# Treefyd Seed
+============================================================
+Treefyd Seed
+
+Name
+
+Treefyd Seed
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Seed
+
+Stackable
+
+Yes (64)
+
+The 
+Treefyd Seed
+ is an item added by the 
+Witchery
+ mod. It is used to grow 
+treefyds
+.
+
+Recipe
+
+Expand
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Water Artichoke
+============================================================
+Water Artichoke
+
+Name
+
+Water Artichoke
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Crop
+
+Stackable
+
+Unknown
+
+Water Artichoke
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Water Artichoke Seeds
+ and when harvested it will yield 
+Water Artichoke Seeds
+ and 
+Water Artichoke Globes
+.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Water Artichoke has no known uses in crafting.
+
+============================================================
+# Water Artichoke Globe
+============================================================
+Water Artichoke Globe
+
+Name
+
+Water Artichoke Globe
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:69
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Water Artichoke Globe is a plant grown from 
+Water Artichoke Seeds
+ and used in many 
+Witchery
+ crafting recipes.
+
+Usage
+
+Water Artichoke Globe can be used to create the following items:
+ 
+Anointing Paste
+ 
+Brew of Ender Inhibition
+ 
+Brew of Extinguish Fires
+ 
+Brew of Fertilize
+ 
+Brew of Frogs Tongue
+ 
+Brew of Love
+ 
+Brew of Moonshine
+ 
+Brew of the Depths
+ 
+Treefyd Seed
+ 
+Water Protection Poppet
+
+============================================================
+# Water Artichoke Seeds
+============================================================
+Water Artichoke Seeds
+
+Name
+
+Water Artichoke Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Water Artichoke Seeds
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by punching 
+Tall Grass
+.
+
+It is used to grow 
+Water Artichoke
+ and 
+Water Artichoke Globes
+.
+
+It grows on still water blocks.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Whiff of Magic
+============================================================
+Whiff of Magic
+
+Name
+
+Whiff of Magic
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:34
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Whiff of Magic
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies.
+
+Recipe
+
+Witches Oven
+
+Distillery
+
+Usage
+
+Whiff of Magic can be used to create the following items:
+ 
+Attuned Stone
+ 
+Brew of Absorb Magic
+ 
+Brew of Love
+ 
+Brew of Webs
+ 
+Golden Thread (Witchery)
+ 
+Impregnated Leather
+ 
+Polynesia Charm
+
+============================================================
+# Wicker Bundle
+============================================================
+Wicker Bundle
+
+Name
+
+Wicker Bundle
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:wickerbundle
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+2.5
+
+Hardness
+
+0.5
+
+Burn Time
+
+300 ticks (1.5 Items)
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+Yes
+
+Required Tool
+
+Any tool
+
+The 
+Wicker Bundle
+ is an item added by the 
+Witchery
+ mod. It is used in a recipe, is decorative and similar to the 
+Hay Bale
+, and can sometimes be found in strawman structures found scattered around.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+Usage
+
+Wicker Bundle can be used to create the following items:
+ 
+Bloodied Wicker Bundle
+
+============================================================
+# Wispy Cotton
+============================================================
+Wispy Cotton
+
+Name
+
+Wispy Cotton
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:somniancotton
+
+Type
+
+Block
+
+Stackable
+
+Yes (64)
+
+Blast Resistance
+
+0.0
+
+Hardness
+
+0.0
+
+Solid
+
+Yes
+
+Transparent
+
+No
+
+Affected by Gravity
+
+No
+
+Emits Light
+
+No
+
+Flammable
+
+No
+
+Required Tool
+
+Any tool
+
+Wispy Cotton
+ is an item added by the 
+Witchery
+ mod. It grows naturally in the Spirit World and can be obtained by harvesting the 
+Wispy Cotton
+ plant. However, if harvested during a nightmare, only 
+Disturbed Cotton
+ can be obtained. Wispy Cotton can only be farmed to grow more in the 
+Spirit World
+ OR on dirt or grass next to 
+Flowing Spirit
+. Wispy Cotton spreads like mushrooms so just place it and give it time to grow more.
+
+It is used in several recipes and can also be used to help lessen
+ the chance of entering the Spirit World in a nightmare. Plant it in the
+ Overworld where entering the Spirit World from, this is 10% per Wispy 
+Cotton with 20% being the maximum.
+
+Wispy Cotton stays in inventories when leaving the Spirit World.
+
+Usage
+
+Wispy Cotton can be used to create the following items:
+ 
+Fanciful Thread
+
+============================================================
+# Wolfsbane (Plant)
+============================================================
+Wolfsbane (Plant)
+
+Name
+
+Wolfsbane (Plant)
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Crop
+
+Stackable
+
+Unknown
+
+Wolfsbane
+ is a crop added by the 
+Witchery
+ mod. It is grown from 
+Wolfsbane Seeds
+ and when harvested it will yield 
+Wolfsbane Flowers
+ and 
+Wolfsbane Seeds
+.
+
+Recipe
+
+Mutandis
+
+{{Substitute|Grass|Brown Mushroom|Red Mushroom|Sugar 
+Canes|Cactus|Sapling|Dandelion|Poppy (Minecraft)|Alder Sapling|Hawthorn 
+Sapling|Rowan Sapling|Ember Moss|Glint Weed|Belladonna|Spanish 
+Moss|Wolfsbane (Plant)|Mandrake (Plant)|Snowbell|Water Artichoke|Grass 
+Block|Mycelium}}
+
+Usage
+
+Wolfsbane (Plant) has no known uses in crafting.
+
+============================================================
+# Wolfsbane
+============================================================
+Wolfsbane
+
+Name
+
+Wolfsbane
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:156
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Wolfsbane
+ flower is an ingredient used in many recipes. It is harvested from a fully grown 
+Wolfsbane (Plant)
+ that must be grown from 
+Wolfsbane Seeds
+. The flower can be used on players and 
+villagers
+ to check and see if they are a 
+werewolf
+ and can also be used to brew a potion that stops a werewolf's ability to change form.
+
+Farming
+
+To grow, Wolfsbane Seeds must be planted in tilled soil. It has three
+ growth stages. Left clicking removes the entire plant, and drops 
+Wolfsbane and Wolfsbane Seeds. The plant can then be replanted using the
+ seed.
+
+Usage
+
+Wolfsbane can be used to create the following items:
+ 
+Brew of Werewolf Lock
+ 
+Witch Hunter Boots (Silvered)
+ 
+Witch Hunter Coat (Silvered)
+ 
+Witch Hunter Hat (Silvered)
+ 
+Witch Hunter Trousers (Silvered)
+ 
+Wolf Altar
+ 
+Wolftrap
+
+============================================================
+# Wolfsbane Seeds
+============================================================
+Wolfsbane Seeds
+
+Name
+
+Wolfsbane Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+Unknown
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Wolfsbane Seeds
+ is an item added by the 
+Witchery
+ mod. It can be obtained randomly by punching 
+Tall Grass
+.
+
+It is used to grow 
+Wolfsbane
+ flowers.
+
+Video
+
+Witchery Explained: Episode 4, Witchery Crops! Minecraft Mod Tutorial
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Wood Ash
+============================================================
+Wood Ash
+
+Name
+
+Wood Ash
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:18
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Wood Ash
+ is an item added by the 
+Witchery
+ mod. It is used in various recipies and 
+Circle Rituals
+.
+
+Recipe
+
+Any sapling may be used in following recipes
+
+Witches Oven
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+Usage
+
+Wood Ash can be used to create the following items:
+ 
+Attuned Stone (Charged)
+ 
+Bone Meal
+ 
+Mutandis
+ 
+Quicklime (Witchery)
+ 
+Ritual Chalk
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Wool of Bat
+============================================================
+This article is a 
+stub
+. You can help the wiki by  
+expanding it
+.
+
+Wool of Bat
+
+Name
+
+Wool of Bat
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:24
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Wool of Bat
+ is an item added by the 
+Witchery
+ mod. It can be obtained by killing 
+Bats
+. By using an 
+Arthana
+, the drop rate of the item can be increased.
+
+Usage
+
+Wool of Bat can be used to create the following items:
+ 
+Brew of Bats
+ 
+Brew of Bodega
+ 
+Brew of Webs
+ 
+Fire Protection Poppet
+ 
+Flying Ointment
+ 
+Redstone Soup
+ 
+Vampiric Poppet
+
+Video
+
+Load video
+
+YouTube
+
+YouTube might collect personal data. 
+Privacy Policy
+
+ 
+Continue
+
+Dismiss
+
+============================================================
+# Wormwood
+============================================================
+Wormwood
+
+Name
+
+Wormwood
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:111
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Wormwood
+ is an item added by the 
+Witchery
+ mod. It can be obtained by mutating 
+Wheat
+ with 
+Wispy Cotton
+. It is used in recipes, especially recipes involving a 
+Brazier
+. Wormwood is commonly used for things involving the dead.
+
+Recipe
+
+Wormwood is created by mutating 
+Wheat
+ with 
+Wispy Cotton
+. To do so, place wheat (make sure it is full grown) down, surround it in the North, South, East, and West directions with 
+Wispy Cotton
+, then place in the North-West, South-West, South-East, and North-East locations four 
+Water
+ source blocks, and finally use a 
+Mutating Sprig
+ on the wheat.
+
+Usage
+
+Wormwood has no known uses in crafting.
+
+============================================================
+# Wormwood Seeds
+============================================================
+Wormwood Seeds
+
+Name
+
+Wormwood Seeds
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:seedswormwood
+
+OreDict
+ Names
+
+listAllseed
+seedWormwood
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Wormwood Seeds
+ is an item added by the 
+Witchery
+ mod.
+
+It can be obtained only from fully grown 
+Wormwood
+. It is used to grow 
+Wormwood
+.
+
+Recipe
+
+Thermal Expansion
+
+Phytogenic Insolator
+
+150%
+
+9600RF
+
+Phytogenic Insolator
+
+150%
+
+7200RF
+
+Usage
+
+Wormwood Seeds can be used to create the following items:
+ 
+Wormwood Seeds
+
+============================================================
+# Wormy Apple
+============================================================
+Wormy Apple
+
+Name
+
+Wormy Apple
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:91
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+The 
+Wormy Apple
+ is an item added by the 
+Witchery
+ mod. It is a component of the 
+Apple (Witchery)
+.
+
+Consuming it will poison the player.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+More
+
+============================================================
+# Woven Cruor
+============================================================
+Woven Cruor
+
+Name
+
+Woven Cruor
+
+Source Mod
+
+Witchery
+
+ID Name
+
+witchery:ingredient:161
+
+Type
+
+Item
+
+Stackable
+
+Yes (64)
+
+Woven Cruor
+ is a crafting item from the mod 
+Witchery
+.
+
+Recipe
+
+You can craft it on:
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+ 
+⠀
+⠀
+
+ 
+⠀
+
+Usage
+
+Woven Cruor can be used to create the following items:
+ 
+Cane Sword
+ 
+Vampire Dress Coat
+ 
+Vampire Dress Jacket (Ladies)
+ 
+Vampire Oxford Boots
+ 
+Vampire Skirted Trousers
+ 
+Vampire Top Hat
+ 
+Vampire Trousers

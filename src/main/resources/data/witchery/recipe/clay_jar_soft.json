@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:clay",
+    "minecraft:clay",
+    "minecraft:clay",
+    "minecraft:clay"
+  ],
+  "result": {
+    "id": "witchery:clay_jar_soft",
+    "count": 4
+  }
+}

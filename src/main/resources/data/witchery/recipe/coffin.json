@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "LBL",
+    "LLL"
+  ],
+  "key": {
+    "P": "#minecraft:planks",
+    "L": "#minecraft:logs",
+    "B": "minecraft:white_bed"
+  },
+  "result": {
+    "id": "witchery:coffin",
+    "count": 1
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:skeleton_skull"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:wheat"},
+    {"id": "minecraft:pumpkin_seeds"},
+    {"id": "minecraft:apple"},
+    {"id": "minecraft:fermented_spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_grave", "count": 3},
+  "power": 1000.0,
+  "color": 8421504
+}

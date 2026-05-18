@@ -1,0 +1,216 @@
+# Future Features — Post-Port Expansion
+
+These ideas are for after the faithful 1.7.10-style port is stable. Do not implement during normal port tasks unless explicitly asked.
+
+**Current scope note:** start with [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md). This file is backlog-only and should not be used to widen current implementation scope.
+
+## Rule
+
+Use these as design inspiration, not as current sprint work.
+
+## Confidence labels
+
+| Label | Meaning |
+|---|---|
+| `confirmed` | Supported by public project/changelog/author description. |
+| `strong inference` | Strongly implied by official descriptions or unfinished systems. |
+| `community-reported` | Mentioned by players; useful but not official. |
+| `speculative` | Good design direction, not confirmed. |
+| `myth` | Treat as folklore unless verified. |
+
+## Expansion backlog
+
+### 1. Deity Powers System
+
+**Confidence:** confirmed for unfinished Intangible deity powers; speculative as Witchery expansion.
+
+Players create, bind, empower, bargain with, or oppose insubstantial godlike entities.
+
+Minimal version:
+- one shrine block
+- one deity JSON
+- favor per player
+- three offerings
+- two boons
+- one wrath event
+
+### 2. Soul Extraction and Essence Storage
+
+**Confidence:** confirmed Intangible theme; strong rewrite fit.
+
+Add typed essences:
+- life
+- beast
+- undead
+- infernal
+- fey
+- echo/identity
+
+Minimal version:
+- extraction item
+- storage jar
+- three essence types
+- one recipe per essence
+
+### 3. Spirit Walking / Possession
+
+**Confidence:** confirmed Intangible theme; speculative implementation.
+
+State machine:
+```text
+NORMAL_BODY -> TRANCE_ENTERING -> SPIRIT_FORM -> POSSESSION_ATTEMPT -> POSSESSING_ENTITY -> RETURNING
+```
+
+Minimal version:
+- anchor block
+- timed spirit form
+- one soulless shell possession target
+
+### 4. Soulless Shells / Artificial Bodies
+
+**Confidence:** confirmed Intangible theme.
+
+Shell types:
+- clay
+- flesh
+- bone
+- wood
+- iron
+- mirror
+
+Minimal version:
+- one shell entity
+- one binding ritual
+- follow/protect owner behavior
+
+### 5. Spirit-Powered Devices
+
+**Confidence:** confirmed Intangible theme; speculative implementation.
+
+Examples:
+- spirit jar
+- bound lantern
+- soul bell
+- dream loom
+- omen engine
+- warding nail
+
+Minimal version:
+- spirit jar stores charge
+- lantern consumes charge to reveal hidden spirits/entities
+- bell detects curses/spirits
+
+### 6. Soul-Modified Gear
+
+**Confidence:** confirmed Intangible theme; speculative design.
+
+Examples:
+- wolf-bound boots
+- bat-bound cloak
+- spider-bound gloves
+- golem-bound chestpiece
+- wraith-bound hood
+
+Implement as a data-driven `InfusionModifier` registry.
+
+### 7. World-Influencing Insubstantial Beings
+
+**Confidence:** confirmed Intangible direction; speculative details.
+
+Persistent spirits that affect chunks/regions:
+- forest spirit
+- hunger spirit
+- mirror echo
+- storm wraith
+- dream parasite
+
+Minimal version:
+- one invisible region entity or level saved-data object
+- one chunk-radius effect
+- one shrine/ritual to create/remove it
+
+### 8. Modern Ritual Grammar
+
+**Confidence:** speculative modernization.
+
+Move from hardcoded rites to composable ritual definitions:
+- circle size/type
+- chalk type
+- moon/weather/dimension
+- offerings
+- target rules
+- effect handlers
+
+Do this only after the current hardcoded system is stable.
+
+### 9. Mirror / Identity Expansion
+
+**Confidence:** original late Witchery feature + speculative expansion.
+
+Future system:
+- mirror pockets
+- reflection boss
+- identity disguise via taglocks
+- mirror network teleport
+- reflection decoys
+
+### 10. Secret Knowledge / Symbol Magic
+
+**Confidence:** community-reported/original obscure mechanics.
+
+Use hidden spell sequences, symbol input, or puzzle knowledge:
+- secret curse sequences
+- forbidden book clues
+- hidden chants
+- rare ritual variants
+
+### 11. Emoniph NPC — The Witch-Architect
+
+**Confidence:** speculative (original creator tribute); user-requested.
+
+A rare, named NPC who wanders the overworld or inhabits a hand-built tower or cave lair. Clearly knowledgeable about the craft — possibly the author of the Witches' Primer itself. Not hostile unless provoked. Carries unusual trades and can teach rites not found elsewhere.
+
+**Lore concept:**
+Emoniph is credited in-world as the scholar who codified the craft. Whether the figure is human, something that was once human, or something that merely wears the shape is left deliberately unclear. The tower smells of old paper and very serious mistakes.
+
+**Design pillars:**
+- Rare overworld spawn (~1 per large region, or tied to a specific biome like dark forests or extreme hills)
+- Has a **personal structure** — either a Wizard's Tower (tall, multi-floor, bookshelves + brewing apparatus) or a Cliff Cave Lair (carved into a hillside, hidden entrance)
+- Dialogue acknowledges the player's witchcraft progression (checks player data for infusion type, familiar, transformations)
+- **Trades** (3–5 unique): sells rare spell ingredients, a copy of the Witches' Primer, a one-of-a-kind rite scroll not available elsewhere
+- Optional: gives a **quest** — retrieve a specific item → unlock a hidden rite or receive a powerful one-time reward
+
+**Structure ideas:**
+
+*Wizard's Tower* — 5×5 footprint, 4 stories of stone brick + mossy stone, pointed roof, lantern-lit windows; ground floor = entrance + storage; floor 2 = brewing station (kettle + distillery + oven); floor 3 = ritual room (circle drawn on floor + altar); roof = observatory with crystal ball
+
+*Cliff Cave Lair* — Natural cave entrance (hidden behind vines or a fake wall), carved-out chambers, bioluminescent plants (wispy cotton, glint weed), a single candle-lit reading desk with a Witches' Primer, hidden chest with rare ingredients
+
+**Entity design:**
+- Extends `AbstractVillager` or custom `NPC` (similar to Coven Witch pattern)
+- Name: always "Emoniph" (single unique spawn per world, stored in world SavedData)
+- Model: robed humanoid; distinct long-coat texture, slightly unusual proportions
+- Attacks if the player has a fully hostile transformation active (e.g. mid-werewolf-change) — otherwise peaceful
+- Drops: worn robe (cosmetic), a partially-filled Witches' Primer with extra annotations
+
+**Implementation notes:**
+- Use `WitcheryPlayerData` checks in dialogue to personalise: "I see you've bound a familiar. Interesting choice." / "A vampire who studies the craft. Rarer than you'd think."
+- Structure uses NBT-based jigsaws or a hand-crafted `StructurePiece` like `HobgoblinHutPiece`
+- One spawn per world: flag in a `WitcheryWorldData` (SavedData) to prevent duplicates
+- Relevant decompiled ref: `entity/EntityCovenWitch.java` (trading pattern to reuse)
+
+**Minimum viable version:**
+1. Entity: named NPC with 3 trades, unique texture, peaceful/hostile toggle
+2. Structure: Wizard's Tower (simpler to generate than cave)
+3. One-per-world enforcement via SavedData flag
+4. Primer dialogue that reads player infusion type
+
+## Recommended order after port
+
+1. Stabilize port + replace placeholder assets.
+2. Mirror World and reflection system.
+3. Soul essence foundation.
+4. Spirit devices and shell entity.
+5. Possession MVP.
+6. Deity alpha.
+7. World-spirit regional effects.

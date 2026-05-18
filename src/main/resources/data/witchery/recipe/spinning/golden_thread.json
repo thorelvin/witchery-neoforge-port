@@ -1,0 +1,16 @@
+{
+  "type": "witchery:spinning",
+  "fibre": {
+    "id": "minecraft:vine"
+  },
+  "modifiers": [
+    {
+      "id": "witchery:whiff_of_magic"
+    }
+  ],
+  "result": {
+    "id": "witchery:golden_thread",
+    "count": 3
+  },
+  "cookingtime": 300
+}

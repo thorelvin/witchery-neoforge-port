@@ -1,0 +1,207 @@
+# Feature Matrix - Witchery NeoForge 1.21.1 Port
+
+Legend: Done / Partial / Not started / Deferred
+
+Last reconciled: 2026-05-18 (Sprints 1-10 plus ritual mechanics/doc sync)
+Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
+
+---
+
+## Branch 1: Brewing
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Kettle block + tick | Done | Power from nearby altar |
+| Kettle recipe system | Done | 33 recipes in JSON; all known originals covered |
+| Brew items | Done | 33 brews with full effects - see brew list below |
+| Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored |
+| Distillery | Done | Altar-powered; jar requirements; up to 4 outputs; core recipes pushed back toward original |
+| Spinning Wheel | Done | 5-slot altar-powered modifier wheel; fibre + modifiers restored |
+| Altar power system | Done | Validated 6-block altar, 14-block scan radius, and artifact bonuses restored closer to original |
+| Brazier recipes | Done | 13 recipes: 3 entity summons, 5 pulsing auras, 5 one-shot buffs |
+| Coffin | Done | 2-block bed-like; vampire day-sleep; OPEN lid; BESR model |
+| Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding |
+| Mutandis / Mutandis Extremis | Done | Pool mutation; Extremis: wolf+owl -> Flying Monkey, crop pool, grass/dirt swap |
+| Brew of Ice / Depths / Vines | Done | All implemented as BrewItem subclasses |
+| Witches' Primer guidebook | Done | Patchouli optional dep; book.json; 8 categories; 21 entries with atmospheric text + images |
+| JEI integration | Done | 5 recipe categories: Kettle, Oven, Distillery, Spinning Wheel, Brazier |
+
+### Brew inventory (all Done)
+Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection, Grotesque, Flowing Spirit, Foaming, Poison, Soaring, Ink, Bats, Hitchcock, Cursed Leaping, Frog's Tongue, Webs, Vines, Thorns, Sprouting, Hollow Tears, Ice, The Depths, Solid Stone, Solid Dirt, Solid Sand, Solid Sandstone, Substitution + Grave/Erosion (GenericBrewItem; obtained via ritual)
+
+---
+
+## Branch 2: Circle Magic
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Chalk item | Done | 4 variants: ritual, golden, otherwhere, infernal |
+| Circle detection | Done | SMALL 3x3, MEDIUM 5x5, LARGE 7x7; `witchery:chalk_circles` tag |
+| Ritual execution | Partial | Ingredient-dispatched; circles persist; ingredients consume only on success; staged ticker restored for Storm + Rain of Toads |
+| Small-circle rites | Done | Infusion, familiar binding, blessing, total eclipse, beastial call, transposition, prior incarnation, cloak, cleansing, waystone binding |
+| Medium-circle rites | Done | Summoning, fertility, charging, Creatures of Night, Sky's Wrath, Sanctity, Imprisonment, Infernal Power, Silent Step, waystone pull |
+| Large-circle rites | Done | Forest, Broiling, Moving Earth, Broken Earth, Protection, Curse of the Wolf, Dragon's Fury, Rain, Manifestation, Hellgate, Torment summoning, Fetish binding, 10 taglock curses, Crater, Blight |
+| Chalk variants | Done | All four done |
+| Glyph blocks | Done | CIRCLE, CIRCLE_GLYPH, CIRCLE_OTHERWHERE, CIRCLE_INFERNAL |
+| Full rite roster | Partial | About 30 done; core roster present, but full 1.7.10 upkeep/refund parity is still incomplete |
+| Circle talisman | Done | Store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4) |
+
+---
+
+## Branch 3: Poppet Magic
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Poppet binding | Done | UUID/name stored via modern item data |
+| Taglock Kit | Done | Collects UUID+name from right-clicked player |
+| Protection poppets | Done | Death, earth, water, fire, hunger, voodoo, poppet-shield |
+| Offensive poppets | Done | Voodoo and Vampiric implemented |
+| Tool / Armor protection poppets | Done | Tool: repairs held tool; Armor: repairs worn armor |
+| Poppet Shelf | Done | 9-slot container; radius scan on death/damage |
+| Basic sympathetic poppet | Done | Carried in inventory: mirrors damage taken to bound target (5 charges; consumed after 5 hits; creepy skeleton-rattle sound) |
+| Curse of Corrupt Poppet | Not started | Requires cat familiar; not implemented |
+
+---
+
+## Branch 4: Spirit World / Dream Weaving
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Spirit World dimension | Done | Overworld-like noise/topography |
+| Spirit World entry | Done | Brew/Apple of Sleeping -> `SpiritWorldHelper.enter()` |
+| Spirit World exit | Done | Icy Needle, death, `/witchery exit` |
+| Spirit inventory rules | Done | Inventory saved/restored; Icy Needle + Mutandis transfer |
+| Dream/nightmare roll | Done | Player data; nightmare spawns Nightmare entities |
+| Spirit entity | Done | Passive flying mob; drops Subdued Spirit |
+| Nightmare entity | Done | Spawn on nightmare entry; teleports to player; 60% respawn |
+| Wispy/Disturbed Cotton | Done | Biome features in Spirit World + rare overworld |
+| Dream Weaver (Dream Catcher) | Done | 5 weave effects applied on wake via SleepFinishedTimeEvent |
+| Crystal Ball scrying | Done | 12 predictions; 500 altar power; 5s cooldown |
+| Rite of Manifestation | Deferred | Spectral-overworld form deferred |
+
+---
+
+## Branch 5: Infusions / Transformations
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Player data system | Done | 16-field CODEC; server->client sync; transient overflow |
+| Infusion types | Done | Light/Overworld/Otherwhere/Infernal passives |
+| Vampirism | Done | Bite, blood drain/thresholds, sunburn, buffs; coffin day-sleep |
+| Lycanthropy | Done | Wolf state, buffs, silver/wolfsbane; Wolf Altar mastery 0-3 |
+| Werewolf howling | Done | Sneak+look-up+right-click -> HowlPayload; frightens mobs; summons 2 wolves; cooldown ticks correctly |
+| Werewolf 3D model | Partial | Works; body-hide rendering artifact remains |
+| Familiar binding | Done | Owl/cat/toad via ritual + PlayerData UUID |
+| Familiar powers | Done | Owl warns, cat repels, toad collects |
+| Creature powers / symbiosis | Done | SPEED/JUMP/HEAL/ENDERMAN/BAT; Mystic Branch; altar kill trigger |
+
+---
+
+## Entities
+
+| Entity | Status | Notes |
+|---|---:|---|
+| Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue |
+| Witch Hunter | Done | Ranged+melee; silver bolts; targets vampires/werewolves |
+| Banshee | Partial | Gameplay works; GhostModel UV needs audit |
+| Spectre | Done | Flying ghost-type |
+| Poltergeist | Partial | Gameplay works; GhostModel UV needs audit |
+| Treefyd | Done | Ground hostile plant creature |
+| Ent | Done | Passive until hit; large model |
+| Mandrake mob | Done | MONSTER category; spawn placement registered |
+| Demon | Partial | Fireball mob; texture/UV audit still open |
+| Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
+| Cat familiar | Partial | Gameplay works; body-proportion model needs tweak |
+| Toad familiar | Done | Tameable; collects items |
+| Broom | Done | Rideable; enchanted variant (Rite of Infusion) |
+| Spirit | Done | Passive flying Spirit World mob |
+| Nightmare | Partial | Exists; in-game behavior verification pending |
+| Flame Imp | Done | Ranged soulfire; Torment patrol |
+| Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
+| Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
+| Binky | Done | Spawns with Death; tameable via Binky's Skull |
+| Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut |
+| Flying Monkey | Done | Created via Mutandis Extremis on wolf+owl; waystone carry; dyeable |
+
+---
+
+## Dimensions
+
+| Dimension | Status | Notes |
+|---|---:|---|
+| Spirit World | Partial | Entry/exit/inventory; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; dynamic fog (dream/nightmare/demonic); missing: health/hunger save-restore, Corpse entity, Demonic events, Flowing Spirit effects, Spirit Portal |
+| Torment | Partial | Boss loop complete; spec-correct maze (6 DFS levels Y=10-85, Force walls, TormentStone floor, 1% mycelium, portal at cell 30,30, 3 refilling chests per level); dimension fixed (has_ceiling=false, red sky, no spawns); TormentHelper entry/exit; Hellgate rite updated |
+| Mirror World | Not started | Not started - dark blue fog, reflected overworld terrain, hostile player clones |
+
+---
+
+## Worldgen & Structures
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); MOTION_BLOCKING_NO_LEAVES heightmap |
+| Rowan berries | Done | Loot/drop chain |
+| Wild magical plants | Done | All 10 plants; biome modifiers; fixed mayPlaceOn |
+| Rowan Wood family | Done | Planks, door (UUID-locked + key + keyring), stairs, slab registered |
+| Ice block family | Done | Ice Door, Fence, Gate, Pressure Plate registered (created by Brew of Ice World - deferred) |
+| Witch hut / abandoned shack | Done | 7x7 hut; Coven Witch; loot chest |
+| Apothecary village house | Done | 9x8x6 shop; Coven Witch; full interior |
+| Hobgoblin Hut | Done | 5x5x5 oak hut; 1-2 hobgoblin residents; koboldite loot chest |
+| Village additions | Not started | Bookshop, guards, walls deferred |
+| Torment maze | Partial | Generator done (32x32 cells, per-world seed); missing special rooms: Torment Portal, Refilling Chests, mycelium floor |
+| Torment boss loop | Done | Full Flame Imp -> Scroll -> ritual -> LoT -> return flow |
+
+---
+
+## Sprint 8-10 features
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Fetishes (5 types) | Done | Voodoo Protection, Sentinel, Shrieking, Disorientation, Ghost Walking |
+| Brazier conjurations named | Done | Anguish/Fortification/Deathly Veil/Drain Growth/Graveyard Mist correctly wired |
+| Coffin block | Done | Vampire day-sleep; shift-open lid; BESR model; spawn point |
+| Rowan Wood Door | Done | UUID-locked; key given on placement; keyring combines keys |
+| Witches' Primer | Done | Patchouli optional; 8 categories; 21 atmospheric entries; 16 generated images; Witch's Hand + Book recipe |
+| JEI recipe categories | Done | Kettle, Oven, Distillery, Spinning Wheel, Brazier |
+| Spawn eggs | Done | All 20 entities have eggs; Hobgoblin/Flying Monkey/Binky added |
+
+---
+
+## Debug / QoL Commands
+
+| Command | Status | Notes |
+|---|---:|---|
+| `/witchery werewolf [targets] [bool]` | Done | |
+| `/witchery vampire [targets] [bool]` | Done | |
+| `/witchery blood <0-500>` | Done | |
+| `/witchery infusion <type>` | Done | NONE/LIGHT/OVERWORLD/OTHERWHERE/INFERNAL |
+| `/witchery wolfmastery <0-3>` | Done | Set wolf mastery directly |
+| `/witchery soaring [ticks]` | Done | Grant soaring brew buff |
+| `/witchery familiar none` | Done | Clear bound familiar |
+| `/witchery fullmoon` | Done | Jump time to next full moon |
+| `/witchery clear` | Done | Wipe all witchery state |
+| `/witchery status` | Done | Multi-line player state dump |
+| `/witchery spawn <entity>` | Done | 23 entities spawnable |
+| `/witchery dream` / `torment` / `exit` | Done | Dimension teleport + return |
+| `/witchery give primer` | Done | Give Witches' Primer directly |
+| `/witchery altar` | Done | Scan and report altar power within 20 blocks |
+
+---
+
+## Open / deferred
+
+| Item | Priority | Notes |
+|---|---:|---|
+| Circle talisman | Done | Store+deploy complete; golden chalk bug fixed |
+| Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, but the original tile-entity ritual queue/refund system is only partially recreated |
+| Sympathetic poppet | Quick | Registered; no standalone logic |
+| Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
+| Banshee/Poltergeist GhostModel UV | Polish | One audit pass needed |
+| Cat familiar model proportions | Polish | Body geometry tweak |
+| Demon UV/texture | Polish | Partially fixed; verify in-game |
+| Nightmare behavior verification | Polish | Needs in-game test |
+| Torment maze | Large | Placeholder terrain only |
+| Mirror World dimension | Large | Not started |
+| Village additions | Large | Bookshop, guards deferred |
+| Custom Brew system | Large | Level 1-5 capacity/power/dispersal system - not started |
+| Rite of Manifestation | Deferred | Original spectral-overworld form deferred |

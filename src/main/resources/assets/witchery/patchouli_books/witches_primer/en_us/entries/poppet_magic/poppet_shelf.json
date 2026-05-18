@@ -1,0 +1,10 @@
+﻿{
+  "name": "witchery.book.entry.poppet_shelf",
+  "icon": "witchery:poppet_shelf",
+  "category": "witchery:poppet_magic",
+  "sortnum": 2,
+  "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/poppet_magic.png"],"border":false},
+    { "type": "patchouli:text", "text": "witchery.book.entry.poppet_shelf.page1" },
+    { "type": "patchouli:crafting", "recipe": "witchery:poppet_shelf", "text": "witchery.book.entry.poppet_shelf.recipe" }
+  ]
+}

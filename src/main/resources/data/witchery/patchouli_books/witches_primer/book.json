@@ -1,0 +1,9 @@
+﻿{
+  "name": "witchery.book.title",
+  "landing_text": "witchery.book.landing",
+  "version": 1,
+  "creative_tab": "witchery:witchery_tab",
+  "use_resource_pack": true,
+  "show_progress": false,
+  "i18n": true
+}

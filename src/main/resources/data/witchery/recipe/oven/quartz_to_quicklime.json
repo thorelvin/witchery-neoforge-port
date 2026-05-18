@@ -1,0 +1,9 @@
+{
+  "type": "witchery:oven",
+  "ingredient": "minecraft:quartz",
+  "result": {
+    "id": "minecraft:lime_dye"
+  },
+  "experience": 0.2,
+  "cookingtime": 150
+}

@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:snowball"},
+    {"id": "minecraft:wheat_seeds"},
+    {"id": "minecraft:sugar"},
+    {"id": "minecraft:nether_wart"},
+    {"id": "minecraft:ice"},
+    {"id": "minecraft:gunpowder"}
+  ],
+  "result": {"id": "witchery:brew_of_frost", "count": 3},
+  "power": 1000.0,
+  "color": -13565953
+}

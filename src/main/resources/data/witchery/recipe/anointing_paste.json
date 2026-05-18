@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:belladonna",
+    "witchery:mandrake_root",
+    "witchery:artichoke",
+    "witchery:snowbell"
+  ],
+  "result": {
+    "id": "witchery:anointing_paste",
+    "count": 4
+  }
+}
