@@ -17,7 +17,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 | Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored |
 | Distillery | Done | Altar-powered; jar requirements; up to 4 outputs; core recipes pushed back toward original |
 | Spinning Wheel | Done | 5-slot altar-powered modifier wheel; fibre + modifiers restored |
-| Altar power system | Done | Validated 6-block altar, 14-block scan radius, cumulative skull bonuses, chalice/Arthana/Mystic Branch bonuses, and missing natural power sources restored closer to original |
+| Altar power system | Done | Validated 6-block altar, 14-block scan radius, cumulative skull bonuses, chalice/Arthana/Mystic Branch bonuses, missing natural power sources, and the basic 3D altar block/item form restored closer to original |
 | Brazier recipes | Done | 13 recipes: 3 entity summons, 5 pulsing auras, 5 one-shot buffs |
 | Coffin | Done | 2-block bed-like; vampire day-sleep; OPEN lid; BESR model |
 | Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding |

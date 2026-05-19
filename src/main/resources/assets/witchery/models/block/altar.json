@@ -1,1 +1,70 @@
-{ "parent": "minecraft:block/cube_column", "textures": { "end": "witchery:block/altar_top", "side": "witchery:block/altar" } }
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "side": "witchery:block/altar",
+    "top": "witchery:block/altar_top",
+    "particle": "witchery:block/altar"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 3, 16],
+      "faces": {
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#top" },
+        "down": { "texture": "#top" }
+      }
+    },
+    {
+      "from": [1, 3, 4],
+      "to": [15, 7, 12],
+      "faces": {
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#top" },
+        "down": { "texture": "#top" }
+      }
+    },
+    {
+      "from": [4, 3, 1],
+      "to": [12, 7, 15],
+      "faces": {
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#top" },
+        "down": { "texture": "#top" }
+      }
+    },
+    {
+      "from": [0, 6, 0],
+      "to": [16, 7, 16],
+      "faces": {
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#top" },
+        "down": { "texture": "#top" }
+      }
+    },
+    {
+      "from": [0, 7, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#top" },
+        "down": { "texture": "#top" }
+      }
+    }
+  ]
+}
