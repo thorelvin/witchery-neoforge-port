@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/familiar_cat_spawn_egg"
+    "model": "minecraft:item/template_spawn_egg"
   }
 }
