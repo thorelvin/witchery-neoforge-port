@@ -1,59 +1,72 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
+import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
-import com.emoniph.witchery.init.WitcheryBlockEntities;
-
 /**
- * Refilling Chest block — opens a 3-row chest GUI.
- * The BlockEntity handles auto-refill from the Torment loot table.
- * Unbreakable: strength(-1.0F, 3_600_000.0F) set via block properties.
+ * Witchery Refilling Chest using the vanilla single-chest visuals/lid path while
+ * keeping Witchery's refill mechanics in its custom block entity.
  */
-public class RefillingChestBlock extends BaseEntityBlock {
+public class RefillingChestBlock extends ChestBlock {
 
-    public static final MapCodec<RefillingChestBlock> CODEC =
-            simpleCodec(RefillingChestBlock::new);
-    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final MapCodec<RefillingChestBlock> CODEC = simpleCodec(RefillingChestBlock::new);
 
-    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+    @Override
+    public MapCodec<? extends ChestBlock> codec() {
+        return CODEC;
+    }
 
     public RefillingChestBlock(Properties props) {
-        super(props);
-        registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        super(() -> WitcheryBlockEntities.REFILLING_CHEST.get(), SoundEvents.CHEST_OPEN, SoundEvents.CHEST_CLOSE, props);
     }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
-    @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        FluidState fluidstate = ctx.getLevel().getFluidState(ctx.getClickedPos());
+        return this.defaultBlockState()
+                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
+                .setValue(TYPE, ChestType.SINGLE)
+                .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+    }
+
+    @Override
+    protected BlockState updateShape(
+            BlockState state,
+            LevelReader level,
+            ScheduledTickAccess scheduledTickAccess,
+            BlockPos currentPos,
+            Direction facing,
+            BlockPos facingPos,
+            BlockState facingState,
+            RandomSource random
+    ) {
+        BlockState updated = super.updateShape(state, level, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
+        if (updated.hasProperty(TYPE) && updated.getValue(TYPE) != ChestType.SINGLE) {
+            updated = updated.setValue(TYPE, ChestType.SINGLE);
+        }
+        return updated;
     }
 
     @Override
@@ -72,21 +85,10 @@ public class RefillingChestBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
-        return createTickerHelper(type, WitcheryBlockEntities.REFILLING_CHEST.get(),
-                RefillingChestBlockEntity::serverTick);
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level,
-                                               BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(player instanceof ServerPlayer sp)) return InteractionResult.CONSUME;
-        if (level.getBlockEntity(pos) instanceof RefillingChestBlockEntity be) {
-            sp.openMenu(be);
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide()) {
+            return createTickerHelper(type, WitcheryBlockEntities.REFILLING_CHEST.get(), ChestBlockEntity::lidAnimateTick);
         }
-        return InteractionResult.CONSUME;
+        return createTickerHelper(type, WitcheryBlockEntities.REFILLING_CHEST.get(), RefillingChestBlockEntity::serverTick);
     }
 }

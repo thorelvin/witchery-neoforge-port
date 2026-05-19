@@ -207,15 +207,17 @@ The Moving Earth rite is back much closer to old Witchery now:
 Remaining gap:
 - The modern port still chooses this rite through simplified ingredient dispatch instead of the original Brew of Erosion sacrifice registry, so the ritual's activation mapping is still not full 1.7.10 parity even though the ongoing terrain behavior is much closer.
 
-### 24. Refilling Chest used the wrong refill timer and loot source - Fixed / verify
+### 24. Refilling Chest used the wrong refill timer, loot source, and render base - Fixed / verify
 
 The Refilling Chest is back much closer to old Witchery now:
 - Instead of starting a fresh one-hour cooldown only after the chest is emptied, it now uses the original lifetime tick cadence again and refills on the hourly boundary while empty.
 - It now saves that lifetime counter directly, matching the old `WITCLifeTicks` behavior more closely and avoiding the port's extra `Filled`/cooldown bookkeeping.
 - The refill source now pulls from a small dungeon-style chest table again instead of the custom Torment-only loot table, and only inserts a small 2-5 stack refill like the original.
+- The placed block now uses the real vanilla single-chest path (`ChestBlock`, `ChestBlockEntity`, and vanilla chest lid renderer) instead of the older custom Witchery refilling-chest renderer, while keeping the Witchery container name and Torment-only refill mechanic.
+- The item still renders through the vanilla chest graphic path, and break particles now have a valid oak-plank fallback instead of the old pink/black missing-texture path.
 
 Remaining gap:
-- This restores the practical refill mechanic, but the remaining work on the block is now visual polish and in-game verification rather than core storage behavior.
+- This restores the practical refill mechanic and core render base, but the remaining work on the block is now visual polish and in-game verification rather than core storage behavior.
 
 ### 25. Large-circle Protection was still a self-buff instead of a real barrier dome - Fixed / verify
 
@@ -601,7 +603,7 @@ Remaining gap:
 
 The next graphics-parity pass is now closer to original Witchery:
 - Distillery, Witch's Oven, and Spinning Wheel now use resurrected-style GUI layout alignment again through the current menu/screen path, instead of the old mixed original/resurrected overlay positions.
-- Refilling Chest now uses the normal vanilla chest texture path like original Witchery again, follows the vanilla chest rotation path instead of the flipped custom pose, and has a valid oak-plank particle texture so mining it no longer falls back pink/black.
+- Refilling Chest now uses the real vanilla chest block/lid render path like original Witchery again, keeps the Witchery refill mechanic/name on top of that base, and has a valid oak-plank particle texture so mining it no longer falls back pink/black.
 - Poppet Shelf top-item rendering is back on a tighter visible 3x3 grid instead of the looser oversized placement that was easy to miss or clip visually.
 
 Remaining gap:

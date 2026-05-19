@@ -3,21 +3,13 @@ package com.emoniph.witchery.blocks.entity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -32,17 +24,15 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Refilling Chest: a 27-slot container that repopulates on the original
- * life-tick cadence when left empty in Torment.
+ * Witchery Refilling Chest using vanilla chest lid/open behavior with Witchery's
+ * Torment-only timed refill mechanic.
  */
-public class RefillingChestBlockEntity extends BlockEntity implements Container, MenuProvider {
+public class RefillingChestBlockEntity extends ChestBlockEntity {
 
-    private static final int SLOTS = 27;
     private static final long REFILL_TICKS = 72000L;
     public static final Identifier LOOT_TABLE =
             Identifier.fromNamespaceAndPath("minecraft", "chests/simple_dungeon");
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private long lifeTicks = 0L;
 
     public RefillingChestBlockEntity(BlockPos pos, BlockState state) {
@@ -58,6 +48,7 @@ public class RefillingChestBlockEntity extends BlockEntity implements Container,
 
         be.lifeTicks++;
         be.tryRefill(level, pos);
+        be.recheckOpen();
     }
 
     private void tryRefill(Level level, BlockPos pos) {
@@ -94,8 +85,8 @@ public class RefillingChestBlockEntity extends BlockEntity implements Container,
 
         clearContent();
 
-        List<Integer> slots = new ArrayList<>(SLOTS);
-        for (int i = 0; i < SLOTS; i++) {
+        List<Integer> slots = new ArrayList<>(getContainerSize());
+        for (int i = 0; i < getContainerSize(); i++) {
             slots.add(i);
         }
         Collections.shuffle(slots, new Random(serverLevel.getRandom().nextLong()));
@@ -105,66 +96,13 @@ public class RefillingChestBlockEntity extends BlockEntity implements Container,
             if (stack.isEmpty()) {
                 continue;
             }
-            if (slotIndex >= maxStacks || slotIndex >= SLOTS) {
+            if (slotIndex >= maxStacks || slotIndex >= getContainerSize()) {
                 break;
             }
-            items.set(slots.get(slotIndex++), stack);
+            setItem(slots.get(slotIndex++), stack);
         }
 
         setChanged();
-    }
-
-    @Override
-    public int getContainerSize() {
-        return SLOTS;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        for (ItemStack stack : items) {
-            if (!stack.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public ItemStack getItem(int slot) {
-        return items.get(slot);
-    }
-
-    @Override
-    public ItemStack removeItem(int slot, int amount) {
-        ItemStack result = ContainerHelper.removeItem(items, slot, amount);
-        if (!result.isEmpty()) {
-            setChanged();
-        }
-        return result;
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return ContainerHelper.takeItem(items, slot);
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        items.set(slot, stack);
-        if (stack.getCount() > getMaxStackSize()) {
-            stack.setCount(getMaxStackSize());
-        }
-        setChanged();
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return Container.stillValidBlockEntity(this, player);
-    }
-
-    @Override
-    public void clearContent() {
-        items.replaceAll(stack -> ItemStack.EMPTY);
     }
 
     @Override
@@ -173,21 +111,14 @@ public class RefillingChestBlockEntity extends BlockEntity implements Container,
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return ChestMenu.threeRows(containerId, playerInventory, this);
-    }
-
-    @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        ContainerHelper.saveAllItems(tag, items);
         tag.putLong("WITCLifeTicks", lifeTicks);
     }
 
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        ContainerHelper.loadAllItems(tag, items);
         lifeTicks = tag.getLongOr("WITCLifeTicks", (long) tag.getIntOr("RefillCooldown", 0));
     }
 }

@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
@@ -107,7 +108,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.FUME_FUNNEL.get(),     FumeFunnelRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.SPINNING_WHEEL.get(),  SpinningWheelRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.LEECH_CHEST.get(),     LeechChestRenderer::new);
-        event.registerBlockEntityRenderer(WitcheryBlockEntities.REFILLING_CHEST.get(), RefillingChestRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.REFILLING_CHEST.get(), ChestRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.FETISH.get(),          FetishRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.COFFIN.get(),          CoffinRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.PLACED_ITEM.get(),     PlacedItemRenderer::new);
