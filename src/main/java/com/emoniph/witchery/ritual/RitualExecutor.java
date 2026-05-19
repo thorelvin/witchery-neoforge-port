@@ -418,8 +418,7 @@ public class RitualExecutor {
             return successResult();
         } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            riteOfBeastialCall(player, level, center);
-            return successResult();
+            return matchedResult(riteOfBeastialCall(player, level, center));
         } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
@@ -580,20 +579,18 @@ public class RitualExecutor {
         WitcheryMod.LOGGER.info("Rite of Total Eclipse cast at {} by {}", center, player.getName().getString());
     }
 
-    /** Rite of Beastial Call — teleports all animals within 30 blocks into the circle. */
-    private static void riteOfBeastialCall(Player player, Level level, BlockPos center) {
-        AABB area = new AABB(center).inflate(30);
-        List<Animal> animals = level.getEntitiesOfClass(Animal.class, area);
-        int count = 0;
-        for (Animal a : animals) {
-            a.teleportTo(center.getX() + 0.5 + (level.random.nextDouble() - 0.5),
-                         center.getY() + 1.0,
-                         center.getZ() + 0.5 + (level.random.nextDouble() - 0.5));
-            count++;
+    /** Rite of Beastial Call — restores the staged coven-gated creature-allure loop instead of a one-shot teleport. */
+    private static boolean riteOfBeastialCall(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 3)) return false;
+        if (!queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES, RitualCircleDetector.CircleSize.LARGE,
+                center, 0, 0, 250, 60)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
         }
-        player.displayClientMessage(Component.translatable("witchery.ritual.beastial_call.success", count), false);
-        success(player, level, center, null, SoundEvents.AMBIENT_CAVE.value(), 1f, 1, 24);
-        WitcheryMod.LOGGER.info("Rite of Beastial Call attracted {} animals", count);
+        success(player, level, center, "witchery.ritual.beastial_call.started",
+                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72);
+        return true;
     }
 
     // ══════════════════════════════════════════════════════════════════════════

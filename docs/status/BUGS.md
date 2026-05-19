@@ -381,6 +381,7 @@ Remaining gap:
 The next ritual routing pass is now closer to original Witchery:
 - `Forestation` now routes from the medium ritual circle again instead of incorrectly living on the large-circle dispatcher.
 - The animal-calling `Beastial Call` behavior no longer fires from an arbitrary small ring; it now routes through a large otherwhere circle instead, which is much closer to the original `Call Beasts` rite.
+- That large otherwhere animal-calling route no longer resolves as a one-shot mass teleport either; it now queues the staged `Call Creatures`-style coven rite again and allures creatures in 60-tick pulses much closer to 1.7.10.
 
 Remaining gap:
 - Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, but their ring size and chalk family are now much closer to original parity.
