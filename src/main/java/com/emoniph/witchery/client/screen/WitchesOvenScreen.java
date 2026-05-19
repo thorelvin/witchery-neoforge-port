@@ -34,7 +34,7 @@ public class WitchesOvenScreen extends AbstractContainerScreen<WitchesOvenMenu> 
 
         int arrowWidth = menu.getCookProgress();
         if (arrowWidth > 0) {
-            graphics.blit(TEXTURE, x + 79, y + 20, arrowWidth + 1, 16, 176.0f, 14.0f, 256.0f, 256.0f);
+            graphics.blit(TEXTURE, x + 79, y + 34, arrowWidth + 1, 16, 176.0f, 14.0f, 256.0f, 256.0f);
         }
     }
 

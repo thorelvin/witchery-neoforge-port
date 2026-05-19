@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class SpinningWheelScreen extends AbstractContainerScreen<SpinningWheelMenu> {
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/spinningwheel.png");
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/spinning_wheel.png");
 
     public SpinningWheelScreen(SpinningWheelMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -28,12 +28,12 @@ public class SpinningWheelScreen extends AbstractContainerScreen<SpinningWheelMe
         graphics.blit(TEXTURE, x, y, this.imageWidth, this.imageHeight, 0.0f, 0.0f, 256.0f, 256.0f);
 
         if (!menu.hasPower()) {
-            graphics.blit(TEXTURE, x + 35, y + 58, 9, 9, 197.0f, 0.0f, 256.0f, 256.0f);
-        }
-
-        int arrowWidth = menu.getSpinProgress();
-        if (arrowWidth > 0) {
-            graphics.blit(TEXTURE, x + 79, y + 20, arrowWidth + 1, 16, 176.0f, 14.0f, 256.0f, 256.0f);
+            graphics.blit(TEXTURE, x + 79, y + 27, 24, 16, 176.0f, 0.0f, 256.0f, 256.0f);
+        } else {
+            int arrowWidth = menu.getSpinProgress();
+            if (arrowWidth > 0) {
+                graphics.blit(TEXTURE, x + 79, y + 26, arrowWidth + 1, 16, 176.0f, 16.0f, 256.0f, 256.0f);
+            }
         }
     }
 

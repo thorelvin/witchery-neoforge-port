@@ -29,16 +29,16 @@ public class SpinningWheelMenu extends AbstractContainerMenu {
 
         checkContainerSize(container, SpinningWheelBlockEntity.SLOT_COUNT);
 
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_FIBRE, 56, 20));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_1, 56, 53));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_OUTPUT, 118, 21) {
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_FIBRE, 56, 26));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_1, 38, 48));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_OUTPUT, 116, 27) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_2, 74, 53));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_3, 92, 53));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_2, 56, 48));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_3, 74, 48));
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {

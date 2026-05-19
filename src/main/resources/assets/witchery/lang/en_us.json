@@ -698,4 +698,6 @@
   "witchery.flying_monkey.waystone_set": "Flying Monkey will carry you to the waystone.",
   "witchery.silver_vat.collected": "Collected %s silver ingots.",
   "witchery.silver_vat.empty": "No silver collected yet — place next to a furnace smelting gold ore."
+  ,
+  "container.witchery.refilling_chest": "Refilling Chest"
 }

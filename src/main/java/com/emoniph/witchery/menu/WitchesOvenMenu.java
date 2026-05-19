@@ -41,19 +41,19 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
                 return playerInventory.player.level().fuelValues().isFuel(stack);
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED, 118, 21) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED, 116, 21) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT, 118, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT, 116, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 83, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 31, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());

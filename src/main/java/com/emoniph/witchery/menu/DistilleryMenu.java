@@ -33,33 +33,33 @@ public class DistilleryMenu extends AbstractContainerMenu {
         this.data = data;
         checkContainerSize(container, DistilleryBlockEntity.SLOT_COUNT);
 
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_1, 48, 16));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_2, 48, 34));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_JARS, 48, 54) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_1, 56, 15));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_2, 56, 33));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_JARS, 56, 55) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_1, 110, 16) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_1, 112, 26) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_2, 128, 16) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_2, 130, 26) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_3, 110, 34) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_3, 112, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_4, 128, 34) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_4, 130, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -87,7 +87,7 @@ public class DistilleryMenu extends AbstractContainerMenu {
     public int getCookProgress() {
         int progress = data.get(2);
         int total = data.get(3);
-        return total > 0 ? progress * 38 / total : 0;
+        return total > 0 ? progress * 28 / total : 0;
     }
 
     public boolean isLit() {

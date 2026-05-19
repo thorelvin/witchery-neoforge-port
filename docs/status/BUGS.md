@@ -357,9 +357,10 @@ The next ritual integrity pass is now closer to original Witchery:
 - Active rites now verify that their own required ring size still exists instead of re-running the generic first-match detector, so staged rites no longer abort just because a smaller ring at the same center is found first.
 - Large-circle `Curse of Waking Nightmare` and `Blight` now require infernal chalk again, and large-circle Fetish binding now requires ritual chalk again, instead of all three accepting the wrong family.
 - Small-circle teleport-to-bound-waystone now requires otherwhere chalk again instead of activating from any small ring.
+- New casts now retry every present ring from large to small instead of collapsing through the first detected ring size only, so mixed-ring activations no longer dead-end just because a smaller inner circle is present.
 
 Remaining gap:
-- This fixes sustain-time validation and one more slice of glyph-family parity, but activation still collapses new casts through the first detected ring size rather than the original full multi-circle registry, so mixed-ring rite matching is still an open architecture task.
+- This fixes sustain-time validation, one more slice of glyph-family parity, and the first major mixed-ring activation failure, but the port still uses an ordered size retry plus representative trigger items instead of the original full multi-circle, multi-sacrifice ritual registry.
 
 ### 40. Small-circle waystone/manifest routes were still off - Fixed / verify
 
@@ -580,6 +581,25 @@ The next mechanical parity pass is now closer to original Witchery:
 
 Remaining gap:
 - The exact old multi-sacrifice recipe and full multi-circle matcher still sit behind the port's simplified dispatcher, so this restores the rite's real job without claiming byte-for-byte activation parity yet.
+
+### 63. Mixed-ring ritual activation still dead-ended on the first detected circle - Fixed / verify
+
+The next ritual-dispatch pass is now closer to original Witchery:
+- New casts no longer stop at the first complete ring detected at a center.
+- The activation layer now gathers every complete ring present and retries from large to small, which restores the first real slice of mixed-ring behavior and stops inner circles from masking valid outer rites.
+
+Remaining gap:
+- This still uses ordered size retry plus representative trigger items instead of the original full multi-circle, multi-sacrifice ritual registry, so dispatcher fidelity is improved but not complete.
+
+### 64. Machine GUI overlays and storage renders were still misleading - Fixed / verify
+
+The next graphics-parity pass is now closer to original Witchery:
+- Distillery, Witch's Oven, and Spinning Wheel now use resurrected-style GUI layout alignment again through the current menu/screen path, instead of the old mixed original/resurrected overlay positions.
+- Refilling Chest now uses a stable local chest texture path for both block and item rendering instead of depending on a brittle vanilla chest texture lookup.
+- Poppet Shelf top-item rendering is back on a tighter visible 3x3 grid instead of the looser oversized placement that was easy to miss or clip visually.
+
+Remaining gap:
+- These fixes still need in-game verification against the latest client build, and the remaining art mismatches are now narrower item/block polish issues tracked in `ITEM_REVIEW.md`.
 
 ---
 

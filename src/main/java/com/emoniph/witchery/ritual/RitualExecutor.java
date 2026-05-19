@@ -175,21 +175,30 @@ public class RitualExecutor {
     }
 
     /**
-     * Dispatch the correct rite based on circle size + ingredient item dropped at the center.
-     * Ingredient matching is intentionally lenient: several items may trigger the same rite.
-     * Must be called server-side only.
+     * Dispatch the correct rite based on the complete rings present at the center
+     * plus the dropped ingredient. Until the full recipe registry comes back, new
+     * casts retry the present circles from outermost to innermost instead of
+     * collapsing through the first detected ring only.
      */
     public static boolean execute(Player player, Level level, BlockPos floorCenter,
-                                  RitualCircleDetector.DetectionResult result, ItemStack ingredient) {
+                                  List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
         if (isGlyphicTransformationChalk(ingredient)) {
             return riteOfGlyphicTransformation(player, level, floorCenter, ingredient);
         }
-        int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
-        return switch (result.size()) {
-            case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
-            case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
-            case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
-        };
+
+        for (RitualCircleDetector.DetectionResult result : presentCircles) {
+            int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
+            boolean matched = switch (result.size()) {
+                case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
+                case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
+                case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
+            };
+            if (matched) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static boolean hasVariant(int currentVariant, int requiredVariant) {

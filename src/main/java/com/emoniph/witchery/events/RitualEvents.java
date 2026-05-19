@@ -26,7 +26,7 @@ public class RitualEvents {
      * Right-clicking any block with the arthana attempts ritual activation.
      *
      * Dispatch order:
-     *  1. Detect the chalk ring (SMALL / MEDIUM / LARGE)
+     *  1. Detect every complete chalk ring at the center
      *  2. Scan for a dropped ItemEntity within 1.5 blocks of center — used as the rite ingredient
      *  3. Consume the ingredient entity, then execute the matching rite
      */
@@ -39,9 +39,9 @@ public class RitualEvents {
         if (!event.getItemStack().is(WitcheryItems.ARTHANA.get())) return;
 
         BlockPos floorCenter = event.getPos();
-        RitualCircleDetector.DetectionResult result = RitualCircleDetector.detect(level, floorCenter);
+        List<RitualCircleDetector.DetectionResult> presentCircles = RitualCircleDetector.detectPresent(level, floorCenter);
 
-        if (result == null) {
+        if (presentCircles.isEmpty()) {
             if (!player.isCrouching()) {
                 player.displayClientMessage(Component.translatable("witchery.ritual.no_circle"), false);
             }
@@ -68,7 +68,7 @@ public class RitualEvents {
             ingredient = ingredientEntity.getItem().copyWithCount(1); // only consume 1
         }
 
-        boolean consumeIngredient = RitualExecutor.execute(player, level, floorCenter, result, ingredient);
+        boolean consumeIngredient = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
         if (!consumeIngredient || ingredientEntity == null) {
             return;
         }

@@ -64,6 +64,33 @@ public class RitualCircleDetector {
         return null;
     }
 
+    /**
+     * Return every complete ring present at the center, ordered from largest to
+     * smallest. This gives the activation layer a stable outer-to-inner retry
+     * path until the full multi-circle recipe registry is restored.
+     */
+    public static List<DetectionResult> detectPresent(Level level, BlockPos floorCenter) {
+        BlockPos markLevel = floorCenter.above();
+        List<DetectionResult> results = new ArrayList<>(3);
+
+        List<BlockPos> large = collectRing(level, markLevel, LARGE_RING);
+        if (large != null) {
+            results.add(new DetectionResult(CircleSize.LARGE, large));
+        }
+
+        List<BlockPos> medium = collectRing(level, markLevel, MEDIUM_RING);
+        if (medium != null) {
+            results.add(new DetectionResult(CircleSize.MEDIUM, medium));
+        }
+
+        List<BlockPos> small = collectRing(level, markLevel, SMALL_RING);
+        if (small != null) {
+            results.add(new DetectionResult(CircleSize.SMALL, small));
+        }
+
+        return results;
+    }
+
     public static boolean hasRing(Level level, BlockPos floorCenter, CircleSize size) {
         BlockPos markLevel = floorCenter.above();
         return switch (size) {
