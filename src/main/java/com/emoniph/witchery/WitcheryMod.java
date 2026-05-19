@@ -52,7 +52,6 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerScreens);
             modEventBus.addListener(WitcheryClient::onAddLayers);
             modEventBus.addListener(WitcheryClient::registerRenderers);
-            modEventBus.addListener(WitcheryClient::registerSpecialModelRenderers);
         }
     }
 
