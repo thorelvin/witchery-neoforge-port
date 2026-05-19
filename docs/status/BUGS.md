@@ -119,7 +119,11 @@ The altar pass is now closer to the original 1.7.10 behavior again:
 - Arthana and other placed altar items now invalidate the altar immediately instead of waiting for the next scan window.
 - Retrieving or breaking placed altar items no longer risks silently eating the stored item.
 
-This still needs in-game verification for final feel, but the remaining gap has moved away from basic altar mechanics and toward broader storage/ritual parity.
+The altar is now stricter and closer to original again:
+- The multiblock no longer treats arbitrary 6-block flood-filled shapes as valid. It now requires a real rectangular 2x3 altar footprint again.
+- The connected/joined blockstate art pass is back too, so a valid altar now selects the original-style joined pieces with the red carpeted top segments instead of staying on the single standalone model.
+
+This still needs in-game verification for final orientation/art feel, but the remaining gap has moved away from basic altar mechanics and toward broader storage/ritual parity.
 
 ### 15. Leech Chest and Taglock Kit had lost their original storage flow - Fixed / verify
 
@@ -646,7 +650,7 @@ The current Nether-style pulse is being kept as the intended hell aesthetic.
 ### Item review - remaining visual/mechanic issues
 
 Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
-- `altar` - mechanics are back near original 2x3 behavior; block and item are 3D again, but the original connected/joined altar art still needs a deeper render pass
+- `altar` - strict 2x3 validation and joined-art variants are back; remaining work is now in-game orientation/polish verification rather than missing connected states
 - `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original; GUI texture/layout verification is still open
 - `crystal_ball` - must be transparent
 - `coffin` - placed two-block render is back on split head/bottom textures, but item/inventory presentation is still placeholder-level

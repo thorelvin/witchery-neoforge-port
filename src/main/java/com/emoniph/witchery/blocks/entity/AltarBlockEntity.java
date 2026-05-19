@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.AltarBlock;
 import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
@@ -7,6 +8,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.item.ArthanaItem;
 import com.emoniph.witchery.item.MysticBranchItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -41,6 +43,9 @@ public class AltarBlockEntity extends BlockEntity {
     private int enhancementLevel = 0;
     private boolean validStructure = false;
     private int tickCount = 0;
+
+    private record AltarLayout(Direction.Axis axis, Set<BlockPos> footprint, Map<BlockPos, AltarBlock.JoinedPart> parts) {
+    }
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.ALTAR.get(), pos, state);
@@ -245,31 +250,78 @@ public class AltarBlockEntity extends BlockEntity {
         return visited;
     }
 
-    private static Set<BlockPos> findValidFootprint(Level level, BlockPos start) {
-        Set<BlockPos> footprint = findConnectedAltars(level, start);
-        if (footprint.size() != 6) return Set.of();
+    private static @Nullable AltarLayout findValidLayout(Set<BlockPos> footprint) {
+        if (footprint.size() != 6) return null;
+
+        int y = footprint.iterator().next().getY();
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxZ = Integer.MIN_VALUE;
 
         for (BlockPos altarPos : footprint) {
-            int neighbors = 0;
-            for (net.minecraft.core.Direction direction : new net.minecraft.core.Direction[]{
-                    net.minecraft.core.Direction.NORTH,
-                    net.minecraft.core.Direction.SOUTH,
-                    net.minecraft.core.Direction.EAST,
-                    net.minecraft.core.Direction.WEST}) {
-                if (footprint.contains(altarPos.relative(direction))) {
-                    neighbors++;
+            if (altarPos.getY() != y) return null;
+            minX = Math.min(minX, altarPos.getX());
+            maxX = Math.max(maxX, altarPos.getX());
+            minZ = Math.min(minZ, altarPos.getZ());
+            maxZ = Math.max(maxZ, altarPos.getZ());
+        }
+
+        int xSpan = maxX - minX + 1;
+        int zSpan = maxZ - minZ + 1;
+        Direction.Axis axis;
+        if (xSpan == 3 && zSpan == 2) {
+            axis = Direction.Axis.X;
+        } else if (xSpan == 2 && zSpan == 3) {
+            axis = Direction.Axis.Z;
+        } else {
+            return null;
+        }
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                if (!footprint.contains(new BlockPos(x, y, z))) {
+                    return null;
                 }
-            }
-            if (neighbors < 2 || neighbors > 3) {
-                return Set.of();
             }
         }
 
-        return footprint;
+        Map<BlockPos, AltarBlock.JoinedPart> parts = new HashMap<>();
+        for (BlockPos altarPos : footprint) {
+            int row;
+            int col;
+            if (axis == Direction.Axis.X) {
+                row = altarPos.getZ() - minZ;
+                col = altarPos.getX() - minX;
+            } else {
+                row = altarPos.getX() - minX;
+                col = altarPos.getZ() - minZ;
+            }
+            parts.put(altarPos, joinedPart(row, col));
+        }
+
+        return new AltarLayout(axis, footprint, parts);
     }
 
-    private static UpgradeInfo scanUpgrades(Level level, BlockPos center) {
-        Set<BlockPos> footprint = findValidFootprint(level, center);
+    private static AltarBlock.JoinedPart joinedPart(int row, int col) {
+        return switch (row) {
+            case 0 -> switch (col) {
+                case 0 -> AltarBlock.JoinedPart.BACK_LEFT;
+                case 1 -> AltarBlock.JoinedPart.BACK_MIDDLE;
+                case 2 -> AltarBlock.JoinedPart.BACK_RIGHT;
+                default -> AltarBlock.JoinedPart.NOT_CONNECTED;
+            };
+            case 1 -> switch (col) {
+                case 0 -> AltarBlock.JoinedPart.FRONT_LEFT;
+                case 1 -> AltarBlock.JoinedPart.FRONT_MIDDLE;
+                case 2 -> AltarBlock.JoinedPart.FRONT_RIGHT;
+                default -> AltarBlock.JoinedPart.NOT_CONNECTED;
+            };
+            default -> AltarBlock.JoinedPart.NOT_CONNECTED;
+        };
+    }
+
+    private static UpgradeInfo scanUpgrades(Level level, Set<BlockPos> footprint) {
         if (footprint.isEmpty()) {
             return new UpgradeInfo(1, 1, 1, 0);
         }
@@ -317,11 +369,37 @@ public class AltarBlockEntity extends BlockEntity {
         );
     }
 
+    private static void applyJoinedState(Level level, BlockPos pos, Direction.Axis axis, AltarBlock.JoinedPart part) {
+        BlockState current = level.getBlockState(pos);
+        if (!current.is(WitcheryBlocks.ALTAR.get())) return;
+        BlockState desired = current.setValue(AltarBlock.AXIS, axis).setValue(AltarBlock.PART, part);
+        if (current != desired) {
+            level.setBlock(pos, desired, 2);
+        }
+    }
+
+    private static void syncVisualStates(Level level, Set<BlockPos> connectedAltars, @Nullable AltarLayout layout) {
+        if (layout == null) {
+            for (BlockPos altarPos : connectedAltars) {
+                applyJoinedState(level, altarPos, Direction.Axis.Z, AltarBlock.JoinedPart.NOT_CONNECTED);
+            }
+            return;
+        }
+
+        for (BlockPos altarPos : connectedAltars) {
+            AltarBlock.JoinedPart part = layout.parts().getOrDefault(altarPos, AltarBlock.JoinedPart.NOT_CONNECTED);
+            applyJoinedState(level, altarPos, layout.axis(), part);
+        }
+    }
+
     private void refreshState(Level level, BlockState state) {
-        Set<BlockPos> footprint = findValidFootprint(level, worldPosition);
-        boolean newValidStructure = !footprint.isEmpty();
+        Set<BlockPos> connectedAltars = findConnectedAltars(level, worldPosition);
+        AltarLayout layout = findValidLayout(connectedAltars);
+        boolean newValidStructure = layout != null;
         int newMaxPower = newValidStructure ? calculateMaxPower(level, worldPosition) : 0;
-        UpgradeInfo upgrades = newValidStructure ? scanUpgrades(level, worldPosition) : new UpgradeInfo(1, 1, 1, 0);
+        UpgradeInfo upgrades = newValidStructure ? scanUpgrades(level, layout.footprint()) : new UpgradeInfo(1, 1, 1, 0);
+
+        syncVisualStates(level, connectedAltars, layout);
 
         if (newValidStructure != validStructure
                 || newMaxPower != maxPower
