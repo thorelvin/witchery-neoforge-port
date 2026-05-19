@@ -315,6 +315,14 @@ public class PoppetEvents {
         return true;
     }
 
+    public static int destroyBoundPoppets(ServerPlayer player, Item poppetItem, int amount, int maxCount) {
+        int destroyed = 0;
+        while (destroyed < maxCount && damageBoundPoppet(player, poppetItem, amount)) {
+            destroyed++;
+        }
+        return destroyed;
+    }
+
     private static void consumeOne(PoppetLocation location) {
         if (location.inventory() != null) {
             location.stack().shrink(1);

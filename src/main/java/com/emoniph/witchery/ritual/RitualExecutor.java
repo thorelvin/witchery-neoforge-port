@@ -325,6 +325,8 @@ public class RitualExecutor {
             return riteOfCurseOverheating(player, level, center);
         } else if (item.is(Items.FERMENTED_SPIDER_EYE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseInsanity(player, level, center);
+        } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfCorruptPoppet(player, level, center);
         } else if (item.is(Items.GOLD_NUGGET)) {
             return riteOfCurseMisfortune(player, level, center);
         } else if (item.is(WitcheryItems.DEMON_HEART.get())) {
@@ -2813,6 +2815,43 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Curse of Corrupt Poppet — destroys bound voodoo-protection poppets on the taglock target. */
+    private static boolean riteOfCorruptPoppet(Player caster, Level level, BlockPos center) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        if (!hasActiveCurseMasteryFamiliar(sp)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.requirescursemastery"), false);
+            return false;
+        }
+
+        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        if (taglock.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.no_taglock"), false);
+            return false;
+        }
+
+        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.offline"), false);
+            return false;
+        }
+
+        consumeInventoryItem(sp, taglock.get().slot());
+
+        if (PoppetEvents.damageBoundPoppet(target, WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
+            target.displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+            strikeCurseBacklashLightning(sp);
+            success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
+            return true;
+        }
+
+        int destroyed = PoppetEvents.destroyBoundPoppets(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
+        success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
+        sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
+        WitcheryMod.LOGGER.info("Curse of Corrupt Poppet destroyed {} voodoo protection poppet(s) for {}", destroyed, target.getName().getString());
+        return true;
+    }
+
     /** Rite of Calling the Familiar — teleports the player's familiar to the center. */
     private static boolean riteOfCallFamiliar(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
@@ -3135,6 +3174,22 @@ public class RitualExecutor {
         if (stack.isEmpty()) {
             inv.setItem(slot, ItemStack.EMPTY);
         }
+    }
+
+    private static boolean hasActiveCurseMasteryFamiliar(ServerPlayer player) {
+        Optional<UUID> familiarUuid = WitcheryAttachments.get(player).getFamiliarUUID();
+        if (familiarUuid.isEmpty()) {
+            return false;
+        }
+        Entity familiar = ((ServerLevel) player.level()).getEntity(familiarUuid.get());
+        return familiar instanceof CatFamiliarEntity;
+    }
+
+    private static void strikeCurseBacklashLightning(ServerPlayer player) {
+        ServerLevel level = (ServerLevel) player.level();
+        LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+        lightning.setPos(player.getX(), player.getY(), player.getZ());
+        level.addFreshEntity(lightning);
     }
 
     /** Find a bound waystone in the caster's inventory without consuming it. */

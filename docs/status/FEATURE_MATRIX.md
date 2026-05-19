@@ -60,7 +60,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Tool / Armor protection poppets | Done | Tool: repairs held tool; Armor: repairs worn armor |
 | Poppet Shelf | Done | 9-slot poppet-only shelf; bound-poppet lookup now scans server shelves again and shelves with bound poppets keep their chunk loaded so protection can still trigger away from the player |
 | Basic sympathetic poppet | Done | Carried in inventory: mirrors damage taken to bound target (5 charges; consumed after 5 hits; creepy skeleton-rattle sound) |
-| Curse of Corrupt Poppet | Not started | Requires cat familiar; not implemented |
+| Curse of Corrupt Poppet | Done | Restored through a representative medium infernal `voodoo_protection_poppet` route; requires active cat familiar, filled taglock target, destroys up to 10 Voodoo Protection Poppets, and is blocked by Poppet Protection again |
 
 ---
 
@@ -195,7 +195,6 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 |---|---:|---|
 | Circle talisman | Done | Store+deploy complete; golden chalk bug fixed |
 | Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, but the original tile-entity ritual queue/refund system is only partially recreated |
-| Sympathetic poppet | Quick | Registered; no standalone logic |
 | Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
 | Banshee/Poltergeist GhostModel UV | Polish | One audit pass needed |
 | Cat familiar model proportions | Polish | Body geometry tweak |

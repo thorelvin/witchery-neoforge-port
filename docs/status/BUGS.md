@@ -519,6 +519,17 @@ The next Spirit World combat pass is now closer to original Witchery:
 Remaining gap:
 - In-game verification is still open for the overall Nightmare fight feel and ghost-state presentation, but the missing anti-strip charm item is no longer a blocker.
 
+### 57. Curse of Corrupt Poppet was missing entirely - Fixed / verify
+
+The next missing-feature pass is now closer to original Witchery:
+- The `corruptvoodooprotection` rite is reachable again through a representative medium infernal `voodoo_protection_poppet` route instead of being absent from the port.
+- It now requires an active cat familiar again as the curse-mastery gate before it will fire.
+- It now validates a filled taglock target, consumes that taglock only after target resolution, and destroys up to 10 bound `Voodoo Protection Poppet` items on the target again.
+- `Poppet Protection` now blocks this rite again and throws the backlash lightning onto the caster instead of letting the anti-voodoo poppets be destroyed.
+
+Remaining gap:
+- The modern dispatcher still collapses the original five-sacrifice recipe into a representative infernal trigger item, so the exact multi-sacrifice activation shape is still not full 1.7.10 recipe-registry parity.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
