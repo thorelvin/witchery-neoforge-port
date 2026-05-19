@@ -54,10 +54,8 @@ public class RefillingChestRenderer implements BlockEntityRenderer<RefillingChes
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
-        ps.translate(0, 1, 1);
-        ps.scale(1.0f, -1.0f, -1.0f);
         ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        ps.mulPose(Axis.YP.rotationDegrees(-state.yaw));
         ps.translate(-0.5, -0.5, -0.5);
         collector.submitModelPart(bottom, ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         collector.submitModelPart(lid, ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);

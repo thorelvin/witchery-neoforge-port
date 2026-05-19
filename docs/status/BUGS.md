@@ -601,7 +601,7 @@ Remaining gap:
 
 The next graphics-parity pass is now closer to original Witchery:
 - Distillery, Witch's Oven, and Spinning Wheel now use resurrected-style GUI layout alignment again through the current menu/screen path, instead of the old mixed original/resurrected overlay positions.
-- Refilling Chest now uses a stable local chest texture path for both block and item rendering instead of depending on a brittle vanilla chest texture lookup.
+- Refilling Chest now uses the normal vanilla chest texture path like original Witchery again, follows the vanilla chest rotation path instead of the flipped custom pose, and has a valid oak-plank particle texture so mining it no longer falls back pink/black.
 - Poppet Shelf top-item rendering is back on a tighter visible 3x3 grid instead of the looser oversized placement that was easy to miss or clip visually.
 
 Remaining gap:
@@ -641,7 +641,7 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `alluring_skull`, `demon_heart` - wrong 3D model/UV
 - `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; the item now uses a special renderer, but final in-game spacing/presentation still needs verification
 - `distillery`, `spinning_wheel`, `fume_funnel`, `brazier`, `candelabra` - item rendering now runs through dedicated special-model renderers; final in-game silhouette verification is still open
-- `leech_chest`, `refilling_chest` - item chest textures now use the correct local `entity/chest` resource path; final in-game verification is still open
+- `leech_chest`, `refilling_chest` - chest item/block rendering is much closer to stable now, but final in-game verification is still open
 - Spawn eggs now point back at the vanilla `template_spawn_egg`; needs an in-game retest before this can leave the backlog completely
 - Full Tools/Armour/Brew sections - untested
 
