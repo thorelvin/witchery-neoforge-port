@@ -654,7 +654,7 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; the item now uses a special renderer, but final in-game spacing/presentation still needs verification
 - `distillery`, `spinning_wheel`, `fume_funnel`, `brazier`, `candelabra` - item rendering now runs through dedicated special-model renderers; final in-game silhouette verification is still open
 - `leech_chest`, `refilling_chest` - chest item/block rendering is much closer to stable now, but final in-game verification is still open
-- Spawn eggs now bypass the broken local Witchery model chain and point directly at the vanilla `template_spawn_egg`; needs an in-game retest before this can leave the backlog completely
+- Spawn eggs now point both item definitions and legacy model files directly at the vanilla `template_spawn_egg`; needs an in-game retest before this can leave the backlog completely
 - Full Tools/Armour/Brew sections - untested
 
 ---

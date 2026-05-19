@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/dream_catcher"
+    "type": "minecraft:special",
+    "base": "witchery:item/dream_catcher",
+    "model": {
+      "type": "witchery:dream_catcher"
+    }
   }
 }

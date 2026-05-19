@@ -3,7 +3,9 @@ package com.emoniph.witchery.client.renderer;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.client.model.BrazierModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
+import com.emoniph.witchery.client.model.ChaliceModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
+import com.emoniph.witchery.client.model.DreamCatcherModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
 import com.emoniph.witchery.client.model.GrassperModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
@@ -37,8 +39,10 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("fume_funnel"), FumeFunnelUnbaked.MAP_CODEC);
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
+        event.register(id("chalice"), ChaliceUnbaked.MAP_CODEC);
         event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
         event.register(id("refilling_chest"), RefillingChestUnbaked.MAP_CODEC);
+        event.register(id("dream_catcher"), DreamCatcherUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -168,7 +172,11 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
-            poseStack.translate(-0.5, 0, -0.5);
+            if (displayContext == ItemDisplayContext.GUI) {
+                poseStack.translate(-0.5, -0.18, -0.5);
+            } else {
+                poseStack.translate(-0.5, 0, -0.5);
+            }
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
@@ -290,6 +298,38 @@ public final class WitcherySpecialItemRenderers {
         }
     }
 
+    public record ChaliceSpecialRenderer(ChaliceModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("chalice");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-90));
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutoutNoCull(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record ChaliceUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<ChaliceUnbaked> MAP_CODEC = MapCodec.unit(new ChaliceUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new ChaliceSpecialRenderer(new ChaliceModel(context.entityModelSet().bakeLayer(ChaliceModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<ChaliceUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
     public record LeechChestSpecialRenderer(LeechChestModel model) implements NoDataSpecialModelRenderer {
         private static final Identifier TEXTURE = blockTexture("leechchest");
 
@@ -297,6 +337,10 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
+            if (displayContext == ItemDisplayContext.GUI) {
+                poseStack.translate(0.0, -0.12, 0.0);
+            }
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
@@ -328,7 +372,8 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             poseStack.pushPose();
-            poseStack.translate(0.5, 0.5, 0.5);
+            poseStack.translate(0.5, displayContext == ItemDisplayContext.GUI ? 0.38 : 0.5, 0.5);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(-0.5, -0.5, -0.5);
             collector.submitModelPart(bottom, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             collector.submitModelPart(lid, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
@@ -353,6 +398,39 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<RefillingChestUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record DreamCatcherSpecialRenderer(DreamCatcherModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("dream_catcher");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            poseStack.translate(-0.5, 0.0, -0.5);
+            int effectiveLight = displayContext == ItemDisplayContext.GUI ? 0xF000F0 : lightCoords;
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), effectiveLight, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record DreamCatcherUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<DreamCatcherUnbaked> MAP_CODEC = MapCodec.unit(new DreamCatcherUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new DreamCatcherSpecialRenderer(new DreamCatcherModel(context.entityModelSet().bakeLayer(DreamCatcherModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<DreamCatcherUnbaked> type() {
             return MAP_CODEC;
         }
     }

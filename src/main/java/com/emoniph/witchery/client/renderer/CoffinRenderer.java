@@ -47,10 +47,13 @@ public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, Co
         if (be.getLevel() == null) { state.shouldRender = false; return; }
         BlockState bs = be.getBlockState();
         if (!(bs.getBlock() instanceof CoffinBlock)) { state.shouldRender = false; return; }
-        if (bs.getValue(CoffinBlock.PART) != BedPart.HEAD) { state.shouldRender = false; return; }
         state.shouldRender = true;
         state.openAmount = bs.getValue(CoffinBlock.OPEN) ? 1.0f : 0.0f;
-        state.facingYaw = facingToYaw(bs.getValue(CoffinBlock.FACING));
+        float yaw = facingToYaw(bs.getValue(CoffinBlock.FACING));
+        if (bs.getValue(CoffinBlock.PART) == BedPart.FOOT) {
+            yaw += 180.0f;
+        }
+        state.facingYaw = yaw;
     }
 
     @Override

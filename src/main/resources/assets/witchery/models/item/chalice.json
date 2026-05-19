@@ -1,3 +1,4 @@
 {
-  "parent": "witchery:block/chalice"
+  "parent": "witchery:block/chalice",
+  "gui_light": "front"
 }

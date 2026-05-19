@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/chalice"
+    "type": "minecraft:special",
+    "base": "witchery:item/chalice",
+    "model": {
+      "type": "witchery:chalice"
+    }
   }
 }
