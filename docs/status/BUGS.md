@@ -571,6 +571,16 @@ The next mechanical parity pass is now closer to original Witchery:
 Remaining gap:
 - The still-loaded sacrificial item entity is deliberately skipped by the port's modern world-scan to avoid dragging the offered waystone itself around before the post-cast consume step, so the runtime shape is slightly modernized even though the practical rite behavior is back closer to 1.7.10.
 
+### 62. Medium otherwhere taglock transposition was missing / wrong - Fixed / verify
+
+The next mechanical parity pass is now closer to original Witchery:
+- The medium otherwhere taglock rite no longer collapses into the large-circle pull mechanic or depends on an inventory search for a separate taglock.
+- It now reads the offered filled taglock directly again and teleports the bound target into the circle center, which is much closer to the old `RiteTeleportEntity` behavior.
+- Spirit World crossovers are blocked again, and Witch Hunter dampening plus Voodoo Protection poppets still get a chance to stop the cast before the target is moved.
+
+Remaining gap:
+- The exact old multi-sacrifice recipe and full multi-circle matcher still sit behind the port's simplified dispatcher, so this restores the rite's real job without claiming byte-for-byte activation parity yet.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

@@ -341,6 +341,10 @@ public class RitualExecutor {
             return riteOfCorruptPoppet(player, level, center);
         } else if (item.is(Items.GOLD_NUGGET)) {
             return riteOfCurseMisfortune(player, level, center);
+        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+                && TaglockKitItem.isFilled(item)
+                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
+            return riteOfTranspositionEntity(player, level, center, item);
         } else if (item.is(WitcheryItems.DEMON_HEART.get())) {
             return riteOfCreaturesOfNightTaglock(player, level, center);
         } else if (item.is(Items.MILK_BUCKET)) {
@@ -3534,6 +3538,48 @@ public class RitualExecutor {
             entity.teleportTo(targetLevel, x, y, z,
                     java.util.Set.<net.minecraft.world.entity.Relative>of(), entity.getYRot(), entity.getXRot(), false);
         }
+    }
+
+    /** Medium otherwhere transposition — teleports the bound taglock target to the circle center. */
+    private static boolean riteOfTranspositionEntity(Player player, Level level, BlockPos center, ItemStack taglock) {
+        if (!(player instanceof ServerPlayer sp)) return false;
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.no_taglock"), false);
+            return false;
+        }
+        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(uuid.get());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.offline"), false);
+            return false;
+        }
+        if (sp.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                || target.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.spirit_world"), false);
+            return false;
+        }
+        if (hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (triggerVoodooProtection(target)) {
+            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+            return false;
+        }
+
+        BlockPos destination = center.above();
+        if (target.level() == level) {
+            target.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);
+        } else {
+            target.teleportTo((ServerLevel) level, destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
+                    java.util.Set.<net.minecraft.world.entity.Relative>of(), target.getYRot(), target.getXRot(), false);
+        }
+        target.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
+        success(player, level, center, "witchery.ritual.transposition_entity.success",
+                SoundEvents.ENDERMAN_TELEPORT, 0.8f, 2, 48);
+        WitcheryMod.LOGGER.info("Rite of Transposition Entity moved {} to {}", target.getName().getString(), destination);
+        return true;
     }
 
     private static boolean riteOfTranspositionPull(Player player, Level level, BlockPos center) {
