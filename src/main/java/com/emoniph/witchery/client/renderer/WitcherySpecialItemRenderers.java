@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.client.model.BrazierModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
 import com.emoniph.witchery.client.model.ChaliceModel;
+import com.emoniph.witchery.client.model.CoffinModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.DreamCatcherModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
@@ -43,6 +44,7 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
         event.register(id("refilling_chest"), RefillingChestUnbaked.MAP_CODEC);
         event.register(id("dream_catcher"), DreamCatcherUnbaked.MAP_CODEC);
+        event.register(id("coffin"), CoffinUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -431,6 +433,52 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<DreamCatcherUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record CoffinSpecialRenderer(CoffinModel headModel, CoffinModel bottomModel) implements NoDataSpecialModelRenderer {
+        private static final Identifier HEAD_TEXTURE = blockTexture("coffin_head");
+        private static final Identifier BOTTOM_TEXTURE = blockTexture("coffin_bottom");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            poseStack.pushPose();
+            poseStack.translate(0.5, displayContext == ItemDisplayContext.GUI ? 0.42 : 0.5, 0.5);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-20.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(225.0F));
+            poseStack.scale(0.56F, 0.56F, 0.56F);
+            poseStack.translate(0.0F, 1.0F, 0.55F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+            int effectiveLight = displayContext == ItemDisplayContext.GUI ? 0xF000F0 : lightCoords;
+            collector.submitModelPart(headModel.root(), poseStack, RenderTypes.entityCutout(HEAD_TEXTURE),
+                    effectiveLight, OverlayTexture.NO_OVERLAY, null);
+            poseStack.translate(0.0F, 0.0F, -1.0F);
+            collector.submitModelPart(bottomModel.root(), poseStack, RenderTypes.entityCutout(BOTTOM_TEXTURE),
+                    effectiveLight, OverlayTexture.NO_OVERLAY, null);
+            poseStack.popPose();
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record CoffinUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<CoffinUnbaked> MAP_CODEC = MapCodec.unit(new CoffinUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new CoffinSpecialRenderer(
+                    new CoffinModel(context.entityModelSet().bakeLayer(CoffinModel.HEAD_LAYER_LOCATION)),
+                    new CoffinModel(context.entityModelSet().bakeLayer(CoffinModel.BOTTOM_LAYER_LOCATION))
+            );
+        }
+
+        @Override
+        public MapCodec<CoffinUnbaked> type() {
             return MAP_CODEC;
         }
     }
