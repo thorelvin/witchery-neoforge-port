@@ -239,6 +239,7 @@
   "witchery.ritual.eclipse.success": "The sky darkens... Rite of Total Eclipse complete.",
   "witchery.ritual.beastial_call.success": "The creatures answer your call (%s drawn in).",
   "witchery.ritual.transpose_ores.success": "The circle begins drawing hidden ore to the surface.",
+  "witchery.ritual.natures_power.success": "Wild growth answers the circle's call.",
   "witchery.ritual.fertility.success": "Nature stirs (%s plants grown, %s villagers cured).",
   "witchery.ritual.charging.success": "You pulse with magical energy... Rite of Charging complete.",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",

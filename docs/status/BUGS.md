@@ -551,6 +551,16 @@ The next missing-feature pass is now closer to original Witchery:
 Remaining gap:
 - The exact multi-sacrifice activation shape is still collapsed into a representative trigger item, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
 
+### 60. Nature's Power was missing entirely - Fixed / verify
+
+The next missing-feature pass is now closer to original Witchery:
+- The old large ritual `naturespower` behavior is reachable again instead of being absent from the port.
+- The restored rite now runs as a long staged growth effect, picks random nearby ground anchors, greens the soil, spreads plants, bonemeals growth, and scales its working radius and lifetime with nearby coven witches again.
+- It is exposed through a representative large ritual `brew_of_sprouting` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+
+Remaining gap:
+- The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, so this restores the rite's world-shaping job without claiming exact 1.7.10 block-for-block growth parity.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

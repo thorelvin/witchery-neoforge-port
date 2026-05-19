@@ -128,6 +128,7 @@ public class RitualExecutor {
         RAIN_OF_TOADS,
         CALL_CREATURES,
         CLIMATE_CHANGE,
+        NATURES_POWER,
         TRANSPOSE_ORES,
         MOVING_EARTH,
         RAISE_COLUMN,
@@ -359,6 +360,8 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             riteOfBeastialCall(player, level, center);
             return true;
+        } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfNaturesPower(player, level, center);
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return riteOfTransposeOres(player, level, center);
         } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
@@ -1469,6 +1472,7 @@ public class RitualExecutor {
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
+            case NATURES_POWER -> tickNaturesPowerRitual(level, ritual);
             case TRANSPOSE_ORES -> tickTransposeOresRitual(level, ritual);
             case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
             case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
@@ -1585,6 +1589,23 @@ public class RitualExecutor {
         applyClimateChange(level, ritual.center, ritual.minRadius, plan);
         clearClimateChangePlan(level.dimension(), ritual.center);
         return false;
+    }
+
+    private static boolean tickNaturesPowerRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage >= ritual.targetStage + ritual.covenSize * 5) {
+            return false;
+        }
+
+        BlockPos anchor = findNaturesPowerAnchor(level, ritual.center, ritual.minRadius + ritual.covenSize * 2, ritual.maxRadius);
+        if (anchor == null) {
+            return true;
+        }
+
+        level.levelEvent(2005, ritual.center.above(2), 0);
+        level.levelEvent(2005, anchor.above(), 0);
+        growNaturePatch(level, anchor, 3);
+        return true;
     }
 
     private static boolean tickTransposeOresRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2642,6 +2663,21 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Nature's Power — gradually spreads fertile life around the circle. */
+    private static boolean riteOfNaturesPower(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.LARGE,
+                center, 14, 8, 150, 20, covenSize)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.natures_power.success",
+                SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40);
+        return true;
+    }
+
     private static void raiseColumnLayer(ServerLevel level, BlockPos center, int y, int radius, boolean topLayer) {
         int radiusSq = radius * radius;
         int innerRadius = Math.max(radius - 1, 0);
@@ -2689,6 +2725,114 @@ public class RitualExecutor {
             }
         }
         return transposed;
+    }
+
+    private static BlockPos findNaturesPowerAnchor(ServerLevel level, BlockPos center, int radius, int height) {
+        int x = center.getX() - radius + level.random.nextInt(radius * 2 + 1);
+        int z = center.getZ() - radius + level.random.nextInt(radius * 2 + 1);
+        int baseY = center.getY() - 1;
+
+        for (int offset = 0; offset <= height; offset++) {
+            BlockPos up = new BlockPos(x, baseY + offset, z);
+            if (isNaturesPowerAnchor(level, up)) {
+                return up;
+            }
+            if (offset == 0) {
+                continue;
+            }
+            BlockPos down = new BlockPos(x, baseY - offset, z);
+            if (isNaturesPowerAnchor(level, down)) {
+                return down;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isNaturesPowerAnchor(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!state.blocksMotion()) {
+            return false;
+        }
+        return level.getBlockState(pos.above()).isAir();
+    }
+
+    private static void growNaturePatch(ServerLevel level, BlockPos center, int radius) {
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz > radiusSq) {
+                    continue;
+                }
+                growNatureColumn(level, center.offset(dx, 0, dz));
+            }
+        }
+    }
+
+    private static void growNatureColumn(ServerLevel level, BlockPos groundPos) {
+        BlockState state = level.getBlockState(groundPos);
+        BlockPos abovePos = groundPos.above();
+        BlockState aboveState = level.getBlockState(abovePos);
+
+        if (canNaturesPowerGreen(state)) {
+            if (hasAdjacentWater(level, groundPos) && level.random.nextDouble() < 0.7) {
+                level.setBlock(groundPos, Blocks.MYCELIUM.defaultBlockState(), 3);
+            } else {
+                level.setBlock(groundPos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+            }
+            state = level.getBlockState(groundPos);
+        }
+
+        if (aboveState.isAir() && level.random.nextInt(4) == 0) {
+            placeNaturesPowerPlant(level, abovePos);
+        }
+
+        BlockState plantState = level.getBlockState(abovePos);
+        if (plantState.getBlock() instanceof BonemealableBlock bonemealable
+                && bonemealable.isValidBonemealTarget(level, abovePos, plantState)
+                && bonemealable.isBonemealSuccess(level, level.random, abovePos, plantState)) {
+            bonemealable.performBonemeal(level, level.random, abovePos, plantState);
+        }
+    }
+
+    private static boolean canNaturesPowerGreen(BlockState state) {
+        return state.is(Blocks.DIRT)
+                || state.is(Blocks.COARSE_DIRT)
+                || state.is(Blocks.ROOTED_DIRT)
+                || state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.PODZOL)
+                || state.is(Blocks.MUD)
+                || state.is(Blocks.SAND)
+                || state.is(Blocks.RED_SAND)
+                || state.is(Blocks.GRAVEL);
+    }
+
+    private static boolean hasAdjacentWater(ServerLevel level, BlockPos pos) {
+        for (net.minecraft.core.Direction direction : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+            if (level.getFluidState(pos.relative(direction)).is(net.minecraft.tags.FluidTags.WATER)
+                    || level.getFluidState(pos.above().relative(direction)).is(net.minecraft.tags.FluidTags.WATER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void placeNaturesPowerPlant(ServerLevel level, BlockPos pos) {
+        BlockState plant = switch (level.random.nextInt(10)) {
+            case 0 -> Blocks.SHORT_GRASS.defaultBlockState();
+            case 1 -> Blocks.FERN.defaultBlockState();
+            case 2 -> Blocks.DANDELION.defaultBlockState();
+            case 3 -> Blocks.POPPY.defaultBlockState();
+            case 4 -> Blocks.BROWN_MUSHROOM.defaultBlockState();
+            case 5 -> Blocks.RED_MUSHROOM.defaultBlockState();
+            case 6 -> WitcheryBlocks.EMBER_MOSS.get().defaultBlockState();
+            case 7 -> WitcheryBlocks.GLINT_WEED.get().defaultBlockState();
+            case 8 -> WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState();
+            default -> Blocks.TALL_GRASS.defaultBlockState();
+        };
+
+        if (plant.canSurvive(level, pos)) {
+            level.setBlock(pos, plant, 3);
+        }
     }
 
     private static boolean isTransposeOre(BlockState state, boolean includeGold) {
