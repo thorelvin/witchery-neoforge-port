@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -132,11 +133,21 @@ public class NightmareEntity extends Monster {
         if (defended) return false;
 
         if (!standingInFlowingSpirit()) {
+            boolean weakeningWeapon = isWeakeningWeapon(source);
             defended = true;
-            defenseTimer = this.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD) ? 80 : 40;
+            defenseTimer = this.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                    ? (weakeningWeapon ? 40 : 80)
+                    : (weakeningWeapon ? 30 : 40);
         }
 
         return super.hurtServer(level, source, Math.min(amount, 15.0f));
+    }
+
+    private boolean isWeakeningWeapon(net.minecraft.world.damagesource.DamageSource source) {
+        if (!(source.getEntity() instanceof LivingEntity living)) {
+            return false;
+        }
+        return living.getMainHandItem().is(WitcheryItems.HUNTSMAN_SPEAR.get());
     }
 
     private boolean standingInFlowingSpirit() {
@@ -147,11 +158,24 @@ public class NightmareEntity extends Monster {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         attackTimer = 15;
-        boolean result = super.doHurtTarget(level, target);
-        if (result && target instanceof Player player && !player.level().isClientSide()) {
-            if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
-                player.heal(3.5f);
+        boolean weakenedOutsideSpiritWorld = !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD);
+        AttributeInstance attackAttribute = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        double oldBaseAttack = attackAttribute != null ? attackAttribute.getBaseValue() : 0.0;
+
+        if (weakenedOutsideSpiritWorld && attackAttribute != null) {
+            attackAttribute.setBaseValue(0.5);
+        }
+
+        boolean result;
+        try {
+            result = super.doHurtTarget(level, target);
+        } finally {
+            if (weakenedOutsideSpiritWorld && attackAttribute != null) {
+                attackAttribute.setBaseValue(oldBaseAttack);
             }
+        }
+
+        if (result && target instanceof Player player && !player.level().isClientSide()) {
             stripRandomArmor(player);
         }
         return result;

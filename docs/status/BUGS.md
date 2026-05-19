@@ -509,6 +509,16 @@ The next Spirit World parity pass is now closer to original Witchery:
 Remaining gap:
 - The practical mechanics are back, but ghost rendering/style parity is still open because the modern port still lacks the old dedicated ghost visual/player-style layer.
 
+### 56. Nightmare combat was still too strong and missed spear weakening - Fixed / verify
+
+The next Spirit World combat pass is now closer to original Witchery:
+- `Nightmare` no longer hits with full Spirit World damage while manifested in the Overworld. Outside the Spirit World it now drops back to the old weak `0.5` damage profile instead of using the full monster attribute.
+- Taking damage from a wielder using `Huntsman's Spear` now shortens the Nightmare defense window again, restoring the old `40/30` tick weakened defense timing instead of always using the full `80/40` timing.
+- The incorrect modern self-heal side effect on Nightmare hits outside the Spirit World is gone.
+
+Remaining gap:
+- The old `Charm of Disrupted Dreams` armor-protection interaction still cannot be restored yet because that specific item is not present in the modern port item set.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

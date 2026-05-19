@@ -42,7 +42,7 @@ Items from spec not yet implemented:
 | **Health/hunger save-restore** | §8 | ✅ Done | Saved in `SpiritWorldState` sub-codec; restored on exit |
 | **Demonic Nightmare events** | §13 | ✅ Done | Every 100t: 50% SmallFireball, 65% LargeFireball, 75% demon spawn (if <10 hostiles, <2 demons) |
 | **Corpse entity** | §9 | ✅ Done | `witchery:corpse` (MISC mob, sleeping pose, NoopRenderer placeholder) spawns on SW entry, removed on exit, killing it forces player back; UUID tracked in `SpiritWorldState` |
-| **Flowing Spirit entity effects** | §21 | Open | Regen for normal entities; Weakness for undead/demons/Nightmares; converts Disturbed Cotton item→Wispy Cotton; suppresses Nightmare defense |
+| **Flowing Spirit entity effects** | §21 | Partial | Regen/weakness, disturbed-cotton cleansing, and Nightmare defense suppression are back; the old anti-armor charm interaction tied to Nightmare attacks is still missing because `Charm of Disrupted Dreams` is not restored as an item yet |
 | **Spirit Portal activation** | §22 | ✅ Done | Snow-frame portal now opens again from a Flowing Spirit source in the Spirit World and is used by the restored manifestation loop |
 | **Rite of Manifestation ghost** | §23 | Partial | The rite now grants 2.5 min + 25s per coven witch of manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld, timed return and Icy Needle recall are back, but ghost rendering/style polish is still open |
 
