@@ -2,6 +2,8 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -26,19 +28,13 @@ public class GrassperBlockEntity extends BlockEntity {
 
     public void setItem(ItemStack stack) {
         this.stack = stack.copy();
-        setChanged();
-        if (level != null) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
+        sync();
     }
 
     public ItemStack takeItem() {
         ItemStack result = stack;
         stack = ItemStack.EMPTY;
-        setChanged();
-        if (level != null) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
+        sync();
         return result;
     }
 
@@ -46,6 +42,11 @@ public class GrassperBlockEntity extends BlockEntity {
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     @Override
@@ -60,5 +61,13 @@ public class GrassperBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
         stack = tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 }

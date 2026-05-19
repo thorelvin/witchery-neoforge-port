@@ -73,7 +73,7 @@ public class GrassperBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS_SERVER;
         }
         if (!(level.getBlockEntity(pos) instanceof GrassperBlockEntity be)) {
             return InteractionResult.PASS;
@@ -84,16 +84,14 @@ public class GrassperBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
 
-        if (!player.getInventory().add(stored.copy())) {
-            level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5, stored.copy()));
-        }
+        level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5, stored.copy()));
         return InteractionResult.SUCCESS;
     }
 
     @Override
     public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS_SERVER;
         }
         if (stack.isEmpty() || !(level.getBlockEntity(pos) instanceof GrassperBlockEntity be)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
