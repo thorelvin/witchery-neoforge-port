@@ -81,6 +81,11 @@ Audit three layers separately:
    - block item visuals
    - spawn eggs
    - broken wraps or wrong UV assumptions
+
+Recent progress:
+- Several broken machine/storage icons now use NeoForge 1.21 `special` item renderers backed by the actual Witchery models instead of invalid static block-model fallbacks.
+- Chest-like item renders now point at local `textures/entity/chest/...` resources instead of broken root-level ids.
+- Spawn eggs were moved back onto the vanilla `template_spawn_egg` parent after the local template path regressed into pink/black fallbacks.
 3. GUI parity:
    - background textures
    - slot alignment

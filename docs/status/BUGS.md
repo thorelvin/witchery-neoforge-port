@@ -624,8 +624,11 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `crystal_ball` - must be transparent
 - `coffin` - shows only one side in inventory
 - `alluring_skull`, `demon_heart` - wrong 3D model/UV
-- `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; item texture/model polish is still open
-- Full Tools/Armour/Brew/Spawn egg sections - untested
+- `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; the item now uses a special renderer, but final in-game spacing/presentation still needs verification
+- `distillery`, `spinning_wheel`, `fume_funnel`, `brazier`, `candelabra` - item rendering now runs through dedicated special-model renderers; final in-game silhouette verification is still open
+- `leech_chest`, `refilling_chest` - item chest textures now use the correct local `entity/chest` resource path; final in-game verification is still open
+- Spawn eggs now point back at the vanilla `template_spawn_egg`; needs an in-game retest before this can leave the backlog completely
+- Full Tools/Armour/Brew sections - untested
 
 ---
 

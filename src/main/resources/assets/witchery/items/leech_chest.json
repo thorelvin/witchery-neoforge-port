@@ -4,7 +4,7 @@
     "base": "witchery:item/leech_chest",
     "model": {
       "type": "minecraft:chest",
-      "texture": "witchery:leechchest"
+      "texture": "witchery:entity/chest/leechchest"
     }
   }
 }

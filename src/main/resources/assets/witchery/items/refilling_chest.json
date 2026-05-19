@@ -4,7 +4,7 @@
     "base": "witchery:item/refilling_chest",
     "model": {
       "type": "minecraft:chest",
-      "texture": "witchery:refillingchest"
+      "texture": "witchery:entity/chest/refillingchest"
     }
   }
 }

@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/distillery"
+    "type": "minecraft:special",
+    "base": "witchery:item/distillery",
+    "model": {
+      "type": "witchery:distillery"
+    }
   }
 }

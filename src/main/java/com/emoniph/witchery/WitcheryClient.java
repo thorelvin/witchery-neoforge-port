@@ -24,6 +24,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 import java.util.List;
@@ -78,6 +79,10 @@ public class WitcheryClient {
         event.register(WitcheryMenuTypes.WITCHES_OVEN.get(),    WitchesOvenScreen::new);
         event.register(WitcheryMenuTypes.SPINNING_WHEEL.get(), SpinningWheelScreen::new);
         event.register(WitcheryMenuTypes.DISTILLERY.get(),     DistilleryScreen::new);
+    }
+
+    public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+        WitcherySpecialItemRenderers.register(event);
     }
 
     public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
