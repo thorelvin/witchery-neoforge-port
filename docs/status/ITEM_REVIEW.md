@@ -12,7 +12,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 1 | `witchery:witches_primer` | | Stubbed, wont open
+| 1 | `witchery:witches_primer` | `Partial - opens real Patchouli book when Patchouli is installed` | No longer a silent stub. It now calls the real Patchouli book-open API through a soft optional hook and shows a clear missing-Patchouli message otherwise. Needs in-game verification with Patchouli present.
 | 2 | `witchery:rowan_log` | ✅ Fixed — RotatedPillarBlock + axis blockstate variants | Can only be placed vertically, should work as regular logs all directions
 | 3 | `witchery:rowan_wood` | | Ok
 | 4 | `witchery:rowan_leaves` | ✅ Fixed — UntintedParticleLeavesBlock, multipart blockstate, logs tag added for decay | Texture wrongly mappet, and not transparent

@@ -1,6 +1,7 @@
 {
   "itemGroup.witchery": "Witchery",
   "item.witchery.witches_primer": "The Witches' Primer",
+  "item.witchery.witches_primer.patchouli_missing": "Patchouli is required to open this book.",
 
   "witchery.book.title": "The Witches' Primer",
   "witchery.book.landing": "You have found — or, more likely, been given — this volume. It is not a complete record of the craft. No single book could be. But it is a beginning, and beginnings matter.$(br2)Study the rowan first. Raise an altar. Then, when you are ready, the rest will follow. Do not rush. The craft does not reward impatience, and it punishes foolishness with unusual creativity.",

@@ -623,6 +623,16 @@ The next familiar-mechanics pass is now closer to original Witchery:
 Remaining gap:
 - The modern port still stores only the active familiar UUID instead of the original richer familiar instance/template data, so `Call Familiar` cannot yet recreate a dismissed or dead familiar the way 1.7.10 could. This patch restores the real bind/call flow for living bound familiars without claiming full familiar-persistence parity yet.
 
+### 66. Witches' Primer was still a silent stub - Fixed / verify
+
+The guidebook flow is now closer to how a modern Witchery port should behave:
+- `The Witches' Primer` no longer right-clicks into a silent no-op.
+- When Patchouli is installed, the item now opens the real `witchery:witches_primer` Patchouli book again through a soft optional reflection hook, so Witchery still compiles cleanly without a hard Patchouli dependency.
+- When Patchouli is not installed or the API call fails, the player now gets a clear missing-Patchouli message instead of the item pretending to work.
+
+Remaining gap:
+- This restores the practical book-open behavior, but it still needs an in-game verification pass with Patchouli actually present on the client/server pack.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
