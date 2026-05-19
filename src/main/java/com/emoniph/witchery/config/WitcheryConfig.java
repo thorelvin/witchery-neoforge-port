@@ -26,6 +26,7 @@ public class WitcheryConfig {
 
     // ── Altar / Rituals ───────────────────────────────────────────────────────
     public static final ModConfigSpec.DoubleValue RITUAL_POWER_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue ALLOW_BIOME_CHANGING;
 
     // ── World gen ─────────────────────────────────────────────────────────────
     public static final ModConfigSpec.BooleanValue ENABLE_ROWAN_TREES;
@@ -67,6 +68,9 @@ public class WitcheryConfig {
         RITUAL_POWER_MULTIPLIER = BUILDER
                 .comment("Multiplier applied to altar power costs. 0.5 = cheaper, 2.0 = more expensive.")
                 .defineInRange("powerMultiplier", 1.0, 0.1, 10.0);
+        ALLOW_BIOME_CHANGING = BUILDER
+                .comment("Allow the Rite of Shifting Seasons to rewrite biome data. Default: true")
+                .define("allowBiomeChanging", true);
         BUILDER.pop();
 
         BUILDER.push("worldgen");

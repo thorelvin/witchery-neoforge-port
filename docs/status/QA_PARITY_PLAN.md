@@ -6,6 +6,8 @@ This checklist is the quality gate for the NeoForge port. The goal is not just "
 
 `docs/status/NEXT_FIXES_PLAN.md` stays the ordered implementation roadmap. This file is the parity and verification harness used while working through that roadmap.
 
+Current phase note: the obvious missing-core-rite sweep is nearly exhausted, so the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap.
+
 ## Reference hierarchy
 
 1. Original Witchery 1.7.10 code and assets in `C:\claude\witchery\decompiled\witchery-original`.

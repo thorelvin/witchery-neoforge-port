@@ -479,6 +479,16 @@ The next missing-rite pass is now closer to original Witchery:
 Remaining gap:
 - This still uses one representative trigger instead of the original multi-sacrifice set, and the modern terrain helper is a little cleaner and more deterministic than the original block-protection aware sand placement loop.
 
+### 53. Rite of Shifting Seasons was missing entirely - Fixed / verify
+
+The next missing-rite pass is now closer to original Witchery:
+- `climatechange` is reachable again as a staged large-circle biome rite through a representative ritual `attuned_stone` route, instead of being absent from the port entirely.
+- The restored route now scans nearby dropped biome foci plus glowstone dust, stages over 5 pulses, requires a coven of 4, and scales the affected radius by coven size again.
+- The biome rewrite now uses the modern 1.21 biome grid with an explicit chunk resend, and desert/frozen outcomes restore the old weather side effects.
+
+Remaining gap:
+- This now uses deterministic nearest-focus selection and representative modern biome mappings instead of the original last-item-wins item-iteration quirk and old biome-dictionary contents.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

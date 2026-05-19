@@ -2,6 +2,7 @@ package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
@@ -20,6 +21,9 @@ import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -47,6 +51,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.SaplingBlock;
@@ -61,6 +69,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
@@ -82,12 +92,38 @@ public class RitualExecutor {
 
     private static final int RITUAL_PULSE_INTERVAL = 30;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
+    private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
+
+    private enum ClimateFocus {
+        FOREST,
+        PLAINS,
+        MOUNTAIN,
+        HILLS,
+        SWAMP,
+        WATER,
+        DESERT,
+        FROZEN,
+        JUNGLE,
+        WASTELAND,
+        BEACH,
+        MUSHROOM,
+        MAGICAL
+    }
+
+    private enum ClimateWeather {
+        NONE,
+        SUN,
+        RAIN
+    }
+
+    private record ClimateChangePlan(Holder<Biome> biomeHolder, ClimateWeather weather) {}
 
     private enum ActiveRitualType {
         WEATHER_CALL_STORM,
         ICE_SHELL,
         RAIN_OF_TOADS,
         CALL_CREATURES,
+        CLIMATE_CHANGE,
         MOVING_EARTH,
         RAISE_COLUMN,
         VOLCANO,
@@ -335,6 +371,8 @@ public class RitualExecutor {
             return riteOfRain(player, level, center);
         } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())) {
             return riteOfEnchantBroom(player, level, center);
+        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfClimateChange(player, level, center);
         } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfSummonImp(player, level, center);
         } else if (item.is(WitcheryItems.TORMENTED_TWINE.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -986,6 +1024,271 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Shifting Seasons - rewrites nearby biome data based on dropped foci and glowstone intensity. */
+    private static boolean riteOfClimateChange(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) {
+            return false;
+        }
+        if (!WitcheryConfig.ALLOW_BIOME_CHANGING.get()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.disabled"), false);
+            return false;
+        }
+        if (!canPerformClimateRite(player, level, center)) {
+            return false;
+        }
+
+        ClimateChangePlan plan = scanClimateChangePlan(sl, center);
+        if (plan == null) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.missingbiomefoci"), false);
+            return false;
+        }
+
+        int covenSize = countNearbyCovenWitches(level, center);
+        int radius = 16 * (covenSize - 3);
+        storeClimateChangePlan(sl.dimension(), center, plan);
+        if (!queueActiveRitual(sl, ActiveRitualType.CLIMATE_CHANGE, RitualCircleDetector.CircleSize.LARGE,
+                center, radius, 0, 5, 20, covenSize)) {
+            clearClimateChangePlan(sl.dimension(), center);
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.climatechange.success",
+                SoundEvents.BEACON_ACTIVATE, 1.2f, 4, 48);
+        WitcheryMod.LOGGER.info("Rite of Shifting Seasons primed at {} with radius {}", center, radius);
+        return true;
+    }
+
+    private static ClimateChangePlan scanClimateChangePlan(ServerLevel level, BlockPos center) {
+        List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(8.0, 2.0, 8.0));
+        ItemEntity selectedFocusEntity = null;
+        ClimateFocus selectedFocus = null;
+        double bestDistance = Double.MAX_VALUE;
+        int glowstone = 0;
+        List<ItemEntity> glowstoneEntities = new ArrayList<>();
+        double centerX = center.getX() + 0.5;
+        double centerY = center.getY() + 0.5;
+        double centerZ = center.getZ() + 0.5;
+
+        for (ItemEntity itemEntity : items) {
+            ItemStack stack = itemEntity.getItem();
+            if (stack.is(Items.GLOWSTONE_DUST)) {
+                glowstone += stack.getCount();
+                glowstoneEntities.add(itemEntity);
+                continue;
+            }
+
+            ClimateFocus focus = climateFocusFromStack(stack);
+            if (focus == null) {
+                continue;
+            }
+
+            double distance = itemEntity.distanceToSqr(centerX, centerY, centerZ);
+            if (selectedFocusEntity == null
+                    || distance < bestDistance
+                    || (distance == bestDistance && itemEntity.getId() < selectedFocusEntity.getId())) {
+                selectedFocusEntity = itemEntity;
+                selectedFocus = focus;
+                bestDistance = distance;
+            }
+        }
+
+        if (selectedFocusEntity == null || selectedFocus == null) {
+            return null;
+        }
+
+        consumeClimateChangeItem(level, selectedFocusEntity);
+        for (ItemEntity glowstoneEntity : glowstoneEntities) {
+            consumeClimateChangeItem(level, glowstoneEntity);
+        }
+
+        return new ClimateChangePlan(resolveClimateBiome(level, selectedFocus, glowstone), weatherForFocus(selectedFocus));
+    }
+
+    private static void consumeClimateChangeItem(ServerLevel level, ItemEntity itemEntity) {
+        level.sendParticles(ParticleTypes.ENCHANT,
+                itemEntity.getX(), itemEntity.getY() + 0.25, itemEntity.getZ(),
+                16, 0.15, 0.25, 0.15, 0.0);
+        level.playSound(null, itemEntity.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.25f, 1.6f);
+        itemEntity.discard();
+    }
+
+    private static ClimateFocus climateFocusFromStack(ItemStack stack) {
+        if (stack.is(Blocks.JUNGLE_SAPLING.asItem()) || stack.is(Blocks.BAMBOO.asItem())) {
+            return ClimateFocus.JUNGLE;
+        }
+        if (stack.is(ItemTags.SAPLINGS)) {
+            return ClimateFocus.FOREST;
+        }
+        if (stack.is(Items.WHEAT_SEEDS) || stack.is(Blocks.FERN.asItem())) {
+            return ClimateFocus.PLAINS;
+        }
+        if (stack.is(Blocks.COBBLESTONE_WALL.asItem()) || stack.is(Blocks.COBBLESTONE.asItem())) {
+            return ClimateFocus.MOUNTAIN;
+        }
+        if (stack.is(Blocks.STONE.asItem()) || stack.is(Blocks.STONE_BRICKS.asItem())) {
+            return ClimateFocus.HILLS;
+        }
+        if (stack.is(Items.LILY_PAD) || stack.is(Items.SLIME_BALL)) {
+            return ClimateFocus.SWAMP;
+        }
+        if (stack.is(Items.COD) || stack.is(Items.SALMON) || stack.is(Items.WATER_BUCKET)) {
+            return ClimateFocus.WATER;
+        }
+        if (stack.is(Blocks.CACTUS.asItem())) {
+            return ClimateFocus.DESERT;
+        }
+        if (stack.is(WitcheryItems.ICY_NEEDLE.get())) {
+            return ClimateFocus.FROZEN;
+        }
+        if (stack.is(Blocks.DEAD_BUSH.asItem()) || stack.is(Blocks.NETHERRACK.asItem())) {
+            return ClimateFocus.WASTELAND;
+        }
+        if (stack.is(Blocks.SAND.asItem()) || stack.is(Blocks.SANDSTONE.asItem())) {
+            return ClimateFocus.BEACH;
+        }
+        if (stack.is(Blocks.RED_MUSHROOM.asItem()) || stack.is(Blocks.BROWN_MUSHROOM.asItem()) || stack.is(Blocks.MYCELIUM.asItem())) {
+            return ClimateFocus.MUSHROOM;
+        }
+        if (stack.is(Items.ENDER_EYE) || stack.is(WitcheryItems.FOCUSED_WILL.get())) {
+            return ClimateFocus.MAGICAL;
+        }
+        return null;
+    }
+
+    private static Holder<Biome> resolveClimateBiome(ServerLevel level, ClimateFocus focus, int glowstoneCount) {
+        return switch (focus) {
+            case FOREST -> pickClimateBiome(level, glowstoneCount, Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.FLOWER_FOREST);
+            case PLAINS -> pickClimateBiome(level, glowstoneCount, Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.MEADOW);
+            case MOUNTAIN -> pickClimateBiome(level, glowstoneCount, Biomes.JAGGED_PEAKS, Biomes.STONY_PEAKS, Biomes.FROZEN_PEAKS);
+            case HILLS -> pickClimateBiome(level, glowstoneCount, Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_FOREST);
+            case SWAMP -> pickClimateBiome(level, glowstoneCount, Biomes.SWAMP, Biomes.MANGROVE_SWAMP);
+            case WATER -> pickClimateBiome(level, glowstoneCount, Biomes.OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.DEEP_OCEAN);
+            case DESERT -> pickClimateBiome(level, glowstoneCount, Biomes.DESERT);
+            case FROZEN -> pickClimateBiome(level, glowstoneCount, Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.FROZEN_PEAKS);
+            case JUNGLE -> pickClimateBiome(level, glowstoneCount, Biomes.JUNGLE, Biomes.BAMBOO_JUNGLE, Biomes.SPARSE_JUNGLE);
+            case WASTELAND -> pickClimateBiome(level, glowstoneCount, Biomes.BADLANDS, Biomes.ERODED_BADLANDS, Biomes.WOODED_BADLANDS);
+            case BEACH -> pickClimateBiome(level, glowstoneCount, Biomes.BEACH, Biomes.SNOWY_BEACH, Biomes.STONY_SHORE);
+            case MUSHROOM -> pickClimateBiome(level, glowstoneCount, Biomes.MUSHROOM_FIELDS);
+            case MAGICAL -> pickClimateBiome(level, glowstoneCount, Biomes.CHERRY_GROVE, Biomes.FLOWER_FOREST, Biomes.DARK_FOREST);
+        };
+    }
+
+    @SafeVarargs
+    private static Holder<Biome> pickClimateBiome(ServerLevel level, int glowstoneCount, ResourceKey<Biome>... biomeKeys) {
+        int index;
+        if (glowstoneCount > 0) {
+            index = Math.min(glowstoneCount, biomeKeys.length) - 1;
+        } else {
+            index = biomeKeys.length <= 1 ? 0 : level.random.nextInt(Math.min(3, biomeKeys.length));
+        }
+        return level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biomeKeys[index]);
+    }
+
+    private static ClimateWeather weatherForFocus(ClimateFocus focus) {
+        return switch (focus) {
+            case DESERT -> ClimateWeather.SUN;
+            case FROZEN -> ClimateWeather.RAIN;
+            default -> ClimateWeather.NONE;
+        };
+    }
+
+    private static void storeClimateChangePlan(ResourceKey<Level> dimension, BlockPos center, ClimateChangePlan plan) {
+        CLIMATE_CHANGE_PLANS.computeIfAbsent(dimension, key -> new HashMap<>()).put(center.immutable(), plan);
+    }
+
+    private static ClimateChangePlan getClimateChangePlan(ResourceKey<Level> dimension, BlockPos center) {
+        Map<BlockPos, ClimateChangePlan> plans = CLIMATE_CHANGE_PLANS.get(dimension);
+        return plans != null ? plans.get(center) : null;
+    }
+
+    private static void clearClimateChangePlan(ResourceKey<Level> dimension, BlockPos center) {
+        Map<BlockPos, ClimateChangePlan> plans = CLIMATE_CHANGE_PLANS.get(dimension);
+        if (plans == null) {
+            return;
+        }
+
+        plans.remove(center);
+        if (plans.isEmpty()) {
+            CLIMATE_CHANGE_PLANS.remove(dimension);
+        }
+    }
+
+    private static void applyClimateChange(ServerLevel level, BlockPos center, int radius, ClimateChangePlan plan) {
+        List<ChunkAccess> chunks = new ArrayList<>();
+        int radiusSq = radius * radius;
+        int minChunkX = Math.floorDiv(center.getX() - radius, 16);
+        int maxChunkX = Math.floorDiv(center.getX() + radius, 16);
+        int minChunkZ = Math.floorDiv(center.getZ() - radius, 16);
+        int maxChunkZ = Math.floorDiv(center.getZ() + radius, 16);
+
+        for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+            for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+                ChunkAccess chunk = level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+                chunks.add(chunk);
+                chunk.fillBiomesFromNoise(makeClimateChangeResolver(chunk, center, radiusSq, plan), level.getChunkSource().randomState().sampler());
+                // This mapping does not expose a clean public dirty-chunk call on ChunkAccess, so reuse a no-op setter that marks the chunk unsaved.
+                chunk.setLightCorrect(chunk.isLightCorrect());
+            }
+        }
+
+        if (!chunks.isEmpty()) {
+            level.getChunkSource().chunkMap.resendBiomesForChunks(chunks);
+        }
+        applyClimateChangeWeather(level, center, radius, plan.weather());
+    }
+
+    private static BiomeResolver makeClimateChangeResolver(ChunkAccess chunk, BlockPos center, int radiusSq, ClimateChangePlan plan) {
+        return (quartX, quartY, quartZ, sampler) -> {
+            int blockX = QuartPos.toBlock(quartX);
+            int blockZ = QuartPos.toBlock(quartZ);
+            int dx = blockX - center.getX();
+            int dz = blockZ - center.getZ();
+            if (dx * dx + dz * dz <= radiusSq) {
+                return plan.biomeHolder();
+            }
+            return chunk.getNoiseBiome(quartX, quartY, quartZ);
+        };
+    }
+
+    private static void applyClimateChangeWeather(ServerLevel level, BlockPos center, int radius, ClimateWeather weather) {
+        switch (weather) {
+            case SUN -> {
+                if (level.isRaining() || level.isThundering()) {
+                    level.setWeatherParameters(0, 0, false, false);
+                }
+                clearClimateSnow(level, center, radius);
+            }
+            case RAIN -> {
+                if (!level.isRaining() && !level.isThundering()) {
+                    int rainTicks = (300 + level.random.nextInt(600)) * 20;
+                    level.setWeatherParameters(0, rainTicks, true, false);
+                }
+            }
+            case NONE -> {
+            }
+        }
+    }
+
+    private static void clearClimateSnow(ServerLevel level, BlockPos center, int radius) {
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz > radiusSq) {
+                    continue;
+                }
+
+                BlockPos surfacePos = center.offset(dx, 0, dz);
+                BlockPos topPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, surfacePos);
+                if (level.getBlockState(topPos).is(Blocks.SNOW)) {
+                    level.setBlock(topPos, Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
+        }
+    }
+
     private static boolean canPerformClimateRite(Player player, Level level, BlockPos center) {
         if (level.dimension().equals(Level.NETHER)
                 || level.dimension().equals(Level.END)
@@ -1115,6 +1418,7 @@ public class RitualExecutor {
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
         if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
+            clearClimateChangePlan(level.dimension(), ritual.center);
             return false;
         }
 
@@ -1129,6 +1433,7 @@ public class RitualExecutor {
             case ICE_SHELL -> tickIceShellRitual(level, ritual);
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
+            case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
             case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
             case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
             case VOLCANO -> tickVolcanoRitual(level, ritual);
@@ -1219,6 +1524,31 @@ public class RitualExecutor {
         ritual.stage++;
         allureCreatures(level, ritual.center, ritual.stage % 8);
         return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickClimateChangeRitual(ServerLevel level, ActiveRitual ritual) {
+        ClimateChangePlan plan = getClimateChangePlan(level.dimension(), ritual.center);
+        if (plan == null) {
+            return false;
+        }
+
+        ritual.stage++;
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.6f, 1.4f);
+        }
+        if (ritual.stage < ritual.targetStage) {
+            level.sendParticles(ParticleTypes.ENCHANT,
+                    ritual.center.getX() + 0.5, ritual.center.getY() + 1.0, ritual.center.getZ() + 0.5,
+                    16, ritual.stage * 1.5, ritual.stage * 1.1, ritual.stage * 1.5, 0.0);
+            return true;
+        }
+
+        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
+                ritual.center.getX() + 0.5, ritual.center.getY() + 1.0, ritual.center.getZ() + 0.5,
+                1, 0.0, 0.0, 0.0, 0.0);
+        applyClimateChange(level, ritual.center, ritual.minRadius, plan);
+        clearClimateChangePlan(level.dimension(), ritual.center);
+        return false;
     }
 
     private static boolean tickMovingEarthRitual(ServerLevel level, ActiveRitual ritual) {
