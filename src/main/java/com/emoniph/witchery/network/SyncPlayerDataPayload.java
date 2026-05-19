@@ -18,6 +18,7 @@ public record SyncPlayerDataPayload(
         int bloodLevel,
         float transformationLevel,
         String familiarUUID,
+        String familiarType,
         String infusionType,
         boolean inSpiritWorld
 ) implements CustomPacketPayload {
@@ -37,6 +38,7 @@ public record SyncPlayerDataPayload(
                             buf.readFloat(),
                             buf.readUtf(),
                             buf.readUtf(),
+                            buf.readUtf(),
                             buf.readBoolean()
                     );
                 }
@@ -49,6 +51,7 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.bloodLevel());
                     buf.writeFloat(payload.transformationLevel());
                     buf.writeUtf(payload.familiarUUID());
+                    buf.writeUtf(payload.familiarType());
                     buf.writeUtf(payload.infusionType());
                     buf.writeBoolean(payload.inSpiritWorld());
                 }
@@ -60,6 +63,7 @@ public record SyncPlayerDataPayload(
                 data.isVampire(), data.isWerewolf(),
                 data.getBloodLevel(), data.getTransformationLevel(),
                 data.getFamiliarUUID().map(java.util.UUID::toString).orElse(""),
+                data.getFamiliarType(),
                 data.getInfusionType().name(),
                 data.isInSpiritWorld()
         );

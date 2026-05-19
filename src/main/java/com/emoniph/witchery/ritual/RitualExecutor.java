@@ -3234,6 +3234,7 @@ public class RitualExecutor {
                 player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
                 return false;
             }
+            PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, WitcheryAttachments.get(sp)));
         }
 
         if (familiar.level() == sl) {

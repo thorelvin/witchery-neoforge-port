@@ -162,6 +162,7 @@ public class WitcheryClient {
             } else {
                 data.clearFamiliar();
             }
+            data.setFamiliarType(payload.familiarType());
             data.setInfusionType(InfusionType.fromString(payload.infusionType()));
             data.setInSpiritWorld(payload.inSpiritWorld());
         });
