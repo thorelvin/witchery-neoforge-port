@@ -181,8 +181,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 134 | `witchery:coven_witch_spawn_egg` | `Retest - local model chain removed` |
-| 135 | `witchery:witch_hunter_spawn_egg` | `Retest - local model chain removed` |
+| 134 | `witchery:coven_witch_spawn_egg` | `Retest - per-egg model chain restored` |
+| 135 | `witchery:witch_hunter_spawn_egg` | `Retest - per-egg model chain restored` |
 
 ---
 
@@ -190,18 +190,18 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 136 | `witchery:banshee_spawn_egg` | `Retest - local model chain removed` |
-| 137 | `witchery:spectre_spawn_egg` | `Retest - local model chain removed` |
-| 138 | `witchery:poltergeist_spawn_egg` | `Retest - local model chain removed` |
-| 139 | `witchery:treefyd_spawn_egg` | `Retest - local model chain removed` |
-| 140 | `witchery:ent_spawn_egg` | `Retest - local model chain removed` |
-| 141 | `witchery:mandrake_mob_spawn_egg` | `Retest - local model chain removed` |
-| 142 | `witchery:demon_spawn_egg` | `Retest - local model chain removed` |
-| 143 | `witchery:nightmare_spawn_egg` | `Retest - local model chain removed` |
-| 144 | `witchery:spirit_spawn_egg` | `Retest - local model chain removed` |
-| 145 | `witchery:flame_imp_spawn_egg` | `Retest - local model chain removed` |
-| 146 | `witchery:lord_of_torment_spawn_egg` | `Retest - local model chain removed` |
-| 147 | `witchery:death_spawn_egg` | `Retest - local model chain removed` |
+| 136 | `witchery:banshee_spawn_egg` | `Retest - per-egg model chain restored` |
+| 137 | `witchery:spectre_spawn_egg` | `Retest - per-egg model chain restored` |
+| 138 | `witchery:poltergeist_spawn_egg` | `Retest - per-egg model chain restored` |
+| 139 | `witchery:treefyd_spawn_egg` | `Retest - per-egg model chain restored` |
+| 140 | `witchery:ent_spawn_egg` | `Retest - per-egg model chain restored` |
+| 141 | `witchery:mandrake_mob_spawn_egg` | `Retest - per-egg model chain restored` |
+| 142 | `witchery:demon_spawn_egg` | `Retest - per-egg model chain restored` |
+| 143 | `witchery:nightmare_spawn_egg` | `Retest - per-egg model chain restored` |
+| 144 | `witchery:spirit_spawn_egg` | `Retest - per-egg model chain restored` |
+| 145 | `witchery:flame_imp_spawn_egg` | `Retest - per-egg model chain restored` |
+| 146 | `witchery:lord_of_torment_spawn_egg` | `Retest - per-egg model chain restored` |
+| 147 | `witchery:death_spawn_egg` | `Retest - per-egg model chain restored` |
 
 ---
 
@@ -209,9 +209,9 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 148 | `witchery:owl_spawn_egg` | `Retest - local model chain removed` |
-| 149 | `witchery:familiar_cat_spawn_egg` | `Retest - local model chain removed` |
-| 150 | `witchery:toad_spawn_egg` | `Retest - local model chain removed` |
-| 151 | `witchery:hobgoblin_spawn_egg` | `Retest - local model chain removed` |
-| 152 | `witchery:flying_monkey_spawn_egg` | `Retest - local model chain removed` |
-| 153 | `witchery:binky_spawn_egg` | `Retest - local model chain removed` |
+| 148 | `witchery:owl_spawn_egg` | `Retest - per-egg model chain restored` |
+| 149 | `witchery:familiar_cat_spawn_egg` | `Retest - per-egg model chain restored` |
+| 150 | `witchery:toad_spawn_egg` | `Retest - per-egg model chain restored` |
+| 151 | `witchery:hobgoblin_spawn_egg` | `Retest - per-egg model chain restored` |
+| 152 | `witchery:flying_monkey_spawn_egg` | `Retest - per-egg model chain restored` |
+| 153 | `witchery:binky_spawn_egg` | `Retest - per-egg model chain restored` |
