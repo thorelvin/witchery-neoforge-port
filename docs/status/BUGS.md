@@ -606,6 +606,17 @@ The next graphics-parity pass is now closer to original Witchery:
 Remaining gap:
 - These fixes still need in-game verification against the latest client build, and the remaining art mismatches are now narrower item/block polish issues tracked in `ITEM_REVIEW.md`.
 
+### 65. Familiar rites still spawned pets instead of binding/calling like the original - Fixed / verify
+
+The next familiar-mechanics pass is now closer to original Witchery:
+- `Bind Familiar` no longer creates a brand-new owl/cat/toad out of the ritual offering. It now scans the medium ritual circle for nearby tamed familiar-capable creatures owned by players inside the ring and binds those instead, which is much closer to the old `RiteBindFamiliar` behavior.
+- Vanilla cats are now converted into the port's `Cat Familiar` entity when they are bound, which restores the old "bind a real pet and gain familiar powers from it" flow better than the previous spawn-a-new-pet shortcut.
+- `Call Familiar` no longer only works when the bound familiar entity happens to already be loaded in the same dimension as the rite. It now searches all loaded server levels for the stored familiar UUID and teleports the real bound entity into the circle again.
+- Familiar-binding dispatch no longer reports unconditional success for the feather/fish/slime placeholder routes. If there is no valid creature to bind, the medium-circle cast now fails/refunds instead of silently consuming the offering and minting a free familiar.
+
+Remaining gap:
+- The modern port still stores only the active familiar UUID instead of the original richer familiar instance/template data, so `Call Familiar` cannot yet recreate a dismissed or dead familiar the way 1.7.10 could. This patch restores the real bind/call flow for living bound familiars without claiming full familiar-persistence parity yet.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

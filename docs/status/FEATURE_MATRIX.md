@@ -92,7 +92,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Lycanthropy | Done | Wolf state, buffs, silver/wolfsbane; Wolf Altar mastery 0-3 |
 | Werewolf howling | Done | Sneak+look-up+right-click -> HowlPayload; frightens mobs; summons 2 wolves; cooldown ticks correctly |
 | Werewolf 3D model | Partial | Works; body-hide rendering artifact remains |
-| Familiar binding | Done | Owl/cat/toad via ritual + PlayerData UUID |
+| Familiar binding | Done | Medium ritual bind now targets existing nearby tamed familiar-capable creatures again and stores the bound familiar UUID for later calls |
 | Familiar powers | Done | Owl warns, cat repels, toad collects |
 | Creature powers / symbiosis | Done | SPEED/JUMP/HEAL/ENDERMAN/BAT; Mystic Branch; altar kill trigger |
 

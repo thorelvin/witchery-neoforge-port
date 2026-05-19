@@ -45,6 +45,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Monster;
@@ -95,6 +96,7 @@ public class RitualExecutor {
     private static final int VARIANT_RITUAL = 4;
 
     private static final int RITUAL_PULSE_INTERVAL = 30;
+    private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
@@ -335,15 +337,12 @@ public class RitualExecutor {
         if (item.is(Items.BONE_MEAL) || item.is(Items.BONE)) {
             riteOfFertility(player, level, center);
             return successResult();
-        } else if (item.is(Items.FEATHER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfBindFamiliar(player, level, center, "owl");
-            return successResult();
-        } else if ((item.is(Items.COD) || item.is(Items.SALMON)) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfBindFamiliar(player, level, center, "cat");
-            return successResult();
-        } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfBindFamiliar(player, level, center, "toad");
-            return successResult();
+        } else if ((item.is(Items.FEATHER)
+                || item.is(Items.COD)
+                || item.is(Items.SALMON)
+                || item.is(Items.SLIME_BALL))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfBindFamiliar(player, level, center));
         } else if (item.is(Items.GLASS_BOTTLE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfCallFamiliar(player, level, center));
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -517,30 +516,45 @@ public class RitualExecutor {
         WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
     }
 
-    /** Rite of Bind Familiar — spawns and binds a familiar of the given type to the player. */
-    private static void riteOfBindFamiliar(Player player, Level level, BlockPos center, String type) {
-        if (!(player instanceof ServerPlayer sp)) return;
-        if (!(level instanceof ServerLevel sl)) return;
+    /** Rite of Bind Familiar — binds nearby tamed familiar-capable creatures instead of spawning a new one. */
+    private static boolean riteOfBindFamiliar(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
 
-        FamiliarEntity familiar = switch (type) {
-            case "owl"  -> new OwlFamiliarEntity(WitcheryEntities.OWL.get(), level);
-            case "cat"  -> new CatFamiliarEntity(WitcheryEntities.FAMILIAR_CAT.get(), level);
-            case "toad" -> new ToadFamiliarEntity(WitcheryEntities.TOAD.get(), level);
-            default -> null;
-        };
-        if (familiar == null) return;
+        AABB playerBounds = new AABB(center).inflate(FAMILIAR_BIND_RADIUS, 1.0, FAMILIAR_BIND_RADIUS);
+        List<ServerPlayer> nearbyPlayers = sl.getEntitiesOfClass(ServerPlayer.class, playerBounds);
+        boolean boundAny = false;
 
-        familiar.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        familiar.tame(sp);
-        sl.addFreshEntity(familiar);
+        for (ServerPlayer nearbyPlayer : nearbyPlayers) {
+            if (nearbyPlayer.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5)
+                    > FAMILIAR_BIND_RADIUS * FAMILIAR_BIND_RADIUS) {
+                continue;
+            }
 
-        WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        data.setFamiliarUUID(familiar.getUUID());
-        PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
+            TamableAnimal candidate = findBindableFamiliarCandidate(nearbyPlayer, sl, center, FAMILIAR_BIND_RADIUS);
+            if (candidate == null) {
+                continue;
+            }
+
+            TamableAnimal familiar = bindFamiliarToPlayer(nearbyPlayer, sl, candidate);
+            if (familiar == null) {
+                continue;
+            }
+
+            familiar.setOrderedToSit(false);
+            sl.sendParticles(ParticleTypes.HEART,
+                    familiar.getX(), familiar.getY() + 0.8, familiar.getZ(),
+                    6, 0.25, 0.25, 0.25, 0.02);
+            boundAny = true;
+        }
+
+        if (!boundAny) {
+            return false;
+        }
 
         success(player, level, center, "witchery.ritual.bind_familiar.success",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
-        WitcheryMod.LOGGER.info("Bound {} familiar to {}", type, sp.getName().getString());
+        WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
+        return true;
     }
 
     /** Rite of Blessing — fallback small-circle rite when no ingredient is present. */
@@ -3206,21 +3220,114 @@ public class RitualExecutor {
 
     /** Rite of Calling the Familiar — teleports the player's familiar to the center. */
     private static boolean riteOfCallFamiliar(Player player, Level level, BlockPos center) {
+        if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<UUID> uuid = WitcheryAttachments.get(player).getFamiliarUUID();
-        if (uuid.isEmpty()) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
-            return false;
-        }
-        net.minecraft.world.entity.Entity familiar = sl.getEntity(uuid.get());
+
+        TamableAnimal familiar = findBoundFamiliar(sp);
         if (familiar == null) {
             player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
             return false;
         }
-        familiar.teleportTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+
+        double x = center.getX() + 0.5;
+        double y = center.getY() + 1.0;
+        double z = center.getZ() + 0.5;
+        if (familiar.level() == sl) {
+            familiar.teleportTo(x, y, z);
+        } else {
+            familiar.teleportTo(sl, x, y, z,
+                    Set.of(), familiar.getYRot(), familiar.getXRot(), false);
+        }
+        familiar.setOrderedToSit(false);
+
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
         return true;
+    }
+
+    private static TamableAnimal findBindableFamiliarCandidate(ServerPlayer player, ServerLevel level, BlockPos center, double radius) {
+        AABB search = new AABB(center).inflate(radius, 1.0, radius);
+        List<TamableAnimal> tameables = level.getEntitiesOfClass(TamableAnimal.class, search);
+        TamableAnimal best = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (TamableAnimal tameable : tameables) {
+            if (!canBecomeBoundFamiliar(player, tameable, center, radius)) {
+                continue;
+            }
+
+            double distance = tameable.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                best = tameable;
+            }
+        }
+
+        return best;
+    }
+
+    private static boolean canBecomeBoundFamiliar(ServerPlayer player, TamableAnimal tameable, BlockPos center, double radius) {
+        if (!tameable.isTame() || tameable.isRemoved() || !tameable.isAlive()) {
+            return false;
+        }
+        if (!tameable.isOwnedBy(player)) {
+            return false;
+        }
+        if (!(tameable instanceof FamiliarEntity) && tameable.getType() != EntityType.CAT) {
+            return false;
+        }
+        return tameable.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5) <= radius * radius;
+    }
+
+    private static TamableAnimal bindFamiliarToPlayer(ServerPlayer player, ServerLevel level, TamableAnimal tameable) {
+        TamableAnimal bound = tameable;
+        if (tameable.getType() == EntityType.CAT && !(tameable instanceof FamiliarEntity)) {
+            CatFamiliarEntity converted = WitcheryEntities.FAMILIAR_CAT.get().create(level, net.minecraft.world.entity.EntitySpawnReason.CONVERSION);
+            if (converted == null) {
+                return null;
+            }
+            converted.setPos(tameable.getX(), tameable.getY(), tameable.getZ());
+            converted.setYRot(tameable.getYRot());
+            converted.setXRot(tameable.getXRot());
+            converted.tame(player);
+            converted.setOrderedToSit(false);
+            if (tameable.hasCustomName()) {
+                converted.setCustomName(tameable.getCustomName());
+                converted.setCustomNameVisible(tameable.isCustomNameVisible());
+            }
+            if (tameable.isPersistenceRequired()) {
+                converted.setPersistenceRequired();
+            }
+            level.addFreshEntity(converted);
+            tameable.discard();
+            bound = converted;
+        } else if (tameable instanceof FamiliarEntity familiar) {
+            familiar.tame(player);
+            familiar.setPersistenceRequired();
+            bound = familiar;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        data.setFamiliarUUID(bound.getUUID());
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        return bound;
+    }
+
+    private static TamableAnimal findBoundFamiliar(ServerPlayer player) {
+        Optional<UUID> familiarUuid = WitcheryAttachments.get(player).getFamiliarUUID();
+        ServerLevel playerLevel = (ServerLevel) player.level();
+        if (familiarUuid.isEmpty() || playerLevel.getServer() == null) {
+            return null;
+        }
+
+        for (ServerLevel level : playerLevel.getServer().getAllLevels()) {
+            Entity entity = level.getEntity(familiarUuid.get());
+            if (entity instanceof TamableAnimal tameable && tameable.isOwnedBy(player)) {
+                return tameable;
+            }
+        }
+
+        return null;
     }
 
     /** Rite of Summon Witch — summons a hostile witch if the circle is not obstructed. */
