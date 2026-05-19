@@ -181,6 +181,7 @@ public class RitualExecutor {
         private int stage;
         private long nextGameTime;
         private float upkeepDebt;
+        private boolean failedOnStop;
         private boolean refundOnStop;
 
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
@@ -1509,6 +1510,9 @@ public class RitualExecutor {
         for (int i = rituals.size() - 1; i >= 0; i--) {
             ActiveRitual ritual = rituals.get(i);
             if (!tickActiveRitual(level, ritual)) {
+                if (ritual.failedOnStop) {
+                    level.playSound(null, ritual.center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                }
                 if (ritual.refundOnStop) {
                     refundRitualIngredient(level, ritual);
                 }
@@ -1523,6 +1527,7 @@ public class RitualExecutor {
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
         if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
             clearClimateChangePlan(level.dimension(), ritual.center);
+            ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
         }
@@ -1636,6 +1641,7 @@ public class RitualExecutor {
     private static boolean tickClimateChangeRitual(ServerLevel level, ActiveRitual ritual) {
         ClimateChangePlan plan = getClimateChangePlan(level.dimension(), ritual.center);
         if (plan == null) {
+            ritual.failedOnStop = true;
             return false;
         }
 
@@ -1814,6 +1820,7 @@ public class RitualExecutor {
 
     private static boolean tickProtectionBarrierRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
         }
@@ -1828,6 +1835,7 @@ public class RitualExecutor {
 
     private static boolean tickProtectionBarrierMonstersRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
         }
@@ -1881,6 +1889,7 @@ public class RitualExecutor {
 
     private static boolean tickSanctityCircleRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
         }
@@ -1903,6 +1912,7 @@ public class RitualExecutor {
 
     private static boolean tickImprisonmentCircleRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
         }
