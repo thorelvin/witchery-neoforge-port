@@ -182,6 +182,9 @@ public class NightmareEntity extends Monster {
     }
 
     private void stripRandomArmor(Player player) {
+        if (hasCharmOfDisruptedDreams(player)) {
+            return;
+        }
         EquipmentSlot[] slots = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
         EquipmentSlot slot = slots[random.nextInt(slots.length)];
         ItemStack armor = player.getItemBySlot(slot);
@@ -189,6 +192,16 @@ public class NightmareEntity extends Monster {
             player.setItemSlot(slot, ItemStack.EMPTY);
             player.drop(armor, true);
         }
+    }
+
+    private boolean hasCharmOfDisruptedDreams(Player player) {
+        var inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            if (inventory.getItem(i).is(WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getAttackTimer() {

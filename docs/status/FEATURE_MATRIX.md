@@ -116,7 +116,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Toad familiar | Done | Tameable; collects items |
 | Broom | Done | Rideable; enchanted variant (Rite of Infusion) |
 | Spirit | Done | Passive flying Spirit World mob |
-| Nightmare | Partial | Exists; in-game behavior verification pending |
+| Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; in-game behavior verification pending |
 | Flame Imp | Done | Ranged soulfire; Torment patrol |
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
@@ -130,7 +130,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Dimension | Status | Notes |
 |---|---:|---|
-| Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; Nightmare defense suppression plus Huntsman's Spear weakening and weak out-of-dimension damage are back closer to original; wild/void bramble danger behavior restored; snow-frame Spirit Portal activation, manifestation-duration rite, portal-triggered ghost travel, timed return, and Icy Needle recall are back; remaining work is mostly in-game verification, the missing anti-Nightmare charm item, and ghost rendering/style polish |
+| Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; Nightmare defense suppression plus Huntsman's Spear weakening, weak out-of-dimension damage, and Charm of Disrupted Dreams armor-strip immunity are back closer to original; wild/void bramble danger behavior restored; snow-frame Spirit Portal activation, manifestation-duration rite, portal-triggered ghost travel, timed return, and Icy Needle recall are back; remaining work is mostly in-game verification and ghost rendering/style polish |
 | Torment | Partial | Boss loop complete; spec-correct maze (6 DFS levels Y=10-85, Force walls, TormentStone floor, 1% mycelium, portal at cell 30,30, 3 refilling chests per level); dimension fixed (has_ceiling=false, red sky, no spawns); TormentHelper entry/exit; Hellgate rite updated |
 | Mirror World | Not started | Not started - dark blue fog, reflected overworld terrain, hostile player clones |
 

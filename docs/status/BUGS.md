@@ -517,7 +517,7 @@ The next Spirit World combat pass is now closer to original Witchery:
 - The incorrect modern self-heal side effect on Nightmare hits outside the Spirit World is gone.
 
 Remaining gap:
-- The old `Charm of Disrupted Dreams` armor-protection interaction still cannot be restored yet because that specific item is not present in the modern port item set.
+- In-game verification is still open for the overall Nightmare fight feel and ghost-state presentation, but the missing anti-strip charm item is no longer a blocker.
 
 ---
 

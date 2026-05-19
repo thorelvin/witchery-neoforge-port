@@ -6,7 +6,7 @@ This checklist is the quality gate for the NeoForge port. The goal is not just "
 
 `docs/status/NEXT_FIXES_PLAN.md` stays the ordered implementation roadmap. This file is the parity and verification harness used while working through that roadmap.
 
-Current phase note: the obvious missing-core-rite sweep is nearly exhausted, so the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap.
+Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and the last explicit Nightmare anti-strip item gap is closed again, so the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, Spirit World feel verification, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap.
 
 ## Reference hierarchy
 
