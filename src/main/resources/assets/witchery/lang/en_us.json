@@ -522,6 +522,7 @@
   "witchery.rite.neednight": "This rite can only be performed at night.",
   "witchery.rite.needday": "This rite can only be performed during the day.",
   "witchery.rite.needstorm": "This rite requires a thunderstorm.",
+  "witchery.rite.unknownritual": "Unknown rite.",
   "witchery.rite.missingbiomefoci": "No biome focus answers the rite.",
   "witchery.rite.missinglava": "A lava pool must lie beneath the circle.",
   "witchery.rite.blackmagicdampening": "Something is dissipating the magic.",

@@ -6,6 +6,8 @@ import com.emoniph.witchery.ritual.RitualExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -69,6 +71,11 @@ public class RitualEvents {
         }
 
         RitualExecutor.ActivationResult activation = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
+        if (activation == RitualExecutor.ActivationResult.NO_MATCH) {
+            level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.unknownritual"), false);
+            return;
+        }
         if (!activation.consumeDroppedIngredient() || ingredientEntity == null) {
             return;
         }

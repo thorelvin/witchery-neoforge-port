@@ -30,6 +30,7 @@ Current state:
 - Rite ingredients now consume only on successful activation.
 - New casts now stop cleanly once a rite route is actually identified, even if that rite then aborts on `already_active`, coven, obstruction, or taglock/precondition failures, instead of falling through to an unrelated smaller-ring retry.
 - Staged rites now retain the dropped ingredient long enough to refund it on the clearest modern abort paths again: broken sustaining circles and lost altar-upkeep on the protection-family rites.
+- Completely unknown offerings on a valid circle now play the original snare-style failure cue and report `Unknown rite.` again instead of failing silently.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
