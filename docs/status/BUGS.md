@@ -594,7 +594,7 @@ The current Nether-style pulse is being kept as the intended hell aesthetic.
 ### Item review - remaining visual/mechanic issues
 
 Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
-- `altar` - mechanics are back near original 2x3 behavior; block/item visuals still need an art pass
+- `altar` - mechanics are back near original 2x3 behavior; the item is 3D again, but block/top texture polish still needs an art pass
 - `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original; GUI texture/layout verification is still open
 - `crystal_ball` - must be transparent
 - `coffin` - shows only one side in inventory
