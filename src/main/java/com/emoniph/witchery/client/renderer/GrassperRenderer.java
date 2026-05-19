@@ -70,10 +70,9 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, null);
 
         if (!state.itemRenderState.isEmpty()) {
-            ps.translate(0.0, 0.6, 0.0);
+            ps.translate(0.0, 0.56, 0.0);
             ps.mulPose(Axis.YP.rotationDegrees(state.rotation * 0.5f));
-            ps.scale(0.75f, 0.75f, 0.75f);
-            ps.translate(0.65, -0.15, 0.65);
+            ps.scale(0.95f, 0.95f, 0.95f);
             state.itemRenderState.submit(ps, collector, state.lightCoords,
                     net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
         }
