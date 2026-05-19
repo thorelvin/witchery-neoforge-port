@@ -97,6 +97,7 @@ public class RitualExecutor {
     private static final int RITUAL_PULSE_INTERVAL = 30;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
+    private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 
     public enum ActivationResult {
         NO_MATCH(false, false),
@@ -174,15 +175,18 @@ public class RitualExecutor {
         private final int pulseInterval;
         private final int covenSize;
         private final float upkeepCost;
+        private final ItemStack sacrificedIngredient;
         private final List<BlockPos> path = new ArrayList<>();
         private final int heading;
         private int stage;
         private long nextGameTime;
         private float upkeepDebt;
+        private boolean refundOnStop;
 
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
-                             int covenSize, float upkeepCost, int heading, long nextGameTime) {
+                             int covenSize, float upkeepCost, int heading, long nextGameTime,
+                             ItemStack sacrificedIngredient) {
             this.type = type;
             this.center = center.immutable();
             this.circleSize = circleSize;
@@ -194,6 +198,7 @@ public class RitualExecutor {
             this.upkeepCost = upkeepCost;
             this.heading = heading;
             this.nextGameTime = nextGameTime;
+            this.sacrificedIngredient = sacrificedIngredient;
         }
     }
 
@@ -205,23 +210,28 @@ public class RitualExecutor {
      */
     public static ActivationResult execute(Player player, Level level, BlockPos floorCenter,
                                            List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
-        if (isGlyphicTransformationChalk(ingredient)) {
-            return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
-        }
-
-        for (RitualCircleDetector.DetectionResult result : presentCircles) {
-            int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
-            ActivationResult activation = switch (result.size()) {
-                case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
-                case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
-                case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
-            };
-            if (activation.matched()) {
-                return activation;
+        PENDING_RITUAL_INGREDIENT.set(ingredient.isEmpty() ? ItemStack.EMPTY : ingredient.copyWithCount(1));
+        try {
+            if (isGlyphicTransformationChalk(ingredient)) {
+                return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
             }
-        }
 
-        return ActivationResult.NO_MATCH;
+            for (RitualCircleDetector.DetectionResult result : presentCircles) {
+                int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
+                ActivationResult activation = switch (result.size()) {
+                    case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
+                    case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
+                    case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
+                };
+                if (activation.matched()) {
+                    return activation;
+                }
+            }
+
+            return ActivationResult.NO_MATCH;
+        } finally {
+            PENDING_RITUAL_INGREDIENT.remove();
+        }
     }
 
     private static ActivationResult successResult() {
@@ -1496,7 +1506,15 @@ public class RitualExecutor {
             return;
         }
 
-        rituals.removeIf(ritual -> !tickActiveRitual(level, ritual));
+        for (int i = rituals.size() - 1; i >= 0; i--) {
+            ActiveRitual ritual = rituals.get(i);
+            if (!tickActiveRitual(level, ritual)) {
+                if (ritual.refundOnStop) {
+                    refundRitualIngredient(level, ritual);
+                }
+                rituals.remove(i);
+            }
+        }
         if (rituals.isEmpty()) {
             ACTIVE_RITUALS.remove(level.dimension());
         }
@@ -1505,6 +1523,7 @@ public class RitualExecutor {
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
         if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
             clearClimateChangePlan(level.dimension(), ritual.center);
+            ritual.refundOnStop = true;
             return false;
         }
 
@@ -1795,6 +1814,7 @@ public class RitualExecutor {
 
     private static boolean tickProtectionBarrierRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.refundOnStop = true;
             return false;
         }
 
@@ -1808,6 +1828,7 @@ public class RitualExecutor {
 
     private static boolean tickProtectionBarrierMonstersRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.refundOnStop = true;
             return false;
         }
 
@@ -1860,6 +1881,7 @@ public class RitualExecutor {
 
     private static boolean tickSanctityCircleRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.refundOnStop = true;
             return false;
         }
 
@@ -1881,6 +1903,7 @@ public class RitualExecutor {
 
     private static boolean tickImprisonmentCircleRitual(ServerLevel level, ActiveRitual ritual) {
         if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.refundOnStop = true;
             return false;
         }
 
@@ -1932,10 +1955,24 @@ public class RitualExecutor {
             return false;
         }
 
+        ItemStack sacrificedIngredient = PENDING_RITUAL_INGREDIENT.get();
         rituals.add(new ActiveRitual(type, center, circleSize, minRadius, maxRadius, targetStage, pulseInterval,
                 covenSize, upkeepCost, heading,
-                level.getGameTime() + pulseInterval));
+                level.getGameTime() + pulseInterval,
+                sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy()));
         return true;
+    }
+
+    private static void refundRitualIngredient(ServerLevel level, ActiveRitual ritual) {
+        if (ritual.sacrificedIngredient.isEmpty()) {
+            return;
+        }
+        ItemEntity refund = new ItemEntity(level,
+                ritual.center.getX() + 0.5,
+                ritual.center.getY() + 1.0,
+                ritual.center.getZ() + 0.5,
+                ritual.sacrificedIngredient.copy());
+        level.addFreshEntity(refund);
     }
 
     private static void spawnRitualBolt(ServerLevel level, int minRadius, int maxRadius, BlockPos center) {
