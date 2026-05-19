@@ -8,6 +8,12 @@ This checklist is the quality gate for the NeoForge port. The goal is not just "
 
 Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, Spirit World feel verification, machine/storage GUI cleanup, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap. Use Witchery Resurrected layouts/assets when they preserve the original result more faithfully on NeoForge, but keep original 1.7.10 mechanics and feel as the final judge.
 
+Current overnight execution note:
+- Use the 5-point unattended run order in `docs/status/NEXT_FIXES_PLAN.md`.
+- Finish one focused subsystem at a time.
+- When a visual issue can be solved by correcting a bad item/model/texture chain, do that before introducing a new custom renderer.
+- When a subsystem needs a custom renderer, prefer matching original orientation, brightness, transparency, and inventory pose before adding extra effects.
+
 ## Reference hierarchy
 
 1. Original Witchery 1.7.10 code and assets in `C:\claude\witchery\decompiled\witchery-original`.

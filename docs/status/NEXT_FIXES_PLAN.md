@@ -49,3 +49,23 @@ Use this order for the remaining autonomous work until the port is in "playable 
    Once the mechanics and visuals are no longer shifting heavily, audit ritual, machine, Spirit World, and special-block sounds against original Witchery and document any intentional placeholders.
 6. Close with regression and doc cleanup.
    The final step is a subsystem-by-subsystem verification pass and a docs reconciliation so the remaining gaps are explicit, small, and believable.
+
+## Overnight 5-point run
+
+Use this as the current unattended run order for the next overnight/autonomous passes. Keep the scope narrow, finish one point before broadening, and prefer shipping a real fix plus docs over starting five half-fixes at once.
+
+1. Finish the active item/block parity cluster first.
+   Best implementation path:
+   Use original 1.7.10 assets as source of truth and Witchery Resurrected only where it preserves the same result better on NeoForge. Start with the currently user-reported offenders: coffin presentation, poppet shelf item pose, leech/refilling chest item pose, chalice item, dream catcher item brightness/placement, alluring skull, demon heart, and any spawn egg regressions. Prefer fixing bad JSON/model chains first, then special item renderers, and only then custom block renderers if static models cannot match the original.
+2. Finish altar parity as one focused subsystem.
+   Best implementation path:
+   Treat altar mechanics and altar art as one job. Confirm the 2x3 multiblock logic against original Witchery, then restore the connected/joined blockstate logic that selects the correct altar segment and red-carpet top pieces. Avoid quick art-only hacks that do not know whether the structure is valid.
+3. Tighten the remaining ritual dispatcher and refund edge cases.
+   Best implementation path:
+   Keep shrinking `RitualExecutor` by adding explicit helper methods for activation result, sacrifice handling, and staged-abort refund behavior. Focus only on real parity mismatches that still consume the wrong item, fall through to the wrong rite, or abort without the correct feedback/refund.
+4. Finish Spirit World and familiar polish that still affects play feel.
+   Best implementation path:
+   Prioritise bound familiar persistence/lookups, manifested-player presentation, corpse visibility/state, and any remaining nightmare or portal feel mismatches that still diverge from original Witchery even though the core mechanics are back.
+5. Close each autonomous batch with verification and docs, not just code.
+   Best implementation path:
+   After every real patch, run `./gradlew.bat compileJava processResources`, update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, and this plan when repo truth changes, then commit. If a task turns out bigger than expected, document the exact remaining gap before moving on.
