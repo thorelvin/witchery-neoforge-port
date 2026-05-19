@@ -1655,6 +1655,7 @@ public class RitualExecutor {
         ClimateChangePlan plan = getClimateChangePlan(level.dimension(), ritual.center);
         if (plan == null) {
             ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
             return false;
         }
 
