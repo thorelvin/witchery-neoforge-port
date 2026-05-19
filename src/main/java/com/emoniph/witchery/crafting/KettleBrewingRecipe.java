@@ -1,12 +1,9 @@
 package com.emoniph.witchery.crafting;
 
-import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
-import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
-import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryRecipeSerializers;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
-import com.emoniph.witchery.init.WitcheryAttachments;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -21,9 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 public class KettleBrewingRecipe implements Recipe<KettleRecipeInput> {
 
     private final List<ItemStack> ingredients;
@@ -142,18 +136,7 @@ public class KettleBrewingRecipe implements Recipe<KettleRecipeInput> {
         if (player == null || !(player.level() instanceof ServerLevel serverLevel)) {
             return false;
         }
-
-        Optional<UUID> familiarUuid = WitcheryAttachments.get(player).getFamiliarUUID();
-        if (familiarUuid.isEmpty()) {
-            return false;
-        }
-
-        net.minecraft.world.entity.Entity familiar = serverLevel.getEntity(familiarUuid.get());
-        int activeType = familiar instanceof CatFamiliarEntity ? 1
-                : familiar instanceof ToadFamiliarEntity ? 2
-                : familiar instanceof OwlFamiliarEntity ? 3
-                : 0;
-        return activeType == familiarType;
+        return FamiliarHelper.getActiveFamiliarType(player) == familiarType;
     }
 
     public ItemStack getResult() {

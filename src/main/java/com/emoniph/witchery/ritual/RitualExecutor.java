@@ -12,6 +12,7 @@ import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.events.PoppetEvents;
@@ -3225,7 +3226,7 @@ public class RitualExecutor {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
 
-        TamableAnimal familiar = findBoundFamiliar(sp);
+        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(sp);
         if (familiar == null) {
             player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
             return false;
@@ -3313,23 +3314,6 @@ public class RitualExecutor {
         data.setFamiliarUUID(bound.getUUID());
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         return bound;
-    }
-
-    private static TamableAnimal findBoundFamiliar(ServerPlayer player) {
-        Optional<UUID> familiarUuid = WitcheryAttachments.get(player).getFamiliarUUID();
-        ServerLevel playerLevel = (ServerLevel) player.level();
-        if (familiarUuid.isEmpty() || playerLevel.getServer() == null) {
-            return null;
-        }
-
-        for (ServerLevel level : playerLevel.getServer().getAllLevels()) {
-            Entity entity = level.getEntity(familiarUuid.get());
-            if (entity instanceof TamableAnimal tameable && tameable.isOwnedBy(player)) {
-                return tameable;
-            }
-        }
-
-        return null;
     }
 
     /** Rite of Summon Witch — summons a hostile witch if the circle is not obstructed. */
@@ -3638,12 +3622,7 @@ public class RitualExecutor {
     }
 
     private static boolean hasActiveCurseMasteryFamiliar(ServerPlayer player) {
-        Optional<UUID> familiarUuid = WitcheryAttachments.get(player).getFamiliarUUID();
-        if (familiarUuid.isEmpty()) {
-            return false;
-        }
-        Entity familiar = ((ServerLevel) player.level()).getEntity(familiarUuid.get());
-        return familiar instanceof CatFamiliarEntity;
+        return FamiliarHelper.hasActiveCatFamiliar(player);
     }
 
     private static void strikeCurseBacklashLightning(ServerPlayer player) {

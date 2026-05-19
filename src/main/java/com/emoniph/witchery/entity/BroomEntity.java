@@ -1,7 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
-import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -157,16 +157,13 @@ public class BroomEntity extends Mob {
         if (!(rider instanceof Player player)) {
             return;
         }
-        if (!(level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel)) {
             return;
         }
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         riderHasSoaringBrew = data.hasSoaringBuff();
-        data.getFamiliarUUID()
-                .map(serverLevel::getEntity)
-                .filter(OwlFamiliarEntity.class::isInstance)
-                .ifPresent(entity -> riderHasOwlFamiliar = true);
+        riderHasOwlFamiliar = FamiliarHelper.hasActiveOwlFamiliar(player);
     }
 
     private Vec3 clampSpeed(Vec3 motion) {
