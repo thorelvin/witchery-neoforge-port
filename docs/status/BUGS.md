@@ -498,6 +498,17 @@ The next Spirit World parity pass is now closer to original Witchery:
 Remaining gap:
 - This restores the original portal activation/lifecycle, but the actual Rite of Manifestation ghost-travel behavior that uses the portal is still deferred as a separate player-state feature.
 
+### 55. Rite of Manifestation ghost travel was still deferred - Fixed / verify
+
+The next Spirit World parity pass is now closer to original Witchery:
+- The small otherwhere `Manifestation` route no longer throws the caster into the Spirit World. It now restores the real old job: granting a Spirit World walker 150 seconds of manifestation time plus 25 seconds per nearby coven witch.
+- Entering a Spirit Portal in the Spirit World now spends that stored time to manifest the same player into the Overworld as a ghost-like traveler while keeping the Spirit World session active in the background.
+- The old timed return loop is back: manifestation time now drops by 5 every 100 ticks outside the Spirit World, warns again at 60/30/15 seconds, and returns the player to their Spirit World anchor when the timer expires.
+- Icy Needle now matches the old ghost-state behavior again by sending a manifested player back to the Spirit World instead of waking them outright, and manifested death now safely snaps the player back to the Spirit World instead of leaving the Spirit World state corrupted.
+
+Remaining gap:
+- The practical mechanics are back, but ghost rendering/style parity is still open because the modern port still lacks the old dedicated ghost visual/player-style layer.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

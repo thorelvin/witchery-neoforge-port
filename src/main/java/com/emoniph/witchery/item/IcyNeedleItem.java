@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,6 +22,10 @@ public class IcyNeedleItem extends Item {
         if (!level.isClientSide() && player instanceof ServerPlayer sp) {
             if (sp.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
                 SpiritWorldHelper.exit(sp);
+                return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
+            }
+            if (WitcheryAttachments.get(sp).isManifestedGhost()) {
+                SpiritWorldHelper.returnGhostPlayerToSpiritWorld(sp);
                 return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
             }
         }

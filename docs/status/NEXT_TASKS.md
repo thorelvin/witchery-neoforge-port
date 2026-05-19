@@ -43,8 +43,8 @@ Items from spec not yet implemented:
 | **Demonic Nightmare events** | §13 | ✅ Done | Every 100t: 50% SmallFireball, 65% LargeFireball, 75% demon spawn (if <10 hostiles, <2 demons) |
 | **Corpse entity** | §9 | ✅ Done | `witchery:corpse` (MISC mob, sleeping pose, NoopRenderer placeholder) spawns on SW entry, removed on exit, killing it forces player back; UUID tracked in `SpiritWorldState` |
 | **Flowing Spirit entity effects** | §21 | Open | Regen for normal entities; Weakness for undead/demons/Nightmares; converts Disturbed Cotton item→Wispy Cotton; suppresses Nightmare defense |
-| **Spirit Portal activation** | §22 | ✅ Done | Snow-frame portal now opens again from a Flowing Spirit source in the Spirit World; full ghost travel still belongs to the deferred Manifestation system |
-| **Rite of Manifestation ghost** | §23 | Deferred | Temporarily manifests Spirit World player in OW as ghost; 2.5 min + 25s per coven witch; returns on timer expiry |
+| **Spirit Portal activation** | §22 | ✅ Done | Snow-frame portal now opens again from a Flowing Spirit source in the Spirit World and is used by the restored manifestation loop |
+| **Rite of Manifestation ghost** | §23 | Partial | The rite now grants 2.5 min + 25s per coven witch of manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld, timed return and Icy Needle recall are back, but ghost rendering/style polish is still open |
 
 ---
 
@@ -129,9 +129,7 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 
 ## Deferred (do not implement unless asked)
 
-- Rite of Manifestation spectral form / ghost travel
 - Village additions (bookshop, guards, walls)
 - Werewolf player model full replacement
 - Flowing Spirit as proper fluid (currently plain block)
-- Spirit Portal snow-frame structure
-- Corpse entity (sleeping body in Overworld)
+- Manifestation ghost rendering / style polish

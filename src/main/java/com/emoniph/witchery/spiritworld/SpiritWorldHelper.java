@@ -74,6 +74,7 @@ public final class SpiritWorldHelper {
         if (sw == null) return;
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
+        data.clearManifestationState();
         data.setReturnPos(player.blockPosition(), player.level().dimension());
 
         // Nightmare chance — block scan around sleeping position
@@ -145,6 +146,7 @@ public final class SpiritWorldHelper {
         data.setInSpiritWorld(false);
         data.setSpiritWorldIsDream(false);
         data.setDemonicNightmare(false);
+        data.clearManifestationState();
         data.clearReturnPos();
         sync(player, data);
 
@@ -157,6 +159,68 @@ public final class SpiritWorldHelper {
         }
 
         player.displayClientMessage(Component.literal("You wake up."), false);
+    }
+
+    public static boolean canManifest(ServerPlayer player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        return data.isInSpiritWorld()
+                && !data.isManifestedGhost()
+                && player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                && data.getManifestationTime() >= 5;
+    }
+
+    public static void manifestPlayerInOverworldAsGhost(ServerPlayer player) {
+        if (!canManifest(player)) {
+            return;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        ServerLevel overworld = resolveReturnLevel(player, Level.OVERWORLD.identifier().toString());
+        if (overworld == null) {
+            return;
+        }
+
+        data.setManifestedGhost(true);
+        data.setSkipManifestationTick(true);
+        data.setManifestationReturnPos(player.blockPosition());
+
+        BlockPos target = findSafeStandingPos(overworld, player.blockPosition());
+        player.teleportTo(overworld,
+                target.getX() + 0.5,
+                target.getY(),
+                target.getZ() + 0.5,
+                java.util.Set.of(),
+                player.getYRot(),
+                player.getXRot(),
+                false);
+        sync(player, data);
+    }
+
+    public static void returnGhostPlayerToSpiritWorld(ServerPlayer player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (!data.isManifestedGhost()) {
+            return;
+        }
+
+        ServerLevel spiritWorld = ((ServerLevel) player.level()).getServer().getLevel(WitcheryDimensions.SPIRIT_WORLD);
+        if (spiritWorld == null) {
+            return;
+        }
+
+        BlockPos anchor = data.getManifestationReturnPos().orElse(new BlockPos(0, 65, 0));
+        BlockPos target = findSafeStandingPos(spiritWorld, anchor);
+        data.setManifestedGhost(false);
+        data.setSkipManifestationTick(false);
+        data.setManifestationReturnPos(null);
+        player.teleportTo(spiritWorld,
+                target.getX() + 0.5,
+                target.getY(),
+                target.getZ() + 0.5,
+                java.util.Set.of(),
+                player.getYRot(),
+                player.getXRot(),
+                false);
+        sync(player, data);
     }
 
     // ── Nightmare chance calculation ──────────────────────────────────────────
@@ -324,6 +388,19 @@ public final class SpiritWorldHelper {
             }
         }
         return new double[]{ playerPos.getX() + 0.5, 65, playerPos.getZ() + 0.5 };
+    }
+
+    private static BlockPos findSafeStandingPos(ServerLevel level, BlockPos anchor) {
+        level.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
+        for (int y = Math.min(level.getMaxY() - 2, 200); y >= level.getMinY(); y--) {
+            BlockPos pos = new BlockPos(anchor.getX(), y, anchor.getZ());
+            if (!level.getBlockState(pos).isAir()
+                    && level.getBlockState(pos.above()).isAir()
+                    && level.getBlockState(pos.above().above()).isAir()) {
+                return pos.above();
+            }
+        }
+        return new BlockPos(anchor.getX(), Math.max(level.getSeaLevel() + 1, 65), anchor.getZ());
     }
 
     private static ServerLevel resolveReturnLevel(ServerPlayer player, String dimStr) {

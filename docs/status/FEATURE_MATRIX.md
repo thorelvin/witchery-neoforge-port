@@ -78,7 +78,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Wispy/Disturbed Cotton | Partial | Spreading bush behavior, nightmare harvest swap, Spirit World placement, and disturbed->wispy Flowing Spirit cleansing restored; disturbed cotton still remains a placeable block in the port |
 | Dream Weaver (Dream Catcher) | Done | 5 weave effects applied on wake; buff arming follows a configurable sleep threshold again; Spirit World nightmare/demonic scans now only respect the `Nightmares` weave again, and wall placement uses the clicked face like the old hanging block |
 | Crystal Ball scrying | Done | 12 predictions; 500 altar power; 5s cooldown |
-| Rite of Manifestation | Deferred | Spectral-overworld form deferred |
+| Rite of Manifestation | Partial | The rite now grants manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld as a ghost, timed return and Icy Needle recall are back, but ghost rendering/style polish is still open |
 
 ---
 
@@ -130,7 +130,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Dimension | Status | Notes |
 |---|---:|---|
-| Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; wild/void bramble danger behavior restored; snow-frame Spirit Portal activation is back, but full spectral manifestation travel and in-game verification are still open |
+| Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; wild/void bramble danger behavior restored; snow-frame Spirit Portal activation, manifestation-duration rite, portal-triggered ghost travel, timed return, and Icy Needle recall are back; remaining work is mostly in-game verification plus ghost rendering/style polish |
 | Torment | Partial | Boss loop complete; spec-correct maze (6 DFS levels Y=10-85, Force walls, TormentStone floor, 1% mycelium, portal at cell 30,30, 3 refilling chests per level); dimension fixed (has_ceiling=false, red sky, no spawns); TormentHelper entry/exit; Hellgate rite updated |
 | Mirror World | Not started | Not started - dark blue fog, reflected overworld terrain, hostile player clones |
 
@@ -205,4 +205,4 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Mirror World dimension | Large | Not started |
 | Village additions | Large | Bookshop, guards deferred |
 | Custom Brew system | Large | Level 1-5 capacity/power/dispersal system - not started |
-| Rite of Manifestation | Deferred | Original spectral-overworld form deferred |
+| Rite of Manifestation | Partial | Duration rite, Spirit Portal ghost travel, timed return, and Icy Needle recall are back; ghost rendering/style polish is still open |

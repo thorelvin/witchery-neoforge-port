@@ -19,18 +19,28 @@ public class WitcheryPlayerData {
         public int     savedFood     = 20;
         public float   savedSat      = 5f;
         public String  corpseUUID    = "";
+        public boolean manifestedGhost = false;
+        public int     manifestationTime = 0;
+        public boolean manifestationSkipTick = false;
+        public long    manifestationReturnPos = Long.MIN_VALUE;
 
         public SpiritWorldState() {}
 
         private SpiritWorldState(boolean isDream, String inventorySnbt,
                                   float savedHealth, int savedFood, float savedSat,
-                                  String corpseUUID) {
+                                  String corpseUUID, boolean manifestedGhost,
+                                  int manifestationTime, boolean manifestationSkipTick,
+                                  long manifestationReturnPos) {
             this.isDream        = isDream;
             this.inventorySnbt  = inventorySnbt;
             this.savedHealth    = savedHealth;
             this.savedFood      = savedFood;
             this.savedSat       = savedSat;
             this.corpseUUID     = corpseUUID == null ? "" : corpseUUID;
+            this.manifestedGhost = manifestedGhost;
+            this.manifestationTime = Math.max(0, manifestationTime);
+            this.manifestationSkipTick = manifestationSkipTick;
+            this.manifestationReturnPos = manifestationReturnPos;
         }
 
         public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -39,7 +49,11 @@ public class WitcheryPlayerData {
             Codec.FLOAT .optionalFieldOf("saved_health",    20f)  .forGetter(s -> s.savedHealth),
             Codec.INT   .optionalFieldOf("saved_food",      20)   .forGetter(s -> s.savedFood),
             Codec.FLOAT .optionalFieldOf("saved_sat",       5f)   .forGetter(s -> s.savedSat),
-            Codec.STRING.optionalFieldOf("corpse_uuid",     "")   .forGetter(s -> s.corpseUUID)
+            Codec.STRING.optionalFieldOf("corpse_uuid",     "")   .forGetter(s -> s.corpseUUID),
+            Codec.BOOL  .optionalFieldOf("manifested_ghost", false).forGetter(s -> s.manifestedGhost),
+            Codec.INT   .optionalFieldOf("manifest_time",    0)    .forGetter(s -> s.manifestationTime),
+            Codec.BOOL  .optionalFieldOf("manifest_skip_tick", false).forGetter(s -> s.manifestationSkipTick),
+            Codec.LONG  .optionalFieldOf("manifest_return_pos", Long.MIN_VALUE).forGetter(s -> s.manifestationReturnPos)
         ).apply(i, SpiritWorldState::new));
     }
 
@@ -197,6 +211,25 @@ public class WitcheryPlayerData {
     }
     public void setCorpseUUID(java.util.UUID uuid) { sw.corpseUUID = uuid == null ? "" : uuid.toString(); }
     public void clearCorpseUUID()                  { sw.corpseUUID = ""; }
+    public boolean isManifestedGhost()             { return sw.manifestedGhost; }
+    public void setManifestedGhost(boolean v)      { sw.manifestedGhost = v; }
+    public int getManifestationTime()              { return sw.manifestationTime; }
+    public void setManifestationTime(int time)     { sw.manifestationTime = Math.max(0, time); }
+    public boolean shouldSkipManifestationTick()   { return sw.manifestationSkipTick; }
+    public void setSkipManifestationTick(boolean v){ sw.manifestationSkipTick = v; }
+    public Optional<BlockPos> getManifestationReturnPos() {
+        if (sw.manifestationReturnPos == Long.MIN_VALUE) return Optional.empty();
+        return Optional.of(BlockPos.of(sw.manifestationReturnPos));
+    }
+    public void setManifestationReturnPos(BlockPos pos) {
+        sw.manifestationReturnPos = pos == null ? Long.MIN_VALUE : pos.asLong();
+    }
+    public void clearManifestationState() {
+        sw.manifestedGhost = false;
+        sw.manifestationTime = 0;
+        sw.manifestationSkipTick = false;
+        sw.manifestationReturnPos = Long.MIN_VALUE;
+    }
 
     public void saveSpiritWorldVitals(float health, int food, float saturation) {
         sw.savedHealth = Math.max(1f, health);

@@ -81,6 +81,13 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.isManifestedGhost()) {
+            event.setCanceled(true);
+            player.setHealth(1.0f);
+            SpiritWorldHelper.returnGhostPlayerToSpiritWorld(player);
+            return;
+        }
         if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
         event.setCanceled(true);
         player.setHealth(1.0f);
@@ -134,6 +141,26 @@ public class WitcheryPlayerEvents {
         if (dataEveryTick.hasSoaringBuff()) dataEveryTick.tickSoaring();
         if (dataEveryTick.getHowlCooldown() > 0) dataEveryTick.setHowlCooldown(dataEveryTick.getHowlCooldown() - 1);
         dataEveryTick.tickTormentPortal();
+
+        if (player.tickCount % 100 == 0
+                && dataEveryTick.isManifestedGhost()
+                && !player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            if (dataEveryTick.shouldSkipManifestationTick()) {
+                dataEveryTick.setSkipManifestationTick(false);
+            } else {
+                int remaining = Math.max(0, dataEveryTick.getManifestationTime() - 5);
+                dataEveryTick.setManifestationTime(remaining);
+                if (remaining == 60 || remaining == 30 || remaining == 15) {
+                    player.displayClientMessage(Component.translatable("witchery.ritual.manifestation.countdown", remaining), false);
+                }
+            }
+
+            if (dataEveryTick.getManifestationTime() == 0) {
+                SpiritWorldHelper.returnGhostPlayerToSpiritWorld(player);
+            } else {
+                syncToClient(player);
+            }
+        }
 
         if (player.tickCount % 100 == 0
                 && dataEveryTick.isInSpiritWorld()

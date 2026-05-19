@@ -232,8 +232,7 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfNecromancy(player, level, center);
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            riteOfManifestationDream(player, level, center);
-            return true;
+            return riteOfManifestationDream(player, level, center);
         } else if (item.is(Items.ENDER_PEARL)) {
             return riteOfTransposition(player, level, center);
         } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -929,7 +928,7 @@ public class RitualExecutor {
         WitcheryMod.LOGGER.info("Rite of Dragon's Fury struck {} mobs", hit);
     }
 
-    /** Rite of Manifestation — sends the caster into the Dream World. */
+    /** Rite of Manifestation — grants a Spirit World walker time to manifest in the Overworld as a ghost. */
     /** Rite of Infusion (Flying Ointment) — enchants the nearest broom within 5 blocks. */
     private static boolean riteOfEnchantBroom(Player player, Level level, BlockPos center) {
         if (!requireNight(player, level, center)) {
@@ -957,34 +956,23 @@ public class RitualExecutor {
         return true;
     }
 
-    // ── Deferred: Rite of Manifestation (spectral overworld form) ──────────────
-    // Kept for future implementation. Currently unused — see PORTING_BACKLOG M8.
-    private static void riteOfManifestationDream(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return;
-        ServerLevel dream = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getLevel(WitcheryDimensions.DREAM_WORLD);
-        if (dream == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.unavailable"), false);
-            return;
-        }
+    private static boolean riteOfManifestationDream(Player player, Level level, BlockPos center) {
+        if (!(player instanceof ServerPlayer sp)) return false;
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        data.setReturnPos(sp.blockPosition(), sp.level().dimension());
-        net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(sp,
-                com.emoniph.witchery.network.SyncPlayerDataPayload.from(sp, data));
+        if (!data.isInSpiritWorld() || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.unavailable"), false);
+            return false;
+        }
+
+        int covenSize = countNearbyCovenWitches(level, center);
+        int duration = 150 + covenSize * 25;
+        data.setManifestationTime(duration);
+        data.setSkipManifestationTick(false);
+        sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.duration", duration), false);
         success(player, level, center, "witchery.ritual.manifestation.success",
                 SoundEvents.ENDERMAN_TELEPORT, 1.8f, 3, 60);
-        // Force chunk 0,0 to generate, then find solid ground
-        dream.getChunk(0, 0, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, true);
-        int dreamY = 65;
-        for (int y = 75; y >= 45; y--) {
-            var bp = new net.minecraft.core.BlockPos(0, y, 0);
-            if (!dream.getBlockState(bp).isAir()
-                    && dream.getBlockState(bp.above()).isAir()
-                    && dream.getBlockState(bp.above().above()).isAir()) {
-                dreamY = y + 1; break;
-            }
-        }
-        sp.teleportTo(dream, 0.5, (double)(dreamY), 0.5, java.util.Set.<net.minecraft.world.entity.Relative>of(), sp.getYRot(), sp.getXRot(), false);
-        WitcheryMod.LOGGER.info("Rite of Manifestation: {} entered Dream World.", sp.getName().getString());
+        WitcheryMod.LOGGER.info("Rite of Manifestation: {} prepared {} seconds of ghost travel.", sp.getName().getString(), duration);
+        return true;
     }
 
     /** Rite of Hellgate — tears open a rift to the Torment dimension. */
