@@ -17,6 +17,7 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -25,6 +26,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -136,6 +138,12 @@ public class WitcheryClient {
     }
 
     // ── Network handlers (client-side only) ───────────────────────────────────
+
+    public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+        event.register(
+                Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "kettle"),
+                KettleSpecialRenderer.Unbaked.MAP_CODEC);
+    }
 
     public static void handleSyncPlayerData(SyncPlayerDataPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {

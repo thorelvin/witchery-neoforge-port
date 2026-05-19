@@ -32,7 +32,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 18 | `witchery:leaping_lily` | `Partial - leap buff restored` | Walking through it now grants short speed + jump boosts again. Still uses placeholder visuals and needs in-game verification.
 | 19 | `witchery:grassper` | `Partial - stash mechanic restored` | Holds one given item again and now renders that stored item above the plant. Visual verification still needed.
 | 20 | `witchery:glowglobe` | `Partial - light and ambience restored` | Now emits strong light and ambient flame particles again. Needs in-game verification.
-| 21 | `witchery:kettle` | | Seems to work, missing item texture. Missing 3d string. Pink black. Check block mechanics in old.
+| 21 | `witchery:kettle` | `Partial - 1.21.11 special item renderer wired for the old kettle shape` | The broken unwrap/exploded item path is now routed through a dedicated special renderer instead of the flat JSON model path. Needs in-game verification after resource reload; filled/hanging world-state variants still need a fuller render pass.
 | 22 | `witchery:distillery` | `Partial - mechanics restored closer to original (altar power, jars, multi-output)` | GUI art/layout and item texture still need verification.
 | 23 | `witchery:spinning_wheel` | `Partial - mechanics restored closer to original (5 slots, altar power, modifiers)` | GUI art/layout and item texture still need verification.
 | 24 | `witchery:witches_oven` | `Partial - mechanics restored closer to original (jars, funnels, byproducts)` | Facing/item texture and GUI verification still open.
