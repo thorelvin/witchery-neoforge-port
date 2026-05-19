@@ -613,6 +613,7 @@ The next familiar-mechanics pass is now closer to original Witchery:
 - Vanilla cats are now converted into the port's `Cat Familiar` entity when they are bound, which restores the old "bind a real pet and gain familiar powers from it" flow better than the previous spawn-a-new-pet shortcut.
 - `Call Familiar` no longer only works when the bound familiar entity happens to already be loaded in the same dimension as the rite. It now searches all loaded server levels for the stored familiar UUID and teleports the real bound entity into the circle again.
 - Familiar-binding dispatch no longer reports unconditional success for the feather/fish/slime placeholder routes. If there is no valid creature to bind, the medium-circle cast now fails/refunds instead of silently consuming the offering and minting a free familiar.
+- The familiar dispatcher routes are now keyed from representative Witchery ingredients (`tear_of_goddess` / `odour_of_purity` / `whiff_of_magic` for binding, `breath_of_goddess` / `hint_of_rebirth` / `whiff_of_magic` for calling) instead of unrelated vanilla placeholders, which is much closer to the original ritual registry feel.
 
 Remaining gap:
 - The modern port still stores only the active familiar UUID instead of the original richer familiar instance/template data, so `Call Familiar` cannot yet recreate a dismissed or dead familiar the way 1.7.10 could. This patch restores the real bind/call flow for living bound familiars without claiming full familiar-persistence parity yet.

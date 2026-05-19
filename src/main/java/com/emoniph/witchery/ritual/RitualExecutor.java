@@ -337,13 +337,15 @@ public class RitualExecutor {
         if (item.is(Items.BONE_MEAL) || item.is(Items.BONE)) {
             riteOfFertility(player, level, center);
             return successResult();
-        } else if ((item.is(Items.FEATHER)
-                || item.is(Items.COD)
-                || item.is(Items.SALMON)
-                || item.is(Items.SLIME_BALL))
+        } else if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
+                || item.is(WitcheryItems.ODOUR_OF_PURITY.get())
+                || item.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindFamiliar(player, level, center));
-        } else if (item.is(Items.GLASS_BOTTLE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if ((item.is(WitcheryItems.BREATH_OF_GODDESS.get())
+                || item.is(WitcheryItems.HINT_OF_REBIRTH.get())
+                || item.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfCallFamiliar(player, level, center));
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
