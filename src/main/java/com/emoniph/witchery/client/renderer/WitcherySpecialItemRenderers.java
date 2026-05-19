@@ -297,7 +297,6 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
