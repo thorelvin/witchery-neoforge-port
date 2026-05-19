@@ -16,6 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
+import java.util.Comparator;
 import java.util.List;
 
 @EventBusSubscriber
@@ -56,7 +57,14 @@ public class RitualEvents {
         ItemStack ingredient = ItemStack.EMPTY;
         ItemEntity ingredientEntity = null;
         if (!nearbyItems.isEmpty()) {
-            ingredientEntity = nearbyItems.get(0);
+            ingredientEntity = nearbyItems.stream()
+                    .min(Comparator.comparingDouble(item -> item.position().distanceToSqr(
+                            floorCenter.getX() + 0.5,
+                            floorCenter.getY() + 1.0,
+                            floorCenter.getZ() + 0.5)))
+                    .orElse(null);
+        }
+        if (ingredientEntity != null) {
             ingredient = ingredientEntity.getItem().copyWithCount(1); // only consume 1
         }
 

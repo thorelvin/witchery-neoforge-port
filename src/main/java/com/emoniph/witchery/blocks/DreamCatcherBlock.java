@@ -63,14 +63,12 @@ public class DreamCatcherBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        for (Direction dir : ctx.getNearestLookingDirections()) {
-            if (dir.getAxis().isHorizontal()) {
-                BlockState candidate = defaultBlockState().setValue(FACING, dir);
-                if (candidate.canSurvive(ctx.getLevel(), ctx.getClickedPos()))
-                    return candidate;
-            }
+        Direction clickedFace = ctx.getClickedFace();
+        if (!clickedFace.getAxis().isHorizontal()) {
+            return null;
         }
-        return null;
+        BlockState candidate = defaultBlockState().setValue(FACING, clickedFace);
+        return candidate.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? candidate : null;
     }
 
     @Override
@@ -84,6 +82,7 @@ public class DreamCatcherBlock extends BaseEntityBlock {
     public void neighborChanged(BlockState state, Level level, BlockPos pos,
                                 net.minecraft.world.level.block.Block block, net.minecraft.world.level.redstone.@org.jspecify.annotations.Nullable Orientation fromPos, boolean isMoving) {
         if (!canSurvive(state, level, pos)) {
+            dropStoredWeave(level, pos);
             level.destroyBlock(pos, true);
         }
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
@@ -102,14 +101,10 @@ public class DreamCatcherBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    // Drop weave item on block break
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-            if (level.getBlockEntity(pos) instanceof DreamCatcherBlockEntity be && be.getWeave() != null) {
-                Block.popResource(level, pos, WitcheryItems.getDreamWeaveItem(be.getWeave()).getDefaultInstance());
-            }
-        }
-        // super.onRemove removed - method no longer exists in 1.21.11
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        dropStoredWeave(level, pos);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -127,4 +122,14 @@ public class DreamCatcherBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+
+    private static void dropStoredWeave(Level level, BlockPos pos) {
+        if (level.isClientSide()) {
+            return;
+        }
+        if (level.getBlockEntity(pos) instanceof DreamCatcherBlockEntity be && be.getWeave() != null) {
+            Block.popResource(level, pos, WitcheryItems.getDreamWeaveItem(be.getWeave()).getDefaultInstance());
+            be.setWeave(null);
+        }
+    }
 }

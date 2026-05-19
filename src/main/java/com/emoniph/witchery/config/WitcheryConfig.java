@@ -22,6 +22,7 @@ public class WitcheryConfig {
 
     // ── Spirit World ──────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue NIGHTMARE_CHANCE_PERCENT;
+    public static final ModConfigSpec.IntValue PLAYERS_SLEEPING_PERCENT_FOR_BUFF;
 
     // ── Altar / Rituals ───────────────────────────────────────────────────────
     public static final ModConfigSpec.DoubleValue RITUAL_POWER_MULTIPLIER;
@@ -57,6 +58,9 @@ public class WitcheryConfig {
         NIGHTMARE_CHANCE_PERCENT = BUILDER
                 .comment("Percent chance of entering a nightmare instead of a dream (0-100). Default: 70")
                 .defineInRange("nightmareChancePercent", 70, 0, 100);
+        PLAYERS_SLEEPING_PERCENT_FOR_BUFF = BUILDER
+                .comment("Percent of players that must be asleep before Dream Catchers arm their sunrise buff. Default: 100")
+                .defineInRange("playersSleepingPercentForBuff", 100, 1, 100);
         BUILDER.pop();
 
         BUILDER.push("rituals");

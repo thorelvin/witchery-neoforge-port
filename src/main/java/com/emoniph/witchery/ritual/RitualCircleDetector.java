@@ -64,6 +64,24 @@ public class RitualCircleDetector {
         return null;
     }
 
+    public static boolean hasRing(Level level, BlockPos floorCenter, CircleSize size) {
+        BlockPos markLevel = floorCenter.above();
+        return switch (size) {
+            case SMALL -> collectRing(level, markLevel, SMALL_RING) != null;
+            case MEDIUM -> collectRing(level, markLevel, MEDIUM_RING) != null;
+            case LARGE -> collectRing(level, markLevel, LARGE_RING) != null;
+        };
+    }
+
+    public static int detectVariant(Level level, BlockPos floorCenter, CircleSize size) {
+        int[] variants = detectAllVariants(level, floorCenter);
+        return switch (size) {
+            case SMALL -> variants[0];
+            case MEDIUM -> variants[1];
+            case LARGE -> variants[2];
+        };
+    }
+
     private static List<BlockPos> collectRing(Level level, BlockPos origin, int[][] offsets) {
         List<BlockPos> positions = new ArrayList<>(offsets.length);
         for (int[] off : offsets) {

@@ -52,13 +52,26 @@ public class PlacedItemBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hit) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be) {
-            ItemStack stored = be.getStack();
+            ItemStack stored = be.takeStack();
             if (!stored.isEmpty()) {
-                player.getInventory().add(stored.copy());
+                if (!player.getInventory().add(stored.copy())) {
+                    player.drop(stored.copy(), false);
+                }
                 level.removeBlock(pos, false);
                 return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be) {
+            ItemStack stored = be.getStack();
+            if (!stored.isEmpty()) {
+                popResource(level, pos, stored.copy());
+            }
+        }
+        return super.playerWillDestroy(level, pos, state, player);
     }
 }

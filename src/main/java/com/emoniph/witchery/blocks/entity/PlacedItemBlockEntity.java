@@ -25,6 +25,15 @@ public class PlacedItemBlockEntity extends BlockEntity {
     public void setStack(ItemStack stack) {
         this.stack = stack.copy();
         setChanged();
+        notifySupportingAltar();
+    }
+
+    public ItemStack takeStack() {
+        ItemStack stored = stack;
+        stack = ItemStack.EMPTY;
+        setChanged();
+        notifySupportingAltar();
+        return stored;
     }
 
     @Nullable @Override
@@ -45,5 +54,14 @@ public class PlacedItemBlockEntity extends BlockEntity {
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
         stack = tag.read("Item", net.minecraft.world.item.ItemStack.CODEC).orElse(ItemStack.EMPTY);
+    }
+
+    private void notifySupportingAltar() {
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            if (level.getBlockEntity(worldPosition.below()) instanceof AltarBlockEntity altar) {
+                altar.invalidate(level);
+            }
+        }
     }
 }

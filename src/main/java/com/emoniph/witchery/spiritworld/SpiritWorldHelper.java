@@ -2,6 +2,8 @@ package com.emoniph.witchery.spiritworld;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.blocks.DreamWeaveType;
+import com.emoniph.witchery.blocks.entity.DreamCatcherBlockEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
@@ -163,40 +165,44 @@ public final class SpiritWorldHelper {
 
     private static NightmareResult calculateNightmare(ServerPlayer player) {
         double chance = WitcheryConfig.NIGHTMARE_CHANCE_PERCENT.get() / 100.0;
-
-        boolean dreamWeaverFound = false;
+        boolean nightmareCatcherFound = false;
         int flowingSpirits = 0, wispyCottons = 0, demonHearts = 0, fires = 0;
 
-        BlockPos origin = player.blockPosition();
-        for (BlockPos bp : BlockPos.betweenClosed(
-                origin.offset(-8, -8, -8), origin.offset(8, 8, 8))) {
-            BlockState bs = player.level().getBlockState(bp);
-            if (bs.is(WitcheryBlocks.DREAM_CATCHER.get())) {
-                dreamWeaverFound = true;
-            } else if (bs.is(WitcheryBlocks.FLOWING_SPIRIT.get())) {
-                flowingSpirits++;
-            } else if (bs.is(WitcheryBlocks.WISPY_COTTON.get())) {
-                wispyCottons++;
-            } else if (bs.is(WitcheryBlocks.DEMON_HEART.get())) {
-                demonHearts++;
-            } else if (bs.is(Blocks.FIRE) || bs.is(Blocks.SOUL_FIRE)) {
-                fires++;
+        if (chance > 0.0 && chance < 1.0) {
+            BlockPos origin = player.blockPosition();
+            for (BlockPos bp : BlockPos.betweenClosed(
+                    origin.offset(-8, -8, -8), origin.offset(8, 8, 8))) {
+                BlockState bs = player.level().getBlockState(bp);
+                if (bs.is(WitcheryBlocks.DREAM_CATCHER.get())) {
+                    if (player.level().getBlockEntity(bp) instanceof DreamCatcherBlockEntity catcher
+                            && catcher.getWeave() == DreamWeaveType.NIGHTMARES) {
+                        nightmareCatcherFound = true;
+                    }
+                } else if (bs.is(WitcheryBlocks.FLOWING_SPIRIT.get())) {
+                    flowingSpirits++;
+                } else if (bs.is(WitcheryBlocks.WISPY_COTTON.get())) {
+                    wispyCottons++;
+                } else if (bs.is(WitcheryBlocks.DEMON_HEART.get())) {
+                    demonHearts++;
+                } else if (bs.is(Blocks.FIRE) || bs.is(Blocks.SOUL_FIRE)) {
+                    fires++;
+                }
             }
-        }
 
-        if (dreamWeaverFound) {
-            chance -= 0.50;
-            chance -= Math.min(flowingSpirits, 3) * 0.10;
-            chance -= Math.min(wispyCottons, 2)   * 0.10;
-            chance += Math.min(demonHearts, 2)    * 0.35;
-            chance += Math.min(fires, 3)          * 0.10;
-            chance  = Mth.clamp(chance, 0.0, 1.0);
+            if (nightmareCatcherFound) {
+                chance -= 0.50;
+                chance -= Math.min(flowingSpirits, 3) * 0.10;
+                chance -= Math.min(wispyCottons, 2)   * 0.10;
+                chance += Math.min(demonHearts, 2)    * 0.35;
+                chance += Math.min(fires, 3)          * 0.10;
+                chance  = Mth.clamp(chance, 0.0, 1.0);
+            }
         }
 
         boolean isNightmare = player.level().random.nextDouble() < chance;
 
-        // Demonic Nightmare: needs nightmare + dreamWeaver + flowing spirit + demon heart
-        boolean isDemonic = isNightmare && dreamWeaverFound && flowingSpirits > 0 && demonHearts > 0
+        // Demonic Nightmare: needs nightmare + NIGHTMARES catcher + flowing spirit + demon heart
+        boolean isDemonic = isNightmare && nightmareCatcherFound && flowingSpirits > 0 && demonHearts > 0
                 && player.level().random.nextDouble() < demonHearts * 0.35 + fires * 0.10;
 
         return new NightmareResult(isNightmare, isDemonic);
@@ -340,6 +346,7 @@ public final class SpiritWorldHelper {
                         .create(sl, EntitySpawnReason.TRIGGERED);
         if (corpse == null) return;
         corpse.setOwner(player);
+        corpse.setHealth(Math.min(corpse.getMaxHealth(), Math.max(1.0f, player.getHealth())));
         corpse.setPos(player.getX(), player.getY(), player.getZ());
         // Facing direction from yaw
         corpse.setYRot(player.getYRot());

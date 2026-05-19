@@ -5,6 +5,8 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
@@ -45,16 +47,38 @@ public class MandrakeBlock extends CropBlock {
                 || state.is(Blocks.DIRT) || state.is(Blocks.COARSE_DIRT);
     }
 
-    // Fully grown mandrake spawn a Mandrake mob when broken
+    // Mature mandrake only summon the hostile root creature under the original
+    // difficulty and time-based chance rules; otherwise they drop normally.
     @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
                               net.minecraft.world.level.block.entity.BlockEntity be, net.minecraft.world.item.ItemStack tool) {
-        super.playerDestroy(level, player, pos, state, be, tool);
-        if (!(level instanceof ServerLevel sl)) return;
-        if (state.getValue(MANDRAKE_AGE) < getMaxAge()) return;
+        if (!shouldSummonMandrake(level, state)) {
+            super.playerDestroy(level, player, pos, state, be, tool);
+            return;
+        }
+
+        if (!(level instanceof ServerLevel sl)) {
+            return;
+        }
+
+        player.awardStat(Stats.BLOCK_MINED.get(this));
+        player.causeFoodExhaustion(0.005F);
+
         MandrakeEntity mob = WitcheryEntities.MANDRAKE_MOB.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
         if (mob == null) return;
         mob.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         sl.addFreshEntity(mob);
+    }
+
+    private boolean shouldSummonMandrake(Level level, BlockState state) {
+        if (state.getValue(MANDRAKE_AGE) < getMaxAge()) {
+            return false;
+        }
+        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+
+        double chance = (level.getDayTime() % 24000L) < 13000L ? 0.9 : 0.1;
+        return level.random.nextDouble() <= chance;
     }
 }

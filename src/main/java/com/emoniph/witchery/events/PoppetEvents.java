@@ -8,7 +8,6 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.PoppetItem;
 import com.emoniph.witchery.item.ProtectionPoppetItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -290,7 +289,7 @@ public class PoppetEvents {
             }
         }
 
-        for (PoppetShelfBlockEntity shelf : findNearbyShelves(player, 8)) {
+        for (PoppetShelfBlockEntity shelf : PoppetShelfBlockEntity.getActiveShelves(((ServerLevel) player.level()).getServer())) {
             for (int i = 0; i < shelf.getContainerSize(); i++) {
                 ItemStack stack = shelf.getItem(i);
                 if (!stack.isEmpty() && matchesBound(stack, playerUUID) && matcher.test(stack)) {
@@ -306,6 +305,13 @@ public class PoppetEvents {
         PoppetLocation location = findFirstBoundPoppet(player, stack -> stack.is(poppetItem));
         if (location == null) return false;
         consumeOne(location);
+        return true;
+    }
+
+    public static boolean damageBoundPoppet(ServerPlayer player, Item poppetItem, int amount) {
+        PoppetLocation location = findFirstBoundPoppet(player, stack -> stack.is(poppetItem));
+        if (location == null) return false;
+        damagePoppet(location, amount);
         return true;
     }
 
@@ -345,21 +351,6 @@ public class PoppetEvents {
             location.shelf().setChanged();
         }
     }
-
-    private static List<PoppetShelfBlockEntity> findNearbyShelves(ServerPlayer player, int radius) {
-        List<PoppetShelfBlockEntity> result = new ArrayList<>();
-        BlockPos center = player.blockPosition();
-        for (BlockPos pos : BlockPos.betweenClosed(
-                center.offset(-radius, -radius, -radius),
-                center.offset(radius, radius, radius))) {
-            BlockEntity blockEntity = player.level().getBlockEntity(pos);
-            if (blockEntity instanceof PoppetShelfBlockEntity shelf) {
-                result.add(shelf);
-            }
-        }
-        return result;
-    }
-
     private static boolean matchesBound(ItemStack stack, UUID playerUUID) {
         return PoppetItem.isBound(stack)
                 && PoppetItem.getBoundUUID(stack).map(playerUUID::equals).orElse(false);

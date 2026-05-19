@@ -3,6 +3,7 @@ package com.emoniph.witchery.blocks;
 import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -43,4 +44,14 @@ public class PoppetShelfBlock extends BaseEntityBlock {
         }
         return (level.isClientSide() ? net.minecraft.world.InteractionResult.SUCCESS_SERVER : net.minecraft.world.InteractionResult.SUCCESS);
     }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PoppetShelfBlockEntity shelf) {
+            Containers.dropContents(level, pos, shelf);
+            level.updateNeighbourForOutputSignal(pos, this);
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
 }

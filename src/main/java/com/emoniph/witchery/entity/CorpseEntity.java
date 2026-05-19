@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
@@ -30,21 +31,25 @@ public class CorpseEntity extends Mob {
     }
 
     @Override
-    protected void registerGoals() { /* no AI */ }
+    protected void registerGoals() {
+        // No AI.
+    }
 
     @Override
-    public boolean isPushable() { return false; }
+    public boolean isPushable() {
+        return false;
+    }
 
     @Override
-    protected void doPush(net.minecraft.world.entity.Entity entity) { /* immovable */ }
+    protected void doPush(Entity entity) {
+        // Immovable sleeping body.
+    }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0)
+                .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
-
-    // ── Owner tracking ────────────────────────────────────────────────────────
 
     public void setOwner(ServerPlayer player) {
         this.ownerUUID = player.getStringUUID();
@@ -52,33 +57,36 @@ public class CorpseEntity extends Mob {
 
     public Optional<UUID> getOwnerUUID() {
         if (ownerUUID.isEmpty()) return Optional.empty();
-        try { return Optional.of(UUID.fromString(ownerUUID)); }
-        catch (IllegalArgumentException e) { return Optional.empty(); }
+        try {
+            return Optional.of(UUID.fromString(ownerUUID));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
-
-    // ── Combat ────────────────────────────────────────────────────────────────
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        ServerPlayer owner = getOwnerUUID()
+                .map(uuid -> level.getServer().getPlayerList().getPlayer(uuid))
+                .orElse(null);
+
+        if (!(source.getEntity() instanceof ServerPlayer attacker && attacker.isCreative()) && owner == null) {
+            return false;
+        }
+
         boolean hurt = super.hurtServer(level, source, amount);
-        if (hurt && !this.isAlive()) {
-            // Corpse destroyed — yank the owner out of Spirit World
-            getOwnerUUID().ifPresent(uuid -> {
-                ServerPlayer owner = level.getServer().getPlayerList().getPlayer(uuid);
-                if (owner != null) {
-                    owner.displayClientMessage(
-                            Component.literal("§4Your sleeping body was destroyed! You are torn back..."), false);
-                    com.emoniph.witchery.spiritworld.SpiritWorldHelper.exit(owner);
-                }
-            });
+        if (hurt && !this.isAlive() && owner != null) {
+            owner.displayClientMessage(
+                    Component.literal("§4Your sleeping body was destroyed! You are torn back..."), false);
+            com.emoniph.witchery.spiritworld.SpiritWorldHelper.exit(owner);
         }
         return hurt;
     }
 
-    // No drops or XP from a sleeping body
-    @Override protected void dropCustomDeathLoot(ServerLevel sl, DamageSource src, boolean recentlyHit) {}
-
-    // ── NBT ───────────────────────────────────────────────────────────────────
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        // No drops or XP from a sleeping body.
+    }
 
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {

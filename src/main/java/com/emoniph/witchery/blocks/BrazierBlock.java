@@ -100,18 +100,17 @@ public class BrazierBlock extends BaseEntityBlock {
     }
 
     /** Drop ingredients when broken (unless burning — then they're consumed). */
-    public void onRemove(BlockState state, Level level, BlockPos pos,
-                         BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !level.isClientSide()) {
-            if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be && !be.isBurning()) {
-                for (ItemStack drop : be.getDrops()) {
-                    ItemEntity ie = new ItemEntity(level,
-                            pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, drop);
-                    level.addFreshEntity(ie);
-                }
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BrazierBlockEntity be && !be.isBurning()) {
+            for (ItemStack drop : be.getDrops()) {
+                ItemEntity ie = new ItemEntity(level,
+                        pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, drop.copy());
+                level.addFreshEntity(ie);
             }
+            be.reset();
         }
-        // super.onRemove removed - method no longer exists in 1.21.11
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

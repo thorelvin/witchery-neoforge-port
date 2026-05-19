@@ -54,6 +54,12 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("altar", () -> new BlockEntityType<>(AltarBlockEntity::new, Set.of(WitcheryBlocks.ALTAR.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlacedItemBlockEntity>> PLACED_ITEM =
             BLOCK_ENTITIES.register("placed_item", () -> new BlockEntityType<>(PlacedItemBlockEntity::new, Set.of(WitcheryBlocks.PLACED_ITEM.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BarrierBlockEntity>> BARRIER =
+            BLOCK_ENTITIES.register("barrier", () -> new BlockEntityType<>(BarrierBlockEntity::new, Set.of(WitcheryBlocks.BARRIER.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrassperBlockEntity>> GRASSPER =
+            BLOCK_ENTITIES.register("grassper", () -> new BlockEntityType<>(GrassperBlockEntity::new, Set.of(WitcheryBlocks.GRASSPER.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodRoseBlockEntity>> BLOOD_ROSE =
+            BLOCK_ENTITIES.register("blood_rose", () -> new BlockEntityType<>(BloodRoseBlockEntity::new, Set.of(WitcheryBlocks.BLOOD_ROSE.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity>> REFILLING_CHEST =
             BLOCK_ENTITIES.register("refilling_chest", () -> new BlockEntityType<>(
                     com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity::new,

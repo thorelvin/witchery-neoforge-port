@@ -108,9 +108,12 @@ public class AltarBlockEntity extends BlockEntity {
         FLOWER("flower", 4, 30),
         WITCHERY_LEAVES("witchery_leaves", 4, 50),
         BELLADONNA("belladonna", 4, 20),
+        ARTICHOKE("artichoke", 4, 20),
         EMBER_MOSS("ember_moss", 4, 20),
         MANDRAKE("mandrake", 4, 20),
         SNOWBELL("snowbell", 4, 20),
+        BLOOD_ROSE("blood_rose", 2, 10),
+        CRITTER_SNARE("critter_snare", 2, 10),
         DEMON_HEART("demon_heart", 100, 2),
         DRAGON_EGG("dragon_egg", 250, 1);
 
@@ -187,9 +190,12 @@ public class AltarBlockEntity extends BlockEntity {
 
         if (state.is(WitcheryBlocks.ROWAN_LEAVES.get())) return Cat.WITCHERY_LEAVES;
         if (state.is(WitcheryBlocks.BELLADONNA.get())) return Cat.BELLADONNA;
+        if (state.is(WitcheryBlocks.ARTICHOKE.get())) return Cat.ARTICHOKE;
         if (state.is(WitcheryBlocks.EMBER_MOSS.get())) return Cat.EMBER_MOSS;
         if (state.is(WitcheryBlocks.MANDRAKE.get())) return Cat.MANDRAKE;
         if (state.is(WitcheryBlocks.SNOWBELL.get())) return Cat.SNOWBELL;
+        if (state.is(WitcheryBlocks.BLOOD_ROSE.get())) return Cat.BLOOD_ROSE;
+        if (state.is(WitcheryBlocks.CRITTER_SNARE.get())) return Cat.CRITTER_SNARE;
         if (state.is(WitcheryBlocks.DEMON_HEART.get())) return Cat.DEMON_HEART;
         if (state.is(Blocks.DRAGON_EGG)) return Cat.DRAGON_EGG;
 
@@ -268,10 +274,10 @@ public class AltarBlockEntity extends BlockEntity {
             return new UpgradeInfo(1, 1, 1, 0);
         }
 
-        int bestHeadPower = 0;
-        int bestHeadRecharge = 0;
-        int bestCandleRecharge = 0;
-        int bestChalicePower = 0;
+        int skullPowerBonus = 0;
+        int skullRechargeBonus = 0;
+        int candleRechargeBonus = 0;
+        int chalicePowerBonus = 0;
         boolean arthanaFound = false;
         boolean mysticBranchFound = false;
 
@@ -279,20 +285,20 @@ public class AltarBlockEntity extends BlockEntity {
             BlockState above = level.getBlockState(altarPos.above());
 
             if (above.is(Blocks.SKELETON_SKULL) || above.is(Blocks.SKELETON_WALL_SKULL)) {
-                bestHeadRecharge = Math.max(bestHeadRecharge, 1);
-                bestHeadPower = Math.max(bestHeadPower, 1);
+                skullRechargeBonus += 1;
+                skullPowerBonus += 1;
             } else if (above.is(Blocks.WITHER_SKELETON_SKULL) || above.is(Blocks.WITHER_SKELETON_WALL_SKULL)) {
-                bestHeadRecharge = Math.max(bestHeadRecharge, 2);
-                bestHeadPower = Math.max(bestHeadPower, 2);
+                skullRechargeBonus += 2;
+                skullPowerBonus += 2;
             } else if (above.is(Blocks.PLAYER_HEAD) || above.is(Blocks.PLAYER_WALL_HEAD)) {
-                bestHeadRecharge = Math.max(bestHeadRecharge, 3);
-                bestHeadPower = Math.max(bestHeadPower, 3);
+                skullRechargeBonus += 3;
+                skullPowerBonus += 3;
             } else if (above.is(WitcheryBlocks.CANDELABRA.get())) {
-                bestCandleRecharge = Math.max(bestCandleRecharge, 2);
+                candleRechargeBonus = Math.max(candleRechargeBonus, 2);
             } else if (above.is(Blocks.TORCH) || above.is(Blocks.WALL_TORCH)) {
-                bestCandleRecharge = Math.max(bestCandleRecharge, 1);
+                candleRechargeBonus = Math.max(candleRechargeBonus, 1);
             } else if (above.is(WitcheryBlocks.CHALICE.get())) {
-                bestChalicePower = Math.max(bestChalicePower, above.getValue(ChaliceBlock.FILLED) ? 2 : 1);
+                chalicePowerBonus = Math.max(chalicePowerBonus, above.getValue(ChaliceBlock.FILLED) ? 2 : 1);
             } else if (above.getBlock() instanceof PlacedItemBlock
                     && level.getBlockEntity(altarPos.above()) instanceof PlacedItemBlockEntity placedItem) {
                 if (placedItem.getStack().getItem() instanceof ArthanaItem) {
@@ -304,8 +310,8 @@ public class AltarBlockEntity extends BlockEntity {
         }
 
         return new UpgradeInfo(
-                1 + bestHeadPower + bestChalicePower,
-                1 + bestHeadRecharge + bestCandleRecharge,
+                1 + skullPowerBonus + chalicePowerBonus,
+                1 + skullRechargeBonus + candleRechargeBonus,
                 arthanaFound ? 2 : 1,
                 mysticBranchFound ? 1 : 0
         );

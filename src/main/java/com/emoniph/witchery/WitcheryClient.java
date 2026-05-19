@@ -106,6 +106,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.FETISH.get(),          FetishRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.COFFIN.get(),          CoffinRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.PLACED_ITEM.get(),     PlacedItemRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.OWL.get(),             OwlFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FAMILIAR_CAT.get(),    CatFamiliarRenderer::new);

@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "witchery:block/blood_rose" }
+    "full=false": { "model": "witchery:block/blood_rose" },
+    "full=true": { "model": "witchery:block/blood_rose_full" }
   }
 }

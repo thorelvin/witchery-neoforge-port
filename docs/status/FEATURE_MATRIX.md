@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-18 (Sprints 1-10 plus ritual mechanics/doc sync)
+Last reconciled: 2026-05-19 (Sprints 1-10 plus ritual mechanics/doc sync)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -17,7 +17,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 | Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored |
 | Distillery | Done | Altar-powered; jar requirements; up to 4 outputs; core recipes pushed back toward original |
 | Spinning Wheel | Done | 5-slot altar-powered modifier wheel; fibre + modifiers restored |
-| Altar power system | Done | Validated 6-block altar, 14-block scan radius, and artifact bonuses restored closer to original |
+| Altar power system | Done | Validated 6-block altar, 14-block scan radius, cumulative skull bonuses, chalice/Arthana/Mystic Branch bonuses, and missing natural power sources restored closer to original |
 | Brazier recipes | Done | 13 recipes: 3 entity summons, 5 pulsing auras, 5 one-shot buffs |
 | Coffin | Done | 2-block bed-like; vampire day-sleep; OPEN lid; BESR model |
 | Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding |
@@ -37,13 +37,13 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 |---|---:|---|
 | Chalk item | Done | 4 variants: ritual, golden, otherwhere, infernal |
 | Circle detection | Done | SMALL 3x3, MEDIUM 5x5, LARGE 7x7; `witchery:chalk_circles` tag |
-| Ritual execution | Partial | Ingredient-dispatched; circles persist; ingredients consume only on success; staged ticker restored for Storm + Rain of Toads |
-| Small-circle rites | Done | Infusion, familiar binding, blessing, total eclipse, beastial call, transposition, prior incarnation, cloak, cleansing, waystone binding |
-| Medium-circle rites | Done | Summoning, fertility, charging, Creatures of Night, Sky's Wrath, Sanctity, Imprisonment, Infernal Power, Silent Step, waystone pull |
-| Large-circle rites | Done | Forest, Broiling, Moving Earth, Broken Earth, Protection, Curse of the Wolf, Dragon's Fury, Rain, Manifestation, Hellgate, Torment summoning, Fetish binding, 10 taglock curses, Crater, Blight |
+| Ritual execution | Partial | Ingredient-dispatched; circles persist; ingredients consume only on success; staged ticker restored for Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Protection, Sanctity, and Imprisonment; active rites now stop when the sustaining circle is broken, do not stack on one center, and verify their own required ring size directly; the protection-family upkeep ratios now track the original fractional altar drain more closely, offline/invalid taglock targets no longer burn the taglock for curses and Transposition Pull, and the dispatcher now enforces a growing set of ritual/infernal/otherwhere chalk-family gates instead of treating all chalk variants as interchangeable |
+| Small-circle rites | Done | Infusion, blessing, total eclipse, transposition, prior incarnation now infernal-gated again, infernal blindness now uses the original area-rite behavior again, small infernal witch summoning is restored through a representative `diamond_vapour` route with obstruction checks, Ice Shell is restored as a staged coven-scaled hollow ice sphere through a representative `frozen_heart` route, Glyphic Transformation is restored through dropped chalk family/stack-size selection, cloak, cleansing, waystone binding now ritual-gated again, Manifestation now routes through otherwhere chalk again, and small Raise Column |
+| Medium-circle rites | Done | Summoning now uses a long-running creature-allure rite again; Rain of Toads now routes to its staged coven rite again; medium Raise Column is staged again; Sanctity and Imprisonment now sustain altar-fed repulsive/attractive circles again; the monster-only and portable Protection barrier variants now exist again through the modern ingredient dispatcher; Forestation is back on the medium ritual ring instead of the wrong large route; familiar binding/calling now live on the medium ritual ring instead of the wrong small route; infernal Blight now uses its original area/world effect again instead of a single-target curse; medium infernal wither summoning is restored through a representative `wither_skeleton_skull` route with obstruction checks; fertility, charging, Creatures of Night, Sky's Wrath, Infernal Power, Silent Step, waystone pull |
+| Large-circle rites | Done | Broiling, Moving Earth now follows a staged earth-parting trench closer to old Part Earth, Broken Earth, large Raise Column, staged Crater, Protection now conjures a sustained barrier dome again, the animal-calling Beastial/Call Beasts behavior is back on a large otherwhere route instead of a small generic one, large infernal imp summoning is restored through a representative `refined_evil` route with a coven check, large infernal demon summoning is restored through a representative `tormented_twine` route, Curse of the Wolf, Dragon's Fury, Rain, Hellgate, Torment summoning, Fetish binding, 10 taglock curses, Blight |
 | Chalk variants | Done | All four done |
 | Glyph blocks | Done | CIRCLE, CIRCLE_GLYPH, CIRCLE_OTHERWHERE, CIRCLE_INFERNAL |
-| Full rite roster | Partial | About 30 done; core roster present, but full 1.7.10 upkeep/refund parity is still incomplete |
+| Full rite roster | Partial | About 30 done; core roster present, several missing storm/night/day activation traits are restored again, infernal-vs-ritual-vs-otherwhere chalk-family gating has started coming back for the single-circle dispatcher, active rites now sustain against their exact ring size instead of a first-match re-detect, Manifestation plus the restored witch/imp/wither/demon summon rites, small Ice Shell, and Glyphic Transformation are reachable again through the modern dispatcher, and day/night checks use tighter windows closer to original behavior, but full 1.7.10 upkeep/refund, glyph-family, and recipe-registry parity is still incomplete |
 | Circle talisman | Done | Store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4) |
 
 ---
@@ -53,11 +53,12 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Feature | Status | Notes |
 |---|---:|---|
 | Poppet binding | Done | UUID/name stored via modern item data |
-| Taglock Kit | Done | Collects UUID+name from right-clicked player |
+| Taglock Kit | Done | Collects UUID+name from right-clicked players again and can now also pull stored samples from Blood Rose and Leech Chest; split-stack handling restored closer to original |
+| Leech Chest | Partial | 27-slot storage, recent-player queue, Taglock Kit extraction, and stored-player block-drop persistence are restored closer to original; broader in-game parity verification is still open |
 | Protection poppets | Done | Death, earth, water, fire, hunger, voodoo, poppet-shield |
 | Offensive poppets | Done | Voodoo and Vampiric implemented |
 | Tool / Armor protection poppets | Done | Tool: repairs held tool; Armor: repairs worn armor |
-| Poppet Shelf | Done | 9-slot container; radius scan on death/damage |
+| Poppet Shelf | Done | 9-slot poppet-only shelf; bound-poppet lookup now scans server shelves again and shelves with bound poppets keep their chunk loaded so protection can still trigger away from the player |
 | Basic sympathetic poppet | Done | Carried in inventory: mirrors damage taken to bound target (5 charges; consumed after 5 hits; creepy skeleton-rattle sound) |
 | Curse of Corrupt Poppet | Not started | Requires cat familiar; not implemented |
 
@@ -73,9 +74,9 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Spirit inventory rules | Done | Inventory saved/restored; Icy Needle + Mutandis transfer |
 | Dream/nightmare roll | Done | Player data; nightmare spawns Nightmare entities |
 | Spirit entity | Done | Passive flying mob; drops Subdued Spirit |
-| Nightmare entity | Done | Spawn on nightmare entry; teleports to player; 60% respawn |
-| Wispy/Disturbed Cotton | Done | Biome features in Spirit World + rare overworld |
-| Dream Weaver (Dream Catcher) | Done | 5 weave effects applied on wake via SleepFinishedTimeEvent |
+| Nightmare entity | Done | Spawn on nightmare entry; teleports to player; replacement pressure now follows the victim-bound delayed respawn loop again |
+| Wispy/Disturbed Cotton | Partial | Spreading bush behavior, nightmare harvest swap, Spirit World placement, and disturbed->wispy Flowing Spirit cleansing restored; disturbed cotton still remains a placeable block in the port |
+| Dream Weaver (Dream Catcher) | Done | 5 weave effects applied on wake; buff arming follows a configurable sleep threshold again; Spirit World nightmare/demonic scans now only respect the `Nightmares` weave again, and wall placement uses the clicked face like the old hanging block |
 | Crystal Ball scrying | Done | 12 predictions; 500 altar power; 5s cooldown |
 | Rite of Manifestation | Deferred | Spectral-overworld form deferred |
 
@@ -129,7 +130,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Dimension | Status | Notes |
 |---|---:|---|
-| Spirit World | Partial | Entry/exit/inventory; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; dynamic fog (dream/nightmare/demonic); missing: health/hunger save-restore, Corpse entity, Demonic events, Flowing Spirit effects, Spirit Portal |
+| Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; wild/void bramble danger behavior restored; missing: Spirit Portal verification |
 | Torment | Partial | Boss loop complete; spec-correct maze (6 DFS levels Y=10-85, Force walls, TormentStone floor, 1% mycelium, portal at cell 30,30, 3 refilling chests per level); dimension fixed (has_ceiling=false, red sky, no spawns); TormentHelper entry/exit; Hellgate rite updated |
 | Mirror World | Not started | Not started - dark blue fog, reflected overworld terrain, hostile player clones |
 
@@ -141,7 +142,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 |---|---:|---|
 | Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); MOTION_BLOCKING_NO_LEAVES heightmap |
 | Rowan berries | Done | Loot/drop chain |
-| Wild magical plants | Done | All 10 plants; biome modifiers; fixed mayPlaceOn |
+| Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage, spanish moss fast growth, grassper item stash, glowglobe light/particles, and leaping lily buffs are now restored closer to original, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks, door (UUID-locked + key + keyring), stairs, slab registered |
 | Ice block family | Done | Ice Door, Fence, Gate, Pressure Plate registered (created by Brew of Ice World - deferred) |
 | Witch hut / abandoned shack | Done | 7x7 hut; Coven Witch; loot chest |

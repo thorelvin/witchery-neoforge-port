@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.DreamWeaveType;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
@@ -35,12 +36,20 @@ public class DreamCatcherBlockEntity extends BlockEntity {
     // ── Weave access ──────────────────────────────────────────────────────────
 
     public @Nullable DreamWeaveType getWeave() { return weave; }
+    public boolean hasPendingBuff() { return buffPending; }
 
     public void setWeave(@Nullable DreamWeaveType w) {
         this.weave = w;
         setChanged();
         if (level != null && !level.isClientSide())
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    public void consumePendingBuff(ServerLevel level) {
+        if (!buffPending || weave == null) return;
+        applyEffectsToNearby(level);
+        buffPending = false;
+        setChanged();
     }
 
     // ── Server tick ───────────────────────────────────────────────────────────
@@ -56,8 +65,7 @@ public class DreamCatcherBlockEntity extends BlockEntity {
 
         if (be.buffPending) {
             if ((level.getDayTime() % 24000 < 13000)) {
-                be.applyEffectsToNearby(level);
-                be.buffPending = false;
+                be.consumePendingBuff(level);
             }
             return;
         }
@@ -70,9 +78,12 @@ public class DreamCatcherBlockEntity extends BlockEntity {
     private static boolean areEnoughPlayersAsleep(ServerLevel level) {
         List<net.minecraft.server.level.ServerPlayer> players = level.players();
         if (players.isEmpty()) return false;
+        if ((level.getDayTime() % 24000L) < 13000L) return false;
+
         long sleeping = players.stream().filter(net.minecraft.world.entity.LivingEntity::isSleeping).count();
-        // 50% threshold matching vanilla default playersSleepingPercentage
-        return sleeping > 0 && sleeping * 2 >= players.size();
+        int percent = WitcheryConfig.PLAYERS_SLEEPING_PERCENT_FOR_BUFF.get();
+        int threshold = Math.max(1, (int) Math.ceil(players.size() * (percent / 100.0)));
+        return sleeping >= threshold;
     }
 
     // ── Effect application ────────────────────────────────────────────────────

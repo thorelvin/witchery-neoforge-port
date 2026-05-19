@@ -1,0 +1,111 @@
+package com.emoniph.witchery.blocks.entity;
+
+import com.emoniph.witchery.blocks.BloodRoseBlock;
+import com.emoniph.witchery.init.WitcheryBlockEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public class BloodRoseBlockEntity extends BlockEntity {
+
+    private static final String KEY_UUID = "StoredUUID";
+    private static final String KEY_NAME = "StoredName";
+
+    @Nullable
+    private UUID storedUuid;
+    private String storedName = "";
+
+    public BloodRoseBlockEntity(BlockPos pos, BlockState state) {
+        super(WitcheryBlockEntities.BLOOD_ROSE.get(), pos, state);
+    }
+
+    public boolean hasStoredPlayer() {
+        return storedUuid != null && !storedName.isEmpty();
+    }
+
+    public void storePlayer(Player player) {
+        UUID uuid = player.getUUID();
+        String name = player.getName().getString();
+        if (uuid.equals(storedUuid) && name.equals(storedName)) {
+            return;
+        }
+        storedUuid = uuid;
+        storedName = name;
+        sync(true);
+    }
+
+    public Optional<StoredPlayer> drainStoredPlayer() {
+        if (!hasStoredPlayer()) {
+            return Optional.empty();
+        }
+        StoredPlayer result = new StoredPlayer(storedUuid, storedName);
+        storedUuid = null;
+        storedName = "";
+        sync(false);
+        return Optional.of(result);
+    }
+
+    private void sync(boolean filled) {
+        setChanged();
+        if (level == null) {
+            return;
+        }
+        BlockState state = getBlockState();
+        if (state.hasProperty(BloodRoseBlock.FULL) && state.getValue(BloodRoseBlock.FULL) != filled) {
+            level.setBlock(worldPosition, state.setValue(BloodRoseBlock.FULL, filled), 3);
+        } else {
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
+    protected void saveAdditional(ValueOutput tag) {
+        super.saveAdditional(tag);
+        if (storedUuid != null) {
+            tag.putString(KEY_UUID, storedUuid.toString());
+        }
+        if (!storedName.isEmpty()) {
+            tag.putString(KEY_NAME, storedName);
+        }
+    }
+
+    @Override
+    protected void loadAdditional(ValueInput tag) {
+        super.loadAdditional(tag);
+        storedUuid = null;
+        String uuidString = tag.getStringOr(KEY_UUID, "");
+        if (!uuidString.isEmpty()) {
+            try {
+                storedUuid = UUID.fromString(uuidString);
+            } catch (IllegalArgumentException ignored) {
+                storedUuid = null;
+            }
+        }
+        storedName = tag.getStringOr(KEY_NAME, "");
+    }
+
+    public record StoredPlayer(UUID uuid, String name) {}
+}

@@ -20,26 +20,6 @@ public class PentacleItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        Level level = ctx.getLevel();
-        BlockPos clickedPos = ctx.getClickedPos();
-        Direction face = ctx.getClickedFace();
-
-        if (face != Direction.UP) return InteractionResult.PASS;
-        if (!level.getBlockState(clickedPos).is(WitcheryBlocks.ALTAR.get())) return InteractionResult.PASS;
-
-        BlockPos above = clickedPos.above();
-        if (!level.getBlockState(above).isAir()) return InteractionResult.PASS;
-
-        if (!level.isClientSide()) {
-            level.setBlock(above, WitcheryBlocks.PLACED_ITEM.get().defaultBlockState(), 3);
-            if (level.getBlockEntity(above) instanceof PlacedItemBlockEntity be) {
-                ItemStack toPlace = ctx.getItemInHand().copyWithCount(1);
-                be.setStack(toPlace);
-                level.sendBlockUpdated(above, level.getBlockState(above), level.getBlockState(above), 3);
-            }
-            if (!ctx.getPlayer().getAbilities().instabuild)
-                ctx.getItemInHand().shrink(1);
-        }
-        return InteractionResult.SUCCESS;
+        return AltarPlacedItemSupport.placeOnAltar(ctx);
     }
 }

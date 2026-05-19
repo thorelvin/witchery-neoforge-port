@@ -1,6 +1,7 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
@@ -8,6 +9,7 @@ import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
+import com.emoniph.witchery.events.PoppetEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
@@ -25,13 +27,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.player.Player;
@@ -69,29 +75,57 @@ import java.util.Set;
 import java.util.UUID;
 
 public class RitualExecutor {
+    private static final int VARIANT_OTHERWHERE = 2;
+    private static final int VARIANT_INFERNAL = 3;
+    private static final int VARIANT_RITUAL = 4;
+
     private static final int RITUAL_PULSE_INTERVAL = 30;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
 
     private enum ActiveRitualType {
         WEATHER_CALL_STORM,
-        RAIN_OF_TOADS
+        ICE_SHELL,
+        RAIN_OF_TOADS,
+        CALL_CREATURES,
+        MOVING_EARTH,
+        RAISE_COLUMN,
+        CRATER,
+        PROTECTION_BARRIER_MONSTERS,
+        PROTECTION_BARRIER_PORTABLE,
+        PROTECTION_BARRIER,
+        SANCTITY_CIRCLE,
+        IMPRISONMENT_CIRCLE
     }
 
     private static final class ActiveRitual {
         private final ActiveRitualType type;
         private final BlockPos center;
+        private final RitualCircleDetector.CircleSize circleSize;
         private final int minRadius;
         private final int maxRadius;
         private final int targetStage;
+        private final int pulseInterval;
+        private final int covenSize;
+        private final float upkeepCost;
+        private final List<BlockPos> path = new ArrayList<>();
+        private final int heading;
         private int stage;
         private long nextGameTime;
+        private float upkeepDebt;
 
-        private ActiveRitual(ActiveRitualType type, BlockPos center, int minRadius, int maxRadius, int targetStage, long nextGameTime) {
+        private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
+                             int minRadius, int maxRadius, int targetStage, int pulseInterval,
+                             int covenSize, float upkeepCost, int heading, long nextGameTime) {
             this.type = type;
             this.center = center.immutable();
+            this.circleSize = circleSize;
             this.minRadius = minRadius;
             this.maxRadius = maxRadius;
             this.targetStage = targetStage;
+            this.pulseInterval = pulseInterval;
+            this.covenSize = covenSize;
+            this.upkeepCost = upkeepCost;
+            this.heading = heading;
             this.nextGameTime = nextGameTime;
         }
     }
@@ -103,16 +137,30 @@ public class RitualExecutor {
      */
     public static boolean execute(Player player, Level level, BlockPos floorCenter,
                                   RitualCircleDetector.DetectionResult result, ItemStack ingredient) {
+        if (isGlyphicTransformationChalk(ingredient)) {
+            return riteOfGlyphicTransformation(player, level, floorCenter, ingredient);
+        }
+        int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
         return switch (result.size()) {
-            case SMALL -> dispatchSmall(player, level, floorCenter, ingredient);
-            case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient);
-            case LARGE -> dispatchLarge(player, level, floorCenter, ingredient);
+            case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
+            case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
+            case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
         };
+    }
+
+    private static boolean hasVariant(int currentVariant, int requiredVariant) {
+        return currentVariant == requiredVariant;
+    }
+
+    private static boolean isGlyphicTransformationChalk(ItemStack stack) {
+        return stack.is(WitcheryItems.CHALK.get())
+                || stack.is(WitcheryItems.CHALK_OTHERWHERE.get())
+                || stack.is(WitcheryItems.CHALK_INFERNAL.get());
     }
 
     // ── Small ring dispatch ────────────────────────────────────────────────────
 
-    private static boolean dispatchSmall(Player player, Level level, BlockPos center, ItemStack item) {
+    private static boolean dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         // Infusion brew bases take priority — each grants a specific infusion type
         if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())) {
             riteOfInfusion(player, level, center, InfusionType.LIGHT);
@@ -126,28 +174,29 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
             riteOfInfusion(player, level, center, InfusionType.INFERNAL);
             return true;
-        } else if (item.is(Items.FEATHER)) {
-            riteOfBindFamiliar(player, level, center, "owl");
-            return true;
-        } else if (item.is(Items.COD) || item.is(Items.SALMON)) {
-            riteOfBindFamiliar(player, level, center, "cat");
-            return true;
-        } else if (item.is(Items.SLIME_BALL)) {
-            riteOfBindFamiliar(player, level, center, "toad");
-            return true;
-        } else if (item.is(Items.COAL) || item.is(Items.COAL_BLOCK) || item.is(Items.BLACK_DYE)) {
+        } else if ((item.is(Items.COAL) || item.is(Items.COAL_BLOCK) || item.is(Items.BLACK_DYE))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTotalEclipse(player, level, center);
             return true;
-        } else if (item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE)) {
-            riteOfBeastialCall(player, level, center);
+        } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            riteOfBlindness(player, level, center);
             return true;
-        } else if (item.is(WitcheryItems.WAYSTONE.get()) && !WaystoneItem.isBound(item)) {
+        } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfSummonWitch(player, level, center);
+        } else if (item.is(WitcheryItems.WAYSTONE.get())
+                && !WaystoneItem.isBound(item)
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfBindWaystone(player, level, center);
-        } else if (item.is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(item)) {
+        } else if (item.is(WitcheryItems.WAYSTONE.get())
+                && WaystoneItem.isBound(item)
+                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return riteOfTranspositionToWaystone(player, level, center);
+        } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
+            riteOfManifestationDream(player, level, center);
+            return true;
         } else if (item.is(Items.ENDER_PEARL)) {
             return riteOfTransposition(player, level, center);
-        } else if (item.is(Items.ROTTEN_FLESH)) {
+        } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfPriorIncarnation(player, level, center);
         } else if (item.is(Items.INK_SAC)) {
             riteOfTheCloak(player, level, center);
@@ -155,25 +204,44 @@ public class RitualExecutor {
         } else if (item.is(Items.DIAMOND)) {
             riteOfCleansing(player, level, center);
             return true;
-        } else if (item.is(Items.GLASS_BOTTLE)) {
-            return riteOfCallFamiliar(player, level, center);
-        } else if (item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET)) {
+        } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
+            return riteOfIceShell(player, level, center);
+        } else if ((item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfWeatherCallStorm(player, level, center);
-        } else if (item.is(Items.SUGAR)) {
+        } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfCookItem(player, level, center);
             return true;
+        } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
+            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL);
         } else {
-            // No ingredient or unrecognised — basic blessing effect
-            riteOfBlessing(player, level, center);
+            if (item.isEmpty()) {
+                riteOfBlessing(player, level, center);
+                return true;
+            }
             return false;
         }
     }
 
     // ── Medium ring dispatch ───────────────────────────────────────────────────
 
-    private static boolean dispatchMedium(Player player, Level level, BlockPos center, ItemStack item) {
+    private static boolean dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         if (item.is(Items.BONE_MEAL) || item.is(Items.BONE)) {
             riteOfFertility(player, level, center);
+            return true;
+        } else if (item.is(Items.FEATHER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfBindFamiliar(player, level, center, "owl");
+            return true;
+        } else if ((item.is(Items.COD) || item.is(Items.SALMON)) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfBindFamiliar(player, level, center, "cat");
+            return true;
+        } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfBindFamiliar(player, level, center, "toad");
+            return true;
+        } else if (item.is(Items.GLASS_BOTTLE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfCallFamiliar(player, level, center);
+        } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfTheForest(player, level, center);
             return true;
         } else if (item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK)) {
             riteOfCharging(player, level, center);
@@ -181,65 +249,76 @@ public class RitualExecutor {
         } else if (item.is(Items.GUNPOWDER)) {
             riteOfSkysWrath(player, level, center);
             return true;
-        } else if (item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK)) {
+        } else if ((item.is(Blocks.COBWEB.asItem()) || item.is(WitcheryItems.DENSE_WEB.get()))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_MONSTERS, 4, 5);
+        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_PORTABLE, 6, 4);
+        } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfSanctity(player, level, center);
             return true;
-        } else if (item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN)) {
+        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfImprisonment(player, level, center);
             return true;
         } else if (item.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())) {
             riteOfInfernalPower(player, level, center);
             return true;
-        } else if (item.is(Items.SPIDER_EYE) || item.is(Items.FERMENTED_SPIDER_EYE)) {
+        } else if (item.is(Items.SPIDER_EYE)) {
             riteOfTheSilentStep(player, level, center);
             return true;
-        } else if (item.is(Items.BLAZE_POWDER)) {
-            return riteOfCurseBlindness(player, level, center);
-        } else if (item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN)) {
-            return riteOfCurseRainingToads(player, level, center);
+        } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
+                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfRainOfToads(player, level, center);
         } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
-            riteOfRaiseColumn(player, level, center);
-            return true;
-        } else if (item.is(Items.MAGMA_CREAM)) {
+            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM);
+        } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseCreature(player, level, center);
-        } else if (item.is(Items.WITHER_ROSE)) {
-            return riteOfCurseBlight(player, level, center);
-        } else if (item.is(Items.CHORUS_FRUIT)) {
+        } else if (item.is(Items.WITHER_SKELETON_SKULL) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfSummonWither(player, level, center);
+        } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            riteOfBlight(player, level, center);
+            return true;
+        } else if (item.is(Items.CHORUS_FRUIT) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseSinking(player, level, center);
-        } else if (item.is(Items.PUFFERFISH)) {
+        } else if (item.is(Items.PUFFERFISH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseOverheating(player, level, center);
-        } else if (item.is(Items.FERMENTED_SPIDER_EYE)) {
+        } else if (item.is(Items.FERMENTED_SPIDER_EYE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseInsanity(player, level, center);
         } else if (item.is(Items.GOLD_NUGGET)) {
             return riteOfCurseMisfortune(player, level, center);
         } else if (item.is(WitcheryItems.DEMON_HEART.get())) {
             return riteOfCreaturesOfNightTaglock(player, level, center);
+        } else if (item.is(Items.MILK_BUCKET)) {
+            return riteOfSummoning(player, level, center);
         } else {
-            riteOfSummoning(player, level, center);
-            return !item.isEmpty();
+            return false;
         }
     }
 
     // ── Large ring dispatch ────────────────────────────────────────────────────
 
-    private static boolean dispatchLarge(Player player, Level level, BlockPos center, ItemStack item) {
-        if (item.is(ItemTags.SAPLINGS)) {
-            riteOfTheForest(player, level, center);
-            return true;
-        } else if (isRawFood(item, level)) {
+    private static boolean dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+        if (isRawFood(item, level)) {
             riteOfBroiling(player, level, center);
             return true;
-        } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
-            riteOfMovingEarth(player, level, center);
+        } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
+                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
+            riteOfBeastialCall(player, level, center);
             return true;
+        } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
+            return riteOfMovingEarth(player, level, center);
         } else if (item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL)) {
             riteOfBrokenEarth(player, level, center);
             return true;
+        } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
+            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE);
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(item)) {
             return riteOfTranspositionPull(player, level, center);
         } else if (item.is(Items.NETHER_STAR)) {
             return riteOfCurseHellOnEarth(player, level, center);
-        } else if (item.is(Items.STRING)) {
+        } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfCurseWakingNightmare(player, level, center);
         } else if (item.is(Items.BONE) || item.is(Items.BONE_BLOCK)) {
             return riteOfCurseOfTheWolfTaglock(player, level, center);
@@ -250,6 +329,10 @@ public class RitualExecutor {
             return riteOfRain(player, level, center);
         } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())) {
             return riteOfEnchantBroom(player, level, center);
+        } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfSummonImp(player, level, center);
+        } else if (item.is(WitcheryItems.TORMENTED_TWINE.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            return riteOfSummonDemon(player, level, center);
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
             return riteOfHellgate(player, level, center);
         } else if (item.is(Items.SKELETON_SKULL) || item.is(Items.WITHER_SKELETON_SKULL)) {
@@ -260,18 +343,16 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.CIRCLE_TALISMAN.get()) && CircleTalismanItem.getCircleData(item) == 0) {
             riteOfBindCircleToTalisman(player, level, center);
             return true;
-        } else if (item.is(Items.WITHER_ROSE) || item.is(Items.NETHER_WART)) {
-            riteOfBlight(player, level, center);
-            return true;
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
             return true;
-        } else if (isFetishItem(item)) {
+        } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfBindSpiritsToFetish(player, level, center, item);
+        } else if ((item.is(Blocks.OBSIDIAN.asItem()) || item.is(Items.GLOWSTONE_DUST))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfProtection(player, level, center);
         } else {
-            // Default large-circle rite: protection barrier
-            riteOfProtection(player, level, center);
-            return !item.isEmpty();
+            return false;
         }
     }
 
@@ -348,6 +429,9 @@ public class RitualExecutor {
 
     /** Rite of Total Eclipse — forces midnight on the server. */
     private static void riteOfTotalEclipse(Player player, Level level, BlockPos center) {
+        if (!requireDay(player, level, center)) {
+            return;
+        }
         if (level instanceof ServerLevel sl) {
             sl.setDayTime(18000L); // midnight
         }
@@ -376,18 +460,18 @@ public class RitualExecutor {
     // MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of Summoning — Strength II + Night Vision, cosmetic lightning. */
-    private static void riteOfSummoning(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,  1200, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,  1200, 0));
-
-        if (level instanceof ServerLevel sl) {
-            LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, sl);
-            bolt.setPos(center.getX() + 0.5, (double)(center.getY() + 1), center.getZ() + 0.5);
-            bolt.setVisualOnly(true);
-            sl.addFreshEntity(bolt);
+    /** Rite of Summoning — a long-running coven rite that allures nearby creatures in pulses. */
+    private static boolean riteOfSummoning(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 3)) return false;
+        if (!queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES, RitualCircleDetector.CircleSize.MEDIUM,
+                center, 0, 0, 250, 60)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
         }
-        success(player, level, center, "witchery.ritual.summoning.success", SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 3, 72);
+        success(player, level, center, "witchery.ritual.summoning.success",
+                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72);
+        return true;
     }
 
     /** Rite of Fertility — bone-meals all crops in 10-block radius; cures zombie villagers. */
@@ -482,14 +566,47 @@ public class RitualExecutor {
     }
 
     /** Rite of Protection — Fire Resistance + Resistance I + Absorption II for 5 minutes. */
-    private static void riteOfProtection(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,  6000, 0)); // 5min
-        player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 6000, 0)); // 5min
-        player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,        6000, 1)); // 5min, Absorption II
+    private static boolean riteOfProtection(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!hasNearbyRitualAltar(sl, center, 16)) {
+            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+            return false;
+        }
+        if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.LARGE,
+                center, 6, 6, 0, 20, 0, 1.4f, 0)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
 
-        success(player, level, center, "witchery.ritual.protection.success",
+        success(player, level, center, "witchery.ritual.protection.activated",
                 SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Protection cast at {} by {}", center, player.getName().getString());
+        WitcheryMod.LOGGER.info("Rite of Protection barrier raised at {} by {}", center, player.getName().getString());
+        return true;
+    }
+
+    private static boolean riteOfProtectionBarrier(Player player, Level level, BlockPos center,
+                                                   ActiveRitualType type, int radius, int height) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (type != ActiveRitualType.PROTECTION_BARRIER_PORTABLE && !hasNearbyRitualAltar(sl, center, 16)) {
+            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+            return false;
+        }
+
+        int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
+        float upkeepCost = switch (type) {
+            case PROTECTION_BARRIER_MONSTERS -> 1.2f;
+            case PROTECTION_BARRIER_PORTABLE -> 0.0f;
+            default -> 0.0f;
+        };
+        if (!queueActiveRitual(sl, type, RitualCircleDetector.CircleSize.MEDIUM, center, radius, height, targetStage, 20, 0, upkeepCost, 0)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.protection.activated",
+                SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
+        WitcheryMod.LOGGER.info("Rite of Protection variant {} raised at {} by {}", type, center, player.getName().getString());
+        return true;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -600,49 +717,36 @@ public class RitualExecutor {
         WitcheryMod.LOGGER.info("Rite of Sky's Wrath: {} strikes around {}", strikes, center);
     }
 
-    /** Rite of Sanctity — repels all hostile mobs 25 blocks away from the center. */
-    private static void riteOfSanctity(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        AABB area = new AABB(center).inflate(20);
-        List<Monster> mobs = sl.getEntitiesOfClass(Monster.class, area);
-        int pushed = 0;
-        for (Monster mob : mobs) {
-            double dx = mob.getX() - center.getX();
-            double dz = mob.getZ() - center.getZ();
-            double dist = Math.sqrt(dx * dx + dz * dz);
-            if (dist < 0.5) { dx = 1; dz = 0; dist = 1; }
-            double scale = 25.0 / dist;
-            mob.teleportTo(center.getX() + dx * scale, mob.getY(), center.getZ() + dz * scale);
-            mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200, 0));
-            pushed++;
+    /** Rite of Sanctity — sustains a repulsive protection circle around the rite. */
+    private static boolean riteOfSanctity(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!hasNearbyRitualAltar(sl, center, 16)) {
+            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+            return false;
         }
-        // Ward caster: Resistance II + Fire Resistance for 3 minutes
-        player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 3600, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,   3600, 0));
-        player.displayClientMessage(Component.translatable("witchery.ritual.sanctity.success", pushed), false);
-        success(player, level, center, null, SoundEvents.BEACON_ACTIVATE, 1.2f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Sanctity repelled {} mobs", pushed);
+        if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.MEDIUM, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+        success(player, level, center, "witchery.ritual.sanctity.activated",
+                SoundEvents.BEACON_ACTIVATE, 1.2f, 2, 48);
+        return true;
     }
 
-    /** Rite of Imprisonment — traps all hostile mobs inside the circle with heavy debuffs. */
-    private static void riteOfImprisonment(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        AABB area = new AABB(center).inflate(10);
-        List<Monster> mobs = sl.getEntitiesOfClass(Monster.class, area);
-        int trapped = 0;
-        for (Monster mob : mobs) {
-            // Teleport stray mobs back to center, then heavily debuff
-            mob.teleportTo(center.getX() + 0.5 + (sl.random.nextDouble() - 0.5) * 2,
-                           center.getY() + 1,
-                           center.getZ() + 0.5 + (sl.random.nextDouble() - 0.5) * 2);
-            mob.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 1200, 4)); // Slowness V
-            mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,           1200, 3));
-            mob.addEffect(new MobEffectInstance(MobEffects.GLOWING,            1200, 0));
-            trapped++;
+    /** Rite of Imprisonment — sustains an attractive circle that keeps creatures penned in. */
+    private static boolean riteOfImprisonment(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!hasNearbyRitualAltar(sl, center, 16)) {
+            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+            return false;
         }
-        player.displayClientMessage(Component.translatable("witchery.ritual.imprisonment.success", trapped), false);
-        success(player, level, center, null, SoundEvents.CHAIN_PLACE, 1f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Imprisonment trapped {} mobs", trapped);
+        if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.MEDIUM, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+        success(player, level, center, "witchery.ritual.imprisonment.activated",
+                SoundEvents.CHAIN_PLACE, 1f, 2, 48);
+        return true;
     }
 
     /** Curse of the Wolf — curses the caster with lycanthropy. Transforms at full moon. */
@@ -665,35 +769,17 @@ public class RitualExecutor {
     // M21 — LARGE rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of Moving Earth — raises a 5×5 surface column by 5 blocks. */
-    private static void riteOfMovingEarth(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        final int LIFT = 5, RADIUS = 2;
-        int lifted = 0;
-        for (int dx = -RADIUS; dx <= RADIUS; dx++) {
-            for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-                // Collect contiguous solid blocks downward from center.y-1
-                List<BlockState> column = new ArrayList<>();
-                for (int dy = -1; dy >= -12; dy--) {
-                    BlockState s = sl.getBlockState(center.offset(dx, dy, dz));
-                    if (s.isAir() || s.liquid()) break;
-                    column.add(s);
-                }
-                if (column.isEmpty()) continue;
-                // Place shifted upward (bottom→top to avoid overwriting)
-                for (int i = column.size() - 1; i >= 0; i--) {
-                    sl.setBlock(center.offset(dx, -1 - i + LIFT, dz), column.get(i), 3);
-                }
-                // Clear original positions
-                for (int i = 0; i < column.size(); i++) {
-                    sl.setBlock(center.offset(dx, -1 - i, dz), Blocks.AIR.defaultBlockState(), 3);
-                }
-                lifted += column.size();
-            }
+    /** Rite of Moving Earth — parts the earth in a staged trench, closer to the old Part Earth rite. */
+    private static boolean riteOfMovingEarth(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!queueActiveRitual(sl, ActiveRitualType.MOVING_EARTH, RitualCircleDetector.CircleSize.LARGE,
+                center, 1, 10, 60, 1, countNearbyCovenWitches(level, center), headingFromLook(player.getLookAngle()))) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
         }
         success(player, level, center, "witchery.ritual.moving_earth.success",
                 SoundEvents.ROOTED_DIRT_BREAK, 0.8f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Moving Earth raised {} blocks at {}", lifted, center);
+        return true;
     }
 
     /** Rite of Broken Earth — digs a 3-wide trench 20 blocks in the player's facing direction. */
@@ -798,6 +884,9 @@ public class RitualExecutor {
     /** Rite of Manifestation — sends the caster into the Dream World. */
     /** Rite of Infusion (Flying Ointment) — enchants the nearest broom within 5 blocks. */
     private static boolean riteOfEnchantBroom(Player player, Level level, BlockPos center) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
         if (!(level instanceof ServerLevel sl)) return false;
         AABB search = new AABB(center).inflate(5);
         List<com.emoniph.witchery.entity.BroomEntity> brooms =
@@ -899,11 +988,101 @@ public class RitualExecutor {
         return requireCoven(player, level, center, 4);
     }
 
-    private static boolean requireCoven(Player player, Level level, BlockPos center, int requiredSize) {
-        int covenSize = level.getEntitiesOfClass(
+    private static boolean requireThunderstorm(Player player, Level level, BlockPos center) {
+        if (level instanceof ServerLevel serverLevel && serverLevel.isThundering()) {
+            return true;
+        }
+        level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+        player.displayClientMessage(Component.translatable("witchery.rite.needstorm"), false);
+        return false;
+    }
+
+    private static boolean requireDay(Player player, Level level, BlockPos center) {
+        long time = level.getDayTime() % 24000L;
+        boolean isDay = time < 12300L;
+        if (isDay) {
+            return true;
+        }
+
+        level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+        player.displayClientMessage(Component.translatable("witchery.rite.needday"), false);
+        return false;
+    }
+
+    private static boolean requireNight(Player player, Level level, BlockPos center) {
+        long time = level.getDayTime() % 24000L;
+        boolean isNight = time >= 12300L && time < 23850L;
+        if (isNight) {
+            return true;
+        }
+
+        level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+        player.displayClientMessage(Component.translatable("witchery.rite.neednight"), false);
+        return false;
+    }
+
+    private static boolean requireNightOverworld(Player player, Level level, BlockPos center) {
+        if (!level.dimension().equals(Level.OVERWORLD)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.wrongdimension"), false);
+            return false;
+        }
+
+        if (requireNight(player, level, center)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static int countNearbyCovenWitches(Level level, BlockPos center) {
+        return level.getEntitiesOfClass(
                 com.emoniph.witchery.entity.CovenWitchEntity.class,
                 new AABB(center).inflate(16.0)
         ).size();
+    }
+
+    private static boolean hasNearbyRitualAltar(ServerLevel level, BlockPos center, int radius) {
+        AltarBlockEntity altar = findNearbyRitualAltar(level, center, radius);
+        return altar != null && altar.hasValidStructure() && altar.getPower() > 0;
+    }
+
+    private static boolean consumeNearbyRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
+        AltarBlockEntity altar = findNearbyRitualAltar(level, center, radius);
+        return altar != null && altar.hasValidStructure() && altar.consumePower(powerCost);
+    }
+
+    private static boolean consumeNearbyRitualAltarPower(ServerLevel level, ActiveRitual ritual, int radius) {
+        if (ritual.upkeepCost <= 0.0f) {
+            return true;
+        }
+
+        ritual.upkeepDebt += ritual.upkeepCost;
+        int wholePower = Mth.floor(ritual.upkeepDebt);
+        if (wholePower <= 0) {
+            return hasNearbyRitualAltar(level, ritual.center, radius);
+        }
+
+        if (!consumeNearbyRitualAltarPower(level, ritual.center, radius, wholePower)) {
+            return false;
+        }
+
+        ritual.upkeepDebt -= wholePower;
+        return true;
+    }
+
+    private static AltarBlockEntity findNearbyRitualAltar(Level level, BlockPos center, int radius) {
+        for (BlockPos checkPos : BlockPos.betweenClosed(
+                center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            if (level.getBlockEntity(checkPos) instanceof AltarBlockEntity altar && altar.hasValidStructure()) {
+                return altar;
+            }
+        }
+        return null;
+    }
+
+    private static boolean requireCoven(Player player, Level level, BlockPos center, int requiredSize) {
+        int covenSize = countNearbyCovenWitches(level, center);
         if (covenSize >= requiredSize) {
             return true;
         }
@@ -925,15 +1104,29 @@ public class RitualExecutor {
     }
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
+            return false;
+        }
+
         long gameTime = level.getGameTime();
         if (gameTime < ritual.nextGameTime) {
             return true;
         }
 
-        ritual.nextGameTime = gameTime + RITUAL_PULSE_INTERVAL;
+        ritual.nextGameTime = gameTime + ritual.pulseInterval;
         return switch (ritual.type) {
             case WEATHER_CALL_STORM -> tickStormRitual(level, ritual);
+            case ICE_SHELL -> tickIceShellRitual(level, ritual);
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
+            case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
+            case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
+            case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
+            case CRATER -> tickCraterRitual(level, ritual);
+            case PROTECTION_BARRIER_MONSTERS -> tickProtectionBarrierMonstersRitual(level, ritual);
+            case PROTECTION_BARRIER_PORTABLE -> tickProtectionBarrierPortableRitual(level, ritual);
+            case PROTECTION_BARRIER -> tickProtectionBarrierRitual(level, ritual);
+            case SANCTITY_CIRCLE -> tickSanctityCircleRitual(level, ritual);
+            case IMPRISONMENT_CIRCLE -> tickImprisonmentCircleRitual(level, ritual);
         };
     }
 
@@ -966,6 +1159,31 @@ public class RitualExecutor {
         return ritual.stage < ritual.targetStage;
     }
 
+    private static boolean tickIceShellRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 1.5f);
+        }
+
+        int maxRadius = ritual.covenSize <= 2
+                ? ritual.minRadius
+                : ritual.covenSize <= 5 ? Mth.floor(ritual.minRadius * 1.5f) : ritual.minRadius * 2;
+        int currentRadius = ritual.stage + 4;
+        if (currentRadius <= maxRadius && ritual.stage % 2 == 0) {
+            drawIceShellSphere(level, ritual.center, currentRadius, Blocks.ICE);
+            if (currentRadius > 2) {
+                drawIceShellSphere(level, ritual.center, currentRadius - 2, Blocks.AIR);
+            }
+            spawnRingParticles(level, ritual.center, currentRadius, 20);
+        }
+
+        if (currentRadius == maxRadius) {
+            clearIceShellInterior(level, ritual.center, maxRadius);
+        }
+
+        return ritual.stage <= ritual.targetStage && currentRadius < maxRadius;
+    }
+
     private static boolean tickRainOfToadsRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
         if (ritual.stage <= 3) {
@@ -986,9 +1204,220 @@ public class RitualExecutor {
         return ritual.stage < ritual.targetStage;
     }
 
-    private static void queueActiveRitual(ServerLevel level, ActiveRitualType type, BlockPos center, int minRadius, int maxRadius, int targetStage) {
-        ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>())
-                .add(new ActiveRitual(type, center, minRadius, maxRadius, targetStage, level.getGameTime() + RITUAL_PULSE_INTERVAL));
+    private static boolean tickCallCreaturesRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        allureCreatures(level, ritual.center, ritual.stage % 8);
+        return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickMovingEarthRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage < 20) {
+            return true;
+        }
+        if (ritual.path.isEmpty()) {
+            buildMovingEarthPath(level, ritual);
+        }
+
+        int carveStage = ritual.stage - 19;
+        int pathIndex = carveStage + 4;
+        if (pathIndex >= ritual.path.size()) {
+            return false;
+        }
+
+        BlockPos carvePos = ritual.path.get(pathIndex);
+        int width = ritual.minRadius + (ritual.covenSize > 2 ? 2 : 0) + (level.random.nextInt(3) == 0 ? 1 : 0);
+        int depth = ritual.maxRadius - 2 + level.random.nextInt(5);
+        carveMovingEarthCircle(level, carvePos, width, depth);
+        if (carveStage == 1 || carveStage % 10 == 0) {
+            spawnRingParticles(level, ritual.center, 3, 12);
+        }
+        return carveStage < ritual.path.size() - 5;
+    }
+
+    private static boolean tickRaiseColumnRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 0.8f);
+            spawnRingParticles(level, ritual.center, Math.max(ritual.minRadius, 3), 32);
+        }
+
+        int baseRadius = ritual.minRadius;
+        int height = ritual.maxRadius;
+        int effectiveRadius = baseRadius + ritual.covenSize * 2;
+        int airSpace = baseRadius * 2;
+
+        for (int y = ritual.center.getY() + airSpace; y >= ritual.center.getY() - height; y--) {
+            raiseColumnLayer(level, ritual.center, y, effectiveRadius, y == ritual.center.getY() - 1);
+        }
+
+        liftRaiseColumnEntities(level, ritual.center, effectiveRadius, airSpace);
+        return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickCraterRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 0.8f);
+            spawnRingParticles(level, ritual.center, Math.max(ritual.minRadius, 4), 24);
+        }
+
+        int radius = ritual.minRadius;
+        int height = ritual.maxRadius;
+        if (ritual.stage > height) {
+            return false;
+        }
+
+        for (int depth = 1; depth <= ritual.stage; depth++) {
+            float layerRadius = radius - (height - ritual.stage - 1 + depth) * radius / (float) height;
+            carveCraterLayer(level, ritual.center, ritual.center.getY() - depth, Math.max((int) Math.ceil(layerRadius), 1), radius);
+        }
+        return true;
+    }
+
+    private static boolean tickProtectionBarrierRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            return false;
+        }
+
+        ritual.stage++;
+        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, true);
+        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.center, ritual.minRadius, 16);
+        }
+        return ritual.targetStage <= 0 || ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickProtectionBarrierMonstersRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            return false;
+        }
+
+        ritual.stage++;
+        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, false);
+        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+        }
+        return true;
+    }
+
+    private static boolean tickProtectionBarrierPortableRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, true);
+        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+        }
+        return ritual.stage < ritual.targetStage;
+    }
+
+    private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {
+        int radiusSq = radius * radius;
+        int innerSq = Math.max(radius - 1, 0);
+        innerSq *= innerSq;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                int distSq = x * x + z * z;
+                if (distSq > radiusSq) {
+                    continue;
+                }
+
+                BlockPos floorPos = center.offset(x, -1, z);
+                com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, floorPos, 30, blocksPlayers);
+
+                BlockPos roofPos = center.offset(x, height, z);
+                com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, roofPos, 30, blocksPlayers);
+
+                if (distSq <= innerSq) {
+                    continue;
+                }
+
+                for (int y = 0; y < height; y++) {
+                    BlockPos wallPos = center.offset(x, y, z);
+                    com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, wallPos, 30, blocksPlayers);
+                }
+            }
+        }
+    }
+
+    private static boolean tickSanctityCircleRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            return false;
+        }
+
+        int repelled = 0;
+        AABB bounds = new AABB(ritual.center).inflate(ritual.minRadius);
+        for (Mob mob : level.getEntitiesOfClass(Mob.class, bounds)) {
+            if (mob instanceof EnderDragon) {
+                continue;
+            }
+            if (pushProtectionMob(mob, ritual.center, ritual.minRadius)) {
+                repelled++;
+            }
+        }
+        if (repelled > 0 && level.getGameTime() % 80L == 0L) {
+            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+        }
+        return true;
+    }
+
+    private static boolean tickImprisonmentCircleRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            return false;
+        }
+
+        int trapped = 0;
+        AABB bounds = new AABB(ritual.center).inflate(ritual.minRadius);
+        for (Mob mob : level.getEntitiesOfClass(Mob.class, bounds)) {
+            if (mob instanceof EnderDragon) {
+                continue;
+            }
+            if (pullProtectionMob(mob, ritual.center, ritual.minRadius)) {
+                mob.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 40, 1, true, false));
+                trapped++;
+            }
+        }
+        if (trapped > 0 && level.getGameTime() % 80L == 0L) {
+            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+        }
+        return true;
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage) {
+        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, RITUAL_PULSE_INTERVAL);
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage, int pulseInterval) {
+        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, pulseInterval, 0, 0.0f, 0);
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize) {
+        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, pulseInterval, covenSize, 0.0f, 0);
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, int heading) {
+        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, pulseInterval, covenSize, 0.0f, heading);
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading) {
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
+        boolean occupied = rituals.stream().anyMatch(active -> active.center.equals(center));
+        if (occupied) {
+            return false;
+        }
+
+        rituals.add(new ActiveRitual(type, center, circleSize, minRadius, maxRadius, targetStage, pulseInterval,
+                covenSize, upkeepCost, heading,
+                level.getGameTime() + pulseInterval));
+        return true;
     }
 
     private static void spawnRitualBolt(ServerLevel level, int minRadius, int maxRadius, BlockPos center) {
@@ -997,6 +1426,77 @@ public class RitualExecutor {
         LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         bolt.setPos(surface.getX() + 0.5, surface.getY(), surface.getZ() + 0.5);
         level.addFreshEntity(bolt);
+    }
+
+    private static void drawIceShellSphere(ServerLevel level, BlockPos center, int radius, Block block) {
+        int radiusSq = radius * radius;
+        int innerRadius = Math.max(radius - 1, 0);
+        int innerRadiusSq = innerRadius * innerRadius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    int distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq > radiusSq) {
+                        continue;
+                    }
+                    if (block != Blocks.AIR && distSq < innerRadiusSq) {
+                        continue;
+                    }
+
+                    BlockPos target = center.offset(dx, dy, dz);
+                    BlockState state = level.getBlockState(target);
+                    if (block == Blocks.AIR) {
+                        if (canIceShellClear(state)) {
+                            level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
+                        }
+                    } else if (canIceShellReplace(state)) {
+                        level.setBlockAndUpdate(target, block.defaultBlockState());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void clearIceShellInterior(ServerLevel level, BlockPos center, int radius) {
+        int innerRadius = Math.max(radius - 1, 0);
+        int innerRadiusSq = innerRadius * innerRadius;
+        for (int dx = -innerRadius; dx <= innerRadius; dx++) {
+            for (int dy = -innerRadius; dy <= innerRadius; dy++) {
+                for (int dz = -innerRadius; dz <= innerRadius; dz++) {
+                    int distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq > innerRadiusSq) {
+                        continue;
+                    }
+                    BlockPos target = center.offset(dx, dy, dz);
+                    BlockState state = level.getBlockState(target);
+                    if (canIceShellClear(state)) {
+                        level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean canIceShellReplace(BlockState state) {
+        return state.isAir()
+                || state.canBeReplaced()
+                || !state.getFluidState().isEmpty()
+                || state.is(Blocks.ICE)
+                || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE)
+                || state.is(Blocks.SNOW)
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.POWDER_SNOW);
+    }
+
+    private static boolean canIceShellClear(BlockState state) {
+        return !state.getFluidState().isEmpty()
+                || state.is(Blocks.ICE)
+                || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE)
+                || state.is(Blocks.SNOW)
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.POWDER_SNOW);
     }
 
     private static void spawnFallingToads(ServerLevel level, BlockPos center, int minRadius, int maxRadius, int count) {
@@ -1010,6 +1510,50 @@ public class RitualExecutor {
             toad.setPos(surface.getX() + 0.5, surface.getY() + 8 + level.random.nextInt(7), surface.getZ() + 0.5);
             level.addFreshEntity(toad);
         }
+    }
+
+    private static void allureCreatures(ServerLevel level, BlockPos center, int quadrant) {
+        AABB search = switch (quadrant) {
+            case 0 -> new AABB(center.getX(), center.getY() - 10.0, center.getZ() - 128.0,
+                    center.getX() + 128.0, center.getY(), center.getZ());
+            case 1 -> new AABB(center.getX() - 128.0, center.getY() - 10.0, center.getZ() - 128.0,
+                    center.getX(), center.getY(), center.getZ());
+            case 2 -> new AABB(center.getX(), center.getY() - 10.0, center.getZ(),
+                    center.getX() + 128.0, center.getY(), center.getZ() + 128.0);
+            case 3 -> new AABB(center.getX() - 128.0, center.getY() - 10.0, center.getZ(),
+                    center.getX(), center.getY(), center.getZ() + 128.0);
+            case 4 -> new AABB(center.getX() - 128.0, center.getY() + 1.0, center.getZ() - 128.0,
+                    center.getX(), center.getY() + 10.0, center.getZ());
+            case 5 -> new AABB(center.getX(), center.getY() + 1.0, center.getZ(),
+                    center.getX() + 128.0, center.getY() + 10.0, center.getZ() + 128.0);
+            case 6 -> new AABB(center.getX() - 128.0, center.getY() + 1.0, center.getZ(),
+                    center.getX(), center.getY() + 10.0, center.getZ() + 128.0);
+            default -> new AABB(center.getX(), center.getY() + 1.0, center.getZ() - 128.0,
+                    center.getX() + 128.0, center.getY() + 10.0, center.getZ());
+        };
+
+        int lured = 0;
+        for (Animal animal : level.getEntitiesOfClass(Animal.class, search, RitualExecutor::isSummoningCreature)) {
+            if (animal.distanceToSqr(center.getX(), center.getY(), center.getZ()) <= 32.0) {
+                continue;
+            }
+            animal.teleportTo(center.getX() - 2.0 + level.random.nextInt(5),
+                    center.getY(), center.getZ() - 2.0 + level.random.nextInt(5));
+            if (++lured >= 2) {
+                break;
+            }
+        }
+    }
+
+    private static boolean isSummoningCreature(Animal animal) {
+        EntityType<?> type = animal.getType();
+        return type == EntityType.PIG
+                || type == EntityType.CHICKEN
+                || type == EntityType.COW
+                || type == EntityType.SHEEP
+                || type == EntityType.MOOSHROOM
+                || type == EntityType.WOLF
+                || type == EntityType.OCELOT;
     }
 
     private static BlockPos randomRitualPos(ServerLevel level, BlockPos center, int minRadius, int maxRadius) {
@@ -1026,6 +1570,109 @@ public class RitualExecutor {
 
         return new BlockPos(center.getX() - maxRadius + ax, center.getY(), center.getZ() - maxRadius + az);
     }
+
+    private static void buildMovingEarthPath(ServerLevel level, ActiveRitual ritual) {
+        ritual.path.clear();
+        BlockPos cursor = ritual.center.below();
+        ritual.path.add(cursor);
+        int heading = ritual.heading;
+        for (int length = 0; length < ritual.targetStage - 1; length++) {
+            int probability = Math.max(20 - length / 2, 6);
+            MovingEarthStep next = nextMovingEarthStep(level, cursor, heading, probability);
+            cursor = next.pos();
+            heading = next.heading();
+            ritual.path.add(cursor);
+        }
+    }
+
+    private static void carveMovingEarthCircle(ServerLevel level, BlockPos center, int radius, int depth) {
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz > radiusSq) {
+                    continue;
+                }
+                carveMovingEarthColumn(level, center.offset(dx, 0, dz), depth);
+            }
+        }
+    }
+
+    private static void carveMovingEarthColumn(ServerLevel level, BlockPos center, int depth) {
+        for (int offset = 0; offset < depth; offset++) {
+            BlockPos pos = center.below(offset);
+            BlockState state = level.getBlockState(pos);
+            if (state.isAir() || state.liquid() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0f) {
+                continue;
+            }
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static MovingEarthStep nextMovingEarthStep(ServerLevel level, BlockPos current, int heading, int probability) {
+        int value = level.random.nextInt(probability);
+        return switch (heading) {
+            case 0 -> {
+                if (value == 0) yield new MovingEarthStep(current.north().east(), 1);
+                if (value == 1) yield new MovingEarthStep(current.north().west(), 7);
+                yield new MovingEarthStep(current.north(), 0);
+            }
+            case 1 -> {
+                if (value == 0) yield new MovingEarthStep(current.north(), 0);
+                if (value == 1) yield new MovingEarthStep(current.east(), 2);
+                yield new MovingEarthStep(current.north().east(), 1);
+            }
+            case 2 -> {
+                if (value == 0) yield new MovingEarthStep(current.north().east(), 1);
+                if (value == 1) yield new MovingEarthStep(current.south().east(), 3);
+                yield new MovingEarthStep(current.east(), 2);
+            }
+            case 3 -> {
+                if (value == 0) yield new MovingEarthStep(current.east(), 2);
+                if (value == 1) yield new MovingEarthStep(current.south(), 4);
+                yield new MovingEarthStep(current.south().east(), 3);
+            }
+            case 4 -> {
+                if (value == 0) yield new MovingEarthStep(current.south().east(), 3);
+                if (value == 1) yield new MovingEarthStep(current.south().west(), 5);
+                yield new MovingEarthStep(current.south(), 4);
+            }
+            case 5 -> {
+                if (value == 0) yield new MovingEarthStep(current.south(), 4);
+                if (value == 1) yield new MovingEarthStep(current.west(), 6);
+                yield new MovingEarthStep(current.south().west(), 5);
+            }
+            case 6 -> {
+                if (value == 0) yield new MovingEarthStep(current.south().west(), 5);
+                if (value == 1) yield new MovingEarthStep(current.north().west(), 7);
+                yield new MovingEarthStep(current.west(), 6);
+            }
+            default -> {
+                if (value == 0) yield new MovingEarthStep(current.west(), 6);
+                if (value == 1) yield new MovingEarthStep(current.north(), 0);
+                yield new MovingEarthStep(current.north().west(), 7);
+            }
+        };
+    }
+
+    private static int headingFromLook(Vec3 look) {
+        if (Math.abs(look.x) < 0.0001 && Math.abs(look.z) < 0.0001) {
+            return 0;
+        }
+        double angle = Math.atan2(look.z, look.x);
+        int octant = Mth.floor((angle / (Math.PI / 4.0)) + 8.5) & 7;
+        return switch (octant) {
+            case 0 -> 2;
+            case 1 -> 3;
+            case 2 -> 4;
+            case 3 -> 5;
+            case 4 -> 6;
+            case 5 -> 7;
+            case 6 -> 0;
+            default -> 1;
+        };
+    }
+
+    private record MovingEarthStep(BlockPos pos, int heading) {}
 
     /**
      * Rite of Binding — summons Death at a Large circle with a Skeleton/Wither Skull.
@@ -1115,6 +1762,43 @@ public class RitualExecutor {
         }
     }
 
+    private static boolean hasSummonCircleObstruction(Level level, BlockPos center) {
+        final int[][] pattern = new int[][]{
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 1, 2, 1, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0}
+        };
+
+        int obstructions = 0;
+        for (int y = center.getY() + 1; y <= center.getY() + 3; y++) {
+            int offsetZ = (pattern.length - 1) / 2;
+            for (int z = 0; z < pattern.length; z++) {
+                int worldZ = center.getZ() - offsetZ + z;
+                int offsetX = (pattern[z].length - 1) / 2;
+                for (int x = 0; x < pattern[z].length; x++) {
+                    int val = pattern[pattern.length - 1 - z][x];
+                    if (val == 0) continue;
+
+                    int worldX = center.getX() - offsetX + x;
+                    if (!level.getBlockState(new BlockPos(worldX, y, worldZ)).blocksMotion()) {
+                        continue;
+                    }
+
+                    obstructions += (val == 2) ? 100 : 1;
+                    if (obstructions > 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Rite of Bind Circle to Talisman — reads the surrounding chalk circle and encodes it into
      * a blank Circle Talisman dropped at the center. Ingredient: blank CircleTalisman.
@@ -1150,6 +1834,87 @@ public class RitualExecutor {
         if (state.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())) return 2;
         if (state.is(WitcheryBlocks.CIRCLE_INFERNAL.get()))  return 3;
         return 1; // default to ritual glyph if not detected
+    }
+
+    /** Rite of Glyphic Transformation — swaps one ring size to the dropped chalk family. */
+    private static boolean riteOfGlyphicTransformation(Player player, Level level, BlockPos center, ItemStack ingredient) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Block targetBlock = glyphicTransformationTargetBlock(ingredient);
+        if (targetBlock == null) {
+            return false;
+        }
+
+        int size = glyphicTransformationSize(sl, center, ingredient);
+        if (size <= 0) {
+            return false;
+        }
+
+        int changed = transformGlyphicRing(sl, center, size, targetBlock);
+        success(player, level, center, "witchery.ritual.glyphic_transform.success",
+                SoundEvents.ENCHANTMENT_TABLE_USE, 0.8f, 2, 32);
+        WitcheryMod.LOGGER.info("Rite of Glyphic Transformation changed {} marks on size {} ring at {}", changed, size, center);
+        return true;
+    }
+
+    private static Block glyphicTransformationTargetBlock(ItemStack ingredient) {
+        if (ingredient.is(WitcheryItems.CHALK.get())) {
+            return WitcheryBlocks.CIRCLE_GLYPH.get();
+        }
+        if (ingredient.is(WitcheryItems.CHALK_OTHERWHERE.get())) {
+            return WitcheryBlocks.CIRCLE_OTHERWHERE.get();
+        }
+        if (ingredient.is(WitcheryItems.CHALK_INFERNAL.get())) {
+            return WitcheryBlocks.CIRCLE_INFERNAL.get();
+        }
+        return null;
+    }
+
+    private static int glyphicTransformationSize(ServerLevel level, BlockPos center, ItemStack ingredient) {
+        AABB area = new AABB(center.above()).inflate(4.0, 2.0, 4.0);
+        int count = 0;
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, area)) {
+            ItemStack stack = itemEntity.getItem();
+            if (ItemStack.isSameItemSameComponents(stack, ingredient)) {
+                count += stack.getCount();
+            }
+        }
+        return Math.min(count, 3);
+    }
+
+    private static int transformGlyphicRing(ServerLevel level, BlockPos center, int size, Block targetBlock) {
+        int radius = switch (size) {
+            case 1 -> 1;
+            case 2 -> 2;
+            case 3 -> 3;
+            default -> 0;
+        };
+        if (radius == 0) {
+            return 0;
+        }
+
+        int changed = 0;
+        BlockPos markLevel = center.above();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) {
+                    continue;
+                }
+
+                BlockPos targetPos = markLevel.offset(dx, 0, dz);
+                BlockState state = level.getBlockState(targetPos);
+                if ((state.is(WitcheryBlocks.CIRCLE_GLYPH.get())
+                        || state.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())
+                        || state.is(WitcheryBlocks.CIRCLE_INFERNAL.get()))
+                        && !state.is(targetBlock)) {
+                    level.setBlockAndUpdate(targetPos, targetBlock.defaultBlockState());
+                    level.sendParticles(ParticleTypes.SMOKE,
+                            targetPos.getX() + 0.5, targetPos.getY() + 0.2, targetPos.getZ() + 0.5,
+                            4, 0.15, 0.1, 0.15, 0.0);
+                    changed++;
+                }
+            }
+        }
+        return changed;
     }
 
     /** Rite of Blindness — blinds all non-player living entities within 10 blocks for 60 seconds. */
@@ -1196,7 +1961,10 @@ public class RitualExecutor {
     private static boolean riteOfRainOfToads(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireCoven(player, level, center, 1)) return false;
-        queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, center, 5, 16, 200);
+        if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
         success(player, level, center, "witchery.ritual.rain_of_toads.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40);
         return true;
@@ -1205,32 +1973,175 @@ public class RitualExecutor {
     /** Rite of Calling the Storm — triggers a thunderstorm and strikes 5–8 lightning bolts. */
     private static boolean riteOfWeatherCallStorm(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, center, 0, 3, 8);
+        if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL, center, 0, 3, 8)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);
         return true;
     }
 
-    /** Rite of Raising the Column — raises a 3-block-radius stone column 8 blocks high. */
-    private static void riteOfRaiseColumn(Player player, Level level, BlockPos center) {
-        int radius = 3;
-        for (int y = center.getY() + 1; y <= center.getY() + 8; y++) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
-                    if (x * x + z * z > radius * radius) continue;
-                    BlockPos pos = new BlockPos(center.getX() + x, y, center.getZ() + z);
-                    if (level.getBlockState(pos).isAir()) {
-                        level.setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
-                    }
+    /** Rite of Ice Shell — grows a hollow sphere of ice around the circle over several pulses. */
+    private static boolean riteOfIceShell(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 2)) return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        if (!queueActiveRitual(sl, ActiveRitualType.ICE_SHELL, RitualCircleDetector.CircleSize.SMALL,
+                center, 8, 8, 250, 5, covenSize)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
+        if (rituals != null) {
+            for (ActiveRitual ritual : rituals) {
+                if (ritual.center.equals(center) && ritual.type == ActiveRitualType.ICE_SHELL) {
+                    ritual.nextGameTime = sl.getGameTime() + 20L;
+                    break;
                 }
             }
         }
+
+        success(player, level, center, "witchery.ritual.ice_shell.success",
+                SoundEvents.GLASS_PLACE, 0.9f, 3, 40);
+        return true;
+    }
+
+    /** Rite of Raising the Column — gradually lifts real terrain instead of stamping stone into the air. */
+    private static boolean riteOfRaiseColumn(Player player, Level level, BlockPos center, RitualCircleDetector.CircleSize circleSize) {
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        int baseRadius = switch (circleSize) {
+            case SMALL -> 4;
+            case MEDIUM -> 6;
+            case LARGE -> 9;
+        };
+        int height = 8;
+
+        if (!queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN, circleSize, center,
+                baseRadius, height, height - 1, 5, countNearbyCovenWitches(level, center))) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
         success(player, level, center, "witchery.ritual.raise_column.success",
                 SoundEvents.STONE_BREAK, 0.8f, 3, 32);
+        return true;
+    }
+
+    private static void raiseColumnLayer(ServerLevel level, BlockPos center, int y, int radius, boolean topLayer) {
+        int radiusSq = radius * radius;
+        int innerRadius = Math.max(radius - 1, 0);
+        int innerRadiusSq = innerRadius * innerRadius;
+
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                int distSq = dx * dx + dz * dz;
+                if (distSq > radiusSq) {
+                    continue;
+                }
+
+                boolean rimBlock = distSq >= innerRadiusSq;
+                if (!topLayer && rimBlock && level.random.nextInt(7) == 0) {
+                    continue;
+                }
+
+                raiseColumnBlock(level, center.offset(dx, y - center.getY(), dz));
+            }
+        }
+    }
+
+    private static void raiseColumnBlock(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!canRaiseColumnMove(level, pos, state)) {
+            return;
+        }
+
+        BlockPos above = pos.above();
+        BlockPos below = pos.below();
+        if (!canRaiseColumnPass(level, above) || !canRaiseColumnPass(level, below)) {
+            return;
+        }
+
+        level.setBlock(above, state, 2);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+    }
+
+    private static boolean canRaiseColumnMove(ServerLevel level, BlockPos pos, BlockState state) {
+        if (state.isAir() || state.liquid() || state.hasBlockEntity()) {
+            return false;
+        }
+        return state.getDestroySpeed(level, pos) >= 0.0f;
+    }
+
+    private static boolean canRaiseColumnPass(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir()) {
+            return true;
+        }
+        if (state.liquid() || state.hasBlockEntity()) {
+            return false;
+        }
+        return state.getDestroySpeed(level, pos) >= 0.0f;
+    }
+
+    private static void liftRaiseColumnEntities(ServerLevel level, BlockPos center, int radius, int airSpace) {
+        AABB bounds = new AABB(
+                center.getX() - radius, center.getY(), center.getZ() - radius,
+                center.getX() + radius + 1.0, center.getY() + airSpace + 1.0, center.getZ() + radius + 1.0
+        );
+        double radiusSq = radius * radius;
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
+            double dx = entity.getX() - center.getX();
+            double dz = entity.getZ() - center.getZ();
+            if (dx * dx + dz * dz <= radiusSq) {
+                entity.teleportTo(entity.getX(), entity.getY() + 1.0, entity.getZ());
+            }
+        }
+    }
+
+    private static boolean pushProtectionMob(Mob mob, BlockPos center, double radius) {
+        double dx = center.getX() + 0.5 - mob.getX();
+        double dy = center.getY() + 0.5 - mob.getY();
+        double dz = center.getZ() + 0.5 - mob.getZ();
+        double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist >= radius || dist < 0.001) {
+            return false;
+        }
+
+        double scale = 0.22 / dist;
+        double motionX = Mth.clamp(-dx * scale, -0.22, 0.22);
+        double motionY = Mth.clamp(-dy * scale, -0.10, 0.12);
+        double motionZ = Mth.clamp(-dz * scale, -0.22, 0.22);
+        mob.push(motionX, motionY, motionZ);
+        mob.hurtMarked = true;
+        return true;
+    }
+
+    private static boolean pullProtectionMob(Mob mob, BlockPos center, double radius) {
+        double nextX = mob.getX() + mob.getDeltaMovement().x;
+        double nextY = mob.getY() + mob.getDeltaMovement().y;
+        double nextZ = mob.getZ() + mob.getDeltaMovement().z;
+        double dx = center.getX() + 0.5 - nextX;
+        double dy = center.getY() + 0.5 - nextY;
+        double dz = center.getZ() + 0.5 - nextZ;
+        double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist < radius - 1.0 || dist < 0.001) {
+            return false;
+        }
+
+        double scale = 0.22 / dist;
+        double motionX = Mth.clamp(dx * scale, -0.22, 0.22);
+        double motionZ = Mth.clamp(dz * scale, -0.22, 0.22);
+        mob.setDeltaMovement(motionX, 0.0, motionZ);
+        mob.hurtMarked = true;
+        return true;
     }
 
     /** Rite of Cursing Creatures — applies Wither, Slowness and Weakness to nearby mobs. */
     private static boolean riteOfCurseCreature(Player player, Level level, BlockPos center) {
+        if (!requireThunderstorm(player, level, center)) return false;
         AABB aabb = new AABB(center).inflate(10);
         int count = 0;
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, aabb)) {
@@ -1265,6 +2176,107 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Summon Witch — summons a hostile witch if the circle is not obstructed. */
+    private static boolean riteOfSummonWitch(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
+
+        net.minecraft.world.entity.monster.Witch witch = EntityType.WITCH.create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (witch == null) {
+            return false;
+        }
+
+        witch.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+        witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        sl.addFreshEntity(witch);
+
+        success(player, level, center, "witchery.ritual.summon_witch.success",
+                SoundEvents.WITCH_CELEBRATE, 0.8f, 3, 48);
+        WitcheryMod.LOGGER.info("Rite of Summon Witch cast by {}", player.getName().getString());
+        return true;
+    }
+
+    /** Rite of Summon Imp — summons a hostile imp, but only with a coven present. */
+    private static boolean riteOfSummonImp(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 1)) return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
+
+        var imp = WitcheryEntities.FLAME_IMP.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (imp == null) {
+            return false;
+        }
+
+        imp.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+        imp.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        sl.addFreshEntity(imp);
+
+        success(player, level, center, "witchery.ritual.summon_imp.success",
+                SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
+        WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
+        return true;
+    }
+
+    /** Rite of Summon Wither — summons a wither if the infernal circle is unobstructed. */
+    private static boolean riteOfSummonWither(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
+
+        var wither = EntityType.WITHER.create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (wither == null) {
+            return false;
+        }
+
+        wither.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+        wither.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        sl.addFreshEntity(wither);
+
+        success(player, level, center, "witchery.ritual.summon_wither.success",
+                SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
+        WitcheryMod.LOGGER.info("Rite of Summon Wither cast by {}", player.getName().getString());
+        return true;
+    }
+
+    /** Rite of Summon Demon — summons a large infernal demon if the circle is clear. */
+    private static boolean riteOfSummonDemon(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
+
+        var demon = WitcheryEntities.DEMON.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (demon == null) {
+            return false;
+        }
+
+        demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+        demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        sl.addFreshEntity(demon);
+
+        success(player, level, center, "witchery.ritual.summon_demon.success",
+                SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);
+        WitcheryMod.LOGGER.info("Rite of Summon Demon cast by {}", player.getName().getString());
+        return true;
+    }
+
     /** Rite of Cooking — smelt all raw food items dropped within 5 blocks. */
     private static void riteOfCookItem(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return;
@@ -1289,25 +2301,73 @@ public class RitualExecutor {
         if (level instanceof ServerLevel slevel) spawnRingParticles(slevel, center, 3, 24);
     }
 
-    /** Rite of the Crater — excavates a sphere of radius 8 centered at the ritual. */
-    private static void riteOfCrater(Player player, Level level, BlockPos center) {
-        int r = 8;
-        int removed = 0;
-        for (BlockPos pos : BlockPos.betweenClosed(
-                center.offset(-r, -r, -r), center.offset(r, r, r))) {
-            int dx = pos.getX() - center.getX();
-            int dy = pos.getY() - center.getY();
-            int dz = pos.getZ() - center.getZ();
-            if (dx * dx + dy * dy + dz * dz > r * r) continue;
-            BlockState state = level.getBlockState(pos);
-            if (state.isAir() || state.is(Blocks.BEDROCK)) continue;
-            Block.dropResources(state, level, pos, null);
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-            removed++;
+    /** Rite of the Crater — excavates downward in pulses, closer to the old staged ritual. */
+    private static boolean riteOfCrater(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!queueActiveRitual(sl, ActiveRitualType.CRATER, RitualCircleDetector.CircleSize.LARGE, center, 8, 8, 8, 10)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
         }
         success(player, level, center, "witchery.ritual.crater.success",
                 SoundEvents.GENERIC_EXPLODE.value(), 1f, 6, 64);
-        WitcheryMod.LOGGER.info("Rite of the Crater removed {} blocks", removed);
+        return true;
+    }
+
+    private static void carveCraterLayer(ServerLevel level, BlockPos center, int y, int radius, int maxRadius) {
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz > radiusSq) {
+                    continue;
+                }
+                carveCraterPixel(level, center, new BlockPos(center.getX() + dx, y, center.getZ() + dz), maxRadius);
+            }
+        }
+    }
+
+    private static void carveCraterPixel(ServerLevel level, BlockPos center, BlockPos pos, int maxRadius) {
+        if ((pos.getX() == center.getX() && pos.getZ() == center.getZ())
+                || !shouldCarveCraterPixel(center, pos, maxRadius)) {
+            return;
+        }
+
+        BlockState state = level.getBlockState(pos);
+        if (!canCarveCrater(level, pos, state)) {
+            return;
+        }
+
+        if (shouldDropCraterBlock(state)) {
+            Block.dropResources(state, level, pos, null);
+        }
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+    }
+
+    private static boolean shouldCarveCraterPixel(BlockPos center, BlockPos pos, int maxRadius) {
+        int depth = center.getY() - pos.getY();
+        if (depth > 3) {
+            return true;
+        }
+
+        double dx = pos.getX() - center.getX();
+        double dz = pos.getZ() - center.getZ();
+        double minRadius = Math.max(maxRadius - 3 - depth, 0);
+        return dx * dx + dz * dz > minRadius * minRadius;
+    }
+
+    private static boolean canCarveCrater(Level level, BlockPos pos, BlockState state) {
+        if (state.isAir() || state.is(Blocks.BEDROCK) || state.hasBlockEntity() || state.liquid()) {
+            return false;
+        }
+        return state.getDestroySpeed(level, pos) >= 0.0f;
+    }
+
+    private static boolean shouldDropCraterBlock(BlockState state) {
+        return !state.is(Blocks.STONE)
+                && !state.is(Blocks.DIRT)
+                && !state.is(Blocks.GRASS_BLOCK)
+                && !state.is(Blocks.SAND)
+                && !state.is(Blocks.GRAVEL)
+                && !state.is(Blocks.CLAY);
     }
 
     // ── Rite of Binding Spirits to Fetish ────────────────────────────────────
@@ -1393,19 +2453,32 @@ public class RitualExecutor {
 
     // ── Taglock / Waystone helpers ────────────────────────────────────────────
 
-    /** Find and consume a filled taglock from the caster's inventory. Returns the bound UUID. */
-    private static Optional<UUID> consumeTaglock(Player player) {
+    private record InventoryTaglock(int slot, UUID targetUuid) {}
+
+    /** Find a filled taglock in the caster's inventory without consuming it yet. */
+    private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack s = inv.getItem(i);
             if (!s.is(WitcheryItems.TAGLOCK_KIT.get())) continue;
             if (!TaglockKitItem.isFilled(s)) continue;
             Optional<UUID> uuid = TaglockKitItem.getUUID(s);
-            s.shrink(1);
-            if (s.isEmpty()) inv.setItem(i, ItemStack.EMPTY);
-            return uuid;
+            if (uuid.isPresent()) {
+                return Optional.of(new InventoryTaglock(i, uuid.get()));
+            }
         }
         return Optional.empty();
+    }
+
+    /** Consume one item from the given inventory slot after the ritual target has been validated. */
+    private static void consumeInventoryItem(Player player, int slot) {
+        var inv = player.getInventory();
+        if (slot < 0 || slot >= inv.getContainerSize()) return;
+        ItemStack stack = inv.getItem(slot);
+        stack.shrink(1);
+        if (stack.isEmpty()) {
+            inv.setItem(slot, ItemStack.EMPTY);
+        }
     }
 
     /** Find a bound waystone in the caster's inventory without consuming it. */
@@ -1467,20 +2540,24 @@ public class RitualExecutor {
     /** Rite of Transposition (pull) — pulls the taglock target to the caster. Costs 3000 altar power. */
     private static boolean riteOfTranspositionPull(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
-        Optional<UUID> targetUUID = consumeTaglock(sp);
-        if (targetUUID.isEmpty()) {
+        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        if (taglock.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.no_taglock"), false);
             return false;
         }
-        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(targetUUID.get());
+        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
         if (target == null) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.offline"), false);
             return false;
         }
-        // Witch Hunter armor provides 90% resist
-        if (target.getRandom().nextFloat() < 0.9f
-                && isWearingWitchHunterArmor(target)) {
-            target.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.resisted"), false);
+        consumeInventoryItem(sp, taglock.get().slot());
+        if (hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (triggerVoodooProtection(target)) {
+            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
         BlockPos dest = sp.blockPosition().above();
@@ -1495,27 +2572,33 @@ public class RitualExecutor {
 
     /**
      * Generic taglock-based curse dispatcher.
-     * Finds and consumes a filled taglock, resolves the online target, checks Voodoo Protection Poppet,
-     * then runs the curse action on the target.
+     * Finds a filled taglock, resolves the online target, consumes the taglock only after target validation,
+     * then checks curse protection and runs the curse action on the target.
      */
     @FunctionalInterface
     private interface CurseAction { void apply(ServerPlayer target); }
 
     private static boolean applyCurse(Player caster, Level level, BlockPos center,
-                                      CurseAction action, String successKey, String failKey) {
+                                      CurseAction action, String successKey, String failKey,
+                                      boolean checkHunterArmorProtection) {
         if (!(caster instanceof ServerPlayer sp)) return false;
-        Optional<UUID> uuid = consumeTaglock(sp);
-        if (uuid.isEmpty()) {
+        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        if (taglock.isEmpty()) {
             sp.displayClientMessage(Component.translatable(failKey + ".no_taglock"), false);
             return false;
         }
-        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(uuid.get());
+        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
         if (target == null) {
             sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
             return false;
         }
+        consumeInventoryItem(sp, taglock.get().slot());
+        if (checkHunterArmorProtection && hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
         // Voodoo Protection Poppet negates the curse
-        if (hasVoodooProtection(target)) {
+        if (triggerVoodooProtection(target)) {
             target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
@@ -1527,15 +2610,12 @@ public class RitualExecutor {
         return true;
     }
 
-    private static boolean hasVoodooProtection(ServerPlayer player) {
-        var uuid = player.getUUID();
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            var s = player.getInventory().getItem(i);
-            if (s.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get())
-                    && com.emoniph.witchery.item.PoppetItem.getBoundUUID(s)
-                        .map(uuid::equals).orElse(false)) return true;
-        }
-        return false;
+    private static boolean triggerVoodooProtection(ServerPlayer player) {
+        return PoppetEvents.damageBoundPoppet(player, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 350);
+    }
+
+    private static boolean hasCurseProtection(ServerPlayer player) {
+        return isWearingWitchHunterArmor(player) && player.level().random.nextFloat() < 0.9f;
     }
 
     private static boolean isWearingWitchHunterArmor(ServerPlayer player) {
@@ -1559,7 +2639,7 @@ public class RitualExecutor {
         return applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 3600, 0));
             target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 3600, 0));
-        }, "witchery.curse.blindness", "witchery.curse.blindness");
+        }, "witchery.curse.blindness", "witchery.curse.blindness", false);
     }
 
     /** Curse of Blight — withers the target. */
@@ -1567,39 +2647,42 @@ public class RitualExecutor {
         return applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 0));
-        }, "witchery.curse.blight", "witchery.curse.blight");
+        }, "witchery.curse.blight", "witchery.curse.blight", false);
     }
 
     /** Curse of Misfortune — gives the target bad luck. */
     private static boolean riteOfCurseMisfortune(Player caster, Level level, BlockPos center) {
         return applyCurse(caster, level, center, target ->
             target.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 6000, 1)),
-            "witchery.curse.misfortune", "witchery.curse.misfortune");
+            "witchery.curse.misfortune", "witchery.curse.misfortune", false);
     }
 
     /** Curse of Overheating — sets target on fire and applies fire vulnerability. */
     private static boolean riteOfCurseOverheating(Player caster, Level level, BlockPos center) {
+        if (!requireThunderstorm(caster, level, center)) return false;
         return applyCurse(caster, level, center, target -> {
             target.igniteForTicks(200);
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 0));
-        }, "witchery.curse.overheating", "witchery.curse.overheating");
+        }, "witchery.curse.overheating", "witchery.curse.overheating", false);
     }
 
     /** Curse of Sinking — extreme slowness and mining fatigue. */
     private static boolean riteOfCurseSinking(Player caster, Level level, BlockPos center) {
+        if (!requireThunderstorm(caster, level, center)) return false;
         return applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400, 3));
             target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400, 2));
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0)); // brief sink
-        }, "witchery.curse.sinking", "witchery.curse.sinking");
+        }, "witchery.curse.sinking", "witchery.curse.sinking", false);
     }
 
     /** Curse of Insanity — nausea + confusion. */
     private static boolean riteOfCurseInsanity(Player caster, Level level, BlockPos center) {
+        if (!requireThunderstorm(caster, level, center)) return false;
         return applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600, 1));
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
-        }, "witchery.curse.insanity", "witchery.curse.insanity");
+        }, "witchery.curse.insanity", "witchery.curse.insanity", false);
     }
 
     /** Curse of Raining Toads — showers toads on the target. */
@@ -1615,11 +2698,12 @@ public class RitualExecutor {
                     sl.addFreshEntity(toad);
                 }
             }
-        }, "witchery.curse.raining_toads", "witchery.curse.raining_toads");
+        }, "witchery.curse.raining_toads", "witchery.curse.raining_toads", false);
     }
 
     /** Curse of Hell on Earth — summons lightning + hostile mobs around target (large circle). */
     private static boolean riteOfCurseHellOnEarth(Player caster, Level level, BlockPos center) {
+        if (!requireNightOverworld(caster, level, center)) return false;
         return applyCurse(caster, level, center, target -> {
             if (!(target.level() instanceof ServerLevel sl)) return;
             // Lightning strikes
@@ -1632,11 +2716,12 @@ public class RitualExecutor {
             }
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 1));
             target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 2400, 1));
-        }, "witchery.curse.hell_on_earth", "witchery.curse.hell_on_earth");
+        }, "witchery.curse.hell_on_earth", "witchery.curse.hell_on_earth", false);
     }
 
     /** Curse of Waking Nightmare — forces target into nightmare state if in Spirit World. */
     private static boolean riteOfCurseWakingNightmare(Player caster, Level level, BlockPos center) {
+        if (!requireThunderstorm(caster, level, center)) return false;
         return applyCurse(caster, level, center, target -> {
             WitcheryPlayerData data = WitcheryAttachments.get(target);
             if (data.isInSpiritWorld()) {
@@ -1645,7 +2730,7 @@ public class RitualExecutor {
             }
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
-        }, "witchery.curse.waking_nightmare", "witchery.curse.waking_nightmare");
+        }, "witchery.curse.waking_nightmare", "witchery.curse.waking_nightmare", true);
     }
 
     /** Updated Curse of the Wolf — targets a specific player via taglock. */
@@ -1657,7 +2742,7 @@ public class RitualExecutor {
                 PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                 target.displayClientMessage(Component.translatable("witchery.ritual.curse_of_wolf.cursed"), false);
             }
-        }, "witchery.ritual.curse_of_wolf", "witchery.ritual.curse_of_wolf");
+        }, "witchery.ritual.curse_of_wolf", "witchery.ritual.curse_of_wolf", false);
     }
 
     /** Updated Creatures of the Night — vampirism curse via taglock. */
@@ -1669,7 +2754,7 @@ public class RitualExecutor {
                 PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                 target.displayClientMessage(Component.translatable("witchery.ritual.creatures_night.cursed"), false);
             }
-        }, "witchery.ritual.creatures_night", "witchery.ritual.creatures_night");
+        }, "witchery.ritual.creatures_night", "witchery.ritual.creatures_night", false);
     }
 
     private static void spawnRingParticles(ServerLevel level, BlockPos center, int radius, int count) {

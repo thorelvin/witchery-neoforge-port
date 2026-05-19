@@ -1,6 +1,7 @@
 {
-  "parent": "block/cube_all",
+  "render_type": "minecraft:cutout",
+  "parent": "minecraft:block/cross",
   "textures": {
-    "all": "witchery:block/disturbed_cotton"
+    "cross": "witchery:block/disturbed_cotton"
   }
 }

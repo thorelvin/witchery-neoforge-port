@@ -18,34 +18,34 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 4 | `witchery:rowan_leaves` | ✅ Fixed — UntintedParticleLeavesBlock, multipart blockstate, logs tag added for decay | Texture wrongly mappet, and not transparent
 | 5 | `witchery:rowan_sapling` | | Works, bone meal too
 | 6 | `witchery:belladonna` | | Ok
-| 7 | `witchery:mandrake_root` | | Does not spawn mandrake?
+| 7 | `witchery:mandrake_root` | `Partial - original spawn-vs-drop branch restored` | Mature harvest now checks difficulty and original weighted summon chance instead of always spawning a mandrake. Needs in-game verification.
 | 8 | `witchery:artichoke` | | Ok
-| 9 | `witchery:cotton` | | Can be planted on farmland, but grows into leather texture plant when used bone meal???
+| 9 | `witchery:cotton` | `Partial - restored closer to old Somnian Cotton behavior` | Now behaves like a spreading bush instead of a staged crop, nightmare harvest can yield disturbed cotton again, and the plant render/loot path is aligned. Needs in-game verification and a final decision on whether the extra placeable disturbed-cotton block should stay.
 | 10 | `witchery:witch_seeds` | | What is this? Plants on farmland. Real item in mod?
 | 11 | `witchery:snowbell` | | Ok, bone meal grow
-| 12 | `witchery:blood_rose` | | Should sting players? Collect blood? Mechanics?
+| 12 | `witchery:blood_rose` | `Partial - blood sample storage restored` | Walking through the rose now stores the last player's UUID/name, switches to the full rose variant, and lets Taglock Kits pull that sample later. Needs in-game verification.
 | 13 | `witchery:ember_moss` | | Looks ok
 | 14 | `witchery:glint_weed` | ✅ Fixed — lightLevel(s->7) added | Ok, should have light
-| 15 | `witchery:spanish_moss` | | Seems ok. Not shrub, grovs like vine. Mechanics.
-| 16 | `witchery:bramble` | | Mechanics?
-| 17 | `witchery:void_bramble` | | Mechanics?
-| 18 | `witchery:leaping_lily` | ⚠️ Partial — now uses snowbell texture as placeholder; needs real leaping_lily texture | Looks like glint weed
-| 19 | `witchery:grassper` | | Wrong texture or wrapping, should hold items given. Mechanics?
-| 20 | `witchery:glowglobe` | | Light and invisible?
+| 15 | `witchery:spanish_moss` | `Partial - growth behavior restored` | Now behaves like a faster-growing vine again. Needs in-game verification for spread feel.
+| 16 | `witchery:bramble` | `Partial - wild bramble hazard restored` | Now hurts entities and spreads into nearby open tiles when broken without shears. Needs in-game verification against original placement/spread feel.
+| 17 | `witchery:void_bramble` | `Partial - void teleport trap restored` | Now teleports living entities to a distant safe point again. Ownership/column-break behavior from the old tile-entity version is still not restored.
+| 18 | `witchery:leaping_lily` | `Partial - leap buff restored` | Walking through it now grants short speed + jump boosts again. Still uses placeholder visuals and needs in-game verification.
+| 19 | `witchery:grassper` | `Partial - stash mechanic restored` | Holds one given item again and now renders that stored item above the plant. Visual verification still needed.
+| 20 | `witchery:glowglobe` | `Partial - light and ambience restored` | Now emits strong light and ambient flame particles again. Needs in-game verification.
 | 21 | `witchery:kettle` | | Seems to work, missing item texture. Missing 3d string. Pink black. Check block mechanics in old.
 | 22 | `witchery:distillery` | `Partial - mechanics restored closer to original (altar power, jars, multi-output)` | GUI art/layout and item texture still need verification.
 | 23 | `witchery:spinning_wheel` | `Partial - mechanics restored closer to original (5 slots, altar power, modifiers)` | GUI art/layout and item texture still need verification.
 | 24 | `witchery:witches_oven` | `Partial - mechanics restored closer to original (jars, funnels, byproducts)` | Facing/item texture and GUI verification still open.
-| 25 | `witchery:altar` | `Partial - validated shared 2x3 altar behavior and artifact logic restored` | Block/item model and top texture still need an art pass.
+| 25 | `witchery:altar` | `Partial - validated shared 2x3 altar behavior and upgrade logic restored closer to original` | Skull stacking, chalice bonus, Arthana range, Mystic Branch enhancement, and missing nature-power plants were all brought closer to 1.7.10. Block/item model and top texture still need an art pass.
 | 26 | `witchery:fume_funnel` | | Wrong design and texture, check mechanics. Missing item texture. Pink black
-| 27 | `witchery:brazier` | | Should be empty. Only ash after item is inserted and burned. Mechanics? Missing item texture. Pink black
-| 28 | `witchery:poppet_shelf` | | GUI looks fine. But poppets does not show on top. Mechanics? Missing item texture. Pink black
-| 29 | `witchery:leech_chest` | | Facing rigth way? Missing item texture. Pink black
-| 30 | `witchery:refilling_chest` | | Wrong texture wrap. Check. Opens chest with items.  Check container.witchery.refilling_chest shows in gui. Missing item texture. Pink black
+| 27 | `witchery:brazier` | `Partial - unburned ingredient drop path restored` | Unlit braziers now drop their stored ingredients again when broken instead of silently eating them through the dead legacy removal hook. Item texture/model work is still open, and ash/result verification still needs an in-game pass.
+| 28 | `witchery:poppet_shelf` | `Partial - mechanics restored closer to original; top-shelf rendering restored` | Now only accepts poppets again, drops its contents on break, scans server shelves for bound poppets again, force-loads shelves with bound poppets so remote protection can still trigger, and renders stored poppets visibly on top again. Item texture/model polish is still open and needs in-game spacing verification.
+| 29 | `witchery:leech_chest` | `Partial - container, taglock storage, and break/replace persistence restored` | Opens as a 27-slot chest again, tracks up to 3 recent players, lets Taglock Kits pull a valid stored target, and now preserves that stored queue through block drops like the old mod. Item texture/model still need work.
+| 30 | `witchery:refilling_chest` | `Partial - refill cadence and loot restored closer to original` | Refill logic is Torment-only again, now follows the old hourly life-tick cadence instead of waiting one hour after emptying, and pulls a small dungeon-style refill closer to 1.7.10. Texture wrap, GUI title/text polish, and item texture/model still need work.
 | 31 | `witchery:candelabra` | | Light? Missing item texture. Pink black
-| 32 | `witchery:chalice` | | Looks ok. Missing item texture. Pink black
+| 32 | `witchery:chalice` | `Partial - altar power bonus wired again` | Filled vs empty chalice bonus now affects the altar closer to original. Item/model art still needs work.
 | 33 | `witchery:crystal_ball` | | Must be transparent. Says flavor text. Missing item texture. Pink black
-| 34 | `witchery:dream_catcher` | | Can be placed, but are on left side. Not on surface clicked. Missing item texture. 2D Pink black texture
+| 34 | `witchery:dream_catcher` | `Partial - placement, nightmare-weave handling, and weave break-drop restored closer to original` | Wall placement now uses the face clicked instead of snapping off to the side, Spirit World nightmare/demonic modifiers now only respect the `Nightmares` weave again, and breaking or support-dropping a catcher now returns its stored weave again. Item texture/model work is still open.
 | 35 | `witchery:weave_fleet_foot` | | Looks ok, mechanics?
 | 36 | `witchery:weave_iron_arm` | | Looks ok, mechanics?
 | 37 | `witchery:weave_fasting` | | Looks ok, mechanics?
@@ -80,13 +80,13 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 62 | `witchery:broom` | | Fligth is weird, and always put you back on ground. Can get up.
-| 63 | `witchery:enchanted_broom` | |
-| 64 | `witchery:arthana` | | Transparent textures. Can be placed on altar, but is transparent. Mechanics?
+| 62 | `witchery:broom` | `Partial - control model rewritten closer to 1.7.10` | Forward acceleration, pitch lift, no forced hover-drop, and mounted fall cancellation are restored. Needs in-game verification.
+| 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path` | Needs in-game verification.
+| 64 | `witchery:arthana` | `Partial - altar placement/range bonus restored` | Now places cleanly on altar, updates bonuses immediately, and restores the old altar range boost. Visual work still needed.
 | 65 | `witchery:boline` | |
 | 66 | `witchery:chalk` | |
-| 67 | `witchery:mystic_branch` | |
-| 68 | `witchery:taglock_kit` | |
+| 67 | `witchery:mystic_branch` | `Partial - altar placement/enhancement bonus restored` | Can now be placed on altar again and correctly grants the enhancement bonus in the altar scan. In-hand creature-power use still works.
+| 68 | `witchery:taglock_kit` | `Partial - Blood Rose + Leech Chest extraction restored` | Now splits stacked kits correctly when filling one, and can pull stored samples from Blood Rose and Leech Chest again. Bed/original edge-case audit is still open.
 | 69 | `witchery:poppet` | |
 | 70 | `witchery:death_protection_poppet` | |
 | 71 | `witchery:earth_protection_poppet` | |

@@ -25,27 +25,31 @@ public class BroomItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
 
         ServerLevel sl = (ServerLevel) level;
 
         // Try to re-mount any nearby riderless broom within 4 blocks
         AABB searchBox = player.getBoundingBox().inflate(4.0);
         List<BroomEntity> nearby = sl.getEntitiesOfClass(BroomEntity.class, searchBox,
-                b -> !b.hasPassenger(player));
+                b -> b.getPassengers().isEmpty());
         if (!nearby.isEmpty()) {
             BroomEntity broom = nearby.get(0);
-            player.startRiding(broom);
-            return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
+            player.startRiding(broom, true, true);
+            return InteractionResult.SUCCESS_SERVER;
         }
 
         // No nearby broom — spawn a new one just above and in front of the player
+        var look = player.getLookAngle();
         BroomEntity broom = BroomEntity.create(sl,
-                player.getX(),
+                player.getX() + look.x * 1.5,
                 player.getY() + 0.5,
-                player.getZ());
+                player.getZ() + look.z * 1.5);
+        broom.setYRot(player.getYRot());
         sl.addFreshEntity(broom);
-        player.startRiding(broom);
+        player.startRiding(broom, true, true);
 
         // Consume the item (one broom per use in survival)
         ItemStack stack = player.getItemInHand(hand);
@@ -53,6 +57,6 @@ public class BroomItem extends Item {
             stack.shrink(1);
         }
 
-        return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
+        return InteractionResult.SUCCESS_SERVER;
     }
 }

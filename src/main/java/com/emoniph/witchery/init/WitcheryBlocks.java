@@ -72,6 +72,10 @@ public class WitcheryBlocks {
         return BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
                 .noOcclusion().noCollision().randomTicks().instabreak();
     }
+    private static BlockBehaviour.Properties spiritCottonProps(int lightLevel) {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).sound(SoundType.GRASS)
+                .noOcclusion().noCollision().randomTicks().instabreak().lightLevel(s -> lightLevel);
+    }
     public static final DeferredBlock<BelladonnaBlock>  BELLADONNA      = BLOCKS.registerBlock("belladonna",  BelladonnaBlock::new,  () -> cropProps());
     public static final DeferredBlock<MandrakeBlock>    MANDRAKE        = BLOCKS.registerBlock("mandrake",    MandrakeBlock::new,    () -> cropProps());
     public static final DeferredBlock<ArtichokeBlock>   ARTICHOKE       = BLOCKS.registerBlock("artichoke",   ArtichokeBlock::new,   () -> cropProps());
@@ -81,21 +85,41 @@ public class WitcheryBlocks {
     public static final DeferredBlock<WormwoodBlock>    WORMWOOD_PLANT  = BLOCKS.registerBlock("wormwood",    WormwoodBlock::new,    () -> cropProps());
 
     // Spirit World plants
-    public static final DeferredBlock<Block> WISPY_COTTON = BLOCKS.registerSimpleBlock("wispy_cotton",
-            BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 4));
+    public static final DeferredBlock<CottonBlock> WISPY_COTTON = BLOCKS.registerBlock("wispy_cotton",
+            CottonBlock::new, () -> spiritCottonProps(4));
     public static final DeferredBlock<Block> DISTURBED_COTTON = BLOCKS.registerSimpleBlock("disturbed_cotton",
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).sound(SoundType.GRASS)
+                    .noOcclusion().noCollision().instabreak());
 
     // Plants
-    public static final DeferredBlock<Block> BLOOD_ROSE     = BLOCKS.registerSimpleBlock("blood_rose",    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
+    public static final DeferredBlock<BloodRoseBlock> BLOOD_ROSE = BLOCKS.registerBlock("blood_rose",
+            BloodRoseBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GRASS)
+                    .strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<Block> EMBER_MOSS     = BLOCKS.registerSimpleBlock("ember_moss",    BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<Block> GLINT_WEED     = BLOCKS.registerSimpleBlock("glint_weed",    BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 7));
-    public static final DeferredBlock<Block> SPANISH_MOSS   = BLOCKS.registerSimpleBlock("spanish_moss",  BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
-    public static final DeferredBlock<Block> BRAMBLE        = BLOCKS.registerSimpleBlock("bramble",       BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion());
-    public static final DeferredBlock<Block> VOID_BRAMBLE   = BLOCKS.registerSimpleBlock("void_bramble",  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(0.2f).noOcclusion());
-    public static final DeferredBlock<Block> LEAPING_LILY   = BLOCKS.registerSimpleBlock("leaping_lily",  BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
-    public static final DeferredBlock<Block> GRASSPER       = BLOCKS.registerSimpleBlock("grassper",      BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f));
-    public static final DeferredBlock<Block> GLOWGLOBE      = BLOCKS.registerSimpleBlock("glowglobe",     BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).lightLevel(s -> 7).noOcclusion().noCollision());
+    public static final DeferredBlock<SpanishMossBlock> SPANISH_MOSS = BLOCKS.registerBlock("spanish_moss",
+            SpanishMossBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.2f).noOcclusion().randomTicks());
+    public static final DeferredBlock<BrambleBlock> BRAMBLE = BLOCKS.registerBlock("bramble",
+            BrambleBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().noCollision());
+    public static final DeferredBlock<VoidBrambleBlock> VOID_BRAMBLE = BLOCKS.registerBlock("void_bramble",
+            VoidBrambleBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(0.2f).noOcclusion().noCollision().lightLevel(s -> 2));
+    public static final DeferredBlock<LeapingLilyBlock> LEAPING_LILY = BLOCKS.registerBlock("leaping_lily",
+            LeapingLilyBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.0f).lightLevel(s -> 6).noOcclusion().noCollision());
+    public static final DeferredBlock<GrassperBlock> GRASSPER = BLOCKS.registerBlock("grassper",
+            GrassperBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.5f).noOcclusion().noCollision());
+    public static final DeferredBlock<GlowGlobeBlock> GLOWGLOBE = BLOCKS.registerBlock("glowglobe",
+            GlowGlobeBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.0f).lightLevel(s -> 14).noOcclusion().noCollision());
 
     // Machines / Multiblocks
     public static final DeferredBlock<KettleBlock>      KETTLE        = BLOCKS.registerBlock("kettle",         KettleBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
@@ -148,7 +172,10 @@ public class WitcheryBlocks {
     public static final DeferredBlock<DoorBlock> WITCH_DOOR = BLOCKS.registerBlock("witch_door",
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
-    public static final DeferredBlock<Block> BARRIER          = BLOCKS.registerSimpleBlock("barrier",          BlockBehaviour.Properties.of().strength(-1.0f).noOcclusion());
+    public static final DeferredBlock<BarrierBlock> BARRIER   = BLOCKS.registerBlock("barrier", BarrierBlock::new,
+            BlockBehaviour.Properties.of().strength(-1.0f, 3_600_000.0f).noOcclusion().noLootTable());
     public static final DeferredBlock<Block> FORCE            = BLOCKS.registerSimpleBlock("force",            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
-    public static final DeferredBlock<Block> FLOWING_SPIRIT   = BLOCKS.registerSimpleBlock("flowing_spirit",   BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());
+    public static final DeferredBlock<FlowingSpiritBlock> FLOWING_SPIRIT = BLOCKS.registerBlock("flowing_spirit",
+            FlowingSpiritBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());
 }

@@ -1,5 +1,8 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.entity.BloodRoseBlockEntity;
+import com.emoniph.witchery.blocks.entity.LeechChestBlockEntity;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -11,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.List;
@@ -39,14 +43,78 @@ public class TaglockKitItem extends Item {
             return InteractionResult.CONSUME;
         }
 
-        // Collect the taglock
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            tag.putString(TAG_UUID, targetPlayer.getStringUUID());
-            tag.putString(TAG_NAME, targetPlayer.getName().getString());
-        });
+        bindSingleTaglock(user, stack, targetPlayer.getUUID(), targetPlayer.getName().getString());
 
         user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected",
                 targetPlayer.getName()).withStyle(ChatFormatting.GREEN), false);
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        boolean bloodRose = ctx.getLevel().getBlockState(ctx.getClickedPos()).is(WitcheryBlocks.BLOOD_ROSE.get());
+        boolean leechChest = ctx.getLevel().getBlockState(ctx.getClickedPos()).is(WitcheryBlocks.LEECH_CHEST.get());
+        if (!bloodRose && !leechChest) {
+            return InteractionResult.PASS;
+        }
+        if (ctx.getLevel().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        ItemStack stack = ctx.getItemInHand();
+        Player user = ctx.getPlayer();
+        if (user == null) {
+            return InteractionResult.PASS;
+        }
+        if (isFilled(stack)) {
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.already_full",
+                    getBoundName(stack)).withStyle(ChatFormatting.RED), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (bloodRose) {
+            if (!(ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof BloodRoseBlockEntity be)) {
+                return InteractionResult.PASS;
+            }
+
+            Optional<BloodRoseBlockEntity.StoredPlayer> stored = be.drainStoredPlayer();
+            if (stored.isEmpty()) {
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.no_blood_rose_sample")
+                        .withStyle(ChatFormatting.RED), false);
+                return InteractionResult.CONSUME;
+            }
+
+            bindSingleTaglock(user, stack, stored.get().uuid(), stored.get().name());
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_rose",
+                    stored.get().name()).withStyle(ChatFormatting.GREEN), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!(ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof LeechChestBlockEntity be)) {
+            return InteractionResult.PASS;
+        }
+
+        LeechChestBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
+        if (drainResult.player() != null) {
+            bindSingleTaglock(user, stack, drainResult.player().uuid(), drainResult.player().name());
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_leech_chest",
+                    drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (drainResult.onlyOwnTaglock()) {
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.only_own_taglock")
+                    .withStyle(ChatFormatting.RED), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!drainResult.missingPlayers().isEmpty()) {
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.player_not_logged_in",
+                    String.join(", ", drainResult.missingPlayers())).withStyle(ChatFormatting.RED), false);
+            return InteractionResult.CONSUME;
+        }
+
+        user.displayClientMessage(Component.translatable("witchery.taglock_kit.no_leech_chest_sample")
+                .withStyle(ChatFormatting.RED), false);
         return InteractionResult.CONSUME;
     }
 
@@ -76,6 +144,28 @@ public class TaglockKitItem extends Item {
 
     public static String getBoundName(ItemStack stack) {
         return getTag(stack).getStringOr(TAG_NAME, "");
+    }
+
+    public static void bind(ItemStack stack, UUID uuid, String name) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(TAG_UUID, uuid.toString());
+            tag.putString(TAG_NAME, name);
+        });
+    }
+
+    private static void bindSingleTaglock(Player user, ItemStack sourceStack, UUID uuid, String name) {
+        if (sourceStack.getCount() == 1) {
+            bind(sourceStack, uuid, name);
+            return;
+        }
+
+        ItemStack filledStack = sourceStack.copyWithCount(1);
+        bind(filledStack, uuid, name);
+        sourceStack.shrink(1);
+
+        if (!user.getInventory().add(filledStack)) {
+            user.drop(filledStack, false);
+        }
     }
 
     private static CompoundTag getTag(ItemStack stack) {
