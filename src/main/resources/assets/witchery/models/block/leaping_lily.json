@@ -1,1 +1,3 @@
-{ "render_type": "minecraft:cutout", "parent": "minecraft:block/cross", "textures": { "cross": "witchery:block/snowbell_stage_4" } }
+{
+  "parent": "minecraft:block/lily_pad"
+}

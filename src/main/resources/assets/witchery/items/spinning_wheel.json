@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/spinning_wheel"
+    "type": "minecraft:special",
+    "base": "witchery:item/spinning_wheel",
+    "model": {
+      "type": "witchery:spinning_wheel"
+    }
   }
 }

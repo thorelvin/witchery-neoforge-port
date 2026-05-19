@@ -96,7 +96,7 @@ public final class WitcherySpecialItemRenderers {
     }
 
     public record SpinningWheelSpecialRenderer(SpinningWheelModel model) implements NoDataSpecialModelRenderer {
-        private static final Identifier TEXTURE = blockTexture("spinning_wheel");
+        private static final Identifier TEXTURE = blockTexture("spinningwheel");
 
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
@@ -263,6 +263,7 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
@@ -295,7 +296,6 @@ public final class WitcherySpecialItemRenderers {
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(-0.5, -0.5, -0.5);
             collector.submitModelPart(bottom, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             collector.submitModelPart(lid, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);

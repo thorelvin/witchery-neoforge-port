@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "witchery:block/grassper", "render_type": "minecraft:cutout" }
+    "": { "model": "witchery:block/grassper" }
   }
 }
