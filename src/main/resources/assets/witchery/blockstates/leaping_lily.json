@@ -1,10 +1,10 @@
 {
   "variants": {
     "": [
-      { "model": "minecraft:block/lily_pad" },
-      { "model": "minecraft:block/lily_pad", "y": 90 },
-      { "model": "minecraft:block/lily_pad", "y": 180 },
-      { "model": "minecraft:block/lily_pad", "y": 270 }
+      { "model": "witchery:block/leaping_lily" },
+      { "model": "witchery:block/leaping_lily", "y": 90 },
+      { "model": "witchery:block/leaping_lily", "y": 180 },
+      { "model": "witchery:block/leaping_lily", "y": 270 }
     ]
   }
 }
