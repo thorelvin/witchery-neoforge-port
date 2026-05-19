@@ -4,6 +4,8 @@ import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
+import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +17,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
@@ -28,6 +31,21 @@ public class FlowingSpiritBlock extends Block {
 
     public FlowingSpiritBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+
+        if (level.isClientSide() || oldState.is(state.getBlock()) || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            return;
+        }
+
+        if (!level.getBlockState(pos.below()).is(Blocks.SNOW_BLOCK)) {
+            return;
+        }
+
+        WitcheryBlocks.SPIRIT_PORTAL.get().tryToCreatePortal(level, pos);
     }
 
     @Override

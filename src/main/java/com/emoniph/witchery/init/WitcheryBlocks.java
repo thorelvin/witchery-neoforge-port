@@ -155,8 +155,8 @@ public class WitcheryBlocks {
     public static final DeferredBlock<CoffinBlock>      COFFIN         = BLOCKS.registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f).noOcclusion());
 
     // Portals / Dimensional
-    public static final DeferredBlock<Block> SPIRIT_PORTAL = BLOCKS.registerSimpleBlock("spirit_portal",
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 10).noOcclusion());
+    public static final DeferredBlock<SpiritPortalBlock> SPIRIT_PORTAL = BLOCKS.registerBlock("spirit_portal", SpiritPortalBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 10).noOcclusion().noCollision().noLootTable());
     public static final DeferredBlock<Block> TORMENT_STONE = BLOCKS.registerSimpleBlock("torment_stone",
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
     public static final DeferredBlock<TormentPortalBlock> TORMENT_PORTAL = BLOCKS.registerBlock("torment_portal", TormentPortalBlock::new,

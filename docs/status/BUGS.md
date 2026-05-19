@@ -489,6 +489,15 @@ The next missing-rite pass is now closer to original Witchery:
 Remaining gap:
 - This now uses deterministic nearest-focus selection and representative modern biome mappings instead of the original last-item-wins item-iteration quirk and old biome-dictionary contents.
 
+### 54. Spirit Portal activation was still deferred - Fixed / verify
+
+The next Spirit World parity pass is now closer to original Witchery:
+- `spirit_portal` is no longer a dead decorative block. It now validates the old 2x2 interior inside a 4x4 snow-block frame again and can be ignited by placing Flowing Spirit into the frame while inside the Spirit World.
+- Flowing Spirit now restores the original "portal source" behavior closely enough that the portal interior replaces the fluid source blocks when the frame is valid, and portal blocks break back out if the snow frame is disturbed.
+
+Remaining gap:
+- This restores the original portal activation/lifecycle, but the actual Rite of Manifestation ghost-travel behavior that uses the portal is still deferred as a separate player-state feature.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
@@ -522,6 +531,7 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - Disturbed Cotton vegetation - Done
 - Nightmare spawns only during nightmare state - Done
 - Nightmare teleport/respawn pressure - Done
+- Spirit Portal snow-frame activation - Done
 - Dream Weaver blocks affecting dream/nightmare chance - see NEXT_TASKS Sprint 3 #1
 
 ### Torment content
