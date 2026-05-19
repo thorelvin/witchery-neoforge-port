@@ -21,11 +21,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, CoffinRenderer.CoffinRenderState> {
+    private static final Identifier HEAD_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_head.png");
+    private static final Identifier BOTTOM_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_bottom.png");
 
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin.png");
-
-    private final CoffinModel model;
+    private final CoffinModel headModel;
+    private final CoffinModel bottomModel;
 
     public static class CoffinRenderState extends BlockEntityRenderState {
         public float openAmount = 0f;
@@ -34,48 +36,65 @@ public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, Co
     }
 
     public CoffinRenderer(BlockEntityRendererProvider.Context ctx) {
-        model = new CoffinModel(ctx.bakeLayer(CoffinModel.LAYER_LOCATION));
+        headModel = new CoffinModel(ctx.bakeLayer(CoffinModel.HEAD_LAYER_LOCATION));
+        bottomModel = new CoffinModel(ctx.bakeLayer(CoffinModel.BOTTOM_LAYER_LOCATION));
     }
 
     @Override
-    public CoffinRenderState createRenderState() { return new CoffinRenderState(); }
+    public CoffinRenderState createRenderState() {
+        return new CoffinRenderState();
+    }
 
     @Override
     public void extractRenderState(CoffinBlockEntity be, CoffinRenderState state, float partialTick,
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
-        if (be.getLevel() == null) { state.shouldRender = false; return; }
-        BlockState bs = be.getBlockState();
-        if (!(bs.getBlock() instanceof CoffinBlock)) { state.shouldRender = false; return; }
-        state.shouldRender = true;
-        state.openAmount = bs.getValue(CoffinBlock.OPEN) ? 1.0f : 0.0f;
-        float yaw = facingToYaw(bs.getValue(CoffinBlock.FACING));
-        if (bs.getValue(CoffinBlock.PART) == BedPart.FOOT) {
-            yaw += 180.0f;
+        if (be.getLevel() == null) {
+            state.shouldRender = false;
+            return;
         }
-        state.facingYaw = yaw;
+
+        BlockState blockState = be.getBlockState();
+        if (!(blockState.getBlock() instanceof CoffinBlock) || blockState.getValue(CoffinBlock.PART) != BedPart.HEAD) {
+            state.shouldRender = false;
+            return;
+        }
+
+        state.shouldRender = true;
+        state.openAmount = blockState.getValue(CoffinBlock.OPEN) ? 1.0F : 0.0F;
+        state.facingYaw = facingToYaw(blockState.getValue(CoffinBlock.FACING));
     }
 
     @Override
-    public void submit(CoffinRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (!state.shouldRender) return;
-        model.setOpen(state.openAmount);
-        ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -0.1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.facingYaw));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
+    public void submit(CoffinRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (!state.shouldRender) {
+            return;
+        }
+
+        headModel.setOpen(state.openAmount);
+        bottomModel.setOpen(state.openAmount);
+
+        poseStack.pushPose();
+        poseStack.translate(0.5, 1.5, 0.5);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.facingYaw));
+
+        collector.submitModelPart(headModel.root(), poseStack, RenderTypes.entityCutout(HEAD_TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+
+        poseStack.translate(0.0F, 0.0F, -1.0F);
+        collector.submitModelPart(bottomModel.root(), poseStack, RenderTypes.entityCutout(BOTTOM_TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        poseStack.popPose();
     }
 
     private static float facingToYaw(Direction facing) {
         return switch (facing) {
-            case SOUTH -> 0f;
-            case WEST  -> 90f;
-            case NORTH -> 180f;
-            case EAST  -> 270f;
-            default    -> 0f;
+            case SOUTH -> 0.0F;
+            case WEST -> 90.0F;
+            case NORTH -> 180.0F;
+            case EAST -> 270.0F;
+            default -> 0.0F;
         };
     }
 }
