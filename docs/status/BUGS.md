@@ -624,6 +624,7 @@ The next familiar-mechanics pass is now closer to original Witchery:
 - The familiar-powered side systems now use the same cross-level bound-familiar lookup too, so brew-mastery, curse-mastery, and owl broom-mastery checks no longer fail just because the familiar entity is loaded in a different server level than the player.
 - The representative familiar triggers no longer collide with each other: `whiff_of_magic` now stays on `Call Familiar` only, so the call route is not accidentally shadowed by `Bind Familiar` earlier in the medium-circle dispatcher.
 - Bound familiar data now also stores the familiar kind (`owl` / `cat` / `toad`) instead of only the live entity UUID, so `Call Familiar` can recreate the correct familiar type at the circle when the old familiar entity has been dismissed or died.
+- Legacy UUID-only familiar saves now repair themselves on the next successful `Call Familiar`: if the live familiar still exists, the rite backfills the missing familiar kind automatically instead of waiting for a fresh rebind.
 
 Remaining gap:
 - The modern port still does not preserve the original richer familiar instance/template state beyond UUID + familiar kind, so the recreated familiar does not yet restore deeper old-Witchery per-familiar history or styling; this closes the dead/dismissed familiar play-flow gap without claiming byte-for-byte familiar persistence parity.

@@ -3223,6 +3223,7 @@ public class RitualExecutor {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
 
+        WitcheryPlayerData familiarData = WitcheryAttachments.get(sp);
         double x = center.getX() + 0.5;
         double y = center.getY() + 1.0;
         double z = center.getZ() + 0.5;
@@ -3234,7 +3235,16 @@ public class RitualExecutor {
                 player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
                 return false;
             }
-            PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, WitcheryAttachments.get(sp)));
+        }
+
+        java.util.UUID familiarUuid = familiar.getUUID();
+        String familiarType = FamiliarHelper.describeFamiliar(familiar);
+        boolean familiarChanged = familiarData.getFamiliarUUID().map(uuid -> !uuid.equals(familiarUuid)).orElse(true)
+                || !familiarType.equals(familiarData.getFamiliarType());
+        if (familiarChanged) {
+            familiarData.setFamiliarUUID(familiarUuid);
+            familiarData.setFamiliarType(familiarType);
+            PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, familiarData));
         }
 
         if (familiar.level() == sl) {
