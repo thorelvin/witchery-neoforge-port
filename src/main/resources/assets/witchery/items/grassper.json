@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/grassper"
+    "type": "minecraft:special",
+    "base": "witchery:item/grassper",
+    "model": {
+      "type": "witchery:grassper"
+    }
   }
 }

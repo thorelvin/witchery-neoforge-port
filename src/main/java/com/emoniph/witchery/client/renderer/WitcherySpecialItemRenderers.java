@@ -5,6 +5,7 @@ import com.emoniph.witchery.client.model.BrazierModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
+import com.emoniph.witchery.client.model.GrassperModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
@@ -30,6 +31,7 @@ public final class WitcherySpecialItemRenderers {
 
     public static void register(RegisterSpecialModelRendererEvent event) {
         event.register(id("distillery"), DistilleryUnbaked.MAP_CODEC);
+        event.register(id("grassper"), GrassperUnbaked.MAP_CODEC);
         event.register(id("spinning_wheel"), SpinningWheelUnbaked.MAP_CODEC);
         event.register(id("poppet_shelf"), PoppetShelfUnbaked.MAP_CODEC);
         event.register(id("fume_funnel"), FumeFunnelUnbaked.MAP_CODEC);
@@ -91,6 +93,38 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<DistilleryUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record GrassperSpecialRenderer(GrassperModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("grassper");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record GrassperUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<GrassperUnbaked> MAP_CODEC = MapCodec.unit(new GrassperUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new GrassperSpecialRenderer(new GrassperModel(context.entityModelSet().bakeLayer(GrassperModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<GrassperUnbaked> type() {
             return MAP_CODEC;
         }
     }

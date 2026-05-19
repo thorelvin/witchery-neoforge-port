@@ -47,6 +47,7 @@ public class WitcheryClient {
         Map.entry(CrystalBallModel.LAYER_LOCATION,     CrystalBallModel::createBodyLayer),
         Map.entry(DreamCatcherModel.LAYER_LOCATION,    DreamCatcherModel::createBodyLayer),
         Map.entry(FumeFunnelModel.LAYER_LOCATION,      FumeFunnelModel::createBodyLayer),
+        Map.entry(GrassperModel.LAYER_LOCATION,        GrassperModel::createBodyLayer),
         Map.entry(SpinningWheelModel.LAYER_LOCATION,   SpinningWheelModel::createBodyLayer),
         Map.entry(LeechChestModel.LAYER_LOCATION,      LeechChestModel::createBodyLayer),
         Map.entry(FetishModel.LAYER_LOCATION,          FetishModel::createBodyLayer),
