@@ -68,8 +68,8 @@ public class RitualEvents {
             ingredient = ingredientEntity.getItem().copyWithCount(1); // only consume 1
         }
 
-        boolean consumeIngredient = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
-        if (!consumeIngredient || ingredientEntity == null) {
+        RitualExecutor.ActivationResult activation = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
+        if (!activation.consumeDroppedIngredient() || ingredientEntity == null) {
             return;
         }
 

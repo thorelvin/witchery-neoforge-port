@@ -28,6 +28,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 Current state:
 - Circles now persist after activation again.
 - Rite ingredients now consume only on successful activation.
+- New casts now stop cleanly once a rite route is actually identified, even if that rite then aborts on `already_active`, coven, obstruction, or taglock/precondition failures, instead of falling through to an unrelated smaller-ring retry.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 

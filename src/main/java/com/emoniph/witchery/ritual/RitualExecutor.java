@@ -98,6 +98,29 @@ public class RitualExecutor {
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
 
+    public enum ActivationResult {
+        NO_MATCH(false, false),
+        MATCHED_FAILED(true, false),
+        SUCCESS(true, true),
+        SUCCESS_NO_CONSUME(true, false);
+
+        private final boolean matched;
+        private final boolean consumeDroppedIngredient;
+
+        ActivationResult(boolean matched, boolean consumeDroppedIngredient) {
+            this.matched = matched;
+            this.consumeDroppedIngredient = consumeDroppedIngredient;
+        }
+
+        public boolean matched() {
+            return matched;
+        }
+
+        public boolean consumeDroppedIngredient() {
+            return consumeDroppedIngredient;
+        }
+    }
+
     private enum ClimateFocus {
         FOREST,
         PLAINS,
@@ -180,25 +203,37 @@ public class RitualExecutor {
      * casts retry the present circles from outermost to innermost instead of
      * collapsing through the first detected ring only.
      */
-    public static boolean execute(Player player, Level level, BlockPos floorCenter,
-                                  List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
+    public static ActivationResult execute(Player player, Level level, BlockPos floorCenter,
+                                           List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
         if (isGlyphicTransformationChalk(ingredient)) {
-            return riteOfGlyphicTransformation(player, level, floorCenter, ingredient);
+            return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
         }
 
         for (RitualCircleDetector.DetectionResult result : presentCircles) {
             int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
-            boolean matched = switch (result.size()) {
+            ActivationResult activation = switch (result.size()) {
                 case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
                 case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
                 case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
             };
-            if (matched) {
-                return true;
+            if (activation.matched()) {
+                return activation;
             }
         }
 
-        return false;
+        return ActivationResult.NO_MATCH;
+    }
+
+    private static ActivationResult successResult() {
+        return ActivationResult.SUCCESS;
+    }
+
+    private static ActivationResult successWithoutConsumption() {
+        return ActivationResult.SUCCESS_NO_CONSUME;
+    }
+
+    private static ActivationResult matchedResult(boolean succeeded) {
+        return succeeded ? ActivationResult.SUCCESS : ActivationResult.MATCHED_FAILED;
     }
 
     private static boolean hasVariant(int currentVariant, int requiredVariant) {
@@ -213,224 +248,224 @@ public class RitualExecutor {
 
     // ── Small ring dispatch ────────────────────────────────────────────────────
 
-    private static boolean dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+    private static ActivationResult dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         // Infusion brew bases take priority — each grants a specific infusion type
         if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())) {
             riteOfInfusion(player, level, center, InfusionType.LIGHT);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.SOUL_OF_THE_WORLD.get())) {
             riteOfInfusion(player, level, center, InfusionType.OVERWORLD);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get())) {
             riteOfInfusion(player, level, center, InfusionType.OTHERWHERE);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
             riteOfInfusion(player, level, center, InfusionType.INFERNAL);
-            return true;
+            return successResult();
         } else if ((item.is(Items.COAL) || item.is(Items.COAL_BLOCK) || item.is(Items.BLACK_DYE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTotalEclipse(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlindness(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfSummonWitch(player, level, center);
+            return matchedResult(riteOfSummonWitch(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfBanishDemon(player, level, center);
+            return matchedResult(riteOfBanishDemon(player, level, center));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfBanishDemon(player, level, center);
+            return matchedResult(riteOfBanishDemon(player, level, center));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && !WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfBindWaystone(player, level, center);
+            return matchedResult(riteOfBindWaystone(player, level, center));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return riteOfTranspositionToWaystone(player, level, center, item);
+            return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfNecromancy(player, level, center);
+            return matchedResult(riteOfNecromancy(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return riteOfManifestationDream(player, level, center);
+            return matchedResult(riteOfManifestationDream(player, level, center));
         } else if (item.is(Items.ENDER_PEARL)) {
-            return riteOfTransposition(player, level, center);
+            return matchedResult(riteOfTransposition(player, level, center));
         } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfPriorIncarnation(player, level, center);
+            return matchedResult(riteOfPriorIncarnation(player, level, center));
         } else if (item.is(Items.INK_SAC)) {
             riteOfTheCloak(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.DIAMOND)) {
             riteOfCleansing(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
-            return riteOfIceShell(player, level, center);
+            return matchedResult(riteOfIceShell(player, level, center));
         } else if ((item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfWeatherCallStorm(player, level, center);
+            return matchedResult(riteOfWeatherCallStorm(player, level, center));
         } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfCookItem(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
-            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL);
+            return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL));
         } else {
             if (item.isEmpty()) {
                 riteOfBlessing(player, level, center);
-                return true;
+                return successWithoutConsumption();
             }
-            return false;
+            return ActivationResult.NO_MATCH;
         }
     }
 
     // ── Medium ring dispatch ───────────────────────────────────────────────────
 
-    private static boolean dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+    private static ActivationResult dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         if (item.is(Items.BONE_MEAL) || item.is(Items.BONE)) {
             riteOfFertility(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.FEATHER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfBindFamiliar(player, level, center, "owl");
-            return true;
+            return successResult();
         } else if ((item.is(Items.COD) || item.is(Items.SALMON)) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfBindFamiliar(player, level, center, "cat");
-            return true;
+            return successResult();
         } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfBindFamiliar(player, level, center, "toad");
-            return true;
+            return successResult();
         } else if (item.is(Items.GLASS_BOTTLE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfCallFamiliar(player, level, center);
+            return matchedResult(riteOfCallFamiliar(player, level, center));
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK)) {
             riteOfCharging(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.GUNPOWDER)) {
             riteOfSkysWrath(player, level, center);
-            return true;
+            return successResult();
         } else if ((item.is(Blocks.COBWEB.asItem()) || item.is(WitcheryItems.DENSE_WEB.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_MONSTERS, 4, 5);
+            return matchedResult(riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_MONSTERS, 4, 5));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_PORTABLE, 6, 4);
+            return matchedResult(riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_PORTABLE, 6, 4));
         } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfSanctity(player, level, center);
-            return true;
+            return successResult();
         } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfImprisonment(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())) {
             riteOfInfernalPower(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.SPIDER_EYE)) {
             riteOfTheSilentStep(player, level, center);
-            return true;
+            return successResult();
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfRainOfToads(player, level, center);
+            return matchedResult(riteOfRainOfToads(player, level, center));
         } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
-            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM);
+            return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
         } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCurseCreature(player, level, center);
+            return matchedResult(riteOfCurseCreature(player, level, center));
         } else if (item.is(Items.WITHER_SKELETON_SKULL) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfSummonWither(player, level, center);
+            return matchedResult(riteOfSummonWither(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlight(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.CHORUS_FRUIT) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCurseSinking(player, level, center);
+            return matchedResult(riteOfCurseSinking(player, level, center));
         } else if (item.is(Items.PUFFERFISH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCurseOverheating(player, level, center);
+            return matchedResult(riteOfCurseOverheating(player, level, center));
         } else if (item.is(Items.FERMENTED_SPIDER_EYE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCurseInsanity(player, level, center);
+            return matchedResult(riteOfCurseInsanity(player, level, center));
         } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCorruptPoppet(player, level, center);
+            return matchedResult(riteOfCorruptPoppet(player, level, center));
         } else if (item.is(Items.GOLD_NUGGET)) {
-            return riteOfCurseMisfortune(player, level, center);
+            return matchedResult(riteOfCurseMisfortune(player, level, center));
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return riteOfTranspositionEntity(player, level, center, item);
+            return matchedResult(riteOfTranspositionEntity(player, level, center, item));
         } else if (item.is(WitcheryItems.DEMON_HEART.get())) {
-            return riteOfCreaturesOfNightTaglock(player, level, center);
+            return matchedResult(riteOfCreaturesOfNightTaglock(player, level, center));
         } else if (item.is(Items.MILK_BUCKET)) {
-            return riteOfSummoning(player, level, center);
+            return matchedResult(riteOfSummoning(player, level, center));
         } else {
-            return false;
+            return ActivationResult.NO_MATCH;
         }
     }
 
     // ── Large ring dispatch ────────────────────────────────────────────────────
 
-    private static boolean dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+    private static ActivationResult dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         if (isRawFood(item, level)) {
             riteOfBroiling(player, level, center);
-            return true;
+            return successResult();
         } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             riteOfBeastialCall(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfNaturesPower(player, level, center);
+            return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return riteOfTransposeOres(player, level, center);
+            return matchedResult(riteOfTransposeOres(player, level, center));
         } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
-            return riteOfMovingEarth(player, level, center);
+            return matchedResult(riteOfMovingEarth(player, level, center));
         } else if (item.is(Items.LAVA_BUCKET)) {
-            return riteOfVolcano(player, level, center);
+            return matchedResult(riteOfVolcano(player, level, center));
         } else if (item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL)) {
             riteOfBrokenEarth(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
-            return riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE);
+            return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE));
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(item)) {
-            return riteOfTranspositionPull(player, level, center);
+            return matchedResult(riteOfTranspositionPull(player, level, center));
         } else if (item.is(Items.NETHER_STAR)) {
-            return riteOfCurseHellOnEarth(player, level, center);
+            return matchedResult(riteOfCurseHellOnEarth(player, level, center));
         } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfCurseWakingNightmare(player, level, center);
+            return matchedResult(riteOfCurseWakingNightmare(player, level, center));
         } else if (item.is(Items.BONE) || item.is(Items.BONE_BLOCK)) {
-            return riteOfCurseOfTheWolfTaglock(player, level, center);
+            return matchedResult(riteOfCurseOfTheWolfTaglock(player, level, center));
         } else if (item.is(Items.DRAGON_BREATH)) {
             riteOfDragonsFury(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.WET_SPONGE) || item.is(Items.SPONGE)) {
-            return riteOfRain(player, level, center);
+            return matchedResult(riteOfRain(player, level, center));
         } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())) {
-            return riteOfEnchantBroom(player, level, center);
+            return matchedResult(riteOfEnchantBroom(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfClimateChange(player, level, center);
+            return matchedResult(riteOfClimateChange(player, level, center));
         } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfSummonImp(player, level, center);
+            return matchedResult(riteOfSummonImp(player, level, center));
         } else if (item.is(WitcheryItems.TORMENTED_TWINE.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return riteOfSummonDemon(player, level, center);
+            return matchedResult(riteOfSummonDemon(player, level, center));
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
-            return riteOfHellgate(player, level, center);
+            return matchedResult(riteOfHellgate(player, level, center));
         } else if (item.is(Items.SKELETON_SKULL) || item.is(Items.WITHER_SKELETON_SKULL)) {
             riteOfBinding(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.TORMENT_SCROLL.get())) {
-            return riteOfSummoningLordOfTorment(player, level, center);
+            return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
         } else if (item.is(WitcheryItems.CIRCLE_TALISMAN.get()) && CircleTalismanItem.getCircleData(item) == 0) {
             riteOfBindCircleToTalisman(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
-            return true;
+            return successResult();
         } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
                 && !SpectralStoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfBindSpectralStone(player, level, center, item);
+            return matchedResult(riteOfBindSpectralStone(player, level, center, item));
         } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfBindSpiritsToFetish(player, level, center, item);
+            return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
         } else if ((item.is(Blocks.OBSIDIAN.asItem()) || item.is(Items.GLOWSTONE_DUST))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return riteOfProtection(player, level, center);
+            return matchedResult(riteOfProtection(player, level, center));
         } else {
-            return false;
+            return ActivationResult.NO_MATCH;
         }
     }
 
