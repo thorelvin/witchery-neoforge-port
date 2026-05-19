@@ -540,6 +540,17 @@ The next missing-feature pass is now closer to original Witchery:
 Remaining gap:
 - The exact portable-vs-regular multi-sacrifice activation shape is still collapsed into representative trigger items, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
 
+### 59. Transpose Ores was missing entirely - Fixed / verify
+
+The next missing-feature pass is now closer to original Witchery:
+- The old large otherwhere `teleportironore` behavior is reachable again instead of being absent from the port.
+- The restored rite now pulses every 10 ticks, scans descending underground layers in an 8-block radius, removes matching ore blocks, and throws them upward as collectible ore-block items near the circle again.
+- Full-coven behavior is back in practical form too: ordinary casts transpose iron ore, while covens of 6 also pull gold ore like the original.
+- It is exposed through a representative large otherwhere `diamond_vapour` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+
+Remaining gap:
+- The exact multi-sacrifice activation shape is still collapsed into a representative trigger item, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

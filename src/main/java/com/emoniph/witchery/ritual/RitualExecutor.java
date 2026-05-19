@@ -128,6 +128,7 @@ public class RitualExecutor {
         RAIN_OF_TOADS,
         CALL_CREATURES,
         CLIMATE_CHANGE,
+        TRANSPOSE_ORES,
         MOVING_EARTH,
         RAISE_COLUMN,
         VOLCANO,
@@ -358,6 +359,8 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             riteOfBeastialCall(player, level, center);
             return true;
+        } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
+            return riteOfTransposeOres(player, level, center);
         } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
             return riteOfMovingEarth(player, level, center);
         } else if (item.is(Items.LAVA_BUCKET)) {
@@ -1466,6 +1469,7 @@ public class RitualExecutor {
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
+            case TRANSPOSE_ORES -> tickTransposeOresRitual(level, ritual);
             case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
             case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
             case VOLCANO -> tickVolcanoRitual(level, ritual);
@@ -1581,6 +1585,24 @@ public class RitualExecutor {
         applyClimateChange(level, ritual.center, ritual.minRadius, plan);
         clearClimateChangePlan(level.dimension(), ritual.center);
         return false;
+    }
+
+    private static boolean tickTransposeOresRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        int scanY = ritual.center.getY() - ritual.stage;
+        if (scanY <= level.getMinY() + 2) {
+            return false;
+        }
+
+        int transposed = transposeOreLayer(level, ritual.center, scanY, ritual.minRadius, ritual.covenSize >= 6);
+        if (transposed > 0) {
+            level.playSound(null, ritual.center, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.35f, 1.5f);
+            level.sendParticles(ParticleTypes.PORTAL,
+                    ritual.center.getX() + 0.5, ritual.center.getY() + 1.0, ritual.center.getZ() + 0.5,
+                    10 + transposed * 2, ritual.minRadius * 0.4, 0.4, ritual.minRadius * 0.4, 0.08);
+        }
+
+        return ritual.stage < ritual.targetStage;
     }
 
     private static boolean tickMovingEarthRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2604,6 +2626,22 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Transpose Ores — lifts hidden ore blocks into the circle over time. */
+    private static boolean riteOfTransposeOres(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        int pulses = 30 + covenSize * 5;
+        if (!queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES, RitualCircleDetector.CircleSize.LARGE,
+                center, 8, 0, pulses, 10, covenSize)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.transpose_ores.success",
+                SoundEvents.END_PORTAL_FRAME_FILL, 0.9f, 4, 40);
+        return true;
+    }
+
     private static void raiseColumnLayer(ServerLevel level, BlockPos center, int y, int radius, boolean topLayer) {
         int radiusSq = radius * radius;
         int innerRadius = Math.max(radius - 1, 0);
@@ -2624,6 +2662,40 @@ public class RitualExecutor {
                 raiseColumnBlock(level, center.offset(dx, y - center.getY(), dz));
             }
         }
+    }
+
+    private static int transposeOreLayer(ServerLevel level, BlockPos center, int y, int radius, boolean includeGold) {
+        int transposed = 0;
+        for (int x = center.getX() - radius; x <= center.getX() + radius; x++) {
+            for (int z = center.getZ() - radius; z <= center.getZ() + radius; z++) {
+                BlockPos orePos = new BlockPos(x, y, z);
+                BlockState state = level.getBlockState(orePos);
+                if (!isTransposeOre(state, includeGold)) {
+                    continue;
+                }
+
+                ItemStack output = new ItemStack(state.getBlock().asItem());
+                if (output.isEmpty()) {
+                    continue;
+                }
+
+                double spawnX = center.getX() - radius + level.random.nextInt(radius * 2 + 1) + 0.5;
+                double spawnZ = center.getZ() - radius + level.random.nextInt(radius * 2 + 1) + 0.5;
+                ItemEntity entity = new ItemEntity(level, spawnX, center.getY() + 2.05, spawnZ, output);
+                entity.setDeltaMovement(0.0, 0.0, 0.0);
+                level.removeBlock(orePos, false);
+                level.addFreshEntity(entity);
+                transposed++;
+            }
+        }
+        return transposed;
+    }
+
+    private static boolean isTransposeOre(BlockState state, boolean includeGold) {
+        if (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE)) {
+            return true;
+        }
+        return includeGold && (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE));
     }
 
     private static void raiseColumnBlock(ServerLevel level, BlockPos pos) {
