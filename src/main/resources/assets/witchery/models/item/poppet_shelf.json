@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:block/poppet_shelf"
-  }
+  "parent": "witchery:block/poppet_shelf"
 }

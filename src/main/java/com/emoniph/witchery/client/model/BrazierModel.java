@@ -16,14 +16,16 @@ public class BrazierModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "brazier"), "main");
 
-    private final List<ModelPart> parts;
+    private final List<ModelPart> structureParts;
+    private final ModelPart ash;
 
     public BrazierModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
-        parts = List.of(
+        this.ash = root.getChild("ash");
+        structureParts = List.of(
             root.getChild("leg1"), root.getChild("leg2"), root.getChild("leg3"), root.getChild("leg4"),
             root.getChild("foot1"), root.getChild("foot2"), root.getChild("foot3"), root.getChild("foot4"),
-            root.getChild("foot_base"), root.getChild("pan_base"), root.getChild("ash"),
+            root.getChild("foot_base"), root.getChild("pan_base"),
             root.getChild("pan_side1"), root.getChild("pan_side2"),
             root.getChild("pan_side3"), root.getChild("pan_side4")
         );
@@ -61,4 +63,11 @@ public class BrazierModel extends Model.Simple {
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    public List<ModelPart> structureParts() {
+        return structureParts;
     }
+
+    public ModelPart ashPart() {
+        return ash;
+    }
+}

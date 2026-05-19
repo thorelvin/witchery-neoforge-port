@@ -1,1 +1,8 @@
-{ "variants": { "": { "model": "witchery:block/witches_oven_idle" } } }
+{
+  "variants": {
+    "facing=north": { "model": "witchery:block/witches_oven_idle" },
+    "facing=south": { "model": "witchery:block/witches_oven_idle" },
+    "facing=west": { "model": "witchery:block/witches_oven_idle" },
+    "facing=east": { "model": "witchery:block/witches_oven_idle" }
+  }
+}

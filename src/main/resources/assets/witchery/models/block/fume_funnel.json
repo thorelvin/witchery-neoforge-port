@@ -1,1 +1,96 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "witchery:block/fumefunnel" } }
+{
+	"parent": "block/block",
+	"texture_size": [48, 48],
+	"textures": {
+		"oven": "witchery:block/witches_oven_idle",
+		"particle": "witchery:block/witches_oven_idle"
+	},
+	"elements": [
+		{
+			"from": [2, 3, 3.5],
+			"to": [3, 9, 12.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [27, 5, 0.5]},
+			"faces": {
+				"north": {"uv": [11.66667, 7.33333, 12, 9.33333], "texture": "#oven"},
+				"east": {"uv": [11.66667, 7.33333, 14.66667, 9.33333], "texture": "#oven"},
+				"south": {"uv": [11.66667, 7.33333, 12, 9.33333], "texture": "#oven"},
+				"west": {"uv": [11.66667, 7.33333, 14.66667, 9.33333], "texture": "#oven"},
+				"up": {"uv": [11.66667, 7.33333, 14.66667, 7.66667], "rotation": 270, "texture": "#oven"},
+				"down": {"uv": [11.66667, 9, 14.66667, 9.33333], "rotation": 90, "texture": "#oven"}
+			}
+		},
+		{
+			"from": [13, 3, 3.5],
+			"to": [14, 9, 12.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [27, 5, 0.5]},
+			"faces": {
+				"north": {"uv": [11.66667, 7.33333, 12, 9.33333], "texture": "#oven"},
+				"east": {"uv": [11.66667, 7.33333, 14.66667, 9.33333], "texture": "#oven"},
+				"south": {"uv": [11.66667, 7.33333, 12, 9.33333], "texture": "#oven"},
+				"west": {"uv": [11.66667, 7.33333, 14.66667, 9.33333], "texture": "#oven"},
+				"up": {"uv": [11.66667, 7.33333, 14.66667, 7.66667], "rotation": 270, "texture": "#oven"},
+				"down": {"uv": [11.66667, 9, 14.66667, 9.33333], "rotation": 90, "texture": "#oven"}
+			}
+		},
+		{
+			"name": "base",
+			"from": [3, 1, 3],
+			"to": [13, 11, 13],
+			"faces": {
+				"north": {"uv": [0.66667, 0, 4.33333, 3.33333], "texture": "#oven"},
+				"east": {"uv": [11.66667, 0, 15, 3.33333], "texture": "#oven"},
+				"south": {"uv": [11.66667, 0, 15, 3.33333], "texture": "#oven"},
+				"west": {"uv": [11.66667, 0, 15, 3.33333], "texture": "#oven"},
+				"up": {"uv": [0, 0, 10, 10], "texture": "#oven"},
+				"down": {"uv": [0, 0, 10, 10], "texture": "#oven"}
+			}
+		},
+		{
+			"name": "bottom",
+			"from": [2, 0, 2],
+			"to": [14, 1, 14],
+			"faces": {
+				"north": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"east": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"south": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"west": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"up": {"uv": [0.33333, 6, 4.33333, 10], "texture": "#oven"},
+				"down": {"uv": [0.33333, 6, 4.33333, 10], "texture": "#oven"}
+			}
+		},
+		{
+			"name": "top",
+			"from": [2, 11, 2],
+			"to": [14, 12, 14],
+			"faces": {
+				"north": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"east": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"south": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"west": {"uv": [0, 4, 4, 4.33333], "texture": "#oven"},
+				"up": {"uv": [0.66667, 6, 4.66667, 10], "texture": "#oven"},
+				"down": {"uv": [0.33333, 6, 4.33333, 10], "texture": "#oven"}
+			}
+		},
+		{
+			"name": "top",
+			"from": [4, 12, 4],
+			"to": [12, 13, 12],
+			"faces": {
+				"north": {"uv": [7.33333, 0.66667, 10, 1], "texture": "#oven"},
+				"east": {"uv": [7.33333, 0.66667, 10, 1], "texture": "#oven"},
+				"south": {"uv": [7.33333, 0.66667, 10, 1], "texture": "#oven"},
+				"west": {"uv": [7.33333, 0.66667, 10, 1], "texture": "#oven"},
+				"up": {"uv": [7, 1, 9.66667, 3.66667], "texture": "#oven"},
+				"down": {"uv": [0, 0, 7, 8], "texture": "#oven"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "fume_alone",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4, 5]
+		}
+	]
+}

@@ -123,6 +123,10 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
     @Override
     public void setChanged() {
         super.setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
         updateChunkForceState();
     }
 

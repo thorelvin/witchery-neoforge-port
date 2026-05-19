@@ -1,1 +1,8 @@
-{ "variants": { "": { "model": "witchery:block/spinning_wheel" } } }
+{
+  "variants": {
+    "facing=north": { "model": "witchery:block/spinning_wheel" },
+    "facing=south": { "model": "witchery:block/spinning_wheel" },
+    "facing=west": { "model": "witchery:block/spinning_wheel" },
+    "facing=east": { "model": "witchery:block/spinning_wheel" }
+  }
+}

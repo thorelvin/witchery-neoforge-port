@@ -111,13 +111,14 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
 
             int row = slot / 3;
             int col = slot % 3;
-            float x = 0.24f + col * 0.26f;
-            float z = 0.24f + row * 0.26f;
+            float x = 0.5f + col * 0.5f;
+            float z = 0.5f + row * 0.5f;
 
             ps.pushPose();
-            ps.translate(x, 0.58f, z);
+            ps.translate(-0.5f, 0.6f, -0.5f);
+            ps.scale(0.5f, 0.5f, 0.5f);
+            ps.translate(x, 0.0f, z);
             ps.mulPose(Axis.YP.rotationDegrees(state.slotRotations[slot]));
-            ps.scale(0.30f, 0.30f, 0.30f);
             renderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             ps.popPose();
         }

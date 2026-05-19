@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "witchery:block/refilling_chest" }
+    "facing=north": { "model": "witchery:block/refilling_chest" },
+    "facing=south": { "model": "witchery:block/refilling_chest" },
+    "facing=west": { "model": "witchery:block/refilling_chest" },
+    "facing=east": { "model": "witchery:block/refilling_chest" }
   }
 }

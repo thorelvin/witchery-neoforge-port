@@ -1,1 +1,8 @@
-{ "variants": { "": { "model": "witchery:block/fume_funnel" } } }
+{
+  "variants": {
+    "facing=north": { "model": "witchery:block/fume_funnel" },
+    "facing=south": { "model": "witchery:block/fume_funnel" },
+    "facing=west": { "model": "witchery:block/fume_funnel" },
+    "facing=east": { "model": "witchery:block/fume_funnel" }
+  }
+}

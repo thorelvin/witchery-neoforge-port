@@ -1,1 +1,8 @@
-{ "variants": { "": { "model": "witchery:block/leech_chest" } } }
+{
+  "variants": {
+    "facing=north": { "model": "witchery:block/leech_chest" },
+    "facing=south": { "model": "witchery:block/leech_chest" },
+    "facing=west": { "model": "witchery:block/leech_chest" },
+    "facing=east": { "model": "witchery:block/leech_chest" }
+  }
+}
