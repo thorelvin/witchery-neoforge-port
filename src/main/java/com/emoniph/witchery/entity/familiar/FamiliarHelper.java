@@ -1,13 +1,16 @@
 package com.emoniph.witchery.entity.familiar;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,5 +65,44 @@ public final class FamiliarHelper {
 
     public static boolean hasActiveOwlFamiliar(Player player) {
         return getActiveFamiliarType(player) == 3;
+    }
+
+    public static String describeFamiliar(@Nullable TamableAnimal familiar) {
+        if (familiar instanceof CatFamiliarEntity) {
+            return "cat";
+        }
+        if (familiar instanceof ToadFamiliarEntity) {
+            return "toad";
+        }
+        if (familiar instanceof OwlFamiliarEntity) {
+            return "owl";
+        }
+        return "";
+    }
+
+    @Nullable
+    public static TamableAnimal restoreBoundFamiliar(ServerPlayer player, ServerLevel level, double x, double y, double z) {
+        String familiarType = WitcheryAttachments.get(player).getFamiliarType();
+        if (familiarType == null || familiarType.isBlank()) {
+            return null;
+        }
+
+        FamiliarEntity familiar = switch (familiarType.toLowerCase(Locale.ROOT)) {
+            case "owl" -> WitcheryEntities.OWL.get().create(level, EntitySpawnReason.TRIGGERED);
+            case "cat" -> WitcheryEntities.FAMILIAR_CAT.get().create(level, EntitySpawnReason.TRIGGERED);
+            case "toad" -> WitcheryEntities.TOAD.get().create(level, EntitySpawnReason.TRIGGERED);
+            default -> null;
+        };
+        if (familiar == null) {
+            return null;
+        }
+
+        familiar.tame(player);
+        familiar.setPersistenceRequired();
+        familiar.setOrderedToSit(false);
+        familiar.snapTo(x, y, z, player.getYRot(), 0.0F);
+        level.addFreshEntity(familiar);
+        WitcheryAttachments.get(player).setFamiliarUUID(familiar.getUUID());
+        return familiar;
     }
 }

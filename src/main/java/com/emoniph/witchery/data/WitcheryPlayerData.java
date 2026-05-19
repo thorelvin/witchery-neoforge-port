@@ -62,6 +62,7 @@ public class WitcheryPlayerData {
     private int bloodLevel = 0;
     private float transformationLevel = 0f;
     private String familiarUUID = "";
+    private String familiarType = "";
     private String infusionType = "";
     private long lastDeathPos = Long.MIN_VALUE; // BlockPos.asLong(); MIN_VALUE = no death recorded
     private String lastDeathDimension = "";
@@ -91,7 +92,7 @@ public class WitcheryPlayerData {
     public WitcheryPlayerData() {}
 
     private WitcheryPlayerData(boolean vampire, boolean werewolf, int bloodLevel,
-                                float transformationLevel, String familiarUUID,
+                                float transformationLevel, String familiarUUID, String familiarType,
                                 String infusionType, long lastDeathPos, String lastDeathDimension,
                                 long returnPos, String returnDimension,
                                 boolean inSpiritWorld, SpiritWorldState sw,
@@ -102,6 +103,7 @@ public class WitcheryPlayerData {
         this.bloodLevel = bloodLevel;
         this.transformationLevel = transformationLevel;
         this.familiarUUID = familiarUUID;
+        this.familiarType = familiarType == null ? "" : familiarType;
         this.infusionType = infusionType;
         this.lastDeathPos = lastDeathPos;
         this.lastDeathDimension = lastDeathDimension;
@@ -116,14 +118,14 @@ public class WitcheryPlayerData {
 
     // Codec factory alias
     private static WitcheryPlayerData fromCodec(boolean vampire, boolean werewolf, int bloodLevel,
-                                                  float transformationLevel, String familiarUUID,
+                                                  float transformationLevel, String familiarUUID, String familiarType,
                                                   String infusionType, long lastDeathPos, String lastDeathDimension,
                                                   long returnPos, String returnDimension,
                                                   boolean inSpiritWorld, SpiritWorldState sw,
                                                   String creaturePowerType, int creaturePowerCharges,
                                                   int wolfMastery) {
         return new WitcheryPlayerData(vampire, werewolf, bloodLevel, transformationLevel,
-                familiarUUID, infusionType, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
+                familiarUUID, familiarType, infusionType, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
                 inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wolfMastery);
     }
 
@@ -133,6 +135,7 @@ public class WitcheryPlayerData {
         Codec.INT.optionalFieldOf("blood_level", 0).forGetter(d -> d.bloodLevel),
         Codec.FLOAT.optionalFieldOf("transformation_level", 0f).forGetter(d -> d.transformationLevel),
         Codec.STRING.optionalFieldOf("familiar_uuid", "").forGetter(d -> d.familiarUUID),
+        Codec.STRING.optionalFieldOf("familiar_type", "").forGetter(d -> d.familiarType),
         Codec.STRING.optionalFieldOf("infusion_type", "").forGetter(d -> d.infusionType),
         Codec.LONG.optionalFieldOf("last_death_pos", Long.MIN_VALUE).forGetter(d -> d.lastDeathPos),
         Codec.STRING.optionalFieldOf("last_death_dim", "").forGetter(d -> d.lastDeathDimension),
@@ -157,6 +160,7 @@ public class WitcheryPlayerData {
         try { return Optional.of(UUID.fromString(familiarUUID)); }
         catch (IllegalArgumentException e) { return Optional.empty(); }
     }
+    public String getFamiliarType()                       { return familiarType; }
 
     public InfusionType getInfusionType() { return InfusionType.fromString(infusionType); }
 
@@ -168,7 +172,8 @@ public class WitcheryPlayerData {
     public void addBlood(int amount)                      { setBloodLevel(bloodLevel + amount); }
     public void setTransformationLevel(float t)           { this.transformationLevel = Math.clamp(t, 0f, 1f); }
     public void setFamiliarUUID(UUID uuid)                { this.familiarUUID = uuid == null ? "" : uuid.toString(); }
-    public void clearFamiliar()                           { this.familiarUUID = ""; }
+    public void setFamiliarType(String type)              { this.familiarType = type == null ? "" : type.toLowerCase(java.util.Locale.ROOT); }
+    public void clearFamiliar()                           { this.familiarUUID = ""; this.familiarType = ""; }
     public void setInfusionType(InfusionType type)        { this.infusionType = type == null ? "" : type.name(); }
     public void clearInfusion()                           { this.infusionType = ""; }
 
@@ -268,6 +273,7 @@ public class WitcheryPlayerData {
         this.werewolf = other.werewolf;
         this.transformationLevel = other.transformationLevel;
         this.familiarUUID = other.familiarUUID;
+        this.familiarType = other.familiarType;
         this.infusionType = other.infusionType;
         this.lastDeathPos = other.lastDeathPos;
         this.lastDeathDimension = other.lastDeathDimension;
@@ -288,6 +294,6 @@ public class WitcheryPlayerData {
     public String toString() {
         return "WitcheryPlayerData{vampire=" + vampire + ", werewolf=" + werewolf
                 + ", blood=" + bloodLevel + ", transform=" + transformationLevel
-                + ", infusion=" + infusionType + "}";
+                + ", familiarType=" + familiarType + ", infusion=" + infusionType + "}";
     }
 }

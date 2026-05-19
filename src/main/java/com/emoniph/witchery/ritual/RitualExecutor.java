@@ -3223,15 +3223,19 @@ public class RitualExecutor {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
 
-        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(sp);
-        if (familiar == null) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
-            return false;
-        }
-
         double x = center.getX() + 0.5;
         double y = center.getY() + 1.0;
         double z = center.getZ() + 0.5;
+
+        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(sp);
+        if (familiar == null) {
+            familiar = FamiliarHelper.restoreBoundFamiliar(sp, sl, x, y, z);
+            if (familiar == null) {
+                player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
+                return false;
+            }
+        }
+
         if (familiar.level() == sl) {
             familiar.teleportTo(x, y, z);
         } else {
@@ -3309,6 +3313,7 @@ public class RitualExecutor {
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.setFamiliarUUID(bound.getUUID());
+        data.setFamiliarType(FamiliarHelper.describeFamiliar(bound));
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         return bound;
     }
