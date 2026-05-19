@@ -3178,8 +3178,6 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeInventoryItem(sp, taglock.get().slot());
-
         if (PoppetEvents.damageBoundPoppet(target, WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
             target.displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
@@ -3188,6 +3186,7 @@ public class RitualExecutor {
             return true;
         }
 
+        consumeInventoryItem(sp, taglock.get().slot());
         int destroyed = PoppetEvents.destroyBoundPoppets(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
         success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
         sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
@@ -3675,7 +3674,6 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.offline"), false);
             return false;
         }
-        consumeInventoryItem(sp, taglock.get().slot());
         if (hasCurseProtection(target)) {
             sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
             return false;
@@ -3685,6 +3683,7 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
+        consumeInventoryItem(sp, taglock.get().slot());
         BlockPos dest = sp.blockPosition().above();
         target.teleportTo(dest.getX() + 0.5, dest.getY(), dest.getZ() + 0.5);
         target.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.pulled"), false);
@@ -3717,7 +3716,6 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
             return false;
         }
-        consumeInventoryItem(sp, taglock.get().slot());
         if (checkHunterArmorProtection && hasCurseProtection(target)) {
             sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
             return false;
@@ -3728,6 +3726,7 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
+        consumeInventoryItem(sp, taglock.get().slot());
         action.apply(target);
         target.displayClientMessage(Component.translatable(successKey + ".target"), false);
         success(caster, level, center, successKey + ".caster",
