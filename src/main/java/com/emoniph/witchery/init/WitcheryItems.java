@@ -174,7 +174,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WITCH_HAND = ITEMS.registerSimpleItem("witch_hand");
     public static final DeferredItem<Item> WITCH_SEEDS = ITEMS.register("witch_seeds", id -> new BlockItem(WitcheryBlocks.WITCH_CROP_BLOCK.get(), itemProps(id)));
     public static final DeferredItem<Item> MUTATOR = ITEMS.registerSimpleItem("mutator");
-    public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.registerSimpleItem("spectral_stone");
+    public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));
     public static final DeferredItem<Item> POPPET_SHELF_COMPASS = ITEMS.registerSimpleItem("poppet_shelf_compass");
     public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.registerSimpleItem("polynesia_charm");
     public static final DeferredItem<Item> PARASYTIC_LOUSE = ITEMS.registerSimpleItem("parasytic_louse");

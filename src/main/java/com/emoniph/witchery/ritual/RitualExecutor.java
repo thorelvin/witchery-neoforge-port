@@ -15,6 +15,7 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.CircleTalismanItem;
+import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
@@ -191,6 +192,8 @@ public class RitualExecutor {
                 && WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return riteOfTranspositionToWaystone(player, level, center);
+        } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfNecromancy(player, level, center);
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             riteOfManifestationDream(player, level, center);
             return true;
@@ -346,6 +349,10 @@ public class RitualExecutor {
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
             return true;
+        } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
+                && !SpectralStoneItem.isBound(item)
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfBindSpectralStone(player, level, center, item);
         } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfBindSpiritsToFetish(player, level, center, item);
         } else if ((item.is(Blocks.OBSIDIAN.asItem()) || item.is(Items.GLOWSTONE_DUST))
@@ -1856,6 +1863,66 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Necromancy — infuses an empty Spectral Stone at night through a representative ritual-dust route. */
+    private static boolean riteOfNecromancy(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+
+        ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
+        SpectralStoneItem.clearBinding(output);
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.15, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, "witchery.ritual.spectral_stone.success",
+                SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
+        WitcheryMod.LOGGER.info("Rite of Necromancy created a Spectral Stone at {}", center);
+        return true;
+    }
+
+    /** Rite of Binding — binds up to three nearby spectral creatures of the same type into a Spectral Stone. */
+    private static boolean riteOfBindSpectralStone(Player player, Level level, BlockPos center, ItemStack spectralStone) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (SpectralStoneItem.isBound(spectralStone)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.already"), false);
+            return false;
+        }
+
+        SpectralStoneItem.StoredType storedType = findNearestSpectralType(sl, center, 5.0);
+        if (storedType == SpectralStoneItem.StoredType.NONE) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
+            return false;
+        }
+
+        int count = consumeNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
+        if (count <= 0) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
+            return false;
+        }
+
+        ItemStack output = spectralStone.copy();
+        output.setCount(1);
+        SpectralStoneItem.bind(output, storedType, count);
+
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.3, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, null, SoundEvents.EVOKER_PREPARE_SUMMON, 1.1f, 3, 40);
+        player.displayClientMessage(Component.translatable(
+                "witchery.ritual.bind_spectral.success",
+                count,
+                Component.translatable(storedType.translationKey())), false);
+        WitcheryMod.LOGGER.info("Rite of Binding stored {} {} entities into a Spectral Stone at {}",
+                count, storedType.name().toLowerCase(), center);
+        return true;
+    }
+
     private static Block glyphicTransformationTargetBlock(ItemStack ingredient) {
         if (ingredient.is(WitcheryItems.CHALK.get())) {
             return WitcheryBlocks.CIRCLE_GLYPH.get();
@@ -1879,6 +1946,73 @@ public class RitualExecutor {
             }
         }
         return Math.min(count, 3);
+    }
+
+    private static SpectralStoneItem.StoredType findNearestSpectralType(ServerLevel level, BlockPos center, double radius) {
+        Vec3 centerVec = Vec3.atCenterOf(center);
+        double radiusSquared = radius * radius;
+        double nearestDistance = Double.MAX_VALUE;
+        SpectralStoneItem.StoredType nearestType = SpectralStoneItem.StoredType.NONE;
+        AABB area = new AABB(center).inflate(radius);
+
+        for (com.emoniph.witchery.entity.SpectreEntity spectre : level.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class, area)) {
+            double distance = spectre.distanceToSqr(centerVec);
+            if (distance <= radiusSquared && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestType = SpectralStoneItem.StoredType.SPECTRE;
+            }
+        }
+        for (com.emoniph.witchery.entity.BansheeEntity banshee : level.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class, area)) {
+            double distance = banshee.distanceToSqr(centerVec);
+            if (distance <= radiusSquared && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestType = SpectralStoneItem.StoredType.BANSHEE;
+            }
+        }
+        for (com.emoniph.witchery.entity.PoltergeistEntity poltergeist : level.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, area)) {
+            double distance = poltergeist.distanceToSqr(centerVec);
+            if (distance <= radiusSquared && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestType = SpectralStoneItem.StoredType.POLTERGEIST;
+            }
+        }
+
+        return nearestType;
+    }
+
+    private static int consumeNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type, double radius, int maxCount) {
+        AABB area = new AABB(center).inflate(radius);
+        Vec3 centerVec = Vec3.atCenterOf(center);
+        double radiusSquared = radius * radius;
+
+        List<? extends Entity> candidates = switch (type) {
+            case SPECTRE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class, area);
+            case BANSHEE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class, area);
+            case POLTERGEIST -> level.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, area);
+            default -> List.of();
+        };
+
+        List<Entity> sorted = new ArrayList<>();
+        for (Entity candidate : candidates) {
+            if (candidate.distanceToSqr(centerVec) <= radiusSquared) {
+                sorted.add(candidate);
+            }
+        }
+        sorted.sort((left, right) -> Double.compare(left.distanceToSqr(centerVec), right.distanceToSqr(centerVec)));
+
+        int count = 0;
+        for (Entity entity : sorted) {
+            entity.discard();
+            level.playSound(null, entity.blockPosition(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.HOSTILE, 0.4f, 1.4f);
+            level.sendParticles(ParticleTypes.PORTAL,
+                    entity.getX(), entity.getY() + 0.5, entity.getZ(),
+                    12, 0.2, 0.2, 0.2, 0.05);
+            count++;
+            if (count >= maxCount) {
+                break;
+            }
+        }
+        return count;
     }
 
     private static int transformGlyphicRing(ServerLevel level, BlockPos center, int size, Block targetBlock) {

@@ -111,7 +111,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 90 | `witchery:exhale_of_horned_one` | |
 | 91 | `witchery:hint_of_rebirth` | |
 | 92 | `witchery:mutator` | |
-| 93 | `witchery:spectral_stone` | |
+| 93 | `witchery:spectral_stone` | `Partial - rite family and binding data restored` | Small Rite of Necromancy now creates it again, large Rite of Binding now stores up to 3 nearby same-type spectral mobs in item data, and tooltip state is visible again. Original release-on-use behavior still needs a full parity pass. |
 | 94 | `witchery:poppet_shelf_compass` | |
 | 95 | `witchery:polynesia_charm` | |
 | 96 | `witchery:parasytic_louse` | |

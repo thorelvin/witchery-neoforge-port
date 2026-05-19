@@ -452,6 +452,24 @@ The next missing-rite pass is now closer to original Witchery:
 Remaining gap:
 - The port now uses the nearest triggering chalk item as the deterministic family selector instead of the old item-iteration-order quirk, and it still rewrites the ring through the modern simplified ritual entrypoint rather than the original separate rite registry.
 
+### 50. Rite of Necromancy was missing entirely - Fixed / verify
+
+The next missing-rite pass is now closer to original Witchery:
+- `spectralstone` is reachable again as a small night-only ritual through a representative ritual `spectral_dust` route, instead of being absent from the modern dispatcher.
+- The restored route now produces a real Spectral Stone item again rather than leaving the feature family dead, and the ported item now carries explicit binding data + tooltip state instead of staying a plain anonymous item.
+
+Remaining gap:
+- This still uses one representative trigger instead of the original multi-sacrifice recipe, and the old release-on-use behavior for stored spectral creatures is not fully rebuilt yet.
+
+### 51. Rite of Binding for Spectral Stone was missing entirely - Fixed / verify
+
+The next missing-rite pass is now closer to original Witchery:
+- `bindspectral` is reachable again as a large ritual-circle route from an empty Spectral Stone, instead of being absent from the port entirely.
+- The restored route now looks for nearby spectral creatures, chooses the nearest creature family, binds up to three of that same type into the stone, removes those entities from the world, and stores the result in modern item data so the item is no longer mechanically blank.
+
+Remaining gap:
+- The port now uses deterministic nearest-type selection instead of the old entity-iteration-order quirk, and the release side of the Spectral Stone item is still simplified compared to the original summoned-undead enslaver flow.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
