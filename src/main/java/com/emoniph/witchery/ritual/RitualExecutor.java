@@ -339,8 +339,7 @@ public class RitualExecutor {
             riteOfFertility(player, level, center);
             return successResult();
         } else if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
-                || item.is(WitcheryItems.ODOUR_OF_PURITY.get())
-                || item.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
+                || item.is(WitcheryItems.ODOUR_OF_PURITY.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindFamiliar(player, level, center));
         } else if ((item.is(WitcheryItems.BREATH_OF_GODDESS.get())

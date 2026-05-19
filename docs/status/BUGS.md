@@ -615,6 +615,7 @@ The next familiar-mechanics pass is now closer to original Witchery:
 - Familiar-binding dispatch no longer reports unconditional success for the feather/fish/slime placeholder routes. If there is no valid creature to bind, the medium-circle cast now fails/refunds instead of silently consuming the offering and minting a free familiar.
 - The familiar dispatcher routes are now keyed from representative Witchery ingredients (`tear_of_goddess` / `odour_of_purity` / `whiff_of_magic` for binding, `breath_of_goddess` / `hint_of_rebirth` / `whiff_of_magic` for calling) instead of unrelated vanilla placeholders, which is much closer to the original ritual registry feel.
 - The familiar-powered side systems now use the same cross-level bound-familiar lookup too, so brew-mastery, curse-mastery, and owl broom-mastery checks no longer fail just because the familiar entity is loaded in a different server level than the player.
+- The representative familiar triggers no longer collide with each other: `whiff_of_magic` now stays on `Call Familiar` only, so the call route is not accidentally shadowed by `Bind Familiar` earlier in the medium-circle dispatcher.
 
 Remaining gap:
 - The modern port still stores only the active familiar UUID instead of the original richer familiar instance/template data, so `Call Familiar` cannot yet recreate a dismissed or dead familiar the way 1.7.10 could. This patch restores the real bind/call flow for living bound familiars without claiming full familiar-persistence parity yet.
