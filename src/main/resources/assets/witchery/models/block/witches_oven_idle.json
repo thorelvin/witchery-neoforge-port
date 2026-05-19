@@ -1,0 +1,7 @@
+{
+  "parent": "witchery:block/witches_oven",
+  "textures": {
+    "oven": "witchery:block/witches_oven_idle",
+    "particle": "witchery:block/witches_oven_idle"
+  }
+}

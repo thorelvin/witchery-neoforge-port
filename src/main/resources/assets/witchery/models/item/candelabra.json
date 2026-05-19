@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:block/candelabra"
-  }
+  "parent": "witchery:block/candelabra"
 }

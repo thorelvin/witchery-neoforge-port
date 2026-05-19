@@ -1,1 +1,164 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "witchery:block/brazier" } }
+{
+	"parent": "block/block",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "witchery:block/brazier",
+		"particle": "witchery:block/brazier"
+	},
+	"elements": [
+		{
+			"name": "BrazierBowlTopWest",
+			"from": [4, 14.475, 5],
+			"to": [5, 15.475, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [12, 22.475, 16]},
+			"faces": {
+				"north": {"uv": [3.5, 3, 4, 3.5], "texture": "#0"},
+				"east": {"uv": [0, 3.5, 3.5, 4], "texture": "#0"},
+				"south": {"uv": [3.5, 3, 4, 3.5], "texture": "#0"},
+				"west": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"up": {"uv": [4, 3, 4.5, 6.5], "texture": "#0"},
+				"down": {"uv": [3.5, 3, 4, 6.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "BrazierBowlBot",
+			"from": [5, 13.475, 5],
+			"to": [11, 14.475, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [13, 21.475, 18]},
+			"faces": {
+				"north": {"uv": [0, 3.5, 3, 4], "texture": "#0"},
+				"east": {"uv": [0, 3.5, 3, 4], "texture": "#0"},
+				"south": {"uv": [0, 3, 3, 3.5], "texture": "#0"},
+				"west": {"uv": [0, 3, 3, 3.5], "texture": "#0"},
+				"up": {"uv": [0, 0, 3, 3], "texture": "#0"},
+				"down": {"uv": [0, 6.5, 3, 9.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "BrazierBowlTopEast",
+			"from": [11, 14.475, 4],
+			"to": [12, 15.475, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [19, 22.475, 15]},
+			"faces": {
+				"north": {"uv": [4, 3.5, 4.5, 4], "texture": "#0"},
+				"east": {"uv": [0, 3.5, 3.5, 4], "texture": "#0"},
+				"south": {"uv": [3.5, 3.5, 4, 4], "texture": "#0"},
+				"west": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"up": {"uv": [3.5, 3, 4, 6.5], "texture": "#0"},
+				"down": {"uv": [4, 3, 4.5, 6.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "BrazierBowlTopNorth",
+			"from": [4, 14.475, 4],
+			"to": [11, 15.475, 5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [18, 22.475, 12]},
+			"faces": {
+				"north": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"east": {"uv": [0, 4, 0.5, 4.5], "texture": "#0"},
+				"south": {"uv": [0.5, 3.5, 4, 4], "texture": "#0"},
+				"west": {"uv": [3.5, 3.5, 4, 4], "texture": "#0"},
+				"up": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"down": {"uv": [1, 3, 4.5, 3.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "BrazierBowlTopSouth",
+			"from": [5, 14.475, 11],
+			"to": [12, 15.475, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [19, 22.475, 19]},
+			"faces": {
+				"north": {"uv": [0, 3.5, 3.5, 4], "texture": "#0"},
+				"east": {"uv": [3.5, 4.5, 4, 5], "texture": "#0"},
+				"south": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"west": {"uv": [4, 4, 4.5, 4.5], "texture": "#0"},
+				"up": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"},
+				"down": {"uv": [0, 3, 3.5, 3.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "FullPlank",
+			"from": [7, -0.15, 9.55],
+			"to": [9, 3.85, 10.55],
+			"rotation": {"angle": -45, "axis": "x", "origin": [8, 1.85, 10.05]},
+			"faces": {
+				"north": {"uv": [7.5, 2, 8.5, 4], "rotation": 180, "texture": "#0"},
+				"east": {"uv": [9, 2, 11, 2.5], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [7, 4.5, 8, 6.5], "texture": "#0"},
+				"west": {"uv": [9.5, 1, 11.5, 1.5], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [5.5, 5, 6.5, 5.5], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [4.5, 0.5, 5.5, 1], "texture": "#0"}
+			}
+		},
+		{
+			"name": "FullPlank",
+			"from": [9.575, -0.175, 7],
+			"to": [10.575, 3.825, 9],
+			"rotation": {"angle": 45, "axis": "z", "origin": [10.075, 1.825, 8]},
+			"faces": {
+				"north": {"uv": [9, 2, 11, 2.5], "rotation": 270, "texture": "#0"},
+				"east": {"uv": [5.5, 4.5, 6.5, 6.5], "texture": "#0"},
+				"south": {"uv": [9.5, 1, 11.5, 1.5], "rotation": 90, "texture": "#0"},
+				"west": {"uv": [7.5, 2, 8.5, 4], "rotation": 180, "texture": "#0"},
+				"up": {"uv": [5.5, 5, 6.5, 5.5], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [4.5, 0.5, 5.5, 1], "rotation": 90, "texture": "#0"}
+			}
+		},
+		{
+			"name": "HalfPlankEast",
+			"from": [7, -0.19041, 5.425],
+			"to": [9, 3.80959, 6.425],
+			"rotation": {"angle": 45, "axis": "x", "origin": [8, 1.80959, 5.925]},
+			"faces": {
+				"north": {"uv": [11, 1, 13, 2], "rotation": 90, "texture": "#0"},
+				"east": {"uv": [12.5, 0, 14.5, 0.5], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [12.5, 3, 14.5, 4], "rotation": 90, "texture": "#0"},
+				"west": {"uv": [12.5, 2, 14.5, 2.5], "rotation": 270, "texture": "#0"},
+				"up": {"uv": [9.5, 0, 10.5, 0.5], "texture": "#0"},
+				"down": {"uv": [10, 1, 11, 1.5], "rotation": 180, "texture": "#0"}
+			}
+		},
+		{
+			"name": "HalfPlankWest",
+			"from": [5.45, -0.175, 7],
+			"to": [6.45, 3.825, 9],
+			"rotation": {"angle": -45, "axis": "z", "origin": [5.95, 1.825, 8]},
+			"faces": {
+				"north": {"uv": [9, 2, 11, 2.5], "rotation": 90, "texture": "#0"},
+				"east": {"uv": [9, 3, 11, 4], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [9, 0, 11, 0.5], "rotation": 270, "texture": "#0"},
+				"west": {"uv": [10, 1.5, 12, 2.5], "rotation": 270, "texture": "#0"},
+				"up": {"uv": [12.5, 2, 13.5, 2.5], "rotation": 270, "texture": "#0"},
+				"down": {"uv": [12.5, 1, 13.5, 1.5], "rotation": 270, "texture": "#0"}
+			}
+		},
+		{
+			"name": "Fence",
+			"from": [7, 2.575, 7],
+			"to": [9, 13.575, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 15.575, 15]},
+			"faces": {
+				"north": {"uv": [6.5, 0.5, 7.5, 6], "texture": "#0"},
+				"east": {"uv": [5.5, 0, 6.5, 5.5], "texture": "#0"},
+				"south": {"uv": [4.5, 0, 5.5, 5.5], "texture": "#0"},
+				"west": {"uv": [7.5, 0, 8.5, 5.5], "texture": "#0"},
+				"up": {"uv": [9, 1.5, 10, 2.5], "texture": "#0"},
+				"down": {"uv": [9, 1.5, 10, 2.5], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "Brazier Bowl",
+			"origin": [13, 21.7, 18],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4]
+		},
+		{
+			"name": "Fence",
+			"origin": [8, 0.5, 8],
+			"color": 0,
+			"children": [5, 6, 7, 8, 9]
+		}
+	]
+}

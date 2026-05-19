@@ -3,35 +3,77 @@ package com.emoniph.witchery.blocks;
 import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 
 public class KettleBlock extends BaseEntityBlock {
     public static final MapCodec<KettleBlock> CODEC = simpleCodec(KettleBlock::new);
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    public KettleBlock(BlockBehaviour.Properties properties) { super(properties); }
+    public KettleBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        builder.add(FACING);
+    }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new KettleBlockEntity(pos, state);
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState state = defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        return state.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? state : null;
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        Direction facing = state.getValue(FACING);
+        Direction left = facing.getClockWise();
+        Direction right = facing.getCounterClockWise();
+        return hasSideSupport(level, pos.relative(left), left.getOpposite())
+                && hasSideSupport(level, pos.relative(right), right.getOpposite());
     }
 
     @Nullable
@@ -44,7 +86,17 @@ public class KettleBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block,
+                                net.minecraft.world.level.redstone.@org.jspecify.annotations.Nullable Orientation orientation, boolean isMoving) {
+        if (!level.isClientSide() && !canSurvive(state, level, pos)) {
+            level.destroyBlock(pos, true);
+            return;
+        }
+        super.neighborChanged(state, level, pos, block, orientation, isMoving);
+    }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
@@ -144,5 +196,10 @@ public class KettleBlock extends BaseEntityBlock {
             boolean added = kettle.addIngredient(stack);
             if (added) itemEntity.discard();
         }
+    }
+
+    private static boolean hasSideSupport(LevelReader level, BlockPos supportPos, Direction towardKettle) {
+        BlockState supportState = level.getBlockState(supportPos);
+        return supportState.isFaceSturdy(level, supportPos, towardKettle);
     }
 }

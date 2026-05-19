@@ -1,10 +1,7 @@
 package com.emoniph.witchery.client.renderer;
 
 import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
-import com.emoniph.witchery.client.model.KettleModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,15 +21,13 @@ import org.jspecify.annotations.Nullable;
 
 public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, KettleRenderer.KettleRenderState> {
 
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/kettle.png");
+    private static final Identifier LIQUID_TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/kettle.png");
 
     private static final float INNER_HW = 0.25f;
     private static final float KETTLE_BOTTOM_Y = 0.08f;
     private static final float KETTLE_FULL_Y   = 0.25f;
     private static final float LIQ_U0 = 0f,    LIQ_U1 = 0.25f;
     private static final float LIQ_V0 = 0.25f, LIQ_V1 = 0.375f;
-
-    private final KettleModel model;
 
     public static class KettleRenderState extends BlockEntityRenderState {
         public int waterLevel = 0;
@@ -42,9 +37,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         public BlockPos bePos = BlockPos.ZERO;
     }
 
-    public KettleRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.model = new KettleModel(ctx.bakeLayer(KettleModel.LAYER_LOCATION));
-    }
+    public KettleRenderer(BlockEntityRendererProvider.Context ctx) {}
 
     @Override
     public KettleRenderState createRenderState() { return new KettleRenderState(); }
@@ -62,14 +55,6 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
 
     @Override
     public void submit(KettleRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
-        ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(-90));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
-
         if (state.waterLevel > 0) {
             float surfaceY = KETTLE_BOTTOM_Y + (KETTLE_FULL_Y - KETTLE_BOTTOM_Y) * (state.waterLevel / 3f);
             int liquidColor = (state.color != 0) ? state.color : 0x2050CC;
@@ -90,7 +75,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         ps.pushPose();
         ps.translate(0.5, surfaceY, 0.5);
 
-        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(TEXTURE), (pose, vc) -> {
+        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(LIQUID_TEXTURE), (pose, vc) -> {
             Matrix4f m = pose.pose();
             vc.addVertex(m, -hw, 0, -hw).setColor(r, g, b, 0.85f).setUv(LIQ_U0, LIQ_V0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
             vc.addVertex(m, -hw, 0,  hw).setColor(r, g, b, 0.85f).setUv(LIQ_U0, LIQ_V1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);

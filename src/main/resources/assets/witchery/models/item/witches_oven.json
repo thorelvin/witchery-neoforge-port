@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:block/witches_oven"
-  }
+  "parent": "witchery:block/witches_oven_idle"
 }

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 
 public class SpinningWheelRenderer implements BlockEntityRenderer<SpinningWheelBlockEntity, BlockEntityRenderState> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/spinningwheel.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/spinning_wheel.png");
     private final SpinningWheelModel model;
 
     public SpinningWheelRenderer(BlockEntityRendererProvider.Context ctx) {

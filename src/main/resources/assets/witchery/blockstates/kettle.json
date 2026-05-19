@@ -1,1 +1,8 @@
-{ "variants": { "": { "model": "witchery:block/kettle" } } }
+{
+  "variants": {
+    "facing=north": { "model": "witchery:block/kettle" },
+    "facing=east": { "model": "witchery:block/kettle", "y": 90, "uvlock": true },
+    "facing=south": { "model": "witchery:block/kettle", "y": 180, "uvlock": true },
+    "facing=west": { "model": "witchery:block/kettle", "y": 270, "uvlock": true }
+  }
+}

@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 // Client-only network handlers live here to keep Minecraft.getInstance() out of shared code.
 // Game bus events in WitcheryClientEvents.
 public class WitcheryClient {
-
     public static final List<Map.Entry<ModelLayerLocation, Supplier<LayerDefinition>>> LAYER_DEFS = List.of(
         Map.entry(WitchesOvenModel.LAYER_LOCATION,    WitchesOvenModel::createBodyLayer),
         Map.entry(KettleModel.LAYER_LOCATION,          KettleModel::createBodyLayer),
