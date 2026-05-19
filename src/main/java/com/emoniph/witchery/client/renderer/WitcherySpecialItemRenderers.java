@@ -5,12 +5,15 @@ import com.emoniph.witchery.client.model.BrazierModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
+import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import java.util.function.Consumer;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
@@ -32,6 +35,8 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("fume_funnel"), FumeFunnelUnbaked.MAP_CODEC);
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
+        event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
+        event.register(id("refilling_chest"), RefillingChestUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -247,6 +252,71 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<CandelabraUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record LeechChestSpecialRenderer(LeechChestModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("leechchest");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record LeechChestUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<LeechChestUnbaked> MAP_CODEC = MapCodec.unit(new LeechChestUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new LeechChestSpecialRenderer(new LeechChestModel(context.entityModelSet().bakeLayer(LeechChestModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<LeechChestUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record RefillingChestSpecialRenderer(ModelPart bottom, ModelPart lid, ModelPart lock) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/entity/chest/normal.png");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            collector.submitModelPart(bottom, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            collector.submitModelPart(lid, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            collector.submitModelPart(lock, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record RefillingChestUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<RefillingChestUnbaked> MAP_CODEC = MapCodec.unit(new RefillingChestUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            ModelPart root = context.entityModelSet().bakeLayer(ModelLayers.CHEST);
+            return new RefillingChestSpecialRenderer(root.getChild("bottom"), root.getChild("lid"), root.getChild("lock"));
+        }
+
+        @Override
+        public MapCodec<RefillingChestUnbaked> type() {
             return MAP_CODEC;
         }
     }

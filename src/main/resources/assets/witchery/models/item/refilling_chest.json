@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/template_chest",
+  "parent": "witchery:item/entity_machine_base",
   "textures": {
-    "particle": "minecraft:block/oak_planks"
+    "layer0": "minecraft:block/oak_planks"
   }
 }

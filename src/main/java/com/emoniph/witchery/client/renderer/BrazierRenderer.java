@@ -44,10 +44,6 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(-90));
-        for (var part : model.structureParts()) {
-            collector.submitModelPart(part, ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        }
         if (state.renderAsh) {
             collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }

@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 
 public class RefillingChestRenderer implements BlockEntityRenderer<RefillingChestBlockEntity, RefillingChestRenderer.State> {
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/chest/refillingchest.png");
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/chest/normal.png");
 
     private final ModelPart lid;
     private final ModelPart bottom;

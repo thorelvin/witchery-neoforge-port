@@ -1,8 +1,8 @@
 {
   "variants": {
-    "facing=north": { "model": "witchery:block/witches_oven_idle" },
-    "facing=south": { "model": "witchery:block/witches_oven_idle" },
-    "facing=west": { "model": "witchery:block/witches_oven_idle" },
-    "facing=east": { "model": "witchery:block/witches_oven_idle" }
+    "facing=north": { "model": "witchery:block/witches_oven_idle", "y": 0 },
+    "facing=south": { "model": "witchery:block/witches_oven_idle", "y": 180 },
+    "facing=west": { "model": "witchery:block/witches_oven_idle", "y": 270 },
+    "facing=east": { "model": "witchery:block/witches_oven_idle", "y": 90 }
   }
 }

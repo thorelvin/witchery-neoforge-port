@@ -43,12 +43,6 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
-        ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
+        // Static funnel geometry now comes from the resurrected block model path.
     }
 }

@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/template_chest",
+  "parent": "witchery:item/entity_machine_base",
   "textures": {
-    "particle": "witchery:block/leechchest"
+    "layer0": "witchery:block/leechchest"
   }
 }

@@ -1,7 +1,7 @@
 {
   "textures": {
-    "particle": "witchery:block/spinning_wheel",
-    "texture": "witchery:block/spinning_wheel"
+    "particle": "witchery:block/spinningwheel",
+    "texture": "witchery:block/spinningwheel"
   },
   "elements": [
     {

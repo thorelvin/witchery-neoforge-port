@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class SpinningWheelRenderer implements BlockEntityRenderer<SpinningWheelBlockEntity, SpinningWheelRenderer.State> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/spinning_wheel.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/spinningwheel.png");
     private final SpinningWheelModel model;
 
     public static class State extends BlockEntityRenderState {

@@ -1,9 +1,6 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "witchery:item/fume_funnel",
-    "model": {
-      "type": "witchery:fume_funnel"
-    }
+    "type": "minecraft:model",
+    "model": "witchery:item/fume_funnel"
   }
 }

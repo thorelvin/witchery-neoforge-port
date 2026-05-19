@@ -1,9 +1,6 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "witchery:item/poppet_shelf",
-    "model": {
-      "type": "witchery:poppet_shelf"
-    }
+    "type": "minecraft:model",
+    "model": "witchery:item/poppet_shelf"
   }
 }

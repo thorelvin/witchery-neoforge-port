@@ -48,7 +48,7 @@ public class WitchesOvenBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
