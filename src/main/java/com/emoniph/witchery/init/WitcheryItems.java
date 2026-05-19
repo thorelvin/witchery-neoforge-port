@@ -282,6 +282,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> TORMENTED_TWINE    = ITEMS.registerSimpleItem("tormented_twine");
     public static final DeferredItem<Item> WHIFF_OF_MAGIC     = ITEMS.registerSimpleItem("whiff_of_magic");
     public static final DeferredItem<Item> ATTUNED_STONE      = ITEMS.registerSimpleItem("attuned_stone");
+    public static final DeferredItem<Item> NECRO_STONE        = ITEMS.registerSimpleItem("necro_stone");
     public static final DeferredItem<Item> QUARTZ_SPHERE      = ITEMS.registerSimpleItem("quartz_sphere");
     public static final DeferredItem<Item> CREEPER_HEART      = ITEMS.registerSimpleItem("creeper_heart");
     public static final DeferredItem<Item> CLAY_JAR           = ITEMS.registerSimpleItem("clay_jar");

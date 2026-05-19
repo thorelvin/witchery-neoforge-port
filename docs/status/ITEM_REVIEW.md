@@ -55,8 +55,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 41 | `witchery:icy_needle` | | Works in dream
 | 42 | `witchery:soul_of_torment` | | Not tested
 | 43 | `witchery:torment_scroll` | | Looks ok
-| 44 | `witchery:alluring_skull` | `Partial - no longer a full cube placeholder` | The placed block now uses a dedicated skull-like 3D static model instead of `cube_all`. A deeper pass to match the original animated/special-render presentation is still open.
-| 45 | `witchery:demon_heart` | `Partial - no longer a full cube placeholder` | The placed block now uses a dedicated heart-shaped 3D static model instead of `cube_all`. A deeper pass to match the original special-render model/animation is still open.
+| 44 | `witchery:alluring_skull` | `Partial - stateful skull behavior restored closer to original` | Now uses a real Witchery block class instead of a dead simple block, has horizontal facing plus `on/off` state again, can be activated with the restored `Necromantic Stone`, swaps to the lit skull texture when active, and periodically allures undead mobs like the original. The old wall-mount skull renderer/rotation is still not fully restored.
+| 45 | `witchery:demon_heart` | `Partial - facing, particles, and heartbeat feel restored closer to original` | Now uses a real Witchery block class instead of a dead simple block, restores horizontal facing, ambient flame/smoke particles, and a client heartbeat pulse closer to original. The old animated custom model is still approximated through the current static 3D heart model.
 | 46 | `witchery:coffin` | `Partial - both halves now render again` | The renderer now shows both placed halves instead of hiding the foot section entirely, while keeping the current lid/sleep mechanics intact. A deeper original-art/model parity pass is still open.
 | 47 | `witchery:rowan_planks` | ✅ Fixed — added to #minecraft:planks tag | Correct texture, need regular plank recipes.
 | 48 | `witchery:rowan_door` | ✅ Fixed — block models now use door_rowan_lower/upper textures; item model uses ingredient.door_rowan | Wrong texture. Looks like oak door.

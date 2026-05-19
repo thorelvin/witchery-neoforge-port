@@ -141,8 +141,12 @@ public class WitcheryBlocks {
     public static final DeferredBlock<ChaliceBlock>     CHALICE       = BLOCKS.registerBlock("chalice",        ChaliceBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(1.0f).noOcclusion());
     public static final DeferredBlock<CrystalBallBlock> CRYSTAL_BALL  = BLOCKS.registerBlock("crystal_ball",   CrystalBallBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(1.5f).noOcclusion());
     public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = BLOCKS.registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.5f).noOcclusion());
-    public static final DeferredBlock<Block>            ALLURING_SKULL = BLOCKS.registerSimpleBlock("alluring_skull", BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(1.0f).noOcclusion());
-    public static final DeferredBlock<Block>            DEMON_HEART    = BLOCKS.registerSimpleBlock("demon_heart",    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(3.0f).noOcclusion());
+    public static final DeferredBlock<AlluringSkullBlock> ALLURING_SKULL = BLOCKS.registerBlock("alluring_skull",
+            AlluringSkullBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(1.0f).noOcclusion());
+    public static final DeferredBlock<DemonHeartBlock> DEMON_HEART = BLOCKS.registerBlock("demon_heart",
+            DemonHeartBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(3.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_SCARECROW      = BLOCKS.registerBlock("fetish_scarecrow",     FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_TRENT_EFFIGY   = BLOCKS.registerBlock("fetish_trent_effigy",  FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_WITCHS_LADDER  = BLOCKS.registerBlock("fetish_witchs_ladder", FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());

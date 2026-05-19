@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "witchery:block/demon_heart" }
+    "facing=north": { "model": "witchery:block/demon_heart" },
+    "facing=east": { "model": "witchery:block/demon_heart", "y": 90 },
+    "facing=south": { "model": "witchery:block/demon_heart", "y": 180 },
+    "facing=west": { "model": "witchery:block/demon_heart", "y": 270 }
   }
 }

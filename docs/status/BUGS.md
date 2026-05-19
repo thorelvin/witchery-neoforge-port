@@ -650,7 +650,7 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original; GUI texture/layout verification is still open
 - `crystal_ball` - must be transparent
 - `coffin` - shows only one side in inventory
-- `alluring_skull`, `demon_heart` - wrong 3D model/UV
+- `alluring_skull`, `demon_heart` - stateful block behavior is back closer to original, but the deeper animated and wall-mount art pass is still open
 - `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; the item now uses a special renderer, but final in-game spacing/presentation still needs verification
 - `distillery`, `spinning_wheel`, `fume_funnel`, `brazier`, `candelabra` - item rendering now runs through dedicated special-model renderers; final in-game silhouette verification is still open
 - `leech_chest`, `refilling_chest` - chest item/block rendering is much closer to stable now, but final in-game verification is still open
