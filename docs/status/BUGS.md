@@ -561,6 +561,16 @@ The next missing-feature pass is now closer to original Witchery:
 Remaining gap:
 - The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, so this restores the rite's world-shaping job without claiming exact 1.7.10 block-for-block growth parity.
 
+### 61. Small otherwhere waystone transposition was doing the wrong job - Fixed / verify
+
+The next mechanical parity pass is now closer to original Witchery:
+- The small otherwhere bound-waystone rite no longer ignores the offered waystone and teleports only the caster from inventory.
+- It now reads the sacrificed bound waystone itself again and teleports nearby entities within the circle's original short radius, which is much closer to the old `RiteTeleportToWaystone` behavior.
+- Cross-dimension travel now applies to non-player entities as well, instead of only the player path being handled.
+
+Remaining gap:
+- The still-loaded sacrificial item entity is deliberately skipped by the port's modern world-scan to avoid dragging the offered waystone itself around before the post-cast consume step, so the runtime shape is slightly modernized even though the practical rite behavior is back closer to 1.7.10.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

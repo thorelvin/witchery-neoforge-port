@@ -240,7 +240,7 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return riteOfTranspositionToWaystone(player, level, center);
+            return riteOfTranspositionToWaystone(player, level, center, item);
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return riteOfNecromancy(player, level, center);
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
@@ -3480,15 +3480,10 @@ public class RitualExecutor {
     }
 
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
-    private static boolean riteOfTranspositionToWaystone(Player player, Level level, BlockPos center) {
+    private static boolean riteOfTranspositionToWaystone(Player player, Level level, BlockPos center, ItemStack waystone) {
         if (!(player instanceof ServerPlayer sp)) return false;
-        Optional<ItemStack> ws = findBoundWaystone(sp);
-        if (ws.isEmpty()) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
-            return false;
-        }
-        Optional<BlockPos> dest = WaystoneItem.getBoundPos(ws.get());
-        Optional<ResourceKey<Level>> dim = WaystoneItem.getBoundDim(ws.get());
+        Optional<BlockPos> dest = WaystoneItem.getBoundPos(waystone);
+        Optional<ResourceKey<Level>> dim = WaystoneItem.getBoundDim(waystone);
         if (dest.isEmpty() || dim.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
             return false;
@@ -3499,14 +3494,48 @@ public class RitualExecutor {
             return false;
         }
         BlockPos d = dest.get();
-        if (sp.level() == targetLevel) sp.teleportTo(d.getX() + 0.5, d.getY(), d.getZ() + 0.5);
-        else sp.teleportTo(targetLevel, d.getX() + 0.5, (double)(d.getY()), d.getZ() + 0.5, java.util.Set.<net.minecraft.world.entity.Relative>of(), sp.getYRot(), sp.getXRot(), false);
+        AABB bounds = new AABB(center).inflate(3.0);
+        int moved = 0;
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
+            if (entity instanceof ItemEntity itemEntity
+                    && itemEntity.distanceToSqr(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5) <= 3.0) {
+                continue;
+            }
+            if (entity.distanceToSqr(center.getX(), center.getY(), center.getZ()) >= 9.0) {
+                continue;
+            }
+            teleportEntityToWaystone(entity, targetLevel, d);
+            moved++;
+        }
         success(player, level, center, "witchery.ritual.transposition.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
+        WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to {}", moved, center, d);
         return true;
     }
 
     /** Rite of Transposition (pull) — pulls the taglock target to the caster. Costs 3000 altar power. */
+    private static void teleportEntityToWaystone(Entity entity, ServerLevel targetLevel, BlockPos dest) {
+        double x = dest.getX() + 0.5;
+        double y = dest.getY();
+        double z = dest.getZ() + 0.5;
+        if (entity instanceof ServerPlayer player) {
+            if (player.level() == targetLevel) {
+                player.teleportTo(x, y, z);
+            } else {
+                player.teleportTo(targetLevel, x, y, z,
+                        java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
+            }
+            return;
+        }
+
+        if (entity.level() == targetLevel) {
+            entity.teleportTo(x, y, z);
+        } else {
+            entity.teleportTo(targetLevel, x, y, z,
+                    java.util.Set.<net.minecraft.world.entity.Relative>of(), entity.getYRot(), entity.getXRot(), false);
+        }
+    }
+
     private static boolean riteOfTranspositionPull(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
