@@ -530,6 +530,16 @@ The next missing-feature pass is now closer to original Witchery:
 Remaining gap:
 - The modern dispatcher still collapses the original five-sacrifice recipe into a representative infernal trigger item, so the exact multi-sacrifice activation shape is still not full 1.7.10 recipe-registry parity.
 
+### 58. Banish Demon rites were missing entirely - Fixed / verify
+
+The next missing-feature pass is now closer to original Witchery:
+- The small `banishdemon` and `banishdemonportable` family is reachable again instead of being absent from the port.
+- The restored rite now banishes the port's infernal creature equivalents within the original 9-block radius: `Demon`, `Flame Imp`, `Death`, and `Lord of Torment`.
+- It is exposed through representative small ritual `attuned_stone` and bound-`waystone` routes because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+
+Remaining gap:
+- The exact portable-vs-regular multi-sacrifice activation shape is still collapsed into representative trigger items, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

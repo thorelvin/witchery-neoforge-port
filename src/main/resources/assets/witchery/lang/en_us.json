@@ -526,6 +526,7 @@
   "witchery.ritual.call_familiar.success": "Your familiar answers the call.",
   "witchery.ritual.call_familiar.none": "You have no familiar to call.",
   "witchery.ritual.summon_witch.success": "A witch answers the infernal call.",
+  "witchery.ritual.banish_demon.success": "Infernal beings are cast out from the circle.",
   "witchery.ritual.summon_imp.success": "An imp claws its way into the circle.",
   "witchery.ritual.summon_wither.success": "A wither answers the infernal summons.",
   "witchery.ritual.summon_demon.success": "A demon erupts from the infernal circle.",

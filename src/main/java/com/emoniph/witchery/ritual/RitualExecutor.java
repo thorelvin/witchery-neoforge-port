@@ -6,6 +6,10 @@ import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
@@ -221,6 +225,12 @@ public class RitualExecutor {
             return true;
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return riteOfSummonWitch(player, level, center);
+        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfBanishDemon(player, level, center);
+        } else if (item.is(WitcheryItems.WAYSTONE.get())
+                && WaystoneItem.isBound(item)
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return riteOfBanishDemon(player, level, center);
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && !WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -724,6 +734,38 @@ public class RitualExecutor {
         sp.displayClientMessage(Component.translatable("witchery.ritual.prior_incarnation.success", recalled), false);
         success(player, level, center, null, SoundEvents.ENDERMAN_TELEPORT, 1f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Prior Incarnation: recalled {} stacks for {}", recalled, sp.getName().getString());
+        return true;
+    }
+
+    /** Rite of Banish Demon — expels infernal beings within 9 blocks of the circle. */
+    private static boolean riteOfBanishDemon(Player player, Level level, BlockPos center) {
+        final int radius = 9;
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.4f);
+
+        AABB bounds = new AABB(center).inflate(radius);
+        int banished = 0;
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (!(entity instanceof DemonEntity
+                    || entity instanceof DeathEntity
+                    || entity instanceof LordOfTormentEntity
+                    || entity instanceof FlameImpEntity)) {
+                continue;
+            }
+            if (entity.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5) > radius * radius) {
+                continue;
+            }
+            sl.sendParticles(ParticleTypes.EXPLOSION,
+                    entity.getX(), entity.getY() + 1.0, entity.getZ(),
+                    16, 0.5, 0.5, 0.5, 0.02);
+            entity.discard();
+            banished++;
+        }
+
+        success(player, level, center, "witchery.ritual.banish_demon.success",
+                SoundEvents.FIRE_EXTINGUISH, 1.1f, 2, 24);
+        WitcheryMod.LOGGER.info("Rite of Banish Demon banished {} infernal entity(s) around {}", banished, center);
         return true;
     }
 
