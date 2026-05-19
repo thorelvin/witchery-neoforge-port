@@ -90,6 +90,7 @@ public class RitualExecutor {
         CALL_CREATURES,
         MOVING_EARTH,
         RAISE_COLUMN,
+        VOLCANO,
         CRATER,
         PROTECTION_BARRIER_MONSTERS,
         PROTECTION_BARRIER_PORTABLE,
@@ -312,6 +313,8 @@ public class RitualExecutor {
             return true;
         } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
             return riteOfMovingEarth(player, level, center);
+        } else if (item.is(Items.LAVA_BUCKET)) {
+            return riteOfVolcano(player, level, center);
         } else if (item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL)) {
             riteOfBrokenEarth(player, level, center);
             return true;
@@ -1128,6 +1131,7 @@ public class RitualExecutor {
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
             case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
+            case VOLCANO -> tickVolcanoRitual(level, ritual);
             case CRATER -> tickCraterRitual(level, ritual);
             case PROTECTION_BARRIER_MONSTERS -> tickProtectionBarrierMonstersRitual(level, ritual);
             case PROTECTION_BARRIER_PORTABLE -> tickProtectionBarrierPortableRitual(level, ritual);
@@ -1260,6 +1264,60 @@ public class RitualExecutor {
 
         liftRaiseColumnEntities(level, ritual.center, effectiveRadius, airSpace);
         return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickVolcanoRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 1.0f);
+            level.sendParticles(ParticleTypes.PORTAL,
+                    ritual.center.getX() + 0.5, ritual.center.getY() + 0.5, ritual.center.getZ() + 0.5,
+                    16, 0.5, 1.0, 0.5, 0.0);
+        }
+
+        int height = ritual.maxRadius + 4 * ritual.covenSize;
+        int radius = ritual.minRadius + 2 * ritual.covenSize;
+        if (ritual.stage <= height) {
+            for (int yOffset = 1; yOffset <= ritual.stage; yOffset++) {
+                float layerRadius = radius - (height - ritual.stage - 1 + yOffset) * radius / (float) height;
+                int actualRadius = Math.max((int) Math.ceil(layerRadius), 1);
+                drawVolcanoFilledCircle(level, ritual.center, ritual.center.getY() + yOffset - 1, actualRadius, yOffset, true);
+                if (ritual.stage == height) {
+                    int belowY = ritual.center.getY() - 1;
+                    for (int reduce = 0; belowY > ritual.center.getY() - 5; reduce++, belowY--) {
+                        drawVolcanoFilledCircle(level, ritual.center, belowY, Math.max(radius - reduce, 2), yOffset, false);
+                    }
+                }
+                liftVolcanoEntities(level, ritual.center, ritual.center.getY() + yOffset, actualRadius);
+            }
+            return true;
+        }
+
+        if (ritual.stage >= height * 2) {
+            openVolcanoVent(level, ritual.center);
+            return false;
+        }
+
+        if (ritual.stage == height * 2 - 1) {
+            level.setBlock(ritual.center.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
+            level.setBlock(ritual.center.above(), Blocks.LAVA.defaultBlockState(), 3);
+            switch (level.random.nextInt(8)) {
+                case 0 -> level.setBlock(ritual.center.offset(1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
+                case 1 -> level.setBlock(ritual.center.offset(0, height - 1, 1), Blocks.AIR.defaultBlockState(), 3);
+                case 2 -> level.setBlock(ritual.center.offset(-1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
+                case 3 -> level.setBlock(ritual.center.offset(0, height - 1, -1), Blocks.AIR.defaultBlockState(), 3);
+                default -> {
+                }
+            }
+        } else {
+            level.setBlock(ritual.center.above(), Blocks.SAND.defaultBlockState(), 3);
+            level.setBlock(ritual.center.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
+        }
+
+        if (ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.center, Math.max(radius / 2, 4), 18);
+        }
+        return true;
     }
 
     private static boolean tickCraterRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2164,6 +2222,26 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Earth's Wrath — raises a volcano if a lava pool lies below the circle. */
+    private static boolean riteOfVolcano(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!hasVolcanoLavaPool(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.missinglava"), false);
+            return false;
+        }
+
+        if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, RitualCircleDetector.CircleSize.LARGE, center,
+                8, 8, 0, 15, countNearbyCovenWitches(level, center))) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.volcano.success",
+                SoundEvents.LAVA_POP, 0.8f, 4, 40);
+        return true;
+    }
+
     private static void raiseColumnLayer(ServerLevel level, BlockPos center, int y, int radius, boolean topLayer) {
         int radiusSq = radius * radius;
         int innerRadius = Math.max(radius - 1, 0);
@@ -2232,6 +2310,132 @@ public class RitualExecutor {
             if (dx * dx + dz * dz <= radiusSq) {
                 entity.teleportTo(entity.getX(), entity.getY() + 1.0, entity.getZ());
             }
+        }
+    }
+
+    private static boolean hasVolcanoLavaPool(ServerLevel level, BlockPos center) {
+        for (int y = center.getY(); y > level.getMinY(); y--) {
+            BlockPos pos = new BlockPos(center.getX(), y, center.getZ());
+            BlockState state = level.getBlockState(pos);
+            if (state.is(Blocks.LAVA) && isVolcanoLavaCluster(level, pos, 2)) {
+                return true;
+            }
+            if (state.is(Blocks.BEDROCK)) {
+                break;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isVolcanoLavaCluster(ServerLevel level, BlockPos center, int requiredNeighbors) {
+        int count = 0;
+        count += level.getBlockState(center.below()).is(Blocks.LAVA) ? 1 : 0;
+        count += level.getBlockState(center.north()).is(Blocks.LAVA) ? 1 : 0;
+        count += level.getBlockState(center.south()).is(Blocks.LAVA) ? 1 : 0;
+        count += level.getBlockState(center.east()).is(Blocks.LAVA) ? 1 : 0;
+        count += level.getBlockState(center.west()).is(Blocks.LAVA) ? 1 : 0;
+        count += level.getBlockState(center.above()).is(Blocks.LAVA) ? 1 : 0;
+        return count >= requiredNeighbors;
+    }
+
+    private static void drawVolcanoFilledCircle(ServerLevel level, BlockPos center, int y, int radius, int heightStage, boolean replaceBlocks) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+        while (x >= z) {
+            drawVolcanoLine(level, center, -x, x, z, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, center, -z, z, x, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, center, -x, x, -z, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, center, -z, z, -x, y, radius, heightStage, replaceBlocks);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void drawVolcanoLine(ServerLevel level, BlockPos center, int startX, int endX, int zOffset, int y,
+                                        int radius, int heightStage, boolean replaceBlocks) {
+        int modStart = radius > 1 && level.random.nextInt(5) == 0 ? startX + 1 : startX;
+        int modEnd = radius > 1 && level.random.nextInt(5) == 0 ? endX - 1 : endX;
+        boolean edgeZ = radius == Math.abs(zOffset);
+        for (int xOffset = modStart; xOffset <= modEnd; xOffset++) {
+            if (xOffset == 0 && zOffset == 0) {
+                continue;
+            }
+            boolean lower = (xOffset == modStart || xOffset == modEnd || edgeZ) && heightStage < 3;
+            drawVolcanoPixel(level, center.offset(xOffset, y - center.getY(), zOffset), lower, replaceBlocks);
+        }
+    }
+
+    private static void drawVolcanoPixel(ServerLevel level, BlockPos pos, boolean lower, boolean replaceBlocks) {
+        BlockState state = level.getBlockState(pos);
+        if (!canVolcanoReplace(level, pos, state, replaceBlocks)) {
+            return;
+        }
+        BlockState fillState = lower && level.random.nextInt(5) != 0
+                ? Blocks.SANDSTONE.defaultBlockState()
+                : Blocks.SAND.defaultBlockState();
+        level.setBlock(pos, fillState, 3);
+    }
+
+    private static boolean canVolcanoReplace(ServerLevel level, BlockPos pos, BlockState state, boolean replaceBlocks) {
+        if (state.isAir()) {
+            return true;
+        }
+        if (!replaceBlocks) {
+            return false;
+        }
+        return !state.hasBlockEntity()
+                && state.getDestroySpeed(level, pos) >= 0.0f
+                && (state.canBeReplaced() || state.getFluidState().isEmpty() || state.is(Blocks.LAVA));
+    }
+
+    private static void liftVolcanoEntities(ServerLevel level, BlockPos center, int y, int radius) {
+        AABB bounds = new AABB(center.getX() - radius, y, center.getZ() - radius,
+                center.getX() + radius, y + 1.0, center.getZ() + radius);
+        double radiusSq = radius * radius;
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
+            double dx = entity.getX() - (center.getX() + 0.5);
+            double dz = entity.getZ() - (center.getZ() + 0.5);
+            if (dx * dx + dz * dz > radiusSq) {
+                continue;
+            }
+            if (!level.getBlockState(entity.blockPosition()).blocksMotion()) {
+                continue;
+            }
+            entity.teleportTo(entity.getX(), entity.getY() + 1.0, entity.getZ());
+        }
+    }
+
+    private static void openVolcanoVent(ServerLevel level, BlockPos center) {
+        for (int y = center.getY(); y > level.getMinY(); y--) {
+            BlockPos pos = new BlockPos(center.getX(), y, center.getZ());
+            BlockState state = level.getBlockState(pos);
+            if (state.is(Blocks.BEDROCK)) {
+                break;
+            }
+            if (state.is(Blocks.LAVA)) {
+                while (y > level.getMinY() && level.getBlockState(new BlockPos(center.getX(), y, center.getZ())).is(Blocks.LAVA)) {
+                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ()));
+                    clearVolcanoLava(level, new BlockPos(center.getX() + 1, y, center.getZ()));
+                    clearVolcanoLava(level, new BlockPos(center.getX() - 1, y, center.getZ()));
+                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ() + 1));
+                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ() - 1));
+                    y--;
+                }
+                break;
+            }
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static void clearVolcanoLava(ServerLevel level, BlockPos pos) {
+        if (level.getBlockState(pos).is(Blocks.LAVA)) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         }
     }
 

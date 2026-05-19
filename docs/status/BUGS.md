@@ -470,6 +470,15 @@ The next missing-rite pass is now closer to original Witchery:
 Remaining gap:
 - The port now uses deterministic nearest-type selection instead of the old entity-iteration-order quirk, and the release side of the Spectral Stone item is still simplified compared to the original summoned-undead enslaver flow.
 
+### 52. Rite of Earth's Wrath was missing entirely - Fixed / verify
+
+The next missing-rite pass is now closer to original Witchery:
+- `volcano` is reachable again as a staged large-circle terrain rite through a representative `lava_bucket` route, instead of being absent from the port entirely.
+- The restored route now checks for a real lava pool beneath the circle before activation, raises the sand/sandstone cone in pulses instead of resolving as a one-shot terrain edit, and opens the center vent at the end of the eruption sequence.
+
+Remaining gap:
+- This still uses one representative trigger instead of the original multi-sacrifice set, and the modern terrain helper is a little cleaner and more deterministic than the original block-protection aware sand placement loop.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
