@@ -456,19 +456,19 @@ Remaining gap:
 
 The next missing-rite pass is now closer to original Witchery:
 - `spectralstone` is reachable again as a small night-only ritual through a representative ritual `spectral_dust` route, instead of being absent from the modern dispatcher.
-- The restored route now produces a real Spectral Stone item again rather than leaving the feature family dead, and the ported item now carries explicit binding data + tooltip state instead of staying a plain anonymous item.
+- The restored route now produces a real Spectral Stone item again rather than leaving the feature family dead, the ported item carries explicit binding data + tooltip state instead of staying a plain anonymous item, and the old hold-to-release summon behavior is back so a charged stone can actually be used again.
 
 Remaining gap:
-- This still uses one representative trigger instead of the original multi-sacrifice recipe, and the old release-on-use behavior for stored spectral creatures is not fully rebuilt yet.
+- This still uses one representative trigger instead of the original multi-sacrifice recipe, and the modern item no longer uses the old metadata/icon split even though the release mechanic itself is back.
 
 ### 51. Rite of Binding for Spectral Stone was missing entirely - Fixed / verify
 
 The next missing-rite pass is now closer to original Witchery:
 - `bindspectral` is reachable again as a large ritual-circle route from an empty Spectral Stone, instead of being absent from the port entirely.
-- The restored route now looks for nearby spectral creatures, chooses the nearest creature family, binds up to three of that same type into the stone, removes those entities from the world, and stores the result in modern item data so the item is no longer mechanically blank.
+- The restored route now looks for nearby spectral creatures, chooses the nearest creature family, binds up to three of that same type into the stone, removes those entities from the world, stores the result in modern item data so the item is no longer mechanically blank, and the released spirits now remember their summoner well enough to avoid immediately targeting them.
 
 Remaining gap:
-- The port now uses deterministic nearest-type selection instead of the old entity-iteration-order quirk, and the release side of the Spectral Stone item is still simplified compared to the original summoned-undead enslaver flow.
+- The port now uses deterministic nearest-type selection instead of the old entity-iteration-order quirk, and the released spirits still use a lighter modern owner-safe filter instead of the full old summoned-undead enslaver system.
 
 ### 52. Rite of Earth's Wrath was missing entirely - Fixed / verify
 

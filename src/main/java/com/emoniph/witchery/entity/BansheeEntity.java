@@ -4,6 +4,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -17,11 +18,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
 
+import java.util.UUID;
+
 /**
  * Banshee — flying undead horror that screams near dying players.
  * Wails loudly when it notices a player below half health.
  */
 public class BansheeEntity extends Monster {
+    private UUID ownerUuid;
 
     public BansheeEntity(EntityType<? extends BansheeEntity> type, Level level) {
         super(type, level);
@@ -58,9 +62,20 @@ public class BansheeEntity extends Monster {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(this, Player.class, true));
     }
 
+    public void setOwner(Player player) {
+        this.ownerUuid = player.getUUID();
+    }
+
+    private boolean isOwner(LivingEntity entity) {
+        return ownerUuid != null && entity != null && ownerUuid.equals(entity.getUUID());
+    }
+
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && getTarget() != null && isOwner(getTarget())) {
+            setTarget(null);
+        }
         // Wail when near a low-health player
         if (!level().isClientSide() && tickCount % 80 == 0) {
             level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(16))
@@ -70,6 +85,26 @@ public class BansheeEntity extends Monster {
                    .ifPresent(p -> level().playSound(null, blockPosition(),
                            SoundEvents.WARDEN_SONIC_BOOM, net.minecraft.sounds.SoundSource.HOSTILE, 0.8f, 1.4f));
         }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return !isOwner(target) && super.canAttack(target);
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (ownerUuid != null) {
+            tag.putString("OwnerUUID", ownerUuid.toString());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        String ownerStr = tag.getStringOr("OwnerUUID", "");
+        ownerUuid = ownerStr.isEmpty() ? null : UUID.fromString(ownerStr);
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.PHANTOM_AMBIENT; }
