@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.Vec3;
 
 public class AlluringSkullRenderer implements BlockEntityRenderer<AlluringSkullBlockEntity, AlluringSkullRenderer.State> {
@@ -47,7 +48,9 @@ public class AlluringSkullRenderer implements BlockEntityRenderer<AlluringSkullB
         BlockState blockState = blockEntity.getBlockState();
         state.facing = blockState.getValue(AlluringSkullBlock.FACING);
         state.on = blockState.getValue(AlluringSkullBlock.ON);
-        state.yaw = switch (state.facing) {
+        state.yaw = state.facing == Direction.UP
+                ? RotationSegment.convertToDegrees(blockEntity.getRotationSegment())
+                : switch (state.facing) {
             case SOUTH -> 180.0F;
             case WEST -> 270.0F;
             case EAST -> 90.0F;

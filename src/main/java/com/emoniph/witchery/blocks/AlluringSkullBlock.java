@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import org.jetbrains.annotations.Nullable;
 
 public class AlluringSkullBlock extends BaseEntityBlock {
@@ -71,6 +73,16 @@ public class AlluringSkullBlock extends BaseEntityBlock {
         }
         BlockState floorState = defaultBlockState().setValue(FACING, Direction.UP);
         return floorState.canSurvive(context.getLevel(), context.getClickedPos()) ? floorState : null;
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (level.isClientSide() || state.getValue(FACING) != Direction.UP || !(level.getBlockEntity(pos) instanceof AlluringSkullBlockEntity skull)) {
+            return;
+        }
+        float rotation = placer != null ? placer.getYRot() : 0.0F;
+        skull.setRotationSegment(RotationSegment.convertToSegment(rotation));
     }
 
     @Override
