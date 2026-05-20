@@ -20,9 +20,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class AlluringSkullRenderer implements BlockEntityRenderer<AlluringSkullBlockEntity, AlluringSkullRenderer.State> {
     private static final Identifier TEXTURE_OFF =
-            Identifier.fromNamespaceAndPath("witchery", "textures/block/alluring_skull.png");
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/alluring_skull_model.png");
     private static final Identifier TEXTURE_ON =
-            Identifier.fromNamespaceAndPath("witchery", "textures/block/alluring_skull2.png");
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/alluring_skull2_model.png");
 
     private final AlluringSkullModel model;
 
