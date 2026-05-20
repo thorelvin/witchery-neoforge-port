@@ -5,7 +5,9 @@ import com.google.gson.JsonParser;
 import com.emoniph.witchery.blocks.AltarBlock;
 import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.DistilleryBlock;
+import com.emoniph.witchery.blocks.FumeFunnelBlock;
 import com.emoniph.witchery.blocks.KettleBlock;
+import com.emoniph.witchery.blocks.SpinningWheelBlock;
 import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.blocks.WickerBundleBlock;
 import com.emoniph.witchery.blocks.WitchesOvenBlock;
@@ -39,8 +41,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -50,8 +55,10 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.ChestType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -914,17 +921,22 @@ public class WitcheryCommands {
         Direction right = forward.getClockWise();
         Direction machineFacing = forward.getOpposite();
         BlockPos stripStart = player.blockPosition().relative(forward, 5);
+        BlockPos ovenPos = stripStart.relative(right, 14);
 
         placeAltarRig(level, stripStart, forward, right);
         placeKettleRig(level, stripStart.relative(right, 6), machineFacing);
         placeMachine(level, stripStart.relative(right, 10),
                 WitcheryBlocks.DISTILLERY.get().defaultBlockState().setValue(DistilleryBlock.FACING, machineFacing));
-        placeMachine(level, stripStart.relative(right, 14),
+        placeMachine(level, ovenPos,
                 WitcheryBlocks.WITCHES_OVEN.get().defaultBlockState().setValue(WitchesOvenBlock.FACING, machineFacing));
+        placeMachine(level, ovenPos.above(),
+                WitcheryBlocks.FUME_FUNNEL.get().defaultBlockState().setValue(FumeFunnelBlock.FACING, machineFacing));
+        placeMachine(level, stripStart.relative(right, 18),
+                WitcheryBlocks.SPINNING_WHEEL.get().defaultBlockState().setValue(SpinningWheelBlock.FACING, machineFacing));
+        placeSupplyChest(level, stripStart.relative(right, 22), machineFacing, right);
 
         src.sendSuccess(() -> Component.literal(
-                "Placed a Witchery station strip 5 blocks ahead: altar, kettle rig, distillery, and witch's oven. "
-                        + "Good next time-savers would be a spinning wheel, oven funnel, and a supply chest/jar rack."),
+                "Placed a Witchery station strip 5 blocks ahead: altar, kettle rig, distillery, witch's oven with funnel, spinning wheel, and a stocked double chest."),
                 false);
         return 1;
     }
@@ -957,6 +969,93 @@ public class WitcheryCommands {
         placeMachine(level, kettlePos.relative(right), Blocks.OAK_FENCE.defaultBlockState());
         placeMachine(level, kettlePos,
                 WitcheryBlocks.KETTLE.get().defaultBlockState().setValue(KettleBlock.FACING, machineFacing));
+    }
+
+    private static void placeSupplyChest(ServerLevel level, BlockPos firstPos, Direction chestFacing, Direction stripDirection) {
+        BlockPos secondPos = firstPos.relative(stripDirection);
+        clearBox(level, firstPos, secondPos.above(2));
+
+        ChestType firstType = stripDirection == chestFacing.getCounterClockWise() ? ChestType.RIGHT : ChestType.LEFT;
+        ChestType secondType = firstType == ChestType.RIGHT ? ChestType.LEFT : ChestType.RIGHT;
+
+        level.setBlock(firstPos, Blocks.CHEST.defaultBlockState()
+                .setValue(ChestBlock.FACING, chestFacing)
+                .setValue(ChestBlock.TYPE, firstType), 3);
+        level.setBlock(secondPos, Blocks.CHEST.defaultBlockState()
+                .setValue(ChestBlock.FACING, chestFacing)
+                .setValue(ChestBlock.TYPE, secondType), 3);
+
+        List<ItemStack> supplies = createSetupChestSupplies();
+        fillChestHalf(level, firstPos, supplies, 0, 27);
+        fillChestHalf(level, secondPos, supplies, 27, 27);
+    }
+
+    private static void fillChestHalf(ServerLevel level, BlockPos pos, List<ItemStack> supplies, int startIndex, int slotCount) {
+        if (!(level.getBlockEntity(pos) instanceof ChestBlockEntity chest)) {
+            return;
+        }
+
+        for (int slot = 0; slot < slotCount; slot++) {
+            int supplyIndex = startIndex + slot;
+            chest.setItem(slot, supplyIndex < supplies.size() ? supplies.get(supplyIndex).copy() : ItemStack.EMPTY);
+        }
+        chest.setChanged();
+    }
+
+    private static List<ItemStack> createSetupChestSupplies() {
+        List<ItemStack> supplies = new ArrayList<>();
+
+        supplies.add(stack(Items.GLASS_BOTTLE, 64));
+        supplies.add(stack(Items.WATER_BUCKET, 1));
+        supplies.add(stack(Items.BUCKET, 1));
+        supplies.add(stack(Items.COAL, 64));
+        supplies.add(stack(Items.CHARCOAL, 64));
+        supplies.add(stack(Items.CLAY_BALL, 64));
+        supplies.add(stack(WitcheryItems.CLAY_JAR_SOFT.get(), 64));
+        supplies.add(stack(WitcheryItems.CLAY_JAR.get(), 64));
+
+        supplies.add(stack(WitcheryItems.HAWTHORN_SAPLING.get(), 64));
+        supplies.add(stack(WitcheryItems.ALDER_SAPLING.get(), 64));
+        supplies.add(stack(WitcheryItems.ROWAN_SAPLING.get(), 64));
+        supplies.add(stack(WitcheryItems.WOOD_ASH.get(), 64));
+        supplies.add(stack(WitcheryItems.FOUL_FUME.get(), 64));
+        supplies.add(stack(WitcheryItems.ODOUR_OF_PURITY.get(), 64));
+        supplies.add(stack(WitcheryItems.QUICKLIME.get(), 64));
+        supplies.add(stack(WitcheryItems.GYPSUM.get(), 64));
+        supplies.add(stack(WitcheryItems.OIL_OF_VITRIOL.get(), 64));
+        supplies.add(stack(WitcheryItems.REEK_OF_MISFORTUNE.get(), 64));
+
+        supplies.add(stack(WitcheryItems.WISPY_COTTON.get(), 64));
+        supplies.add(stack(Items.STRING, 64));
+        supplies.add(stack(WitcheryItems.FANCIFUL_THREAD.get(), 64));
+        supplies.add(stack(WitcheryItems.BAT_WOOL.get(), 64));
+        supplies.add(stack(WitcheryItems.SPANISH_MOSS.get(), 64));
+        supplies.add(stack(WitcheryItems.GOLDEN_THREAD.get(), 64));
+        supplies.add(stack(WitcheryItems.DIAMOND_VAPOUR.get(), 32));
+
+        supplies.add(stack(WitcheryItems.BELLADONNA.get(), 64));
+        supplies.add(stack(WitcheryItems.MANDRAKE_ROOT.get(), 64));
+        supplies.add(stack(WitcheryItems.ARTICHOKE.get(), 64));
+        supplies.add(stack(WitcheryItems.SNOWBELL.get(), 64));
+        supplies.add(stack(WitcheryItems.WORMWOOD.get(), 64));
+        supplies.add(stack(WitcheryItems.ROWAN_BERRIES.get(), 64));
+        supplies.add(stack(Items.LILY_PAD, 64));
+        supplies.add(stack(Items.INK_SAC, 64));
+        supplies.add(stack(Items.REDSTONE, 64));
+        supplies.add(stack(Items.GLOWSTONE_DUST, 64));
+
+        supplies.add(stack(WitcheryItems.BREATH_OF_GODDESS.get(), 64));
+        supplies.add(stack(WitcheryItems.HINT_OF_REBIRTH.get(), 64));
+        supplies.add(stack(WitcheryItems.WHIFF_OF_MAGIC.get(), 64));
+        supplies.add(stack(WitcheryItems.MUTANDIS.get(), 32));
+        supplies.add(stack(WitcheryItems.MUTANDIS_EXTREMIS.get(), 16));
+        supplies.add(stack(Items.FLINT_AND_STEEL, 1));
+
+        return supplies;
+    }
+
+    private static ItemStack stack(Item item, int count) {
+        return new ItemStack(item, count);
     }
 
     private static void placeMachine(ServerLevel level, BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
