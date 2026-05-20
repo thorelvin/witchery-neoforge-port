@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.core.Direction;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -32,6 +33,7 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
     public static class State extends BlockEntityRenderState {
         public final ItemStackRenderState[] slotRenderStates = new ItemStackRenderState[PoppetShelfBlockEntity.SLOT_COUNT];
         public final float[] slotRotations = new float[PoppetShelfBlockEntity.SLOT_COUNT];
+        public float yaw;
 
         public State() {
             for (int i = 0; i < slotRenderStates.length; i++) {
@@ -57,9 +59,15 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
 
         Level level = be.getLevel();
         if (level == null) {
+            state.yaw = 0f;
             clearSlots(state);
             return;
         }
+
+        Direction facing = be.getBlockState().hasProperty(com.emoniph.witchery.blocks.PoppetShelfBlock.FACING)
+                ? be.getBlockState().getValue(com.emoniph.witchery.blocks.PoppetShelfBlock.FACING)
+                : Direction.NORTH;
+        state.yaw = facing.getOpposite().toYRot();
 
         Vec3 bePos = Vec3.atCenterOf(be.getBlockPos());
         ItemOwner owner = new ItemOwner() {
@@ -99,9 +107,9 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
         ps.pushPose();
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
+        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
         ps.translate(-0.5, 0, -0.5);
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
 
         for (int slot = 0; slot < state.slotRenderStates.length; slot++) {
             ItemStackRenderState renderState = state.slotRenderStates[slot];
@@ -121,6 +129,8 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
             renderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             ps.popPose();
         }
+
+        ps.popPose();
     }
 
     private static void clearSlots(State state) {
