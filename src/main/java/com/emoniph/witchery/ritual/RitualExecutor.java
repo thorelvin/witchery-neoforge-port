@@ -498,7 +498,10 @@ public class RitualExecutor {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE));
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(item)) {
             return matchedResult(riteOfTranspositionPull(player, level, center));
-        } else if (item.is(Items.NETHER_STAR)) {
+        } else if (item.is(Items.NETHER_STAR)
+                && hasVariant(circleVariant, VARIANT_INFERNAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
         } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
