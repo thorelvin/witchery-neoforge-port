@@ -26,6 +26,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.InteractionResult;
 
@@ -35,6 +37,7 @@ public class ChaliceBlock extends BaseEntityBlock {
 
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
     private static final String FILLED_TAG = "Filled";
+    private static final VoxelShape SHAPE = box(4.8, 0.0, 5.92, 10.08, 7.36, 11.12);
 
     public static final MapCodec<ChaliceBlock> CODEC = simpleCodec(ChaliceBlock::new);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
@@ -130,6 +133,16 @@ public class ChaliceBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
 
     private ItemStack createStackForState(BlockState state) {
         ItemStack stack = new ItemStack(asItem());
