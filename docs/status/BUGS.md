@@ -51,6 +51,7 @@ Current state:
 - The non-original redstone Charging buff fallback is gone again, so the old small-plus-medium `chargestone` / `infusionrecharge` family now stands as explicit remaining work instead of pretending to be a finished medium-circle parity route.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
+- The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra unbound inventory waystone and spits out two bound waystones again, instead of falsely collapsing into the representative Banish Demon branch.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -462,10 +463,11 @@ Remaining gap:
 
 The next small-circle parity pass is now closer to original Witchery:
 - `Bind Waystone` now requires ritual chalk again instead of accepting any small ring.
+- `Bind Waystone Copy` is now reachable again from the dropped bound-waystone ritual route, and it once more consumes one spare unbound inventory waystone to produce two bound waystones instead of firing the false Banish Demon branch.
 - `Manifestation` is now actually reachable again through the simplified dispatcher, mapped to `spectral_dust` on an otherwhere small circle instead of remaining implemented-but-dead.
 
 Remaining gap:
-- These routes are now reachable and family-gated, but the dispatcher is still using representative single items rather than the original full multi-sacrifice recipe sets.
+- These routes are now reachable and family-gated, but the dispatcher is still using representative single items and inventory checks rather than the original full multi-sacrifice recipe sets, so the waystone-copy route still does not explicitly validate its old Ender Dew plus diamond support sacrifices.
 
 ### 41. Forestation and animal-calling were routed through the wrong ring sizes - Fixed / verify
 
@@ -635,7 +637,7 @@ Remaining gap:
 The next missing-feature pass is now closer to original Witchery:
 - The small `banishdemon` and `banishdemonportable` family is reachable again instead of being absent from the port.
 - The restored rite now banishes the port's infernal creature equivalents within the original 9-block radius: `Demon`, `Flame Imp`, `Death`, and `Lord of Torment`.
-- It is exposed through representative small ritual `attuned_stone` and bound-`waystone` routes because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+- It is exposed through a representative small ritual `attuned_stone` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
 
 Remaining gap:
 - The exact portable-vs-regular multi-sacrifice activation shape is still collapsed into representative trigger items, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
