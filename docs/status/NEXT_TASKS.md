@@ -92,7 +92,7 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 - `ice_fence` added to `#minecraft:fences` tag (fence connection logic)
 
 **Plant tweaks**
-- `glint_weed` now emits light level 7
+- `glint_weed` now emits original full light level 15 and has its legacy flame ambience/spread behavior restored
 - `leaping_lily` model no longer reuses glint_weed texture (now uses snowbell_stage_4 as placeholder)
 
 **Directional BESR blocks** — all four now face the direction placed:

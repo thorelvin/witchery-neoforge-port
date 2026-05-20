@@ -100,7 +100,10 @@ public class WitcheryBlocks {
             EmberMossBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
                     .strength(0.0f).lightLevel(s -> 6).noOcclusion().noCollision().randomTicks().noLootTable());
-    public static final DeferredBlock<Block> GLINT_WEED     = BLOCKS.registerSimpleBlock("glint_weed",    BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 15));
+    public static final DeferredBlock<GlintWeedBlock> GLINT_WEED = BLOCKS.registerBlock("glint_weed",
+            GlintWeedBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 15).randomTicks());
     public static final DeferredBlock<SpanishMossBlock> SPANISH_MOSS = BLOCKS.registerBlock("spanish_moss",
             SpanishMossBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
