@@ -353,7 +353,8 @@ public class RitualExecutor {
         } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfCookItem(player, level, center);
             return successResult();
-        } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
+        } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL));
         } else {
             if (item.isEmpty()) {
@@ -410,7 +411,8 @@ public class RitualExecutor {
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfRainOfToads(player, level, center));
-        } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
+        } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
         } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseCreature(player, level, center));
@@ -445,7 +447,7 @@ public class RitualExecutor {
     // ── Large ring dispatch ────────────────────────────────────────────────────
 
     private static ActivationResult dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if (isRawFood(item, level)) {
+        if (isRawFood(item, level) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBroiling(player, level, center);
             return successResult();
         } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
@@ -455,14 +457,17 @@ public class RitualExecutor {
             return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTransposeOres(player, level, center));
-        } else if (item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND)) {
+        } else if ((item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfMovingEarth(player, level, center));
-        } else if (item.is(Items.LAVA_BUCKET)) {
+        } else if (item.is(Items.LAVA_BUCKET) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfVolcano(player, level, center));
-        } else if (item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL)) {
+        } else if ((item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfBrokenEarth(player, level, center);
             return successResult();
-        } else if (item.is(Items.COBBLESTONE) || item.is(Items.STONE)) {
+        } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE));
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(item)) {
             return matchedResult(riteOfTranspositionPull(player, level, center));
@@ -477,7 +482,7 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(Items.WET_SPONGE) || item.is(Items.SPONGE)) {
             return matchedResult(riteOfRain(player, level, center));
-        } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())) {
+        } else if (item.is(WitcheryItems.FLYING_OINTMENT.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfEnchantBroom(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfClimateChange(player, level, center));
