@@ -148,6 +148,7 @@ public class RitualExecutor {
     }
 
     private record ClimateChangePlan(Holder<Biome> biomeHolder, ClimateWeather weather) {}
+    private record ClimateChangeScan(ClimateChangePlan plan, List<ItemEntity> itemsToConsume) {}
 
     private enum ActiveRitualType {
         WEATHER_CALL_STORM,
@@ -1148,8 +1149,8 @@ public class RitualExecutor {
             return false;
         }
 
-        ClimateChangePlan plan = scanClimateChangePlan(sl, center);
-        if (plan == null) {
+        ClimateChangeScan scan = scanClimateChangePlan(sl, center);
+        if (scan == null) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.missingbiomefoci"), false);
             return false;
@@ -1157,7 +1158,7 @@ public class RitualExecutor {
 
         int covenSize = countNearbyCovenWitches(level, center);
         int radius = 16 * (covenSize - 3);
-        storeClimateChangePlan(sl.dimension(), center, plan);
+        storeClimateChangePlan(sl.dimension(), center, scan.plan());
         if (!queueActiveRitual(sl, ActiveRitualType.CLIMATE_CHANGE, RitualCircleDetector.CircleSize.LARGE,
                 center, radius, 0, 5, 20, covenSize)) {
             clearClimateChangePlan(sl.dimension(), center);
@@ -1165,13 +1166,14 @@ public class RitualExecutor {
             return false;
         }
 
+        consumeClimateChangeItems(sl, scan.itemsToConsume());
         success(player, level, center, "witchery.ritual.climatechange.success",
                 SoundEvents.BEACON_ACTIVATE, 1.2f, 4, 48);
         WitcheryMod.LOGGER.info("Rite of Shifting Seasons primed at {} with radius {}", center, radius);
         return true;
     }
 
-    private static ClimateChangePlan scanClimateChangePlan(ServerLevel level, BlockPos center) {
+    private static ClimateChangeScan scanClimateChangePlan(ServerLevel level, BlockPos center) {
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(8.0, 2.0, 8.0));
         ItemEntity selectedFocusEntity = null;
         ClimateFocus selectedFocus = null;
@@ -1209,15 +1211,23 @@ public class RitualExecutor {
             return null;
         }
 
-        consumeClimateChangeItem(level, selectedFocusEntity);
-        for (ItemEntity glowstoneEntity : glowstoneEntities) {
-            consumeClimateChangeItem(level, glowstoneEntity);
-        }
+        List<ItemEntity> itemsToConsume = new ArrayList<>(glowstoneEntities.size() + 1);
+        itemsToConsume.add(selectedFocusEntity);
+        itemsToConsume.addAll(glowstoneEntities);
+        ClimateChangePlan plan = new ClimateChangePlan(resolveClimateBiome(level, selectedFocus, glowstone), weatherForFocus(selectedFocus));
+        return new ClimateChangeScan(plan, List.copyOf(itemsToConsume));
+    }
 
-        return new ClimateChangePlan(resolveClimateBiome(level, selectedFocus, glowstone), weatherForFocus(selectedFocus));
+    private static void consumeClimateChangeItems(ServerLevel level, List<ItemEntity> items) {
+        for (ItemEntity itemEntity : items) {
+            consumeClimateChangeItem(level, itemEntity);
+        }
     }
 
     private static void consumeClimateChangeItem(ServerLevel level, ItemEntity itemEntity) {
+        if (itemEntity == null || !itemEntity.isAlive()) {
+            return;
+        }
         level.sendParticles(ParticleTypes.ENCHANT,
                 itemEntity.getX(), itemEntity.getY() + 0.25, itemEntity.getZ(),
                 16, 0.15, 0.25, 0.15, 0.0);
