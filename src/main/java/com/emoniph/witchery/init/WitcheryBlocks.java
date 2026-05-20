@@ -37,7 +37,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<Block> ROWAN_PLANKS = BLOCKS.registerSimpleBlock("rowan_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
     public static final DeferredBlock<RowanDoorBlock> ROWAN_DOOR = BLOCKS.registerBlock("rowan_door",
-            props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+            props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
 
     // Ice blocks
