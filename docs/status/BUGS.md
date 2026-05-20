@@ -668,6 +668,7 @@ Remaining gap:
 The next mechanical parity pass is now closer to original Witchery:
 - The small otherwhere bound-waystone rite no longer ignores the offered waystone and teleports only the caster from inventory.
 - It now reads the sacrificed bound waystone itself again and teleports nearby entities within the circle's original short radius, which is much closer to the old `RiteTeleportToWaystone` behavior.
+- That nearby-entity sweep now also measures from the actual center of the circle with the old radius-3 feel again, instead of using a slightly tighter corner-based approximation.
 - Cross-dimension travel now applies to non-player entities as well, instead of only the player path being handled.
 
 Remaining gap:

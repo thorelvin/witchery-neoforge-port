@@ -3900,14 +3900,17 @@ public class RitualExecutor {
             return false;
         }
         BlockPos d = dest.get();
-        AABB bounds = new AABB(center).inflate(3.0);
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radius = 3.0;
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
         int moved = 0;
         for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
             if (entity instanceof ItemEntity itemEntity
                     && itemEntity.distanceToSqr(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5) <= 3.0) {
                 continue;
             }
-            if (entity.distanceToSqr(center.getX(), center.getY(), center.getZ()) >= 9.0) {
+            if (entity.position().distanceToSqr(centerPoint) >= radiusSq) {
                 continue;
             }
             teleportEntityToWaystone(entity, targetLevel, d);
