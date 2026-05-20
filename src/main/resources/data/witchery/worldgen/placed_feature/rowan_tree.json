@@ -17,6 +17,12 @@
       "heightmap": "WORLD_SURFACE_WG"
     },
     {
+      "type": "witchery:tree_clearance",
+      "horizontal_radius": 3,
+      "min_y": 0,
+      "max_y": 10
+    },
+    {
       "type": "minecraft:biome"
     },
     {

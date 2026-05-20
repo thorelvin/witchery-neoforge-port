@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-20 (Torment portal/verifier follow-up + fetish visual parity pass + ritual mechanics/doc sync)
+Last reconciled: 2026-05-20 (Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis rose-bush pool)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -21,7 +21,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 | Brazier recipes | Done | 13 recipes: 3 entity summons, 5 pulsing auras, 5 one-shot buffs |
 | Coffin | Done | 2-block bed-like; vampire day-sleep; OPEN lid; BESR model |
 | Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding; original sturdier hardness and very high blast resistance restored closer to 1.7.10; scarecrow/trent once again use dedicated visuals and Witch's Ladder is back on its flat model path |
-| Mutandis / Mutandis Extremis | Done | Pool mutation; Extremis: wolf+owl -> Flying Monkey, crop pool, grass/dirt swap |
+| Mutandis / Mutandis Extremis | Done | Pool mutation; normal/Extremis plant pool now includes rose bush with correct double-plant placement/removal handling; Extremis: wolf+owl -> Flying Monkey, crop pool, grass/dirt swap |
 | Brew of Ice / Depths / Vines | Done | All implemented as BrewItem subclasses |
 | Witches' Primer guidebook | Done | Patchouli optional dep; book.json; 8 categories; 21 entries with atmospheric text + images |
 | JEI integration | Done | 5 recipe categories: Kettle, Oven, Distillery, Spinning Wheel, Brazier |
@@ -140,7 +140,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies |
+| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies, and a custom `tree_clearance` placement filter now keeps rowan generation away from nearby logs/leaves so it gets a more open, special footprint |
 | Rowan berries | Done | Loot/drop chain |
 | Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage, ember moss fire/spread/shears behavior, spanish moss fast growth plus non-ladder/high-flammability behavior, bramble hazard/spread plus original toughness, void bramble teleport plus owner-column removal/unbreakable/ritual-nulling profile, grassper item stash plus comparator output, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, leaping lily buffs, and critter snare catch/release behavior are now restored closer to original, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks craft from rowan logs and are tagged as planks; rowan log, wood, planks, sapling, and lower-half door drops now mirror vanilla self-drop behavior; Rowan stairs and slab are restored with rowan plank models, recipes, tags, loot, and old `5/20` flammability; rowan door has original `5.0F` hardness plus UUID-locked key/keyring flow |

@@ -13,7 +13,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 
@@ -45,8 +47,10 @@ public class MutandisItem extends Item {
         Level level = ctx.getLevel();
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        BlockPos pos   = ctx.getClickedPos();
-        BlockState state = level.getBlockState(pos);
+        BlockPos pos = ctx.getClickedPos();
+        BlockState clickedState = level.getBlockState(pos);
+        BlockPos mutationPos = normalizeMutationPos(clickedState, pos);
+        BlockState state = level.getBlockState(mutationPos);
         Block block    = state.getBlock();
 
         // ── Extremis special: Grass Block ↔ Dirt toggle ───────────────────────
@@ -82,15 +86,15 @@ public class MutandisItem extends Item {
         boolean inPool = pool.stream().anyMatch(s -> s.getBlock() == block);
         if (!inPool) return InteractionResult.PASS;
 
-        pool.removeIf(s -> s.getBlock() == block);
+        pool.removeIf(s -> s.getBlock() == block || !canPlaceMutation(level, mutationPos, state, s));
         if (pool.isEmpty()) return InteractionResult.PASS;
 
         int sourceAge = getAge(state);
         BlockState chosen = pool.get(level.random.nextInt(pool.size()));
         chosen = applyAge(chosen, sourceAge);
 
-        level.setBlock(pos, chosen, 3);
-        spawnEffects(level, pos);
+        placeMutation(level, mutationPos, state, chosen);
+        spawnEffects(level, mutationPos);
         consumeItem(ctx);
         return InteractionResult.SUCCESS;
     }
@@ -126,6 +130,7 @@ public class MutandisItem extends Item {
         // Vanilla plants
         pool.add(Blocks.DANDELION.defaultBlockState());
         pool.add(Blocks.POPPY.defaultBlockState());
+        pool.add(Blocks.ROSE_BUSH.defaultBlockState());
         pool.add(Blocks.FERN.defaultBlockState());
         pool.add(Blocks.DEAD_BUSH.defaultBlockState());
         pool.add(Blocks.SHORT_GRASS.defaultBlockState());
@@ -170,6 +175,54 @@ public class MutandisItem extends Item {
             }
         }
         return state;
+    }
+
+    private static BlockPos normalizeMutationPos(BlockState state, BlockPos pos) {
+        if (state.getBlock() instanceof DoublePlantBlock
+                && state.hasProperty(DoublePlantBlock.HALF)
+                && state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {
+            return pos.below();
+        }
+        return pos;
+    }
+
+    private static boolean canPlaceMutation(Level level, BlockPos pos, BlockState currentState, BlockState targetState) {
+        if (targetState.getBlock() instanceof DoublePlantBlock) {
+            if (!level.isInWorldBounds(pos.above())) {
+                return false;
+            }
+            BlockPos abovePos = pos.above();
+            BlockState aboveState = level.getBlockState(abovePos);
+            if (isUpperHalfOf(aboveState, currentState.getBlock())) {
+                return true;
+            }
+            return aboveState.canBeReplaced();
+        }
+        return true;
+    }
+
+    private static void placeMutation(Level level, BlockPos pos, BlockState currentState, BlockState targetState) {
+        if (!(targetState.getBlock() instanceof DoublePlantBlock) && currentState.getBlock() instanceof DoublePlantBlock) {
+            clearUpperHalf(level, pos, currentState.getBlock());
+        }
+        if (targetState.getBlock() instanceof DoublePlantBlock) {
+            DoublePlantBlock.placeAt(level, targetState, pos, 3);
+            return;
+        }
+        level.setBlock(pos, targetState, 3);
+    }
+
+    private static void clearUpperHalf(Level level, BlockPos pos, Block block) {
+        BlockPos abovePos = pos.above();
+        if (isUpperHalfOf(level.getBlockState(abovePos), block)) {
+            level.setBlock(abovePos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static boolean isUpperHalfOf(BlockState state, Block block) {
+        return state.is(block)
+                && state.hasProperty(DoublePlantBlock.HALF)
+                && state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER;
     }
 
     // ── Extremis clay conversion ──────────────────────────────────────────────

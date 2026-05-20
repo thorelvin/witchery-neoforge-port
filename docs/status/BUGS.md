@@ -721,6 +721,17 @@ Current state:
 - `/witchery verify torment` gives a repeatable server-side audit for fresh/deleted Torment chunks before the remaining visual/manual QA pass, and its footprint scan now covers the full right-side chest room instead of undercounting those chests.
 - Existing saves still need the Torment dimension folder deleted, or a fresh world, before this visual/layout fix can be verified because old chunks will not regenerate automatically.
 
+### 11. Rowan worldgen still tucked itself into existing canopies, and Mutandis was missing rose-bush parity - Fixed / verify
+
+The previous rowan worldgen improvement stopped trunks from dropping onto leaf-covered forest floors, but it still allowed rowan to generate too close to other trees. Mutandis also still lacked rose bush in its mutation pool, and the port did not yet handle double-plant mutation placement/cleanup safely.
+
+Current state:
+- `rowan_tree.json` now keeps the `WORLD_SURFACE_WG` surface sample and adds a custom `tree_clearance` placement filter.
+- `TreeClearancePlacement` rejects rowan generation when nearby logs or leaves occupy the checked clearance box, giving rowan a more open footprint instead of letting it tuck straight into other tree canopies.
+- `MutandisItem` now includes vanilla `ROSE_BUSH` in the plant mutation pool that Extremis inherits from, restoring the missing bush outcome.
+- Mutandis mutation placement now normalizes upper-half double-plant clicks back to the lower half, clears orphaned upper halves when swapping to single-block plants, and uses the proper double-plant placement path when mutating into rose bush.
+- Final in-game verification is still needed to tune whether the current rowan clearance radius feels right across dense forests and to confirm rose-bush mutations behave cleanly on both normal Mutandis and Extremis.
+
 ---
 
 ## Feature-polish backlog, not blocking bugs

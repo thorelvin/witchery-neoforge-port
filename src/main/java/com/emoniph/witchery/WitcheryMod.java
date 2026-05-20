@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryChunkGenerators;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
+import com.emoniph.witchery.init.WitcheryPlacementModifiers;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryCreativeTabs;
@@ -44,6 +45,7 @@ public class WitcheryMod {
         WitcheryStructures.STRUCTURE_TYPES.register(modEventBus);
         WitcheryStructures.PIECE_TYPES.register(modEventBus);
         WitcheryChunkGenerators.CHUNK_GENERATORS.register(modEventBus);
+        WitcheryPlacementModifiers.PLACEMENT_MODIFIERS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
