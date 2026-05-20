@@ -46,7 +46,7 @@ Current state:
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
-- `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring.
+- `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring, and its staged active-rite state now remembers that same medium ring instead of collapsing under a stray large-ring sustain check.
 - Sky's Wrath now routes from the original small ritual circle again instead of the wrong medium ring.
 - The non-original redstone Charging buff fallback is gone again, and the real paired-circle `chargestone` path now exists again: a plain Attuned Stone on the medium ritual ring with its inner small ritual companion plus 2000 altar power now spits out a Charged Attuned Stone instead of falling through to the portable-barrier placeholder.
 - The original infusion charge state is back too: successful infusion rites now seed `200/200` current/max energy again, that charge data persists in player saves, syncs to the client, and shows up in `/witchery status` instead of leaving infused players with no meter at all.
@@ -659,7 +659,7 @@ Remaining gap:
 
 The next missing-feature pass is now closer to original Witchery:
 - The old medium ritual `naturespower` behavior is reachable again instead of being absent from the port.
-- The restored rite now runs as a long staged growth effect, picks random nearby ground anchors, greens the soil, spreads plants, bonemeals growth, and scales its working radius and lifetime with nearby coven witches again.
+- The restored rite now runs as a long staged growth effect, picks random nearby ground anchors, greens the soil, spreads plants, bonemeals growth, scales its working radius and lifetime with nearby coven witches again, and now sustains against the same medium ritual ring it activates from instead of mistakenly requiring a large ring after queueing.
 - It is exposed through a representative medium ritual `brew_of_sprouting` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
 
 Remaining gap:

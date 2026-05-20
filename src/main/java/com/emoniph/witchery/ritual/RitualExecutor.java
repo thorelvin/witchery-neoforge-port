@@ -3033,7 +3033,7 @@ public class RitualExecutor {
     private static boolean riteOfNaturesPower(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         int covenSize = countNearbyCovenWitches(level, center);
-        if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.LARGE,
+        if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.MEDIUM,
                 center, 14, 8, 150, 20, covenSize)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
