@@ -77,6 +77,10 @@ Current `GhostModel` has no mouth part - it was never introduced in the port. Ar
 
 Handled by spawn placement registration for the biome-spawned mobs.
 
+### 8. Spawn eggs were still relying on a flat fallback icon chain - Fixed / verify
+
+Witchery spawn eggs now use a local copy of the vanilla two-layer spawn-egg template again instead of the temporary flat fallback sprite chain. This avoids the missing `minecraft:item/template_spawn_egg` issue in this runtime while restoring the normal tinted egg presentation path much closer to original expectations.
+
 ---
 
 ### 7. Mandrake mob spawn category mismatch - Fixed

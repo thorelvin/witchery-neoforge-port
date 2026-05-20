@@ -181,8 +181,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 134 | `witchery:coven_witch_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 135 | `witchery:witch_hunter_spawn_egg` | `Partial - stable local fallback egg texture restored` |
+| 134 | `witchery:coven_witch_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 135 | `witchery:witch_hunter_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
 
 ---
 
@@ -190,18 +190,18 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 136 | `witchery:banshee_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 137 | `witchery:spectre_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 138 | `witchery:poltergeist_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 139 | `witchery:treefyd_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 140 | `witchery:ent_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 141 | `witchery:mandrake_mob_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 142 | `witchery:demon_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 143 | `witchery:nightmare_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 144 | `witchery:spirit_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 145 | `witchery:flame_imp_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 146 | `witchery:lord_of_torment_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 147 | `witchery:death_spawn_egg` | `Partial - stable local fallback egg texture restored` |
+| 136 | `witchery:banshee_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 137 | `witchery:spectre_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 138 | `witchery:poltergeist_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 139 | `witchery:treefyd_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 140 | `witchery:ent_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 141 | `witchery:mandrake_mob_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 142 | `witchery:demon_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 143 | `witchery:nightmare_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 144 | `witchery:spirit_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 145 | `witchery:flame_imp_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 146 | `witchery:lord_of_torment_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 147 | `witchery:death_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
 
 ---
 
@@ -209,9 +209,9 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 148 | `witchery:owl_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 149 | `witchery:familiar_cat_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 150 | `witchery:toad_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 151 | `witchery:hobgoblin_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 152 | `witchery:flying_monkey_spawn_egg` | `Partial - stable local fallback egg texture restored` |
-| 153 | `witchery:binky_spawn_egg` | `Partial - stable local fallback egg texture restored` |
+| 148 | `witchery:owl_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 149 | `witchery:familiar_cat_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 150 | `witchery:toad_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 151 | `witchery:hobgoblin_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 152 | `witchery:flying_monkey_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 153 | `witchery:binky_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |

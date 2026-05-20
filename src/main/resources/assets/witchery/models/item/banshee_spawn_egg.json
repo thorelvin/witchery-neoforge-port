@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:item/spawn_egg"
-  }
+  "parent": "witchery:item/template_spawn_egg"
 }
