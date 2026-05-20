@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-20 (trader menu pass + setup stations debug strip + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + expanded machine QA strip + kettle/oven polish)
+Last reconciled: 2026-05-20 (trader menu pass + setup stations QA hut pass + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + kettle/oven polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -188,7 +188,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | `/witchery verify torment` | Done | Server-side Torment audit for fresh/deleted chunks, full legacy footprint/layout parity, and atmosphere data |
 | `/witchery give primer` | Done | Give Witches' Primer directly |
 | `/witchery altar` | Done | Scan and report altar power within 20 blocks |
-| `/witchery setup stations` | Done | Places a player-facing QA strip 5 blocks ahead with altar, fence-mounted kettle over a campfire, distillery, witch's oven with fume funnel, spinning wheel, and a stocked double supply chest |
+| `/witchery setup stations` | Done | Rebuilds a player-facing 11x11 Rowan QA hut 5 blocks ahead with a 3-deep stone-brick foundation, altar, fence-mounted kettle over a campfire plus water cauldron, distillery, witch's oven with fume funnel, spinning wheel, stocked double chest, and indoor Coven Witch + Hobgoblin traders; oven/distillery/spinning wheel preload one ready recipe each |
 
 ---
 
