@@ -42,6 +42,7 @@ Current state:
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
+- Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -441,7 +442,7 @@ Remaining gap:
 
 The next ritual integrity pass is now closer to original Witchery:
 - Active rites now verify that their own required ring size still exists instead of re-running the generic first-match detector, so staged rites no longer abort just because a smaller ring at the same center is found first.
-- Large-circle `Curse of Waking Nightmare` and `Blight` now require infernal chalk again, and large-circle Fetish binding now requires ritual chalk again, instead of all three accepting the wrong family.
+- Large-circle `Curse of Waking Nightmare` and `Blight` now require infernal chalk again, and Fetish binding now requires ritual chalk again, instead of all three accepting the wrong family.
 - Small-circle teleport-to-bound-waystone now requires otherwhere chalk again instead of activating from any small ring.
 - New casts now retry every present ring from large to small instead of collapsing through the first detected ring size only, so mixed-ring activations no longer dead-end just because a smaller inner circle is present.
 

@@ -449,6 +449,8 @@ public class RitualExecutor {
                 && !SpectralStoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindSpectralStone(player, level, center, item));
+        } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -513,8 +515,6 @@ public class RitualExecutor {
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
             return successResult();
-        } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
         } else {
             return ActivationResult.NO_MATCH;
         }
