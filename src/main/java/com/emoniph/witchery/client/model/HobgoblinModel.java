@@ -29,7 +29,7 @@ public class HobgoblinModel<S extends HumanoidRenderState> extends HumanoidModel
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        root.addOrReplaceChild("head",
+        PartDefinition head = root.addOrReplaceChild("head",
                 CubeListBuilder.create()
                         .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8)
                         .texOffs(34, 3).addBox(-0.5F, -6.0F, -5.0F, 1, 3, 1)
@@ -41,10 +41,10 @@ public class HobgoblinModel<S extends HumanoidRenderState> extends HumanoidModel
                         .texOffs(39, 0).addBox(-6.0F, -7.0F, 0.0F, 2, 3, 1),
                 PartPose.offset(0.0F, 11.0F, 0.0F));
 
-        root.addOrReplaceChild("hat",
+        head.addOrReplaceChild("hat",
                 CubeListBuilder.create()
                         .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8),
-                PartPose.offset(0.0F, 11.0F, 0.0F));
+                PartPose.ZERO);
 
         root.addOrReplaceChild("body",
                 CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8, 7, 4),
@@ -73,7 +73,6 @@ public class HobgoblinModel<S extends HumanoidRenderState> extends HumanoidModel
     public void setupAnim(S state) {
         super.setupAnim(state);
         this.head.y = 11.0F;
-        this.hat.y = 11.0F;
         this.body.y = 11.0F;
         this.rightArm.y = 12.0F;
         this.leftArm.y = 12.0F;
