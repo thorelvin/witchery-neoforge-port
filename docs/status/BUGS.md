@@ -113,7 +113,7 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Grassper` works as a one-item stash and renders its stored item again.
 - `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.
-- `Bramble` and `Void Bramble` now behave as hazards again.
+- `Bramble` and `Void Bramble` now behave as hazards again; Wild Bramble also has its original high hardness/blast resistance back, and Void Bramble has the old high blast resistance without the still-missing owner-column unbreakable flow.
 
 These still need in-game verification for feel and visuals, but they are no longer plain placeholder blocks.
 

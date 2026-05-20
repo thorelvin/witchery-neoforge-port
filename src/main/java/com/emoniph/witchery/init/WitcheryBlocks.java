@@ -110,10 +110,10 @@ public class WitcheryBlocks {
                     .strength(0.2f).noOcclusion().randomTicks());
     public static final DeferredBlock<BrambleBlock> BRAMBLE = BLOCKS.registerBlock("bramble",
             BrambleBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().noCollision());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(20.0f, 1000.0f).noOcclusion().noCollision());
     public static final DeferredBlock<VoidBrambleBlock> VOID_BRAMBLE = BLOCKS.registerBlock("void_bramble",
             VoidBrambleBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(0.2f).noOcclusion().noCollision().lightLevel(s -> 2));
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(0.2f, 1000.0f).noOcclusion().noCollision().lightLevel(s -> 2));
     public static final DeferredBlock<LeapingLilyBlock> LEAPING_LILY = BLOCKS.registerBlock("leaping_lily",
             LeapingLilyBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
