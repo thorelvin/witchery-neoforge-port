@@ -45,7 +45,7 @@ public class DemonHeartModel extends Model.Simple {
                 CubeListBuilder.create().mirror().texOffs(0, 7).addBox(0.0F, 0.0F, 0.0F, 3.0F, 8.0F, 6.0F),
                 PartPose.offset(-4.0F, 15.0F, -1.0F));
         root.addOrReplaceChild("shape3",
-                CubeListBuilder.create().mirror().texOffs(13, 0).addBox(0.0F, 0.0F, 0.0F, 1.0F, 6.0F, 4.0F),
+                CubeListBuilder.create().texOffs(13, 0).addBox(0.0F, 0.0F, 0.0F, 1.0F, 6.0F, 4.0F),
                 PartPose.offset(-5.0F, 16.0F, 0.0F));
         root.addOrReplaceChild("shape4",
                 CubeListBuilder.create().mirror().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 2.0F, 1.0F, 2.0F),
