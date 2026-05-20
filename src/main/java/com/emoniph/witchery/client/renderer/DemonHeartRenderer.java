@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 public class DemonHeartRenderer implements BlockEntityRenderer<DemonHeartBlockEntity, DemonHeartRenderer.State> {
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/block/demon_heart.png");
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/demon_heart_model.png");
 
     private final DemonHeartModel model;
 
