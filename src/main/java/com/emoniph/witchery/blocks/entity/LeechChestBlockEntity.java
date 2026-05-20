@@ -172,6 +172,15 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     @Override
     public void clearContent() {
         items.replaceAll(stack -> ItemStack.EMPTY);
+        setChanged();
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null) {
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
+        }
     }
 
     @Override

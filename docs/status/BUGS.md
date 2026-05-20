@@ -139,6 +139,7 @@ The first real storage-parity pass is now back in place:
 - `Taglock Kit` also splits stacked kits correctly again when filling a single one, instead of binding an entire stack at once.
 - Breaking and replacing the `Leech Chest` now preserves that stored player queue on the dropped chest item again instead of wiping it.
 - `Leech Chest` once again refuses to open when the lid is blocked by a solid block or a sitting cat, matching the old chest-like access rules more closely.
+- `Leech Chest` once again exposes real chest-style comparator output and now refreshes that signal correctly as its contents change.
 
 ### 16. Poppet Shelf only worked as a local chest - Fixed / verify
 
