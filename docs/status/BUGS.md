@@ -70,7 +70,7 @@ The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again in
 
 ### 1a.i. Hobgoblin renderer was still a scaled zombie fallback - Fixed / verify
 
-`HobgoblinRenderer` no longer bakes the vanilla zombie layer and scales it down as an approximation. The port now has a dedicated `HobgoblinModel` built from Witchery: Resurrected's `ModelGoblin` proportions/UV layout instead, so the Hobgoblin textures land on the intended short goblin body again instead of stretching into hollow green slabs.
+`HobgoblinRenderer` no longer bakes the vanilla zombie layer and scales it down as an approximation. The port now has a dedicated `HobgoblinModel` built from Witchery: Resurrected's `ModelGoblin` proportions/UV layout instead, so the Hobgoblin textures land on the intended short goblin body again instead of stretching into hollow green slabs. The client launch path also now bakes that layer in the exact 1.21 `HumanoidModel` head/hat structure, which removes the black-screen `Can't find part hat` startup failure the first pass introduced.
 
 ### 1b. Kettle side supports were too strict for fence rigs - Fixed / verify
 

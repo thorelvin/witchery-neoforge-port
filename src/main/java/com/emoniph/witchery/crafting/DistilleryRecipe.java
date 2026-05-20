@@ -87,6 +87,11 @@ public class DistilleryRecipe implements Recipe<DistilleryRecipeInput> {
     }
 
     @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
+    @Override
     public RecipeSerializer<DistilleryRecipe> getSerializer() {
         return WitcheryRecipeSerializers.DISTILLERY.get();
     }

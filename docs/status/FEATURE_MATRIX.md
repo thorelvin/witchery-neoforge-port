@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-20 (trader menu pass + setup stations QA hut pass + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass + ritual refund lifecycle pass + ritual chalk-family sustain pass + ritual family-gate pass + chalk block shape/model fix)
+Last reconciled: 2026-05-20 (trader menu pass + setup stations QA hut pass + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass + hobgoblin launch-structure fix + startup warning cleanup + ritual refund lifecycle pass + ritual chalk-family sustain pass + ritual family-gate pass + chalk block shape/model fix)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
