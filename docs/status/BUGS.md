@@ -423,7 +423,7 @@ The next missing-rite pass is now closer to original Witchery:
 - The restored route now spawns a hostile witch at the circle center and uses a proper summoning-space obstruction check instead of blindly spawning inside blocked space.
 
 Remaining gap:
-- The dispatcher is still using one representative original ingredient instead of the full original sacrifice set, and only this one summon-creature rite has the restored obstruction check so far.
+- The dispatcher is still using one representative original ingredient instead of the full original sacrifice set, but the shared summoning-space obstruction check now covers the restored witch/imp/demon/wither/death/Lord of Torment family instead of only the smallest infernal path.
 
 ### 45. Large infernal imp summoning was missing entirely - Fixed / verify
 

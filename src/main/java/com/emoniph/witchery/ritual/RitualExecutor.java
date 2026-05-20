@@ -2270,6 +2270,11 @@ public class RitualExecutor {
     private static void riteOfBinding(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return;
         if (!(level instanceof ServerLevel sl)) return;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return;
+        }
 
         // Lightning at midnight atmosphere
         for (int i = 0; i < 8; i++) {
@@ -2300,6 +2305,11 @@ public class RitualExecutor {
     private static boolean riteOfSummoningLordOfTorment(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl))   return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
 
         // Block re-summoning from inside Torment
         if (sl.dimension().equals(WitcheryDimensions.TORMENT)) {
