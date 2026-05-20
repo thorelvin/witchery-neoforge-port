@@ -44,7 +44,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Chalk variants | Done | All four done |
 | Glyph blocks | Done | CIRCLE, CIRCLE_GLYPH, CIRCLE_OTHERWHERE, CIRCLE_INFERNAL |
 | Full rite roster | Partial | The obvious missing core rites are now covered again through the modern dispatcher: several storm/night/day activation traits are restored, infernal-vs-ritual-vs-otherwhere chalk-family gating has started coming back for the single-circle dispatcher, active rites now sustain against their exact ring size and remembered chalk family instead of a loose first-match re-detect, more direct rite routes like Broiling, Broken Earth, Moving Earth, Raise Column, Volcano, Flying Ointment, fertility, and most of the protection family now also require closer original ring/family behavior again, the first paired-ring activation requirements are back for Flying Ointment, `summonwither`, the four player infusion rites, and `Hell on Earth`, new casts now retry all present ring sizes outer-to-inner instead of failing on the first detected ring, Manifestation plus the restored witch/imp/wither/demon summon rites, Banish Demon, small Ice Shell, Glyphic Transformation, the Spectral Stone rite pair, the staged volcano rite, the staged climate-change rite, the staged Nature's Power rite, and the staged Transpose Ores rite are reachable again, and day/night checks use tighter windows closer to original behavior, but full 1.7.10 upkeep/refund, glyph-family, multi-circle activation, and recipe-registry parity is still incomplete |
-| Circle talisman | Done | Store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4) |
+| Circle talisman | Done | Store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4); blank talisman binding no longer depends on the wrong large-circle dispatcher and now stores absent ring slots as 0 instead of defaulting them back to ritual glyphs |
 
 ---
 
@@ -196,7 +196,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Item | Priority | Notes |
 |---|---:|---|
-| Circle talisman | Done | Store+deploy complete; golden chalk bug fixed |
+| Circle talisman | Done | Store+deploy complete; golden chalk bug fixed; blank binding no longer large-circle locked |
 | Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, Climate Change now preserves/refunds its consumed support sacrifices on queued-abort paths, and active rites now keep their original chalk family during sustain, but the original tile-entity ritual queue/refund system is still only partially recreated |
 | Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
 | Banshee/Poltergeist GhostModel UV | Polish | One audit pass needed |

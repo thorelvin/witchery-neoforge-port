@@ -234,6 +234,10 @@ public class RitualExecutor {
                 return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
             }
 
+            if (ingredient.is(WitcheryItems.CIRCLE_TALISMAN.get()) && CircleTalismanItem.getCircleData(ingredient) == 0) {
+                return matchedResult(riteOfBindCircleToTalisman(player, level, floorCenter));
+            }
+
             for (RitualCircleDetector.DetectionResult result : presentCircles) {
                 int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
                 ActivationResult activation = switch (result.size()) {
@@ -531,9 +535,6 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(WitcheryItems.TORMENT_SCROLL.get())) {
             return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
-        } else if (item.is(WitcheryItems.CIRCLE_TALISMAN.get()) && CircleTalismanItem.getCircleData(item) == 0) {
-            riteOfBindCircleToTalisman(player, level, center);
-            return successResult();
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
             return successResult();
@@ -2504,20 +2505,20 @@ public class RitualExecutor {
     }
 
     /**
-     * Rite of Bind Circle to Talisman — reads the surrounding chalk circle and encodes it into
+     * Rite of Bind Circle to Talisman — reads the surrounding chalk circles and encodes them into
      * a blank Circle Talisman dropped at the center. Ingredient: blank CircleTalisman.
-     * Trigger: large circle, blank talisman ingredient.
+     * Trigger: any present circle stack; the old portable rite was not tied to one fixed ring size.
      */
-    private static void riteOfBindCircleToTalisman(Player player, Level level, BlockPos center) {
-        if (level.isClientSide()) return;
+    private static boolean riteOfBindCircleToTalisman(Player player, Level level, BlockPos center) {
+        if (level.isClientSide()) return false;
 
-        // Sample representative positions for each ring (from center row of the 17x17 pattern)
-        // Small ring: x-offset -3; Medium: -5; Large: -7
-        int small  = detectVariant(level, center.offset(-3, 0, 0));
-        int medium = detectVariant(level, center.offset(-5, 0, 0));
-        int large  = detectVariant(level, center.offset(-7, 0, 0));
-
-        int data = (large << 6) | (medium << 3) | small;
+        int[] variants = RitualCircleDetector.detectAllVariants(level, center);
+        int data = (variants[2] << 6) | (variants[1] << 3) | variants[0];
+        if (data == 0) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.unknownritual"), false);
+            return false;
+        }
         ItemStack talisman = new ItemStack(WitcheryItems.CIRCLE_TALISMAN.get());
         CircleTalismanItem.setCircleData(talisman, data);
 
@@ -2529,15 +2530,7 @@ public class RitualExecutor {
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 4, 48);
         WitcheryMod.LOGGER.info("Rite of Bind Circle: encoded data {} for {}",
                 data, player.getName().getString());
-    }
-
-    /** Returns 1=GLYPH, 2=OTHERWHERE, 3=INFERNAL, 0=unknown for the block at pos. */
-    private static int detectVariant(Level level, BlockPos pos) {
-        var state = level.getBlockState(pos);
-        if (state.is(WitcheryBlocks.CIRCLE_GLYPH.get()))     return 1;
-        if (state.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())) return 2;
-        if (state.is(WitcheryBlocks.CIRCLE_INFERNAL.get()))  return 3;
-        return 1; // default to ritual glyph if not detected
+        return true;
     }
 
     /** Rite of Glyphic Transformation — swaps one ring size to the dropped chalk family. */
