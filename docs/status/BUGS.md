@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-19
+Last reconciled: 2026-05-20
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -16,7 +16,8 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Register spawn placements for biome-spawned mobs | 10-20 min | Fixed |
 | Done | Demon UV/texture-size audit | 20-45 min | Fixed - model corrected to 128x32, all UVs at y=0 row, wings added |
 | Done | Werewolf pre-render body hide | 20-45 min | Fixed - SyncPlayerDataPayload now includes entityId; handleOnClient updates correct tracked entity |
-| Medium | Decide Torment red pulse/fog effect | 5-20 min | Decision made; keep current look |
+| Done | Verify Torment visibility / darkness | 10-20 min | Fixed - Force no longer blocks light and Torment now has low ambient skylight |
+| Done | Decide Torment red pulse/fog effect | 5-20 min | Decision made; keep red biome sky/fog without Nether pulse |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
 
 ---
@@ -691,7 +692,18 @@ Remaining gap:
 
 ### 8. Torment red pulse / overlay decision - Closed
 
-The current Nether-style pulse is being kept as the intended hell aesthetic.
+The current red biome sky/fog is being kept as the intended hell aesthetic. The dimension type stays on `minecraft:overworld` effects so the view remains red/pink without adding the darker Nether pulse overlay.
+
+---
+
+### 9. Torment was too dark - Fixed / verify
+
+Old Witchery's `BlockForce` used light opacity `0`, rendered as a non-opaque cube, and the Torment provider forced a constant red sky. The port had Force registered as a normal opaque block, `has_skylight: false`, midnight fixed time, and no ambient floor, which made maze levels much darker than the original/reference screenshot.
+
+Current state:
+- `ForceBlock` now restores the old light behavior by propagating skylight and returning light block `0`, while remaining solid/unbreakable for maze collision.
+- Torment now uses `has_skylight: true`, `fixed_time: 6000`, and `ambient_light: 0.15` so it remains ominous but navigable.
+- Final in-game verification is still needed across all six stacked maze levels, especially lower floors where TormentStone floors intentionally still block direct sky.
 
 ---
 
@@ -737,4 +749,4 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - Flame Imp -> Torment Scroll progression - Done
 - Maze generator / maze-like structure - deferred
 - Torment Stone block and portal exit - deferred
-- Torment red pulse - `"effects": "minecraft:the_nether"` in `dimension_type/torment.json` intentionally kept for the hellish red-fog aesthetic
+- Torment red sky/fog - biome red sky/fog with `minecraft:overworld` dimension effects is intentionally kept for the hellish aesthetic without the extra Nether pulse darkening

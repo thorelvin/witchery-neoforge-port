@@ -198,7 +198,12 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<BarrierBlock> BARRIER   = BLOCKS.registerBlock("barrier", BarrierBlock::new,
             BlockBehaviour.Properties.of().strength(-1.0f, 3_600_000.0f).noOcclusion().noLootTable());
-    public static final DeferredBlock<Block> FORCE            = BLOCKS.registerSimpleBlock("force",            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
+    public static final DeferredBlock<ForceBlock> FORCE      = BLOCKS.registerBlock("force", ForceBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
+                    .strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
+                    .isRedstoneConductor((state, level, pos) -> false)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isViewBlocking((state, level, pos) -> false));
     public static final DeferredBlock<FlowingSpiritBlock> FLOWING_SPIRIT = BLOCKS.registerBlock("flowing_spirit",
             FlowingSpiritBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());

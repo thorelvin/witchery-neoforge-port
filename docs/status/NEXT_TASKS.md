@@ -104,14 +104,14 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 ---
 
 ### Torment dimension (full spec implementation)
-- Dimension type: `has_ceiling: false`, `ambient_light: 0.0`, red sky (RGB 200,80,80 fog 160,50,50), no mob spawns
+- Dimension type: `has_ceiling: false`, `has_skylight: true`, `fixed_time: 6000`, `ambient_light: 0.15`, red sky (RGB 200,80,80 fog 160,50,50), no mob spawns
 - **TormentChunkGenerator** rewritten: air everywhere by default; 6 DFS maze levels (Y=10,25,40,55,70,85); 31×31 recursive-backtracking perfect maze per level; per-world seed via `WorldGenRegion.getSeed()`
 - **Maze blocks:** Force walls/ceiling (6 tall), TormentStone floor, 1% mycelium, Torment Portal at cell (30,30), 3 Refilling Chests per level at cells (15,15), (5,15), (25,15)
 - **TormentPortalBlock** — `entityInside`: outside→enter Torment (random level), inside→95% return/5% more; 100-tick cooldown
 - **TormentHelper** — `sendToTorment(player, level)`: entry at (8, entryY, 8), 3×3 clearing, save return pos; `returnFromTorment`: safe-block search, restore return pos
 - **RefillingChestBlockEntity + RefillingChestBlock** — 27-slot chest; fills from `witchery:chests/torment` loot table on first placement; refills every 72000t (3600s) when empty; loot includes spectral dust, demon heart, infernal animus, torment scroll, gold, etc.
 - **Hellgate rite** updated to use `TormentHelper.sendToTorment` (was scanning for safe Y at 0,0)
-- **Force** block: solid, unbreakable (`strength(-1,3_600_000)`); **TormentStone**: same
+- **Force** block: solid, unbreakable (`strength(-1,3_600_000)`), non-suffocating/non-view-blocking, and old light opacity 0 behavior; **TormentStone**: same unbreakable profile
 
 ### Spirit World (spec §1-19 partial)
 - **Block-scan nightmare chance** (§7): Dream Weaver −50%, Flowing Spirit −10%×3, Wispy Cotton −10%×2, Demon Heart +35%×2, Fire +10%×3; modifiers only apply if Dream Weaver found
