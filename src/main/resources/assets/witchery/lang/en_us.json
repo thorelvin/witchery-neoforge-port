@@ -246,7 +246,6 @@
   "witchery.ritual.transpose_ores.success": "The circle begins drawing hidden ore to the surface.",
   "witchery.ritual.natures_power.success": "Wild growth answers the circle's call.",
   "witchery.ritual.fertility.success": "Nature stirs (%s plants grown, %s villagers cured).",
-  "witchery.ritual.charging.success": "You pulse with magical energy... Rite of Charging complete.",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",
   "witchery.ritual.broiling.success": "The circle blazes — %s item stacks cooked.",
   "witchery.ritual.protection.success": "A ward surrounds you... Rite of Protection complete.",

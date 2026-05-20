@@ -418,11 +418,6 @@ public class RitualExecutor {
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
             return successResult();
-        } else if ((item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK))
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
-            riteOfCharging(player, level, center);
-            return successResult();
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
@@ -751,17 +746,6 @@ public class RitualExecutor {
         player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
         WitcheryMod.LOGGER.info("Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
-    }
-
-    /** Rite of Charging — Haste II + Absorption III + Resistance for 3 minutes. */
-    private static void riteOfCharging(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.HASTE,         3600, 1)); // Haste II
-        player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,         3600, 2)); // Absorption III
-        player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE,  1200, 0)); // Resistance I
-
-        success(player, level, center, "witchery.ritual.charging.success",
-                SoundEvents.BEACON_ACTIVATE, 1.5f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Charging activated for {}", player.getName().getString());
     }
 
     // ══════════════════════════════════════════════════════════════════════════
