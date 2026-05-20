@@ -10,6 +10,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,6 +84,9 @@ public class LeechChestBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (isChestBlocked(level, pos)) {
+            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -91,6 +96,25 @@ public class LeechChestBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
+    }
+
+    private static boolean isChestBlocked(Level level, BlockPos pos) {
+        BlockPos above = pos.above();
+        if (level.getBlockState(above).isFaceSturdy(level, above, Direction.DOWN)) {
+            return true;
+        }
+
+        AABB catBox = new AABB(
+                pos.getX(), pos.getY() + 1, pos.getZ(),
+                pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1
+        );
+        for (TamableAnimal tameable : level.getEntitiesOfClass(TamableAnimal.class, catBox)) {
+            if (tameable.isInSittingPose()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

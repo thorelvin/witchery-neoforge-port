@@ -138,6 +138,7 @@ The first real storage-parity pass is now back in place:
 - `Taglock Kit` can now pull a stored non-self target from `Leech Chest` again and reports the old failure cases more sensibly: only your own taglock, or players no longer online.
 - `Taglock Kit` also splits stacked kits correctly again when filling a single one, instead of binding an entire stack at once.
 - Breaking and replacing the `Leech Chest` now preserves that stored player queue on the dropped chest item again instead of wiping it.
+- `Leech Chest` once again refuses to open when the lid is blocked by a solid block or a sitting cat, matching the old chest-like access rules more closely.
 
 ### 16. Poppet Shelf only worked as a local chest - Fixed / verify
 
