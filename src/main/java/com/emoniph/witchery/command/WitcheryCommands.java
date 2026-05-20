@@ -980,7 +980,6 @@ public class WitcheryCommands {
         BlockState planks = WitcheryBlocks.ROWAN_PLANKS.get().defaultBlockState();
         BlockState log = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
         BlockState slab = WitcheryBlocks.ROWAN_SLAB.get().defaultBlockState();
-        BlockState glass = Blocks.GLASS_PANE.defaultBlockState();
         int floorY = -SETUP_SHELL_DROP;
         int wallBaseY = floorY + 1;
         int wallTopY = wallBaseY + 3;
@@ -1030,8 +1029,8 @@ public class WitcheryCommands {
         }
 
         placeSetupDoor(level, layout);
-        placeSetupWindows(level, layout, glass);
-        placeSetupLights(level, layout);
+        placeSetupWindows(level, layout);
+        placeSetupLights(level, layout, roofY - 1);
     }
 
     private static void placeSetupDoor(ServerLevel level, SetupHouseLayout layout) {
@@ -1047,35 +1046,45 @@ public class WitcheryCommands {
         level.setBlock(lowerPos.above(), upper, 3);
     }
 
-    private static void placeSetupWindows(ServerLevel level, SetupHouseLayout layout, BlockState glass) {
+    private static void placeSetupWindows(ServerLevel level, SetupHouseLayout layout) {
+        List<BlockPos> panes = new ArrayList<>();
         for (int y = 2 - SETUP_SHELL_DROP; y <= 3 - SETUP_SHELL_DROP; y++) {
-            level.setBlock(layout.pos(1, y, 0), glass, 3);
-            level.setBlock(layout.pos(2, y, 0), glass, 3);
-            level.setBlock(layout.pos(8, y, 0), glass, 3);
-            level.setBlock(layout.pos(9, y, 0), glass, 3);
+            panes.add(layout.pos(1, y, 0));
+            panes.add(layout.pos(2, y, 0));
+            panes.add(layout.pos(8, y, 0));
+            panes.add(layout.pos(9, y, 0));
 
-            level.setBlock(layout.pos(1, y, 10), glass, 3);
-            level.setBlock(layout.pos(2, y, 10), glass, 3);
-            level.setBlock(layout.pos(8, y, 10), glass, 3);
-            level.setBlock(layout.pos(9, y, 10), glass, 3);
+            panes.add(layout.pos(1, y, 10));
+            panes.add(layout.pos(2, y, 10));
+            panes.add(layout.pos(8, y, 10));
+            panes.add(layout.pos(9, y, 10));
 
-            level.setBlock(layout.pos(0, y, 2), glass, 3);
-            level.setBlock(layout.pos(0, y, 3), glass, 3);
-            level.setBlock(layout.pos(0, y, 7), glass, 3);
-            level.setBlock(layout.pos(0, y, 8), glass, 3);
+            panes.add(layout.pos(0, y, 2));
+            panes.add(layout.pos(0, y, 3));
+            panes.add(layout.pos(0, y, 7));
+            panes.add(layout.pos(0, y, 8));
 
-            level.setBlock(layout.pos(10, y, 2), glass, 3);
-            level.setBlock(layout.pos(10, y, 3), glass, 3);
-            level.setBlock(layout.pos(10, y, 7), glass, 3);
-            level.setBlock(layout.pos(10, y, 8), glass, 3);
+            panes.add(layout.pos(10, y, 2));
+            panes.add(layout.pos(10, y, 3));
+            panes.add(layout.pos(10, y, 7));
+            panes.add(layout.pos(10, y, 8));
+        }
+
+        for (BlockPos pos : panes) {
+            level.setBlock(pos, Blocks.GLASS_PANE.defaultBlockState(), 3);
+        }
+        for (BlockPos pos : panes) {
+            BlockState connectedPane = net.minecraft.world.level.block.Block.updateFromNeighbourShapes(
+                    Blocks.GLASS_PANE.defaultBlockState(), level, pos);
+            level.setBlock(pos, connectedPane, 3);
         }
     }
 
-    private static void placeSetupLights(ServerLevel level, SetupHouseLayout layout) {
-        placeMachine(level, layout.pos(1, 1 - SETUP_SHELL_DROP, 1), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(9, 1 - SETUP_SHELL_DROP, 1), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(1, 1 - SETUP_SHELL_DROP, 7), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(9, 1 - SETUP_SHELL_DROP, 9), Blocks.TORCH.defaultBlockState());
+    private static void placeSetupLights(ServerLevel level, SetupHouseLayout layout, int lightY) {
+        placeMachine(level, layout.pos(3, lightY, 3), WitcheryBlocks.GLOWGLOBE.get().defaultBlockState());
+        placeMachine(level, layout.pos(7, lightY, 3), WitcheryBlocks.GLOWGLOBE.get().defaultBlockState());
+        placeMachine(level, layout.pos(3, lightY, 7), WitcheryBlocks.GLOWGLOBE.get().defaultBlockState());
+        placeMachine(level, layout.pos(7, lightY, 7), WitcheryBlocks.GLOWGLOBE.get().defaultBlockState());
     }
 
     private static void placeSetupContents(ServerLevel level, SetupHouseLayout layout) {
@@ -1113,8 +1122,8 @@ public class WitcheryCommands {
         Direction left = machineFacing.getClockWise();
         Direction right = machineFacing.getCounterClockWise();
         placeMachine(level, kettlePos.below(), Blocks.CAMPFIRE.defaultBlockState());
-        placeMachine(level, kettlePos.relative(left), Blocks.OAK_FENCE.defaultBlockState());
-        placeMachine(level, kettlePos.relative(right), Blocks.OAK_FENCE.defaultBlockState());
+        placeMachine(level, kettlePos.relative(left), Blocks.COBBLESTONE.defaultBlockState());
+        placeMachine(level, kettlePos.relative(right), Blocks.COBBLESTONE.defaultBlockState());
         placeMachine(level, kettlePos,
                 WitcheryBlocks.KETTLE.get().defaultBlockState().setValue(KettleBlock.FACING, machineFacing));
     }

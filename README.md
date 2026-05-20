@@ -33,7 +33,7 @@ The mod includes a growing set of in-game debug commands under `/witchery`.
 
 Useful current helpers:
 
-- `/witchery setup stations` clears a `20x20` pad in front of the player and rebuilds a fully stocked `11x11` Rowan QA hut 5 blocks ahead, with the shell sunk one block lower but the altar/machines/chest/traders kept at player height for faster testing
+- `/witchery setup stations` clears a `20x20` pad in front of the player and rebuilds a fully stocked `11x11` Rowan QA hut 5 blocks ahead, with the shell sunk one block lower, ceiling Glowglobes, cobblestone kettle supports, and the altar/machines/chest/traders kept at player height for faster testing
 - `/witchery verify torment` runs a server-side Torment audit against the restored legacy maze footprint and atmosphere settings
 - `/witchery spawn wickerman` places a summon-valid bloodied wickerman for Horned Huntsman testing
 
