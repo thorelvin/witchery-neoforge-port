@@ -47,6 +47,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -1042,8 +1043,11 @@ public class WitcheryCommands {
                 .setValue(DoorBlock.POWERED, false)
                 .setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER);
         BlockState upper = lower.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
+        BlockState header = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState()
+                .setValue(RotatedPillarBlock.AXIS, layout.width().getAxis());
         level.setBlock(lowerPos, lower, 3);
         level.setBlock(lowerPos.above(), upper, 3);
+        level.setBlock(lowerPos.above(2), header, 3);
     }
 
     private static void placeSetupWindows(ServerLevel level, SetupHouseLayout layout) {
