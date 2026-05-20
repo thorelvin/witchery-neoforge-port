@@ -126,6 +126,7 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
         if (level != null) {
             BlockState state = getBlockState();
             level.sendBlockUpdated(worldPosition, state, state, 3);
+            level.updateNeighbourForOutputSignal(worldPosition, state.getBlock());
         }
         updateChunkForceState();
     }
