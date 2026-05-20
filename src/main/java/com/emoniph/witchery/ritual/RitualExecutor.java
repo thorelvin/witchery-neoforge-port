@@ -312,6 +312,10 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTotalEclipse(player, level, center);
             return successResult();
+        } else if ((item.is(Items.BONE_MEAL) || item.is(Items.BONE))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfFertility(player, level, center);
+            return successResult();
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlindness(player, level, center);
             return successResult();
@@ -350,6 +354,17 @@ public class RitualExecutor {
         } else if ((item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfWeatherCallStorm(player, level, center));
+        } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfSanctity(player, level, center));
+        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfImprisonment(player, level, center));
+        } else if ((item.is(Blocks.COBWEB.asItem()) || item.is(WitcheryItems.DENSE_WEB.get()))
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfProtectionBarrier(player, level, center,
+                    ActiveRitualType.PROTECTION_BARRIER_MONSTERS,
+                    RitualCircleDetector.CircleSize.SMALL, 4, 5));
         } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfCookItem(player, level, center);
             return successResult();
@@ -368,10 +383,7 @@ public class RitualExecutor {
     // ── Medium ring dispatch ───────────────────────────────────────────────────
 
     private static ActivationResult dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if (item.is(Items.BONE_MEAL) || item.is(Items.BONE)) {
-            riteOfFertility(player, level, center);
-            return successResult();
-        } else if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
+        if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
                 || item.is(WitcheryItems.ODOUR_OF_PURITY.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindFamiliar(player, level, center));
@@ -389,19 +401,13 @@ public class RitualExecutor {
         } else if (item.is(Items.GUNPOWDER)) {
             riteOfSkysWrath(player, level, center);
             return successResult();
-        } else if ((item.is(Blocks.COBWEB.asItem()) || item.is(WitcheryItems.DENSE_WEB.get()))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_MONSTERS, 4, 5));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfProtectionBarrier(player, level, center, ActiveRitualType.PROTECTION_BARRIER_PORTABLE, 6, 4));
-        } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
+            return matchedResult(riteOfProtectionBarrier(player, level, center,
+                    ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
+                    RitualCircleDetector.CircleSize.MEDIUM, 6, 4));
+        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN) || item.is(Items.GLOWSTONE_DUST))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfSanctity(player, level, center);
-            return successResult();
-        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfImprisonment(player, level, center);
-            return successResult();
+            return matchedResult(riteOfProtection(player, level, center));
         } else if (item.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())) {
             riteOfInfernalPower(player, level, center);
             return successResult();
@@ -509,9 +515,6 @@ public class RitualExecutor {
             return matchedResult(riteOfBindSpectralStone(player, level, center, item));
         } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
-        } else if ((item.is(Blocks.OBSIDIAN.asItem()) || item.is(Items.GLOWSTONE_DUST))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfProtection(player, level, center));
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -739,14 +742,14 @@ public class RitualExecutor {
         WitcheryMod.LOGGER.info("Rite of Broiling cooked {} item stacks", cooked);
     }
 
-    /** Rite of Protection — Fire Resistance + Resistance I + Absorption II for 5 minutes. */
+    /** Rite of Protection Barrier (large) — sustains the broader monster barrier from the medium ritual ring. */
     private static boolean riteOfProtection(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!hasNearbyRitualAltar(sl, center, 16)) {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.LARGE,
+        if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.MEDIUM,
                 center, 6, 6, 0, 20, 0, 1.4f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
@@ -759,7 +762,8 @@ public class RitualExecutor {
     }
 
     private static boolean riteOfProtectionBarrier(Player player, Level level, BlockPos center,
-                                                   ActiveRitualType type, int radius, int height) {
+                                                   ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                                   int radius, int height) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (type != ActiveRitualType.PROTECTION_BARRIER_PORTABLE && !hasNearbyRitualAltar(sl, center, 16)) {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
@@ -772,7 +776,7 @@ public class RitualExecutor {
             case PROTECTION_BARRIER_PORTABLE -> 0.0f;
             default -> 0.0f;
         };
-        if (!queueActiveRitual(sl, type, RitualCircleDetector.CircleSize.MEDIUM, center, radius, height, targetStage, 20, 0, upkeepCost, 0)) {
+        if (!queueActiveRitual(sl, type, circleSize, center, radius, height, targetStage, 20, 0, upkeepCost, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -930,7 +934,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.MEDIUM, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+        if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -946,7 +950,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.MEDIUM, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+        if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }

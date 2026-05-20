@@ -39,6 +39,8 @@ Current state:
 - Climate Change no longer burns its dropped biome focus or glowstone when the rite fails at the final `already_active` queue gate.
 - Climate Change staged aborts now refund their consumed biome-focus items and glowstone support sacrifices too, instead of only refunding the main dropped trigger item.
 - Broiling, Broken Earth, Moving Earth, Raise Column, Volcano, and Flying Ointment's broom infusion now require the original chalk family again instead of activating from any same-size circle.
+- Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
+- Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -252,15 +254,16 @@ The Crater rite is back much closer to old Witchery now:
 Remaining gap:
 - The original rite had more exact legacy terrain-drop rules, so the port still uses a conservative modern approximation for which removed blocks drop items.
 
-### 21. Sanctity and Imprisonment were one-shot effects instead of sustained protection circles - Fixed / verify
+### 21. Sanctity and Imprisonment were one-shot effects and on the wrong ring size - Fixed / verify
 
 The Sanctity and Imprisonment rites are back much closer to old Witchery now:
 - Instead of immediately teleporting mobs and ending, they now queue as sustained active circles again.
 - Both now require a nearby working altar to keep running and consume altar power over time.
 - Sanctity now behaves like a repulsive ward, while Imprisonment now keeps nearby creatures penned toward the circle instead of acting as a one-tick trap.
+- Both now also queue from the original small ritual circle again instead of the wrong medium ring.
 
 Remaining gap:
-- The original mod split these protection-family rites across different circle sizes and also had separate barrier variants, so the remaining parity work is now mostly about full ritual mapping and barrier-specific behavior rather than the basic sustained-circle mechanic.
+- The original mod split the full protection family across several different sacrifice shapes. The modern dispatcher is closer now on small-vs-medium ring size, but the portable barrier still stays on a medium representative trigger because the old charged-attuned-stone route currently collides with small-circle `banishdemon` in the simplified single-item mapper.
 
 ### 22. Dream Catcher and Brazier still used dead legacy break hooks - Fixed / verify
 
@@ -293,16 +296,17 @@ The Refilling Chest is back much closer to old Witchery now:
 Remaining gap:
 - This restores the practical refill mechanic and core render base, but the remaining work on the block is now visual polish and in-game verification rather than core storage behavior.
 
-### 25. Large-circle Protection was still a self-buff instead of a real barrier dome - Fixed / verify
+### 25. Protection-family ring sizes were still shifted upward - Fixed / verify
 
 The protection barrier family is now back much closer to old Witchery:
-- The default large-circle `Rite of Protection` no longer resolves as a modern potion buff on the caster.
-- It now queues as a sustained active rite again, requires altar power to stay alive, and redraws an invisible barrier dome around the circle on a timed pulse.
+- The broader `Rite of Protection` barrier no longer resolves as a modern potion buff on the caster.
+- It now queues as a sustained active rite again, requires altar power to stay alive, redraws an invisible barrier dome around the circle on a timed pulse, and now does so from the original medium ritual ring instead of the wrong large route.
 - The barrier itself now has real timed block/entity behavior again instead of being a dead placeholder block.
-- The smaller monster-only barrier variant and the timed portable barrier variant are both reachable again through the modern medium-circle ingredient dispatcher.
+- The smaller monster-only barrier variant now routes from the original small ritual ring instead of medium.
+- The timed portable barrier variant is still reachable, but it remains on a medium representative trigger for now because the simplified dispatcher would otherwise collide with small-circle `banishdemon`.
 
 Remaining gap:
-- This restores the practical barrier mechanics, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly, and the old charged-attuned-stone distinction is still collapsed into the port's single `attuned_stone` item.
+- This restores the practical barrier mechanics and most of the ring-size split, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly, and the old charged-attuned-stone distinction is still collapsed into the port's single `attuned_stone` item.
 
 ### 26. Flowing Spirit world-block effects were still mostly missing - Fixed / verify
 

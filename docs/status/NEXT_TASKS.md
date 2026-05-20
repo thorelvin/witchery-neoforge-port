@@ -139,3 +139,4 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 - Werewolf player model full replacement
 - Flowing Spirit as proper fluid (currently plain block)
 - Manifestation ghost rendering / style polish
+- `Egassy` - future non-parity joke-villain idea; a farting antagonist for a later optional content/fun pass, explicitly lower priority than original Witchery mechanics and parity work
