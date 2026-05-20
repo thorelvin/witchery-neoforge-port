@@ -127,6 +127,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(LordOfTormentEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.9F).clientTrackingRange(16).fireImmune().build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "lord_of_torment"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<HornedHuntsmanEntity>> HORNED_HUNTSMAN =
+            ENTITY_TYPES.register("horned_huntsman", () ->
+                    EntityType.Builder.of(HornedHuntsmanEntity::new, MobCategory.MONSTER)
+                            .sized(1.4F, 3.2F).clientTrackingRange(16).fireImmune().build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "horned_huntsman"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<SoulfireProjectile>> SOULFIRE =
             ENTITY_TYPES.register("soulfire", () ->
                     EntityType.Builder.<SoulfireProjectile>of(SoulfireProjectile::new, MobCategory.MISC)
@@ -211,6 +216,7 @@ public class WitcheryEntities {
         event.put(SPIRIT.get(),           SpiritEntity.createAttributes().build());
         event.put(BROOM.get(),            BroomEntity.createAttributes().build());
         event.put(LORD_OF_TORMENT.get(),  LordOfTormentEntity.createAttributes().build());
+        event.put(HORNED_HUNTSMAN.get(),   HornedHuntsmanEntity.createAttributes().build());
         event.put(FLAME_IMP.get(),        com.emoniph.witchery.entity.FlameImpEntity.createAttributes().build());
         event.put(BINKY.get(),            com.emoniph.witchery.entity.BinkyEntity.createAttributes().build());
         event.put(DEATH.get(),            DeathEntity.createAttributes().build());

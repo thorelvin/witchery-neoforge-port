@@ -145,8 +145,14 @@ The first Wicker Bundle parity pass is now in place:
 - Fire spread and flammability are back at the old `20/20` profile.
 - The inventory item now renders from the block model instead of the temporary flat generated side sprite.
 
-Remaining gap:
-- The original bloodied wicker bundle variant, wickerman shape detection, and Horned Huntsman summon path are still deferred because the current port does not yet register a bloodied wicker block/item or Horned Huntsman entity.
+Current status:
+- Bloodied Wicker Bundle is registered as its own rotated-pillar block/item with Resurrected bloodied textures, self drop, Demonic Blood recipe, and the same old `20/20` fire profile.
+- Flint-and-steel on a valid old Witchery bloodied wickerman now runs the restored shape detection, replaces the matching structure blocks with fire, and summons a persistent Horned Huntsman boss.
+- Horned Huntsman now has first-pass old-Witchery parity for 400 HP, boss bar, fire immunity, invulnerability windup, regen, ranged arrows, melee knock-up, wolf summons, stuck teleporting, capped incoming damage, drops, spawn egg, and renderer.
+
+Remaining verification:
+- Check in game that the Wickerman base/orientation offsets match old Witchery from each clicked side.
+- Check Horned Huntsman model pose/scale/texture wrap against Resurrected and tune if needed.
 
 ### 15. Leech Chest and Taglock Kit had lost their original storage flow - Fixed / verify
 

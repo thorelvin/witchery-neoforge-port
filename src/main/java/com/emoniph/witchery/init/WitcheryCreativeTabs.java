@@ -76,6 +76,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.FETISH_WITCHS_LADDER.get());
                         output.accept(WitcheryItems.STATUE_GODDESS.get());
                         output.accept(WitcheryItems.WICKER_BUNDLE.get());
+                        output.accept(WitcheryItems.BLOODIED_WICKER_BUNDLE.get());
                         output.accept(WitcheryItems.CRITTER_SNARE.get());
                         output.accept(WitcheryItems.WITCH_DOOR.get());
                         // Items
@@ -171,6 +172,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.SPIRIT_SPAWN_EGG.get());
                         output.accept(WitcheryItems.FLAME_IMP_SPAWN_EGG.get());
                         output.accept(WitcheryItems.LORD_OF_TORMENT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.HORNED_HUNTSMAN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.DEATH_SPAWN_EGG.get());
                         // Spawn eggs — familiars & sprint-8/9 entities
                         output.accept(WitcheryItems.OWL_SPAWN_EGG.get());

@@ -72,6 +72,7 @@ public class WitcheryClient {
         Map.entry(NightmareModel.LAYER_LOCATION,       NightmareModel::createBodyLayer),
         Map.entry(SpiritModel.LAYER_LOCATION,          SpiritModel::createBodyLayer),
         Map.entry(LordOfTormentModel.LAYER_LOCATION,   LordOfTormentModel::createBodyLayer),
+        Map.entry(HornedHuntsmanModel.LAYER_LOCATION,  HornedHuntsmanModel::createBodyLayer),
         Map.entry(DeathEntityModel.LAYER_LOCATION,     DeathEntityModel::createBodyLayer),
         Map.entry(FlameImpModel.LAYER_LOCATION,        FlameImpModel::createBodyLayer)
     );
@@ -138,6 +139,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.BINKY.get(),           BinkyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.DEATH.get(),           DeathEntityRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LORD_OF_TORMENT.get(), LordOfTormentRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.HORNED_HUNTSMAN.get(), HornedHuntsmanRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FLAME_IMP.get(),       FlameImpRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SOULFIRE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);

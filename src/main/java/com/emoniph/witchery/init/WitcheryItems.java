@@ -136,6 +136,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> FETISH_WITCHS_LADDER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FETISH_WITCHS_LADDER);
     public static final DeferredItem<BlockItem> STATUE_GODDESS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.STATUE_GODDESS);
     public static final DeferredItem<BlockItem> WICKER_BUNDLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WICKER_BUNDLE);
+    public static final DeferredItem<BlockItem> BLOODIED_WICKER_BUNDLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOODIED_WICKER_BUNDLE);
     public static final DeferredItem<BlockItem> CRITTER_SNARE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CRITTER_SNARE);
     public static final DeferredItem<BlockItem> WITCH_DOOR = ITEMS.register("witch_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.WITCH_DOOR.get(), itemProps(id)));
     public static final DeferredItem<Item> COTTON = ITEMS.register("cotton", id -> new BlockItem(WitcheryBlocks.COTTON_CROP.get(), itemProps(id)));
@@ -375,6 +376,9 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> LORD_OF_TORMENT_SPAWN_EGG =
             ITEMS.register("lord_of_torment_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.LORD_OF_TORMENT.get())));
+    public static final DeferredItem<SpawnEggItem> HORNED_HUNTSMAN_SPAWN_EGG =
+            ITEMS.register("horned_huntsman_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.HORNED_HUNTSMAN.get())));
 
     // ── Familiar spawn eggs ────────────────────────────────────────────────────
     public static final DeferredItem<SpawnEggItem> OWL_SPAWN_EGG =
