@@ -367,6 +367,9 @@ public class RitualExecutor {
         } else if ((item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfWeatherCallStorm(player, level, center));
+        } else if (item.is(Items.GUNPOWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            riteOfSkysWrath(player, level, center);
+            return successResult();
         } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfSanctity(player, level, center));
@@ -410,9 +413,6 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK)) {
             riteOfCharging(player, level, center);
-            return successResult();
-        } else if (item.is(Items.GUNPOWDER)) {
-            riteOfSkysWrath(player, level, center);
             return successResult();
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
