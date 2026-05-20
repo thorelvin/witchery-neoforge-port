@@ -113,8 +113,12 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Grassper` works as a one-item stash and renders its stored item again.
 - `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.
+- `Critter Snare` is stateful again: it catches bats, silverfish, small slimes, and small magma cubes, swaps to the matching caught texture, chirps while occupied, and releases the creature on sneak-use.
 - `Bramble` and `Void Bramble` now behave as hazards again; Wild Bramble also has its original high hardness/blast resistance back, and Void Bramble now stores its placer again so creative players or the owner can left-click away an upward column despite the restored unbreakable/high-blast-resistance profile.
 - `Void Bramble` also blocks ritual activation within the old 32-block null-source radius again, returning the existing black-magic dampening feedback instead of consuming the dropped rite ingredient.
+
+Remaining gap:
+- `Critter Snare` does not yet preserve the old special Polynesia Charm bat stock-inventory flag because `Polynesia Charm` is still a simple placeholder item in the port.
 
 These still need in-game verification for feel and visuals, but they are no longer plain placeholder blocks.
 

@@ -54,7 +54,7 @@ Priority mechanics checklist:
 2. Machines: Distillery, Witch's Oven, Spinning Wheel, Kettle, Altar item interactions, and funnel/jar/byproduct edge cases.
 3. Poppets and storage: Poppet Shelf, Leech Chest, Refilling Chest, Taglock flow, chunk-loading expectations.
 4. Spirit World: Dream Catcher rules, Nightmare/Demonic Nightmare cadence, corpse rules, Flowing Spirit, plant interactions.
-5. Blocks and plants: cotton, blood rose, brambles including Void Bramble ritual nulling, grassper, glowglobe, crystal ball, coffin, brazier, fetish blocks.
+5. Blocks and plants: cotton, blood rose, brambles including Void Bramble ritual nulling, grassper, glowglobe, critter snare, crystal ball, coffin, brazier, fetish blocks.
 6. Entities: broom flight, familiar powers, mob AI, renderer-linked gameplay expectations.
 
 ### 2. Sound parity

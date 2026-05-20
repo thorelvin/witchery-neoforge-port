@@ -1,5 +1,9 @@
 {
   "variants": {
-    "": { "model": "witchery:block/critter_snare" }
+    "caught=0": { "model": "witchery:block/critter_snare_empty" },
+    "caught=1": { "model": "witchery:block/critter_snare_bat" },
+    "caught=2": { "model": "witchery:block/critter_snare_silverfish" },
+    "caught=3": { "model": "witchery:block/critter_snare_slime" },
+    "caught=4": { "model": "witchery:block/critter_snare_magmacube" }
   }
 }
