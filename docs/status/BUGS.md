@@ -114,8 +114,9 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.
 - `Bramble` and `Void Bramble` now behave as hazards again; Wild Bramble also has its original high hardness/blast resistance back, and Void Bramble now stores its placer again so creative players or the owner can left-click away an upward column despite the restored unbreakable/high-blast-resistance profile.
+- `Void Bramble` also blocks ritual activation within the old 32-block null-source radius again, returning the existing black-magic dampening feedback instead of consuming the dropped rite ingredient.
 
-These still need in-game verification for feel and visuals, and Void Bramble's old ritual-null-source suppression still needs a dedicated power/ritual-system pass, but they are no longer plain placeholder blocks.
+These still need in-game verification for feel and visuals, but they are no longer plain placeholder blocks.
 
 ### 14. Altar-adjacent artefact parity was still missing edge cases - Fixed / verify
 

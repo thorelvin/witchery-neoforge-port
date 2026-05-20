@@ -97,6 +97,8 @@ public class RitualExecutor {
     private static final int VARIANT_RITUAL = 4;
 
     private static final int RITUAL_PULSE_INTERVAL = 30;
+    private static final int VOID_BRAMBLE_NULL_RANGE = 32;
+    private static final int VOID_BRAMBLE_NULL_RANGE_SQ = VOID_BRAMBLE_NULL_RANGE * VOID_BRAMBLE_NULL_RANGE;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
@@ -217,6 +219,12 @@ public class RitualExecutor {
                                            List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
         PENDING_RITUAL_INGREDIENT.set(ingredient.isEmpty() ? ItemStack.EMPTY : ingredient.copyWithCount(1));
         try {
+            if (isRitualAreaNulled(level, floorCenter)) {
+                level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+                return ActivationResult.MATCHED_FAILED;
+            }
+
             if (isGlyphicTransformationChalk(ingredient)) {
                 return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
             }
@@ -259,6 +267,24 @@ public class RitualExecutor {
         return stack.is(WitcheryItems.CHALK.get())
                 || stack.is(WitcheryItems.CHALK_OTHERWHERE.get())
                 || stack.is(WitcheryItems.CHALK_INFERNAL.get());
+    }
+
+    private static boolean isRitualAreaNulled(Level level, BlockPos center) {
+        for (BlockPos checkPos : BlockPos.betweenClosed(
+                center.offset(-VOID_BRAMBLE_NULL_RANGE, -VOID_BRAMBLE_NULL_RANGE, -VOID_BRAMBLE_NULL_RANGE),
+                center.offset(VOID_BRAMBLE_NULL_RANGE, VOID_BRAMBLE_NULL_RANGE, VOID_BRAMBLE_NULL_RANGE))) {
+            if (!level.getBlockState(checkPos).is(WitcheryBlocks.VOID_BRAMBLE.get())) {
+                continue;
+            }
+
+            long dx = center.getX() - checkPos.getX();
+            long dy = center.getY() - checkPos.getY();
+            long dz = center.getZ() - checkPos.getZ();
+            if (dx * dx + dy * dy + dz * dz < VOID_BRAMBLE_NULL_RANGE_SQ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ── Small ring dispatch ────────────────────────────────────────────────────
