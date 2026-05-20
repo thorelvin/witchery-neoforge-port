@@ -40,6 +40,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
+    private static final int MIN_MELEE_DAMAGE = 7;
+    private static final int MELEE_DAMAGE_ROLL = 15;
+
     private static final EntityDataAccessor<Boolean> PLAYER_CREATED =
             SynchedEntityData.defineId(HornedHuntsmanEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> INVULNERABLE_TICKS =
@@ -147,12 +150,12 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         attackTimer = 10;
-        boolean result = super.doHurtTarget(level, target);
-        if (result) {
-            target.setDeltaMovement(target.getDeltaMovement().add(0.0, 0.4, 0.0));
-            playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
-        }
-        return result;
+        DamageSource source = damageSources().mobAttack(this);
+        target.hurt(source, MIN_MELEE_DAMAGE + random.nextInt(MELEE_DAMAGE_ROLL));
+        setLastHurtMob(target);
+        target.setDeltaMovement(target.getDeltaMovement().add(0.0, 0.4, 0.0));
+        playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
+        return true;
     }
 
     @Override
