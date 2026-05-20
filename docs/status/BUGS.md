@@ -672,7 +672,7 @@ The current Nether-style pulse is being kept as the intended hell aesthetic.
 
 Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `altar` - strict 2x3 validation and joined-art variants are back; remaining work is now in-game orientation/polish verification rather than missing connected states
-- `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original; GUI texture/layout verification is still open
+- `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original, including the old comparator-output behavior, and GUI texture/layout verification is still open
 - `crystal_ball` - shared translucent model path, original compact pedestal footprint, support-required placement/survival, and sturdier hardness are back; remaining work is final in-game translucency verification
 - `coffin` - placed two-block render is back on split head/bottom textures, the placed block now uses its intended lower coffin-height collision instead of a hidden full cube, and item/inventory presentation now uses the same split 3D geometry through a dedicated special renderer; remaining work is final in-game pose/scale polish only
 - Witchery spawn eggs no longer point at the missing `minecraft:item/template_spawn_egg` path used by older versions. They now render again through a stable local fallback egg texture/model chain on 1.21.11; exact per-egg colour art parity is still a later polish pass.
