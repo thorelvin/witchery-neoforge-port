@@ -20,7 +20,8 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `crystal_ball` | Must be transparent (currently solid pink-black or wrong) | Small |
 | `coffin` | Shows only one side in inventory | Medium |
 | `alluring_skull` | Dedicated animated skull-head render still approximated through static block models | Low |
-| `demon_heart` | Wrong 3D model / UV wrap | Medium |
+| `demon_heart` | Retest baked shell + heartbeat overlay in-world | Low |
+| `chalice` | Final GUI pose / placed-block verification | Low |
 | `dream_catcher` | Places on wrong surface (left side instead of face clicked) | Small |
 | `kettle` | Missing 3D rope/string model detail | Small |
 | `poppet_shelf` | Poppets don't visually appear on top of shelf | Medium |
