@@ -139,7 +139,7 @@ public class WitcheryBlocks {
     // Decorative / Ritual
     public static final DeferredBlock<CandelabraBlock>  CANDELABRA    = BLOCKS.registerBlock("candelabra",     CandelabraBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f).lightLevel(s -> 15).noOcclusion());
     public static final DeferredBlock<ChaliceBlock>     CHALICE       = BLOCKS.registerBlock("chalice",        ChaliceBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
-    public static final DeferredBlock<CrystalBallBlock> CRYSTAL_BALL  = BLOCKS.registerBlock("crystal_ball",   CrystalBallBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(1.5f).noOcclusion());
+    public static final DeferredBlock<CrystalBallBlock> CRYSTAL_BALL  = BLOCKS.registerBlock("crystal_ball",   CrystalBallBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(2.0f).noOcclusion());
     public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = BLOCKS.registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.5f).noOcclusion());
     public static final DeferredBlock<AlluringSkullBlock> ALLURING_SKULL = BLOCKS.registerBlock("alluring_skull",
             AlluringSkullBlock::new,
