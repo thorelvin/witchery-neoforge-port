@@ -3819,21 +3819,6 @@ public class RitualExecutor {
         level.addFreshEntity(lightning);
     }
 
-    private record InventoryWaystone(int slot, ItemStack stack) {}
-
-    /** Find a bound or unbound waystone in the caster's inventory without consuming it. */
-    private static Optional<InventoryWaystone> findInventoryWaystone(Player player, boolean bound) {
-        var inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack s = inv.getItem(i);
-            if (!s.is(WitcheryItems.WAYSTONE.get()) || WaystoneItem.isBound(s) != bound) {
-                continue;
-            }
-            return Optional.of(new InventoryWaystone(i, s));
-        }
-        return Optional.empty();
-    }
-
     // ── Sprint 4 — Waystone rites ─────────────────────────────────────────────
 
     /** Rite of Binding — summons a freshly bound Waystone item at the ritual center. */
@@ -3855,7 +3840,7 @@ public class RitualExecutor {
 
     /**
      * Rite of Binding (copy) — restores the original small-circle bound-waystone copy route
-     * and duplicates the dropped bound waystone's location onto one extra unbound waystone.
+     * and duplicates the dropped bound waystone's location onto one extra offered unbound waystone.
      */
     private static boolean riteOfBindWaystoneCopy(Player player, Level level, BlockPos center, ItemStack sourceWaystone) {
         if (!(player instanceof ServerPlayer sp)) return false;
@@ -3864,13 +3849,13 @@ public class RitualExecutor {
             return false;
         }
 
-        Optional<InventoryWaystone> unboundWaystone = findInventoryWaystone(sp, false);
+        Optional<ItemEntity> unboundWaystone = findNearbyWaystoneOffering(level, center, false);
         if (unboundWaystone.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_copy.none"), false);
             return false;
         }
 
-        consumeInventoryItem(sp, unboundWaystone.get().slot());
+        consumeOfferedItem(unboundWaystone.get());
         ItemStack copiedWaystones = sourceWaystone.copyWithCount(2);
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
@@ -3884,6 +3869,34 @@ public class RitualExecutor {
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
         WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
         return true;
+    }
+
+    private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radius = 1.5;
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
+            ItemStack stack = itemEntity.getItem();
+            if (!stack.is(WitcheryItems.WAYSTONE.get()) || WaystoneItem.isBound(stack) != bound) {
+                continue;
+            }
+            if (itemEntity.position().distanceToSqr(centerPoint) >= radiusSq) {
+                continue;
+            }
+            return Optional.of(itemEntity);
+        }
+        return Optional.empty();
+    }
+
+    private static void consumeOfferedItem(ItemEntity itemEntity) {
+        ItemStack stack = itemEntity.getItem();
+        stack.shrink(1);
+        if (stack.isEmpty()) {
+            itemEntity.discard();
+        } else {
+            itemEntity.setItem(stack);
+        }
     }
 
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
