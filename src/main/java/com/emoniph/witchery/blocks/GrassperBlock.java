@@ -58,6 +58,18 @@ public class GrassperBlock extends BaseEntityBlock {
         return RenderShape.INVISIBLE;
     }
 
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof GrassperBlockEntity be) {
+            return be.getItem().isEmpty() ? 0 : 15;
+        }
+        return 0;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
