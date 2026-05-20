@@ -42,6 +42,11 @@ import net.minecraft.world.phys.Vec3;
 public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     private static final int MIN_MELEE_DAMAGE = 7;
     private static final int MELEE_DAMAGE_ROLL = 15;
+    private static final float ARROW_VELOCITY = 1.6F;
+    private static final float ARROW_INACCURACY_BASE = 14.0F;
+    private static final double ARROW_DAMAGE_SCALE = 8.0D;
+    private static final double ARROW_DAMAGE_GAUSSIAN = 0.25D;
+    private static final double ARROW_DIFFICULTY_BONUS = 0.11D;
 
     private static final EntityDataAccessor<Boolean> PLAYER_CREATED =
             SynchedEntityData.defineId(HornedHuntsmanEntity.class, EntityDataSerializers.BOOLEAN);
@@ -138,11 +143,15 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
         ItemStack arrowStack = new ItemStack(Items.ARROW);
         var projectile = ProjectileUtil.getMobArrow(this, arrowStack, distanceFactor, this.getMainHandItem());
+        projectile.setBaseDamage(distanceFactor * ARROW_DAMAGE_SCALE
+                + random.nextGaussian() * ARROW_DAMAGE_GAUSSIAN
+                + level().getDifficulty().getId() * ARROW_DIFFICULTY_BONUS);
         double dx = target.getX() - this.getX();
         double dy = target.getY(0.3333) - projectile.getY();
         double dz = target.getZ() - this.getZ();
         double horizontal = Math.sqrt(dx * dx + dz * dz) * 0.2;
-        projectile.shoot(dx, dy + horizontal, dz, 1.6F, 14 - this.level().getDifficulty().getId() * 4);
+        projectile.shoot(dx, dy + horizontal, dz, ARROW_VELOCITY,
+                ARROW_INACCURACY_BASE - this.level().getDifficulty().getId() * 4);
         playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
         level().addFreshEntity(projectile);
     }

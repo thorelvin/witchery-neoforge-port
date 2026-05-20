@@ -151,6 +151,7 @@ Current status:
 - Flint-and-steel on a valid old Witchery bloodied wickerman now runs the restored shape detection, replaces the matching structure blocks with fire, and summons a persistent Horned Huntsman boss.
 - Horned Huntsman now has first-pass old-Witchery parity for 400 HP, boss bar, fire immunity, invulnerability windup, regen, ranged arrows, melee knock-up, wolf summons, stuck teleporting, capped incoming damage, drops, spawn egg, and renderer.
 - Horned Huntsman melee now uses the original random `7 + rand(15)` damage roll again instead of the flat modern `14` attack attribute hit, while preserving the old knock-up and golem-throw cue.
+- Horned Huntsman arrows now restore the original ranged damage formula, `distanceFactor * 8 + gaussian(0.25) + difficulty * 0.11`, instead of keeping the weaker vanilla mob-arrow helper damage.
 
 Remaining verification:
 - Check in game that the Wickerman base/orientation offsets match old Witchery from each clicked side.
