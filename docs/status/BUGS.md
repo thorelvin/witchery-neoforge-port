@@ -46,6 +46,7 @@ Current state:
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
+- `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
@@ -648,9 +649,9 @@ Remaining gap:
 ### 60. Nature's Power was missing entirely - Fixed / verify
 
 The next missing-feature pass is now closer to original Witchery:
-- The old large ritual `naturespower` behavior is reachable again instead of being absent from the port.
+- The old medium ritual `naturespower` behavior is reachable again instead of being absent from the port.
 - The restored rite now runs as a long staged growth effect, picks random nearby ground anchors, greens the soil, spreads plants, bonemeals growth, and scales its working radius and lifetime with nearby coven witches again.
-- It is exposed through a representative large ritual `brew_of_sprouting` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+- It is exposed through a representative medium ritual `brew_of_sprouting` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
 
 Remaining gap:
 - The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, so this restores the rite's world-shaping job without claiming exact 1.7.10 block-for-block growth parity.

@@ -437,6 +437,8 @@ public class RitualExecutor {
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
+        } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseCreature(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -480,8 +482,6 @@ public class RitualExecutor {
         } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfBeastialCall(player, level, center));
-        } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTransposeOres(player, level, center));
         } else if ((item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND))
