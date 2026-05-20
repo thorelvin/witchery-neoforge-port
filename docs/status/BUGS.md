@@ -18,6 +18,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Werewolf pre-render body hide | 20-45 min | Fixed - SyncPlayerDataPayload now includes entityId; handleOnClient updates correct tracked entity |
 | Done | Verify Torment visibility / darkness | 10-20 min | Fixed - Force no longer blocks light and Torment now has low ambient skylight |
 | Done | Decide Torment red pulse/fog effect | 5-20 min | Decision made; keep red biome sky/fog without Nether pulse |
+| Done | Restore Torment maze block/layout parity | 20-45 min | Fixed - legacy Bedrock/Force `GenerateMaze.display` layout restored |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
 
 ---
@@ -703,7 +704,17 @@ Old Witchery's `BlockForce` used light opacity `0`, rendered as a non-opaque cub
 Current state:
 - `ForceBlock` now restores the old light behavior by propagating skylight and returning light block `0`, while remaining solid/unbreakable for maze collision.
 - Torment now uses `has_skylight: true`, `fixed_time: 6000`, and `ambient_light: 0.15` so it remains ominous but navigable.
-- Final in-game verification is still needed across all six stacked maze levels, especially lower floors where TormentStone floors intentionally still block direct sky.
+- Final in-game verification is still needed across all six stacked maze levels, especially lower floors where Bedrock floors and Force ceilings stack through the old maze footprint.
+
+### 10. Torment maze blocks/layout used wrong port simplification - Fixed / verify
+
+Old Witchery generated Torment by calling `GenerateMaze.display(originX=-23, y, originZ=6, Force, Bedrock)`. The port had simplified that into a 0..62 footprint with `TormentStone`/nether-brick-looking floors, portal at the far corner, and chests floating at `y + 1`.
+
+Current state:
+- `TormentChunkGenerator` now follows the legacy 31x31 DFS display footprint at x=-23/z=6 for all six stacked levels.
+- Floor and portal frame blocks use vanilla Bedrock again; walls and ceilings use invisible, solid, light-transparent Force blocks like old `BlockForce`.
+- Portal chamber and three old-style refilling chest rooms are restored per level, with chests placed at floor level.
+- Existing saves need the Torment dimension folder deleted, or a fresh world, before this visual/layout fix can be verified because old chunks will not regenerate automatically.
 
 ---
 
@@ -747,6 +758,6 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 
 - Lord of Torment boss flow (phase 1 -> 2, player return) - Done
 - Flame Imp -> Torment Scroll progression - Done
-- Maze generator / maze-like structure - deferred
-- Torment Stone block and portal exit - deferred
+- Maze generator / maze-like structure - legacy block/layout pass restored; needs fresh-dimension in-game verification
+- Torment Stone block and portal exit - portal exit active; Torment Stone remains registered but no longer used as the old maze floor
 - Torment red sky/fog - biome red sky/fog with `minecraft:overworld` dimension effects is intentionally kept for the hellish aesthetic without the extra Nether pulse darkening

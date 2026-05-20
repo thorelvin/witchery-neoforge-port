@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
@@ -15,31 +14,33 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Generates the Torment dimension as six stacked DFS maze levels.
  *
- * All chunks are air by default.
- * Each maze level (0-5) is centered at X=0, Z=0 (spans world blocks 0-62 in X and Z).
- * Maze Y:     mazeY   = BASE_LEVEL + level * LEVEL_HEIGHT  (10, 25, 40, 55, 70, 85)
- * Entry Y:    entryY  = mazeY + 2
+ * The layout follows old Witchery's GenerateMaze display path:
+ * - origin X=-23, Z=6
+ * - player entry near (8, y+2, 8)
+ * - portal near (8, y+1..2, 68)
  *
- * Vertical block layout per maze position:
- *   mazeY - 1          → Torment Stone (floor)
- *   mazeY              → Torment Stone (1 % Mycelium) if passage, Force if wall
- *   mazeY + 1..4       → Air if passage, Force if wall
- *   mazeY + 5          → Force (ceiling, always)
+ * Vertical passage layout:
+ * - y - 1: Bedrock floor
+ * - y: Bedrock, with rare Mycelium
+ * - y + 1..4: Air
+ * - y + 5: Force ceiling
  *
- * The maze is a perfect 31×31 DFS maze generated deterministically from world seed.
- * A Torment Portal is placed at cell (30, 30) in each level (world X=61, Z=61).
+ * Walls are six-block-tall Force columns. Force is intentionally invisible and
+ * light-transparent like the old BlockForce, but remains solid for collision.
  */
 public class TormentChunkGenerator extends ChunkGenerator {
 
@@ -48,110 +49,65 @@ public class TormentChunkGenerator extends ChunkGenerator {
                     BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource)
             ).apply(inst, TormentChunkGenerator::new));
 
-    // ── Maze constants ────────────────────────────────────────────────────────
-
     public static final int NUM_LEVELS   = 6;
     public static final int BASE_LEVEL   = 10;
     public static final int LEVEL_HEIGHT = 15;
     public static final int MAZE_SIZE    = 31;
 
-    // Maze footprint: world X/Z 0..62 (cells at odd positions 1,3,..61; walls at even)
-    private static final int MAZE_MAX_COORD = 62;
+    private static final int WALL_HEIGHT = 6;
+    private static final int ORIGIN_X = 8 - MAZE_SIZE;
+    private static final int ORIGIN_Z = 8 - 2;
+    private static final int MAZE_MAX_LOCAL = MAZE_SIZE * 2;
+    private static final int STRUCTURE_MIN_X = ORIGIN_X;
+    private static final int STRUCTURE_MAX_X = ORIGIN_X + MAZE_MAX_LOCAL;
+    private static final int STRUCTURE_MIN_Z = ORIGIN_Z;
+    private static final int STRUCTURE_MAX_Z = ORIGIN_Z + MAZE_MAX_LOCAL + 7;
 
-    // DFS direction encoding: N=1, E=2, S=4, W=8
-    private static final int N = 1, E = 2, S = 4, W = 8;
-    private static final int[] DX = {0, 1, 0, -1};
-    private static final int[] DZ = {-1, 0, 1, 0};
-    private static final int[] BITS = {N, E, S, W};
-    private static final int[] OPP  = {S, W, N, E};
+    // Old GenerateMaze direction encoding: N=1, S=2, E=4, W=8.
+    private static final int N = 1, S = 2, E = 4, W = 8;
+    private static final int[] DX = {0, 0, 1, -1};
+    private static final int[] DZ = {-1, 1, 0, 0};
+    private static final int[] BITS = {N, S, E, W};
+    private static final int[] OPP  = {S, N, W, E};
 
     /** Cached mazes keyed by world seed. [level][mx][mz] = direction bitmask. */
     private static final ConcurrentHashMap<Long, int[][][]> MAZE_CACHE = new ConcurrentHashMap<>();
-
-    // ── Constructor ───────────────────────────────────────────────────────────
 
     public TormentChunkGenerator(BiomeSource biomeSource) {
         super(biomeSource);
     }
 
     @Override
-    protected MapCodec<? extends ChunkGenerator> codec() { return CODEC; }
-
-    // ── fillFromNoise: solid-air pass (no seed needed) ────────────────────────
+    protected MapCodec<? extends ChunkGenerator> codec() {
+        return CODEC;
+    }
 
     @Override
     public CompletableFuture<ChunkAccess> fillFromNoise(
             Blender blender, RandomState randomState, StructureManager structures, ChunkAccess chunk) {
-        // Torment is air by default — maze is carved in buildSurface where seed is available
         return CompletableFuture.completedFuture(chunk);
     }
-
-    // ── buildSurface: maze placement (world seed available) ───────────────────
 
     @Override
     public void buildSurface(WorldGenRegion region, StructureManager structures,
                              RandomState random, ChunkAccess chunk) {
+        if (!intersectsMazeFootprint(chunk)) {
+            return;
+        }
+
         long seed = region.getSeed();
         int[][][] mazes = getMazes(seed);
+        BlockState force = WitcheryBlocks.FORCE.get().defaultBlockState();
+        BlockState floor = Blocks.BEDROCK.defaultBlockState();
+        BlockState portal = WitcheryBlocks.TORMENT_PORTAL.get().defaultBlockState();
+        BlockState chest = WitcheryBlocks.REFILLING_CHEST.get().defaultBlockState();
+        BlockState mycelium = Blocks.MYCELIUM.defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
 
-        int bx = chunk.getPos().getMinBlockX();
-        int bz = chunk.getPos().getMinBlockZ();
-
-        BlockState force        = WitcheryBlocks.FORCE.get().defaultBlockState();
-        BlockState tormentStone = WitcheryBlocks.TORMENT_STONE.get().defaultBlockState();
-        BlockState portal       = WitcheryBlocks.TORMENT_PORTAL.get().defaultBlockState();
-        BlockState mycelium     = Blocks.MYCELIUM.defaultBlockState();
-        BlockState air          = Blocks.AIR.defaultBlockState();
-
-        for (int lx = 0; lx < 16; lx++) {
-            int wx = bx + lx;
-            if (wx < 0 || wx > MAZE_MAX_COORD) continue;
-
-            for (int lz2 = 0; lz2 < 16; lz2++) {
-                int wz = bz + lz2;
-                if (wz < 0 || wz > MAZE_MAX_COORD) continue;
-
-                for (int level = 0; level < NUM_LEVELS; level++) {
-                    int mazeY = BASE_LEVEL + level * LEVEL_HEIGHT;
-                    boolean passage = isPassage(wx, wz, mazes[level]);
-
-                    // Floor
-                    setBlock(chunk, wx, mazeY - 1, wz, tormentStone);
-
-                    // Passage or wall columns
-                    for (int y = mazeY; y <= mazeY + 5; y++) {
-                        if (y == mazeY + 5) {
-                            // Ceiling always Force
-                            setBlock(chunk, wx, y, wz, force);
-                        } else if (passage) {
-                            if (y == mazeY) {
-                                // 1 % mycelium on floor level
-                                setBlock(chunk, wx, y, wz, myceliumOrStone(wx, wz, seed, level, tormentStone, mycelium));
-                            } else {
-                                setBlock(chunk, wx, y, wz, air);
-                            }
-                        } else {
-                            setBlock(chunk, wx, y, wz, force);
-                        }
-                    }
-
-                    // Torment Portal at far corner cell (30, 30) → world (61, 61)
-                    if (wx == 61 && wz == 61) {
-                        setBlock(chunk, wx, mazeY + 1, wz, portal);
-                        setBlock(chunk, wx, mazeY + 2, wz, portal);
-                    }
-
-                    // Refilling Chests: central cell (15,15)→world(31,31), side cells (5,15)→(11,31) and (25,15)→(51,31)
-                    BlockState chest = WitcheryBlocks.REFILLING_CHEST.get().defaultBlockState();
-                    if ((wx == 31 && wz == 31) || (wx == 11 && wz == 31) || (wx == 51 && wz == 31)) {
-                        if (passage) setBlock(chunk, wx, mazeY + 1, wz, chest);
-                    }
-                }
-            }
+        for (int level = 0; level < NUM_LEVELS; level++) {
+            drawLegacyMazeLevel(chunk, seed, level, mazes[level], force, floor, portal, chest, mycelium, air);
         }
     }
-
-    // ── Maze access ───────────────────────────────────────────────────────────
 
     private static int[][][] getMazes(long seed) {
         return MAZE_CACHE.computeIfAbsent(seed, TormentChunkGenerator::generateAllMazes);
@@ -170,11 +126,8 @@ public class TormentChunkGenerator extends ChunkGenerator {
     private static void dfs(int mx, int mz, int[][] maze, boolean[][] visited, Random rng) {
         visited[mx][mz] = true;
         Integer[] dirs = {0, 1, 2, 3};
-        // Fisher-Yates shuffle
-        for (int i = 3; i > 0; i--) {
-            int j = rng.nextInt(i + 1);
-            int tmp = dirs[i]; dirs[i] = dirs[j]; dirs[j] = tmp;
-        }
+        Collections.shuffle(Arrays.asList(dirs), rng);
+
         for (int d : dirs) {
             int nx = mx + DX[d];
             int nz = mz + DZ[d];
@@ -186,75 +139,209 @@ public class TormentChunkGenerator extends ChunkGenerator {
         }
     }
 
-    /**
-     * Returns true if world position (wx, wz) is a passage (open air) rather than a wall.
-     * Maze occupies wx/wz 0..62. Outer edges (0, 62) are always walls.
-     * Cells are at odd positions (1,3,5,...,61) in both axes.
-     * Wall slots between cells are at even positions (2,4,...,60).
-     */
-    private static boolean isPassage(int wx, int wz, int[][] maze) {
-        if (wx == 0 || wx == MAZE_MAX_COORD || wz == 0 || wz == MAZE_MAX_COORD) return false;
+    private static boolean intersectsMazeFootprint(ChunkAccess chunk) {
+        int minX = chunk.getPos().getMinBlockX();
+        int minZ = chunk.getPos().getMinBlockZ();
+        int maxX = minX + 15;
+        int maxZ = minZ + 15;
+        return maxX >= STRUCTURE_MIN_X && minX <= STRUCTURE_MAX_X
+                && maxZ >= STRUCTURE_MIN_Z && minZ <= STRUCTURE_MAX_Z;
+    }
 
-        int lx = wx - 1; // 0-based: cells at 0,2,4,... walls at 1,3,5,...
-        int lz = wz - 1;
-        boolean lxOdd = (lx & 1) == 1;
-        boolean lzOdd = (lz & 1) == 1;
+    private static void drawLegacyMazeLevel(ChunkAccess chunk, long seed, int level, int[][] maze,
+                                            BlockState walls, BlockState floor, BlockState portal,
+                                            BlockState chest, BlockState mycelium, BlockState air) {
+        int origX = ORIGIN_X;
+        int origY = BASE_LEVEL + level * LEVEL_HEIGHT;
+        int origZ = ORIGIN_Z;
+        int i;
 
-        if (!lxOdd && !lzOdd) return true;  // cell centre
-        if (lxOdd && lzOdd)  return false;  // corner
+        for (i = 0; i < MAZE_SIZE; i++) {
+            int j;
+            for (j = 0; j < MAZE_SIZE; j++) {
+                drawWall(chunk, origX + j * 2, origY, origZ + 2 * i, walls);
+                if ((maze[j][i] & N) == 0) {
+                    drawWall(chunk, origX + j * 2 + 1, origY, origZ + 2 * i, walls);
+                } else {
+                    drawPassage(chunk, seed, level, origX + j * 2 + 1, origY,
+                            origZ + 2 * i, walls, floor, mycelium, air);
+                }
+            }
 
-        if (lxOdd) {
-            // E-W wall between cell (lx>>1, lz>>1) and (lx>>1+1, lz>>1)
-            int cx = lx >> 1;
-            int cz = lz >> 1;
-            return cx >= 0 && cx < MAZE_SIZE - 1 && cz >= 0 && cz < MAZE_SIZE
-                    && (maze[cx][cz] & E) != 0;
-        } else {
-            // N-S wall between cell (lx>>1, lz>>1) and (lx>>1, lz>>1+1)
-            int cx = lx >> 1;
-            int cz = lz >> 1;
-            return cx >= 0 && cx < MAZE_SIZE && cz >= 0 && cz < MAZE_SIZE - 1
-                    && (maze[cx][cz] & S) != 0;
+            drawWall(chunk, origX + j * 2, origY, origZ + 2 * i, walls);
+
+            for (j = 0; j < MAZE_SIZE; j++) {
+                if ((maze[j][i] & W) == 0) {
+                    drawWall(chunk, origX + j * 2, origY, origZ + 2 * i + 1, walls);
+                } else {
+                    drawPassage(chunk, seed, level, origX + j * 2, origY,
+                            origZ + 2 * i + 1, walls, floor, mycelium, air);
+                }
+                drawPassage(chunk, seed, level, origX + j * 2 + 1, origY,
+                        origZ + 2 * i + 1, walls, floor, mycelium, air);
+            }
+
+            drawWall(chunk, origX + j * 2, origY, origZ + 2 * i + 1, walls);
+        }
+
+        int j;
+        for (j = 0; j < MAZE_SIZE; j++) {
+            drawWall(chunk, origX + j * 2, origY, origZ + 2 * i, walls);
+            drawWall(chunk, origX + j * 2 + 1, origY, origZ + 2 * i, walls);
+        }
+        drawWall(chunk, origX + j * 2, origY, origZ + 2 * i, walls);
+
+        drawPortalChambersAndChests(chunk, seed, level, walls, floor, portal, chest, mycelium, air);
+    }
+
+    private static void drawPortalChambersAndChests(ChunkAccess chunk, long seed, int level,
+                                                    BlockState walls, BlockState floor, BlockState portal,
+                                                    BlockState chest, BlockState mycelium, BlockState air) {
+        int origX = ORIGIN_X;
+        int origY = BASE_LEVEL + level * LEVEL_HEIGHT;
+        int origZ = ORIGIN_Z;
+
+        int chamberWidth = 7;
+        int chamberHalf = chamberWidth / 2;
+        for (int x = 0; x < chamberWidth; x++) {
+            for (int z = 0; z < chamberWidth; z++) {
+                drawPassage(chunk, seed, level, origX + MAZE_SIZE + x - chamberHalf, origY,
+                        origZ + z + 1, walls, floor, mycelium, air);
+            }
+        }
+
+        for (int x = 0; x < chamberWidth; x++) {
+            for (int z = 0; z < chamberWidth + 2; z++) {
+                drawPassage(chunk, seed, level, origX + MAZE_SIZE + x - chamberHalf, origY,
+                        origZ + 2 * MAZE_SIZE + z - chamberWidth, walls, floor, mycelium, air);
+            }
+        }
+
+        drawPortal(chunk, origX + MAZE_SIZE, origY, origZ + 2 * MAZE_SIZE, portal, floor);
+
+        int sideRoomWidth = 5;
+        int sideRoomHalf = sideRoomWidth / 2;
+        int shift = chestShift(seed, level, 0);
+        for (int x = 0; x < sideRoomWidth; x++) {
+            for (int z = 0; z < sideRoomWidth; z++) {
+                drawPassage(chunk, seed, level, origX + x + 1, origY,
+                        origZ + z + MAZE_SIZE - sideRoomHalf + shift, walls, floor, mycelium, air);
+            }
+        }
+        drawChest(chunk, origX + sideRoomHalf + 1, origY, origZ + MAZE_SIZE + shift, chest);
+
+        shift = chestShift(seed, level, 1);
+        for (int x = 0; x < sideRoomWidth; x++) {
+            for (int z = 0; z < sideRoomWidth; z++) {
+                drawPassage(chunk, seed, level, origX + 2 * MAZE_SIZE + x - sideRoomWidth, origY,
+                        origZ + z + MAZE_SIZE - sideRoomHalf + shift, walls, floor, mycelium, air);
+            }
+        }
+        drawChest(chunk, origX + 2 * MAZE_SIZE - sideRoomHalf - 1, origY, origZ + MAZE_SIZE + shift, chest);
+
+        int roomWidth = 7;
+        int roomHalf = roomWidth / 2;
+        for (int x = 0; x < roomWidth; x++) {
+            for (int z = 0; z < roomWidth; z++) {
+                drawPassage(chunk, seed, level, origX + MAZE_SIZE + x - roomHalf, origY,
+                        origZ + MAZE_SIZE + z - roomHalf, walls, floor, mycelium, air);
+            }
+        }
+        drawChest(chunk, origX + MAZE_SIZE, origY, origZ + MAZE_SIZE, chest);
+    }
+
+    private static void drawPortal(ChunkAccess chunk, int x, int y, int z,
+                                   BlockState portal, BlockState floor) {
+        setBlock(chunk, x, y + 1, z, portal);
+        setBlock(chunk, x, y + 2, z, portal);
+        setBlock(chunk, x, y + 3, z, floor);
+        for (int side : new int[]{-1, 1}) {
+            setBlock(chunk, x + side, y + 1, z, floor);
+            setBlock(chunk, x + side, y + 2, z, floor);
+            setBlock(chunk, x + side, y + 3, z, floor);
         }
     }
 
-    private static BlockState myceliumOrStone(int wx, int wz, long seed, int level,
-                                               BlockState stone, BlockState myc) {
+    private static void drawChest(ChunkAccess chunk, int x, int y, int z, BlockState chest) {
+        setBlock(chunk, x, y, z, chest);
+    }
+
+    private static void drawWall(ChunkAccess chunk, int x, int y, int z, BlockState wallBlock) {
+        for (int h = 0; h < WALL_HEIGHT; h++) {
+            setBlock(chunk, x, y + h, z, wallBlock);
+        }
+    }
+
+    private static void drawPassage(ChunkAccess chunk, long seed, int level, int x, int y, int z,
+                                    BlockState wallBlock, BlockState floorBlock,
+                                    BlockState mycelium, BlockState air) {
+        setBlock(chunk, x, y - 1, z, floorBlock);
+        setBlock(chunk, x, y, z, myceliumOrFloor(x, z, seed, level, floorBlock, mycelium));
+
+        for (int h = 1; h < WALL_HEIGHT - 1; h++) {
+            setBlock(chunk, x, y + h, z, air);
+        }
+
+        setBlock(chunk, x, y + WALL_HEIGHT - 1, z, wallBlock);
+    }
+
+    private static BlockState myceliumOrFloor(int wx, int wz, long seed, int level,
+                                              BlockState floor, BlockState mycelium) {
         long h = seed ^ ((long) wx * 0x9e3779b97f4a7c15L) ^ ((long) wz * 0x6c62272e07bb0142L)
                 ^ ((long) level * 0x517cc1b727220a95L);
-        h ^= h >>> 33; h *= 0xff51afd7ed558ccdL; h ^= h >>> 33;
-        return (h & 0x7FL) == 0 ? myc : stone; // ~1/128 ≈ 0.8 %
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        return Math.floorMod(h, 100L) == 0 ? mycelium : floor;
+    }
+
+    private static int chestShift(long seed, int level, int index) {
+        long h = seed ^ ((long) level * 0x632be59bd9b4e019L) ^ ((long) index * 0x85157af5L);
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        return (int) Math.floorMod(h, 11L) - 5;
     }
 
     private static void setBlock(ChunkAccess chunk, int wx, int wy, int wz, BlockState state) {
-        if (wy >= 0 && wy < 256) {
+        int minX = chunk.getPos().getMinBlockX();
+        int minZ = chunk.getPos().getMinBlockZ();
+        if (wy >= 0 && wy < 256
+                && wx >= minX && wx < minX + 16
+                && wz >= minZ && wz < minZ + 16) {
             chunk.setBlockState(new BlockPos(wx, wy, wz), state, 0);
         }
     }
 
-    // ── Abstract stubs ────────────────────────────────────────────────────────
-
     @Override
     public void applyCarvers(WorldGenRegion level, long seed, RandomState random,
                              BiomeManager biomeManager, StructureManager structures,
-                             ChunkAccess chunk) {}
+                             ChunkAccess chunk) {
+    }
 
     @Override
-    public void spawnOriginalMobs(WorldGenRegion region) {}
+    public void spawnOriginalMobs(WorldGenRegion region) {
+    }
 
     @Override
-    public int getGenDepth()  { return 256; }
+    public int getGenDepth() {
+        return 256;
+    }
 
     @Override
-    public int getMinY()      { return 0; }
+    public int getMinY() {
+        return 0;
+    }
 
     @Override
-    public int getSeaLevel()  { return 63; }
+    public int getSeaLevel() {
+        return 63;
+    }
 
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types type,
                              LevelHeightAccessor level, RandomState random) {
-        return BASE_LEVEL + (NUM_LEVELS - 1) * LEVEL_HEIGHT + 6;
+        return BASE_LEVEL + (NUM_LEVELS - 1) * LEVEL_HEIGHT + WALL_HEIGHT;
     }
 
     @Override
@@ -266,6 +353,6 @@ public class TormentChunkGenerator extends ChunkGenerator {
 
     @Override
     public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
-        info.add(String.format("Torment cell (%d, %d)", (pos.getX() - 1) / 2, (pos.getZ() - 1) / 2));
+        info.add(String.format("Torment cell (%d, %d)", (pos.getX() - ORIGIN_X) / 2, (pos.getZ() - ORIGIN_Z) / 2));
     }
 }

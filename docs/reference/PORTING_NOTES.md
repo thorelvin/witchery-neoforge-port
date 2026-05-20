@@ -310,13 +310,13 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 - Nightmare: 100 HP, spawns during nightmares, teleports to player, respawns, strips armor, drops Mellifluous Hunger
 - Spirit: 20 HP, passive/flees, flying, drops 1 Subdued Spirit
 
-**Torment dimension (confirmed by wiki):**
-- Horizontally aligned mazes; walls/floor = Torment Stone (Mycelium-look, indestructible)
+**Torment dimension (confirmed by wiki / old source):**
+- Horizontally aligned mazes. Old 1.7.10 `GenerateMaze.display` uses invisible `Force` for walls/ceilings and vanilla Bedrock for floors/portal frames; Resurrected has a TormentStone naming/art path, but the baseline port should preserve old mechanics/layout unless intentionally deviating.
 - No vanilla mobs (blaze/magma_cube removed from torment biome spawner)
 - Remaining spawners: witchery:demon, witchery:mandrake_mob
 - Entry: summon Lord of Torment via Torment Scroll (final gift from tamed Flame Imp), fight to 50% HP (250 HP), gets teleported in with player
 - Exit: die → respawn in Overworld, or complete maze → Torment Portal
-- True maze generator deferred (complex); current nether noise is placeholder terrain
+- Legacy maze generator restored in the port; existing generated chunks must be deleted before visual/layout retest.
 
 **Lord of Torment (not yet implemented):**
 - 500 HP boss, fires Slowness fireballs, at 50% HP teleports self+player to Torment
@@ -426,7 +426,7 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 - `server.getLevel(ResourceKey<Level>)` returns null if dimension not loaded yet — safe to call after the first teleport
 - Force chunk generation before scanning for a safe Y: `level.getChunk(0, 0, ChunkStatus.FULL, true)`
 - Dream World uses End-style noise (`"settings": "minecraft:end"`) — central island always at ~(0, 64, 0)
-- Torment uses Nether-style noise (`"settings": "minecraft:nether"`) — scan y=110→10 for 2-block air gap with solid floor
+- Torment now uses a custom legacy maze generator, not Nether-style noise; regenerate existing Torment chunks before retesting maze block/layout changes.
 - `WitcheryPlayerData` has `returnPos`/`returnDimension` — set before teleport, cleared on exit; copied via `PlayerEvent.Clone`
 
 ### 2026-05-15 (Entity models)
