@@ -150,6 +150,7 @@ The first real Poppet Shelf parity pass is now in place:
 - Bound-poppet lookup now scans every loaded shelf on the current server again instead of only looking in a tiny radius around the player.
 - Shelves with bound poppets now force-load their chunk again, so poppet protection can still trigger even when the player is far away.
 - `Poppet Shelf` once again exposes real container-strength comparator output, and that redstone signal now refreshes when the stored poppets change.
+- `Poppet Shelf` once again uses the original low half-height shelf footprint for outline and collision instead of behaving like a full cube.
 
 ### 17. Dream Catcher nightmare handling was too loose - Fixed / verify
 

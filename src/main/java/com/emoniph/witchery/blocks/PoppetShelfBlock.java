@@ -21,11 +21,14 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class PoppetShelfBlock extends BaseEntityBlock {
     public static final MapCodec<PoppetShelfBlock> CODEC = simpleCodec(PoppetShelfBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final VoxelShape SHAPE = box(0.0, 0.0, 0.0, 16.0, 8.16, 16.0);
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
@@ -44,6 +47,16 @@ public class PoppetShelfBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     @Nullable
