@@ -445,6 +445,10 @@ public class RitualExecutor {
             return matchedResult(riteOfCreaturesOfNightTaglock(player, level, center));
         } else if (item.is(Items.MILK_BUCKET)) {
             return matchedResult(riteOfSummoning(player, level, center));
+        } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
+                && !SpectralStoneItem.isBound(item)
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfBindSpectralStone(player, level, center, item));
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -509,10 +513,6 @@ public class RitualExecutor {
         } else if (item.is(Items.TNT)) {
             riteOfCrater(player, level, center);
             return successResult();
-        } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
-                && !SpectralStoneItem.isBound(item)
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindSpectralStone(player, level, center, item));
         } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
         } else {
@@ -2557,7 +2557,7 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Binding — binds up to three nearby spectral creatures of the same type into a Spectral Stone. */
+    /** Rite of Binding — binds up to three nearby spectral creatures into a Spectral Stone on the medium ritual ring. */
     private static boolean riteOfBindSpectralStone(Player player, Level level, BlockPos center, ItemStack spectralStone) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (SpectralStoneItem.isBound(spectralStone)) {

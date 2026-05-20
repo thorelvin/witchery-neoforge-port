@@ -41,6 +41,7 @@ Current state:
 - Broiling, Broken Earth, Moving Earth, Raise Column, Volcano, and Flying Ointment's broom infusion now require the original chalk family again instead of activating from any same-size circle.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
+- `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -551,8 +552,9 @@ Remaining gap:
 ### 51. Rite of Binding for Spectral Stone was missing entirely - Fixed / verify
 
 The next missing-rite pass is now closer to original Witchery:
-- `bindspectral` is reachable again as a large ritual-circle route from an empty Spectral Stone, instead of being absent from the port entirely.
+- `bindspectral` is reachable again as a medium ritual-circle route from an empty Spectral Stone, instead of being absent from the port entirely.
 - The restored route now looks for nearby spectral creatures, chooses the nearest creature family, binds up to three of that same type into the stone, removes those entities from the world, stores the result in modern item data so the item is no longer mechanically blank, and the released spirits now remember their summoner well enough to avoid immediately targeting them.
+- The route now also uses the original medium ring again instead of the wrong large-circle dispatcher slot.
 
 Remaining gap:
 - The port now uses deterministic nearest-type selection instead of the old entity-iteration-order quirk, and the released spirits still use a lighter modern owner-safe filter instead of the full old summoned-undead enslaver system.
