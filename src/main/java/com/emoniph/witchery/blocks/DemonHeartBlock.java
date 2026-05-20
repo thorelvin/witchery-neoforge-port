@@ -57,6 +57,11 @@ public class DemonHeartBlock extends BaseEntityBlock {
     }
 
     @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(10) != 0) {
             return;

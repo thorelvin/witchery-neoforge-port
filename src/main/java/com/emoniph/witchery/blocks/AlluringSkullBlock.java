@@ -114,6 +114,11 @@ public class AlluringSkullBlock extends BaseEntityBlock {
     }
 
     @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return getShape(state, level, pos, context);
+    }
+
+    @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(WitcheryItems.NECRO_STONE.get())) {

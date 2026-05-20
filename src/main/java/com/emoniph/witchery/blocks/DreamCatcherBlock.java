@@ -64,6 +64,11 @@ public class DreamCatcherBlock extends BaseEntityBlock {
     }
 
     @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        return SHAPES.get(state.getValue(FACING));
+    }
+
+    @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction clickedFace = ctx.getClickedFace();
         if (!clickedFace.getAxis().isHorizontal()) {
