@@ -3250,13 +3250,16 @@ public class RitualExecutor {
         java.util.UUID familiarUuid = familiar.getUUID();
         String familiarType = FamiliarHelper.describeFamiliar(familiar);
         String familiarName = familiar.hasCustomName() ? familiar.getCustomName().getString() : "";
+        boolean familiarSitting = familiar.isOrderedToSit();
         boolean familiarChanged = familiarData.getFamiliarUUID().map(uuid -> !uuid.equals(familiarUuid)).orElse(true)
                 || !familiarType.equals(familiarData.getFamiliarType())
-                || !familiarName.equals(familiarData.getFamiliarName());
+                || !familiarName.equals(familiarData.getFamiliarName())
+                || familiarSitting != familiarData.isFamiliarSitting();
         if (familiarChanged) {
             familiarData.setFamiliarUUID(familiarUuid);
             familiarData.setFamiliarType(familiarType);
             familiarData.setFamiliarName(familiarName);
+            familiarData.setFamiliarSitting(familiarSitting);
             PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, familiarData));
         }
 
@@ -3266,7 +3269,7 @@ public class RitualExecutor {
             familiar.teleportTo(sl, x, y, z,
                     Set.of(), familiar.getYRot(), familiar.getXRot(), false);
         }
-        familiar.setOrderedToSit(false);
+        familiar.setOrderedToSit(familiarData.isFamiliarSitting());
 
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
@@ -3318,7 +3321,7 @@ public class RitualExecutor {
             converted.setYRot(tameable.getYRot());
             converted.setXRot(tameable.getXRot());
             converted.tame(player);
-            converted.setOrderedToSit(false);
+            converted.setOrderedToSit(tameable.isOrderedToSit());
             if (tameable.hasCustomName()) {
                 converted.setCustomName(tameable.getCustomName());
                 converted.setCustomNameVisible(tameable.isCustomNameVisible());
@@ -3339,6 +3342,7 @@ public class RitualExecutor {
         data.setFamiliarUUID(bound.getUUID());
         data.setFamiliarType(FamiliarHelper.describeFamiliar(bound));
         data.setFamiliarName(bound.hasCustomName() ? bound.getCustomName().getString() : "");
+        data.setFamiliarSitting(bound.isOrderedToSit());
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         return bound;
     }

@@ -632,7 +632,7 @@ The next familiar-mechanics pass is now closer to original Witchery:
 - Legacy UUID-only familiar saves now repair themselves on the next successful `Call Familiar`: if the live familiar still exists, the rite backfills the missing familiar kind automatically instead of waiting for a fresh rebind.
 
 Remaining gap:
-- The modern port now preserves bound familiar UUID, familiar kind, and custom familiar name, but it still does not carry over the original deeper familiar instance/template state beyond that core identity. Recreated familiars therefore regain the right owl/cat/toad type and familiar name without yet restoring every old-Witchery per-familiar history or styling detail.
+- The modern port now preserves bound familiar UUID, familiar kind, custom familiar name, and sit state, but it still does not carry over the original deeper familiar instance/template state beyond that core identity. Recreated familiars therefore regain the right owl/cat/toad type, familiar name, and resting/follow posture without yet restoring every old-Witchery per-familiar history or styling detail.
 
 ### 66. Witches' Primer was still a silent stub - Fixed / verify
 

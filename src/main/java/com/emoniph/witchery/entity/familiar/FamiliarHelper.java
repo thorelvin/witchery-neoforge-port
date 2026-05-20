@@ -99,7 +99,7 @@ public final class FamiliarHelper {
 
         familiar.tame(player);
         familiar.setPersistenceRequired();
-        familiar.setOrderedToSit(false);
+        familiar.setOrderedToSit(WitcheryAttachments.get(player).isFamiliarSitting());
         String familiarName = WitcheryAttachments.get(player).getFamiliarName();
         if (!familiarName.isBlank()) {
             familiar.setCustomName(net.minecraft.network.chat.Component.literal(familiarName));
