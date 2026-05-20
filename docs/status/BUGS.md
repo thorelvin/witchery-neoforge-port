@@ -690,6 +690,15 @@ The next active-block parity pass is now closer to original Witchery:
 Remaining gap:
 - Final in-game verification is still open for scale/lighting feel, but the core block behavior is now closer to the original 1.7.10 skull.
 
+### 68. Necromantic Stone item was missing its item-definition asset - Fixed / verify
+
+The asset chain is now complete again:
+- `necro_stone` already had a valid item model and texture.
+- The missing `assets/witchery/items/necro_stone.json` definition has now been added, matching the working `attuned_stone` asset chain.
+
+Remaining gap:
+- Final in-game verification is still open, but the pink-black fallback should now be gone in inventory, hand, and other item render contexts.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
