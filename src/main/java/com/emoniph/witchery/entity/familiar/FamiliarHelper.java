@@ -100,6 +100,11 @@ public final class FamiliarHelper {
         familiar.tame(player);
         familiar.setPersistenceRequired();
         familiar.setOrderedToSit(false);
+        String familiarName = WitcheryAttachments.get(player).getFamiliarName();
+        if (!familiarName.isBlank()) {
+            familiar.setCustomName(net.minecraft.network.chat.Component.literal(familiarName));
+            familiar.setCustomNameVisible(true);
+        }
         familiar.snapTo(x, y, z, player.getYRot(), 0.0F);
         level.addFreshEntity(familiar);
         WitcheryAttachments.get(player).setFamiliarUUID(familiar.getUUID());

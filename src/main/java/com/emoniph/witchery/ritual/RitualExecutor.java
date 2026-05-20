@@ -3249,11 +3249,14 @@ public class RitualExecutor {
 
         java.util.UUID familiarUuid = familiar.getUUID();
         String familiarType = FamiliarHelper.describeFamiliar(familiar);
+        String familiarName = familiar.hasCustomName() ? familiar.getCustomName().getString() : "";
         boolean familiarChanged = familiarData.getFamiliarUUID().map(uuid -> !uuid.equals(familiarUuid)).orElse(true)
-                || !familiarType.equals(familiarData.getFamiliarType());
+                || !familiarType.equals(familiarData.getFamiliarType())
+                || !familiarName.equals(familiarData.getFamiliarName());
         if (familiarChanged) {
             familiarData.setFamiliarUUID(familiarUuid);
             familiarData.setFamiliarType(familiarType);
+            familiarData.setFamiliarName(familiarName);
             PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, familiarData));
         }
 
@@ -3335,6 +3338,7 @@ public class RitualExecutor {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.setFamiliarUUID(bound.getUUID());
         data.setFamiliarType(FamiliarHelper.describeFamiliar(bound));
+        data.setFamiliarName(bound.hasCustomName() ? bound.getCustomName().getString() : "");
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         return bound;
     }
