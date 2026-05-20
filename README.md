@@ -4,7 +4,9 @@ An unofficial modern NeoForge port and continuation of the classic Witchery mod 
 
 ## Status
 
-The port is already playable and includes major Witchery systems such as:
+The port is already playable and well beyond the early proof-of-concept stage. Current work prioritizes original Witchery `1.7.10` mechanics first, then Witchery: Resurrected visuals and models where they improve parity.
+
+Implemented major systems include:
 
 - altar power
 - kettle brewing
@@ -14,18 +16,31 @@ The port is already playable and includes major Witchery systems such as:
 - poppets and taglocks
 - ritual circles and a broad rite roster
 - vampirism, lycanthropy, and familiars
-- Spirit World and Torment baseline content
+- Spirit World gameplay loop
+- Torment dimension with the restored legacy-style maze flow
+- core traders, structures, and worldgen content
 
 Project status and current bug tracking live in:
 
 - `docs/status/FEATURE_MATRIX.md`
 - `docs/status/BUGS.md`
 - `docs/status/ITEM_REVIEW.md`
+- `docs/status/NEXT_TASKS.md`
+
+## Debug / QA Helpers
+
+The mod includes a growing set of in-game debug commands under `/witchery`.
+
+Useful current helpers:
+
+- `/witchery setup stations` rebuilds a fully stocked `11x11` Rowan QA hut 5 blocks ahead of the player with altar, kettle rig, distillery, witch's oven plus funnel, spinning wheel, supply chest, and indoor Coven Witch + Hobgoblin traders
+- `/witchery verify torment` runs a server-side Torment audit against the restored legacy maze footprint and atmosphere settings
+- `/witchery spawn wickerman` places a summon-valid bloodied wickerman for Horned Huntsman testing
 
 ## Build
 
 ```bash
-./gradlew compileJava
+./gradlew compileJava processResources
 ```
 
 ## Notes
