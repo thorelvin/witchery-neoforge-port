@@ -185,10 +185,18 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 3600000.0F).lightLevel(s -> 12).noOcclusion().noCollision().noLootTable());
 
     // Chalk circle marks
-    public static final DeferredBlock<Block> CIRCLE           = BLOCKS.registerSimpleBlock("circle",           BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.GOLD));
-    public static final DeferredBlock<Block> CIRCLE_GLYPH     = BLOCKS.registerSimpleBlock("circle_glyph",     BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.STONE));
-    public static final DeferredBlock<Block> CIRCLE_OTHERWHERE = BLOCKS.registerSimpleBlock("circle_otherwhere", BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.COLOR_PURPLE));
-    public static final DeferredBlock<Block> CIRCLE_INFERNAL  = BLOCKS.registerSimpleBlock("circle_infernal",  BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.COLOR_RED));
+    public static final DeferredBlock<ChalkCircleBlock> CIRCLE = BLOCKS.registerBlock("circle",
+            ChalkCircleBlock::new,
+            BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.GOLD));
+    public static final DeferredBlock<ChalkCircleBlock> CIRCLE_GLYPH = BLOCKS.registerBlock("circle_glyph",
+            ChalkCircleBlock::new,
+            BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.STONE));
+    public static final DeferredBlock<ChalkCircleBlock> CIRCLE_OTHERWHERE = BLOCKS.registerBlock("circle_otherwhere",
+            ChalkCircleBlock::new,
+            BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<ChalkCircleBlock> CIRCLE_INFERNAL = BLOCKS.registerBlock("circle_infernal",
+            ChalkCircleBlock::new,
+            BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.COLOR_RED));
     public static final DeferredBlock<CritterSnareBlock> CRITTER_SNARE = BLOCKS.registerBlock("critter_snare",
             CritterSnareBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.5f).noOcclusion().noCollision());

@@ -54,6 +54,10 @@ Files:
 
 ## Fixed / verify
 
+### 0. Chalk circles were still placing as cube blocks - Fixed / verify
+
+The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again instead of generic full-shape `Block` registrations, so their outline/support behavior is back to reading like drawn floor sigils instead of square blocks. The ritual chalk asset chain is corrected too: `circle_glyph` no longer uses a `cube_all` model and now matches the flat cutout/carpet-style path already used by the other chalk families.
+
 ### 1a. Merchant trade GUIs flashed shut immediately - Fixed / verify
 
 `CovenWitchEntity` and `HobgoblinEntity` now follow the vanilla merchant-open contract again by setting the active trading player before opening their menu. That keeps the trade menu from failing `MerchantMenu.stillValid()` on the next tick, which was causing the one-frame flash-close behavior. The interaction pass also now lets vanilla item interactions win before trade opening where appropriate.

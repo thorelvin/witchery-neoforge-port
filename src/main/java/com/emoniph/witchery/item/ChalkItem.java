@@ -60,6 +60,7 @@ public class ChalkItem extends Item {
         }
 
         if (!current.canBeReplaced()) return InteractionResult.PASS;
+        if (!target.defaultBlockState().canSurvive(level, above)) return InteractionResult.PASS;
 
         level.setBlock(above, target.defaultBlockState(), 3);
         level.playSound(null, above, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);

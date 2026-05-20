@@ -86,7 +86,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path` | Needs in-game verification.
 | 64 | `witchery:arthana` | `Partial - altar placement/range bonus restored` | Now places cleanly on altar, updates bonuses immediately, and restores the old altar range boost. Visual work still needed.
 | 65 | `witchery:boline` | |
-| 66 | `witchery:chalk` | |
+| 66 | `witchery:chalk` | `Partial - placed glyph block path corrected` | Ritual chalk now places a thin floor glyph again instead of a cube block: `circle_glyph` uses the flat cutout/carpet model path and the chalk-circle blocks now share a dedicated low-profile block shape. Needs in-game verification for final outline/selection feel.
 | 67 | `witchery:mystic_branch` | `Partial - altar placement/enhancement bonus restored` | Can now be placed on altar again and correctly grants the enhancement bonus in the altar scan. In-hand creature-power use still works.
 | 68 | `witchery:taglock_kit` | `Partial - Blood Rose + Leech Chest extraction restored` | Now splits stacked kits correctly when filling one, and can pull stored samples from Blood Rose and Leech Chest again. Bed/original edge-case audit is still open.
 | 69 | `witchery:poppet` | |
