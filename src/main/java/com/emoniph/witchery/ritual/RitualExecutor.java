@@ -26,6 +26,7 @@ import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
@@ -54,6 +55,9 @@ import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -168,6 +172,7 @@ public class RitualExecutor {
         PROTECTION_BARRIER_MONSTERS,
         PROTECTION_BARRIER_PORTABLE,
         PROTECTION_BARRIER,
+        INFUSION_RECHARGE,
         SANCTITY_CIRCLE,
         IMPRISONMENT_CIRCLE
     }
@@ -282,6 +287,14 @@ public class RitualExecutor {
         return stack.is(WitcheryItems.CHALK.get())
                 || stack.is(WitcheryItems.CHALK_OTHERWHERE.get())
                 || stack.is(WitcheryItems.CHALK_INFERNAL.get());
+    }
+
+    private static boolean isPotion(ItemStack stack, Holder<Potion> potion) {
+        if (!stack.is(Items.POTION)) {
+            return false;
+        }
+        PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        return contents != null && contents.is(potion);
     }
 
     private static boolean isRitualAreaNulled(Level level, BlockPos center) {
@@ -419,6 +432,10 @@ public class RitualExecutor {
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
             return successResult();
+        } else if (isPotion(item, Potions.REGENERATION)
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+            return matchedResult(riteOfInfusionRecharge(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
@@ -802,6 +819,26 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.charge_stone.success",
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
         WitcheryMod.LOGGER.info("Charged Attuned Stone created at {} for {}", center, player.getName().getString());
+        return true;
+    }
+
+    /** Rite of Infusion Recharge — sustains a charging field for infused players standing in paired ritual circles. */
+    private static boolean riteOfInfusionRecharge(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_recharge.no_power"), false);
+            return false;
+        }
+        if (!queueActiveRitual(sl, ActiveRitualType.INFUSION_RECHARGE, RitualCircleDetector.CircleSize.MEDIUM,
+                center, 4, 4, 0, 20, 0, 40.0f, 0)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.infusion_recharge.success",
+                SoundEvents.BEACON_ACTIVATE, 1f, 2, 40);
+        WitcheryMod.LOGGER.info("Infusion recharge rite activated at {} by {}", center, player.getName().getString());
         return true;
     }
 
@@ -1712,6 +1749,7 @@ public class RitualExecutor {
             case PROTECTION_BARRIER_MONSTERS -> tickProtectionBarrierMonstersRitual(level, ritual);
             case PROTECTION_BARRIER_PORTABLE -> tickProtectionBarrierPortableRitual(level, ritual);
             case PROTECTION_BARRIER -> tickProtectionBarrierRitual(level, ritual);
+            case INFUSION_RECHARGE -> tickInfusionRechargeRitual(level, ritual);
             case SANCTITY_CIRCLE -> tickSanctityCircleRitual(level, ritual);
             case IMPRISONMENT_CIRCLE -> tickImprisonmentCircleRitual(level, ritual);
         };
@@ -2015,6 +2053,49 @@ public class RitualExecutor {
             spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
         }
         return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickInfusionRechargeRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
+
+        int radius = ritual.minRadius;
+        AABB bounds = new AABB(
+                ritual.center.getX() - radius, ritual.center.getY(), ritual.center.getZ() - radius,
+                ritual.center.getX() + radius, ritual.center.getY() + 1, ritual.center.getZ() + radius
+        );
+
+        for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            double dx = player.getX() - ritual.center.getX();
+            double dy = player.getY() - ritual.center.getY();
+            double dz = player.getZ() - ritual.center.getZ();
+            if (dx * dx + dy * dy + dz * dz > radius * radius) {
+                continue;
+            }
+
+            WitcheryPlayerData data = WitcheryAttachments.get(player);
+            if (data.getInfusionType() == InfusionType.NONE || data.getInfusionMaxEnergy() <= 0) {
+                continue;
+            }
+
+            int currentEnergy = data.getInfusionEnergy();
+            int maxEnergy = data.getInfusionMaxEnergy();
+            if (currentEnergy >= maxEnergy) {
+                continue;
+            }
+
+            data.setInfusionEnergy(Math.min(currentEnergy + 10, maxEnergy), maxEnergy);
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+            level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_PLING.value(),
+                    SoundSource.PLAYERS, 0.5f, 0.4f / (level.random.nextFloat() * 0.4f + 0.8f));
+            level.sendParticles(ParticleTypes.ENCHANT,
+                    player.getX(), player.getY() + 0.5, player.getZ(),
+                    8, 1.0, 2.0, 1.0, 0.0);
+        }
+        return true;
     }
 
     private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {

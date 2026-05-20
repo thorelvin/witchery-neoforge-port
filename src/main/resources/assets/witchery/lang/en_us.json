@@ -384,6 +384,8 @@
   "witchery.ritual.infusion.overworld.success": "The world breathes through you.",
   "witchery.ritual.infusion.otherwhere.success": "The void resonates within you.",
   "witchery.ritual.infusion.infernal.success": "Darkness coils around your soul.",
+  "witchery.ritual.infusion_recharge.success": "The circle begins to hum with renewing power.",
+  "witchery.ritual.infusion_recharge.no_power": "A nearby altar lacks the power to awaken the charging rite.",
   "witchery.infusion.light.tooltip": "Infused with light. Grants illumination and daytime resilience.",
   "witchery.infusion.overworld.tooltip": "Infused with nature. Hastens growth and sharpens the senses.",
   "witchery.infusion.otherwhere.tooltip": "Infused with the void. Grants slow fall and heightened agility.",

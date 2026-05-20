@@ -50,6 +50,7 @@ Current state:
 - Sky's Wrath now routes from the original small ritual circle again instead of the wrong medium ring.
 - The non-original redstone Charging buff fallback is gone again, and the real paired-circle `chargestone` path now exists again: a plain Attuned Stone on the medium ritual ring with its inner small ritual companion plus 2000 altar power now spits out a Charged Attuned Stone instead of falling through to the portable-barrier placeholder.
 - The original infusion charge state is back too: successful infusion rites now seed `200/200` current/max energy again, that charge data persists in player saves, syncs to the client, and shows up in `/witchery status` instead of leaving infused players with no meter at all.
+- The old `infusionrecharge` half is back too: a `Potion of Regeneration` on the medium ritual ring with its inner small ritual companion and 4000 altar power now raises the original indefinite charging field again, pulsing 10 infusion energy per second into infused players standing inside the circle while draining 40 altar power per second.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
@@ -58,7 +59,7 @@ Current state:
 
 Remaining gap:
 - The original tile-entity ritual queue, upkeep lifecycle, and abort/refund behavior are only partially restored.
-- The old `infusionrecharge` half of the family is still genuinely missing, but it is no longer blocked on absent player charge state: the port now has the original infusion-energy meter foundation again, so the remaining work is restoring the paired-circle sustained recharge rite itself.
+- The Charging family is functionally back now, but it still runs through the port's simplified active-ritual queue and refund/upkeep handling rather than the full original tile-entity rite registry.
 - See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
 Files:
