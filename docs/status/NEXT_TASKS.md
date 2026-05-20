@@ -19,7 +19,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `witches_oven` | GUI wrong; faces left when placed | Medium |
 | `crystal_ball` | Must be transparent (currently solid pink-black or wrong) | Small |
 | `coffin` | Shows only one side in inventory | Medium |
-| `alluring_skull` | Wrong 3D model / UV wrap | Medium |
+| `alluring_skull` | Dedicated animated skull-head render still approximated through static block models | Low |
 | `demon_heart` | Wrong 3D model / UV wrap | Medium |
 | `dream_catcher` | Places on wrong surface (left side instead of face clicked) | Small |
 | `kettle` | Missing 3D rope/string model detail | Small |

@@ -1,12 +1,14 @@
 {
   "variants": {
-    "facing=north,on=false": { "model": "witchery:block/alluring_skull" },
-    "facing=east,on=false": { "model": "witchery:block/alluring_skull", "y": 90 },
-    "facing=south,on=false": { "model": "witchery:block/alluring_skull", "y": 180 },
-    "facing=west,on=false": { "model": "witchery:block/alluring_skull", "y": 270 },
-    "facing=north,on=true": { "model": "witchery:block/alluring_skull_on" },
-    "facing=east,on=true": { "model": "witchery:block/alluring_skull_on", "y": 90 },
-    "facing=south,on=true": { "model": "witchery:block/alluring_skull_on", "y": 180 },
-    "facing=west,on=true": { "model": "witchery:block/alluring_skull_on", "y": 270 }
+    "facing=up,on=false": { "model": "witchery:block/alluring_skull" },
+    "facing=up,on=true": { "model": "witchery:block/alluring_skull_on" },
+    "facing=north,on=false": { "model": "witchery:block/alluring_skull_wall" },
+    "facing=east,on=false": { "model": "witchery:block/alluring_skull_wall", "y": 90 },
+    "facing=south,on=false": { "model": "witchery:block/alluring_skull_wall", "y": 180 },
+    "facing=west,on=false": { "model": "witchery:block/alluring_skull_wall", "y": 270 },
+    "facing=north,on=true": { "model": "witchery:block/alluring_skull_wall_on" },
+    "facing=east,on=true": { "model": "witchery:block/alluring_skull_wall_on", "y": 90 },
+    "facing=south,on=true": { "model": "witchery:block/alluring_skull_wall_on", "y": 180 },
+    "facing=west,on=true": { "model": "witchery:block/alluring_skull_wall_on", "y": 270 }
   }
 }

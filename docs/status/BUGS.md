@@ -662,7 +662,7 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 - `crystal_ball` - must be transparent
 - `coffin` - placed two-block render is back on split head/bottom textures, and item/inventory presentation now uses the same split 3D geometry through a dedicated special renderer; remaining work is final in-game pose/scale polish only
 - Witchery spawn eggs no longer point at the missing `minecraft:item/template_spawn_egg` path used by older versions. They now render again through a stable local fallback egg texture/model chain on 1.21.11; exact per-egg colour art parity is still a later polish pass.
-- `alluring_skull`, `demon_heart` - stateful block behavior is back closer to original, but the deeper animated and wall-mount art pass is still open
+- `alluring_skull`, `demon_heart` - stateful block behavior is back closer to original; `alluring_skull` also supports floor and wall mounting again, but the deeper animated head/heart art pass is still open
 - `poppet_shelf` - server/storage mechanics are back and top-shelf poppet rendering is restored; the item now uses a special renderer, but final in-game spacing/presentation still needs verification
 - `distillery`, `spinning_wheel`, `fume_funnel`, `brazier`, `candelabra` - item rendering now runs through dedicated special-model renderers; final in-game silhouette verification is still open
 - `leech_chest`, `refilling_chest` - chest item/block rendering is much closer to stable now, but final in-game verification is still open

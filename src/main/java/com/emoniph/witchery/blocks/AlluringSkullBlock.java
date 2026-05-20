@@ -36,9 +36,13 @@ import org.jetbrains.annotations.Nullable;
 public class AlluringSkullBlock extends BaseEntityBlock {
 
     public static final MapCodec<AlluringSkullBlock> CODEC = simpleCodec(AlluringSkullBlock::new);
-    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty ON = BooleanProperty.create("on");
-    private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 3.0, 12.0, 10.0, 12.0);
+    private static final VoxelShape FLOOR_SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 8.0, 12.0);
+    private static final VoxelShape NORTH_SHAPE = Block.box(4.0, 4.0, 8.0, 12.0, 12.0, 16.0);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(4.0, 4.0, 0.0, 12.0, 12.0, 8.0);
+    private static final VoxelShape WEST_SHAPE = Block.box(8.0, 4.0, 4.0, 16.0, 12.0, 12.0);
+    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 4.0, 4.0, 8.0, 12.0, 12.0);
 
     public AlluringSkullBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -59,12 +63,21 @@ public class AlluringSkullBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        Direction clickedFace = context.getClickedFace();
+        Direction facing = clickedFace == Direction.DOWN ? Direction.UP : clickedFace;
+        BlockState state = defaultBlockState().setValue(FACING, facing);
+        if (state.canSurvive(context.getLevel(), context.getClickedPos())) {
+            return state;
+        }
+        BlockState floorState = defaultBlockState().setValue(FACING, Direction.UP);
+        return floorState.canSurvive(context.getLevel(), context.getClickedPos()) ? floorState : null;
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !level.getBlockState(pos.below()).isAir();
+        Direction facing = state.getValue(FACING);
+        BlockPos supportPos = facing == Direction.UP ? pos.below() : pos.relative(facing.getOpposite());
+        return Block.canSupportCenter(level, supportPos, facing == Direction.UP ? Direction.UP : facing);
     }
 
     @Override
@@ -79,7 +92,13 @@ public class AlluringSkullBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return switch (state.getValue(FACING)) {
+            case NORTH -> NORTH_SHAPE;
+            case SOUTH -> SOUTH_SHAPE;
+            case WEST -> WEST_SHAPE;
+            case EAST -> EAST_SHAPE;
+            default -> FLOOR_SHAPE;
+        };
     }
 
     @Override
