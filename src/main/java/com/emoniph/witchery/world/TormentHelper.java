@@ -23,10 +23,15 @@ public final class TormentHelper {
     public static final int NUM_LEVELS   = 6;
     public static final int BASE_LEVEL   = 10;
     public static final int LEVEL_HEIGHT = 15;
+    public static final int MAZE_SIZE    = 31;
     public static final int ENTRY_X      = 8;
     public static final int ENTRY_Z      = 8;
     public static final int BOSS_X       = 9;
     public static final int BOSS_Z       = 36;
+    public static final int ORIGIN_X     = ENTRY_X - MAZE_SIZE;
+    public static final int ORIGIN_Z     = ENTRY_Z - 2;
+    public static final int PORTAL_X     = ORIGIN_X + MAZE_SIZE;
+    public static final int PORTAL_Z     = ORIGIN_Z + MAZE_SIZE * 2;
 
     private TormentHelper() {}
 
@@ -44,6 +49,14 @@ public final class TormentHelper {
 
     public static BlockPos getBossPos(int level) {
         return new BlockPos(BOSS_X, getStandingY(level), BOSS_Z);
+    }
+
+    public static BlockPos getPortalLowerPos(int level) {
+        return new BlockPos(PORTAL_X, getStandingY(level), PORTAL_Z);
+    }
+
+    public static BlockPos getPortalUpperPos(int level) {
+        return getPortalLowerPos(level).above();
     }
 
     public static void sendToTorment(ServerPlayer player, int level) {

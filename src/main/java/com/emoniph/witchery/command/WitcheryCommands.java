@@ -1,8 +1,11 @@
 package com.emoniph.witchery.command;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -19,6 +22,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
@@ -27,6 +31,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -37,6 +43,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -168,6 +175,10 @@ public class WitcheryCommands {
                         .then(Commands.argument("level", IntegerArgumentType.integer(0, 5))
                                 .executes(ctx -> tormentLevel(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "level")))))
+
+                .then(Commands.literal("verify")
+                        .then(Commands.literal("torment")
+                                .executes(ctx -> verifyTorment(ctx.getSource()))))
 
                 .then(Commands.literal("give")
                         .then(Commands.literal("primer")
@@ -567,6 +578,237 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal(
                 "Teleported to Torment maze level " + lvl + " (Y=" + TormentHelper.getStandingY(level) + ")."), false);
         return 1;
+    }
+
+    /** Server-side Torment audit for fresh/deleted dimension chunks. */
+    private static int verifyTorment(CommandSourceStack src) {
+        ServerLevel torment = src.getServer().getLevel(WitcheryDimensions.TORMENT);
+        if (torment == null) {
+            src.sendFailure(Component.literal("Torment dimension is not loaded."));
+            return 0;
+        }
+
+        loadTormentFootprintChunks(torment);
+
+        java.util.List<String> failures = new java.util.ArrayList<>();
+        verifyTormentDimensionSettings(torment, failures);
+        for (int level = 0; level < TormentHelper.NUM_LEVELS; level++) {
+            verifyTormentLevel(torment, level, failures);
+        }
+
+        if (failures.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "Torment verification passed for all 6 levels: legacy Force/Bedrock maze, portal chamber, 3 chest rooms, and red navigable atmosphere look correct."),
+                    false);
+            return 1;
+        }
+
+        src.sendFailure(Component.literal("Torment verification failed with " + failures.size() + " mismatch(es)."));
+        for (String failure : failures) {
+            src.sendFailure(Component.literal(" - " + failure));
+        }
+        return 0;
+    }
+
+    private static void loadTormentFootprintChunks(ServerLevel torment) {
+        int minChunkX = Math.floorDiv(TormentHelper.ORIGIN_X, 16);
+        int maxChunkX = Math.floorDiv(TormentHelper.PORTAL_X + 3, 16);
+        int minChunkZ = Math.floorDiv(TormentHelper.ORIGIN_Z, 16);
+        int maxChunkZ = Math.floorDiv(TormentHelper.PORTAL_Z + 7, 16);
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                torment.getChunk(chunkX, chunkZ);
+            }
+        }
+    }
+
+    private static void verifyTormentDimensionSettings(ServerLevel torment, java.util.List<String> failures) {
+        var type = torment.dimensionType();
+        if (!type.hasSkyLight()) {
+            failures.add("Torment dimension type lost skylight.");
+        }
+        if (type.hasCeiling()) {
+            failures.add("Torment dimension type unexpectedly has a ceiling.");
+        }
+        if (!type.hasFixedTime()) {
+            failures.add("Torment dimension type lost its fixed time.");
+        }
+        if (Math.abs(type.ambientLight() - 0.15F) > 0.0001F) {
+            failures.add("Torment ambient light should be 0.15 but was " + type.ambientLight() + ".");
+        }
+
+        JsonObject dimensionJson = readTormentDataJson(torment, "dimension_type/torment.json", failures);
+        if (dimensionJson != null) {
+            if (!dimensionJson.has("fixed_time") || dimensionJson.get("fixed_time").getAsLong() != 6000L) {
+                failures.add("Torment dimension JSON fixed_time should stay 6000.");
+            }
+            if (!dimensionJson.has("effects") || !"minecraft:overworld".equals(dimensionJson.get("effects").getAsString())) {
+                failures.add("Torment dimension JSON effects should stay minecraft:overworld.");
+            }
+        }
+
+        JsonObject biomeJson = readTormentDataJson(torment, "worldgen/biome/torment.json", failures);
+        if (biomeJson != null) {
+            JsonObject effectsJson = biomeJson.getAsJsonObject("effects");
+            if (effectsJson == null) {
+                failures.add("Torment biome JSON is missing its effects object.");
+            } else {
+                if (!effectsJson.has("fog_color") || effectsJson.get("fog_color").getAsInt() != 10498610) {
+                    failures.add("Torment biome JSON fog_color should stay 10498610.");
+                }
+                if (!effectsJson.has("sky_color") || effectsJson.get("sky_color").getAsInt() != 13127760) {
+                    failures.add("Torment biome JSON sky_color should stay 13127760.");
+                }
+            }
+        }
+    }
+
+    private static void verifyTormentLevel(ServerLevel torment, int level, java.util.List<String> failures) {
+        int mazeY = TormentHelper.getMazeY(level);
+        int standingY = TormentHelper.getStandingY(level);
+        BlockPos entryPos = TormentHelper.getEntryPos(level);
+        BlockPos portalLower = TormentHelper.getPortalLowerPos(level);
+        long seed = torment.getSeed();
+
+        verifyStateAt(torment, new BlockPos(TormentHelper.ORIGIN_X, mazeY, TormentHelper.ORIGIN_Z),
+                state -> state.is(WitcheryBlocks.FORCE.get()),
+                "Level " + level + " must keep Force walls on the outer maze border.", failures);
+        verifyStateAt(torment, new BlockPos(TormentHelper.ORIGIN_X, mazeY + 5, TormentHelper.ORIGIN_Z),
+                state -> state.is(WitcheryBlocks.FORCE.get()),
+                "Level " + level + " must keep Force ceilings on the outer maze border.", failures);
+
+        var sampleForce = torment.getBlockState(new BlockPos(TormentHelper.ORIGIN_X, mazeY + 5, TormentHelper.ORIGIN_Z));
+        if (sampleForce.is(WitcheryBlocks.FORCE.get())) {
+            if (sampleForce.getRenderShape() != RenderShape.INVISIBLE) {
+                failures.add("Level " + level + " Force ceiling is no longer invisible.");
+            }
+            if (sampleForce.getLightBlock() != 0) {
+                failures.add("Level " + level + " Force ceiling no longer has light block 0.");
+            }
+            if (!sampleForce.propagatesSkylightDown()) {
+                failures.add("Level " + level + " Force ceiling no longer propagates skylight.");
+            }
+        }
+
+        verifyStateAt(torment, entryPos.below(),
+                state -> state.is(Blocks.BEDROCK),
+                "Level " + level + " entry foundation must be Bedrock.", failures);
+        verifyStateAt(torment, new BlockPos(entryPos.getX(), mazeY, entryPos.getZ()),
+                state -> state.is(Blocks.BEDROCK) || state.is(Blocks.MYCELIUM),
+                "Level " + level + " entry floor must be Bedrock or rare Mycelium.", failures);
+        verifyStateAt(torment, entryPos,
+                net.minecraft.world.level.block.state.BlockState::isAir,
+                "Level " + level + " entry standing space must stay open.", failures);
+        verifyStateAt(torment, entryPos.above(),
+                net.minecraft.world.level.block.state.BlockState::isAir,
+                "Level " + level + " entry headroom must stay open.", failures);
+        verifyStateAt(torment, new BlockPos(entryPos.getX(), standingY + 4, entryPos.getZ()),
+                state -> state.is(WitcheryBlocks.FORCE.get()),
+                "Level " + level + " entry lane must keep a Force ceiling.", failures);
+
+        verifyStateAt(torment, portalLower,
+                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get()),
+                "Level " + level + " portal lower block is missing from the old chamber.", failures);
+        verifyStateAt(torment, portalLower.above(),
+                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get()),
+                "Level " + level + " portal upper block is missing from the old chamber.", failures);
+        verifyStateAt(torment, portalLower.above(2),
+                state -> state.is(Blocks.BEDROCK),
+                "Level " + level + " portal top frame must be Bedrock.", failures);
+        verifyStateAt(torment, portalLower.west(),
+                state -> state.is(Blocks.BEDROCK),
+                "Level " + level + " portal west frame must be Bedrock.", failures);
+        verifyStateAt(torment, portalLower.east(),
+                state -> state.is(Blocks.BEDROCK),
+                "Level " + level + " portal east frame must be Bedrock.", failures);
+        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X, standingY, TormentHelper.PORTAL_Z - 3),
+                net.minecraft.world.level.block.state.BlockState::isAir,
+                "Level " + level + " portal chamber should stay open three blocks before the portal.", failures);
+        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X - 3, standingY, TormentHelper.PORTAL_Z - 5),
+                net.minecraft.world.level.block.state.BlockState::isAir,
+                "Level " + level + " portal chamber west side should stay open.", failures);
+        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X + 3, standingY, TormentHelper.PORTAL_Z - 5),
+                net.minecraft.world.level.block.state.BlockState::isAir,
+                "Level " + level + " portal chamber east side should stay open.", failures);
+
+        int totalChestCount = 0;
+        int tormentStoneCount = 0;
+        for (int x = TormentHelper.ORIGIN_X; x <= TormentHelper.PORTAL_X + 3; x++) {
+            for (int z = TormentHelper.ORIGIN_Z; z <= TormentHelper.PORTAL_Z + 7; z++) {
+                for (int y = mazeY - 1; y <= mazeY + 5; y++) {
+                    if (torment.getBlockState(new BlockPos(x, y, z)).is(WitcheryBlocks.TORMENT_STONE.get())) {
+                        tormentStoneCount++;
+                    }
+                }
+
+                if (torment.getBlockState(new BlockPos(x, mazeY, z)).is(WitcheryBlocks.REFILLING_CHEST.get())) {
+                    totalChestCount++;
+                }
+            }
+        }
+
+        verifyStateAt(torment, getTormentLeftChestPos(seed, level),
+                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
+                "Level " + level + " left chest room lost its Refilling Chest.", failures);
+        verifyStateAt(torment, getTormentCenterChestPos(level),
+                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
+                "Level " + level + " center chest room lost its Refilling Chest.", failures);
+        verifyStateAt(torment, getTormentRightChestPos(seed, level),
+                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
+                "Level " + level + " right chest room lost its Refilling Chest.", failures);
+
+        if (tormentStoneCount > 0) {
+            failures.add("Level " + level + " still contains " + tormentStoneCount + " Torment Stone block(s) inside the legacy maze footprint.");
+        }
+        if (totalChestCount != 3) {
+            failures.add("Level " + level + " should have exactly 3 floor-level Refilling Chests, but found " + totalChestCount + ".");
+        }
+    }
+
+    private static void verifyStateAt(ServerLevel level, net.minecraft.core.BlockPos pos,
+                                      java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> predicate,
+                                      String message, java.util.List<String> failures) {
+        if (!predicate.test(level.getBlockState(pos))) {
+            failures.add(message + " Found " + BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock()) + " at " + pos + ".");
+        }
+    }
+
+    private static JsonObject readTormentDataJson(ServerLevel torment, String path, java.util.List<String> failures) {
+        var resourceId = Identifier.fromNamespaceAndPath("witchery", path);
+        var resource = torment.getServer().getResourceManager().getResource(resourceId).orElse(null);
+        if (resource == null) {
+            failures.add("Missing Torment data resource " + resourceId + ".");
+            return null;
+        }
+
+        try (var reader = resource.openAsReader()) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (IOException | IllegalStateException ex) {
+            failures.add("Could not read Torment data resource " + resourceId + ": " + ex.getMessage());
+            return null;
+        }
+    }
+
+    private static BlockPos getTormentLeftChestPos(long seed, int level) {
+        return new BlockPos(TormentHelper.ORIGIN_X + 3, TormentHelper.getMazeY(level),
+                TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE + chestShift(seed, level, 0));
+    }
+
+    private static BlockPos getTormentCenterChestPos(int level) {
+        return new BlockPos(TormentHelper.ENTRY_X, TormentHelper.getMazeY(level), TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE);
+    }
+
+    private static BlockPos getTormentRightChestPos(long seed, int level) {
+        return new BlockPos(TormentHelper.ORIGIN_X + TormentHelper.MAZE_SIZE * 2 - 3, TormentHelper.getMazeY(level),
+                TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE + chestShift(seed, level, 1));
+    }
+
+    private static int chestShift(long seed, int level, int index) {
+        long h = seed ^ ((long) level * 0x632be59bd9b4e019L) ^ ((long) index * 0x85157af5L);
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        return (int) Math.floorMod(h, 11L) - 5;
     }
 
     /** Give a witchery item by registry path name. */
