@@ -3,12 +3,15 @@ package com.emoniph.witchery.blocks;
 import com.emoniph.witchery.blocks.entity.ChaliceBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -20,14 +23,18 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.InteractionResult;
 
+import java.util.List;
+
 public class ChaliceBlock extends BaseEntityBlock {
 
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
+    private static final String FILLED_TAG = "Filled";
 
     public static final MapCodec<ChaliceBlock> CODEC = simpleCodec(ChaliceBlock::new);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
@@ -44,7 +51,7 @@ public class ChaliceBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = defaultBlockState();
+        BlockState state = defaultBlockState().setValue(FILLED, isFilledItem(context.getItemInHand()));
         return state.canSurvive(context.getLevel(), context.getClickedPos()) ? state : null;
     }
 
@@ -112,5 +119,28 @@ public class ChaliceBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new ChaliceBlockEntity(pos, state); }
 
     @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        return createStackForState(state);
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        return List.of(createStackForState(state));
+    }
+
+    @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+
+    private ItemStack createStackForState(BlockState state) {
+        ItemStack stack = new ItemStack(asItem());
+        if (state.getValue(FILLED)) {
+            CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean(FILLED_TAG, true));
+        }
+        return stack;
+    }
+
+    private static boolean isFilledItem(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.getBooleanOr(FILLED_TAG, false);
+    }
 }
