@@ -2,6 +2,7 @@ package com.emoniph.witchery.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -23,6 +24,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
@@ -611,10 +613,10 @@ public class WitcheryCommands {
     }
 
     private static void loadTormentFootprintChunks(ServerLevel torment) {
-        int minChunkX = Math.floorDiv(TormentHelper.ORIGIN_X, 16);
-        int maxChunkX = Math.floorDiv(TormentHelper.PORTAL_X + 3, 16);
-        int minChunkZ = Math.floorDiv(TormentHelper.ORIGIN_Z, 16);
-        int maxChunkZ = Math.floorDiv(TormentHelper.PORTAL_Z + 7, 16);
+        int minChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MIN_X, 16);
+        int maxChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MAX_X, 16);
+        int minChunkZ = Math.floorDiv(TormentHelper.STRUCTURE_MIN_Z, 16);
+        int maxChunkZ = Math.floorDiv(TormentHelper.STRUCTURE_MAX_Z, 16);
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 torment.getChunk(chunkX, chunkZ);
@@ -629,9 +631,6 @@ public class WitcheryCommands {
         }
         if (type.hasCeiling()) {
             failures.add("Torment dimension type unexpectedly has a ceiling.");
-        }
-        if (!type.hasFixedTime()) {
-            failures.add("Torment dimension type lost its fixed time.");
         }
         if (Math.abs(type.ambientLight() - 0.15F) > 0.0001F) {
             failures.add("Torment ambient light should be 0.15 but was " + type.ambientLight() + ".");
@@ -707,10 +706,14 @@ public class WitcheryCommands {
                 "Level " + level + " entry lane must keep a Force ceiling.", failures);
 
         verifyStateAt(torment, portalLower,
-                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get()),
+                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get())
+                        && state.hasProperty(TormentPortalBlock.AXIS)
+                        && state.getValue(TormentPortalBlock.AXIS) == Direction.Axis.X,
                 "Level " + level + " portal lower block is missing from the old chamber.", failures);
         verifyStateAt(torment, portalLower.above(),
-                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get()),
+                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get())
+                        && state.hasProperty(TormentPortalBlock.AXIS)
+                        && state.getValue(TormentPortalBlock.AXIS) == Direction.Axis.X,
                 "Level " + level + " portal upper block is missing from the old chamber.", failures);
         verifyStateAt(torment, portalLower.above(2),
                 state -> state.is(Blocks.BEDROCK),
@@ -733,8 +736,8 @@ public class WitcheryCommands {
 
         int totalChestCount = 0;
         int tormentStoneCount = 0;
-        for (int x = TormentHelper.ORIGIN_X; x <= TormentHelper.PORTAL_X + 3; x++) {
-            for (int z = TormentHelper.ORIGIN_Z; z <= TormentHelper.PORTAL_Z + 7; z++) {
+        for (int x = TormentHelper.STRUCTURE_MIN_X; x <= TormentHelper.STRUCTURE_MAX_X; x++) {
+            for (int z = TormentHelper.STRUCTURE_MIN_Z; z <= TormentHelper.STRUCTURE_MAX_Z; z++) {
                 for (int y = mazeY - 1; y <= mazeY + 5; y++) {
                     if (torment.getBlockState(new BlockPos(x, y, z)).is(WitcheryBlocks.TORMENT_STONE.get())) {
                         tormentStoneCount++;

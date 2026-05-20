@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "witchery:block/torment_portal" }
+    "axis=x": { "model": "witchery:block/torment_portal_ns" },
+    "axis=z": { "model": "witchery:block/torment_portal_ew" }
   }
 }

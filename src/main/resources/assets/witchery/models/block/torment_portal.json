@@ -1,1 +1,3 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "witchery:block/tears_still" } }
+{
+  "parent": "witchery:block/torment_portal_ns"
+}

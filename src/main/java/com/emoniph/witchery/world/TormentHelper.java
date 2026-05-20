@@ -32,6 +32,10 @@ public final class TormentHelper {
     public static final int ORIGIN_Z     = ENTRY_Z - 2;
     public static final int PORTAL_X     = ORIGIN_X + MAZE_SIZE;
     public static final int PORTAL_Z     = ORIGIN_Z + MAZE_SIZE * 2;
+    public static final int STRUCTURE_MIN_X = ORIGIN_X;
+    public static final int STRUCTURE_MAX_X = ORIGIN_X + MAZE_SIZE * 2;
+    public static final int STRUCTURE_MIN_Z = ORIGIN_Z;
+    public static final int STRUCTURE_MAX_Z = ORIGIN_Z + MAZE_SIZE * 2 + 7;
 
     private TormentHelper() {}
 

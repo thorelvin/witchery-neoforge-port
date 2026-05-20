@@ -1,9 +1,11 @@
 package com.emoniph.witchery.world;
 
+import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
@@ -49,19 +51,18 @@ public class TormentChunkGenerator extends ChunkGenerator {
                     BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource)
             ).apply(inst, TormentChunkGenerator::new));
 
-    public static final int NUM_LEVELS   = 6;
-    public static final int BASE_LEVEL   = 10;
-    public static final int LEVEL_HEIGHT = 15;
-    public static final int MAZE_SIZE    = 31;
+    public static final int NUM_LEVELS   = TormentHelper.NUM_LEVELS;
+    public static final int BASE_LEVEL   = TormentHelper.BASE_LEVEL;
+    public static final int LEVEL_HEIGHT = TormentHelper.LEVEL_HEIGHT;
+    public static final int MAZE_SIZE    = TormentHelper.MAZE_SIZE;
 
     private static final int WALL_HEIGHT = 6;
-    private static final int ORIGIN_X = 8 - MAZE_SIZE;
-    private static final int ORIGIN_Z = 8 - 2;
-    private static final int MAZE_MAX_LOCAL = MAZE_SIZE * 2;
-    private static final int STRUCTURE_MIN_X = ORIGIN_X;
-    private static final int STRUCTURE_MAX_X = ORIGIN_X + MAZE_MAX_LOCAL;
-    private static final int STRUCTURE_MIN_Z = ORIGIN_Z;
-    private static final int STRUCTURE_MAX_Z = ORIGIN_Z + MAZE_MAX_LOCAL + 7;
+    private static final int ORIGIN_X = TormentHelper.ORIGIN_X;
+    private static final int ORIGIN_Z = TormentHelper.ORIGIN_Z;
+    private static final int STRUCTURE_MIN_X = TormentHelper.STRUCTURE_MIN_X;
+    private static final int STRUCTURE_MAX_X = TormentHelper.STRUCTURE_MAX_X;
+    private static final int STRUCTURE_MIN_Z = TormentHelper.STRUCTURE_MIN_Z;
+    private static final int STRUCTURE_MAX_Z = TormentHelper.STRUCTURE_MAX_Z;
 
     // Old GenerateMaze direction encoding: N=1, S=2, E=4, W=8.
     private static final int N = 1, S = 2, E = 4, W = 8;
@@ -99,7 +100,8 @@ public class TormentChunkGenerator extends ChunkGenerator {
         int[][][] mazes = getMazes(seed);
         BlockState force = WitcheryBlocks.FORCE.get().defaultBlockState();
         BlockState floor = Blocks.BEDROCK.defaultBlockState();
-        BlockState portal = WitcheryBlocks.TORMENT_PORTAL.get().defaultBlockState();
+        BlockState portal = WitcheryBlocks.TORMENT_PORTAL.get().defaultBlockState()
+                .setValue(TormentPortalBlock.AXIS, Direction.Axis.X);
         BlockState chest = WitcheryBlocks.REFILLING_CHEST.get().defaultBlockState();
         BlockState mycelium = Blocks.MYCELIUM.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();

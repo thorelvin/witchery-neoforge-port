@@ -704,7 +704,7 @@ Old Witchery's `BlockForce` used light opacity `0`, rendered as a non-opaque cub
 Current state:
 - `ForceBlock` now restores the old light behavior by propagating skylight and returning light block `0`, while remaining solid/unbreakable for maze collision.
 - Torment now uses `has_skylight: true`, `fixed_time: 6000`, and `ambient_light: 0.15` so it remains ominous but navigable.
-- `/witchery verify torment` now loads the legacy Torment footprint and audits the Force ceiling/light behavior, Bedrock floor/frame, legacy portal chamber, exact per-level refilling chest positions, zero `Torment Stone` contamination, and the red sky/fog data settings before manual in-game inspection.
+- `/witchery verify torment` now loads the full legacy Torment footprint and audits the Force ceiling/light behavior, Bedrock floor/frame, legacy portal chamber, exact per-level refilling chest positions/count, zero `Torment Stone` contamination, and the red sky/fog data settings before manual in-game inspection.
 - Final in-game verification is still needed across all six stacked maze levels, especially lower floors where Bedrock floors and Force ceilings stack through the old maze footprint.
 
 ### 10. Torment maze blocks/layout used wrong port simplification - Fixed / verify
@@ -715,9 +715,10 @@ Current state:
 - `TormentChunkGenerator` now follows the legacy 31x31 DFS display footprint at x=-23/z=6 for all six stacked levels.
 - Floor and portal frame blocks use vanilla Bedrock again; walls and ceilings use invisible, solid, light-transparent Force blocks like old `BlockForce`.
 - Portal chamber and three old-style refilling chest rooms are restored per level, with chests placed at floor level.
+- `TormentPortalBlock` now renders as the old thin red portal plane again, keeps the fixed west/east-framed axis used by the legacy chamber, and restores the original ambient portal sound plus flame particles so the exit is readable in-world instead of looking like a placeholder cube.
 - The obsolete random `torment_chambers` structure-set path is gone, so fresh/deleted Torment chunks now rely on the restored legacy maze generator alone instead of mixing in the later standalone chamber structure.
 - `TormentHelper`, `/witchery torment`, `/witchery tormentlevel`, and the Lord of Torment half-health transfer now all enter the real maze start again, and the phase-2 Lord now respawns on the old fixed maze lane at half health instead of using arbitrary safe-spot scans.
-- `/witchery verify torment` gives a repeatable server-side audit for fresh/deleted Torment chunks before the remaining visual/manual QA pass.
+- `/witchery verify torment` gives a repeatable server-side audit for fresh/deleted Torment chunks before the remaining visual/manual QA pass, and its footprint scan now covers the full right-side chest room instead of undercounting those chests.
 - Existing saves still need the Torment dimension folder deleted, or a fresh world, before this visual/layout fix can be verified because old chunks will not regenerate automatically.
 
 ---
