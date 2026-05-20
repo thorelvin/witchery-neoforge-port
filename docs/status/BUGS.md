@@ -649,6 +649,15 @@ The guidebook flow is now closer to how a modern Witchery port should behave:
 Remaining gap:
 - This restores the practical book-open behavior, but it still needs an in-game verification pass with Patchouli actually present on the client/server pack.
 
+### 67. Alluring Skull was still too fragile - Fixed / verify
+
+The next active-block parity pass is now closer to original Witchery:
+- `Alluring Skull` already had its stateful on/off flow, low light output, floor/wall placement, floor rotation, and skull-head renderer back.
+- It now also restores the old very high blast resistance instead of behaving like an ordinary fragile decorative block under explosions.
+
+Remaining gap:
+- Final in-game verification is still open for scale/lighting feel, but the core block behavior is now closer to the original 1.7.10 skull.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
