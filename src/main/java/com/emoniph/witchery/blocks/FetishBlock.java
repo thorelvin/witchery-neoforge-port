@@ -1,6 +1,7 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.FetishBlockEntity;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.mojang.serialization.MapCodec;
@@ -46,7 +47,7 @@ public class FetishBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
     }
 
     @Override
@@ -65,7 +66,9 @@ public class FetishBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+    public RenderShape getRenderShape(BlockState state) {
+        return state.is(WitcheryBlocks.FETISH_WITCHS_LADDER.get()) ? RenderShape.MODEL : RenderShape.INVISIBLE;
+    }
 
     @Override
     @Nullable

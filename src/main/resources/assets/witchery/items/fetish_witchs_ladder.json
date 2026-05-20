@@ -1,9 +1,6 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "witchery:item/entity_machine_base",
-    "model": {
-      "type": "witchery:fetish_witchs_ladder"
-    }
+    "type": "minecraft:model",
+    "model": "witchery:item/fetish_witchs_ladder"
   }
 }

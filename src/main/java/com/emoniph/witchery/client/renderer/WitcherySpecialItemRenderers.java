@@ -9,6 +9,7 @@ import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.DreamCatcherModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
 import com.emoniph.witchery.client.model.FetishModel;
+import com.emoniph.witchery.client.model.FetishTrentModel;
 import com.emoniph.witchery.client.model.GrassperModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
@@ -489,12 +490,12 @@ public final class WitcherySpecialItemRenderers {
         }
     }
 
-    public record FetishSpecialRenderer(FetishModel model, Identifier texture) implements NoDataSpecialModelRenderer {
+    public record FetishSpecialRenderer(ModelPart root, Identifier texture) implements NoDataSpecialModelRenderer {
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
-            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(texture), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            collector.submitModelPart(root, poseStack, RenderTypes.entityCutout(texture), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
 
@@ -510,7 +511,7 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
             return new FetishSpecialRenderer(
-                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)).root(),
                     blockTexture("scarecrow"));
         }
 
@@ -526,7 +527,7 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
             return new FetishSpecialRenderer(
-                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    new FetishTrentModel(context.entityModelSet().bakeLayer(FetishTrentModel.LAYER_LOCATION)).root(),
                     blockTexture("trent"));
         }
 
@@ -542,7 +543,7 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
             return new FetishSpecialRenderer(
-                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)).root(),
                     blockTexture("witchsladder"));
         }
 

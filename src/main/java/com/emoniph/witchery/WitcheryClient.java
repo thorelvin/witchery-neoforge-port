@@ -51,6 +51,7 @@ public class WitcheryClient {
         Map.entry(SpinningWheelModel.LAYER_LOCATION,   SpinningWheelModel::createBodyLayer),
         Map.entry(LeechChestModel.LAYER_LOCATION,      LeechChestModel::createBodyLayer),
         Map.entry(FetishModel.LAYER_LOCATION,          FetishModel::createBodyLayer),
+        Map.entry(FetishTrentModel.LAYER_LOCATION,     FetishTrentModel::createBodyLayer),
         Map.entry(CoffinModel.HEAD_LAYER_LOCATION,     CoffinModel::createHeadLayer),
         Map.entry(CoffinModel.BOTTOM_LAYER_LOCATION,   CoffinModel::createBottomLayer),
         Map.entry(DemonHeartModel.LAYER_LOCATION,      DemonHeartModel::createBodyLayer),
