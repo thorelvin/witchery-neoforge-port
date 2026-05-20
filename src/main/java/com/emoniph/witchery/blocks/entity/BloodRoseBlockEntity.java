@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 public class BloodRoseBlockEntity extends BlockEntity {
@@ -46,15 +47,27 @@ public class BloodRoseBlockEntity extends BlockEntity {
         sync(true);
     }
 
-    public Optional<StoredPlayer> drainStoredPlayer() {
-        if (!hasStoredPlayer()) {
-            return Optional.empty();
+    public DrainResult drainStoredPlayerExcept(Player usingPlayer) {
+        if (level == null || level.isClientSide() || usingPlayer == null || !hasStoredPlayer()) {
+            return DrainResult.none();
         }
-        StoredPlayer result = new StoredPlayer(storedUuid, storedName);
-        storedUuid = null;
-        storedName = "";
-        sync(false);
-        return Optional.of(result);
+
+        UUID usingUuid = usingPlayer.getUUID();
+        String usingName = usingPlayer.getName().getString();
+        if (storedUuid.equals(usingUuid) || storedName.equalsIgnoreCase(usingName)) {
+            return DrainResult.onlyOwn();
+        }
+
+        ServerPlayer onlinePlayer = level.getServer() == null ? null : level.getServer().getPlayerList().getPlayer(storedUuid);
+        if (onlinePlayer != null && onlinePlayer.isAlive()) {
+            StoredPlayer result = new StoredPlayer(onlinePlayer.getUUID(), onlinePlayer.getName().getString());
+            storedUuid = null;
+            storedName = "";
+            sync(false);
+            return DrainResult.success(result);
+        }
+
+        return DrainResult.missingPlayers(List.of(storedName));
     }
 
     private void sync(boolean filled) {
@@ -108,4 +121,22 @@ public class BloodRoseBlockEntity extends BlockEntity {
     }
 
     public record StoredPlayer(UUID uuid, String name) {}
+
+    public record DrainResult(@Nullable StoredPlayer player, boolean onlyOwnTaglock, List<String> missingPlayers) {
+        public static DrainResult success(StoredPlayer player) {
+            return new DrainResult(player, false, List.of());
+        }
+
+        public static DrainResult onlyOwn() {
+            return new DrainResult(null, true, List.of());
+        }
+
+        public static DrainResult missingPlayers(List<String> names) {
+            return new DrainResult(null, false, List.copyOf(names));
+        }
+
+        public static DrainResult none() {
+            return new DrainResult(null, false, List.of());
+        }
+    }
 }

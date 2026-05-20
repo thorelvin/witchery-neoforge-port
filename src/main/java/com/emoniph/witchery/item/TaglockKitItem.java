@@ -77,16 +77,27 @@ public class TaglockKitItem extends Item {
                 return InteractionResult.PASS;
             }
 
-            Optional<BloodRoseBlockEntity.StoredPlayer> stored = be.drainStoredPlayer();
-            if (stored.isEmpty()) {
-                user.displayClientMessage(Component.translatable("witchery.taglock_kit.no_blood_rose_sample")
-                        .withStyle(ChatFormatting.RED), false);
+            BloodRoseBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
+            if (drainResult.player() != null) {
+                bindSingleTaglock(user, stack, drainResult.player().uuid(), drainResult.player().name());
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_rose",
+                        drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
                 return InteractionResult.CONSUME;
             }
 
-            bindSingleTaglock(user, stack, stored.get().uuid(), stored.get().name());
-            user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_rose",
-                    stored.get().name()).withStyle(ChatFormatting.GREEN), false);
+            if (drainResult.onlyOwnTaglock()) {
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.only_own_taglock")
+                        .withStyle(ChatFormatting.RED), false);
+                return InteractionResult.CONSUME;
+            }
+            if (!drainResult.missingPlayers().isEmpty()) {
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.player_not_logged_in",
+                        String.join(", ", drainResult.missingPlayers())).withStyle(ChatFormatting.RED), false);
+                return InteractionResult.CONSUME;
+            }
+
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.no_blood_rose_sample")
+                    .withStyle(ChatFormatting.RED), false);
             return InteractionResult.CONSUME;
         }
 

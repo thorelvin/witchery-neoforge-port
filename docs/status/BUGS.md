@@ -149,7 +149,7 @@ Witchery spawn eggs now use a local copy of the vanilla two-layer spawn-egg temp
 ### 13. Special plants were still mostly decorative placeholders - Fixed / verify
 
 The special-plant pass has now restored the missing gameplay hooks that mattered most for parity:
-- `Blood Rose` stores a fresh player sample again and lets `Taglock Kit` pull it later.
+- `Blood Rose` stores a fresh player sample again and lets `Taglock Kit` pull it later, while once more refusing to mint a taglock from your own stored sample or an offline player.
 - `Ember Moss` burns living entities again, gives the old low fire-moss light/ambience, spreads onto the legacy substrate set, and only drops itself when sheared.
 - `Glint Weed` emits the original full-strength light and flame ambience again, and now uses the old capped spreading behavior over legacy substrates instead of staying as a passive decorative block.
 - `Spanish Moss` grows as a fast vine instead of a dead decorative cross, no longer acts as a climbable ladder, and now restores the old high fire spread/flammability profile.
