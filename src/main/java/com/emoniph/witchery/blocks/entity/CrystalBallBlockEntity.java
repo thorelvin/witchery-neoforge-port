@@ -2,10 +2,12 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -52,6 +54,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel sl)) return false;
         if (cooldown > 0) {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.cooldown"), false);
+            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
             return false;
         }
 
@@ -59,10 +62,12 @@ public class CrystalBallBlockEntity extends BlockEntity {
         Optional<AltarBlockEntity> altar = findAltar(sl);
         if (altar.isEmpty()) {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
             return false;
         }
         if (!altar.get().consumePower(POWER_COST)) {
             player.displayClientMessage(Component.translatable("witchery.crystal_ball.insufficient_power"), false);
+            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
             return false;
         }
 
@@ -72,6 +77,12 @@ public class CrystalBallBlockEntity extends BlockEntity {
         // Generate and send prediction
         String prediction = getPrediction(player, sl);
         player.displayClientMessage(Component.literal("§5§o" + prediction), false);
+        sl.sendParticles(ParticleTypes.EXPLOSION,
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + 0.2,
+                worldPosition.getZ() + 0.5,
+                16, 0.2, 0.2, 0.2, 0.0);
+        sl.playSound(null, worldPosition, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.75f, 1.0f);
         return true;
     }
 
