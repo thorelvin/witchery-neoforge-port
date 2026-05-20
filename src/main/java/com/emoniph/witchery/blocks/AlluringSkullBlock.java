@@ -65,14 +65,24 @@ public class AlluringSkullBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction clickedFace = context.getClickedFace();
-        Direction facing = clickedFace == Direction.DOWN ? Direction.UP : clickedFace;
-        BlockState state = defaultBlockState().setValue(FACING, facing);
-        if (state.canSurvive(context.getLevel(), context.getClickedPos())) {
-            return state;
-        }
+        BlockPos pos = context.getClickedPos();
+        LevelReader level = context.getLevel();
         BlockState floorState = defaultBlockState().setValue(FACING, Direction.UP);
-        return floorState.canSurvive(context.getLevel(), context.getClickedPos()) ? floorState : null;
+
+        for (Direction direction : context.getNearestLookingDirections()) {
+            if (direction == Direction.UP) {
+                continue;
+            }
+
+            BlockState state = direction == Direction.DOWN
+                    ? floorState
+                    : defaultBlockState().setValue(FACING, direction.getOpposite());
+            if (state.canSurvive(level, pos) && level.isUnobstructed(state, pos, CollisionContext.empty())) {
+                return state;
+            }
+        }
+
+        return null;
     }
 
     @Override
