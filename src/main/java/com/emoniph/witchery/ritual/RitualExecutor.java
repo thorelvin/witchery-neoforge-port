@@ -182,6 +182,7 @@ public class RitualExecutor {
         private final int covenSize;
         private final float upkeepCost;
         private final ItemStack sacrificedIngredient;
+        private final List<ItemStack> supplementalSacrifices;
         private final List<BlockPos> path = new ArrayList<>();
         private final int heading;
         private int stage;
@@ -193,7 +194,7 @@ public class RitualExecutor {
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
                              int covenSize, float upkeepCost, int heading, long nextGameTime,
-                             ItemStack sacrificedIngredient) {
+                             ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices) {
             this.type = type;
             this.center = center.immutable();
             this.circleSize = circleSize;
@@ -206,6 +207,7 @@ public class RitualExecutor {
             this.heading = heading;
             this.nextGameTime = nextGameTime;
             this.sacrificedIngredient = sacrificedIngredient;
+            this.supplementalSacrifices = supplementalSacrifices;
         }
     }
 
@@ -1185,8 +1187,9 @@ public class RitualExecutor {
         int covenSize = countNearbyCovenWitches(level, center);
         int radius = 16 * (covenSize - 3);
         storeClimateChangePlan(sl.dimension(), center, scan.plan());
+        List<ItemStack> supplementalSacrifices = copyConsumedItemStacks(scan.itemsToConsume());
         if (!queueActiveRitual(sl, ActiveRitualType.CLIMATE_CHANGE, RitualCircleDetector.CircleSize.LARGE,
-                center, radius, 0, 5, 20, covenSize)) {
+                center, radius, 0, 5, 20, covenSize, 0.0f, 0, supplementalSacrifices)) {
             clearClimateChangePlan(sl.dimension(), center);
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
@@ -1248,6 +1251,20 @@ public class RitualExecutor {
         for (ItemEntity itemEntity : items) {
             consumeClimateChangeItem(level, itemEntity);
         }
+    }
+
+    private static List<ItemStack> copyConsumedItemStacks(List<ItemEntity> items) {
+        List<ItemStack> copies = new ArrayList<>(items.size());
+        for (ItemEntity itemEntity : items) {
+            if (itemEntity == null || !itemEntity.isAlive()) {
+                continue;
+            }
+            ItemStack stack = itemEntity.getItem();
+            if (!stack.isEmpty()) {
+                copies.add(stack.copy());
+            }
+        }
+        return List.copyOf(copies);
     }
 
     private static void consumeClimateChangeItem(ServerLevel level, ItemEntity itemEntity) {
@@ -2009,6 +2026,14 @@ public class RitualExecutor {
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                              BlockPos center, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading) {
+        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, List.of());
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading,
+                                             List<ItemStack> supplementalSacrifices) {
         List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
         boolean occupied = rituals.stream().anyMatch(active -> active.center.equals(center));
         if (occupied) {
@@ -2019,19 +2044,28 @@ public class RitualExecutor {
         rituals.add(new ActiveRitual(type, center, circleSize, minRadius, maxRadius, targetStage, pulseInterval,
                 covenSize, upkeepCost, heading,
                 level.getGameTime() + pulseInterval,
-                sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy()));
+                sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
+                List.copyOf(supplementalSacrifices)));
         return true;
     }
 
     private static void refundRitualIngredient(ServerLevel level, ActiveRitual ritual) {
-        if (ritual.sacrificedIngredient.isEmpty()) {
-            return;
+        if (!ritual.sacrificedIngredient.isEmpty()) {
+            spawnRefundItem(level, ritual.center, ritual.sacrificedIngredient);
         }
+        for (ItemStack supplemental : ritual.supplementalSacrifices) {
+            if (!supplemental.isEmpty()) {
+                spawnRefundItem(level, ritual.center, supplemental);
+            }
+        }
+    }
+
+    private static void spawnRefundItem(ServerLevel level, BlockPos center, ItemStack stack) {
         ItemEntity refund = new ItemEntity(level,
-                ritual.center.getX() + 0.5,
-                ritual.center.getY() + 1.0,
-                ritual.center.getZ() + 0.5,
-                ritual.sacrificedIngredient.copy());
+                center.getX() + 0.5,
+                center.getY() + 1.0,
+                center.getZ() + 0.5,
+                stack.copy());
         level.addFreshEntity(refund);
     }
 

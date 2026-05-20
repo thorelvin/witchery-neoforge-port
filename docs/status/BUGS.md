@@ -36,6 +36,7 @@ Current state:
 - Completely unknown offerings on a valid circle now play the original snare-style failure cue and report `Unknown rite.` again instead of failing silently.
 - Inventory taglocks on curse/transposition routes now survive the final dampening/poppet-protection abort checks instead of being consumed too early.
 - Climate Change no longer burns its dropped biome focus or glowstone when the rite fails at the final `already_active` queue gate.
+- Climate Change staged aborts now refund their consumed biome-focus items and glowstone support sacrifices too, instead of only refunding the main dropped trigger item.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
