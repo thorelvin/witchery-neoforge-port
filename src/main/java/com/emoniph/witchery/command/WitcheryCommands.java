@@ -968,7 +968,7 @@ public class WitcheryCommands {
 
     private static void clearSetupHouse(ServerLevel level, SetupHouseLayout layout) {
         clearBox(level,
-                layout.pos(-5, -SETUP_SHELL_DROP, -4),
+                layout.pos(-5, 0, -4),
                 layout.pos(SETUP_CLEAR_PAD_SIZE - 6, SETUP_CLEAR_HEIGHT, SETUP_CLEAR_PAD_SIZE - 5));
         clearBox(level,
                 layout.origin().below(SETUP_FOUNDATION_DEPTH + SETUP_SHELL_DROP),
@@ -1088,7 +1088,7 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupContents(ServerLevel level, SetupHouseLayout layout) {
-        placeAltarRig(level, layout.pos(1, 0, 8), layout.depth(), layout.width());
+        placeAltarRig(level, layout.pos(1, 0, 7), layout.depth(), layout.width());
         placeKettleRig(level, layout.pos(2, 0, 5), layout.frontFacing());
         placeMachine(level, layout.pos(1, 0, 4), Blocks.WATER_CAULDRON.defaultBlockState());
         placeMachine(level, layout.pos(4, 0, 3), Blocks.CRAFTING_TABLE.defaultBlockState());
