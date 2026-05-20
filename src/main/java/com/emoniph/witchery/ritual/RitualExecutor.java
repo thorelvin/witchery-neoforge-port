@@ -505,8 +505,6 @@ public class RitualExecutor {
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE));
-        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(item)) {
-            return matchedResult(riteOfTranspositionPull(player, level, center));
         } else if (item.is(Items.NETHER_STAR)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)

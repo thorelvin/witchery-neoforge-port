@@ -429,8 +429,8 @@ Remaining gap:
 
 The next ritual lifecycle pass is now closer to original Witchery:
 - `Rain of Toads` now routes from the medium-circle dispatcher into the staged coven weather rite again instead of incorrectly firing a non-original taglock curse path.
-- Taglock-based curse rites and `Transposition Pull` now validate that a filled taglock resolves to a real online target before consuming it, so invalid or offline targets no longer waste the taglock.
-- `Transposition Pull` now respects Witch Hunter black-magic dampening and Voodoo Protection poppets again, and the original `witchery.rite.blackmagicdampening` feedback text is restored.
+- Taglock-based curse rites and the remaining medium otherwhere taglock-transposition route now validate their filled taglock target before succeeding, so invalid or offline targets no longer waste the sacrifice.
+- The non-original large filled-taglock `Transposition Pull` fallback is gone again; the original teleportation family is back to the real small bound-waystone path plus the medium otherwhere `RiteTeleportEntity` path instead of keeping that false-positive large-circle branch alive.
 
 Remaining gap:
 - The ritual dispatcher is still a representative single-item shortcut for many rites, so more sacrifice-mapping cleanup is still needed even though this removes one of the larger false-role activations and one of the more obvious refund errors.
