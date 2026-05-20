@@ -31,11 +31,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class LeechChestBlock extends BaseEntityBlock {
     public static final MapCodec<LeechChestBlock> CODEC = simpleCodec(LeechChestBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final VoxelShape SHAPE = box(1.0, 0.0, 1.0, 15.0, 14.0, 15.0);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public LeechChestBlock(BlockBehaviour.Properties p) {
@@ -53,6 +56,16 @@ public class LeechChestBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {

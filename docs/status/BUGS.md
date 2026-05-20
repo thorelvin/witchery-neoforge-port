@@ -141,6 +141,7 @@ The first real storage-parity pass is now back in place:
 - `Leech Chest` once again refuses to open when the lid is blocked by a solid block or a sitting cat, matching the old chest-like access rules more closely.
 - `Leech Chest` once again exposes real chest-style comparator output and now refreshes that signal correctly as its contents change.
 - `Leech Chest` once again behaves like a trapped chest for redstone, outputting open-count signal strength while players are using it and notifying adjacent blocks when that state changes.
+- `Leech Chest` once again uses the original compact chest-sized outline/collision footprint instead of behaving like a hidden full cube.
 
 ### 16. Poppet Shelf only worked as a local chest - Fixed / verify
 
