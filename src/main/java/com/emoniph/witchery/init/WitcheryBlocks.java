@@ -119,7 +119,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<GlowGlobeBlock> GLOWGLOBE = BLOCKS.registerBlock("glowglobe",
             GlowGlobeBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
-                    .strength(0.0f).lightLevel(s -> 14).noOcclusion().noCollision());
+                    .strength(0.0f).lightLevel(s -> 14).noOcclusion().noCollision().noLootTable());
 
     // Machines / Multiblocks
     public static final DeferredBlock<KettleBlock>      KETTLE        = BLOCKS.registerBlock("kettle",         KettleBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());

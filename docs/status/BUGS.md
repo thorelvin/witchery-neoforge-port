@@ -109,7 +109,7 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Blood Rose` stores a fresh player sample again and lets `Taglock Kit` pull it later.
 - `Spanish Moss` grows as a fast vine instead of a dead decorative cross.
 - `Grassper` works as a one-item stash and renders its stored item again.
-- `Glowglobe` emits real light and ambience again.
+- `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.
 - `Bramble` and `Void Bramble` now behave as hazards again.
 
