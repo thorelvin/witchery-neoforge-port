@@ -157,7 +157,9 @@ public class WitcheryBlocks {
     public static final DeferredBlock<FetishBlock>      FETISH_TRENT_EFFIGY   = BLOCKS.registerBlock("fetish_trent_effigy",  FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_WITCHS_LADDER  = BLOCKS.registerBlock("fetish_witchs_ladder", FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<StatueGoddessBlock> STATUE_GODDESS      = BLOCKS.registerBlock("statue_goddess",       StatueGoddessBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
-    public static final DeferredBlock<Block>            WICKER_BUNDLE  = BLOCKS.registerSimpleBlock("wicker_bundle",   BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f).noOcclusion());
+    public static final DeferredBlock<WickerBundleBlock> WICKER_BUNDLE = BLOCKS.registerBlock("wicker_bundle",
+            WickerBundleBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f).noOcclusion());
     public static final DeferredBlock<PlacedItemBlock>  PLACED_ITEM    = BLOCKS.registerBlock("placed_item",   PlacedItemBlock::new,   BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = BLOCKS.registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f));
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = BLOCKS.registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());

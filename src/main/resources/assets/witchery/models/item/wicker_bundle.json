@@ -1,1 +1,3 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "witchery:block/wicker_block_plain_side" } }
+{
+  "parent": "witchery:block/wicker_bundle"
+}

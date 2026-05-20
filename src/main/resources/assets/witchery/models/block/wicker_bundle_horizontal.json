@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "textures": {
+    "end": "witchery:block/wicker_block_plain_top",
+    "side": "witchery:block/wicker_block_plain_side"
+  }
+}

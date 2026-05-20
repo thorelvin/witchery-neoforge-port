@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "witchery:block/wicker_bundle" }
+    "axis=x": { "model": "witchery:block/wicker_bundle_horizontal", "x": 90, "y": 90 },
+    "axis=y": { "model": "witchery:block/wicker_bundle" },
+    "axis=z": { "model": "witchery:block/wicker_bundle_horizontal", "x": 90 }
   }
 }

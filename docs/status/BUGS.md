@@ -138,6 +138,16 @@ The altar is now stricter and closer to original again:
 
 This still needs in-game verification for final orientation/art feel, but the remaining gap has moved away from basic altar mechanics and toward broader storage/ritual parity.
 
+### 14a. Wicker Bundle was still a flat/simple block - Fixed / verify
+
+The first Wicker Bundle parity pass is now in place:
+- The placed block is a rotated pillar again instead of a directionless simple cube.
+- Fire spread and flammability are back at the old `20/20` profile.
+- The inventory item now renders from the block model instead of the temporary flat generated side sprite.
+
+Remaining gap:
+- The original bloodied wicker bundle variant, wickerman shape detection, and Horned Huntsman summon path are still deferred because the current port does not yet register a bloodied wicker block/item or Horned Huntsman entity.
+
 ### 15. Leech Chest and Taglock Kit had lost their original storage flow - Fixed / verify
 
 The first real storage-parity pass is now back in place:
