@@ -462,7 +462,7 @@ Remaining gap:
 ### 40. Small-circle waystone/manifest routes were still off - Fixed / verify
 
 The next small-circle parity pass is now closer to original Witchery:
-- `Bind Waystone` now requires ritual chalk again instead of accepting any small ring, and it once more spits out a freshly bound waystone item at the ritual center itself instead of mutating an inventory stack or binding to the caster's current position.
+- `Bind Waystone` now requires ritual chalk again instead of accepting any small ring, and it once more consumes its original Ender Dew plus glowstone dust supports before spitting out a freshly bound waystone item at the ritual center itself instead of mutating an inventory stack or binding to the caster's current position.
 - `Bind Waystone Copy` is now reachable again from the dropped bound-waystone ritual route, and it once more consumes one extra offered unbound waystone plus its original Ender Dew and diamond supports to produce two bound waystones instead of firing the false Banish Demon branch.
 - `Manifestation` is now actually reachable again through the simplified dispatcher, mapped to `spectral_dust` on an otherwhere small circle instead of remaining implemented-but-dead.
 

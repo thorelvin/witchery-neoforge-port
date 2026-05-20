@@ -3824,6 +3824,15 @@ public class RitualExecutor {
 
     /** Rite of Binding — summons a freshly bound Waystone item at the ritual center. */
     private static boolean riteOfBindWaystone(Player player, Level level, BlockPos center) {
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> glowstone = findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
+        if (enderDew.isEmpty() || glowstone.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone.support"), false);
+            return false;
+        }
+
+        consumeOfferedItem(enderDew.get());
+        consumeOfferedItem(glowstone.get());
         ItemStack boundWaystone = new ItemStack(WitcheryItems.WAYSTONE.get());
         WaystoneItem.bindTo(boundWaystone, center, level.dimension());
         ItemEntity entity = new ItemEntity(level,
