@@ -268,6 +268,11 @@ public class RitualExecutor {
         return currentVariant == requiredVariant;
     }
 
+    private static boolean hasCompanionRing(Level level, BlockPos center, RitualCircleDetector.CircleSize size, int requiredVariant) {
+        return RitualCircleDetector.hasRing(level, center, size)
+                && RitualCircleDetector.detectVariant(level, center, size) == requiredVariant;
+    }
+
     private static boolean isGlyphicTransformationChalk(ItemStack stack) {
         return stack.is(WitcheryItems.CHALK.get())
                 || stack.is(WitcheryItems.CHALK_OTHERWHERE.get())
@@ -408,6 +413,10 @@ public class RitualExecutor {
         } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN) || item.is(Items.GLOWSTONE_DUST))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtection(player, level, center));
+        } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+            return matchedResult(riteOfEnchantBroom(player, level, center));
         } else if (item.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())) {
             riteOfInfernalPower(player, level, center);
             return successResult();
@@ -422,8 +431,6 @@ public class RitualExecutor {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
         } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseCreature(player, level, center));
-        } else if (item.is(Items.WITHER_SKELETON_SKULL) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfSummonWither(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlight(player, level, center);
             return successResult();
@@ -494,8 +501,6 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(Items.WET_SPONGE) || item.is(Items.SPONGE)) {
             return matchedResult(riteOfRain(player, level, center));
-        } else if (item.is(WitcheryItems.FLYING_OINTMENT.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfEnchantBroom(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfClimateChange(player, level, center));
         } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -504,6 +509,10 @@ public class RitualExecutor {
             return matchedResult(riteOfSummonDemon(player, level, center));
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
             return matchedResult(riteOfHellgate(player, level, center));
+        } else if (item.is(Items.WITHER_SKELETON_SKULL)
+                && hasVariant(circleVariant, VARIANT_INFERNAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
+            return matchedResult(riteOfSummonWither(player, level, center));
         } else if (item.is(Items.SKELETON_SKULL) || item.is(Items.WITHER_SKELETON_SKULL)) {
             riteOfBinding(player, level, center);
             return successResult();
@@ -1092,7 +1101,7 @@ public class RitualExecutor {
     }
 
     /** Rite of Manifestation — grants a Spirit World walker time to manifest in the Overworld as a ghost. */
-    /** Rite of Infusion (Flying Ointment) — enchants the nearest broom within 5 blocks. */
+    /** Rite of Infusion (Flying Ointment) — enchants the nearest broom from the medium ritual ring when the inner small ritual ring is also present. */
     private static boolean riteOfEnchantBroom(Player player, Level level, BlockPos center) {
         if (!requireNight(player, level, center)) {
             return false;
@@ -3495,7 +3504,7 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Summon Wither — summons a wither if the infernal circle is unobstructed. */
+    /** Rite of Summon Wither — summons a wither from the large infernal ring when the inner medium infernal ring is also present. */
     private static boolean riteOfSummonWither(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (hasSummonCircleObstruction(sl, center)) {

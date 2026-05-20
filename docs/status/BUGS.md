@@ -39,10 +39,12 @@ Current state:
 - Climate Change no longer burns its dropped biome focus or glowstone when the rite fails at the final `already_active` queue gate.
 - Climate Change staged aborts now refund their consumed biome-focus items and glowstone support sacrifices too, instead of only refunding the main dropped trigger item.
 - Broiling, Broken Earth, Moving Earth, Raise Column, Volcano, and Flying Ointment's broom infusion now require the original chalk family again instead of activating from any same-size circle.
+- Flying Ointment's broom infusion now also routes from the original medium ritual ring only when the inner small ritual ring is present again, instead of firing from a lone large ritual circle.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
+- `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -366,7 +368,7 @@ Remaining gap:
 
 The next ritual trait pass is now back in place:
 - `Rite of Total Eclipse` now requires daytime again before it will fire, matching the old `ONLY_AT_DAY` recipe trait instead of allowing free midnight shifts at any time.
-- The broom infusion rite triggered by `Flying Ointment` now requires nighttime again, matching the original enchanted-broom recipe instead of allowing daytime enchanting.
+- The broom infusion rite triggered by `Flying Ointment` now requires nighttime again and once more expects the original medium-plus-small ritual ring pair instead of activating from a lone large ritual circle.
 - These checks now fail early with the same snare/message style as the other restored ritual preconditions.
 
 Remaining gap:
@@ -514,10 +516,10 @@ The next missing-rite pass is now closer to original Witchery:
 Remaining gap:
 - This is still routed through one representative ingredient instead of the full original sacrifice set, and the larger summon-creature family still needs fuller parity work beyond the restored witch/imp/demon paths.
 
-### 47. Medium infernal wither summoning was missing entirely - Fixed / verify
+### 47. Paired infernal wither summoning was still collapsed onto the wrong single ring - Fixed / verify
 
 The next missing-rite pass is now closer to original Witchery:
-- `summonwither` is reachable again as a medium infernal rite through a representative `wither_skeleton_skull` route, instead of being absent from the modern dispatcher.
+- `summonwither` is still reachable through the representative `wither_skeleton_skull` route, but it now does so from the original large infernal circle and again expects the inner medium infernal companion ring instead of collapsing onto a lone medium infernal circle.
 - The restored route now spawns the Wither at the circle center and reuses the shared summoning-space obstruction check instead of blindly spawning inside blocked circles.
 
 Remaining gap:
