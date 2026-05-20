@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -37,6 +38,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
@@ -245,6 +247,11 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.ENDER_DRAGON_GROWL; }
     @Override protected SoundEvent getHurtSound(DamageSource source) { return SoundEvents.ZOMBIE_HORSE_HURT; }
     @Override protected SoundEvent getDeathSound() { return SoundEvents.WITHER_DEATH; }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+    }
 
     private void summonWolf(LivingEntity target) {
         if (!(level() instanceof ServerLevel serverLevel)) {
