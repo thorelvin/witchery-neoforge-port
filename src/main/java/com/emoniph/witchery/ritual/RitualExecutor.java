@@ -423,7 +423,7 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfChargeStone(player, level, center));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
                     RitualCircleDetector.CircleSize.MEDIUM, 6, 4));

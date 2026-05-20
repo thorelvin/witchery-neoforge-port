@@ -275,7 +275,7 @@ The Sanctity and Imprisonment rites are back much closer to old Witchery now:
 - Both now also queue from the original small ritual circle again instead of the wrong medium ring.
 
 Remaining gap:
-- The original mod split the full protection family across several different sacrifice shapes. The modern dispatcher is closer now on small-vs-medium ring size, but the portable barrier still stays on a medium representative trigger because the old charged-attuned-stone route currently collides with small-circle `banishdemon` in the simplified single-item mapper.
+- The original mod split the full protection family across several different sacrifice shapes. The modern dispatcher is closer now on small-vs-medium ring size, and the portable barrier now keys off `Charged Attuned Stone` again instead of plain `Attuned Stone`, but the family still uses representative trigger items rather than the full original multi-sacrifice matcher.
 
 ### 22. Dream Catcher and Brazier still used dead legacy break hooks - Fixed / verify
 
@@ -315,10 +315,10 @@ The protection barrier family is now back much closer to old Witchery:
 - It now queues as a sustained active rite again, requires altar power to stay alive, redraws an invisible barrier dome around the circle on a timed pulse, and now does so from the original medium ritual ring instead of the wrong large route.
 - The barrier itself now has real timed block/entity behavior again instead of being a dead placeholder block.
 - The smaller monster-only barrier variant now routes from the original small ritual ring instead of medium.
-- The timed portable barrier variant is still reachable, but it remains on a medium representative trigger for now because the simplified dispatcher would otherwise collide with small-circle `banishdemon`.
+- The timed portable barrier variant is still reachable on its original medium circle, and it now expects `Charged Attuned Stone` instead of collapsing onto plain `Attuned Stone`.
 
 Remaining gap:
-- This restores the practical barrier mechanics and most of the ring-size split, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly, and the old charged-attuned-stone distinction is still collapsed into the port's single `attuned_stone` item.
+- This restores the practical barrier mechanics and most of the ring-size split, and the old charged-attuned-stone distinction is now back for the portable route, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly.
 
 ### 26. Flowing Spirit world-block effects were still mostly missing - Fixed / verify
 
