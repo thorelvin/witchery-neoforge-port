@@ -36,6 +36,13 @@ public class WitcheryBlocks {
     // Wood & Rowan family
     public static final DeferredBlock<Block> ROWAN_PLANKS = BLOCKS.registerSimpleBlock("rowan_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
+    public static final DeferredBlock<WitcheryWoodStairBlock> ROWAN_STAIRS = BLOCKS.registerBlock("rowan_stairs",
+            props -> new WitcheryWoodStairBlock(ROWAN_PLANKS.get().defaultBlockState(),
+                    props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<WitcheryWoodSlabBlock> ROWAN_SLAB = BLOCKS.registerBlock("rowan_slab",
+            props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanDoorBlock> ROWAN_DOOR = BLOCKS.registerBlock("rowan_door",
             props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f).noOcclusion()),
             BlockBehaviour.Properties.of());

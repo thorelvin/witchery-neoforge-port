@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": "witchery:rowan_planks"
+  },
+  "result": {
+    "id": "witchery:rowan_slab",
+    "count": 6
+  }
+}
