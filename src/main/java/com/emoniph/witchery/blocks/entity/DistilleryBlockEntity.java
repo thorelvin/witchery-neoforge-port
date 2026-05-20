@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.DistilleryBlock;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipeInput;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
@@ -108,6 +109,7 @@ public class DistilleryBlockEntity extends BlockEntity implements Container, Men
                 be.pendingPowerScaled = 0;
                 changed = true;
             }
+            syncLitState(level, pos, state, false);
             if (changed) {
                 be.setChanged();
             }
@@ -130,17 +132,21 @@ public class DistilleryBlockEntity extends BlockEntity implements Container, Men
                 be.pendingPowerScaled = 0;
                 changed = true;
             }
+            syncLitState(level, pos, state, false);
             if (changed) {
                 be.setChanged();
             }
             return;
         }
 
+        syncLitState(level, pos, state, true);
+
         be.pendingPowerScaled += POWER_PER_TICK_SCALED;
         int powerUnits = be.pendingPowerScaled / POWER_SCALE;
         if (powerUnits > 0) {
             if (!altar.consumePower(powerUnits)) {
                 be.powerLevel = 0;
+                syncLitState(level, pos, state, false);
                 if (changed) {
                     be.setChanged();
                 }
@@ -158,6 +164,12 @@ public class DistilleryBlockEntity extends BlockEntity implements Container, Men
 
         if (changed) {
             be.setChanged();
+        }
+    }
+
+    private static void syncLitState(Level level, BlockPos pos, BlockState state, boolean lit) {
+        if (state.getValue(DistilleryBlock.LIT) != lit) {
+            level.setBlock(pos, state.setValue(DistilleryBlock.LIT, lit), 3);
         }
     }
 

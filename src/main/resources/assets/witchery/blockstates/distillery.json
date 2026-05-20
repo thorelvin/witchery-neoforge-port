@@ -1,8 +1,12 @@
 {
   "variants": {
-    "facing=north": { "model": "witchery:block/distillery" },
-    "facing=south": { "model": "witchery:block/distillery" },
-    "facing=west": { "model": "witchery:block/distillery" },
-    "facing=east": { "model": "witchery:block/distillery" }
+    "facing=north,lit=false": { "model": "witchery:block/distillery" },
+    "facing=south,lit=false": { "model": "witchery:block/distillery" },
+    "facing=west,lit=false": { "model": "witchery:block/distillery" },
+    "facing=east,lit=false": { "model": "witchery:block/distillery" },
+    "facing=north,lit=true": { "model": "witchery:block/distillery" },
+    "facing=south,lit=true": { "model": "witchery:block/distillery" },
+    "facing=west,lit=true": { "model": "witchery:block/distillery" },
+    "facing=east,lit=true": { "model": "witchery:block/distillery" }
   }
 }

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.WitchesOvenBlock;
 import com.emoniph.witchery.crafting.OvenRecipe;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
@@ -120,7 +121,14 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
         }
 
         if (wasBurning != be.isLit()) {
+            syncLitState(level, pos, state, be.isLit());
             be.setChanged();
+        }
+    }
+
+    private static void syncLitState(Level level, BlockPos pos, BlockState state, boolean lit) {
+        if (state.getValue(WitchesOvenBlock.LIT) != lit) {
+            level.setBlock(pos, state.setValue(WitchesOvenBlock.LIT, lit), 3);
         }
     }
 
