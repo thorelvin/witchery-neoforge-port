@@ -621,6 +621,7 @@
   "witchery.ritual.bind_waystone.none": "No unbound waystone in your inventory.",
   "witchery.ritual.bind_waystone_copy.success": "Waystone copy bound.",
   "witchery.ritual.bind_waystone_copy.none": "No unbound waystone offered for copying.",
+  "witchery.ritual.bind_waystone_copy.support": "Ender Dew and a diamond must be offered for copying.",
   "witchery.ritual.transposition_pull.success": "Target pulled.",
   "witchery.ritual.transposition_pull.no_taglock": "No filled taglock in inventory.",
   "witchery.ritual.transposition_pull.offline": "Target is not online.",

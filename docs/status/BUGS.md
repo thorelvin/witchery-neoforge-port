@@ -51,7 +51,7 @@ Current state:
 - The non-original redstone Charging buff fallback is gone again, so the old small-plus-medium `chargestone` / `infusionrecharge` family now stands as explicit remaining work instead of pretending to be a finished medium-circle parity route.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
-- The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone and spits out two bound waystones again, instead of falsely collapsing into the representative Banish Demon branch.
+- The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -463,11 +463,11 @@ Remaining gap:
 
 The next small-circle parity pass is now closer to original Witchery:
 - `Bind Waystone` now requires ritual chalk again instead of accepting any small ring, and it once more spits out a freshly bound waystone item at the ritual center itself instead of mutating an inventory stack or binding to the caster's current position.
-- `Bind Waystone Copy` is now reachable again from the dropped bound-waystone ritual route, and it once more consumes one extra offered unbound waystone to produce two bound waystones instead of firing the false Banish Demon branch.
+- `Bind Waystone Copy` is now reachable again from the dropped bound-waystone ritual route, and it once more consumes one extra offered unbound waystone plus its original Ender Dew and diamond supports to produce two bound waystones instead of firing the false Banish Demon branch.
 - `Manifestation` is now actually reachable again through the simplified dispatcher, mapped to `spectral_dust` on an otherwhere small circle instead of remaining implemented-but-dead.
 
 Remaining gap:
-- These routes are now reachable and family-gated, but the dispatcher is still using representative single items and partial support-sacrifice checks rather than the original full multi-sacrifice recipe sets, so the waystone-copy route still does not explicitly validate its old Ender Dew plus diamond support sacrifices.
+- These routes are now reachable and family-gated, but the dispatcher is still using representative single items rather than the original full multi-sacrifice recipe sets, so broader small-circle recipe-shape parity remains open even though the waystone-copy support offerings are back.
 
 ### 41. Forestation and animal-calling were routed through the wrong ring sizes - Fixed / verify
 

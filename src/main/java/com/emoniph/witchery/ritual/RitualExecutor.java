@@ -90,6 +90,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class RitualExecutor {
     private static final int VARIANT_OTHERWHERE = 2;
@@ -3854,8 +3855,16 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_copy.none"), false);
             return false;
         }
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        if (enderDew.isEmpty() || diamond.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_copy.support"), false);
+            return false;
+        }
 
         consumeOfferedItem(unboundWaystone.get());
+        consumeOfferedItem(enderDew.get());
+        consumeOfferedItem(diamond.get());
         ItemStack copiedWaystones = sourceWaystone.copyWithCount(2);
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
@@ -3871,22 +3880,31 @@ public class RitualExecutor {
         return true;
     }
 
-    private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
+    private static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
         double radius = 1.5;
         double radiusSq = radius * radius;
         AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        ItemEntity closest = null;
+        double closestDistance = Double.MAX_VALUE;
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
             ItemStack stack = itemEntity.getItem();
-            if (!stack.is(WitcheryItems.WAYSTONE.get()) || WaystoneItem.isBound(stack) != bound) {
+            if (!matcher.test(stack)) {
                 continue;
             }
-            if (itemEntity.position().distanceToSqr(centerPoint) >= radiusSq) {
+            double distance = itemEntity.position().distanceToSqr(centerPoint);
+            if (distance >= radiusSq || distance > closestDistance) {
                 continue;
             }
-            return Optional.of(itemEntity);
+            closest = itemEntity;
+            closestDistance = distance;
         }
-        return Optional.empty();
+        return Optional.ofNullable(closest);
+    }
+
+    private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
+        return findNearbyOffering(level, center,
+                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(stack) == bound);
     }
 
     private static void consumeOfferedItem(ItemEntity itemEntity) {
