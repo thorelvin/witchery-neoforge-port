@@ -130,7 +130,7 @@ public class MutandisItem extends Item {
         // Vanilla plants
         pool.add(Blocks.DANDELION.defaultBlockState());
         pool.add(Blocks.POPPY.defaultBlockState());
-        pool.add(Blocks.ROSE_BUSH.defaultBlockState());
+        pool.add(Blocks.BUSH.defaultBlockState());
         pool.add(Blocks.FERN.defaultBlockState());
         pool.add(Blocks.DEAD_BUSH.defaultBlockState());
         pool.add(Blocks.SHORT_GRASS.defaultBlockState());
