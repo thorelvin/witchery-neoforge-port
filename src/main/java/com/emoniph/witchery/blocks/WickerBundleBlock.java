@@ -94,13 +94,14 @@ public class WickerBundleBlock extends RotatedPillarBlock {
     }
 
     public static void buildBloodiedWickerman(Level level, BlockPos base, Direction facing) {
-        Direction.Axis axis = facing.getAxis().isHorizontal() ? facing.getAxis() : Direction.Axis.Z;
-        int fx = axis == Direction.Axis.X ? 1 : 0;
-        int fz = axis == Direction.Axis.Z ? 1 : 0;
+        Direction lateral = facing.getClockWise();
+        Direction.Axis horizontalAxis = lateral.getAxis();
+        int fx = lateral.getStepX();
+        int fz = lateral.getStepZ();
         BlockState vertical = WitcheryBlocks.BLOODIED_WICKER_BUNDLE.get().defaultBlockState()
                 .setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
         BlockState horizontal = WitcheryBlocks.BLOODIED_WICKER_BUNDLE.get().defaultBlockState()
-                .setValue(RotatedPillarBlock.AXIS, axis);
+                .setValue(RotatedPillarBlock.AXIS, horizontalAxis);
 
         for (PatternPoint point : REQUIRED_WICKERMAN_POINTS) {
             BlockState state = usesHorizontalAxis(point) ? horizontal : vertical;
@@ -194,7 +195,10 @@ public class WickerBundleBlock extends RotatedPillarBlock {
     }
 
     private static boolean usesHorizontalAxis(PatternPoint point) {
-        return point.y() >= 2 && point.y() <= 4;
+        if (point.y() == 4) {
+            return true;
+        }
+        return (point.y() == 2 || point.y() == 3) && point.lateral() >= 0 && point.lateral() <= 1;
     }
 
     private static boolean isBloodied(LevelReader level, BlockPos pos) {
