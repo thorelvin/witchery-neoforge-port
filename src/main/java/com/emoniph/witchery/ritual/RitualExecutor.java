@@ -411,7 +411,9 @@ public class RitualExecutor {
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
             return successResult();
-        } else if (item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK)) {
+        } else if ((item.is(Items.REDSTONE) || item.is(Items.REDSTONE_BLOCK))
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             riteOfCharging(player, level, center);
             return successResult();
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {

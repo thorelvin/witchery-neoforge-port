@@ -48,6 +48,7 @@ Current state:
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
 - `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Sky's Wrath now routes from the original small ritual circle again instead of the wrong medium ring.
+- The representative redstone Charging route now also expects the original matching small-plus-medium ritual circle stack again instead of firing from a lone medium ring.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
