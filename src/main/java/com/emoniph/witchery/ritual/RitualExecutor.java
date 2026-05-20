@@ -804,12 +804,22 @@ public class RitualExecutor {
     /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired ritual circles. */
     private static boolean riteOfChargeStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<ChargeStoneOfferings> offerings = findChargeStoneOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.support"), false);
+            return false;
+        }
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.no_power"), false);
             return false;
         }
 
+        consumeOfferedItem(offerings.get().glowstone());
+        consumeOfferedItem(offerings.get().redstone());
+        consumeOfferedItem(offerings.get().woodAsh());
+        consumeOfferedItem(offerings.get().quicklime());
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
                 center.getY() + 1.5,
@@ -3900,6 +3910,8 @@ public class RitualExecutor {
 
     private record InventoryTaglock(int slot, UUID targetUuid) {}
 
+    private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4031,6 +4043,17 @@ public class RitualExecutor {
     private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
         return findNearbyOffering(level, center,
                 stack -> stack.is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(stack) == bound);
+    }
+
+    private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> glowstone = findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
+        Optional<ItemEntity> redstone = findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE));
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        if (glowstone.isEmpty() || redstone.isEmpty() || woodAsh.isEmpty() || quicklime.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ChargeStoneOfferings(glowstone.get(), redstone.get(), woodAsh.get(), quicklime.get()));
     }
 
     private static void consumeOfferedItem(ItemEntity itemEntity) {

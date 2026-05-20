@@ -511,6 +511,7 @@
   "witchery.ritual.cloak.success": "You fade from sight...",
   "witchery.ritual.cleansing.success": "The circle purges all corruption.",
   "witchery.ritual.charge_stone.success": "The attuned stone crackles with stored power.",
+  "witchery.ritual.charge_stone.support": "The rite needs glowstone dust, redstone, wood ash, and quicklime.",
   "witchery.ritual.charge_stone.no_power": "A nearby altar lacks the power to charge the stone.",
   "witchery.ritual.infernal_power.success": "Infernal fire courses through you.",
   "witchery.ritual.silent_step.success": "Your step becomes silent as shadow.",
