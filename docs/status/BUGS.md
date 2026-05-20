@@ -672,7 +672,7 @@ The current Nether-style pulse is being kept as the intended hell aesthetic.
 ### Item review - remaining visual/mechanic issues
 
 Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
-- `altar` - strict 2x3 validation and joined-art variants are back; remaining work is now in-game orientation/polish verification rather than missing connected states
+- `altar` - strict 2x3 validation is back, and the joined-art path now uses the resurrected-style single-texture altar assets instead of the placeholder split top/joined overlays; remaining work is now in-game orientation/polish verification rather than missing connected states
 - `distillery`, `spinning_wheel`, `witches_oven` - mechanics were restored closer to original, including the old comparator-output behavior; `distillery` now regains its low active glow plus spell-like work ambience, `witches_oven` now regains its burning light/state presentation plus front smoke/flame ambience, `spinning_wheel` also has the original sturdier hardness back, and GUI/in-game verification is still open
 - `crystal_ball` - shared translucent model path, original compact pedestal footprint, support-required placement/survival, sturdier hardness, and original-style snare/levelup/explosion use feedback are back; remaining work is final in-game translucency verification
 - `coffin` - placed two-block render is back on split head/bottom textures, the placed block now uses its intended lower coffin-height collision instead of a hidden full cube, and item/inventory presentation now uses the same split 3D geometry through a dedicated special renderer; remaining work is final in-game pose/scale polish only
