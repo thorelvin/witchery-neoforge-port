@@ -338,6 +338,8 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonWitch(player, level, center));
+        } else if (item.is(WitcheryItems.DROP_OF_LUCK.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfSummonFamiliar(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBanishDemon(player, level, center));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
@@ -618,6 +620,39 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.bind_familiar.success",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
         WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
+        return true;
+    }
+
+    /** Rite of Summon Familiar — restores the original small-circle Drop of Luck path as a bound witch's cat summon. */
+    private static boolean riteOfSummonFamiliar(Player player, Level level, BlockPos center) {
+        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (hasSummonCircleObstruction(sl, center)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
+            return false;
+        }
+
+        var familiar = WitcheryEntities.FAMILIAR_CAT.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (familiar == null) {
+            return false;
+        }
+
+        familiar.snapTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5, player.getYRot(), 0.0F);
+        familiar.setOrderedToSit(false);
+        familiar.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        sl.addFreshEntity(familiar);
+
+        TamableAnimal bound = bindFamiliarToPlayer(sp, sl, familiar);
+        if (bound == null) {
+            familiar.discard();
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.summon_familiar.success",
+                SoundEvents.CAT_AMBIENT, 1.0f, 2, 24);
+        WitcheryMod.LOGGER.info("Rite of Summon Familiar cast by {}", player.getName().getString());
         return true;
     }
 

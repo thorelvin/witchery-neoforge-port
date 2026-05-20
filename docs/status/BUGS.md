@@ -481,6 +481,7 @@ Remaining gap:
 The next ritual routing pass is now closer to original Witchery:
 - `Prior Incarnation` now requires an infernal small circle again instead of activating from any small ring.
 - Familiar binding and familiar calling no longer live on the small-circle dispatcher; they now route through the medium ritual circle instead, which is much closer to the original `bindfamiliar` and `callfamiliar` rites.
+- The original small ritual `summonfamiliar` path is back too through a representative `drop_of_luck` trigger, and it once again summons a bound Witch's Cat into the circle instead of leaving the small ritual familiar branch missing entirely.
 
 Remaining gap:
 - These rites are still triggered through simplified representative ingredients rather than the full original sacrifice sets, but their ring size and chalk family now line up much more closely with 1.7.10.
@@ -703,6 +704,7 @@ Remaining gap:
 The next familiar-mechanics pass is now closer to original Witchery:
 - `Bind Familiar` no longer creates a brand-new owl/cat/toad out of the ritual offering. It now scans the medium ritual circle for nearby tamed familiar-capable creatures owned by players inside the ring and binds those instead, which is much closer to the old `RiteBindFamiliar` behavior.
 - Vanilla cats are now converted into the port's `Cat Familiar` entity when they are bound, which restores the old "bind a real pet and gain familiar powers from it" flow better than the previous spawn-a-new-pet shortcut.
+- The missing small-circle `summonfamiliar` route is back too through representative `drop_of_luck`, and it now spawns a real bound Witch's Cat at the circle again instead of leaving the original familiar-summon branch absent.
 - `Call Familiar` no longer only works when the bound familiar entity happens to already be loaded in the same dimension as the rite. It now searches all loaded server levels for the stored familiar UUID and teleports the real bound entity into the circle again.
 - Familiar-binding dispatch no longer reports unconditional success for the feather/fish/slime placeholder routes. If there is no valid creature to bind, the medium-circle cast now fails/refunds instead of silently consuming the offering and minting a free familiar.
 - The familiar dispatcher routes are now keyed from representative Witchery ingredients (`tear_of_goddess` / `odour_of_purity` / `whiff_of_magic` for binding, `breath_of_goddess` / `hint_of_rebirth` / `whiff_of_magic` for calling) instead of unrelated vanilla placeholders, which is much closer to the original ritual registry feel.
