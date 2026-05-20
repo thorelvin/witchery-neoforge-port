@@ -38,6 +38,24 @@ public class WitcheryPlayerData {
         ).apply(i, FamiliarState::new));
     }
 
+    /** Nested infusion charge state keeps the main player codec within the 16-field DFU limit. */
+    public static class InfusionChargeState {
+        public int currentEnergy = 0;
+        public int maxEnergy = 0;
+
+        public InfusionChargeState() {}
+
+        private InfusionChargeState(int currentEnergy, int maxEnergy) {
+            this.maxEnergy = Math.max(0, maxEnergy);
+            this.currentEnergy = Math.clamp(currentEnergy, 0, this.maxEnergy);
+        }
+
+        public static final Codec<InfusionChargeState> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.INT.optionalFieldOf("current_energy", 0).forGetter(s -> s.currentEnergy),
+            Codec.INT.optionalFieldOf("max_energy", 0).forGetter(s -> s.maxEnergy)
+        ).apply(i, InfusionChargeState::new));
+    }
+
     /** Nested record for Spirit World state — keeps the main CODEC under the 16-field DFU limit. */
     public static class SpiritWorldState {
         public boolean isDream = false;
@@ -90,6 +108,7 @@ public class WitcheryPlayerData {
     private float transformationLevel = 0f;
     private FamiliarState familiar = new FamiliarState();
     private String infusionType = "";
+    private InfusionChargeState infusionChargeState = new InfusionChargeState();
     private long lastDeathPos = Long.MIN_VALUE;
     private String lastDeathDimension = "";
     private long returnPos = Long.MIN_VALUE;
@@ -110,7 +129,8 @@ public class WitcheryPlayerData {
 
     private WitcheryPlayerData(boolean vampire, boolean werewolf, int bloodLevel,
                                float transformationLevel, FamiliarState familiar,
-                               String infusionType, long lastDeathPos, String lastDeathDimension,
+                               String infusionType, InfusionChargeState infusionChargeState,
+                               long lastDeathPos, String lastDeathDimension,
                                long returnPos, String returnDimension,
                                boolean inSpiritWorld, SpiritWorldState sw,
                                String creaturePowerType, int creaturePowerCharges,
@@ -121,6 +141,7 @@ public class WitcheryPlayerData {
         this.transformationLevel = transformationLevel;
         this.familiar = familiar != null ? familiar : new FamiliarState();
         this.infusionType = infusionType;
+        this.infusionChargeState = infusionChargeState != null ? infusionChargeState : new InfusionChargeState();
         this.lastDeathPos = lastDeathPos;
         this.lastDeathDimension = lastDeathDimension;
         this.returnPos = returnPos;
@@ -134,13 +155,14 @@ public class WitcheryPlayerData {
 
     private static WitcheryPlayerData fromCodec(boolean vampire, boolean werewolf, int bloodLevel,
                                                 float transformationLevel, FamiliarState familiar,
-                                                String infusionType, long lastDeathPos, String lastDeathDimension,
+                                                String infusionType, InfusionChargeState infusionChargeState,
+                                                long lastDeathPos, String lastDeathDimension,
                                                 long returnPos, String returnDimension,
                                                 boolean inSpiritWorld, SpiritWorldState sw,
                                                 String creaturePowerType, int creaturePowerCharges,
                                                 int wolfMastery) {
         return new WitcheryPlayerData(vampire, werewolf, bloodLevel, transformationLevel,
-                familiar, infusionType, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
+                familiar, infusionType, infusionChargeState, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
                 inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wolfMastery);
     }
 
@@ -151,6 +173,7 @@ public class WitcheryPlayerData {
         Codec.FLOAT.optionalFieldOf("transformation_level", 0f).forGetter(d -> d.transformationLevel),
         FamiliarState.CODEC.optionalFieldOf("familiar", new FamiliarState()).forGetter(d -> d.familiar),
         Codec.STRING.optionalFieldOf("infusion_type", "").forGetter(d -> d.infusionType),
+        InfusionChargeState.CODEC.optionalFieldOf("infusion_charge_state", new InfusionChargeState()).forGetter(d -> d.infusionChargeState),
         Codec.LONG.optionalFieldOf("last_death_pos", Long.MIN_VALUE).forGetter(d -> d.lastDeathPos),
         Codec.STRING.optionalFieldOf("last_death_dim", "").forGetter(d -> d.lastDeathDimension),
         Codec.LONG.optionalFieldOf("return_pos", Long.MIN_VALUE).forGetter(d -> d.returnPos),
@@ -179,6 +202,8 @@ public class WitcheryPlayerData {
     public boolean isFamiliarNameVisible() { return familiar.nameVisible; }
 
     public InfusionType getInfusionType() { return InfusionType.fromString(infusionType); }
+    public int getInfusionEnergy() { return infusionChargeState.currentEnergy; }
+    public int getInfusionMaxEnergy() { return infusionChargeState.maxEnergy; }
 
     public void setVampire(boolean v) { this.vampire = v; }
     public void setWerewolf(boolean w) { this.werewolf = w; }
@@ -191,8 +216,21 @@ public class WitcheryPlayerData {
     public void setFamiliarSitting(boolean sitting) { this.familiar.sitting = sitting; }
     public void setFamiliarNameVisible(boolean visible) { this.familiar.nameVisible = visible; }
     public void clearFamiliar() { this.familiar = new FamiliarState(); }
-    public void setInfusionType(InfusionType type) { this.infusionType = type == null ? "" : type.name(); }
-    public void clearInfusion() { this.infusionType = ""; }
+    public void setInfusionType(InfusionType type) {
+        if (type == null || type == InfusionType.NONE) {
+            clearInfusion();
+            return;
+        }
+        this.infusionType = type.name();
+    }
+    public void setInfusionEnergy(int currentEnergy, int maxEnergy) {
+        this.infusionChargeState.maxEnergy = Math.max(0, maxEnergy);
+        this.infusionChargeState.currentEnergy = Math.clamp(currentEnergy, 0, this.infusionChargeState.maxEnergy);
+    }
+    public void clearInfusion() {
+        this.infusionType = "";
+        this.infusionChargeState = new InfusionChargeState();
+    }
 
     public Optional<BlockPos> getLastDeathPos() {
         if (lastDeathPos == Long.MIN_VALUE) return Optional.empty();
@@ -301,6 +339,7 @@ public class WitcheryPlayerData {
         this.transformationLevel = other.transformationLevel;
         this.familiar = new FamiliarState(other.familiar.uuid, other.familiar.type, other.familiar.name, other.familiar.sitting, other.familiar.nameVisible);
         this.infusionType = other.infusionType;
+        this.infusionChargeState = new InfusionChargeState(other.infusionChargeState.currentEnergy, other.infusionChargeState.maxEnergy);
         this.lastDeathPos = other.lastDeathPos;
         this.lastDeathDimension = other.lastDeathDimension;
         this.returnPos = other.returnPos;
@@ -320,6 +359,7 @@ public class WitcheryPlayerData {
     public String toString() {
         return "WitcheryPlayerData{vampire=" + vampire + ", werewolf=" + werewolf
                 + ", blood=" + bloodLevel + ", transform=" + transformationLevel
-                + ", familiarType=" + familiar.type + ", infusion=" + infusionType + "}";
+                + ", familiarType=" + familiar.type + ", infusion=" + infusionType
+                + ", infusionEnergy=" + infusionChargeState.currentEnergy + "/" + infusionChargeState.maxEnergy + "}";
     }
 }

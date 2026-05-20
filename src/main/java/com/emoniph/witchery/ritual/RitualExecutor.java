@@ -567,6 +567,7 @@ public class RitualExecutor {
 
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
         data.setInfusionType(type);
+        data.setInfusionEnergy(200, 200);
 
         String msgKey = switch (type) {
             case LIGHT      -> "witchery.ritual.infusion.light.success";

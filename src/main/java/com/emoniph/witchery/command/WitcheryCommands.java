@@ -334,9 +334,15 @@ public class WitcheryCommands {
         ServerPlayer p = src.getPlayerOrException();
         InfusionType type = InfusionType.fromString(typeName.toUpperCase());
         WitcheryPlayerData d = WitcheryAttachments.get(p);
-        d.setInfusionType(type);
+        if (type == InfusionType.NONE) {
+            d.clearInfusion();
+        } else {
+            d.setInfusionType(type);
+            d.setInfusionEnergy(200, 200);
+        }
         sync(p, d);
-        src.sendSuccess(() -> Component.literal("Infusion set to " + type + "."), false);
+        src.sendSuccess(() -> Component.literal(
+                "Infusion set to " + type + (type == InfusionType.NONE ? "." : " (200/200 charges).")), false);
         return 1;
     }
 
@@ -467,6 +473,7 @@ public class WitcheryCommands {
                 + " transform=" + String.format("%.2f", d.getTransformationLevel())
                 + " wolfmastery=" + d.getWolfMastery() + "/3\n"
                 + "  infusion=" + d.getInfusionType()
+                + " energy=" + d.getInfusionEnergy() + "/" + d.getInfusionMaxEnergy()
                 + " soaring=" + d.getSoaringTicks() + "t\n"
                 + "  familiar=" + d.getFamiliarUUID().map(u -> u.toString().substring(0, 8) + "...").orElse("none") + "\n"
                 + "  spiritWorld=" + d.isInSpiritWorld()

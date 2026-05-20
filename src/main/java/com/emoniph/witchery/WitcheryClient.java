@@ -175,6 +175,7 @@ public class WitcheryClient {
             data.setFamiliarSitting(payload.familiarSitting());
             data.setFamiliarNameVisible(payload.familiarNameVisible());
             data.setInfusionType(InfusionType.fromString(payload.infusionType()));
+            data.setInfusionEnergy(payload.infusionEnergy(), payload.infusionMaxEnergy());
             data.setInSpiritWorld(payload.inSpiritWorld());
         });
     }
