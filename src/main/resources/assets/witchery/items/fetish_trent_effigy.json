@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/fetish_trent_effigy"
+    "type": "minecraft:special",
+    "base": "witchery:item/entity_machine_base",
+    "model": {
+      "type": "witchery:fetish_trent_effigy"
+    }
   }
 }

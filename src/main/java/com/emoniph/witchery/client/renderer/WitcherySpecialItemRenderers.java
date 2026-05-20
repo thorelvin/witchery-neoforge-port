@@ -8,10 +8,12 @@ import com.emoniph.witchery.client.model.CoffinModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.DreamCatcherModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
+import com.emoniph.witchery.client.model.FetishModel;
 import com.emoniph.witchery.client.model.GrassperModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
+import com.emoniph.witchery.client.model.StatueGoddessModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
@@ -45,6 +47,10 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("refilling_chest"), RefillingChestUnbaked.MAP_CODEC);
         event.register(id("dream_catcher"), DreamCatcherUnbaked.MAP_CODEC);
         event.register(id("coffin"), CoffinUnbaked.MAP_CODEC);
+        event.register(id("fetish_scarecrow"), FetishScarecrowUnbaked.MAP_CODEC);
+        event.register(id("fetish_trent_effigy"), FetishTrentUnbaked.MAP_CODEC);
+        event.register(id("fetish_witchs_ladder"), FetishWitchsLadderUnbaked.MAP_CODEC);
+        event.register(id("statue_goddess"), StatueGoddessUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -479,6 +485,101 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<CoffinUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record FetishSpecialRenderer(FetishModel model, Identifier texture) implements NoDataSpecialModelRenderer {
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(texture), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record FetishScarecrowUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<FetishScarecrowUnbaked> MAP_CODEC = MapCodec.unit(new FetishScarecrowUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new FetishSpecialRenderer(
+                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    blockTexture("scarecrow"));
+        }
+
+        @Override
+        public MapCodec<FetishScarecrowUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record FetishTrentUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<FetishTrentUnbaked> MAP_CODEC = MapCodec.unit(new FetishTrentUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new FetishSpecialRenderer(
+                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    blockTexture("trent"));
+        }
+
+        @Override
+        public MapCodec<FetishTrentUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record FetishWitchsLadderUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<FetishWitchsLadderUnbaked> MAP_CODEC = MapCodec.unit(new FetishWitchsLadderUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new FetishSpecialRenderer(
+                    new FetishModel(context.entityModelSet().bakeLayer(FetishModel.LAYER_LOCATION)),
+                    blockTexture("witchsladder"));
+        }
+
+        @Override
+        public MapCodec<FetishWitchsLadderUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record StatueGoddessSpecialRenderer(StatueGoddessModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("statuegoddess");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record StatueGoddessUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<StatueGoddessUnbaked> MAP_CODEC = MapCodec.unit(new StatueGoddessUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new StatueGoddessSpecialRenderer(
+                    new StatueGoddessModel(context.entityModelSet().bakeLayer(StatueGoddessModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<StatueGoddessUnbaked> type() {
             return MAP_CODEC;
         }
     }

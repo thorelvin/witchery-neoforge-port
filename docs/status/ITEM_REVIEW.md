@@ -66,10 +66,10 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 52 | `witchery:ice_fence` | ✅ Fixed — added to #minecraft:fences tag | Dont link with other fences
 | 53 | `witchery:ice_gate` | | Works, link with fence
 | 54 | `witchery:ice_pressure_plate` | | Works on fence. tested
-| 55 | `witchery:fetish_scarecrow` | ✅ Fixed — FACING property added; FetishRenderer uses facing-aware render state | Facing to right when placed. Missing item texture. Pink black
-| 56 | `witchery:fetish_trent_effigy` | ✅ Fixed — same FACING fix | Facing to right when placed. Missing item texture. Pink black
-| 57 | `witchery:fetish_witchs_ladder` | ✅ Fixed — same FACING fix | Facing to right when placed. Missing item texture. Pink black. All three looks same
-| 58 | `witchery:statue_goddess` | ✅ Fixed — FACING property; reads facing from block state in renderer | Facing to right when placed. Missing item texture. Pink black.
+| 55 | `witchery:fetish_scarecrow` | `Partial - facing-aware placed render and 3D special item path restored` | The placed fetish now uses facing-aware render state again, and the item no longer wraps a flat block texture. It now renders through the real `FetishModel` with the scarecrow texture via the NeoForge `special` item path. Needs in-game verification for final pose/scale.
+| 56 | `witchery:fetish_trent_effigy` | `Partial - facing-aware placed render and 3D special item path restored` | Shares the restored facing-aware placed render, and the item now uses the real `FetishModel` with the `trent` texture instead of the broken flat wrap path. Needs in-game verification.
+| 57 | `witchery:fetish_witchs_ladder` | `Partial - facing-aware placed render and 3D special item path restored` | Shares the restored facing-aware placed render, and the item now uses the real `FetishModel` with the `witchsladder` texture instead of the broken flat wrap path. Needs in-game verification.
+| 58 | `witchery:statue_goddess` | `Partial - facing-aware placed render and 3D special item path restored` | The placed statue already reads facing from block state again, and the item now uses the real `StatueGoddessModel` through the NeoForge `special` item path instead of the broken flat/generated wrap. Needs in-game verification for final pose/scale.
 | 59 | `witchery:wicker_bundle` | | Burns? Mechanics?
 | 60 | `witchery:critter_snare` | | Looks ok, not tested
 | 61 | `witchery:witch_door` | ✅ Fixed — converted to DoorBlock(OAK), full door blockstates/models created, DoubleHighBlockItem; uses rowan textures as placeholder | Not a door, shaped as cube. Texture wrapped wrong. Wont open.
