@@ -127,6 +127,7 @@ The altar pass is now closer to the original 1.7.10 behavior again:
 The altar is now stricter and closer to original again:
 - The multiblock no longer treats arbitrary 6-block flood-filled shapes as valid. It now requires a real rectangular 2x3 altar footprint again.
 - The connected/joined blockstate art pass is back too, so a valid altar now selects the original-style joined pieces with the red carpeted top segments instead of staying on the single standalone model.
+- The joined corner models now omit the same hidden internal support faces as Resurrected instead of rendering those faces with altar texture coordinates, and block updates refresh the whole possible 2x3 neighborhood so newly completed or broken structures do not keep stale joined states as easily.
 
 This still needs in-game verification for final orientation/art feel, but the remaining gap has moved away from basic altar mechanics and toward broader storage/ritual parity.
 

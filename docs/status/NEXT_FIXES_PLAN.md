@@ -31,7 +31,7 @@ The missing `Curse of Corrupt Poppet` rite is also back now, which means the rem
 The `Banish Demon` effect family is back too, and both `Transpose Ores` and `Nature's Power` now live again as staged large rites, so the remaining rite sweep is narrowing toward more obscure or architecture-heavy activation gaps rather than plainly absent core infernal rites.
 The small otherwhere bound-waystone transposition path is also back closer to original now, since it once again uses the sacrificed waystone and moves nearby entities instead of silently collapsing into a caster-only inventory teleport.
 The medium otherwhere taglock transposition path is back too, since it now pulls the bound target into the circle again instead of silently collapsing into the large-circle caster pull mechanic.
-The altar is visually closer too now that both block and item use a shaped 3D form again, so the remaining altar art work narrows toward the original connected/joined render variants rather than a flat-vs-3D mismatch.
+The altar is visually closer too now that both block and item use a shaped 3D form again, and the joined corner models no longer render Resurrected's hidden internal faces as stray yellow/grey panels. The remaining altar art work is now mostly final in-game orientation/feel verification rather than a flat-vs-3D or obvious internal-face mismatch.
 
 ## Finish-line batch order
 
@@ -44,7 +44,7 @@ Use this order for the remaining autonomous work until the port is in "playable 
 3. Finish machine and storage presentation parity.
    Distillery / Witch's Oven / Spinning Wheel GUI cleanup, Refilling Chest / Leech Chest / Poppet Shelf render polish, and any remaining unwrap/facing/model mismatches should be pushed to "recognisable and trustworthy".
 4. Finish altar and special-block visual parity.
-   Prioritise joined altar variants, Crystal Ball translucency, Coffin item/block presentation, Fume Funnel art/facing, and the remaining wrong-wrap blocks/items listed in `ITEM_REVIEW.md`.
+   Prioritise joined altar orientation verification, Crystal Ball translucency, Coffin item/block presentation, Fume Funnel art/facing, and the remaining wrong-wrap blocks/items listed in `ITEM_REVIEW.md`.
 5. Run a targeted sound pass.
    Once the mechanics and visuals are no longer shifting heavily, audit ritual, machine, Spirit World, and special-block sounds against original Witchery and document any intentional placeholders.
 6. Close with regression and doc cleanup.

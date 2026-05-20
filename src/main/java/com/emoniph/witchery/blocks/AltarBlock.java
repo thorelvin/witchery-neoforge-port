@@ -99,11 +99,9 @@ public class AltarBlock extends BaseEntityBlock {
     }
 
     private static void refreshNearbyAltars(Level level, BlockPos pos) {
-        refreshIfAltar(level, pos);
-        refreshIfAltar(level, pos.north());
-        refreshIfAltar(level, pos.south());
-        refreshIfAltar(level, pos.east());
-        refreshIfAltar(level, pos.west());
+        for (BlockPos candidate : BlockPos.betweenClosed(pos.offset(-2, 0, -2), pos.offset(2, 0, 2))) {
+            refreshIfAltar(level, candidate);
+        }
     }
 
     private static void refreshIfAltar(Level level, BlockPos pos) {
