@@ -103,7 +103,7 @@ public final class FamiliarHelper {
         String familiarName = WitcheryAttachments.get(player).getFamiliarName();
         if (!familiarName.isBlank()) {
             familiar.setCustomName(net.minecraft.network.chat.Component.literal(familiarName));
-            familiar.setCustomNameVisible(true);
+            familiar.setCustomNameVisible(WitcheryAttachments.get(player).isFamiliarNameVisible());
         }
         familiar.snapTo(x, y, z, player.getYRot(), 0.0F);
         level.addFreshEntity(familiar);

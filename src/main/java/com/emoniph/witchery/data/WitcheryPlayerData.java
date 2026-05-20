@@ -17,21 +17,24 @@ public class WitcheryPlayerData {
         public String type = "";
         public String name = "";
         public boolean sitting = false;
+        public boolean nameVisible = false;
 
         public FamiliarState() {}
 
-        private FamiliarState(String uuid, String type, String name, boolean sitting) {
+        private FamiliarState(String uuid, String type, String name, boolean sitting, boolean nameVisible) {
             this.uuid = uuid == null ? "" : uuid;
             this.type = type == null ? "" : type;
             this.name = name == null ? "" : name;
             this.sitting = sitting;
+            this.nameVisible = nameVisible;
         }
 
         public static final Codec<FamiliarState> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.STRING.optionalFieldOf("uuid", "").forGetter(s -> s.uuid),
             Codec.STRING.optionalFieldOf("type", "").forGetter(s -> s.type),
             Codec.STRING.optionalFieldOf("name", "").forGetter(s -> s.name),
-            Codec.BOOL.optionalFieldOf("sitting", false).forGetter(s -> s.sitting)
+            Codec.BOOL.optionalFieldOf("sitting", false).forGetter(s -> s.sitting),
+            Codec.BOOL.optionalFieldOf("name_visible", false).forGetter(s -> s.nameVisible)
         ).apply(i, FamiliarState::new));
     }
 
@@ -173,6 +176,7 @@ public class WitcheryPlayerData {
     public String getFamiliarType() { return familiar.type; }
     public String getFamiliarName() { return familiar.name; }
     public boolean isFamiliarSitting() { return familiar.sitting; }
+    public boolean isFamiliarNameVisible() { return familiar.nameVisible; }
 
     public InfusionType getInfusionType() { return InfusionType.fromString(infusionType); }
 
@@ -185,6 +189,7 @@ public class WitcheryPlayerData {
     public void setFamiliarType(String type) { this.familiar.type = type == null ? "" : type.toLowerCase(java.util.Locale.ROOT); }
     public void setFamiliarName(String name) { this.familiar.name = name == null ? "" : name; }
     public void setFamiliarSitting(boolean sitting) { this.familiar.sitting = sitting; }
+    public void setFamiliarNameVisible(boolean visible) { this.familiar.nameVisible = visible; }
     public void clearFamiliar() { this.familiar = new FamiliarState(); }
     public void setInfusionType(InfusionType type) { this.infusionType = type == null ? "" : type.name(); }
     public void clearInfusion() { this.infusionType = ""; }
@@ -294,7 +299,7 @@ public class WitcheryPlayerData {
         this.vampire = other.vampire;
         this.werewolf = other.werewolf;
         this.transformationLevel = other.transformationLevel;
-        this.familiar = new FamiliarState(other.familiar.uuid, other.familiar.type, other.familiar.name, other.familiar.sitting);
+        this.familiar = new FamiliarState(other.familiar.uuid, other.familiar.type, other.familiar.name, other.familiar.sitting, other.familiar.nameVisible);
         this.infusionType = other.infusionType;
         this.lastDeathPos = other.lastDeathPos;
         this.lastDeathDimension = other.lastDeathDimension;

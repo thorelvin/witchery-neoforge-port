@@ -21,6 +21,7 @@ public record SyncPlayerDataPayload(
         String familiarType,
         String familiarName,
         boolean familiarSitting,
+        boolean familiarNameVisible,
         String infusionType,
         boolean inSpiritWorld
 ) implements CustomPacketPayload {
@@ -42,6 +43,7 @@ public record SyncPlayerDataPayload(
                             buf.readUtf(),
                             buf.readUtf(),
                             buf.readBoolean(),
+                            buf.readBoolean(),
                             buf.readUtf(),
                             buf.readBoolean()
                     );
@@ -58,6 +60,7 @@ public record SyncPlayerDataPayload(
                     buf.writeUtf(payload.familiarType());
                     buf.writeUtf(payload.familiarName());
                     buf.writeBoolean(payload.familiarSitting());
+                    buf.writeBoolean(payload.familiarNameVisible());
                     buf.writeUtf(payload.infusionType());
                     buf.writeBoolean(payload.inSpiritWorld());
                 }
@@ -72,6 +75,7 @@ public record SyncPlayerDataPayload(
                 data.getFamiliarType(),
                 data.getFamiliarName(),
                 data.isFamiliarSitting(),
+                data.isFamiliarNameVisible(),
                 data.getInfusionType().name(),
                 data.isInSpiritWorld()
         );

@@ -3251,15 +3251,18 @@ public class RitualExecutor {
         String familiarType = FamiliarHelper.describeFamiliar(familiar);
         String familiarName = familiar.hasCustomName() ? familiar.getCustomName().getString() : "";
         boolean familiarSitting = familiar.isOrderedToSit();
+        boolean familiarNameVisible = familiar.isCustomNameVisible();
         boolean familiarChanged = familiarData.getFamiliarUUID().map(uuid -> !uuid.equals(familiarUuid)).orElse(true)
                 || !familiarType.equals(familiarData.getFamiliarType())
                 || !familiarName.equals(familiarData.getFamiliarName())
-                || familiarSitting != familiarData.isFamiliarSitting();
+                || familiarSitting != familiarData.isFamiliarSitting()
+                || familiarNameVisible != familiarData.isFamiliarNameVisible();
         if (familiarChanged) {
             familiarData.setFamiliarUUID(familiarUuid);
             familiarData.setFamiliarType(familiarType);
             familiarData.setFamiliarName(familiarName);
             familiarData.setFamiliarSitting(familiarSitting);
+            familiarData.setFamiliarNameVisible(familiarNameVisible);
             PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, familiarData));
         }
 
@@ -3343,6 +3346,7 @@ public class RitualExecutor {
         data.setFamiliarType(FamiliarHelper.describeFamiliar(bound));
         data.setFamiliarName(bound.hasCustomName() ? bound.getCustomName().getString() : "");
         data.setFamiliarSitting(bound.isOrderedToSit());
+        data.setFamiliarNameVisible(bound.isCustomNameVisible());
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         return bound;
     }
