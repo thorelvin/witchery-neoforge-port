@@ -35,6 +35,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final List<StoredPlayer> recentPlayers = new ArrayList<>();
     private String customName = "";
+    private int openCount = 0;
 
     public LeechChestBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.LEECH_CHEST.get(), pos, state);
@@ -121,6 +122,10 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         }
     }
 
+    public int getOpenCount() {
+        return openCount;
+    }
+
     @Override
     public int getContainerSize() {
         return SLOTS;
@@ -181,6 +186,34 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         if (level != null) {
             level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
         }
+    }
+
+    public void startOpen(Player player) {
+        if (isRemoved() || player.isSpectator()) {
+            return;
+        }
+        updateOpenCount(openCount + 1);
+    }
+
+    public void stopOpen(Player player) {
+        if (isRemoved() || player.isSpectator()) {
+            return;
+        }
+        updateOpenCount(openCount - 1);
+    }
+
+    private void updateOpenCount(int newOpenCount) {
+        int clamped = Math.max(0, newOpenCount);
+        if (level == null || clamped == openCount) {
+            openCount = clamped;
+            return;
+        }
+
+        openCount = clamped;
+        BlockState state = getBlockState();
+        level.updateNeighborsAt(worldPosition, state.getBlock());
+        level.updateNeighborsAt(worldPosition.below(), state.getBlock());
+        level.sendBlockUpdated(worldPosition, state, state, 3);
     }
 
     @Override
