@@ -301,16 +301,24 @@ public class RitualExecutor {
 
     private static ActivationResult dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         // Infusion brew bases take priority — each grants a specific infusion type
-        if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())) {
+        if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
             riteOfInfusion(player, level, center, InfusionType.LIGHT);
             return successResult();
-        } else if (item.is(WitcheryItems.SOUL_OF_THE_WORLD.get())) {
+        } else if (item.is(WitcheryItems.SOUL_OF_THE_WORLD.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
             riteOfInfusion(player, level, center, InfusionType.OVERWORLD);
             return successResult();
-        } else if (item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get())) {
+        } else if (item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get())
+                && hasVariant(circleVariant, VARIANT_OTHERWHERE)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)) {
             riteOfInfusion(player, level, center, InfusionType.OTHERWHERE);
             return successResult();
-        } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
+        } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())
+                && hasVariant(circleVariant, VARIANT_INFERNAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
             riteOfInfusion(player, level, center, InfusionType.INFERNAL);
             return successResult();
         } else if ((item.is(Items.COAL) || item.is(Items.COAL_BLOCK) || item.is(Items.BLACK_DYE))

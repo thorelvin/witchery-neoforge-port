@@ -40,6 +40,7 @@ Current state:
 - Climate Change staged aborts now refund their consumed biome-focus items and glowstone support sacrifices too, instead of only refunding the main dropped trigger item.
 - Broiling, Broken Earth, Moving Earth, Raise Column, Volcano, and Flying Ointment's broom infusion now require the original chalk family again instead of activating from any same-size circle.
 - Flying Ointment's broom infusion now also routes from the original medium ritual ring only when the inner small ritual ring is present again, instead of firing from a lone large ritual circle.
+- The four player infusion rites now also require their original small-plus-medium paired-circle layouts again: Light and Overworld infusions expect ritual chalk on both rings, Otherwhere infusion expects otherwhere chalk on both, and Infernal infusion expects infernal chalk on both instead of all four firing from any lone small circle.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
