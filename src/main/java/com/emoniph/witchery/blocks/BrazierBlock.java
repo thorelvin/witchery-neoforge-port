@@ -22,11 +22,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class BrazierBlock extends BaseEntityBlock {
 
     public static final MapCodec<BrazierBlock> CODEC = simpleCodec(BrazierBlock::new);
+    private static final VoxelShape SHAPE = box(3.2, 0.0, 3.2, 12.8, 15.2, 12.8);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public BrazierBlock(BlockBehaviour.Properties p) { super(p); }
@@ -115,4 +118,14 @@ public class BrazierBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
 }
