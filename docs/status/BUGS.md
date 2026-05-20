@@ -314,13 +314,14 @@ Remaining gap:
 
 The protection barrier family is now back much closer to old Witchery:
 - The broader `Rite of Protection` barrier no longer resolves as a modern potion buff on the caster.
-- It now queues as a sustained active rite again, requires altar power to stay alive, redraws an invisible barrier dome around the circle on a timed pulse, and now does so from the original medium ritual ring instead of the wrong large route.
+- It now queues as a sustained active rite again, once more asks for its startup glowstone-dust support offering plus 1000 altar power, redraws an invisible barrier dome around the circle on a timed pulse, and now does so from the original medium ritual ring instead of the wrong large route.
 - The barrier itself now has real timed block/entity behavior again instead of being a dead placeholder block.
-- The smaller monster-only barrier variant now routes from the original small ritual ring instead of medium.
-- The timed portable barrier variant is still reachable on its original medium circle, and it now expects `Charged Attuned Stone` instead of collapsing onto plain `Attuned Stone`.
+- The smaller monster-only barrier variant now routes from the original small ritual ring instead of medium and once again asks for redstone plus its startup altar cost before sustaining.
+- The timed portable barrier variant is still reachable on its original medium circle, now expects `Charged Attuned Stone` again instead of collapsing onto plain `Attuned Stone`, and once more asks for its obsidian support offering.
+- Sanctity and Imprisonment now also once more ask for redstone plus their original 500 altar-power startup cost instead of activating as effectively free wards once an altar merely exists nearby.
 
 Remaining gap:
-- This restores the practical barrier mechanics and most of the ring-size split, and the old charged-attuned-stone distinction is now back for the portable route, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly.
+- This restores the practical barrier mechanics, startup altar costs, and most of the ring-size split, and the old charged-attuned-stone distinction is now back for the portable route, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly and the optional bound-waystone relocation behavior is still deferred.
 
 ### 26. Flowing Spirit world-block effects were still mostly missing - Fixed / verify
 
@@ -359,6 +360,7 @@ The ritual lifecycle is now closer to old Witchery on the protection family:
 - The large barrier dome now drains altar power at the old relative `1.4` upkeep rate again instead of the port's rounded `2`.
 - The medium monster-only barrier now uses the old `1.2` upkeep rate again.
 - Sanctity and Imprisonment now use the old `0.8` upkeep rate again instead of draining a full point every pulse.
+- Sanctity, Imprisonment, the monster-only barrier, and the broader dome now also restore their missing startup altar costs, so these wards are no longer effectively free to begin before the upkeep loop takes over.
 - The port now tracks fractional upkeep debt across pulses, so these rites preserve the old relative costs without forcing the altar system back to floating-point storage.
 
 Remaining gap:

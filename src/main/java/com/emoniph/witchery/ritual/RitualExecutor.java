@@ -446,7 +446,7 @@ public class RitualExecutor {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
                     RitualCircleDetector.CircleSize.MEDIUM, 6, 4));
-        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN) || item.is(Items.GLOWSTONE_DUST))
+        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtection(player, level, center));
         } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())
@@ -875,8 +875,15 @@ public class RitualExecutor {
     /** Rite of Protection Barrier (large) — sustains the broader monster barrier from the medium ritual ring. */
     private static boolean riteOfProtection(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!hasNearbyRitualAltar(sl, center, 16)) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+        Optional<ItemEntity> glowstone = findNearbyGlowstoneOffering(level, center);
+        if (glowstone.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.glowstone_support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
         if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.MEDIUM,
@@ -885,6 +892,7 @@ public class RitualExecutor {
             return false;
         }
 
+        consumeOfferedItem(glowstone.get());
         success(player, level, center, "witchery.ritual.protection.activated",
                 SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of Protection barrier raised at {} by {}", center, player.getName().getString());
@@ -895,22 +903,43 @@ public class RitualExecutor {
                                                    ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                                    int radius, int height) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (type != ActiveRitualType.PROTECTION_BARRIER_PORTABLE && !hasNearbyRitualAltar(sl, center, 16)) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+        Optional<ItemEntity> supportOffering = switch (type) {
+            case PROTECTION_BARRIER_MONSTERS -> findNearbyRedstoneOffering(level, center);
+            case PROTECTION_BARRIER_PORTABLE -> findNearbyObsidianOffering(level, center);
+            default -> Optional.empty();
+        };
+        String supportKey = switch (type) {
+            case PROTECTION_BARRIER_MONSTERS -> "witchery.ritual.protection.redstone_support";
+            case PROTECTION_BARRIER_PORTABLE -> "witchery.ritual.protection.obsidian_support";
+            default -> null;
+        };
+        if (supportKey != null && supportOffering.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
 
         int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
+        int startupPower = switch (type) {
+            case PROTECTION_BARRIER_MONSTERS -> 500;
+            default -> 0;
+        };
         float upkeepCost = switch (type) {
             case PROTECTION_BARRIER_MONSTERS -> 1.2f;
             case PROTECTION_BARRIER_PORTABLE -> 0.0f;
             default -> 0.0f;
         };
+        if (startupPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupPower)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, type, circleSize, center, radius, height, targetStage, 20, 0, upkeepCost, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
+        supportOffering.ifPresent(RitualExecutor::consumeOfferedItem);
         success(player, level, center, "witchery.ritual.protection.activated",
                 SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of Protection variant {} raised at {} by {}", type, center, player.getName().getString());
@@ -1066,14 +1095,22 @@ public class RitualExecutor {
     /** Rite of Sanctity — sustains a repulsive protection circle around the rite. */
     private static boolean riteOfSanctity(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!hasNearbyRitualAltar(sl, center, 16)) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+        Optional<ItemEntity> redstone = findNearbyRedstoneOffering(level, center);
+        if (redstone.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 500)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
         if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
+        consumeOfferedItem(redstone.get());
         success(player, level, center, "witchery.ritual.sanctity.activated",
                 SoundEvents.BEACON_ACTIVATE, 1.2f, 2, 48);
         return true;
@@ -1082,14 +1119,22 @@ public class RitualExecutor {
     /** Rite of Imprisonment — sustains an attractive circle that keeps creatures penned in. */
     private static boolean riteOfImprisonment(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!hasNearbyRitualAltar(sl, center, 16)) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
+        Optional<ItemEntity> redstone = findNearbyRedstoneOffering(level, center);
+        if (redstone.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 500)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
         if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
+        consumeOfferedItem(redstone.get());
         success(player, level, center, "witchery.ritual.imprisonment.activated",
                 SoundEvents.CHAIN_PLACE, 1f, 2, 48);
         return true;
@@ -4043,6 +4088,18 @@ public class RitualExecutor {
     private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
         return findNearbyOffering(level, center,
                 stack -> stack.is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(stack) == bound);
+    }
+
+    private static Optional<ItemEntity> findNearbyRedstoneOffering(Level level, BlockPos center) {
+        return findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE));
+    }
+
+    private static Optional<ItemEntity> findNearbyGlowstoneOffering(Level level, BlockPos center) {
+        return findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
+    }
+
+    private static Optional<ItemEntity> findNearbyObsidianOffering(Level level, BlockPos center) {
+        return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
