@@ -14,7 +14,7 @@ Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA che
 6. Fix mandrake harvest rules so mature crops only spawn a mandrake under the original difficulty and time-based chances, instead of always doing both.
 7. Replace the current cotton placeholder behavior with mechanics that match the Dream World plant flow more closely.
 8. Audit Dream Catcher and Dream World nightmare chance rules against the old block scan and sleep-threshold behavior.
-9. Restore special plant/block mechanics that are still plain blocks in the port: blood rose, spanish moss, bramble, void bramble, grassper, and glowglobe.
+9. Restore special plant/block mechanics that are still plain blocks in the port: blood rose, bramble, void bramble, grassper, and glowglobe. Spanish Moss is no longer plain behavior-wise, but still needs in-game spread/burn verification.
 10. Revisit altar-adjacent placed-item interactions so Arthana, Mystic Branch, chalice, and similar bonuses match original expectations.
 11. Restore storage block behavior parity for Leech Chest, Refilling Chest, Dream Catcher handling, and Poppet Shelf edge cases.
 12. Finish Spirit World parity around corpse/state transitions, flowing spirit interactions, and demonic nightmare edge cases.

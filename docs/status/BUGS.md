@@ -109,7 +109,7 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Blood Rose` stores a fresh player sample again and lets `Taglock Kit` pull it later.
 - `Ember Moss` burns living entities again, gives the old low fire-moss light/ambience, spreads onto the legacy substrate set, and only drops itself when sheared.
 - `Glint Weed` emits the original full-strength light and flame ambience again, and now uses the old capped spreading behavior over legacy substrates instead of staying as a passive decorative block.
-- `Spanish Moss` grows as a fast vine instead of a dead decorative cross.
+- `Spanish Moss` grows as a fast vine instead of a dead decorative cross, no longer acts as a climbable ladder, and now restores the old high fire spread/flammability profile.
 - `Grassper` works as a one-item stash and renders its stored item again.
 - `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.

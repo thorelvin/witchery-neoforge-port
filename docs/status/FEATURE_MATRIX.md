@@ -142,7 +142,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 |---|---:|---|
 | Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); MOTION_BLOCKING_NO_LEAVES heightmap |
 | Rowan berries | Done | Loot/drop chain |
-| Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage, ember moss fire/spread/shears behavior, spanish moss fast growth, grassper item stash plus comparator output, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, and leaping lily buffs are now restored closer to original, but in-game verification and a few edge behaviors are still open |
+| Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage, ember moss fire/spread/shears behavior, spanish moss fast growth plus non-ladder/high-flammability behavior, grassper item stash plus comparator output, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, and leaping lily buffs are now restored closer to original, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks, door (UUID-locked + key + keyring), stairs, slab registered |
 | Ice block family | Done | Ice Door, Fence, Gate, Pressure Plate registered (created by Brew of Ice World - deferred) |
 | Witch hut / abandoned shack | Done | 7x7 hut; Coven Witch; loot chest |
