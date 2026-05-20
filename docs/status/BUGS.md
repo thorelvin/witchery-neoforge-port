@@ -48,7 +48,7 @@ Current state:
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.
 - `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Sky's Wrath now routes from the original small ritual circle again instead of the wrong medium ring.
-- The non-original redstone Charging buff fallback is gone again, so the old small-plus-medium `chargestone` / `infusionrecharge` family now stands as explicit remaining work instead of pretending to be a finished medium-circle parity route.
+- The non-original redstone Charging buff fallback is gone again, and the real paired-circle `chargestone` path now exists again: a plain Attuned Stone on the medium ritual ring with its inner small ritual companion plus 2000 altar power now spits out a Charged Attuned Stone instead of falling through to the portable-barrier placeholder.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
@@ -57,7 +57,7 @@ Current state:
 
 Remaining gap:
 - The original tile-entity ritual queue, upkeep lifecycle, and abort/refund behavior are only partially restored.
-- The old `chargestone` / `infusionrecharge` family is still genuinely missing: the port does not yet have the original charged-attuned-stone split or the old infusion-energy meter those paired-circle rites act on.
+- The old `infusionrecharge` half of the family is still genuinely missing: the port still does not have the original infusion-energy meter that rite refills, even though the Charged Attuned Stone split and the `chargestone` ritual path are back.
 - See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
 Files:

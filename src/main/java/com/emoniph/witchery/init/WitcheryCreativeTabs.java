@@ -121,6 +121,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.OIL_OF_VITRIOL.get());
                         output.accept(WitcheryItems.REEK_OF_MISFORTUNE.get());
                         output.accept(WitcheryItems.GOLDEN_THREAD.get());
+                        output.accept(WitcheryItems.ATTUNED_STONE.get());
+                        output.accept(WitcheryItems.ATTUNED_STONE_CHARGED.get());
                         output.accept(WitcheryItems.CLAY_JAR_SOFT.get());
                         output.accept(WitcheryItems.CLAY_JAR.get());
                         output.accept(WitcheryItems.ALDER_SAPLING.get());

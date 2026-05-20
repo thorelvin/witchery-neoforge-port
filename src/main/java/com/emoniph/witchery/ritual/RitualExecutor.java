@@ -419,6 +419,10 @@ public class RitualExecutor {
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTheForest(player, level, center);
             return successResult();
+        } else if (item.is(WitcheryItems.ATTUNED_STONE.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+            return matchedResult(riteOfChargeStone(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
@@ -775,6 +779,29 @@ public class RitualExecutor {
         player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of the Forest grew {} trees", grown);
+    }
+
+    /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired ritual circles. */
+    private static boolean riteOfChargeStone(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.no_power"), false);
+            return false;
+        }
+
+        ItemEntity entity = new ItemEntity(level,
+                center.getX() + 0.5,
+                center.getY() + 1.5,
+                center.getZ() + 0.5,
+                new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        entity.setDeltaMovement(0.0, 0.3, 0.0);
+        level.addFreshEntity(entity);
+
+        success(player, level, center, "witchery.ritual.charge_stone.success",
+                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+        WitcheryMod.LOGGER.info("Charged Attuned Stone created at {} for {}", center, player.getName().getString());
+        return true;
     }
 
     /** Rite of Broiling — cooks all raw food item entities in 10-block radius. */

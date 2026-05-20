@@ -17,6 +17,7 @@ import com.emoniph.witchery.item.BrewOfWastingItem;
 import com.emoniph.witchery.item.BroomItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -285,6 +286,13 @@ public class WitcheryItems {
     public static final DeferredItem<Item> TORMENTED_TWINE    = ITEMS.registerSimpleItem("tormented_twine");
     public static final DeferredItem<Item> WHIFF_OF_MAGIC     = ITEMS.registerSimpleItem("whiff_of_magic");
     public static final DeferredItem<Item> ATTUNED_STONE      = ITEMS.registerSimpleItem("attuned_stone");
+    public static final DeferredItem<Item> ATTUNED_STONE_CHARGED = ITEMS.register("attuned_stone_charged",
+            id -> new Item(itemProps(id)) {
+                @Override
+                public boolean isFoil(ItemStack stack) {
+                    return true;
+                }
+            });
     public static final DeferredItem<Item> NECRO_STONE        = ITEMS.registerSimpleItem("necro_stone");
     public static final DeferredItem<Item> QUARTZ_SPHERE      = ITEMS.registerSimpleItem("quartz_sphere");
     public static final DeferredItem<Item> CREEPER_HEART      = ITEMS.registerSimpleItem("creeper_heart");
