@@ -405,13 +405,14 @@ public class RitualExecutor {
     // ── Medium ring dispatch ───────────────────────────────────────────────────
 
     private static ActivationResult dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
+        if (item.is(WitcheryItems.WHIFF_OF_MAGIC.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfWhiffOfMagicFamiliar(player, level, center));
+        } else if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
                 || item.is(WitcheryItems.ODOUR_OF_PURITY.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindFamiliar(player, level, center));
         } else if ((item.is(WitcheryItems.BREATH_OF_GODDESS.get())
-                || item.is(WitcheryItems.HINT_OF_REBIRTH.get())
-                || item.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
+                || item.is(WitcheryItems.HINT_OF_REBIRTH.get()))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfCallFamiliar(player, level, center));
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -621,6 +622,17 @@ public class RitualExecutor {
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
         WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
         return true;
+    }
+
+    /**
+     * Shared `Whiff of Magic` familiar trigger — bind when a valid familiar candidate is present,
+     * otherwise fall through to calling the already bound familiar.
+     */
+    private static boolean riteOfWhiffOfMagicFamiliar(Player player, Level level, BlockPos center) {
+        if (level instanceof ServerLevel sl && hasBindableFamiliarCandidate(sl, center, FAMILIAR_BIND_RADIUS)) {
+            return riteOfBindFamiliar(player, level, center);
+        }
+        return riteOfCallFamiliar(player, level, center);
     }
 
     /** Rite of Summon Familiar — restores the original small-circle Drop of Luck path as a bound witch's cat summon. */
@@ -3441,6 +3453,21 @@ public class RitualExecutor {
         }
 
         return best;
+    }
+
+    private static boolean hasBindableFamiliarCandidate(ServerLevel level, BlockPos center, double radius) {
+        AABB playerBounds = new AABB(center).inflate(radius, 1.0, radius);
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, playerBounds);
+        for (ServerPlayer nearbyPlayer : nearbyPlayers) {
+            if (nearbyPlayer.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5)
+                    > radius * radius) {
+                continue;
+            }
+            if (findBindableFamiliarCandidate(nearbyPlayer, level, center, radius) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean canBecomeBoundFamiliar(ServerPlayer player, TamableAnimal tameable, BlockPos center, double radius) {
