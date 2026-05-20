@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-19 (Sprints 1-10 plus ritual mechanics/doc sync)
+Last reconciled: 2026-05-20 (Torment maze follow-up + ritual mechanics/doc sync)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -131,7 +131,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Dimension | Status | Notes |
 |---|---:|---|
 | Spirit World | Partial | Entry/exit/inventory; health/hunger save-restore; corpse anchor now restores full-body health closer to original; vegetation; atmosphere (pink fog); block-scan nightmare chance; transferable items; victim UUID; periodic respawn+kill cooldown; nightmare death now feeds the old delayed victim-bound replacement loop again; demonic nightmare events now use the old single-roll overhead harassment split again; dynamic fog (dream/nightmare/demonic); disturbed-cotton cleansing and Flowing Spirit living-entity effects restored; Nightmare defense suppression plus Huntsman's Spear weakening, weak out-of-dimension damage, and Charm of Disrupted Dreams armor-strip immunity are back closer to original; wild/void bramble danger behavior restored; snow-frame Spirit Portal activation, manifestation-duration rite, portal-triggered ghost travel, timed return, and Icy Needle recall are back; remaining work is mostly in-game verification and ghost rendering/style polish |
-| Torment | Partial | Boss loop complete; legacy `GenerateMaze.display` layout restored (6 DFS levels Y=10-85, origin x=-23/z=6, invisible Force walls/ceilings, vanilla Bedrock floor/portal frame, rare mycelium patches, old portal chamber, and 3 refilling chest rooms per level); dimension fixed (has_ceiling=false, skylight=true, fixed day, ambient_light=0.15, red sky, no spawns); Force restores old light opacity 0 behavior so maze ceilings do not black out the view; TormentHelper entry/exit; Hellgate rite updated |
+| Torment | Partial | Boss loop now reuses one shared random maze level again, sends players to the legacy maze start, and respawns the phase-2 Lord on the old fixed lane at half health. Legacy `GenerateMaze.display` layout is restored too (6 DFS levels Y=10-85, origin x=-23/z=6, invisible Force walls/ceilings, vanilla Bedrock floor/portal frame, rare mycelium patches, old portal chamber, and 3 refilling chest rooms per level); the stray standalone `torment_chambers` worldgen path is removed so fresh/deleted Torment chunks only use that maze. Dimension settings are fixed too (`has_ceiling=false`, skylight, fixed day, ambient_light=0.15, red sky, no spawns); Force restores old light opacity 0 behavior; Hellgate rite updated |
 | Mirror World | Not started | Not started - dark blue fog, reflected overworld terrain, hostile player clones |
 
 ---
@@ -150,8 +150,8 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Apothecary village house | Done | 9x8x6 shop; Coven Witch; full interior |
 | Hobgoblin Hut | Done | 5x5x5 oak hut; 1-2 hobgoblin residents; koboldite loot chest |
 | Village additions | Not started | Bookshop, guards, walls deferred |
-| Torment maze | Partial | Legacy 31x31 DFS generator restored with old origin, invisible Force wall/ceiling blocks, Bedrock floor, rare mycelium, portal chamber, and 3 refilling chest rooms per level; final in-game verification still open |
-| Torment boss loop | Done | Full Flame Imp -> Scroll -> ritual -> LoT -> return flow |
+| Torment maze | Partial | Legacy 31x31 DFS generator restored with old origin, invisible Force wall/ceiling blocks, Bedrock floor, rare mycelium, portal chamber, and 3 refilling chest rooms per level. The obsolete random `torment_chambers` structure-set path is removed so fresh/deleted Torment chunks now verify the maze generator alone; final in-game verification is still open |
+| Torment boss loop | Done | Full Flame Imp -> Scroll -> ritual -> LoT -> shared random Torment level -> fixed phase-2 maze spawn -> return flow |
 
 ---
 
@@ -201,7 +201,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Cat familiar model proportions | Polish | Body geometry tweak |
 | Demon UV/texture | Polish | Partially fixed; verify in-game |
 | Nightmare behavior verification | Polish | Needs in-game test |
-| Torment maze | Partial | Legacy block/layout parity restored; needs fresh-dimension in-game verification |
+| Torment maze | Partial | Legacy block/layout parity restored and the stray random chamber structure-set path removed; still needs fresh-dimension in-game verification |
 | Mirror World dimension | Large | Not started |
 | Village additions | Large | Bookshop, guards deferred |
 | Custom Brew system | Large | Level 1-5 capacity/power/dispersal system - not started |

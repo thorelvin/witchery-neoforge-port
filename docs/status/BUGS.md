@@ -714,7 +714,9 @@ Current state:
 - `TormentChunkGenerator` now follows the legacy 31x31 DFS display footprint at x=-23/z=6 for all six stacked levels.
 - Floor and portal frame blocks use vanilla Bedrock again; walls and ceilings use invisible, solid, light-transparent Force blocks like old `BlockForce`.
 - Portal chamber and three old-style refilling chest rooms are restored per level, with chests placed at floor level.
-- Existing saves need the Torment dimension folder deleted, or a fresh world, before this visual/layout fix can be verified because old chunks will not regenerate automatically.
+- The obsolete random `torment_chambers` structure-set path is gone, so fresh/deleted Torment chunks now rely on the restored legacy maze generator alone instead of mixing in the later standalone chamber structure.
+- `TormentHelper`, `/witchery torment`, `/witchery tormentlevel`, and the Lord of Torment half-health transfer now all enter the real maze start again, and the phase-2 Lord now respawns on the old fixed maze lane at half health instead of using arbitrary safe-spot scans.
+- Existing saves still need the Torment dimension folder deleted, or a fresh world, before this visual/layout fix can be verified because old chunks will not regenerate automatically.
 
 ---
 

@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
+import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -422,8 +423,7 @@ public class WitcheryCommands {
      * Dream World: End-style generator, central island peaks around Y=55–70.
      *   Scan downward from 75 for the first solid block with 2 air above it.
      *
-     * Torment: Nether-style generator, open caverns through Y=10–110.
-     *   Scan downward from 110 for the first 2-block-tall air gap.
+     * Torment uses its dedicated maze-entry helper instead of this generic scan.
      */
     private static double[] findSafeEntry(ServerLevel level, ResourceKey<Level> dim) {
         // Force full chunk generation at spawn point (synchronous on server thread)
@@ -442,19 +442,6 @@ public class WitcheryCommands {
             return new double[]{ 0.5, 65, 0.5 };
         }
 
-        if (dim.equals(WitcheryDimensions.TORMENT)) {
-            // Scan down from 110: find a 2-block air gap (standing room in nether cavern)
-            for (int y = 110; y >= 10; y--) {
-                var pos = new net.minecraft.core.BlockPos(0, y, 0);
-                if (level.getBlockState(pos).isAir()
-                        && level.getBlockState(pos.above()).isAir()
-                        && !level.getBlockState(pos.below()).isAir()) {
-                    return new double[]{ 0.5, y, 0.5 };
-                }
-            }
-            return new double[]{ 0.5, 50, 0.5 }; // nether mid-cavern fallback
-        }
-
         return new double[]{ 0.5, 64, 0.5 };
     }
 
@@ -465,6 +452,11 @@ public class WitcheryCommands {
         if (target == null) {
             src.sendFailure(Component.literal("Dimension " + dim.identifier() + " is not loaded."));
             return 0;
+        }
+        if (dim.equals(WitcheryDimensions.TORMENT)) {
+            TormentHelper.sendToTorment(player, 0);
+            src.sendSuccess(() -> Component.literal("Entered torment at maze level 0."), false);
+            return 1;
         }
         // Save return position before teleporting
         WitcheryPlayerData data = WitcheryAttachments.get(player);
@@ -570,17 +562,10 @@ public class WitcheryCommands {
             src.sendFailure(Component.literal("Torment dimension not loaded."));
             return 0;
         }
-        int y = com.emoniph.witchery.world.TormentChunkGenerator.BASE_LEVEL
-              + level * com.emoniph.witchery.world.TormentChunkGenerator.LEVEL_HEIGHT + 1;
-        WitcheryPlayerData d = WitcheryAttachments.get(p);
-        d.setReturnPos(p.blockPosition(), p.level().dimension());
-        sync(p, d);
-        p.teleportTo(torment, 8.5, y, 8.5,
-                java.util.Set.<net.minecraft.world.entity.Relative>of(),
-                p.getYRot(), p.getXRot(), false);
+        TormentHelper.sendToTorment(p, level);
         final int lvl = level;
         src.sendSuccess(() -> Component.literal(
-                "Teleported to Torment maze level " + lvl + " (Y=" + y + ")."), false);
+                "Teleported to Torment maze level " + lvl + " (Y=" + TormentHelper.getStandingY(level) + ")."), false);
         return 1;
     }
 

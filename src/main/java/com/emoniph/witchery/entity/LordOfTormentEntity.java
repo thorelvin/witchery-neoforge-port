@@ -1,9 +1,9 @@
 package com.emoniph.witchery.entity;
 
-import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.world.TormentHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -159,6 +159,7 @@ public class LordOfTormentEntity extends Monster implements RangedAttackMob {
     private void triggerTormentTeleport(ServerLevel serverLevel) {
         ServerLevel torment = serverLevel.getServer().getLevel(WitcheryDimensions.TORMENT);
         if (torment == null) return;
+        int tormentLevel = serverLevel.getRandom().nextInt(TormentHelper.NUM_LEVELS);
 
         double x = this.getX(), y = this.getY(), z = this.getZ();
         AABB bb = new AABB(x - 16, y - 32, z - 16, x + 16, y + 32, z + 16);
@@ -174,38 +175,27 @@ public class LordOfTormentEntity extends Monster implements RangedAttackMob {
 
         // Save each player's return position, then teleport them to Torment
         for (ServerPlayer player : toTransport) {
-            WitcheryAttachments.get(player).setReturnPos(player.blockPosition(), player.level().dimension());
-            teleportToTorment(player, torment);
+            TormentHelper.sendToTorment(player, tormentLevel);
         }
 
-        // Spawn phase-2 Lord of Torment in Torment at full HP
-        BlockPos phase2Pos = findSafeTormentPos(torment, new BlockPos((int) x, (int) y, (int) z));
-        LordOfTormentEntity phase2 = WitcheryEntities.LORD_OF_TORMENT.get().create(torment, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
-        if (phase2 != null) {
-            phase2.setPos(phase2Pos.getX() + 0.5, phase2Pos.getY(), phase2Pos.getZ() + 0.5);
-            phase2.finalizeSpawn(torment, torment.getCurrentDifficultyAt(phase2Pos),
-                    EntitySpawnReason.MOB_SUMMONED, null);
-            torment.addFreshEntity(phase2);
+        // Restore the old fixed phase-2 spawn deeper in the maze at half health.
+        BlockPos phase2Pos = TormentHelper.getBossPos(tormentLevel);
+        torment.getChunkAt(phase2Pos);
+        AABB phase2Band = new AABB(phase2Pos).inflate(1.0, 3.0, 1.0);
+        boolean existingPhase2 = !torment.getEntitiesOfClass(LordOfTormentEntity.class, phase2Band).isEmpty();
+        if (!existingPhase2) {
+            LordOfTormentEntity phase2 = WitcheryEntities.LORD_OF_TORMENT.get().create(torment, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            if (phase2 != null) {
+                phase2.setPos(phase2Pos.getX() + 0.5, phase2Pos.getY(), phase2Pos.getZ() + 0.5);
+                phase2.finalizeSpawn(torment, torment.getCurrentDifficultyAt(phase2Pos),
+                        EntitySpawnReason.MOB_SUMMONED, null);
+                phase2.setPersistenceRequired();
+                phase2.setHealth((float) (phase2.getMaxHealth() * 0.5F));
+                torment.addFreshEntity(phase2);
+            }
         }
 
         this.discard();
-    }
-
-    private void teleportToTorment(ServerPlayer player, ServerLevel torment) {
-        BlockPos target = findSafeTormentPos(torment, player.blockPosition());
-        player.teleportTo(torment, target.getX() + 0.5, (double)(target.getY()), target.getZ() + 0.5, java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
-    }
-
-    private BlockPos findSafeTormentPos(ServerLevel torment, BlockPos hint) {
-        int x = hint.getX(), z = hint.getZ();
-        for (int y = 110; y > 10; y--) {
-            BlockPos pos = new BlockPos(x, y, z);
-            if (torment.getBlockState(pos).isAir()
-                    && torment.getBlockState(pos.below()).isSolid()) {
-                return pos;
-            }
-        }
-        return new BlockPos(x, 80, z);
     }
 
     // ── Drops ─────────────────────────────────────────────────────────────────
