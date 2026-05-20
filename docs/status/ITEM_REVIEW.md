@@ -25,7 +25,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 11 | `witchery:snowbell` | | Ok, bone meal grow
 | 12 | `witchery:blood_rose` | `Partial - blood sample storage restored` | Walking through the rose now stores the last player's UUID/name, switches to the full rose variant, and lets Taglock Kits pull that sample later. Needs in-game verification.
 | 13 | `witchery:ember_moss` | | Looks ok
-| 14 | `witchery:glint_weed` | ✅ Fixed — lightLevel(s->7) added | Ok, should have light
+| 14 | `witchery:glint_weed` | `Partial - original full light restored` | Now uses full light level 15 again, matching the old `0.9375F` brightness. Original random spread and flame ambience still need a focused plant-behavior pass.
 | 15 | `witchery:spanish_moss` | `Partial - growth behavior restored` | Now behaves like a faster-growing vine again. Needs in-game verification for spread feel.
 | 16 | `witchery:bramble` | `Partial - wild bramble hazard restored` | Now hurts entities and spreads into nearby open tiles when broken without shears. Needs in-game verification against original placement/spread feel.
 | 17 | `witchery:void_bramble` | `Partial - void teleport trap restored` | Now teleports living entities to a distant safe point again. Ownership/column-break behavior from the old tile-entity version is still not restored.
