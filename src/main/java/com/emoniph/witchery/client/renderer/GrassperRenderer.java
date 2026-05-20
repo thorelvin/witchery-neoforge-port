@@ -1,9 +1,11 @@
 package com.emoniph.witchery.client.renderer;
 
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
+import com.emoniph.witchery.blocks.GrassperBlock;
 import com.emoniph.witchery.client.model.GrassperModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.core.Direction;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -28,6 +30,7 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
     public static class State extends BlockEntityRenderState {
         public ItemStackRenderState itemRenderState = new ItemStackRenderState();
         public float rotation = 0f;
+        public float blockRotation = 0f;
     }
 
     public GrassperRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -58,6 +61,10 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
             state.itemRenderState = new ItemStackRenderState();
         }
         state.rotation = (float) (be.getBlockPos().hashCode() % 360);
+        Direction facing = be.getBlockState().hasProperty(GrassperBlock.FACING)
+                ? be.getBlockState().getValue(GrassperBlock.FACING)
+                : Direction.NORTH;
+        state.blockRotation = facing.getOpposite().toYRot();
     }
 
     @Override
@@ -66,6 +73,7 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0.0, -1.0, 0.0);
+        ps.mulPose(Axis.YP.rotationDegrees(state.blockRotation));
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords,
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, null);
 

@@ -153,7 +153,7 @@ The special-plant pass has now restored the missing gameplay hooks that mattered
 - `Ember Moss` burns living entities again, gives the old low fire-moss light/ambience, spreads onto the legacy substrate set, and only drops itself when sheared.
 - `Glint Weed` emits the original full-strength light and flame ambience again, and now uses the old capped spreading behavior over legacy substrates instead of staying as a passive decorative block.
 - `Spanish Moss` grows as a fast vine instead of a dead decorative cross, no longer acts as a climbable ladder, and now restores the old high fire spread/flammability profile.
-- `Grassper` works as a one-item stash and renders its stored item again.
+- `Grassper` works as a one-item stash, renders its stored item again, and once more keeps the old facing-aware placement/orientation on its asymmetric plant model instead of ignoring block rotation entirely.
 - `Glowglobe` emits real light and ambience again, and now matches the old ambient-only block more closely by dropping nothing and returning no pick-block clone stack.
 - `Leaping Lily` grants the expected short movement buffs again.
 - `Critter Snare` is stateful again: it catches bats, silverfish, small slimes, and small magma cubes, swaps to the matching caught texture, chirps while occupied, and releases the creature on sneak-use.

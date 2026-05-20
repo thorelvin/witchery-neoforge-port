@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "witchery:block/grassper" }
+    "facing=north": { "model": "witchery:block/grassper" },
+    "facing=south": { "model": "witchery:block/grassper" },
+    "facing=west": { "model": "witchery:block/grassper" },
+    "facing=east": { "model": "witchery:block/grassper" }
   }
 }
