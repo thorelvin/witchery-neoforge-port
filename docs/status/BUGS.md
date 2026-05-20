@@ -57,7 +57,7 @@ Files:
 
 ### 1b. Kettle side supports were too strict for fence rigs - Fixed / verify
 
-`KettleBlock` now accepts fences, walls, and iron bars as valid side supports again instead of requiring only fully sturdy side faces. `/witchery setup stations` now uses that path to place a valid debug strip five blocks ahead of the player with a linked altar, a fence-mounted kettle over a campfire, a distillery, a witch's oven with a fume funnel above it, a spinning wheel, and a stocked double chest for faster machine QA.
+`KettleBlock` now accepts fences, walls, and iron bars as valid side supports again instead of requiring only fully sturdy side faces. The kettle no longer exposes a full-cube support shape to neighbors, so fence-post rigs can still hold it up without visually connecting their side arms into the kettle body. `/witchery setup stations` now uses that path to place a valid debug strip five blocks ahead of the player with a linked altar, a fence-mounted kettle over a campfire, a distillery, a witch's oven with a fume funnel above it, a spinning wheel, and a stocked double chest for faster machine QA.
 
 ### 1c. Base alchemy ingredient chain had hidden and missing steps - Fixed / verify
 

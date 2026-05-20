@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-20 (trader menu pass + setup stations debug strip + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + expanded machine QA strip)
+Last reconciled: 2026-05-20 (trader menu pass + setup stations debug strip + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction + base alchemy item pass + expanded machine QA strip + kettle/oven polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -11,10 +11,10 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Kettle block + tick | Done | Power from nearby altar; fence/wall/iron-bar side support now works again for the original between-post mounting style |
+| Kettle block + tick | Done | Power from nearby altar; fence/wall/iron-bar side support now works again for the original between-post mounting style, and the kettle no longer exposes a full-cube support face so fence-post rigs stop visually connecting into it |
 | Kettle recipe system | Done | 33 recipes in JSON; all known originals covered |
 | Brew items | Done | 33 brews with full effects - see brew list below |
-| Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored; the missing `clay_jar_soft -> clay_jar` furnace step is back so the early jar chain is usable again in survival; current GUI layout now tracks the resurrected-style slot/overlay pass more closely, and the screen now blits the intended panel/overlay subregions directly instead of compressing the full sheet |
+| Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored; the missing `clay_jar_soft -> clay_jar` furnace step is back so the early jar chain is usable again in survival; current GUI layout now tracks the resurrected-style slot/overlay pass more closely, the screen blits the intended panel/overlay subregions directly instead of compressing the full sheet, and the animated cook arrow is back on the correct main-arrow lane instead of drawing offset below it |
 | Distillery | Done | Altar-powered; jar requirements; up to 4 outputs; core recipes pushed back toward original; the clay-jar progression is usable again and omitted base intermediates like `odour_of_purity` / `oil_of_vitriol` are now exposed in the Witchery tab for faster QA; resurrected-style GUI texture/layout pass now matches the current screen/menu path more closely, and the screen now blits the intended panel/overlay subregions directly instead of compressing the full sheet |
 | Spinning Wheel | Done | 5-slot altar-powered modifier wheel; fibre + modifiers restored; resurrected-style GUI texture/layout pass now matches the current screen/menu path more closely, and the screen now blits the intended panel/overlay subregions directly instead of compressing the full sheet |
 | Altar power system | Done | Validated 6-block altar, 14-block scan radius, cumulative skull bonuses, chalice/Arthana/Mystic Branch bonuses, missing natural power sources, and the basic 3D altar block/item form restored closer to original |
