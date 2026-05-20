@@ -4,6 +4,8 @@ import com.emoniph.witchery.blocks.entity.DistilleryBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -63,6 +65,18 @@ public class DistilleryBlock extends BaseEntityBlock {
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!state.getValue(LIT)) {
+            return;
+        }
+
+        double x = pos.getX() + 0.4 + random.nextDouble() * 0.2;
+        double y = pos.getY() + 1.0 + random.nextDouble() * 0.3;
+        double z = pos.getZ() + 0.4 + random.nextDouble() * 0.2;
+        level.addParticle(ParticleTypes.WITCH, x, y, z, 0.0, 0.0, 0.0);
     }
 
     @Override

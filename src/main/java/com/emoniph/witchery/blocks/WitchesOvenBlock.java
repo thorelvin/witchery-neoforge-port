@@ -4,6 +4,8 @@ import com.emoniph.witchery.blocks.entity.WitchesOvenBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -66,6 +68,38 @@ public class WitchesOvenBlock extends BaseEntityBlock {
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!state.getValue(LIT)) {
+            return;
+        }
+
+        double x = pos.getX() + 0.5;
+        double y = pos.getY() + 0.2 + random.nextDouble() * (6.0 / 16.0);
+        double z = pos.getZ() + 0.5;
+        double sideOffset = 0.52;
+        double randomOffset = random.nextDouble() * 0.6 - 0.3;
+
+        switch (state.getValue(FACING)) {
+            case EAST -> {
+                level.addParticle(ParticleTypes.SMOKE, x + sideOffset, y, z + randomOffset, 0.0, 0.0, 0.0);
+                level.addParticle(ParticleTypes.FLAME, x + sideOffset, y, z + randomOffset, 0.0, 0.0, 0.0);
+            }
+            case WEST -> {
+                level.addParticle(ParticleTypes.SMOKE, x - sideOffset, y, z + randomOffset, 0.0, 0.0, 0.0);
+                level.addParticle(ParticleTypes.FLAME, x - sideOffset, y, z + randomOffset, 0.0, 0.0, 0.0);
+            }
+            case SOUTH -> {
+                level.addParticle(ParticleTypes.SMOKE, x + randomOffset, y, z + sideOffset, 0.0, 0.0, 0.0);
+                level.addParticle(ParticleTypes.FLAME, x + randomOffset, y, z + sideOffset, 0.0, 0.0, 0.0);
+            }
+            case NORTH -> {
+                level.addParticle(ParticleTypes.SMOKE, x + randomOffset, y, z - sideOffset, 0.0, 0.0, 0.0);
+                level.addParticle(ParticleTypes.FLAME, x + randomOffset, y, z - sideOffset, 0.0, 0.0, 0.0);
+            }
+        }
     }
 
     @Override
