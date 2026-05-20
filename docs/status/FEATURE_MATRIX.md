@@ -140,7 +140,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); MOTION_BLOCKING_NO_LEAVES heightmap |
+| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies |
 | Rowan berries | Done | Loot/drop chain |
 | Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage, ember moss fire/spread/shears behavior, spanish moss fast growth plus non-ladder/high-flammability behavior, bramble hazard/spread plus original toughness, void bramble teleport plus owner-column removal/unbreakable/ritual-nulling profile, grassper item stash plus comparator output, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, leaping lily buffs, and critter snare catch/release behavior are now restored closer to original, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks craft from rowan logs and are tagged as planks; rowan log, wood, planks, sapling, and lower-half door drops now mirror vanilla self-drop behavior; Rowan stairs and slab are restored with rowan plank models, recipes, tags, loot, and old `5/20` flammability; rowan door has original `5.0F` hardness plus UUID-locked key/keyring flow |
