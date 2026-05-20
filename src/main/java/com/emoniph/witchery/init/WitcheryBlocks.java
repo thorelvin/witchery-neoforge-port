@@ -96,7 +96,10 @@ public class WitcheryBlocks {
             BloodRoseBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GRASS)
                     .strength(0.0f).noOcclusion().noCollision());
-    public static final DeferredBlock<Block> EMBER_MOSS     = BLOCKS.registerSimpleBlock("ember_moss",    BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
+    public static final DeferredBlock<EmberMossBlock> EMBER_MOSS = BLOCKS.registerBlock("ember_moss",
+            EmberMossBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(0.0f).lightLevel(s -> 6).noOcclusion().noCollision().randomTicks().noLootTable());
     public static final DeferredBlock<Block> GLINT_WEED     = BLOCKS.registerSimpleBlock("glint_weed",    BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 15));
     public static final DeferredBlock<SpanishMossBlock> SPANISH_MOSS = BLOCKS.registerBlock("spanish_moss",
             SpanishMossBlock::new,
