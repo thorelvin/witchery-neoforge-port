@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.AlluringSkullBlock;
 import com.emoniph.witchery.blocks.entity.AlluringSkullBlockEntity;
 import com.emoniph.witchery.client.model.AlluringSkullModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -70,7 +71,8 @@ public class AlluringSkullRenderer implements BlockEntityRenderer<AlluringSkullB
                     0.5F - (float) state.facing.getStepZ() * 0.25F);
         }
         poseStack.scale(-1.0F, -1.0F, 1.0F);
-        model.setYaw(state.yaw);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        model.resetPose();
         collector.submitModelPart(
                 model.root(),
                 poseStack,
