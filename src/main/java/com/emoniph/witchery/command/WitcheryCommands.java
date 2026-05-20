@@ -2,8 +2,13 @@ package com.emoniph.witchery.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.emoniph.witchery.blocks.AltarBlock;
+import com.emoniph.witchery.blocks.ChaliceBlock;
+import com.emoniph.witchery.blocks.DistilleryBlock;
+import com.emoniph.witchery.blocks.KettleBlock;
 import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.blocks.WickerBundleBlock;
+import com.emoniph.witchery.blocks.WitchesOvenBlock;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -204,6 +209,12 @@ public class WitcheryCommands {
                         .executes(ctx -> kettleInfo(ctx.getSource()))
                         .then(Commands.literal("clear")
                                 .executes(ctx -> kettleClear(ctx.getSource()))))
+
+                .then(Commands.literal("setup")
+                        .then(Commands.literal("stations")
+                                .executes(ctx -> setupStations(ctx.getSource())))
+                        .then(Commands.literal("machines")
+                                .executes(ctx -> setupStations(ctx.getSource()))))
 
                 // ── Spawn ─────────────────────────────────────────────────────
                 .then(Commands.literal("spawn")
@@ -892,6 +903,83 @@ public class WitcheryCommands {
                 return k;
         }
         return null;
+    }
+
+    private static int setupStations(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) return 0;
+
+        Direction forward = player.getDirection();
+        Direction right = forward.getClockWise();
+        Direction machineFacing = forward.getOpposite();
+        BlockPos stripStart = player.blockPosition().relative(forward, 5);
+
+        placeAltarRig(level, stripStart, forward, right);
+        placeKettleRig(level, stripStart.relative(right, 6), machineFacing);
+        placeMachine(level, stripStart.relative(right, 10),
+                WitcheryBlocks.DISTILLERY.get().defaultBlockState().setValue(DistilleryBlock.FACING, machineFacing));
+        placeMachine(level, stripStart.relative(right, 14),
+                WitcheryBlocks.WITCHES_OVEN.get().defaultBlockState().setValue(WitchesOvenBlock.FACING, machineFacing));
+
+        src.sendSuccess(() -> Component.literal(
+                "Placed a Witchery station strip 5 blocks ahead: altar, kettle rig, distillery, and witch's oven. "
+                        + "Good next time-savers would be a spinning wheel, oven funnel, and a supply chest/jar rack."),
+                false);
+        return 1;
+    }
+
+    private static void placeAltarRig(ServerLevel level, BlockPos backLeft, Direction depthDirection, Direction widthDirection) {
+        clearBox(level, backLeft.offset(-1, 0, -1),
+                backLeft.relative(widthDirection, 2).relative(depthDirection, 1).offset(1, 3, 1));
+
+        for (int row = 0; row < 2; row++) {
+            for (int col = 0; col < 3; col++) {
+                BlockPos pos = backLeft.relative(depthDirection, row).relative(widthDirection, col);
+                placeMachine(level, pos,
+                        WitcheryBlocks.ALTAR.get().defaultBlockState().setValue(AltarBlock.AXIS, widthDirection.getAxis()));
+            }
+        }
+
+        placeMachine(level, backLeft.above(), WitcheryBlocks.CANDELABRA.get().defaultBlockState());
+        placeMachine(level, backLeft.relative(widthDirection).above(),
+                WitcheryBlocks.CHALICE.get().defaultBlockState().setValue(ChaliceBlock.FILLED, true));
+        placeMachine(level, backLeft.relative(widthDirection, 2).above(), Blocks.SKELETON_SKULL.defaultBlockState());
+    }
+
+    private static void placeKettleRig(ServerLevel level, BlockPos kettlePos, Direction machineFacing) {
+        Direction left = machineFacing.getClockWise();
+        Direction right = machineFacing.getCounterClockWise();
+        clearBox(level, kettlePos.relative(left).below(),
+                kettlePos.relative(right).above(3));
+        placeMachine(level, kettlePos.below(), Blocks.CAMPFIRE.defaultBlockState());
+        placeMachine(level, kettlePos.relative(left), Blocks.OAK_FENCE.defaultBlockState());
+        placeMachine(level, kettlePos.relative(right), Blocks.OAK_FENCE.defaultBlockState());
+        placeMachine(level, kettlePos,
+                WitcheryBlocks.KETTLE.get().defaultBlockState().setValue(KettleBlock.FACING, machineFacing));
+    }
+
+    private static void placeMachine(ServerLevel level, BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
+        clearColumn(level, pos, 3);
+        level.setBlock(pos, state, 3);
+    }
+
+    private static void clearBox(ServerLevel level, BlockPos min, BlockPos max) {
+        int minX = Math.min(min.getX(), max.getX());
+        int minY = Math.min(min.getY(), max.getY());
+        int minZ = Math.min(min.getZ(), max.getZ());
+        int maxX = Math.max(min.getX(), max.getX());
+        int maxY = Math.max(min.getY(), max.getY());
+        int maxZ = Math.max(min.getZ(), max.getZ());
+        for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static void clearColumn(ServerLevel level, BlockPos base, int heightAbove) {
+        for (int dy = 0; dy <= heightAbove; dy++) {
+            level.setBlock(base.above(dy), Blocks.AIR.defaultBlockState(), 3);
+        }
     }
 
     // ── Shared ────────────────────────────────────────────────────────────────

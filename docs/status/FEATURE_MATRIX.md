@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-20 (Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction)
+Last reconciled: 2026-05-20 (trader menu pass + setup stations debug strip + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + Mutandis bush pool correction)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -11,7 +11,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Kettle block + tick | Done | Power from nearby altar |
+| Kettle block + tick | Done | Power from nearby altar; fence/wall/iron-bar side support now works again for the original between-post mounting style |
 | Kettle recipe system | Done | 33 recipes in JSON; all known originals covered |
 | Brew items | Done | 33 brews with full effects - see brew list below |
 | Witches Oven | Done | 5-slot oven with jars, funnels, byproducts, and legacy-style smelting outputs restored; current GUI layout now tracks the resurrected-style slot/overlay pass more closely, and the screen now blits the intended panel/overlay subregions directly instead of compressing the full sheet |
@@ -102,7 +102,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Entity | Status | Notes |
 |---|---:|---|
-| Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue |
+| Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue, and stable merchant opening via the vanilla trading-player flow |
 | Witch Hunter | Done | Ranged+melee; silver bolts; targets vampires/werewolves |
 | Banshee | Partial | Gameplay works; GhostModel UV needs audit |
 | Spectre | Done | Flying ghost-type |
@@ -121,7 +121,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
 | Binky | Done | Spawns with Death; tameable via Binky's Skull |
-| Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut |
+| Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut; trade GUI now stays open through the same trading-player flow vanilla merchants use |
 | Flying Monkey | Done | Created via Mutandis Extremis on wolf+owl; waystone carry; dyeable |
 
 ---
@@ -188,6 +188,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | `/witchery verify torment` | Done | Server-side Torment audit for fresh/deleted chunks, full legacy footprint/layout parity, and atmosphere data |
 | `/witchery give primer` | Done | Give Witches' Primer directly |
 | `/witchery altar` | Done | Scan and report altar power within 20 blocks |
+| `/witchery setup stations` | Done | Places a player-facing QA strip 5 blocks ahead with altar, fence-mounted kettle over a campfire, distillery, and witch's oven |
 
 ---
 

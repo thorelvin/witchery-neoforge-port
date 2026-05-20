@@ -4,15 +4,23 @@ import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.stats.Stats;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
@@ -20,7 +28,6 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
@@ -31,9 +38,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Hobgoblin — forest-dwelling merchant.
+ * Hobgoblin: forest-dwelling merchant.
  * Neutral to players, hostile to villagers, immune to fall damage.
- * When leashed: picks up nearby dropped items and deposits in chests.
+ * When leashed: picks up nearby dropped items and deposits them in chests.
  * When leashed + holding a pickaxe: occasionally mines, yielding Koboldite Dust.
  */
 public class HobgoblinEntity extends AbstractVillager {
@@ -42,17 +49,13 @@ public class HobgoblinEntity extends AbstractVillager {
         super(type, level);
     }
 
-    // ── Attributes ────────────────────────────────────────────────────────────
-
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.ATTACK_DAMAGE, 3.0)
-                .add(Attributes.SAFE_FALL_DISTANCE, 1024.0); // immune to fall damage
+                .add(Attributes.SAFE_FALL_DISTANCE, 1024.0);
     }
-
-    // ── Goals ─────────────────────────────────────────────────────────────────
 
     @Override
     protected void registerGoals() {
@@ -62,96 +65,97 @@ public class HobgoblinEntity extends AbstractVillager {
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        // Target villagers
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<net.minecraft.world.entity.npc.villager.Villager>(this, Villager.class, true));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Villager.class, true));
     }
 
-    // ── Trades ────────────────────────────────────────────────────────────────
-    // Sequential: must purchase trade N before N+1 unlocks. Simplified: all available from start.
-
     @Override
-    protected void updateTrades(net.minecraft.server.level.ServerLevel _level) {
+    protected void updateTrades(ServerLevel level) {
         var offers = getOffers();
-        if (!offers.isEmpty()) return; // already set
+        if (!offers.isEmpty()) {
+            return;
+        }
 
-        // Trade 1: 17 Coal → 1 Koboldite Dust (single ingredient)
         offers.add(new MerchantOffer(new ItemCost(Items.COAL, 17), java.util.Optional.empty(),
                 new ItemStack(WitcheryItems.KOBOLDITE_DUST.get(), 1), 12, 0, 0.05f));
-        // Trade 2: 9 Koboldite Dust + 5 Gold Nuggets → 1 Koboldite Nugget
         offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 9),
                 java.util.Optional.of(new ItemCost(Items.GOLD_NUGGET, 5)),
                 new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 1), 8, 0, 0.05f));
-        // Trade 3: 16 Koboldite Dust + 1 Gold Ingot → 2 Koboldite Nuggets
         offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 16),
                 java.util.Optional.of(new ItemCost(Items.GOLD_INGOT, 1)),
                 new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 2), 8, 0, 0.05f));
-        // Trade 4: 9 Koboldite Nuggets + 1 Emerald → 1 Koboldite Ingot
         offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_NUGGET.get(), 9),
                 java.util.Optional.of(new ItemCost(Items.EMERALD, 1)),
                 new ItemStack(WitcheryItems.KOBOLDITE_INGOT.get(), 1), 4, 0, 0.05f));
-        // Trade 5: 8 Gold Ingots → 1 Emerald (single ingredient)
         offers.add(new MerchantOffer(new ItemCost(Items.GOLD_INGOT, 8), java.util.Optional.empty(),
                 new ItemStack(Items.EMERALD, 1), 16, 0, 0.05f));
     }
 
-    // ── Interaction ────────────────────────────────────────────────────────────
-
     @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        // Give a pickaxe → hobgoblin holds it for mining duty
-        if (!level().isClientSide() && isLeashed() && held.is(net.minecraft.tags.ItemTags.PICKAXES)) {
-            setItemInHand(InteractionHand.MAIN_HAND, held.copyWithCount(1));
-            if (!player.getAbilities().instabuild) held.shrink(1);
-            return InteractionResult.SUCCESS;
+        InteractionResult vanillaResult = super.mobInteract(player, hand);
+        if (vanillaResult.consumesAction()) {
+            return vanillaResult;
         }
-        if (!level().isClientSide() && !isLeashed()) {
-            openTradingScreen(player, Component.translatable("witchery.hobgoblin.trade"), 1);
-            return InteractionResult.SUCCESS;
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
-    }
 
-    // ── Lead behavior ──────────────────────────────────────────────────────────
+        if (isLeashed() && held.is(net.minecraft.tags.ItemTags.PICKAXES)) {
+            if (!level().isClientSide()) {
+                setItemInHand(InteractionHand.MAIN_HAND, held.copyWithCount(1));
+                if (!player.getAbilities().instabuild) {
+                    held.shrink(1);
+                }
+            }
+            return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        }
+        if (!isAlive() || isTrading() || player.isSecondaryUseActive() || isLeashed()) {
+            return InteractionResult.PASS;
+        }
+        if (level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        setTradingPlayer(player);
+        openTradingScreen(player, Component.translatable("witchery.hobgoblin.trade"), 1);
+        player.awardStat(Stats.TALKED_TO_VILLAGER);
+        return InteractionResult.CONSUME;
+    }
 
     @Override
     public void tick() {
         super.tick();
         if (level().isClientSide() || tickCount % 20 != 0) return;
-
         if (!isLeashed()) return;
 
-        // Pick up nearby dropped items
         AABB pickupRange = getBoundingBox().inflate(4);
         List<ItemEntity> nearby = level().getEntitiesOfClass(ItemEntity.class, pickupRange);
-        for (ItemEntity ie : nearby) {
-            if (ie.isAlive() && !ie.getItem().isEmpty()) {
-                ie.getItem(); // don't actually take it — just wander toward chests
-                depositToNearbyChest(ie.getItem().copy());
-                ie.discard();
-                break; // one per tick cycle
+        for (ItemEntity itemEntity : nearby) {
+            if (itemEntity.isAlive() && !itemEntity.getItem().isEmpty()) {
+                depositToNearbyChest(itemEntity.getItem().copy());
+                itemEntity.discard();
+                break;
             }
         }
 
-        // If holding pickaxe, occasionally mine for koboldite dust
         ItemStack mainHand = getMainHandItem();
         if (mainHand.is(net.minecraft.tags.ItemTags.PICKAXES) && tickCount % 100 == 0) {
             if (getRandom().nextFloat() < 0.15f) {
                 ItemStack dust = new ItemStack(WitcheryItems.KOBOLDITE_DUST.get());
                 if (!depositToNearbyChest(dust)) {
-                    spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), dust);
+                    spawnAtLocation((ServerLevel) level(), dust);
                 }
             }
         }
     }
 
-    /** Try to deposit an item into a nearby chest (8-block radius). Returns true if deposited. */
     private boolean depositToNearbyChest(ItemStack stack) {
-        if (!(level() instanceof ServerLevel sl)) return false;
-        for (BlockPos bp : BlockPos.betweenClosed(
+        if (!(level() instanceof ServerLevel serverLevel)) return false;
+        for (BlockPos pos : BlockPos.betweenClosed(
                 blockPosition().offset(-8, -3, -8),
-                blockPosition().offset( 8,  3,  8))) {
-            if (sl.getBlockEntity(bp) instanceof ChestBlockEntity chest) {
+                blockPosition().offset(8, 3, 8))) {
+            if (serverLevel.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
                 for (int i = 0; i < chest.getContainerSize(); i++) {
                     if (chest.getItem(i).isEmpty()) {
                         chest.setItem(i, stack);
@@ -163,24 +167,53 @@ public class HobgoblinEntity extends AbstractVillager {
         return false;
     }
 
-    // ── Fall damage immunity ───────────────────────────────────────────────────
-
     @Override
-    public boolean causeFallDamage(double fallDistance, float multiplier, DamageSource src) {
-        return false; // immune to falling
+    public boolean causeFallDamage(double fallDistance, float multiplier, DamageSource source) {
+        return false;
     }
 
-    // ── Misc ──────────────────────────────────────────────────────────────────
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+        return null;
+    }
 
-    @Nullable @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) { return null; }
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.VILLAGER_AMBIENT;
+    }
 
-    @Override protected SoundEvent getAmbientSound()              { return SoundEvents.VILLAGER_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.VILLAGER_HURT; }
-    @Override protected SoundEvent getDeathSound()                { return SoundEvents.VILLAGER_DEATH; }
-    @Override public SoundEvent getNotifyTradeSound()             { return SoundEvents.VILLAGER_YES; }
-    @Override public boolean showProgressBar()                    { return false; }
-    @Override public int getVillagerXp()                          { return 0; }
-    @Override public boolean canRestock()                         { return true; }
-    @Override protected void rewardTradeXp(MerchantOffer offer)   {}
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundEvents.VILLAGER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.VILLAGER_DEATH;
+    }
+
+    @Override
+    public SoundEvent getNotifyTradeSound() {
+        return SoundEvents.VILLAGER_YES;
+    }
+
+    @Override
+    public boolean showProgressBar() {
+        return false;
+    }
+
+    @Override
+    public int getVillagerXp() {
+        return 0;
+    }
+
+    @Override
+    public boolean canRestock() {
+        return true;
+    }
+
+    @Override
+    protected void rewardTradeXp(MerchantOffer offer) {
+    }
 }

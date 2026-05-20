@@ -51,6 +51,14 @@ Files:
 
 ## Fixed / verify
 
+### 1a. Merchant trade GUIs flashed shut immediately - Fixed / verify
+
+`CovenWitchEntity` and `HobgoblinEntity` now follow the vanilla merchant-open contract again by setting the active trading player before opening their menu. That keeps the trade menu from failing `MerchantMenu.stillValid()` on the next tick, which was causing the one-frame flash-close behavior. The interaction pass also now lets vanilla item interactions win before trade opening where appropriate.
+
+### 1b. Kettle side supports were too strict for fence rigs - Fixed / verify
+
+`KettleBlock` now accepts fences, walls, and iron bars as valid side supports again instead of requiring only fully sturdy side faces. `/witchery setup stations` now uses that path to place a valid debug strip five blocks ahead of the player with a linked altar, a fence-mounted kettle over a campfire, a distillery, and a witch's oven for faster machine QA.
+
 ### 2. GhostModel mouth protrusion - Fixed
 
 Current `GhostModel` has no mouth part - it was never introduced in the port. Arm UV sharing (both arms at `texOffs(0,0)`) may still cause slight Poltergeist texture mirroring issues but no protrusion geometry exists. Verify in-game if arm UV ever looks wrong.

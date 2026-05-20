@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
@@ -200,6 +202,9 @@ public class KettleBlock extends BaseEntityBlock {
 
     private static boolean hasSideSupport(LevelReader level, BlockPos supportPos, Direction towardKettle) {
         BlockState supportState = level.getBlockState(supportPos);
-        return supportState.isFaceSturdy(level, supportPos, towardKettle);
+        return supportState.isFaceSturdy(level, supportPos, towardKettle)
+                || supportState.is(BlockTags.FENCES)
+                || supportState.is(BlockTags.WALLS)
+                || supportState.is(Blocks.IRON_BARS);
     }
 }
