@@ -358,8 +358,10 @@ public class RitualExecutor {
                 && WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
+        } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfBanishDemon(player, level, center, true));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBanishDemon(player, level, center));
+            return matchedResult(riteOfBanishDemon(player, level, center, false));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && !WaystoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -975,9 +977,14 @@ public class RitualExecutor {
     }
 
     /** Rite of Banish Demon — expels infernal beings within 9 blocks of the circle. */
-    private static boolean riteOfBanishDemon(Player player, Level level, BlockPos center) {
+    private static boolean riteOfBanishDemon(Player player, Level level, BlockPos center, boolean portable) {
         final int radius = 9;
         if (!(level instanceof ServerLevel sl)) return false;
+        if (!portable && !consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.banish_demon.no_power"), false);
+            return false;
+        }
 
         level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.4f);
 
@@ -1002,7 +1009,8 @@ public class RitualExecutor {
 
         success(player, level, center, "witchery.ritual.banish_demon.success",
                 SoundEvents.FIRE_EXTINGUISH, 1.1f, 2, 24);
-        WitcheryMod.LOGGER.info("Rite of Banish Demon banished {} infernal entity(s) around {}", banished, center);
+        WitcheryMod.LOGGER.info("Rite of Banish Demon ({}) banished {} infernal entity(s) around {}",
+                portable ? "portable" : "altar", banished, center);
         return true;
     }
 

@@ -248,6 +248,7 @@
   "witchery.ritual.fertility.success": "Nature stirs (%s plants grown, %s villagers cured).",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",
   "witchery.ritual.broiling.success": "The circle blazes — %s item stacks cooked.",
+  "witchery.ritual.banish_demon.no_power": "A nearby altar lacks the power to banish the infernal presence.",
   "witchery.ritual.protection.success": "A ward surrounds you... Rite of Protection complete.",
   "witchery.ritual.protection.activated": "An unseen dome hardens around the circle.",
   "witchery.ritual.infusion.success": "The circle pulses with energy... Rite of Infusion complete.",

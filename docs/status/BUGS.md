@@ -639,10 +639,10 @@ Remaining gap:
 The next missing-feature pass is now closer to original Witchery:
 - The small `banishdemon` and `banishdemonportable` family is reachable again instead of being absent from the port.
 - The restored rite now banishes the port's infernal creature equivalents within the original 9-block radius: `Demon`, `Flame Imp`, `Death`, and `Lord of Torment`.
-- It is exposed through a representative small ritual `attuned_stone` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+- The portable half now keys off `Charged Attuned Stone` again like the original family, while the non-portable fallback still uses a representative plain `Attuned Stone` route but now also restores the original 2000 altar-power cost instead of acting like a free portable cast.
 
 Remaining gap:
-- The exact portable-vs-regular multi-sacrifice activation shape is still collapsed into representative trigger items, so this restores the effect family without claiming full 1.7.10 recipe-registry parity.
+- The exact portable-vs-regular multi-sacrifice activation shape is still collapsed into representative trigger items, so this restores the split charged-vs-altar feel without claiming full 1.7.10 recipe-registry parity.
 
 ### 59. Transpose Ores was missing entirely - Fixed / verify
 
