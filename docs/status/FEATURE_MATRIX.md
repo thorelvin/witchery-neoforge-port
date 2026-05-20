@@ -20,7 +20,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 | Altar power system | Done | Validated 6-block altar, 14-block scan radius, cumulative skull bonuses, chalice/Arthana/Mystic Branch bonuses, missing natural power sources, and the basic 3D altar block/item form restored closer to original |
 | Brazier recipes | Done | 13 recipes: 3 entity summons, 5 pulsing auras, 5 one-shot buffs |
 | Coffin | Done | 2-block bed-like; vampire day-sleep; OPEN lid; BESR model |
-| Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding |
+| Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding; original sturdier hardness and very high blast resistance restored closer to 1.7.10 |
 | Mutandis / Mutandis Extremis | Done | Pool mutation; Extremis: wolf+owl -> Flying Monkey, crop pool, grass/dirt swap |
 | Brew of Ice / Depths / Vines | Done | All implemented as BrewItem subclasses |
 | Witches' Primer guidebook | Done | Patchouli optional dep; book.json; 8 categories; 21 entries with atmospheric text + images |
