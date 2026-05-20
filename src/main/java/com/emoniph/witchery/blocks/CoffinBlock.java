@@ -80,6 +80,11 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
         return SHAPE;
     }
 
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        return SHAPE;
+    }
+
     // ── Placement ─────────────────────────────────────────────────────────────
 
     @Nullable @Override
