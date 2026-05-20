@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.menu.WitchesOvenMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,16 +26,16 @@ public class WitchesOvenScreen extends AbstractContainerScreen<WitchesOvenMenu> 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        graphics.blit(TEXTURE, x, y, this.imageWidth, this.imageHeight, 0.0f, 0.0f, 256.0f, 256.0f);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 256);
 
         if (menu.isLit()) {
             int fireHeight = menu.getBurnProgress();
-            graphics.blit(TEXTURE, x + 56, y + 36 + 12 - fireHeight, 14, fireHeight + 2, 176.0f, (float) (12 - fireHeight), 256.0f, 256.0f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 56, y + 36 + 12 - fireHeight, 176.0f, 12.0f - fireHeight, 14, fireHeight + 2, 256, 256);
         }
 
         int arrowWidth = menu.getCookProgress();
         if (arrowWidth > 0) {
-            graphics.blit(TEXTURE, x + 79, y + 34, arrowWidth + 1, 16, 176.0f, 14.0f, 256.0f, 256.0f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 34, 176.0f, 14.0f, arrowWidth + 1, 16, 256, 256);
         }
     }
 

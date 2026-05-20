@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.menu.DistilleryMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,19 +26,19 @@ public class DistilleryScreen extends AbstractContainerScreen<DistilleryMenu> {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        graphics.blit(TEXTURE, x, y, this.imageWidth, this.imageHeight, 0.0f, 0.0f, 256.0f, 256.0f);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 256);
 
         if (!menu.hasPower()) {
-            graphics.blit(TEXTURE, x + 77, y + 34, 28, 17, 197.0f, 0.0f, 256.0f, 256.0f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 77, y + 34, 197.0f, 0.0f, 28, 17, 256, 256);
         }
 
         int arrowWidth = menu.getCookProgress();
         if (arrowWidth > 0) {
-            graphics.blit(TEXTURE, x + 77, y + 37, arrowWidth, 9, 176.0f, 29.0f, 256.0f, 256.0f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 77, y + 37, 176.0f, 29.0f, arrowWidth, 9, 256, 256);
 
             int bubbleHeight = menu.getBubbleFrameHeight();
             if (bubbleHeight > 0) {
-                graphics.blit(TEXTURE, x + 40, y + 18 + 29 - bubbleHeight, 12, bubbleHeight, 185.0f, (float) (29 - bubbleHeight), 256.0f, 256.0f);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 40, y + 18 + 29 - bubbleHeight, 185.0f, 29.0f - bubbleHeight, 12, bubbleHeight, 256, 256);
             }
         }
     }

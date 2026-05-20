@@ -14,9 +14,9 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | Item | Issue | Effort |
 |---|---|---|
 | `altar` | Should be 2×3 multiblock; item graphic wrong (just a square); top should be red | Large |
-| `distillery` | Wrong/faulty GUI | Medium |
-| `spinning_wheel` | GUI wrong | Medium |
-| `witches_oven` | GUI wrong; faces left when placed | Medium |
+| `distillery` | Retest machine GUI after explicit source-region blit fix | Low |
+| `spinning_wheel` | Retest machine GUI after explicit source-region blit fix | Low |
+| `witches_oven` | Retest machine GUI after explicit source-region blit fix; faces left when placed | Medium |
 | `crystal_ball` | Must be transparent (currently solid pink-black or wrong) | Small |
 | `coffin` | Shows only one side in inventory | Medium |
 | `alluring_skull` | Dedicated animated skull-head render still approximated through static block models | Low |

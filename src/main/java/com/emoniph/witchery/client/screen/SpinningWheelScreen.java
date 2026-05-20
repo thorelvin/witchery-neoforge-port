@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.menu.SpinningWheelMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,14 +26,14 @@ public class SpinningWheelScreen extends AbstractContainerScreen<SpinningWheelMe
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        graphics.blit(TEXTURE, x, y, this.imageWidth, this.imageHeight, 0.0f, 0.0f, 256.0f, 256.0f);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 256);
 
         if (!menu.hasPower()) {
-            graphics.blit(TEXTURE, x + 79, y + 27, 24, 16, 176.0f, 0.0f, 256.0f, 256.0f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 27, 176.0f, 0.0f, 24, 16, 256, 256);
         } else {
             int arrowWidth = menu.getSpinProgress();
             if (arrowWidth > 0) {
-                graphics.blit(TEXTURE, x + 79, y + 26, arrowWidth + 1, 16, 176.0f, 16.0f, 256.0f, 256.0f);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 26, 176.0f, 16.0f, arrowWidth + 1, 16, 256, 256);
             }
         }
     }
