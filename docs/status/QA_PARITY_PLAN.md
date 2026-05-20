@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-05-19
+Last updated: 2026-05-20
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -8,11 +8,12 @@ This checklist is the quality gate for the NeoForge port. The goal is not just "
 
 Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, Spirit World feel verification, machine/storage GUI cleanup, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap. Use Witchery Resurrected layouts/assets when they preserve the original result more faithfully on NeoForge, but keep original 1.7.10 mechanics and feel as the final judge.
 
-Current overnight execution note:
-- Use the 5-point unattended run order in `docs/status/NEXT_FIXES_PLAN.md`.
+Current unattended execution note:
+- Use the current 5-point unattended run order in `docs/status/NEXT_FIXES_PLAN.md`.
 - Finish one focused subsystem at a time.
 - When a visual issue can be solved by correcting a bad item/model/texture chain, do that before introducing a new custom renderer.
 - When a subsystem needs a custom renderer, prefer matching original orientation, brightness, transparency, and inventory pose before adding extra effects.
+- Behavior-preserving refactors are explicitly allowed when they remove a real parity blocker, reduce ritual/storage renderer duplication, or make the next parity fix safer to land. Avoid broad cleanup that does not improve correctness, traceability, or verification.
 
 ## Reference hierarchy
 
@@ -116,6 +117,7 @@ Every implementation batch should follow this loop:
 3. Compare against the current port and write down the exact mismatch.
 4. Check a modern NeoForge example or official docs only for API shape when needed.
 5. Implement the smallest behavior-preserving fix that moves parity forward.
+   If a small refactor makes that fix safer or clearer, do it in the same patch and keep the behavioral goal explicit.
 6. Run `./gradlew.bat compileJava processResources`.
 7. Update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, and/or `NEXT_FIXES_PLAN.md` when the repo truth has changed.
 8. Keep unresolved visual-only or feel-only issues documented instead of hand-waving them away.

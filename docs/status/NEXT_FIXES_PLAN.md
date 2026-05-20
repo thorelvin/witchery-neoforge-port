@@ -50,22 +50,22 @@ Use this order for the remaining autonomous work until the port is in "playable 
 6. Close with regression and doc cleanup.
    The final step is a subsystem-by-subsystem verification pass and a docs reconciliation so the remaining gaps are explicit, small, and believable.
 
-## Overnight 5-point run
+## Current 5-point run
 
-Use this as the current unattended run order for the next overnight/autonomous passes. Keep the scope narrow, finish one point before broadening, and prefer shipping a real fix plus docs over starting five half-fixes at once.
+Use this as the current unattended run order for the next autonomous/daytime passes. Keep the scope narrow, finish one point before broadening, and prefer shipping one real parity improvement plus docs over opening several half-finished rewrites.
 
 1. Finish the active item/block parity cluster first.
    Best implementation path:
-   Use original 1.7.10 assets as source of truth and Witchery Resurrected only where it preserves the same result better on NeoForge. Start with the currently user-reported offenders: coffin presentation, poppet shelf item pose, leech/refilling chest item pose, chalice item, dream catcher item brightness/placement, alluring skull, demon heart, and any spawn egg regressions. Prefer fixing bad JSON/model chains first, then special item renderers, and only then custom block renderers if static models cannot match the original.
-2. Finish altar parity as one focused subsystem.
+   Stay on the remaining placed-block behavior mismatches that are still easy to prove from original 1.7.10: footprint/collision, support rules, hardness/resistance, light output, comparator/redstone behavior, lid/open rules, and simple interaction feedback on storage, machine, and ritual-adjacent blocks. Use original assets as source of truth and Witchery Resurrected only where it preserves the same visual result better on NeoForge. Prefer small state/property fixes before touching renderers.
+2. Tighten ritual dispatcher fidelity and allow behavior-preserving refactors when they help.
    Best implementation path:
-   Treat altar mechanics and altar art as one job. Confirm the 2x3 multiblock logic against original Witchery, then restore the connected/joined blockstate logic that selects the correct altar segment and red-carpet top pieces. Avoid quick art-only hacks that do not know whether the structure is valid.
-3. Tighten the remaining ritual dispatcher and refund edge cases.
+   Keep shrinking `RitualExecutor` only when the refactor directly improves parity work: extract activation-result helpers, sacrifice-resolution helpers, staged lifecycle/refund helpers, or clearer ring/ingredient dispatch helpers if they remove a real mismatch or make the next parity fix safer. Do not do abstract cleanup for its own sake; refactoring is allowed when it measurably improves correctness, traceability, or future parity speed.
+3. Finish Spirit World and familiar polish that still affects play feel.
    Best implementation path:
-   Keep shrinking `RitualExecutor` by adding explicit helper methods for activation result, sacrifice handling, and staged-abort refund behavior. Focus only on real parity mismatches that still consume the wrong item, fall through to the wrong rite, or abort without the correct feedback/refund.
-4. Finish Spirit World and familiar polish that still affects play feel.
+   Prioritise manifested-player presentation, corpse visibility/state, remaining nightmare/portal edge cases, and familiar persistence/recreation details that still make the system feel less like original Witchery even though the core mechanics are already back.
+4. Start the first targeted sound parity sweep once a subsystem is stable enough.
    Best implementation path:
-   Prioritise bound familiar persistence/lookups, manifested-player presentation, corpse visibility/state, and any remaining nightmare or portal feel mismatches that still diverge from original Witchery even though the core mechanics are back.
+   Focus first on ritual fail/sustain/complete cues, then machine active/burning/idle feedback, then Spirit World and special-block interactions. Use original Witchery 1.7.10 as the final judge for cadence and intent, and use modern NeoForge examples only for sound registration/playback patterns.
 5. Close each autonomous batch with verification and docs, not just code.
    Best implementation path:
-   After every real patch, run `./gradlew.bat compileJava processResources`, update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, and this plan when repo truth changes, then commit. If a task turns out bigger than expected, document the exact remaining gap before moving on.
+   After every real patch, run `./gradlew.bat compileJava processResources`, update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, `QA_PARITY_PLAN.md`, and/or this plan when repo truth changes, then commit. If a task turns out bigger than expected, document the exact remaining gap before moving on instead of leaving hidden drift.
