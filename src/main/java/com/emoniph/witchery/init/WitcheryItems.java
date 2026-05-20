@@ -299,7 +299,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HUNTER_LEGGINGS_SILVERED   = ITEMS.register("hunter_leggings_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
     public static final DeferredItem<Item> HUNTER_BOOTS_SILVERED      = ITEMS.register("hunter_boots_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> DENSE_WEB          = ITEMS.registerSimpleItem("dense_web");
-    public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.registerSimpleItem("demonic_blood");
+    public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.register("demonic_blood", id -> new DemonicBloodItem(itemProps(id)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     public static final DeferredItem<Item> ALDER_SAPLING      = ITEMS.registerSimpleItem("alder_sapling");
     public static final DeferredItem<Item> HAWTHORN_SAPLING   = ITEMS.registerSimpleItem("hawthorn_sapling");
