@@ -22,6 +22,7 @@ public class HobgoblinModel<S extends HumanoidRenderState> extends HumanoidModel
 
     public HobgoblinModel(ModelPart root) {
         super(root);
+        this.hat.visible = false;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -41,7 +42,8 @@ public class HobgoblinModel<S extends HumanoidRenderState> extends HumanoidModel
                 PartPose.offset(0.0F, 11.0F, 0.0F));
 
         root.addOrReplaceChild("hat",
-                CubeListBuilder.create(),
+                CubeListBuilder.create()
+                        .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8),
                 PartPose.offset(0.0F, 11.0F, 0.0F));
 
         root.addOrReplaceChild("body",
