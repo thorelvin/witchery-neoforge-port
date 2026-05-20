@@ -17,12 +17,13 @@ Current unattended execution note:
 
 ## Reference hierarchy
 
-1. Original Witchery 1.7.10 code and assets in `C:\claude\witchery\decompiled\witchery-original`.
-2. The active NeoForge port in `C:\claude\witchery\witchery-port`.
-3. Official modern modding references for the current runtime:
-   - Neo/Forge sound registration and `sounds.json` workflow.
-   - Working NeoForge 1.21.x renderer/menu/datapack patterns.
-4. Other working modern mods are examples for API usage and structure only, never the source of truth for Witchery behavior.
+Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:
+
+1. Original Witchery mechanics and edge cases: `C:\claude\witchery\decompiled\witchery-1.7.2-0.19.0`.
+2. Witchery Resurrected visual parity, models, textures, GUI clues, and renderer clues: `C:\claude\witchery\decompiled\WitcheryResurrected-1.12.2-0.5.2.4-forge-all`.
+3. Witchery Companion bugfixes, compatibility notes, mixins, and community corrections: `C:\claude\witchery\decompiled\witcherycompanion-0.36.1-beta`.
+4. The active NeoForge port being changed and verified: `C:\claude\witchery\witchery-port`.
+5. NeoForge docs and modern examples are API-shape references only; they do not override Witchery behavior without a documented reason.
 
 ## External reference set
 
