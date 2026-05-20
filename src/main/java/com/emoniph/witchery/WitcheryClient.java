@@ -54,6 +54,7 @@ public class WitcheryClient {
         Map.entry(CoffinModel.HEAD_LAYER_LOCATION,     CoffinModel::createHeadLayer),
         Map.entry(CoffinModel.BOTTOM_LAYER_LOCATION,   CoffinModel::createBottomLayer),
         Map.entry(DemonHeartModel.LAYER_LOCATION,      DemonHeartModel::createBodyLayer),
+        Map.entry(AlluringSkullModel.LAYER_LOCATION,   AlluringSkullModel::createBodyLayer),
         Map.entry(StatueGoddessModel.LAYER_LOCATION,   StatueGoddessModel::createBodyLayer),
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
         Map.entry(ToadModel.LAYER_LOCATION,            ToadModel::createBodyLayer),
@@ -118,6 +119,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.DEMON_HEART.get(),     DemonHeartRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.ALLURING_SKULL.get(),  AlluringSkullRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.OWL.get(),             OwlFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FAMILIAR_CAT.get(),    CatFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.TOAD.get(),             ToadFamiliarRenderer::new);
