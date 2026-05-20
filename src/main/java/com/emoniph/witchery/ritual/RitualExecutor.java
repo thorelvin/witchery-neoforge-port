@@ -3836,7 +3836,7 @@ public class RitualExecutor {
 
     // ── Sprint 4 — Waystone rites ─────────────────────────────────────────────
 
-    /** Rite of Binding — binds an unbound Waystone in inventory to the caster's current position. */
+    /** Rite of Binding — binds an unbound Waystone in inventory to the ritual center. */
     private static boolean riteOfBindWaystone(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         Optional<InventoryWaystone> unboundWaystone = findInventoryWaystone(sp, false);
@@ -3845,10 +3845,10 @@ public class RitualExecutor {
             return false;
         }
 
-        WaystoneItem.bindTo(unboundWaystone.get().stack(), sp.blockPosition(), sp.level().dimension());
+        WaystoneItem.bindTo(unboundWaystone.get().stack(), center, sp.level().dimension());
         success(player, level, center, "witchery.ritual.bind_waystone.success",
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Waystone bound to {} for {}", sp.blockPosition(), sp.getName().getString());
+        WitcheryMod.LOGGER.info("Waystone bound to ritual center {} for {}", center, sp.getName().getString());
         return true;
     }
 
