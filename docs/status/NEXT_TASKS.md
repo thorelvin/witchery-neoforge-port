@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-20 (post trader menu pass + setup stations helper)
+Last reconciled: 2026-05-20 (post trader menu pass + setup stations helper + base alchemy item pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -70,6 +70,7 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 
 - **Trader menus** - spawn/use both `Coven Witch` and `Hobgoblin`; verify the trade screen stays open instead of flashing shut, and make sure lead/name-tag interactions still win when intended
 - **Setup strip** - run `/witchery setup stations`; verify the altar links as a real 2x3 multiblock, the kettle survives between fence posts over the campfire, and the distillery/oven face back toward the player
+- **Base alchemy chain** - smelt `clay_jar_soft` into `clay_jar`, then retest the oven/distillery loop; confirm `odour_of_purity`, `oil_of_vitriol`, and the other early intermediates now show in the Witchery creative tab for fast QA
 
 - **Demon model** — `/witchery spawn demon` and verify horns/wings look correct after model fix
 - **Nightmare behavior** — `/witchery dream`, wait for nightmare roll; verify: single nightmare spawns, targets only victim, green fog in nightmare, re-spawns after kill with 30s delay, drops Mellifluous Hunger

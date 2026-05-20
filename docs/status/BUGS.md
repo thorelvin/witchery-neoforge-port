@@ -59,6 +59,15 @@ Files:
 
 `KettleBlock` now accepts fences, walls, and iron bars as valid side supports again instead of requiring only fully sturdy side faces. `/witchery setup stations` now uses that path to place a valid debug strip five blocks ahead of the player with a linked altar, a fence-mounted kettle over a campfire, a distillery, and a witch's oven for faster machine QA.
 
+### 1c. Base alchemy ingredient chain had hidden and missing steps - Fixed / verify
+
+`odour_of_purity`, `oil_of_vitriol`, and the related early-game intermediates were already registered with real item assets and real Witchery recipes, including the `fanciful_thread` spinning recipe that consumes `odour_of_purity`. The actual break was lower in the chain: `clay_jar_soft` had its crafting recipe, but the smelting step into the usable `clay_jar` item was missing, which made parts of the oven/distillery progression look absent in survival.
+
+Current state:
+- `clay_jar_soft -> clay_jar` now has the missing furnace smelting recipe again.
+- The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the current `alder_sapling` / `hawthorn_sapling` ingredient placeholders.
+- `alder_sapling` and `hawthorn_sapling` still need a broader survival/worldgen pass later; this fix makes the base item chain visible and the jar progression usable again without claiming those placeholder ingredients are fully world-integrated yet.
+
 ### 2. GhostModel mouth protrusion - Fixed
 
 Current `GhostModel` has no mouth part - it was never introduced in the port. Arm UV sharing (both arms at `texOffs(0,0)`) may still cause slight Poltergeist texture mirroring issues but no protrusion geometry exists. Verify in-game if arm UV ever looks wrong.
