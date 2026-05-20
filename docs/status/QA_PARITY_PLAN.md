@@ -132,6 +132,7 @@ After any meaningful batch, verify at least the affected lane:
 - ritual activates only under original conditions
 - failed activation does not consume the wrong items
 - staged rites stop cleanly on broken circles or missing upkeep
+- staged rites stop cleanly if their sustaining ring is rebuilt into the wrong chalk family
 - staged rites refund both their primary trigger item and any consumed support sacrifices on documented abort paths
 - machine slots and outputs match original expectations
 - storage blocks preserve or expose the same data the old mod did

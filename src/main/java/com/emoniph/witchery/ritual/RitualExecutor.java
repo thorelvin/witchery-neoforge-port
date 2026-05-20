@@ -175,6 +175,7 @@ public class RitualExecutor {
         private final ActiveRitualType type;
         private final BlockPos center;
         private final RitualCircleDetector.CircleSize circleSize;
+        private final int circleVariant;
         private final int minRadius;
         private final int maxRadius;
         private final int targetStage;
@@ -192,12 +193,14 @@ public class RitualExecutor {
         private boolean refundOnStop;
 
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
+                             int circleVariant,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
                              int covenSize, float upkeepCost, int heading, long nextGameTime,
                              ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices) {
             this.type = type;
             this.center = center.immutable();
             this.circleSize = circleSize;
+            this.circleVariant = circleVariant;
             this.minRadius = minRadius;
             this.maxRadius = maxRadius;
             this.targetStage = targetStage;
@@ -1591,7 +1594,7 @@ public class RitualExecutor {
     }
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
-        if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
+        if (!hasSustainingCircle(level, ritual)) {
             clearClimateChangePlan(level.dimension(), ritual.center);
             ritual.failedOnStop = true;
             ritual.refundOnStop = true;
@@ -2040,13 +2043,24 @@ public class RitualExecutor {
             return false;
         }
 
+        int circleVariant = RitualCircleDetector.detectVariant(level, center, circleSize);
         ItemStack sacrificedIngredient = PENDING_RITUAL_INGREDIENT.get();
-        rituals.add(new ActiveRitual(type, center, circleSize, minRadius, maxRadius, targetStage, pulseInterval,
+        rituals.add(new ActiveRitual(type, center, circleSize, circleVariant, minRadius, maxRadius, targetStage, pulseInterval,
                 covenSize, upkeepCost, heading,
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
                 List.copyOf(supplementalSacrifices)));
         return true;
+    }
+
+    private static boolean hasSustainingCircle(ServerLevel level, ActiveRitual ritual) {
+        if (!RitualCircleDetector.hasRing(level, ritual.center, ritual.circleSize)) {
+            return false;
+        }
+        if (ritual.circleVariant <= 0) {
+            return true;
+        }
+        return RitualCircleDetector.detectVariant(level, ritual.center, ritual.circleSize) == ritual.circleVariant;
     }
 
     private static void refundRitualIngredient(ServerLevel level, ActiveRitual ritual) {
