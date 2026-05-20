@@ -188,7 +188,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | `/witchery verify torment` | Done | Server-side Torment audit for fresh/deleted chunks, full legacy footprint/layout parity, and atmosphere data |
 | `/witchery give primer` | Done | Give Witches' Primer directly |
 | `/witchery altar` | Done | Scan and report altar power within 20 blocks |
-| `/witchery setup stations` | Done | Rebuilds a player-facing 11x11 Rowan QA hut 5 blocks ahead with a 3-deep stone-brick foundation, altar, fence-mounted kettle over a campfire plus water cauldron, distillery, witch's oven with fume funnel, spinning wheel, stocked double chest, and indoor Coven Witch + Hobgoblin traders; oven/distillery/spinning wheel preload one ready recipe each |
+| `/witchery setup stations` | Done | Clears a 20x20 pad in front of the player, then rebuilds a player-facing 11x11 Rowan QA hut 5 blocks ahead with a 3-deep stone-brick foundation, a one-block-lower shell, player-height altar/machines/chest/traders, kettle over a campfire plus water cauldron, distillery, witch's oven with fume funnel, spinning wheel, stocked double chest, and indoor Coven Witch + Hobgoblin traders; oven/distillery/spinning wheel preload one ready recipe each |
 
 ---
 

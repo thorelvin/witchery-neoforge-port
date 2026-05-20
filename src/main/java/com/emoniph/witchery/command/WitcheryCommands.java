@@ -98,6 +98,8 @@ public class WitcheryCommands {
     private static final int SETUP_FOUNDATION_DEPTH = 3;
     private static final int SETUP_CLEAR_HEIGHT = 7;
     private static final int SETUP_FORWARD_OFFSET = 5;
+    private static final int SETUP_CLEAR_PAD_SIZE = 20;
+    private static final int SETUP_SHELL_DROP = 1;
 
     private record SetupHouseLayout(BlockPos origin, Direction depth, Direction width) {
         BlockPos pos(int x, int z) {
@@ -950,7 +952,7 @@ public class WitcheryCommands {
         placeSetupTraders(level, layout);
 
         src.sendSuccess(() -> Component.literal(
-                "Placed a filled Rowan Witchery QA hut 5 blocks ahead with altar, kettle rig, distillery, witch's oven with funnel, spinning wheel, stocked chest, and indoor traders."),
+                "Cleared a 20x20 pad in front and placed a sunken Rowan Witchery QA hut with player-height stations, stocked chest, and indoor traders."),
                 false);
         return 1;
     }
@@ -965,9 +967,12 @@ public class WitcheryCommands {
     }
 
     private static void clearSetupHouse(ServerLevel level, SetupHouseLayout layout) {
-        clearBox(level, layout.origin().below(SETUP_FOUNDATION_DEPTH),
+        clearBox(level,
+                layout.pos(-5, -SETUP_SHELL_DROP, -4),
+                layout.pos(SETUP_CLEAR_PAD_SIZE - 6, SETUP_CLEAR_HEIGHT, SETUP_CLEAR_PAD_SIZE - 5));
+        clearBox(level,
+                layout.origin().below(SETUP_FOUNDATION_DEPTH + SETUP_SHELL_DROP),
                 layout.pos(SETUP_HOUSE_SIZE - 1, SETUP_CLEAR_HEIGHT, SETUP_HOUSE_SIZE - 1));
-        clearBox(level, layout.pos(4, 0, -1), layout.pos(6, 3, -1));
     }
 
     private static void buildSetupHouse(ServerLevel level, SetupHouseLayout layout) {
@@ -976,17 +981,22 @@ public class WitcheryCommands {
         BlockState log = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
         BlockState slab = WitcheryBlocks.ROWAN_SLAB.get().defaultBlockState();
         BlockState glass = Blocks.GLASS_PANE.defaultBlockState();
+        int floorY = -SETUP_SHELL_DROP;
+        int wallBaseY = floorY + 1;
+        int wallTopY = wallBaseY + 3;
+        int roofY = floorY + 5;
+        int roofTrimY = floorY + 6;
 
         for (int x = 0; x < SETUP_HOUSE_SIZE; x++) {
             for (int z = 0; z < SETUP_HOUSE_SIZE; z++) {
                 for (int depth = 1; depth <= SETUP_FOUNDATION_DEPTH; depth++) {
-                    level.setBlock(layout.pos(x, -depth, z), stone, 3);
+                    level.setBlock(layout.pos(x, floorY - depth, z), stone, 3);
                 }
-                level.setBlock(layout.pos(x, 0, z), planks, 3);
+                level.setBlock(layout.pos(x, floorY, z), planks, 3);
             }
         }
 
-        for (int y = 1; y <= 4; y++) {
+        for (int y = wallBaseY; y <= wallTopY; y++) {
             for (int x = 0; x < SETUP_HOUSE_SIZE; x++) {
                 level.setBlock(layout.pos(x, y, 0), planks, 3);
                 level.setBlock(layout.pos(x, y, SETUP_HOUSE_SIZE - 1), planks, 3);
@@ -997,7 +1007,7 @@ public class WitcheryCommands {
             }
         }
 
-        for (int y = 1; y <= 4; y++) {
+        for (int y = wallBaseY; y <= wallTopY; y++) {
             level.setBlock(layout.pos(0, y, 0), log, 3);
             level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, y, 0), log, 3);
             level.setBlock(layout.pos(0, y, SETUP_HOUSE_SIZE - 1), log, 3);
@@ -1008,15 +1018,15 @@ public class WitcheryCommands {
 
         for (int x = 0; x < SETUP_HOUSE_SIZE; x++) {
             for (int z = 0; z < SETUP_HOUSE_SIZE; z++) {
-                level.setBlock(layout.pos(x, 5, z), planks, 3);
+                level.setBlock(layout.pos(x, roofY, z), planks, 3);
             }
         }
 
         for (int edge = 0; edge < SETUP_HOUSE_SIZE; edge++) {
-            level.setBlock(layout.pos(edge, 6, 0), slab, 3);
-            level.setBlock(layout.pos(edge, 6, SETUP_HOUSE_SIZE - 1), slab, 3);
-            level.setBlock(layout.pos(0, 6, edge), slab, 3);
-            level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, 6, edge), slab, 3);
+            level.setBlock(layout.pos(edge, roofTrimY, 0), slab, 3);
+            level.setBlock(layout.pos(edge, roofTrimY, SETUP_HOUSE_SIZE - 1), slab, 3);
+            level.setBlock(layout.pos(0, roofTrimY, edge), slab, 3);
+            level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, roofTrimY, edge), slab, 3);
         }
 
         placeSetupDoor(level, layout);
@@ -1025,7 +1035,7 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupDoor(ServerLevel level, SetupHouseLayout layout) {
-        BlockPos lowerPos = layout.pos(5, 1, 0);
+        BlockPos lowerPos = layout.pos(5, 1 - SETUP_SHELL_DROP, 0);
         BlockState lower = WitcheryBlocks.ROWAN_DOOR.get().defaultBlockState()
                 .setValue(DoorBlock.FACING, layout.frontFacing())
                 .setValue(DoorBlock.HINGE, DoorHingeSide.LEFT)
@@ -1038,7 +1048,7 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupWindows(ServerLevel level, SetupHouseLayout layout, BlockState glass) {
-        for (int y = 2; y <= 3; y++) {
+        for (int y = 2 - SETUP_SHELL_DROP; y <= 3 - SETUP_SHELL_DROP; y++) {
             level.setBlock(layout.pos(1, y, 0), glass, 3);
             level.setBlock(layout.pos(2, y, 0), glass, 3);
             level.setBlock(layout.pos(8, y, 0), glass, 3);
@@ -1062,10 +1072,10 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupLights(ServerLevel level, SetupHouseLayout layout) {
-        placeMachine(level, layout.pos(1, 1, 1), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(9, 1, 1), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(1, 1, 7), Blocks.TORCH.defaultBlockState());
-        placeMachine(level, layout.pos(9, 1, 9), Blocks.TORCH.defaultBlockState());
+        placeMachine(level, layout.pos(1, 1 - SETUP_SHELL_DROP, 1), Blocks.TORCH.defaultBlockState());
+        placeMachine(level, layout.pos(9, 1 - SETUP_SHELL_DROP, 1), Blocks.TORCH.defaultBlockState());
+        placeMachine(level, layout.pos(1, 1 - SETUP_SHELL_DROP, 7), Blocks.TORCH.defaultBlockState());
+        placeMachine(level, layout.pos(9, 1 - SETUP_SHELL_DROP, 9), Blocks.TORCH.defaultBlockState());
     }
 
     private static void placeSetupContents(ServerLevel level, SetupHouseLayout layout) {
@@ -1237,9 +1247,9 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupTraders(ServerLevel level, SetupHouseLayout layout) {
-        BlockPos max = layout.pos(SETUP_HOUSE_SIZE - 1, 4, SETUP_HOUSE_SIZE - 1);
+        BlockPos max = layout.pos(SETUP_HOUSE_SIZE - 1, 3, SETUP_HOUSE_SIZE - 1);
         net.minecraft.world.phys.AABB interior = new net.minecraft.world.phys.AABB(
-                layout.origin().getX(), layout.origin().getY(), layout.origin().getZ(),
+                layout.origin().getX(), layout.origin().getY() - SETUP_SHELL_DROP, layout.origin().getZ(),
                 max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0);
 
         level.getEntitiesOfClass(com.emoniph.witchery.entity.CovenWitchEntity.class, interior)
@@ -1247,8 +1257,8 @@ public class WitcheryCommands {
         level.getEntitiesOfClass(com.emoniph.witchery.entity.HobgoblinEntity.class, interior)
                 .forEach(net.minecraft.world.entity.Entity::discard);
 
-        spawnSetupMob(level, WitcheryEntities.COVEN_WITCH.get(), layout.pos(4, 1, 4), 45.0F);
-        spawnSetupMob(level, WitcheryEntities.HOBGOBLIN.get(), layout.pos(6, 1, 4), -45.0F);
+        spawnSetupMob(level, WitcheryEntities.COVEN_WITCH.get(), layout.pos(4, 0, 4), 45.0F);
+        spawnSetupMob(level, WitcheryEntities.HOBGOBLIN.get(), layout.pos(6, 0, 4), -45.0F);
     }
 
     private static <T extends Mob> void spawnSetupMob(ServerLevel level, EntityType<T> type, BlockPos pos, float yaw) {
