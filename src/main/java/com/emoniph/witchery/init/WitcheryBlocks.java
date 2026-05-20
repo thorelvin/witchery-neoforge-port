@@ -127,7 +127,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SpinningWheelBlock> SPINNING_WHEEL = BLOCKS.registerBlock("spinning_wheel", SpinningWheelBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f).noOcclusion());
     public static final DeferredBlock<WitchesOvenBlock> WITCHES_OVEN  = BLOCKS.registerBlock("witches_oven",   WitchesOvenBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).noOcclusion());
     public static final DeferredBlock<AltarBlock>       ALTAR         = BLOCKS.registerBlock("altar",          AltarBlock::new,        BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(5.0f));
-    public static final DeferredBlock<FumeFunnelBlock>  FUME_FUNNEL   = BLOCKS.registerBlock("fume_funnel",    FumeFunnelBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
+    public static final DeferredBlock<FumeFunnelBlock>  FUME_FUNNEL   = BLOCKS.registerBlock("fume_funnel",    FumeFunnelBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).noOcclusion());
     public static final DeferredBlock<BrazierBlock>     BRAZIER       = BLOCKS.registerBlock("brazier",        BrazierBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f).noOcclusion());
 
     // Storage / Containers
