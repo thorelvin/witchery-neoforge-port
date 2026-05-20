@@ -3,6 +3,7 @@ package com.emoniph.witchery.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.emoniph.witchery.blocks.TormentPortalBlock;
+import com.emoniph.witchery.blocks.WickerBundleBlock;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -206,6 +207,7 @@ public class WitcheryCommands {
 
                 // ── Spawn ─────────────────────────────────────────────────────
                 .then(Commands.literal("spawn")
+                        .then(Commands.literal("wickerman")     .executes(ctx -> spawnWickerman(ctx.getSource())))
                         .then(Commands.literal("owl")           .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.OWL.get())))
                         .then(Commands.literal("familiar_cat")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.FAMILIAR_CAT.get())))
                         .then(Commands.literal("toad")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.TOAD.get())))
@@ -893,6 +895,22 @@ public class WitcheryCommands {
     }
 
     // ── Shared ────────────────────────────────────────────────────────────────
+
+    private static int spawnWickerman(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel sl)) return 0;
+
+        Direction facing = player.getDirection();
+        BlockPos base = player.blockPosition().relative(facing, 5);
+        WickerBundleBlock.buildBloodiedWickerman(sl, base, facing);
+
+        src.sendSuccess(() -> Component.literal(
+                "Spawned a bloodied wickerman at " + base.getX() + ", " + base.getY() + ", " + base.getZ()
+                        + ". Light any bloodied bundle with flint and steel to summon the Horned Huntsman."),
+                false);
+        return 1;
+    }
 
     private static void sync(ServerPlayer player, WitcheryPlayerData data) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
