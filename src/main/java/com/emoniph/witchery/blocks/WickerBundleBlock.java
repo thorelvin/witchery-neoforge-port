@@ -31,6 +31,33 @@ import net.minecraft.world.phys.BlockHitResult;
  * and additionally restore the Horned Huntsman ignition check from old Witchery.
  */
 public class WickerBundleBlock extends RotatedPillarBlock {
+    private static final PatternPoint[] REQUIRED_WICKERMAN_POINTS = new PatternPoint[]{
+            new PatternPoint(0, 6), new PatternPoint(1, 6),
+            new PatternPoint(0, 5), new PatternPoint(1, 5),
+            new PatternPoint(-1, 4), new PatternPoint(0, 4), new PatternPoint(1, 4), new PatternPoint(2, 4),
+            new PatternPoint(-1, 3), new PatternPoint(0, 3), new PatternPoint(1, 3), new PatternPoint(2, 3),
+            new PatternPoint(-1, 2), new PatternPoint(0, 2), new PatternPoint(1, 2), new PatternPoint(2, 2),
+            new PatternPoint(0, 1), new PatternPoint(1, 1),
+            new PatternPoint(0, 0), new PatternPoint(1, 0)
+    };
+    private static final PatternPoint[] EMPTY_WICKERMAN_POINTS = new PatternPoint[]{
+            new PatternPoint(0, 7), new PatternPoint(1, 7),
+            new PatternPoint(-1, 6), new PatternPoint(2, 6),
+            new PatternPoint(-1, 5), new PatternPoint(2, 5),
+            new PatternPoint(-2, 4), new PatternPoint(3, 4),
+            new PatternPoint(-2, 3), new PatternPoint(3, 3),
+            new PatternPoint(-2, 2), new PatternPoint(3, 2),
+            new PatternPoint(-1, 1), new PatternPoint(2, 1),
+            new PatternPoint(-1, 0), new PatternPoint(2, 0)
+    };
+    private static final PatternPoint[] FIRE_WICKERMAN_POINTS = new PatternPoint[]{
+            new PatternPoint(0, 6), new PatternPoint(1, 6),
+            new PatternPoint(0, 3), new PatternPoint(1, 3),
+            new PatternPoint(0, 2), new PatternPoint(1, 2),
+            new PatternPoint(0, 1), new PatternPoint(1, 1),
+            new PatternPoint(0, 0), new PatternPoint(1, 0),
+            new PatternPoint(-1, 4), new PatternPoint(2, 4)
+    };
 
     private final boolean bloodied;
 
@@ -67,112 +94,40 @@ public class WickerBundleBlock extends RotatedPillarBlock {
     }
 
     public static boolean tryIgniteMan(Level level, BlockPos pos, float rotationYaw) {
-        boolean xleft = isAnyWicker(level, pos.west());
-        boolean xright = isAnyWicker(level, pos.east());
-        boolean zleft = isAnyWicker(level, pos.north());
-        boolean zright = isAnyWicker(level, pos.south());
-        BlockPos base = pos;
-        int fx = 0;
-        int fz = 0;
-
-        if (((!xleft && !xright) || (!zleft && !zright)) && (xleft || xright || zleft || zright)) {
-            if (!xleft && !xright) {
-                if (zleft && !zright) {
-                    base = pos.north();
-                } else if (!zleft) {
-                    base = pos.south();
-                }
-                while (isAnyWicker(level, base.below())) {
-                    base = base.below();
-                }
-                while (isAnyWicker(level, base.north())) {
-                    base = base.north();
-                }
-                fz = 1;
-            } else {
-                if (xleft && !xright) {
-                    base = pos.west();
-                } else if (!xleft) {
-                    base = pos.east();
-                }
-                while (isAnyWicker(level, base.below())) {
-                    base = base.below();
-                }
-                while (isAnyWicker(level, base.west())) {
-                    base = base.west();
-                }
-                fx = 1;
-            }
-
-            if (!matchesBloodiedWickerman(level, base, fx, fz)) {
-                return false;
-            }
-            if (level.isClientSide()) {
-                return true;
-            }
-
-            ignite(level, base, fx, fz);
-            summonHuntsman(level, base, fx, fz, rotationYaw);
+        if (!isBloodied(level, pos)) {
+            return false;
+        }
+        WickermanMatch match = findBloodiedWickerman(level, pos);
+        if (match == null) {
+            return false;
+        }
+        if (level.isClientSide()) {
             return true;
         }
-        return false;
+
+        ignite(level, match.base(), match.fx(), match.fz());
+        summonHuntsman(level, match.base(), match.fx(), match.fz(), rotationYaw);
+        return true;
     }
 
     private static boolean matchesBloodiedWickerman(LevelReader level, BlockPos base, int fx, int fz) {
-        int dx = base.getX();
-        int dy = base.getY();
-        int dz = base.getZ();
-        return !bloodied(level, dx, dy + 7, dz)
-                && !bloodied(level, dx + fx, dy + 7, dz + fz)
-                && !bloodied(level, dx - fx, dy + 6, dz - fz)
-                && bloodied(level, dx, dy + 6, dz)
-                && bloodied(level, dx + fx, dy + 6, dz + fz)
-                && !bloodied(level, dx + 2 * fx, dy + 6, dz + 2 * fz)
-                && !bloodied(level, dx - fx, dy + 5, dz - fz)
-                && bloodied(level, dx, dy + 5, dz)
-                && bloodied(level, dx + fx, dy + 5, dz + fz)
-                && !bloodied(level, dx + 2 * fx, dy + 5, dz + 2 * fz)
-                && !bloodied(level, dx - 2 * fx, dy + 4, dz - 2 * fz)
-                && bloodied(level, dx - fx, dy + 4, dz - fz)
-                && bloodied(level, dx, dy + 4, dz)
-                && bloodied(level, dx + fx, dy + 4, dz + fz)
-                && bloodied(level, dx + 2 * fx, dy + 4, dz + 2 * fz)
-                && !bloodied(level, dx + 3 * fx, dy + 4, dz + 3 * fz)
-                && !bloodied(level, dx - 2 * fx, dy + 3, dz - 2 * fz)
-                && bloodied(level, dx - fx, dy + 3, dz - fz)
-                && bloodied(level, dx, dy + 3, dz)
-                && bloodied(level, dx + fx, dy + 3, dz + fz)
-                && bloodied(level, dx + 2 * fx, dy + 3, dz + 2 * fz)
-                && !bloodied(level, dx + 3 * fx, dy + 3, dz + 3 * fz)
-                && !bloodied(level, dx - 2 * fx, dy + 2, dz - 2 * fz)
-                && bloodied(level, dx - fx, dy + 2, dz - fz)
-                && bloodied(level, dx, dy + 2, dz)
-                && bloodied(level, dx + fx, dy + 2, dz + fz)
-                && bloodied(level, dx + 2 * fx, dy + 2, dz + 2 * fz)
-                && !bloodied(level, dx + 3 * fx, dy + 2, dz + 3 * fz)
-                && !bloodied(level, dx - fx, dy + 1, dz - fz)
-                && bloodied(level, dx, dy + 1, dz)
-                && bloodied(level, dx + fx, dy, dz + fz)
-                && !bloodied(level, dx + 2 * fx, dy + 1, dz + 2 * fz)
-                && !bloodied(level, dx - fx, dy, dz - fz)
-                && bloodied(level, dx, dy, dz)
-                && bloodied(level, dx + fx, dy, dz + fz)
-                && !bloodied(level, dx + 2 * fx, dy, dz + 2 * fz);
+        for (PatternPoint point : REQUIRED_WICKERMAN_POINTS) {
+            if (!isBloodied(level, offset(base, point, fx, fz))) {
+                return false;
+            }
+        }
+        for (PatternPoint point : EMPTY_WICKERMAN_POINTS) {
+            if (isBloodied(level, offset(base, point, fx, fz))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void ignite(Level level, BlockPos base, int fx, int fz) {
-        setFire(level, base.offset(0, 6, 0));
-        setFire(level, base.offset(fx, 6, fz));
-        setFire(level, base.offset(0, 3, 0));
-        setFire(level, base.offset(fx, 3, fz));
-        setFire(level, base.offset(0, 2, 0));
-        setFire(level, base.offset(fx, 2, fz));
-        setFire(level, base.above());
-        setFire(level, base.offset(fx, 1, fz));
-        setFire(level, base);
-        setFire(level, base.offset(fx, 0, fz));
-        setFire(level, base.offset(-fx, 4, -fz));
-        setFire(level, base.offset(2 * fx, 4, 2 * fz));
+        for (PatternPoint point : FIRE_WICKERMAN_POINTS) {
+            setFire(level, offset(base, point, fx, fz));
+        }
     }
 
     private static void summonHuntsman(Level level, BlockPos base, int fx, int fz, float rotationYaw) {
@@ -205,12 +160,26 @@ public class WickerBundleBlock extends RotatedPillarBlock {
         level.setBlock(pos, Blocks.FIRE.defaultBlockState(), Block.UPDATE_ALL);
     }
 
-    private static boolean isAnyWicker(LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos).getBlock() instanceof WickerBundleBlock;
+    private static WickermanMatch findBloodiedWickerman(LevelReader level, BlockPos clickedPos) {
+        for (int[] orientation : new int[][]{{1, 0}, {0, 1}}) {
+            int fx = orientation[0];
+            int fz = orientation[1];
+            for (PatternPoint point : REQUIRED_WICKERMAN_POINTS) {
+                BlockPos candidateBase = clickedPos.offset(-point.lateral() * fx, -point.y(), -point.lateral() * fz);
+                if (matchesBloodiedWickerman(level, candidateBase, fx, fz)) {
+                    return new WickermanMatch(candidateBase, fx, fz);
+                }
+            }
+        }
+        return null;
     }
 
-    private static boolean bloodied(LevelReader level, int x, int y, int z) {
-        return level.getBlockState(new BlockPos(x, y, z)).is(WitcheryBlocks.BLOODIED_WICKER_BUNDLE.get());
+    private static BlockPos offset(BlockPos base, PatternPoint point, int fx, int fz) {
+        return base.offset(point.lateral() * fx, point.y(), point.lateral() * fz);
+    }
+
+    private static boolean isBloodied(LevelReader level, BlockPos pos) {
+        return level.getBlockState(pos).is(WitcheryBlocks.BLOODIED_WICKER_BUNDLE.get());
     }
 
     @Override
@@ -222,4 +191,8 @@ public class WickerBundleBlock extends RotatedPillarBlock {
     public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return 20;
     }
+
+    private record PatternPoint(int lateral, int y) {}
+
+    private record WickermanMatch(BlockPos base, int fx, int fz) {}
 }
