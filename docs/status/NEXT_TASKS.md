@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-20 (post trader menu pass + setup stations QA hut helper + base alchemy item pass + kettle/oven polish)
+Last reconciled: 2026-05-20 (post trader menu pass + setup stations QA hut helper + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -69,6 +69,7 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 ## Quick polish / verify items
 
 - **Trader menus** - spawn/use both `Coven Witch` and `Hobgoblin`; verify the trade screen stays open instead of flashing shut, and make sure lead/name-tag interactions still win when intended
+- **Hobgoblin render** - `/witchery spawn hobgoblin` or rerun `/witchery setup stations`; verify the new Resurrected-style goblin proportions/UVs in-world, and check held pickaxe alignment now that the zombie fallback and 0.75 scale shim are gone
 - **Setup hut** - run `/witchery setup stations`; verify the command clears the intended 20x20 pad in front of the player without digging below door/player height, the 11x11 Rowan hut shell/foundation still sits one block lower while the altar/machines/chest/traders stay on the original player-height test plane, the 3-deep stone-brick foundation still hides uneven ground, the Rowan door/windows generate correctly, the window panes now visually meet the Rowan walls, the ceiling Glowglobes light the hut cleanly, the altar sits off the back wall and still links as a real 2x3 multiblock, the cobblestone-supported kettle survives over the campfire, the water cauldron lands beside the kettle, the distillery/oven/spinning wheel face into the room, the fume funnel links cleanly above the oven, the oven cook arrow still sits on the correct upper lane, the stocked double chest contains the intended QA supplies, and the indoor Coven Witch + Hobgoblin both spawn and keep their trade GUIs open
 - **Base alchemy chain** - smelt `clay_jar_soft` into `clay_jar`, then retest the oven/distillery loop; confirm `odour_of_purity`, `oil_of_vitriol`, and the other early intermediates now show in the Witchery creative tab for fast QA
 

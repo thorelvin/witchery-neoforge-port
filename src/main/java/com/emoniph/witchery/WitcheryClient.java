@@ -63,6 +63,7 @@ public class WitcheryClient {
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
         Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
+        Map.entry(HobgoblinModel.LAYER_LOCATION,       HobgoblinModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_BANSHEE,            GhostModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_SPECTRE,            GhostModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_POLTERGEIST,        GhostModel::createBodyLayer),

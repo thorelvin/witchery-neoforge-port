@@ -1,17 +1,13 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.client.model.HobgoblinModel;
 import com.emoniph.witchery.entity.HobgoblinEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 
-public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, HobgoblinRenderer.HobgoblinRenderState, HumanoidModel<HobgoblinRenderer.HobgoblinRenderState>> {
+public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, HobgoblinRenderer.HobgoblinRenderState, HobgoblinModel<HobgoblinRenderer.HobgoblinRenderState>> {
 
     public static class HobgoblinRenderState extends HumanoidRenderState {
         public int entityId = 0;
@@ -25,7 +21,7 @@ public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, Hobg
     };
 
     public HobgoblinRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new HumanoidModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), 0.5F);
+        super(ctx, new HobgoblinModel<>(ctx.bakeLayer(HobgoblinModel.LAYER_LOCATION)), 0.5F);
     }
 
     @Override public HobgoblinRenderState createRenderState() { return new HobgoblinRenderState(); }
@@ -40,12 +36,5 @@ public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, Hobg
     public Identifier getTextureLocation(HobgoblinRenderState state) {
         int idx = (int)(Math.abs(state.entityId) % TEXTURES.length);
         return TEXTURES[idx];
-    }
-
-    @Override
-    public void submit(HobgoblinRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
-        ps.pushPose(); ps.scale(0.75f, 0.75f, 0.75f);
-        super.submit(state, ps, collector, camera);
-        ps.popPose();
     }
 }
