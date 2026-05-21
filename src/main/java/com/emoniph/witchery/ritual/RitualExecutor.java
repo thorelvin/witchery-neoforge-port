@@ -583,6 +583,18 @@ public class RitualExecutor {
     /** Rite of Infusion — applies a typed infusion to the player from a brew base. */
     private static void riteOfInfusion(Player player, Level level, BlockPos center, InfusionType type) {
         if (!(player instanceof ServerPlayer sp)) return;
+        if (!(level instanceof ServerLevel sl)) return;
+
+        int startupCost = switch (type) {
+            case LIGHT -> 2000;
+            case OVERWORLD, OTHERWHERE, INFERNAL -> 4000;
+            default -> 0;
+        };
+        if (startupCost > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupCost)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            sp.displayClientMessage(Component.translatable("witchery.ritual.infusion.no_power"), false);
+            return;
+        }
 
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
         data.setInfusionType(type);
