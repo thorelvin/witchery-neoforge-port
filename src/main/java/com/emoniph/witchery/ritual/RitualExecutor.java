@@ -4677,6 +4677,9 @@ public class RitualExecutor {
     private record ExpensiveSummonDemonOfferings(ItemEntity refinedEvil, ItemEntity blazeRod, ItemEntity enderPearl,
                                                  ItemEntity attunedStone, ItemEntity chargedStone) {}
 
+    private record HellOnEarthOfferings(ItemEntity redstoneSoup, ItemEntity demonHeart, ItemEntity waystone,
+                                        ItemEntity netherStar, Villager villager) {}
+
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
 
@@ -5388,6 +5391,25 @@ public class RitualExecutor {
                 enderPearl.get(),
                 attunedStone.get(),
                 chargedStone.get()));
+    }
+
+    private static Optional<HellOnEarthOfferings> findHellOnEarthOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
+        Optional<ItemEntity> demonHeart = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMON_HEART.get()));
+        Optional<ItemEntity> waystone = findNearbyOffering(level, center,
+                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && !WaystoneItem.isBound(stack));
+        Optional<ItemEntity> netherStar = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_STAR));
+        Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
+        if (redstoneSoup.isEmpty() || demonHeart.isEmpty() || waystone.isEmpty()
+                || netherStar.isEmpty() || villager.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new HellOnEarthOfferings(
+                redstoneSoup.get(),
+                demonHeart.get(),
+                waystone.get(),
+                netherStar.get(),
+                villager.get()));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {
@@ -6115,19 +6137,41 @@ public class RitualExecutor {
     /** Curse of Hell on Earth — summons lightning + hostile mobs around target (large circle). */
     private static boolean riteOfCurseHellOnEarth(Player caster, Level level, BlockPos center) {
         if (!requireNightOverworld(caster, level, center)) return false;
+        Optional<HellOnEarthOfferings> offerings = findHellOnEarthOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.no_power"), false);
+            return false;
+        }
         return applyCurse(caster, level, center, target -> {
-            if (!(target.level() instanceof ServerLevel sl)) return;
+            if (!(target.level() instanceof ServerLevel targetLevel)) return;
             // Lightning strikes
             for (int i = 0; i < 5; i++) {
-                double dx = (sl.getRandom().nextDouble() - 0.5) * 10;
-                double dz = (sl.getRandom().nextDouble() - 0.5) * 10;
-                LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, sl);
+                double dx = (targetLevel.getRandom().nextDouble() - 0.5) * 10;
+                double dz = (targetLevel.getRandom().nextDouble() - 0.5) * 10;
+                LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, targetLevel);
                 bolt.setPos(target.getX() + dx, target.getY(), target.getZ() + dz);
-                sl.addFreshEntity(bolt);
+                targetLevel.addFreshEntity(bolt);
             }
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 1));
             target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 2400, 1));
-        }, "witchery.curse.hell_on_earth", "witchery.curse.hell_on_earth", false);
+        }, "witchery.curse.hell_on_earth", "witchery.curse.hell_on_earth", false)
+                && consumeHellOnEarthOfferings(offerings.get());
+    }
+
+    private static boolean consumeHellOnEarthOfferings(HellOnEarthOfferings offerings) {
+        consumeOfferedItem(offerings.redstoneSoup());
+        consumeOfferedItem(offerings.demonHeart());
+        consumeOfferedItem(offerings.waystone());
+        consumeOfferedItem(offerings.netherStar());
+        offerings.villager().discard();
+        return true;
     }
 
     /** Curse of Waking Nightmare — forces target into nightmare state if in Spirit World. */

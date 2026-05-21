@@ -43,6 +43,7 @@ Current state:
 - The four player infusion rites now also require their original small-plus-medium paired-circle layouts again: Light and Overworld infusions expect ritual chalk on both rings, Otherwhere infusion expects otherwhere chalk on both, and Infernal infusion expects infernal chalk on both instead of all four firing from any lone small circle.
 - Those same four player infusions now also restore their original altar startup costs again instead of infusing players for free: Light costs 2000 altar power, while Overworld, Otherwhere, and Infernal each cost 4000.
 - `Hell on Earth` now also expects its original mixed three-ring stack again — large infernal outer ring, medium otherwhere middle ring, and small infernal inner ring — instead of activating from any generic large-circle `nether_star` drop.
+- That same `Hell on Earth` route now also once more expects `Redstone Soup`, a `Demon Heart`, an unbound `Waystone`, a `nether star`, a villager sacrifice, and its original 5000 altar-power startup cost instead of firing after only the modern mixed-ring and time checks.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - That small-circle fertility route now also restores its original support gate and startup cost again: it once more expects `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, and `Mutandis`, and once more consumes 3000 altar power before the growth pulse begins.
 - The old portable fertility sibling is back in practical form too: a `bone_meal` trigger with `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, `Mutandis Extremis`, and a nearby `Charged Attuned Stone` now takes the portable branch instead of collapsing into the normal altar-powered rite or the charged-stone banish path.
@@ -391,6 +392,7 @@ The next ritual precondition pass is now back in place:
 - `Curse of Waking Nightmare` now also once more expects its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
 - The first small ritual `Breath of the Goddess` cure family is now back too: Misfortune, Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power, using the port's existing inventory-taglock flow instead of dropped taglocks.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
+- `Curse of Hell on Earth` now also once more expects `Redstone Soup`, a `Demon Heart`, an unbound `Waystone`, a `nether star`, a villager sacrifice, and its original 5000 altar-power startup cost before the curse lands.
 - These checks now happen before taglock consumption, so failed preconditions no longer waste the curse item flow.
 
 Remaining gap:
