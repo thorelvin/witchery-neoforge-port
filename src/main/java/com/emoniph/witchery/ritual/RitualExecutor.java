@@ -3496,21 +3496,15 @@ public class RitualExecutor {
         return nearestType;
     }
 
-    private static List<Entity> findNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type,
-                                                            double radius, int maxCount) {
+    private static <T extends Entity> List<T> findNearestEntities(ServerLevel level, Class<T> entityClass,
+                                                                  BlockPos center, double radius, int maxCount) {
         AABB area = new AABB(center).inflate(radius);
         Vec3 centerVec = Vec3.atCenterOf(center);
         double radiusSquared = radius * radius;
 
-        List<? extends Entity> candidates = switch (type) {
-            case SPECTRE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class, area);
-            case BANSHEE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class, area);
-            case POLTERGEIST -> level.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, area);
-            default -> List.of();
-        };
-
-        List<Entity> sorted = new ArrayList<>();
-        for (Entity candidate : candidates) {
+        List<T> candidates = level.getEntitiesOfClass(entityClass, area);
+        List<T> sorted = new ArrayList<>();
+        for (T candidate : candidates) {
             if (candidate.distanceToSqr(centerVec) <= radiusSquared) {
                 sorted.add(candidate);
             }
@@ -3522,7 +3516,17 @@ public class RitualExecutor {
         return sorted;
     }
 
-    private static int consumeCapturedSpectralCreatures(ServerLevel level, List<Entity> capturedEntities) {
+    private static List<Entity> findNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type,
+                                                            double radius, int maxCount) {
+        return switch (type) {
+            case SPECTRE -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.SpectreEntity.class, center, radius, maxCount));
+            case BANSHEE -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.BansheeEntity.class, center, radius, maxCount));
+            case POLTERGEIST -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.PoltergeistEntity.class, center, radius, maxCount));
+            default -> List.of();
+        };
+    }
+
+    private static int consumeCapturedEntities(ServerLevel level, List<? extends Entity> capturedEntities) {
         int count = 0;
         for (Entity entity : capturedEntities) {
             if (!entity.isAlive() || entity.isRemoved()) {
@@ -3536,6 +3540,10 @@ public class RitualExecutor {
             count++;
         }
         return count;
+    }
+
+    private static int consumeCapturedSpectralCreatures(ServerLevel level, List<Entity> capturedEntities) {
+        return consumeCapturedEntities(level, capturedEntities);
     }
 
     private static int transformGlyphicRing(ServerLevel level, BlockPos center, int size, Block targetBlock) {
@@ -4861,34 +4869,39 @@ public class RitualExecutor {
             return false;
         }
 
-        double r = 16;
-        AABB box = new AABB(center).inflate(r);
-
-        List<com.emoniph.witchery.entity.SpiritEntity>      spirits      = sl.getEntitiesOfClass(com.emoniph.witchery.entity.SpiritEntity.class,      box);
-        List<com.emoniph.witchery.entity.SpectreEntity>     spectres     = sl.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class,     box);
-        List<com.emoniph.witchery.entity.BansheeEntity>     banshees     = sl.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class,     box);
-        List<com.emoniph.witchery.entity.PoltergeistEntity> poltergeists = sl.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, box);
+        List<com.emoniph.witchery.entity.SpiritEntity> spirits = findNearestEntities(
+                sl, com.emoniph.witchery.entity.SpiritEntity.class, center, 16.0, 3);
+        List<com.emoniph.witchery.entity.SpectreEntity> spectres = findNearestEntities(
+                sl, com.emoniph.witchery.entity.SpectreEntity.class, center, 16.0, 3);
+        List<com.emoniph.witchery.entity.BansheeEntity> banshees = findNearestEntities(
+                sl, com.emoniph.witchery.entity.BansheeEntity.class, center, 16.0, 2);
+        List<com.emoniph.witchery.entity.PoltergeistEntity> poltergeists = findNearestEntities(
+                sl, com.emoniph.witchery.entity.PoltergeistEntity.class, center, 16.0, 2);
 
         int effectId = matchFetishEffect(spirits.size(), spectres.size(), banshees.size(), poltergeists.size());
         if (effectId == 0) {
             player.displayClientMessage(Component.translatable("witchery.ritual.fetish.no_spirits"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.bind_fetish.no_power"), false);
+        List<Entity> capturedSpirits = new ArrayList<>();
+        capturedSpirits.addAll(new ArrayList<>(spirits.subList(0, spiritCount(effectId))));
+        capturedSpirits.addAll(new ArrayList<>(spectres.subList(0, spectreCount(effectId))));
+        capturedSpirits.addAll(new ArrayList<>(banshees.subList(0, bansheeCount(effectId))));
+        capturedSpirits.addAll(new ArrayList<>(poltergeists.subList(0, poltergeistCount(effectId))));
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 6000, "witchery.ritual.bind_fetish.no_power")
+                .offer(offerings.get().attunedStone())
+                .offer(offerings.get().necroStone())
+                .offer(offerings.get().boline());
+        if (!transaction.commit(player)) {
             return false;
         }
 
-        consumeOfferedItem(offerings.get().attunedStone());
-        consumeOfferedItem(offerings.get().necroStone());
-        consumeOfferedItem(offerings.get().boline());
-
-        // Consume entities
-        consumeSpirits(spirits,      spiritCount(effectId));
-        consumeSpirits(spectres,     spectreCount(effectId));
-        consumeSpirits(banshees,     bansheeCount(effectId));
-        consumeSpirits(poltergeists, poltergeistCount(effectId));
+        if (consumeCapturedEntities(sl, capturedSpirits) <= 0) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.fetish.no_spirits"), false);
+            return false;
+        }
 
         // Output item with effect stored in CUSTOM_DATA
         ItemStack output = fetishItem.copy();
@@ -4930,10 +4943,6 @@ public class RitualExecutor {
     private static int spectreCount(int id)     { return switch (id) { case 1,5 -> 1; case 2 -> 3; default -> 0; }; }
     private static int bansheeCount(int id)     { return switch (id) { case 1,5 -> 1; case 3 -> 2; default -> 0; }; }
     private static int poltergeistCount(int id) { return switch (id) { case 1 -> 1; case 4 -> 2; default -> 0; }; }
-
-    private static <T extends net.minecraft.world.entity.Entity> void consumeSpirits(List<T> list, int count) {
-        for (int i = 0; i < Math.min(count, list.size()); i++) list.get(i).discard();
-    }
 
     // ── Taglock / Waystone helpers ────────────────────────────────────────────
 
