@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Icy Expansion",
+  "icon": "witchery:frozen_heart",
+  "category": "witchery:circle_magic",
+  "sortnum": 15,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Icy Expansion is the witch's answer to drowning. Rather than parting the sea with fire or force, it grows a hollow winter shell around the working, pushing liquid away and leaving a breathing chamber inside.$(br2)It is a sheltering rite, but never a gentle one."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:frozen_heart",
+      "text": "In the live port this rite is worked from a $(bold)small ritual circle$(/) through a representative $(item)Frozen Heart$() trigger. It requires a $(bold)coven of at least two witches$(/) before the shell will begin to form. Stronger coven support makes the icy sphere grow larger."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Underwater Refuge",
+      "text": "Once begun, the rite grows in pulses instead of appearing all at once. Water and other soft replaceable matter are pushed aside, the inside is cleared, and a hollow chamber is left behind. Cast it under the ocean, in flooded caverns, or anywhere you need a pocket of winter-made air long enough to work."
+    }
+  ]
+}
