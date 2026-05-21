@@ -3983,6 +3983,17 @@ public class RitualExecutor {
     /** Rite of Summon Wither — summons a wither from the large infernal ring when the inner medium infernal ring is also present. */
     private static boolean riteOfSummonWither(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<SummonWitherOfferings> offerings = findSummonWitherOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.no_power"), false);
+            return false;
+        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -3999,6 +4010,9 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(wither);
 
+        consumeOfferedItem(offerings.get().diamondVapour());
+        consumeOfferedItem(offerings.get().enderPearl());
+        offerings.get().villager().discard();
         success(player, level, center, "witchery.ritual.summon_wither.success",
                 SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
         WitcheryMod.LOGGER.info("Rite of Summon Wither cast by {}", player.getName().getString());
@@ -4219,6 +4233,8 @@ public class RitualExecutor {
     private record SummonWitchOfferings(ItemEntity diamondVapour, ItemEntity exhaleOfHornedOne, ItemEntity magmaCream,
                                         ItemEntity arthana, ItemEntity fermentedSpiderEye) {}
 
+    private record SummonWitherOfferings(ItemEntity diamondVapour, ItemEntity enderPearl, Villager villager) {}
+
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
 
@@ -4435,6 +4451,34 @@ public class RitualExecutor {
                 magmaCream.get(),
                 arthana.get(),
                 fermentedSpiderEye.get()));
+    }
+
+    private static Optional<SummonWitherOfferings> findSummonWitherOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        if (diamondVapour.isEmpty() || enderPearl.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radius = 1.5;
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        Villager closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (Villager villager : level.getEntitiesOfClass(Villager.class, bounds)) {
+            double distance = villager.position().distanceToSqr(centerPoint);
+            if (distance >= radiusSq || distance > closestDistance) {
+                continue;
+            }
+            closest = villager;
+            closestDistance = distance;
+        }
+        if (closest == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new SummonWitherOfferings(diamondVapour.get(), enderPearl.get(), closest));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {

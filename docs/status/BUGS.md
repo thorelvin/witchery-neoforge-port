@@ -548,10 +548,10 @@ Remaining gap:
 
 The next missing-rite pass is now closer to original Witchery:
 - `summonwither` is still reachable through the representative `wither_skeleton_skull` route, but it now does so from the original large infernal circle and again expects the inner medium infernal companion ring instead of collapsing onto a lone medium infernal circle.
-- The restored route now spawns the Wither at the circle center and reuses the shared summoning-space obstruction check instead of blindly spawning inside blocked circles.
+- The restored route now spawns the Wither at the circle center, reuses the shared summoning-space obstruction check instead of blindly spawning inside blocked circles, and once more expects `Diamond Vapour`, an `ender pearl`, a villager standing in the circle, and its original 4000 altar-power startup cost.
 
 Remaining gap:
-- This still uses one representative trigger instead of the original multi-sacrifice summon recipes, and the larger binding/summoning family still needs fuller parity work beyond the restored witch/imp/wither/demon paths.
+- This still uses one representative trigger instead of the original full multi-recipe summon registry, and the alternate expensive no-villager wither recipe is not modeled yet.
 
 ### 48. Small Ice Shell rite was missing entirely - Fixed / verify
 

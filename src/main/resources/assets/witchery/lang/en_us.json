@@ -575,6 +575,8 @@
   "witchery.ritual.banish_demon.success": "Infernal beings are cast out from the circle.",
   "witchery.ritual.summon_imp.success": "An imp claws its way into the circle.",
   "witchery.ritual.summon_wither.success": "A wither answers the infernal summons.",
+  "witchery.ritual.summon_wither.support": "The rite needs Diamond Vapour, an ender pearl, and a villager standing in the circle.",
+  "witchery.ritual.summon_wither.no_power": "A nearby altar lacks the power to summon the wither.",
   "witchery.ritual.summon_demon.success": "A demon erupts from the infernal circle.",
   "witchery.ritual.cook.success": "The ritual flame cooked %s items.",
   "witchery.ritual.crater.success": "The earth tears open beneath you.",
