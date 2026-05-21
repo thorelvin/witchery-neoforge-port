@@ -391,6 +391,13 @@ The next ritual trait pass is now back in place:
 Remaining gap:
 - More original recipe-trait coverage is still missing outside these rites, especially where the modern ingredient dispatcher has collapsed multiple legacy ritual recipes together.
 
+### 32a. Mystic Branch infusion rite was still missing from the medium ritual dispatcher - Fixed / verify
+
+The old `infusiontree` path is back in practical form:
+- `Ent Twig` on the medium ritual circle now once again routes into the original night-only paired ritual-circle infusion instead of doing nothing.
+- The port now also once more expects `Mystic Unguent` and 3000 altar power before the rite completes.
+- Success now drops a fresh `Mystic Branch` item at the circle center instead of leaving the old item obtainable only through non-ritual shortcuts.
+
 ### 32. Curse of Insanity was unreachable because a non-original medium placeholder route claimed the same ingredient first - Fixed / verify
 
 The next ritual-dispatch pass is now back in place:

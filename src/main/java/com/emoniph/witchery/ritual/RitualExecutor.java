@@ -455,6 +455,10 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfEnchantBroom(player, level, center));
+        } else if (item.is(WitcheryItems.ENT_TWIG.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+            return matchedResult(riteOfInfuseMysticBranch(player, level, center));
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfRainOfToads(player, level, center));
@@ -2921,6 +2925,38 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Infusion — creates a Mystic Branch from Ent Twig and Mystic Unguent at night. */
+    private static boolean riteOfInfuseMysticBranch(Player player, Level level, BlockPos center) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<MysticBranchOfferings> offerings = findMysticBranchOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_tree.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_tree.no_power"), false);
+            return false;
+        }
+
+        consumeOfferedItem(offerings.get().entTwig());
+        consumeOfferedItem(offerings.get().mysticUnguent());
+
+        ItemStack output = new ItemStack(WitcheryItems.MYSTIC_BRANCH.get());
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.25, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, "witchery.ritual.infusion_tree.success",
+                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+        WitcheryMod.LOGGER.info("Rite of Infusion created a Mystic Branch at {}", center);
+        return true;
+    }
+
     private static Block glyphicTransformationTargetBlock(ItemStack ingredient) {
         if (ingredient.is(WitcheryItems.CHALK.get())) {
             return WitcheryBlocks.CIRCLE_GLYPH.get();
@@ -4315,6 +4351,8 @@ public class RitualExecutor {
 
     private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh) {}
 
+    private record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4514,6 +4552,15 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new BindSpectralOfferings(spectralDust.get(), boline.get()));
+    }
+
+    private static Optional<MysticBranchOfferings> findMysticBranchOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> entTwig = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENT_TWIG.get()));
+        Optional<ItemEntity> mysticUnguent = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MYSTIC_UNGUENT.get()));
+        if (entTwig.isEmpty() || mysticUnguent.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new MysticBranchOfferings(entTwig.get(), mysticUnguent.get()));
     }
 
     private static Optional<SummonFamiliarOfferings> findSummonFamiliarOfferings(Level level, BlockPos center) {
