@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Nature's Power",
+  "icon": "witchery:sprouting_brew",
+  "category": "witchery:circle_magic",
+  "sortnum": 13,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Nature's Power is not a single burst of growth. It is a sustained medium-circle coaxing, urging the land around the rite toward green abundance.$(br2)A patient witch uses it to wake fields, moss, saplings, and wild growth over time instead of forcing one plant at one moment."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:sprouting_brew",
+      "text": "The live port works this rite from a $(bold)medium ritual circle$(/) with $(item)Brew of Sprouting$() and a mixed grove offering: $(item)Rowan$(), $(item)Alder$(), $(item)Hawthorn$(), $(item)Oak$(), $(item)Spruce$(), and $(item)Birch Saplings$(), plus a $(item)Charged Attuned Stone$(). The stone returns as a plain attuned one after the work is accepted."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Living Reach",
+      "text": "Once begun, the rite pulses outward over time, greening soil, encouraging plants, and driving growth around the circle. Nearby Coven Witches lengthen its reach and lifetime. Use it when you want the land itself to become more fertile, not merely one crop stack or one planted tree."
+    }
+  ]
+}
