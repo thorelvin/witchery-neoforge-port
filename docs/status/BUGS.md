@@ -55,6 +55,7 @@ Current state:
 - The original infusion charge state is back too: successful infusion rites now seed `200/200` current/max energy again, that charge data persists in player saves, syncs to the client, and shows up in `/witchery status` instead of leaving infused players with no meter at all.
 - The old `infusionrecharge` half is back too: a `Potion of Regeneration` on the medium ritual ring with its inner small ritual companion and 4000 altar power now raises the original indefinite charging field again, pulsing 10 infusion energy per second into infused players standing inside the circle while draining 40 altar power per second.
 - The old infused-brew pair is back too: an `Infused Brew Base` on the medium ritual ring with its inner small ritual companion now once again branches into the original 3000-power living-sacrifice infusions, creating Brew of Soaring from a broom, feather, Arthana, and an owl, or Brew of the Grave from a bone, Dense Web, Necromantic Stone, and a zombie.
+- The non-original medium `Creatures of the Night` and large `Curse of the Wolf` dispatcher routes are gone again instead of claiming direct vampire/werewolf transformation rites that do not exist in the original 1.7.10 ritual registry.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
@@ -77,6 +78,10 @@ Files:
 ### 0. Chalk circles were still placing as cube blocks - Fixed / verify
 
 The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again instead of generic full-shape `Block` registrations, so their outline/support behavior is back to reading like drawn floor sigils instead of square blocks. The ritual chalk asset chain is corrected too: `circle_glyph` no longer uses a `cube_all` model and now matches the flat cutout/carpet-style path already used by the other chalk families.
+
+### 0a. Fake vampire/werewolf ritual routes were still exposed - Fixed / verify
+
+The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of the Wolf` dispatcher routes have been removed again. A decompiled sweep of the original 1.7.10 `WitcheryRecipes` curse registry only shows the five real curse rites (`witcheryCursed`, `witcheryInsanity`, `witcherySinking`, `witcheryOverheating`, `witcheryWakingNightmare`), so these direct transformation rituals were overclaims introduced by the port rather than missing parity. Vampirism and lycanthropy themselves still exist through the port's real progression systems; only the non-original ritual shortcuts are gone.
 
 ### 1a. Merchant trade GUIs flashed shut immediately - Fixed / verify
 

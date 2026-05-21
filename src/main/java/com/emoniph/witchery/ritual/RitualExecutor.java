@@ -507,8 +507,6 @@ public class RitualExecutor {
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionEntity(player, level, center, item));
-        } else if (item.is(WitcheryItems.DEMON_HEART.get())) {
-            return matchedResult(riteOfCreaturesOfNightTaglock(player, level, center));
         } else if (item.is(Items.MILK_BUCKET)) {
             return matchedResult(riteOfSummoning(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
@@ -552,8 +550,6 @@ public class RitualExecutor {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
         } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
-        } else if (item.is(Items.BONE) || item.is(Items.BONE_BLOCK)) {
-            return matchedResult(riteOfCurseOfTheWolfTaglock(player, level, center));
         } else if (item.is(Items.DRAGON_BREATH)) {
             riteOfDragonsFury(player, level, center);
             return successResult();
@@ -1207,23 +1203,6 @@ public class RitualExecutor {
     // M21 — MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Creatures of the Night — curses the caster with vampirism. Persists through death. */
-    private static boolean riteOfCreaturesOfNight(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        if (data.isVampire()) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.creatures_of_night.already"), false);
-            return false;
-        }
-        data.setVampire(true);
-        data.setBloodLevel(250); // start at half blood
-        PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
-        success(player, level, center, "witchery.ritual.creatures_of_night.success",
-                SoundEvents.WITHER_SPAWN, 0.6f, 2, 48);
-        WitcheryMod.LOGGER.info("Creatures of the Night: {} is now a vampire.", sp.getName().getString());
-        return true;
-    }
-
     /** Rite of Sky's Wrath — strikes lightning at 12 points around the circle. */
     private static void riteOfSkysWrath(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return;
@@ -1287,22 +1266,6 @@ public class RitualExecutor {
         consumeOfferedItem(redstone.get());
         success(player, level, center, "witchery.ritual.imprisonment.activated",
                 SoundEvents.CHAIN_PLACE, 1f, 2, 48);
-        return true;
-    }
-
-    /** Curse of the Wolf — curses the caster with lycanthropy. Transforms at full moon. */
-    private static boolean riteOfCurseOfTheWolf(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        if (data.isWerewolf()) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.curse_of_wolf.already"), false);
-            return false;
-        }
-        data.setWerewolf(true);
-        PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
-        success(player, level, center, "witchery.ritual.curse_of_wolf.success",
-                SoundEvents.WOLF_SHAKE, 0.8f, 3, 72);
-        WitcheryMod.LOGGER.info("Curse of the Wolf: {} is now a werewolf.", sp.getName().getString());
         return true;
     }
 
@@ -6029,30 +5992,6 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().emerald());
         consumeOfferedItem(offerings.get().brewGrotesque());
         return true;
-    }
-
-    /** Updated Curse of the Wolf — targets a specific player via taglock. */
-    private static boolean riteOfCurseOfTheWolfTaglock(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target -> {
-            WitcheryPlayerData data = WitcheryAttachments.get(target);
-            if (!data.isWerewolf()) {
-                data.setWerewolf(true);
-                PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
-                target.displayClientMessage(Component.translatable("witchery.ritual.curse_of_wolf.cursed"), false);
-            }
-        }, "witchery.ritual.curse_of_wolf", "witchery.ritual.curse_of_wolf", false);
-    }
-
-    /** Updated Creatures of the Night — vampirism curse via taglock. */
-    private static boolean riteOfCreaturesOfNightTaglock(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target -> {
-            WitcheryPlayerData data = WitcheryAttachments.get(target);
-            if (!data.isVampire()) {
-                data.setVampire(true);
-                PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
-                target.displayClientMessage(Component.translatable("witchery.ritual.creatures_night.cursed"), false);
-            }
-        }, "witchery.ritual.creatures_night", "witchery.ritual.creatures_night", false);
     }
 
     private static void spawnRingParticles(ServerLevel level, BlockPos center, int radius, int count) {
