@@ -390,12 +390,6 @@ public class RitualExecutor {
             return matchedResult(riteOfTransposition(player, level, center));
         } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfPriorIncarnation(player, level, center));
-        } else if (item.is(Items.INK_SAC)) {
-            riteOfTheCloak(player, level, center);
-            return successResult();
-        } else if (item.is(Items.DIAMOND)) {
-            riteOfCleansing(player, level, center);
-            return successResult();
         } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
             return matchedResult(riteOfIceShell(player, level, center));
         } else if (item.is(Items.SNOWBALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -1375,24 +1369,6 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
     // NEW — SMALL rites
     // ══════════════════════════════════════════════════════════════════════════
-
-    /** Rite of the Cloak — Invisibility V + Night Vision for 5 minutes. */
-    private static void riteOfTheCloak(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 6000, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 6000, 0));
-        success(player, level, center, "witchery.ritual.cloak.success",
-                SoundEvents.ENDERMAN_TELEPORT, 1.4f, 1, 24);
-        WitcheryMod.LOGGER.info("Rite of the Cloak cast by {}", player.getName().getString());
-    }
-
-    /** Rite of Cleansing — removes all negative effects; grants Regeneration II for 10 s. */
-    private static void riteOfCleansing(Player player, Level level, BlockPos center) {
-        player.removeAllEffects();
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
-        success(player, level, center, "witchery.ritual.cleansing.success",
-                SoundEvents.BEACON_ACTIVATE, 1.6f, 1, 24);
-        WitcheryMod.LOGGER.info("Rite of Cleansing cast by {}", player.getName().getString());
-    }
 
     // ══════════════════════════════════════════════════════════════════════════
     // NEW — MEDIUM rites

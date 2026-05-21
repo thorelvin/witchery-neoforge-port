@@ -587,6 +587,15 @@ The next ritual parity pass is now closer to original Witchery:
 Remaining gap:
 - The ritual effect is now back on the original support split, but broader in-game verification is still open around repeated daytime casts and the practical feel of the portable charged-stone return.
 
+### 42b. Fake Cloak and Cleansing rites were still exposed - Fixed / verify
+
+The next ritual parity pass is now closer to original Witchery:
+- The small-circle `ink_sac -> The Cloak` and `diamond -> Cleansing` routes are gone again.
+- A decompiled sweep of the original 1.7.10 `WitcheryRecipes` registry and the later Resurrected rite data found no public ritual entries for either route, so these were port-side overclaims rather than missing Witchery mechanics.
+
+Remaining gap:
+- This removes two fake public activations and makes the dispatcher more honest, but it does not claim that invisibility or cleansing-style effects are fully covered elsewhere in the port's ritual roster.
+
 ### 43. Blindness and Blight were using the wrong mechanic entirely - Fixed / verify
 
 The next infernal-rite correction is now closer to original Witchery:

@@ -545,8 +545,6 @@
   "item.witchery.flying_monkey_spawn_egg": "Flying Monkey Spawn Egg",
   "entity.witchery.flying_monkey": "Flying Monkey",
   "witchery.poppet.shield.activated": "§6Your Poppet Protection Poppet absorbed the consumption!",
-  "witchery.ritual.cloak.success": "You fade from sight...",
-  "witchery.ritual.cleansing.success": "The circle purges all corruption.",
   "witchery.ritual.charge_stone.success": "The attuned stone crackles with stored power.",
   "witchery.ritual.charge_stone.support": "The rite needs glowstone dust, redstone, wood ash, and quicklime.",
   "witchery.ritual.charge_stone.no_power": "A nearby altar lacks the power to charge the stone.",
