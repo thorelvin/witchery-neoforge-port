@@ -507,8 +507,6 @@ public class RitualExecutor {
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionEntity(player, level, center, item));
-        } else if (item.is(Items.MILK_BUCKET)) {
-            return matchedResult(riteOfSummoning(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
                 && !SpectralStoneItem.isBound(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -818,20 +816,6 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
     // MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
-
-    /** Rite of Summoning — a long-running coven rite that allures nearby creatures in pulses. */
-    private static boolean riteOfSummoning(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!requireCoven(player, level, center, 3)) return false;
-        if (!queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES, RitualCircleDetector.CircleSize.MEDIUM,
-                center, 0, 0, 250, 60)) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
-            return false;
-        }
-        success(player, level, center, "witchery.ritual.summoning.success",
-                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72);
-        return true;
-    }
 
     /** Rite of Fertility — bone-meals all crops in 10-block radius; cures zombie villagers. */
     private static boolean riteOfFertility(Player player, Level level, BlockPos center) {
