@@ -376,7 +376,7 @@ Remaining gap:
 The next ritual precondition pass is now back in place:
 - `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare` now require an actual thunderstorm again before they will cast, matching the old `ONLY_IN_STROM` recipe traits.
 - `Curse Creature` now also once more expects its original `Taglock Kit`, `Exhale of the Horned One`, `fermented spider eye`, `gunpowder`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
-- `Curse of Insanity` now also once more expects its original `Exhale of the Horned One`, `glistering melon slice`, `sugar`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
+- `Curse of Insanity` now also once more expects its original `Exhale of the Horned One`, `poisonous potato`, `sugar`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Sinking` now also once more expects its original `Exhale of the Horned One`, `ink sac`, `nether wart`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Overheating` now also once more expects its original `Exhale of the Horned One`, the port's `Demonic Blood` item in the old Infernal Blood slot, a `blaze rod`, and `Brew of Grotesque` plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Waking Nightmare` now also once more expects its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
@@ -547,7 +547,7 @@ Remaining gap:
 The next infernal-rite correction is now closer to original Witchery:
 - Small infernal `curseblindness` now runs the area `Rite of Blindness` again instead of incorrectly behaving like a taglock curse on one player.
 - Medium infernal `curseblight` now runs the area/world `Rite of Blight` again instead of incorrectly behaving like a single-target curse.
-- Both rites now also restore their original support-sacrifice gates: Blindness once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Exhale of the Horned One`, `Brew of Ink`, `poisonous potato`, `spider eye`, and `diamond`, while Blight once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `fermented spider eye`, `glistering melon slice`, `rotten flesh`, and `diamond`.
+- Both rites now also restore their original support-sacrifice gates: Blindness once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Exhale of the Horned One`, `Brew of Ink`, `poisonous potato`, `spider eye`, and `diamond`, while Blight once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `fermented spider eye`, `poisonous potato`, `rotten flesh`, and `diamond`.
 - The false large-circle blight activation path was removed, so the world-blight effect no longer appears as a non-original extra large infernal rite.
 
 Remaining gap:

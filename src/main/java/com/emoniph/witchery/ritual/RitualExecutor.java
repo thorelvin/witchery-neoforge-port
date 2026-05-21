@@ -4658,7 +4658,7 @@ public class RitualExecutor {
     private record CurseOverheatingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity demonicBlood,
                                              ItemEntity blazeRod, ItemEntity brewGrotesque) {}
 
-    private record CurseInsanityOfferings(ItemEntity exhaleOfHornedOne, ItemEntity glisteringMelonSlice,
+    private record CurseInsanityOfferings(ItemEntity exhaleOfHornedOne, ItemEntity poisonousPotato,
                                           ItemEntity sugar, ItemEntity brewGrotesque) {}
 
     private record CurseWakingNightmareOfferings(ItemEntity exhaleOfHornedOne, ItemEntity mellifluousHunger,
@@ -4992,15 +4992,15 @@ public class RitualExecutor {
 
     private static Optional<CurseInsanityOfferings> findCurseInsanityOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        Optional<ItemEntity> glisteringMelonSlice = findNearbyOffering(level, center, stack -> stack.is(Items.GLISTERING_MELON_SLICE));
+        Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
         Optional<ItemEntity> sugar = findNearbyOffering(level, center, stack -> stack.is(Items.SUGAR));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (exhaleOfHornedOne.isEmpty() || glisteringMelonSlice.isEmpty() || sugar.isEmpty() || brewGrotesque.isEmpty()) {
+        if (exhaleOfHornedOne.isEmpty() || poisonousPotato.isEmpty() || sugar.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseInsanityOfferings(
                 exhaleOfHornedOne.get(),
-                glisteringMelonSlice.get(),
+                poisonousPotato.get(),
                 sugar.get(),
                 brewGrotesque.get()));
     }
@@ -5307,11 +5307,11 @@ public class RitualExecutor {
         Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
         Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
         Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
-        Optional<ItemEntity> glisteringMelon = findNearbyOffering(level, center, stack -> stack.is(Items.GLISTERING_MELON_SLICE));
+        Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
         Optional<ItemEntity> rottenFlesh = findNearbyOffering(level, center, stack -> stack.is(Items.ROTTEN_FLESH));
         Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
         if (chargedStone.isEmpty() || redstoneSoup.isEmpty() || reekOfMisfortune.isEmpty() || fermentedSpiderEye.isEmpty()
-                || glisteringMelon.isEmpty() || rottenFlesh.isEmpty() || diamond.isEmpty()) {
+                || poisonousPotato.isEmpty() || rottenFlesh.isEmpty() || diamond.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new BlightOfferings(
@@ -5319,7 +5319,7 @@ public class RitualExecutor {
                 redstoneSoup.get(),
                 reekOfMisfortune.get(),
                 fermentedSpiderEye.get(),
-                glisteringMelon.get(),
+                poisonousPotato.get(),
                 rottenFlesh.get(),
                 diamond.get()));
     }
@@ -5714,7 +5714,7 @@ public class RitualExecutor {
             return false;
         }
         consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().glisteringMelonSlice());
+        consumeOfferedItem(offerings.get().poisonousPotato());
         consumeOfferedItem(offerings.get().sugar());
         consumeOfferedItem(offerings.get().brewGrotesque());
         return true;
