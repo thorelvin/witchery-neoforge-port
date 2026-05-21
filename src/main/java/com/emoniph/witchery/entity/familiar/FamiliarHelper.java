@@ -2,8 +2,10 @@ package com.emoniph.witchery.entity.familiar;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.TamableAnimal;
@@ -24,6 +26,18 @@ import java.util.UUID;
 public final class FamiliarHelper {
 
     public static final double BOUND_FAMILIAR_MAX_HEALTH = 50.0;
+    private static final String[] TOAD_NAMES = {
+            "Casper", "Wart", "Langston", "Croaker", "Prince Charming", "Frog-n-stien",
+            "Randolph", "Evileye", "Churchill", "Santa", "Dillinger", "Spuds"
+    };
+    private static final String[] CAT_NAMES = {
+            "Pyewackett", "Salem", "Gobbolino", "Sabbath", "Norris", "Crookshanks",
+            "Binx", "Voodoo", "Raven", "Simpkin", "Fishbone", "Kismet"
+    };
+    private static final String[] OWL_NAMES = {
+            "Archimedes", "Dumbledornithologist", "Al Travis", "Baltimore", "Cornelius", "Hadwig",
+            "Hoot", "Merlin", "Owl Capone", "Pigwidgeon", "Athena", "Albertine"
+    };
 
     private FamiliarHelper() {
     }
@@ -108,6 +122,25 @@ public final class FamiliarHelper {
         familiar.setPersistenceRequired();
     }
 
+    public static void ensureDefaultFamiliarName(@Nullable TamableAnimal familiar, RandomSource random) {
+        if (familiar == null || familiar.hasCustomName()) {
+            return;
+        }
+
+        String[] pool = switch (describeFamiliar(familiar)) {
+            case "owl" -> OWL_NAMES;
+            case "toad" -> TOAD_NAMES;
+            case "cat" -> CAT_NAMES;
+            default -> null;
+        };
+        if (pool == null || pool.length == 0) {
+            return;
+        }
+
+        familiar.setCustomName(Component.literal(pool[random.nextInt(pool.length)]));
+        familiar.setCustomNameVisible(false);
+    }
+
     @Nullable
     public static TamableAnimal restoreBoundFamiliar(ServerPlayer player, ServerLevel level, double x, double y, double z) {
         String familiarType = WitcheryAttachments.get(player).getFamiliarType();
@@ -131,8 +164,10 @@ public final class FamiliarHelper {
         familiar.setOrderedToSit(WitcheryAttachments.get(player).isFamiliarSitting());
         String familiarName = WitcheryAttachments.get(player).getFamiliarName();
         if (!familiarName.isBlank()) {
-            familiar.setCustomName(net.minecraft.network.chat.Component.literal(familiarName));
+            familiar.setCustomName(Component.literal(familiarName));
             familiar.setCustomNameVisible(WitcheryAttachments.get(player).isFamiliarNameVisible());
+        } else {
+            ensureDefaultFamiliarName(familiar, level.getRandom());
         }
         familiar.snapTo(x, y, z, player.getYRot(), 0.0F);
         level.addFreshEntity(familiar);

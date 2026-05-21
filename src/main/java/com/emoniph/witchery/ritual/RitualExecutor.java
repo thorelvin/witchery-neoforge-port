@@ -4594,6 +4594,7 @@ public class RitualExecutor {
         }
 
         FamiliarHelper.promoteBoundFamiliar(bound);
+        FamiliarHelper.ensureDefaultFamiliarName(bound, level.getRandom());
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.setFamiliarUUID(bound.getUUID());
