@@ -574,6 +574,8 @@
   "witchery.ritual.summon_witch.no_power": "A nearby altar lacks the power to summon the witch.",
   "witchery.ritual.banish_demon.success": "Infernal beings are cast out from the circle.",
   "witchery.ritual.summon_imp.success": "An imp claws its way into the circle.",
+  "witchery.ritual.summon_imp.support": "The rite needs Refined Evil, Demonic Blood, an ender pearl, and an Attuned Stone.",
+  "witchery.ritual.summon_imp.no_power": "A nearby altar lacks the power to summon the imp.",
   "witchery.ritual.summon_wither.success": "A wither answers the infernal summons.",
   "witchery.ritual.summon_wither.support": "The rite needs Diamond Vapour, an ender pearl, and a villager standing in the circle.",
   "witchery.ritual.summon_wither.no_power": "A nearby altar lacks the power to summon the wither.",

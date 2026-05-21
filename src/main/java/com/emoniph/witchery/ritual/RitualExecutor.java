@@ -3958,6 +3958,17 @@ public class RitualExecutor {
     private static boolean riteOfSummonImp(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireCoven(player, level, center, 1)) return false;
+        Optional<SummonImpOfferings> offerings = findSummonImpOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_imp.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_imp.no_power"), false);
+            return false;
+        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -3974,6 +3985,10 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(imp);
 
+        consumeOfferedItem(offerings.get().refinedEvil());
+        consumeOfferedItem(offerings.get().infernalBlood());
+        consumeOfferedItem(offerings.get().enderPearl());
+        consumeOfferedItem(offerings.get().attunedStone());
         success(player, level, center, "witchery.ritual.summon_imp.success",
                 SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
         WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
@@ -4245,6 +4260,9 @@ public class RitualExecutor {
 
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
+    private record SummonImpOfferings(ItemEntity refinedEvil, ItemEntity infernalBlood, ItemEntity enderPearl,
+                                      ItemEntity attunedStone) {}
+
     private record SummonWitchOfferings(ItemEntity diamondVapour, ItemEntity exhaleOfHornedOne, ItemEntity magmaCream,
                                         ItemEntity arthana, ItemEntity fermentedSpiderEye) {}
 
@@ -4469,6 +4487,21 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SummonFamiliarOfferings(egg.get(), goldIngot.get(), arthana.get()));
+    }
+
+    private static Optional<SummonImpOfferings> findSummonImpOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
+        Optional<ItemEntity> infernalBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
+        if (refinedEvil.isEmpty() || infernalBlood.isEmpty() || enderPearl.isEmpty() || attunedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SummonImpOfferings(
+                refinedEvil.get(),
+                infernalBlood.get(),
+                enderPearl.get(),
+                attunedStone.get()));
     }
 
     private static Optional<SummonWitchOfferings> findSummonWitchOfferings(Level level, BlockPos center) {

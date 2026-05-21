@@ -530,10 +530,10 @@ Remaining gap:
 
 The next missing-rite pass is now closer to original Witchery:
 - `summonimp` is reachable again as a large infernal rite through `refined_evil`, instead of being absent from the modern dispatcher.
-- The restored route now brings back the original coven dependency for imp summoning and reuses the restored summoning-space obstruction check instead of blindly spawning into blocked circles.
+- The restored route now brings back the original coven dependency for imp summoning, reuses the restored summoning-space obstruction check instead of blindly spawning into blocked circles, and once more expects `Refined Evil`, the port's `Demonic Blood` item as the old `Infernal Blood` equivalent, an `ender pearl`, an `Attuned Stone`, and its original 5000 altar-power startup cost.
 
 Remaining gap:
-- This is still routed through one representative ingredient instead of the full original sacrifice set, and the shared summon-creature family is not fully rebuilt yet beyond the restored witch/imp paths.
+- This is still routed through one representative ingredient instead of the full original summon registry, but the old `Infernal Blood` support slot is now materially covered through the port's `Demonic Blood` item rather than left missing.
 
 ### 46. Large infernal demon summoning was missing entirely - Fixed / verify
 
