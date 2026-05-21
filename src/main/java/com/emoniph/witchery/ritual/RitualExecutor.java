@@ -1454,6 +1454,7 @@ public class RitualExecutor {
 
         int covenSize = countNearbyCovenWitches(level, center);
         int duration = 150 + covenSize * 25;
+        consumeOfferedItem(offerings.get().spectralDust());
         consumeOfferedItem(offerings.get().mellifluousHunger());
         consumeOfferedItem(offerings.get().goldenPickaxe());
         consumeOfferedItem(offerings.get().gunpowder());
@@ -5091,9 +5092,9 @@ public class RitualExecutor {
                                              ItemEntity bone, ItemEntity spectralDust,
                                              ItemEntity chargedStone) {}
 
-    private record ManifestationOfferings(ItemEntity mellifluousHunger, ItemEntity necroStone,
-                                          ItemEntity goldenPickaxe, ItemEntity arthana,
-                                          ItemEntity gunpowder) {}
+    private record ManifestationOfferings(ItemEntity spectralDust, ItemEntity mellifluousHunger, ItemEntity necroStone,
+                                           ItemEntity goldenPickaxe, ItemEntity arthana,
+                                           ItemEntity gunpowder) {}
 
     private record TotalEclipseOfferings(ItemEntity quicklime, ItemEntity chargedStone) {}
 
@@ -5566,16 +5567,17 @@ public class RitualExecutor {
     }
 
     private static Optional<ManifestationOfferings> findManifestationOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
         Optional<ItemEntity> mellifluousHunger = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()));
         Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
         Optional<ItemEntity> goldenPickaxe = findNearbyOffering(level, center, stack -> stack.is(Items.GOLDEN_PICKAXE));
         Optional<ItemEntity> arthana = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ARTHANA.get()));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
-        if (mellifluousHunger.isEmpty() || necroStone.isEmpty() || goldenPickaxe.isEmpty()
+        if (spectralDust.isEmpty() || mellifluousHunger.isEmpty() || necroStone.isEmpty() || goldenPickaxe.isEmpty()
                 || arthana.isEmpty() || gunpowder.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new ManifestationOfferings(mellifluousHunger.get(), necroStone.get(),
+        return Optional.of(new ManifestationOfferings(spectralDust.get(), mellifluousHunger.get(), necroStone.get(),
                 goldenPickaxe.get(), arthana.get(), gunpowder.get()));
     }
 
