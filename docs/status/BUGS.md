@@ -389,7 +389,7 @@ The next ritual precondition pass is now back in place:
 - `Curse of Sinking` now also once more expects its original `Exhale of the Horned One`, `ink sac`, `nether wart`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Overheating` now also once more expects its original `Exhale of the Horned One`, the port's `Demonic Blood` item in the old Infernal Blood slot, a `blaze rod`, and `Brew of Grotesque` plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Waking Nightmare` now also once more expects its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
-- The first small ritual `Breath of the Goddess` cure family is now back too: Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power, using the port's existing inventory-taglock flow instead of dropped taglocks.
+- The first small ritual `Breath of the Goddess` cure family is now back too: Misfortune, Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power, using the port's existing inventory-taglock flow instead of dropped taglocks.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
 - These checks now happen before taglock consumption, so failed preconditions no longer waste the curse item flow.
 
@@ -449,7 +449,7 @@ Another decompiled-vs-port ritual cleanup is now in place:
 - The original 1.7.10 recipe registry only exposes five `RiteCurseCreature(true, ...)` taglock curse routes: `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare`.
 - The port had invented an extra medium-circle `gold_nugget` `Curse of Misfortune` taglock route that does not exist in the original rite list.
 - That non-original Misfortune rite has now been removed from the dispatcher, so the ritual roster no longer overclaims a fake Witchery curse.
-- Generic `UNLUCK` / misfortune status handling remains in side systems like Statue of the Goddess and Seer Stone readings, but not as an original ritual route.
+- Generic `UNLUCK` / misfortune status handling still remains in side systems like Statue of the Goddess and Seer Stone readings, and the original small-circle `removecurse1` cleansing branch is now back too through the restored `Breath of the Goddess` / `gold nugget` / `bread` / `Brew of Love` support set, but there is still no public Misfortune casting rite in the original ritual roster.
 
 ### 32c. Large Dragon's Fury, Rain, and Hellgate routes were non-original overclaims - Fixed / verify
 

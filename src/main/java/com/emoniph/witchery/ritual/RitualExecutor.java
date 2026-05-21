@@ -354,7 +354,8 @@ public class RitualExecutor {
             return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(WitcheryItems.BREATH_OF_GODDESS.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
-                && (findCureCreatureOfferings(level, center).isPresent()
+                && (findCureMisfortuneOfferings(level, center).isPresent()
+                    || findCureCreatureOfferings(level, center).isPresent()
                     || findCureInsanityOfferings(level, center).isPresent()
                     || findCureSinkingOfferings(level, center).isPresent()
                     || findCureOverheatingOfferings(level, center).isPresent()
@@ -4643,6 +4644,9 @@ public class RitualExecutor {
     private record CureWakingNightmareOfferings(ItemEntity breathOfTheGoddess, ItemEntity goldenCarrot,
                                                 ItemEntity tormentedTwine, ItemEntity brewOfLove) {}
 
+    private record CureMisfortuneOfferings(ItemEntity breathOfTheGoddess, ItemEntity goldNugget,
+                                           ItemEntity bread, ItemEntity brewOfLove) {}
+
     private record CureCreatureOfferings(ItemEntity breathOfTheGoddess, ItemEntity spiderEye,
                                          ItemEntity gunpowder, ItemEntity brewOfLove) {}
 
@@ -4977,6 +4981,21 @@ public class RitualExecutor {
                 breathOfTheGoddess.get(),
                 spiderEye.get(),
                 gunpowder.get(),
+                brewOfLove.get()));
+    }
+
+    private static Optional<CureMisfortuneOfferings> findCureMisfortuneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> goldNugget = findNearbyOffering(level, center, stack -> stack.is(Items.GOLD_NUGGET));
+        Optional<ItemEntity> bread = findNearbyOffering(level, center, stack -> stack.is(Items.BREAD));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        if (breathOfTheGoddess.isEmpty() || goldNugget.isEmpty() || bread.isEmpty() || brewOfLove.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureMisfortuneOfferings(
+                breathOfTheGoddess.get(),
+                goldNugget.get(),
+                bread.get(),
                 brewOfLove.get()));
     }
 
@@ -5826,6 +5845,27 @@ public class RitualExecutor {
     }
 
     private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {
+        Optional<CureMisfortuneOfferings> misfortune = findCureMisfortuneOfferings(level, center);
+        if (misfortune.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                if (!target.hasEffect(MobEffects.UNLUCK)) return false;
+                target.removeEffect(MobEffects.UNLUCK);
+                return true;
+            }, "curse.witchery.misfortune.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(misfortune.get().breathOfTheGoddess());
+            consumeOfferedItem(misfortune.get().goldNugget());
+            consumeOfferedItem(misfortune.get().bread());
+            consumeOfferedItem(misfortune.get().brewOfLove());
+            return true;
+        }
+
         Optional<CureCreatureOfferings> curseCreature = findCureCreatureOfferings(level, center);
         if (curseCreature.isPresent()) {
             if (!(level instanceof ServerLevel sl)) return false;
