@@ -392,8 +392,6 @@ public class RitualExecutor {
             return matchedResult(riteOfNecromancy(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfManifestationDream(player, level, center));
-        } else if (item.is(Items.ENDER_PEARL)) {
-            return matchedResult(riteOfTransposition(player, level, center));
         } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfPriorIncarnation(player, level, center));
         } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
@@ -1152,33 +1150,6 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
     // M21 — SMALL rites
     // ══════════════════════════════════════════════════════════════════════════
-
-    /** Rite of Transposition — teleports the caster to their bound respawn point (bed/anchor). */
-    private static boolean riteOfTransposition(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        var respawnCfg = sp.getRespawnConfig();
-        if (respawnCfg == null || respawnCfg.respawnData() == net.minecraft.world.level.storage.LevelData.RespawnData.DEFAULT) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
-            return false;
-        }
-        BlockPos respawnPos = respawnCfg.respawnData().pos();
-        ResourceKey<Level> respawnDim = respawnCfg.respawnData().dimension();
-        ServerLevel targetLevel = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getLevel(respawnDim);
-        if (targetLevel == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
-            return false;
-        }
-        double tx = respawnPos.getX() + 0.5, ty = respawnPos.getY() + 0.5, tz = respawnPos.getZ() + 0.5;
-        if (level == targetLevel) {
-            sp.teleportTo(tx, ty, tz);
-        } else {
-            sp.teleportTo(targetLevel, tx, (double)(ty), tz, java.util.Set.<net.minecraft.world.entity.Relative>of(), sp.getYRot(), sp.getXRot(), false);
-        }
-        success(player, level, center, "witchery.ritual.transposition.success",
-                SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
-        WitcheryMod.LOGGER.info("Rite of Transposition: {} teleported to respawn.", sp.getName().getString());
-        return true;
-    }
 
     /** Rite of Prior Incarnation — summons dropped items near the caster's last death spot. */
     private static boolean riteOfPriorIncarnation(Player player, Level level, BlockPos center) {
