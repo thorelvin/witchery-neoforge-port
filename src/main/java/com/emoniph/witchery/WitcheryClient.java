@@ -150,8 +150,7 @@ public class WitcheryClient {
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.HOBGOBLIN.get(),       HobgoblinRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);
-        event.registerEntityRenderer(WitcheryEntities.CORPSE.get(),
-                net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.CORPSE.get(),          CorpseRenderer::new);
     }
 
     // ── Network handlers (client-side only) ───────────────────────────────────

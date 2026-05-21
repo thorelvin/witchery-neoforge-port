@@ -968,10 +968,6 @@ Active item review in `docs/status/ITEM_REVIEW.md`. Priority remaining items:
 
 ---
 
-### Corpse entity renderer
-
-`witchery:corpse` uses `NoopRenderer` (invisible). Needs a humanoid sleeping-pose model to be visible to other players. Low priority - entity is hittable and functional server-side.
-
 ### Spirit World remaining content
 
 - Wispy Cotton vegetation and disturbed-cotton cleansing loop - Done

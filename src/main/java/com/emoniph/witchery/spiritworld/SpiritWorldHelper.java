@@ -427,6 +427,8 @@ public final class SpiritWorldHelper {
         corpse.setPos(player.getX(), player.getY(), player.getZ());
         // Facing direction from yaw
         corpse.setYRot(player.getYRot());
+        corpse.setYBodyRot(player.getYRot());
+        corpse.setYHeadRot(player.getYRot());
         corpse.setXRot(0f);
         sl.addFreshEntity(corpse);
         data.setCorpseUUID(corpse.getUUID());
