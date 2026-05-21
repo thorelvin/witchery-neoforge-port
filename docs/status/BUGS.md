@@ -61,7 +61,7 @@ Current state:
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
 - Rain of Toads now also once more expects its original support offerings before the staged medium infernal weather rite will queue: `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Toe of Frog`, a water bucket, and `Belladonna`.
-- Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
+- Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
 Remaining gap:
@@ -271,15 +271,15 @@ The Raise Column rite is back much closer to old Witchery now:
 Remaining gap:
 - The original 1.7.10 rite moved tile entities as part of the terrain lift; the port still skips block-entity columns for safety until that migration logic is restored cleanly.
 
-### 20. Crater was an instant sphere delete instead of a staged excavation rite - Fixed / verify
+### 20. Crater was exposed as a public large-circle ritual even though the original 1.7.2 registry never registered it - Fixed / verify
 
-The Crater rite is back much closer to old Witchery now:
-- Instead of deleting a full sphere in one tick, it now queues as an active large-circle ritual again.
-- It pulses every 10 ticks and deepens over several stages, matching the old crater-opening cadence more closely.
-- The carve now follows a layered downward crater shape instead of flattening everything inside a sphere immediately.
+The large-circle `TNT` Crater route has been removed again:
+- The original 1.7.2 decompile does contain a `RiteCrater` class, but there is no matching `RiteRegistry.addRecipe(...)` entry or public language entry exposing it as an actual Witchery ritual.
+- The port had turned that unused internal class into a live large-circle `TNT` activation path, which overclaimed a rite the original registry did not make available to players.
+- That false-positive dispatch path is now gone, so the ritual roster is once again closer to the real public Witchery rite list instead of advertising a dead source artifact as a supported cast.
 
 Remaining gap:
-- The original rite had more exact legacy terrain-drop rules, so the port still uses a conservative modern approximation for which removed blocks drop items.
+- If later source comparison turns up a different public crater/excavation route in another Witchery version, it should be restored from that concrete registry evidence rather than from the unused internal class alone.
 
 ### 21. Sanctity and Imprisonment were one-shot effects and on the wrong ring size - Fixed / verify
 

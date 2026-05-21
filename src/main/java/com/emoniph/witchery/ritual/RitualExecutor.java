@@ -170,7 +170,6 @@ public class RitualExecutor {
         MOVING_EARTH,
         RAISE_COLUMN,
         VOLCANO,
-        CRATER,
         PROTECTION_BARRIER_MONSTERS,
         PROTECTION_BARRIER_PORTABLE,
         PROTECTION_BARRIER,
@@ -567,9 +566,6 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(WitcheryItems.TORMENT_SCROLL.get())) {
             return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
-        } else if (item.is(Items.TNT)) {
-            riteOfCrater(player, level, center);
-            return successResult();
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -1868,7 +1864,6 @@ public class RitualExecutor {
             case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
             case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
             case VOLCANO -> tickVolcanoRitual(level, ritual);
-            case CRATER -> tickCraterRitual(level, ritual);
             case PROTECTION_BARRIER_MONSTERS -> tickProtectionBarrierMonstersRitual(level, ritual);
             case PROTECTION_BARRIER_PORTABLE -> tickProtectionBarrierPortableRitual(level, ritual);
             case PROTECTION_BARRIER -> tickProtectionBarrierRitual(level, ritual);
@@ -2124,26 +2119,6 @@ public class RitualExecutor {
 
         if (ritual.stage % 4 == 0) {
             spawnRingParticles(level, effectCenter, Math.max(radius / 2, 4), 18);
-        }
-        return true;
-    }
-
-    private static boolean tickCraterRitual(ServerLevel level, ActiveRitual ritual) {
-        ritual.stage++;
-        if (ritual.stage == 1) {
-            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 0.8f);
-            spawnRingParticles(level, ritual.center, Math.max(ritual.minRadius, 4), 24);
-        }
-
-        int radius = ritual.minRadius;
-        int height = ritual.maxRadius;
-        if (ritual.stage > height) {
-            return false;
-        }
-
-        for (int depth = 1; depth <= ritual.stage; depth++) {
-            float layerRadius = radius - (height - ritual.stage - 1 + depth) * radius / (float) height;
-            carveCraterLayer(level, ritual.center, ritual.center.getY() - depth, Math.max((int) Math.ceil(layerRadius), 1), radius);
         }
         return true;
     }
@@ -4495,74 +4470,6 @@ public class RitualExecutor {
     }
 
     /** Rite of the Crater — excavates downward in pulses, closer to the old staged ritual. */
-    private static boolean riteOfCrater(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!queueActiveRitual(sl, ActiveRitualType.CRATER, RitualCircleDetector.CircleSize.LARGE, center, 8, 8, 8, 10)) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
-            return false;
-        }
-        success(player, level, center, "witchery.ritual.crater.success",
-                SoundEvents.GENERIC_EXPLODE.value(), 1f, 6, 64);
-        return true;
-    }
-
-    private static void carveCraterLayer(ServerLevel level, BlockPos center, int y, int radius, int maxRadius) {
-        int radiusSq = radius * radius;
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                if (dx * dx + dz * dz > radiusSq) {
-                    continue;
-                }
-                carveCraterPixel(level, center, new BlockPos(center.getX() + dx, y, center.getZ() + dz), maxRadius);
-            }
-        }
-    }
-
-    private static void carveCraterPixel(ServerLevel level, BlockPos center, BlockPos pos, int maxRadius) {
-        if ((pos.getX() == center.getX() && pos.getZ() == center.getZ())
-                || !shouldCarveCraterPixel(center, pos, maxRadius)) {
-            return;
-        }
-
-        BlockState state = level.getBlockState(pos);
-        if (!canCarveCrater(level, pos, state)) {
-            return;
-        }
-
-        if (shouldDropCraterBlock(state)) {
-            Block.dropResources(state, level, pos, null);
-        }
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-    }
-
-    private static boolean shouldCarveCraterPixel(BlockPos center, BlockPos pos, int maxRadius) {
-        int depth = center.getY() - pos.getY();
-        if (depth > 3) {
-            return true;
-        }
-
-        double dx = pos.getX() - center.getX();
-        double dz = pos.getZ() - center.getZ();
-        double minRadius = Math.max(maxRadius - 3 - depth, 0);
-        return dx * dx + dz * dz > minRadius * minRadius;
-    }
-
-    private static boolean canCarveCrater(Level level, BlockPos pos, BlockState state) {
-        if (state.isAir() || state.is(Blocks.BEDROCK) || state.hasBlockEntity() || state.liquid()) {
-            return false;
-        }
-        return state.getDestroySpeed(level, pos) >= 0.0f;
-    }
-
-    private static boolean shouldDropCraterBlock(BlockState state) {
-        return !state.is(Blocks.STONE)
-                && !state.is(Blocks.DIRT)
-                && !state.is(Blocks.GRASS_BLOCK)
-                && !state.is(Blocks.SAND)
-                && !state.is(Blocks.GRAVEL)
-                && !state.is(Blocks.CLAY);
-    }
-
     // ── Rite of Binding Spirits to Fetish ────────────────────────────────────
 
     /**

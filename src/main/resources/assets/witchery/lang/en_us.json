@@ -611,7 +611,6 @@
   "witchery.ritual.cook.no_power": "A nearby altar lacks the power to stoke the ritual flame.",
   "witchery.ritual.cook.none": "No raw food lies within the ritual flame.",
   "witchery.ritual.cook.success": "The ritual flame cooked %s items.",
-  "witchery.ritual.crater.success": "The earth tears open beneath you.",
   "witchery.ritual.manifestation.success": "Your spirit is anchored to the mortal world.",
   "witchery.ritual.manifestation.unavailable": "Only a spirit walker in the Spirit World can weave manifestation.",
   "witchery.ritual.manifestation.duration": "Your manifested form will endure for %s seconds.",
