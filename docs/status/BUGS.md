@@ -60,6 +60,8 @@ Current state:
 - The non-original medium `Creatures of the Night` and large `Curse of the Wolf` dispatcher routes are gone again instead of claiming direct vampire/werewolf transformation rites that do not exist in the original 1.7.10 ritual registry.
 - The non-original medium milk-bucket `Rite of Summoning` dispatcher route is gone again too; the original 1.7.10 registry only exposes the large otherwhere `Rite of Beastial Call` creature-allure route in that family.
 - The original medium infernal taglock-curse family is back on filled `Taglock Kit` activation again instead of the port's non-original placeholder trigger items, so `Curse Creature`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Insanity` no longer pretend to be separate `magma_cream`, `chorus_fruit`, `pufferfish`, or `fermented_spider_eye` public rites.
+- Those infernal taglock-curse routes now also resolve and consume the offered filled `Taglock Kit` itself again instead of quietly falling back to the player's inventory taglock shortcut after activation.
+- Large infernal `Curse of Waking Nightmare` now also keys off a filled offered `Taglock Kit` again instead of the port's non-original public `string` shortcut.
 - The first small ritual `Breath of the Goddess` cure family now also keys off an offered filled `Taglock Kit` again instead of the port's inventory-taglock shortcut, so Misfortune, Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare once more use the original dropped-taglock activation shape.
 - The non-original small `ender_pearl` self-transposition shortcut is gone again too; the original 1.7.10 registry only exposes the small otherwhere bound-waystone route plus the separate medium otherwhere taglock transposition route in that family.
 - The non-original small plain-bone Fertility shortcut is gone again too; the original 1.7.10 registry drives both Fertility branches from `bone_meal`, with `Mutandis` on the altar branch and `Mutandis Extremis` plus `Charged Attuned Stone` on the portable branch.
@@ -397,7 +399,7 @@ The next ritual precondition pass is now back in place:
 - `Curse of Insanity` now also once more expects its original `Exhale of the Horned One`, `poisonous potato`, `sugar`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Sinking` now also once more expects its original `Exhale of the Horned One`, `ink sac`, `nether wart`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Overheating` now also once more expects its original `Exhale of the Horned One`, the port's `Demonic Blood` item in the old Infernal Blood slot, a `blaze rod`, and `Brew of Grotesque` plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
-- `Curse of Waking Nightmare` now also once more expects its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
+- `Curse of Waking Nightmare` now also once more expects a filled offered `Taglock Kit`, its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings, plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
 - The first small ritual `Breath of the Goddess` cure family is now back too: Misfortune, Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power and an offered filled `Taglock Kit` instead of the port's old inventory-taglock shortcut.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
 - `Curse of Hell on Earth` now also once more expects `Redstone Soup`, a `Demon Heart`, an unbound `Waystone`, a `nether star`, a villager sacrifice, and its original 5000 altar-power startup cost before the curse lands.
@@ -759,7 +761,7 @@ The next missing-feature pass is now closer to original Witchery:
 - `Poppet Protection` now blocks this rite again and throws the backlash lightning onto the caster instead of letting the anti-voodoo poppets be destroyed.
 
 Remaining gap:
-- The modern dispatcher still collapses the original five-sacrifice recipe into a representative infernal trigger item plus inventory taglock path, so the exact multi-sacrifice activation shape is still not full 1.7.10 recipe-registry parity.
+- The modern dispatcher still collapses several original five-sacrifice ritual recipes into representative public trigger items or simplified route matching, so full 1.7.10 recipe-registry parity is still not complete even though the offered-taglock targeting path is restored here.
 
 ### 58. Banish Demon rites were missing entirely - Fixed / verify
 

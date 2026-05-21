@@ -544,7 +544,9 @@ public class RitualExecutor {
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
-        } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+                && TaglockKitItem.isFilled(item)
+                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfClimateChange(player, level, center));
@@ -4910,16 +4912,16 @@ public class RitualExecutor {
                                           ItemEntity spiderEye, ItemEntity gunpowder,
                                           ItemEntity brewGrotesque) {}
 
-    private record CurseSinkingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity inkSac,
+    private record CurseSinkingOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne, ItemEntity inkSac,
                                          ItemEntity netherWart, ItemEntity brewGrotesque) {}
 
-    private record CurseOverheatingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity demonicBlood,
+    private record CurseOverheatingOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne, ItemEntity demonicBlood,
                                              ItemEntity blazeRod, ItemEntity brewGrotesque) {}
 
-    private record CurseInsanityOfferings(ItemEntity exhaleOfHornedOne, ItemEntity poisonousPotato,
+    private record CurseInsanityOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne, ItemEntity poisonousPotato,
                                           ItemEntity sugar, ItemEntity brewGrotesque) {}
 
-    private record CurseWakingNightmareOfferings(ItemEntity exhaleOfHornedOne, ItemEntity mellifluousHunger,
+    private record CurseWakingNightmareOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne, ItemEntity mellifluousHunger,
                                                  ItemEntity tormentedTwine, ItemEntity emerald,
                                                  ItemEntity brewGrotesque) {}
 
@@ -5307,14 +5309,17 @@ public class RitualExecutor {
     }
 
     private static Optional<CurseSinkingOfferings> findCurseSinkingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> inkSac = findNearbyOffering(level, center, stack -> stack.is(Items.INK_SAC));
         Optional<ItemEntity> netherWart = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_WART));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (exhaleOfHornedOne.isEmpty() || inkSac.isEmpty() || netherWart.isEmpty() || brewGrotesque.isEmpty()) {
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || inkSac.isEmpty()
+                || netherWart.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseSinkingOfferings(
+                taglockKit.get(),
                 exhaleOfHornedOne.get(),
                 inkSac.get(),
                 netherWart.get(),
@@ -5322,14 +5327,17 @@ public class RitualExecutor {
     }
 
     private static Optional<CurseOverheatingOfferings> findCurseOverheatingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
         Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (exhaleOfHornedOne.isEmpty() || demonicBlood.isEmpty() || blazeRod.isEmpty() || brewGrotesque.isEmpty()) {
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || demonicBlood.isEmpty()
+                || blazeRod.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseOverheatingOfferings(
+                taglockKit.get(),
                 exhaleOfHornedOne.get(),
                 demonicBlood.get(),
                 blazeRod.get(),
@@ -5337,14 +5345,17 @@ public class RitualExecutor {
     }
 
     private static Optional<CurseInsanityOfferings> findCurseInsanityOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
         Optional<ItemEntity> sugar = findNearbyOffering(level, center, stack -> stack.is(Items.SUGAR));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (exhaleOfHornedOne.isEmpty() || poisonousPotato.isEmpty() || sugar.isEmpty() || brewGrotesque.isEmpty()) {
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || poisonousPotato.isEmpty()
+                || sugar.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseInsanityOfferings(
+                taglockKit.get(),
                 exhaleOfHornedOne.get(),
                 poisonousPotato.get(),
                 sugar.get(),
@@ -5352,16 +5363,18 @@ public class RitualExecutor {
     }
 
     private static Optional<CurseWakingNightmareOfferings> findCurseWakingNightmareOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> mellifluousHunger = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()));
         Optional<ItemEntity> tormentedTwine = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()));
         Optional<ItemEntity> emerald = findNearbyOffering(level, center, stack -> stack.is(Items.EMERALD));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (exhaleOfHornedOne.isEmpty() || mellifluousHunger.isEmpty() || tormentedTwine.isEmpty()
-                || emerald.isEmpty() || brewGrotesque.isEmpty()) {
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || mellifluousHunger.isEmpty()
+                || tormentedTwine.isEmpty() || emerald.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseWakingNightmareOfferings(
+                taglockKit.get(),
                 exhaleOfHornedOne.get(),
                 mellifluousHunger.get(),
                 tormentedTwine.get(),
@@ -6120,6 +6133,37 @@ public class RitualExecutor {
     @FunctionalInterface
     private interface CurseAction { void apply(ServerPlayer target); }
 
+    private static boolean applyCurse(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                      CurseAction action, String successKey, String failKey,
+                                      boolean checkHunterArmorProtection) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.getItem());
+        if (taglockUuid.isEmpty()) {
+            sp.displayClientMessage(Component.translatable(failKey + ".no_taglock"), false);
+            return false;
+        }
+        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglockUuid.get());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
+            return false;
+        }
+        if (checkHunterArmorProtection && hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (triggerVoodooProtection(target)) {
+            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+            return false;
+        }
+        consumeOfferedItem(offeredTaglock);
+        action.apply(target);
+        target.displayClientMessage(Component.translatable(successKey + ".target"), false);
+        success(caster, level, center, successKey + ".caster",
+                SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        return true;
+    }
+
     private static boolean applyCurse(Player caster, Level level, BlockPos center,
                                       CurseAction action, String successKey, String failKey,
                                       boolean checkHunterArmorProtection) {
@@ -6382,7 +6426,7 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.no_power"), false);
             return false;
         }
-        boolean applied = applyCurse(caster, level, center, target -> {
+        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
             target.igniteForTicks(200);
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 0));
         }, "witchery.curse.overheating", "witchery.curse.overheating", false);
@@ -6411,7 +6455,7 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.no_power"), false);
             return false;
         }
-        boolean applied = applyCurse(caster, level, center, target -> {
+        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
             target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400, 3));
             target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400, 2));
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0)); // brief sink
@@ -6441,7 +6485,7 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.no_power"), false);
             return false;
         }
-        boolean applied = applyCurse(caster, level, center, target -> {
+        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600, 1));
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
         }, "witchery.curse.insanity", "witchery.curse.insanity", false);
@@ -6556,7 +6600,7 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.no_power"), false);
             return false;
         }
-        boolean applied = applyCurse(caster, level, center, target -> {
+        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
             WitcheryPlayerData data = WitcheryAttachments.get(target);
             if (data.isInSpiritWorld()) {
                 data.setSpiritWorldIsDream(false); // flip to nightmare
