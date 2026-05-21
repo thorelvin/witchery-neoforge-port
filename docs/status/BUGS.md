@@ -56,6 +56,7 @@ Current state:
 - The old `infusionrecharge` half is back too: a `Potion of Regeneration` on the medium ritual ring with its inner small ritual companion and 4000 altar power now raises the original indefinite charging field again, pulsing 10 infusion energy per second into infused players standing inside the circle while draining 40 altar power per second.
 - The old infused-brew pair is back too: an `Infused Brew Base` on the medium ritual ring with its inner small ritual companion now once again branches into the original 3000-power living-sacrifice infusions, creating Brew of Soaring from a broom, feather, Arthana, and an owl, or Brew of the Grave from a bone, Dense Web, Necromantic Stone, and a zombie.
 - The non-original medium `Creatures of the Night` and large `Curse of the Wolf` dispatcher routes are gone again instead of claiming direct vampire/werewolf transformation rites that do not exist in the original 1.7.10 ritual registry.
+- The non-original large `Dragon's Fury`, generic `Rain`, and `Hellgate` dispatcher routes are gone again too; the original 1.7.10 ritual registry/language data only expose the `Sky's Wrath` storm family plus the separate standing-stones Torment contract and Lord of Torment scroll flow, not those extra large-circle shortcuts.
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
@@ -447,6 +448,15 @@ Another decompiled-vs-port ritual cleanup is now in place:
 - The port had invented an extra medium-circle `gold_nugget` `Curse of Misfortune` taglock route that does not exist in the original rite list.
 - That non-original Misfortune rite has now been removed from the dispatcher, so the ritual roster no longer overclaims a fake Witchery curse.
 - Generic `UNLUCK` / misfortune status handling remains in side systems like Statue of the Goddess and Seer Stone readings, but not as an original ritual route.
+
+### 32c. Large Dragon's Fury, Rain, and Hellgate routes were non-original overclaims - Fixed / verify
+
+Another decompiled-vs-port ritual cleanup is now in place:
+
+- The original 1.7.10 ritual registry and `en_US.lang` expose the `Sky's Wrath` storm family (`storm`, `stormlarge`, `stormportable`) plus the separate standing-stones Torment contract/Lord of Torment flow, but not any large-circle `Dragon's Fury`, generic `Rain`, or `Hellgate` rites.
+- The port had still exposed three extra large-circle shortcuts: `dragon_breath -> Dragon's Fury`, `wet sponge/sponge -> Rain`, and `Infernal Animus -> Hellgate`.
+- Those non-original large dispatcher routes are now removed, so the ritual roster no longer claims fake Witchery rites in the large-circle family.
+- Torment access still remains through the original separate progression paths the port already supports: the standing-stones Torment contract item and the Lord of Torment scroll route.
 
 ### 33. Large-circle Protection was incorrectly the fallback for unrelated ingredients - Fixed / verify
 

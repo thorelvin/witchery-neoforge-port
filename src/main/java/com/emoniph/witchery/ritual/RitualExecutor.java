@@ -550,19 +550,12 @@ public class RitualExecutor {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
         } else if (item.is(Items.STRING) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
-        } else if (item.is(Items.DRAGON_BREATH)) {
-            riteOfDragonsFury(player, level, center);
-            return successResult();
-        } else if (item.is(Items.WET_SPONGE) || item.is(Items.SPONGE)) {
-            return matchedResult(riteOfRain(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfClimateChange(player, level, center));
         } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonImp(player, level, center));
         } else if (item.is(WitcheryItems.TORMENTED_TWINE.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonDemon(player, level, center));
-        } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())) {
-            return matchedResult(riteOfHellgate(player, level, center));
         } else if (item.is(Items.WITHER_SKELETON_SKULL)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
@@ -1348,22 +1341,6 @@ public class RitualExecutor {
     // NEW — LARGE rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of Dragon's Fury — deals 8 magic damage to every hostile mob within 20 blocks. */
-    private static void riteOfDragonsFury(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        List<net.minecraft.world.entity.monster.Monster> mobs =
-                sl.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
-                        new AABB(center).inflate(20));
-        int hit = 0;
-        for (var mob : mobs) {
-            mob.hurt(player.damageSources().magic(), 8.0f);
-            hit++;
-        }
-        player.displayClientMessage(Component.translatable("witchery.ritual.dragons_fury.success", hit), false);
-        success(player, level, center, null, SoundEvents.ENDER_DRAGON_AMBIENT, 0.6f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Dragon's Fury struck {} mobs", hit);
-    }
-
     /** Rite of Manifestation — grants a Spirit World walker time to manifest in the Overworld as a ghost. */
     /** Rite of Infusion (Flying Ointment) — enchants the nearest broom from the medium ritual ring when the inner small ritual ring is also present. */
     private static boolean riteOfEnchantBroom(Player player, Level level, BlockPos center) {
@@ -1413,43 +1390,6 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.manifestation.success",
                 SoundEvents.ENDERMAN_TELEPORT, 1.8f, 3, 60);
         WitcheryMod.LOGGER.info("Rite of Manifestation: {} prepared {} seconds of ghost travel.", sp.getName().getString(), duration);
-        return true;
-    }
-
-    /** Rite of Hellgate — tears open a rift to the Torment dimension. */
-    private static boolean riteOfHellgate(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        if (((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getLevel(WitcheryDimensions.TORMENT) == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.hellgate.unavailable"), false);
-            return false;
-        }
-        // Strike lightning ring for drama
-        if (level instanceof ServerLevel sl) {
-            for (int i = 0; i < 8; i++) {
-                double angle = 2 * Math.PI * i / 8;
-                int bx = center.getX() + (int) Math.round(3 * Math.cos(angle));
-                int bz = center.getZ() + (int) Math.round(3 * Math.sin(angle));
-                LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, sl);
-                bolt.setPos(bx + 0.5, (double)(center.getY() + 1), bz + 0.5);
-                bolt.setVisualOnly(true);
-                sl.addFreshEntity(bolt);
-            }
-        }
-        success(player, level, center, null, SoundEvents.PORTAL_TRIGGER, 1f, 3, 60);
-        com.emoniph.witchery.world.TormentHelper.sendToTorment(sp, level.random.nextInt(
-                com.emoniph.witchery.world.TormentHelper.NUM_LEVELS));
-        WitcheryMod.LOGGER.info("Rite of Hellgate: {} entered Torment.", sp.getName().getString());
-        return true;
-    }
-
-    /** Rite of Rain — starts rain for 10 minutes. */
-    private static boolean riteOfRain(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!canPerformClimateRite(player, level, center)) return false;
-        sl.setWeatherParameters(0, 12000, true, false); // 10 min rain, no thunder
-        success(player, level, center, "witchery.ritual.rain.success",
-                SoundEvents.WEATHER_RAIN, 0.9f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Rain started by {}", player.getName().getString());
         return true;
     }
 
