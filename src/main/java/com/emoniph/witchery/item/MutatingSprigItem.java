@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -42,6 +43,16 @@ public class MutatingSprigItem extends Item {
         BlockPos pos = ctx.getClickedPos();
         BlockState state = level.getBlockState(pos);
         if (tryCreateGrasspers(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateLeechChest(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -109,6 +120,29 @@ public class MutatingSprigItem extends Item {
             BlockPos grassPos = pos.relative(direction);
             level.setBlock(grassPos, WitcheryBlocks.GRASSPER.get().defaultBlockState().setValue(GrassperBlock.FACING, direction), 3);
         }
+        return true;
+    }
+
+    private static boolean tryCreateLeechChest(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.TRAPPED_CHEST)
+                || !state.hasProperty(ChestBlock.TYPE)
+                || state.getValue(ChestBlock.TYPE) != ChestType.SINGLE
+                || !(level.getBlockEntity(pos) instanceof ChestBlockEntity chest)
+                || !chest.isEmpty()) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos vinePos = pos.relative(direction);
+            if (!level.getBlockState(vinePos).is(Blocks.VINE)
+                    || !level.getFluidState(vinePos.below()).is(FluidTags.WATER)) {
+                return false;
+            }
+        }
+
+        BlockState resultState = WitcheryBlocks.LEECH_CHEST.get().defaultBlockState()
+                .setValue(com.emoniph.witchery.blocks.LeechChestBlock.FACING, state.getValue(ChestBlock.FACING));
+        level.setBlock(pos, resultState, 3);
         return true;
     }
 

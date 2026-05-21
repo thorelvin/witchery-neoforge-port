@@ -18,6 +18,11 @@
       "type": "patchouli:text",
       "title": "Practical Mutations",
       "text": "Rewoven now restores the core block workings: $(li)$(item)Grass Block$() becomes $(item)Mycelium$()$(li)$(item)Mycelium$() becomes $(item)Grass Block$()$(li)Underwater $(item)Dirt$() becomes $(item)Clay$()$(li)Underwater $(item)Clay$() becomes $(item)Dirt$()$(br2)The first plant-construction mutation is back too: use the sprig on an $(item)empty Chest$() sitting over a water source with $(item)Short Grass$() on each of its four sides, and those grasses will twist into four $(item)Grasspers$()."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Leech Chest",
+      "text": "The next old structure route is back as well. Set an $(item)empty Trapped Chest$() in place, put a $(item)Vine$() on each of its four sides, and make sure there is water below each vine. Use the sprig on the trapped chest and it will turn into a $(item)Leech Chest$().$(br2)That matters because the Leech Chest is one of the cleanest repeatable ways to gather stored taglocks in a settlement."
     }
   ]
 }
