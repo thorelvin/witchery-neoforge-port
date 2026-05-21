@@ -34,8 +34,8 @@ This backlog is separate from pure feature parity. The port is now far enough al
    `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` are still static maps keyed by dimension, which is fine inside a single server session but unsafe across restart or reload because staged rites can silently disappear after ingredients and altar power were already consumed. The preferred fix is `SavedData`, a dimension attachment, or another durable ritual anchor. If full persistence is deferred, server stop/unload must at least cancel cleanly or refund stored sacrifices where possible.
 4. Reconcile the two kettle recipe systems.
    The live kettle path uses `WitcheryRecipeTypes.KETTLE_BREWING`, but the legacy `WitcheryKettleRecipes` singleton plus `WitcheryKettleRecipeData::register` still hardcode a smaller fallback set. That is a long-term divergence risk for JEI, in-game brewing, docs, and QA. The port should have one source of truth: either remove the singleton entirely or turn it into data-generation or test coverage for the JSON recipe set.
-5. Deep-copy `SpiritWorldState` in player data.
-   `WitcheryPlayerData.copyFrom` already deep-copies familiar and infusion state but still shares `SpiritWorldState` by reference through `this.sw = other.sw`. That is a classic shared-mutable-state bug source during clone, respawn, or copy flows. `SpiritWorldState` should become explicitly copyable, and the fields that currently live outside the CODEC after `wolfMastery` should either be documented as intentionally transient or moved into a persistable nested state object.
+5. Audit the remaining transient player-state fields around Spirit World handling.
+   `SpiritWorldState` is now explicitly copyable and `WitcheryPlayerData.copyFrom` / constructor paths no longer share it by reference, so the old clone/respawn shared-mutable-state bug is closed. The remaining follow-up is to decide whether the fields that still live outside the CODEC after `wolfMastery` are intentionally transient, and either document that choice or move them into a persistable nested state object.
 6. Wire config values through central helpers.
    `WitcheryConfig.RITUAL_POWER_MULTIPLIER` and `ALLOW_BIOME_CHANGING` should not remain "defined but inconsistently enforced" knobs. Ritual power should route through one shared cost helper, and biome-changing rites should honor the biome-changing flag before final consumption or queueing, not only at effect time.
 7. Reduce expensive ritual activation and upkeep scans.
@@ -55,7 +55,7 @@ When architecture work is chosen instead of another parity patch, take these fir
 
 1. Introduce ritual transactions so rites do not consume power or items until all preconditions pass.
 2. Split `RitualExecutor` into registry-driven or definition-driven handlers.
-3. Fix `WitcheryPlayerData.copyFrom` so `SpiritWorldState` is deep-copied.
+3. Audit and document the remaining transient player-state fields after the `SpiritWorldState` deep-copy fix.
 4. Remove or fully reconcile the legacy kettle singleton with the modern recipe-map system.
 5. Persist or explicitly cancel/refund active rituals across stop/reload.
 6. Route ritual cost and biome-changing config through central helpers.

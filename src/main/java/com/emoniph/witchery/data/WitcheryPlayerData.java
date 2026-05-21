@@ -88,6 +88,20 @@ public class WitcheryPlayerData {
             this.manifestationReturnPos = manifestationReturnPos;
         }
 
+        public SpiritWorldState copy() {
+            return new SpiritWorldState(
+                    isDream,
+                    inventorySnbt,
+                    savedHealth,
+                    savedFood,
+                    savedSat,
+                    corpseUUID,
+                    manifestedGhost,
+                    manifestationTime,
+                    manifestationSkipTick,
+                    manifestationReturnPos);
+        }
+
         public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.BOOL.optionalFieldOf("is_dream", false).forGetter(s -> s.isDream),
             Codec.STRING.optionalFieldOf("inventory_snbt", "").forGetter(s -> s.inventorySnbt),
@@ -147,7 +161,7 @@ public class WitcheryPlayerData {
         this.returnPos = returnPos;
         this.returnDimension = returnDimension;
         this.inSpiritWorld = inSpiritWorld;
-        this.sw = sw != null ? sw : new SpiritWorldState();
+        this.sw = sw != null ? sw.copy() : new SpiritWorldState();
         this.creaturePowerType = creaturePowerType;
         this.creaturePowerCharges = creaturePowerCharges;
         this.wolfMastery = wolfMastery;
@@ -345,7 +359,7 @@ public class WitcheryPlayerData {
         this.returnPos = other.returnPos;
         this.returnDimension = other.returnDimension;
         this.inSpiritWorld = other.inSpiritWorld;
-        this.sw = other.sw;
+        this.sw = other.sw.copy();
         this.creaturePowerType = other.creaturePowerType;
         this.creaturePowerCharges = other.creaturePowerCharges;
         this.wolfMastery = other.wolfMastery;
