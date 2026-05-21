@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "MWM",
+    "MMM"
+  ],
+  "key": {
+    "M": "witchery:mutandis",
+    "W": "minecraft:nether_wart"
+  },
+  "result": {
+    "id": "witchery:mutandis_extremis",
+    "count": 8
+  }
+}

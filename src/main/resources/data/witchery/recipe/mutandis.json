@@ -1,16 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WAW",
+    "WDW",
     "MEB",
     "WAW"
   ],
   "key": {
     "W": "witchery:wood_ash",
-    "A": "minecraft:bone_meal",
+    "D": "minecraft:green_dye",
+    "A": "witchery:hint_of_rebirth",
     "M": "witchery:mandrake_root",
     "E": "minecraft:egg",
-    "B": "witchery:hint_of_rebirth"
+    "B": "minecraft:bone_meal"
   },
   "result": {
     "id": "witchery:mutandis",
