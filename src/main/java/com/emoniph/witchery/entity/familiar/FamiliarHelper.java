@@ -50,6 +50,9 @@ public final class FamiliarHelper {
         if (familiar instanceof CatFamiliarEntity) {
             return 1;
         }
+        if (familiar instanceof SpectralFamiliarEntity) {
+            return 4;
+        }
         if (familiar instanceof ToadFamiliarEntity) {
             return 2;
         }
@@ -71,6 +74,9 @@ public final class FamiliarHelper {
         if (familiar instanceof CatFamiliarEntity) {
             return "cat";
         }
+        if (familiar instanceof SpectralFamiliarEntity) {
+            return "spectral familiar";
+        }
         if (familiar instanceof ToadFamiliarEntity) {
             return "toad";
         }
@@ -90,6 +96,7 @@ public final class FamiliarHelper {
         FamiliarEntity familiar = switch (familiarType.toLowerCase(Locale.ROOT)) {
             case "owl" -> WitcheryEntities.OWL.get().create(level, EntitySpawnReason.TRIGGERED);
             case "cat" -> WitcheryEntities.FAMILIAR_CAT.get().create(level, EntitySpawnReason.TRIGGERED);
+            case "spectral", "spectral familiar" -> WitcheryEntities.SPECTRAL_FAMILIAR.get().create(level, EntitySpawnReason.TRIGGERED);
             case "toad" -> WitcheryEntities.TOAD.get().create(level, EntitySpawnReason.TRIGGERED);
             default -> null;
         };

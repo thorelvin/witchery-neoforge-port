@@ -11,12 +11,12 @@
     {
       "type": "patchouli:text",
       "title": "Current Port Truth",
-      "text": "Witchery: Rewoven has the restored small-circle summon route, its real support offerings, and its altar cost back, but the separate Spectral Familiar creature is not yet implemented as its own entity. For now, the rite still produces a bound $(item)Witch's Cat$() so the branch remains usable without falsely claiming full parity.$(br2)Treat this as an honest placeholder, not the finished familiar."
+      "text": "Witchery: Rewoven now restores the separate $(bold)Spectral Familiar$(/) as its own bound summon instead of collapsing the rite into a Witch's Cat. The small-circle route, its real support offerings, and its altar cost are all back, and the familiar can once again be led toward shinies by feeding it the matching ore item.$(br2)The strongest current use is practical ore-hunting rather than combat."
     },
     {
       "type": "patchouli:text",
-      "title": "What Still Remains",
-      "text": "The future parity step is to restore the true summoned familiar: its own identity, visuals, and the old search-for-shinies role that made it distinct from Owl, Cat, and Toad familiars.$(br2)Until then, the practical familiar systems to rely on are the bound Owl, Cat, and Toad lines described elsewhere in this chapter."
+      "title": "Searching for Ores",
+      "text": "Feed it an $(item)Iron Ingot$(), $(item)Gold Ingot$(), $(item)Lapis Lazuli$(), $(item)Redstone Dust$(), $(item)Coal$(), $(item)Emerald$(), or a $(item)Diamond$(). The gift is spent, the familiar starts searching, and if it finds the right ore somewhere below it will sit and call out the spot for you.$(br2)Like the old craft, repeated searches become risky: after the first success there is an increasing chance that the familiar will simply vanish."
     }
   ]
 }

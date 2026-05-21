@@ -10,6 +10,7 @@ import com.emoniph.witchery.entity.SpiritEntity;
 import com.emoniph.witchery.entity.BroomEntity;
 import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.SpectralFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -44,6 +45,11 @@ public class WitcheryEntities {
             ENTITY_TYPES.register("familiar_cat", () ->
                     EntityType.Builder.of(CatFamiliarEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 0.7F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "familiar_cat"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SpectralFamiliarEntity>> SPECTRAL_FAMILIAR =
+            ENTITY_TYPES.register("spectral_familiar", () ->
+                    EntityType.Builder.of(SpectralFamiliarEntity::new, MobCategory.CREATURE)
+                            .sized(0.8F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spectral_familiar"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ToadFamiliarEntity>> TOAD =
             ENTITY_TYPES.register("toad", () ->
@@ -201,6 +207,7 @@ public class WitcheryEntities {
         event.register(OWL.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(RAVEN.get(),         SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(FAMILIAR_CAT.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(SPECTRAL_FAMILIAR.get(), SpawnPlacementTypes.ON_GROUND,    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(TOAD.get(),          SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
     }
 
@@ -209,6 +216,7 @@ public class WitcheryEntities {
         event.put(OWL.get(),           OwlFamiliarEntity.createAttributes().build());
         event.put(RAVEN.get(),         RavenEntity.createAttributes().build());
         event.put(FAMILIAR_CAT.get(),  CatFamiliarEntity.createAttributes().build());
+        event.put(SPECTRAL_FAMILIAR.get(), SpectralFamiliarEntity.createAttributes().build());
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
         event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());
         event.put(WITCH_HUNTER.get(),  WitchHunterEntity.createAttributes().build());

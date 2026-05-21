@@ -64,8 +64,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 5. Rite of the Forest / Treefyd seed bridge - closed.
    The missing `Treefyd Seeds` item path is now surfaced again: the original crafted seed recipe is back, the seed can once more be used on grass to raise an owned Treefyd, and the Primer now teaches that bridge directly instead of leaving Treefyd progression implied or hidden behind QA-only spawn paths.
    Treefyd owner control is a little healthier too: owned Treefyds can now once again learn player-side ignore commands and one-exact-creature ignore commands from filled `Taglock Kit`s, though the broader old species-wide creature memory still remains future parity work.
-6. Spectral Familiar explanation - closed as a truthful Primer pass.
-   The Primer now explains what the original Spectral Familiar was for, why the summon rite text mentions giving it a diamond, and that the current port still uses a bound Witch's Cat placeholder for the restored summon route until the dedicated spectral familiar entity/search behavior is implemented.
+6. Spectral Familiar explanation - closed and now backed by a real dedicated summon.
+   The Primer now explains what the original Spectral Familiar was for, and the port once again restores a separate `Spectral Familiar` entity on the small summon rite with practical ore-search behavior driven by gifted ore items. The remaining familiar gap is now mostly in bespoke visuals/polish rather than the rite still collapsing into a Witch's Cat placeholder.
 7. Mystic Branch explanation - closed as a first truthful port pass.
    The Primer now explains how the live port actually grants the branch through the night infusion rite and how it currently spends stored creature-power charges as a practical focus item. The deeper old air-glyph / demonic-branch spellcasting lore is still future work at the mechanics level, but the player no longer receives the item with no explanation at all.
 8. Necromantic Stone explanation - closed as a first truthful port pass.

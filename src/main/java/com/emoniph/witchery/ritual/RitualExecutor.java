@@ -693,7 +693,7 @@ public class RitualExecutor {
         return riteOfCallFamiliar(player, level, center);
     }
 
-    /** Rite of Summon Familiar — restores the original small-circle Drop of Luck path as a bound witch's cat summon. */
+    /** Rite of Summon Familiar — restores the original small-circle Drop of Luck path as a real spectral familiar summon. */
     private static boolean riteOfSummonFamiliar(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
@@ -709,7 +709,7 @@ public class RitualExecutor {
             return false;
         }
 
-        var familiar = WitcheryEntities.FAMILIAR_CAT.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        var familiar = WitcheryEntities.SPECTRAL_FAMILIAR.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
         if (familiar == null) {
             return false;
         }
@@ -731,7 +731,7 @@ public class RitualExecutor {
         bindFamiliarToPlayer(sp, sl, familiar);
 
         success(player, level, center, "witchery.ritual.summon_familiar.success",
-                SoundEvents.CAT_AMBIENT, 1.0f, 2, 24);
+                SoundEvents.PIG_AMBIENT, 1.0f, 2, 24);
         WitcheryMod.LOGGER.info("Rite of Summon Familiar cast by {}", player.getName().getString());
         return true;
     }

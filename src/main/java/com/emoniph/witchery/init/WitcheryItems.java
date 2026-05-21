@@ -408,6 +408,9 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> FAMILIAR_CAT_SPAWN_EGG =
             ITEMS.register("familiar_cat_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.FAMILIAR_CAT.get())));
+    public static final DeferredItem<SpawnEggItem> SPECTRAL_FAMILIAR_SPAWN_EGG =
+            ITEMS.register("spectral_familiar_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.SPECTRAL_FAMILIAR.get())));
     public static final DeferredItem<SpawnEggItem> TOAD_SPAWN_EGG =
             ITEMS.register("toad_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.TOAD.get())));

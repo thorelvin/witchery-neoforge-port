@@ -272,6 +272,7 @@ public class WitcheryCommands {
                                                 IntegerArgumentType.getInteger(ctx, "count")))))
                         .then(Commands.literal("owl")           .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.OWL.get())))
                         .then(Commands.literal("familiar_cat")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.FAMILIAR_CAT.get())))
+                        .then(Commands.literal("spectral_familiar").executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.SPECTRAL_FAMILIAR.get())))
                         .then(Commands.literal("toad")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.TOAD.get())))
                         .then(Commands.literal("coven_witch")   .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.COVEN_WITCH.get())))
                         .then(Commands.literal("witch_hunter")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.WITCH_HUNTER.get())))
