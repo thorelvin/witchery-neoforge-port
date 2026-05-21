@@ -65,8 +65,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The Primer now teaches the rite itself again, but the full `Treefyd Seed` bridge is still blocked by repo truth: the actual `Treefyd Seed` item/recipe path is not yet surfaced in the port. Finish that item path, then connect the guide to it directly.
 6. Spectral Familiar explanation.
    The summon rite can exist without the player understanding what a Spectral Familiar actually is, how it behaves, or how it differs from Cat / Owl / Toad familiars. This needs a practical familiar entry, not just a recipe mention.
-7. Mystic Branch explanation.
-   The item appears as a ritual/ignition ingredient, but its actual tool-like spellcasting role is still not documented well enough. Add its active-use identity, especially the named spell behavior, so it does not look like a dead crafting stick.
+7. Mystic Branch explanation - closed as a first truthful port pass.
+   The Primer now explains how the live port actually grants the branch through the night infusion rite and how it currently spends stored creature-power charges as a practical focus item. The deeper old air-glyph / demonic-branch spellcasting lore is still future work at the mechanics level, but the player no longer receives the item with no explanation at all.
 8. Vampire armor coverage.
    Vampirism itself is documented much better than the dedicated vampire armor set. The Chain Coat / Dress Coat / Helmet / Trousers / Oxford Boots / Top Hat family and their vampire-specific bonuses should be covered as a real equipment track, not left to the wiki.
 9. Minor completeness gaps.
@@ -79,7 +79,7 @@ Use this order when choosing book/completeness work instead of another renderer 
 1. Treefyd seed bridge next.
    The rites themselves now have first-pass coverage again, so the next discovery blocker is connecting `Rite of the Forest` honestly to the missing `Treefyd Seed` item/recipe path once that path exists in the port.
 2. Tool/familiar identity after that.
-   `Mystic Branch`, `Spectral Familiar`, and `Necromantic Stone` should be explained once the player can at least enter the systems they belong to.
+   `Spectral Familiar` and `Necromantic Stone` should be explained next now that `Mystic Branch` has a first truthful Primer page.
 3. Equipment and minor completeness after the blockers.
    Vampire armor coverage, belts, Beartrap, and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
 
