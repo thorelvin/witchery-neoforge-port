@@ -1783,6 +1783,8 @@ public class RitualExecutor {
 
     private record FamiliarBindTarget(ServerPlayer player, TamableAnimal candidate) {}
 
+    private record InventoryConsumption(ServerPlayer player, int slot) {}
+
     private static final class RitualTransaction {
         private final ServerLevel level;
         private final BlockPos center;
@@ -1790,6 +1792,7 @@ public class RitualExecutor {
         private final int altarPowerCost;
         private final String noPowerMessageKey;
         private final List<ItemEntity> offerings = new ArrayList<>();
+        private final List<InventoryConsumption> inventoryConsumptions = new ArrayList<>();
 
         private RitualTransaction(ServerLevel level, BlockPos center, int altarRadius, int altarPowerCost,
                                   String noPowerMessageKey) {
@@ -1807,6 +1810,11 @@ public class RitualExecutor {
             return this;
         }
 
+        private RitualTransaction offerInventory(ServerPlayer player, int slot) {
+            inventoryConsumptions.add(new InventoryConsumption(player, slot));
+            return this;
+        }
+
         private boolean commit(Player player) {
             if (altarPowerCost > 0 && !consumeNearbyRitualAltarPower(level, center, altarRadius, altarPowerCost)) {
                 level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -1816,6 +1824,9 @@ public class RitualExecutor {
 
             for (ItemEntity offering : offerings) {
                 consumeOfferedItem(offering);
+            }
+            for (InventoryConsumption inventoryConsumption : inventoryConsumptions) {
+                consumeInventoryItem(inventoryConsumption.player(), inventoryConsumption.slot());
             }
             return true;
         }
@@ -4404,16 +4415,14 @@ public class RitualExecutor {
         }
 
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 7000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.no_power"), false);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 7000, "witchery.ritual.corrupt_poppet.no_power")
+                .offerInventory(sp, taglock.get().slot())
+                .offer(offerings.get().exhaleOfHornedOne())
+                .offer(offerings.get().blazePowder())
+                .offer(offerings.get().spectralDust());
+        if (!transaction.commit(sp)) {
             return false;
         }
-
-        consumeInventoryItem(sp, taglock.get().slot());
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().blazePowder());
-        consumeOfferedItem(offerings.get().spectralDust());
         int destroyed = PoppetEvents.destroyBoundPoppets(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
         success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
         sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
