@@ -666,11 +666,12 @@ Remaining gap:
 The next missing-feature pass is now closer to original Witchery:
 - The `corruptvoodooprotection` rite is reachable again through a representative medium infernal `voodoo_protection_poppet` route instead of being absent from the port.
 - It now requires an active cat familiar again as the curse-mastery gate before it will fire.
+- It now also restores the original missing support gate and altar startup cost more closely: the representative Voodoo Protection Poppet trigger now also expects Exhale of the Horned One, blaze powder, and Spectral Dust nearby, and the rite once again consumes 7000 altar power before it starts unravelling wards.
 - It now validates a filled taglock target, consumes that taglock only after target resolution, and destroys up to 10 bound `Voodoo Protection Poppet` items on the target again.
 - `Poppet Protection` now blocks this rite again and throws the backlash lightning onto the caster instead of letting the anti-voodoo poppets be destroyed.
 
 Remaining gap:
-- The modern dispatcher still collapses the original five-sacrifice recipe into a representative infernal trigger item, so the exact multi-sacrifice activation shape is still not full 1.7.10 recipe-registry parity.
+- The modern dispatcher still collapses the original five-sacrifice recipe into a representative infernal trigger item plus inventory taglock path, so the exact multi-sacrifice activation shape is still not full 1.7.10 recipe-registry parity.
 
 ### 58. Banish Demon rites were missing entirely - Fixed / verify
 

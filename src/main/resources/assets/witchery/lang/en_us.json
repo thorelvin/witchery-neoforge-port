@@ -721,6 +721,8 @@
   "witchery.ritual.corrupt_poppet.success": "The target's voodoo wards unravel. (%s destroyed)",
   "witchery.ritual.corrupt_poppet.no_taglock": "No filled taglock in inventory.",
   "witchery.ritual.corrupt_poppet.offline": "Target is not online.",
+  "witchery.ritual.corrupt_poppet.support": "The rite needs Exhale of the Horned One, blaze powder, and Spectral Dust around the offered Voodoo Protection Poppet.",
+  "witchery.ritual.corrupt_poppet.no_power": "A nearby altar lacks the power to corrupt the poppet wards.",
   "witchery.ritual.curse_of_wolf.caster": "Curse of the Wolf cast.",
   "witchery.ritual.curse_of_wolf.target": "You feel something stir within you... the wolf awakens.",
   "witchery.ritual.curse_of_wolf.cursed": "The wolf curse has taken hold.",

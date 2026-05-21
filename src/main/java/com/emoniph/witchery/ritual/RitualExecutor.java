@@ -3903,6 +3903,13 @@ public class RitualExecutor {
             return false;
         }
 
+        Optional<CorruptPoppetOfferings> offerings = findCorruptPoppetOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.support"), false);
+            return false;
+        }
+
         if (PoppetEvents.damageBoundPoppet(target, WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
             target.displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
@@ -3911,7 +3918,17 @@ public class RitualExecutor {
             return true;
         }
 
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 7000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.no_power"), false);
+            return false;
+        }
+
         consumeInventoryItem(sp, taglock.get().slot());
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().blazePowder());
+        consumeOfferedItem(offerings.get().spectralDust());
         int destroyed = PoppetEvents.destroyBoundPoppets(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
         success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
         sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
@@ -4439,6 +4456,9 @@ public class RitualExecutor {
                                           ItemEntity fermentedSpiderEye, ItemEntity gunpowder,
                                           ItemEntity brewGrotesque) {}
 
+    private record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
+                                          ItemEntity spectralDust) {}
+
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
     private record BindFamiliarOfferings(ItemEntity tearOfTheGoddess, ItemEntity odourOfPurity,
@@ -4692,6 +4712,19 @@ public class RitualExecutor {
                 fermentedSpiderEye.get(),
                 gunpowder.get(),
                 brewGrotesque.get()));
+    }
+
+    private static Optional<CorruptPoppetOfferings> findCorruptPoppetOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> blazePowder = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
+        if (exhaleOfHornedOne.isEmpty() || blazePowder.isEmpty() || spectralDust.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CorruptPoppetOfferings(
+                exhaleOfHornedOne.get(),
+                blazePowder.get(),
+                spectralDust.get()));
     }
 
     private static Optional<SpectralStoneOfferings> findSpectralStoneOfferings(Level level, BlockPos center) {
