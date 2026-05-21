@@ -5143,6 +5143,7 @@ public class RitualExecutor {
 
     /** Rite of Binding — summons a freshly bound Waystone item at the ritual center. */
     private static boolean riteOfBindWaystone(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
         Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
         Optional<ItemEntity> glowstone = findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
         if (enderDew.isEmpty() || glowstone.isEmpty()) {
@@ -5150,8 +5151,13 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeOfferedItem(enderDew.get());
-        consumeOfferedItem(glowstone.get());
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
+                .offer(enderDew.get())
+                .offer(glowstone.get());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         ItemStack boundWaystone = new ItemStack(WitcheryItems.WAYSTONE.get());
         WaystoneItem.bindTo(boundWaystone, center, level.dimension());
         ItemEntity entity = new ItemEntity(level,
@@ -5190,9 +5196,14 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeOfferedItem(unboundWaystone.get());
-        consumeOfferedItem(enderDew.get());
-        consumeOfferedItem(diamond.get());
+        RitualTransaction transaction = new RitualTransaction((ServerLevel) level, center, 16, 0, null)
+                .offer(unboundWaystone.get())
+                .offer(enderDew.get())
+                .offer(diamond.get());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         ItemStack copiedWaystones = sourceWaystone.copyWithCount(2);
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
@@ -6107,7 +6118,7 @@ public class RitualExecutor {
 
     /** Medium otherwhere transposition — teleports the bound taglock target to the circle center. */
     private static boolean riteOfTranspositionEntity(Player player, Level level, BlockPos center, ItemStack taglock) {
-        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         Optional<EntityTranspositionOfferings> offerings = findEntityTranspositionOfferings(level, center);
         if (offerings.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.support"), false);
@@ -6137,19 +6148,21 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower((ServerLevel) level, center, 16, 3000)) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.no_power"), false);
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
+                "witchery.ritual.transposition_entity.no_power")
+                .offer(offerings.get().waystone())
+                .offer(offerings.get().enderDew())
+                .offer(offerings.get().ironAxe());
+        if (!transaction.commit(player)) {
             return false;
         }
 
         BlockPos destination = center.above();
-        consumeOfferedItem(offerings.get().waystone());
-        consumeOfferedItem(offerings.get().enderDew());
-        consumeOfferedItem(offerings.get().ironAxe());
         if (target.level() == level) {
             target.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);
         } else {
-            target.teleportTo((ServerLevel) level, destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
+            target.teleportTo(sl, destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
                     java.util.Set.<net.minecraft.world.entity.Relative>of(), target.getYRot(), target.getXRot(), false);
         }
         target.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
