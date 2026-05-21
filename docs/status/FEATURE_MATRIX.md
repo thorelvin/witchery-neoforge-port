@@ -61,7 +61,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Tool / Armor protection poppets | Done | Tool: repairs held tool; Armor: repairs worn armor |
 | Poppet Shelf | Done | 9-slot poppet-only shelf; bound-poppet lookup now scans server shelves again and shelves with bound poppets keep their chunk loaded so protection can still trigger away from the player; top-of-shelf poppet rendering is back on a clearer 3x3 grid |
 | Basic sympathetic poppet | Done | Carried in inventory: mirrors damage taken to bound target (5 charges; consumed after 5 hits; creepy skeleton-rattle sound) |
-| Curse of Corrupt Poppet | Done | Restored through a representative medium infernal `voodoo_protection_poppet` route; requires active cat familiar, a filled taglock target, Exhale of the Horned One, blaze powder, Spectral Dust, and 7000 altar power, destroys up to 10 Voodoo Protection Poppets, and is blocked by Poppet Protection again |
+| Curse of Corrupt Poppet | Done | Restored through a representative medium infernal `voodoo_protection_poppet` route; requires active cat familiar, an offered filled `Taglock Kit`, Exhale of the Horned One, blaze powder, Spectral Dust, and 7000 altar power, destroys up to 10 Voodoo Protection Poppets, and is blocked by Poppet Protection again |
 
 ---
 

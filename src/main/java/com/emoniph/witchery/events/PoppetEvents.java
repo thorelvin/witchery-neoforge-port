@@ -323,6 +323,10 @@ public class PoppetEvents {
         return destroyed;
     }
 
+    public static boolean hasBoundPoppet(ServerPlayer player, Item poppetItem) {
+        return findFirstBoundPoppet(player, stack -> stack.is(poppetItem)) != null;
+    }
+
     private static void consumeOne(PoppetLocation location) {
         if (location.inventory() != null) {
             location.stack().shrink(1);

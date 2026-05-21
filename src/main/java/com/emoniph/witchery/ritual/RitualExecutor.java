@@ -4409,15 +4409,17 @@ public class RitualExecutor {
             return false;
         }
 
-        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        Optional<ItemEntity> taglock = findNearbyFilledTaglockOffering(level, center);
         if (taglock.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.no_taglock"), false);
             return false;
         }
 
-        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
-        if (target == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.offline"), false);
+        Optional<ServerPlayer> target = resolveOfferedTaglockTarget(
+                caster, taglock.get(),
+                "witchery.ritual.corrupt_poppet.no_taglock",
+                "witchery.ritual.corrupt_poppet.offline");
+        if (target.isEmpty()) {
             return false;
         }
 
@@ -4428,27 +4430,32 @@ public class RitualExecutor {
             return false;
         }
 
-        if (PoppetEvents.damageBoundPoppet(target, WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
-            target.displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
+        if (PoppetEvents.damageBoundPoppet(target.get(), WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
+            target.get().displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             strikeCurseBacklashLightning(sp);
             success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
             return true;
         }
 
+        if (!PoppetEvents.hasBoundPoppet(target.get(), WitcheryItems.VOODOO_PROTECTION_POPPET.get())) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.none"), false);
+            return false;
+        }
+
         if (!(level instanceof ServerLevel sl)) return false;
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 7000, "witchery.ritual.corrupt_poppet.no_power")
-                .offerInventory(sp, taglock.get().slot())
+                .offer(taglock.get())
                 .offer(offerings.get().exhaleOfHornedOne())
                 .offer(offerings.get().blazePowder())
                 .offer(offerings.get().spectralDust());
         if (!transaction.commit(sp)) {
             return false;
         }
-        int destroyed = PoppetEvents.destroyBoundPoppets(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
+        int destroyed = PoppetEvents.destroyBoundPoppets(target.get(), WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
         success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
         sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
-        WitcheryMod.LOGGER.info("Curse of Corrupt Poppet destroyed {} voodoo protection poppet(s) for {}", destroyed, target.getName().getString());
+        WitcheryMod.LOGGER.info("Curse of Corrupt Poppet destroyed {} voodoo protection poppet(s) for {}", destroyed, target.get().getName().getString());
         return true;
     }
 
