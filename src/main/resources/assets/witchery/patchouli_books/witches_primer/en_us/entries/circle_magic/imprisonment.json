@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Imprisonment",
+  "icon": "minecraft:slime_ball",
+  "category": "witchery:circle_magic",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Imprisonment is the sister-working to Sanctity. Where Sanctity presses creatures away from the boundary, Imprisonment draws them back and keeps them penned within it.$(br2)It is a snare-circle, not a killing-circle, useful when you need bodies contained rather than banished."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:slime_ball",
+      "text": "Offer a $(item)Slime Ball$() with $(item)Redstone$() on a small ritual circle and keep $(bold)500 altar power$(/) ready. Once the rite takes hold, the circle becomes an attractive prison that resists creatures slipping beyond its edge.$(br2)If you want the safer inverse, study $(l:circle_magic/sanctity)Sanctity$(/l), which instead keeps intruders out."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "Imprisonment is useful for holding sacrificial beasts, trapping summoned nuisances, or keeping dangerous creatures in one known patch of ground while you prepare the next working. It is control before it is destruction, and witches who survive long learn the value of that order."
+    }
+  ]
+}
