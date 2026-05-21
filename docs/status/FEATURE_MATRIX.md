@@ -23,7 +23,7 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 | Fetishes | Done | 3 host blocks (Scarecrow/Trent Effigy/Witch's Ladder); 5 effects; Rite of Binding; original sturdier hardness and very high blast resistance restored closer to 1.7.10; scarecrow/trent once again use dedicated visuals, fetish placement now faces the placer instead of rendering backward after placement, and Witch's Ladder is back on its flat model path with explicit cutout rendering so the original ladder sprite no longer draws like an opaque placeholder block |
 | Mutandis / Mutandis Extremis | Done | Pool mutation; normal/Extremis plant pool now includes the vanilla `bush` shrub, upper-half double-plant clicks still normalize safely, and Extremis keeps the crop pool plus grass/dirt swap; wolf+owl -> Flying Monkey |
 | Brew of Ice / Depths / Vines | Done | All implemented as BrewItem subclasses |
-| Witches' Primer guidebook | Done | Patchouli optional dep; book.json; 8 categories; 28 entries with atmospheric text + images, now including Boline, Anointing Paste, infusion source guidance, Rite of the Forest, and Rite of Manifestation |
+| Witches' Primer guidebook | Done | Patchouli optional dep; book.json; 8 categories; 29 entries with atmospheric text + images, now including Boline, Anointing Paste, infusion source guidance, Rite of the Forest, Rite of Manifestation, and Rite of Beastial Call |
 | JEI integration | Done | 5 recipe categories: Kettle, Oven, Distillery, Spinning Wheel, Brazier |
 
 ### Brew inventory (all Done)
@@ -164,7 +164,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Brazier conjurations named | Done | Anguish/Fortification/Deathly Veil/Drain Growth/Graveyard Mist correctly wired |
 | Coffin block | Done | Vampire day-sleep; shift-open lid; BESR model; spawn point |
 | Rowan Wood Door | Done | UUID-locked; key given on placement; keyring combines keys |
-| Witches' Primer | Done | Patchouli optional; 8 categories; 28 atmospheric entries; 16 generated images; Witch's Hand + Book recipe, with Boline / Anointing Paste / infusion-source coverage now added and first missing-rite coverage started through the Rite of the Forest and Rite of Manifestation |
+| Witches' Primer | Done | Patchouli optional; 8 categories; 29 atmospheric entries; 16 generated images; Witch's Hand + Book recipe, with Boline / Anointing Paste / infusion-source coverage now added and first missing-rite coverage started through the Rite of the Forest, Rite of Manifestation, and Rite of Beastial Call |
 | JEI recipe categories | Done | Kettle, Oven, Distillery, Spinning Wheel, Brazier |
 | Spawn eggs | Done | All 21 entities have eggs; Raven added alongside Hobgoblin/Flying Monkey/Binky |
 

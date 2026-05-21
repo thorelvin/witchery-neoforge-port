@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Beastial Call",
+  "icon": "minecraft:hay_block",
+  "category": "witchery:circle_magic",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Beastial Call is a large Otherwhere working for drawing animal life into the circle from the surrounding countryside.$(br2)It is less a summoning than a lure. The rite coaxes nearby creatures to answer a call they do not understand and gathers them at the center whether they came from the wild or from someone's pasture."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:milk_bucket",
+      "text": "Prepare the circle with offerings that speak of barn, field, and bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, carrot, and seeds, plus $(bold)6000 altar power$(/).$(br2)The rite favors the ordinary creatures of the world: pigs, chickens, cows, sheep, mooshrooms, wolves, and ocelots."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "Use it when you need living creatures gathered in one place for breeding, selection, sacrifice, or later workings. Do not cast it carelessly near a village ranch unless you are willing to explain yourself afterward.$(br2)A coven of three or more makes the call more fitting for the old craft."
+    }
+  ]
+}
