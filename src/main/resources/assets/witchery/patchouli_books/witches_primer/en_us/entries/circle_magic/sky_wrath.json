@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Sky's Wrath",
+  "icon": "minecraft:snowball",
+  "category": "witchery:circle_magic",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Sky's Wrath is a small-circle storm working for calling lightning where you choose. In its simplest form the storm gathers inside the circle. With the broader branch it lashes the ground outside it. With the portable branch it may be cast far from home without spending altar power.$(br2)This is weather as a weapon, not a forecast."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:snowball",
+      "text": "The rite splits into three offerings. $(item)Snowball$() with $(item)Wood Ash$() calls the inner storm and costs $(bold)1000 altar power$(). $(item)Water Bucket$() with $(item)Wood Ash$() calls the broader outer storm and costs $(bold)2000 altar power$(). $(item)Gunpowder$(), $(item)Wood Ash$(), and a $(item)Charged Attuned Stone$() restore the portable branch.$(br2)Offer a bound waystone in range to move the storm to its bound location instead."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "Use the inner branch for punishing a point within the circle, the outer branch for scouring the surrounding ground, and the portable branch when you need the old witchcraft trick of sending the storm elsewhere.$(br2)A waystone cast is safer than standing under your own lightning, but only if the bound place is close enough and in the same world."
+    }
+  ]
+}
