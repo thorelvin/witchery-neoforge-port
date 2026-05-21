@@ -6241,27 +6241,53 @@ public class RitualExecutor {
     }
 
     @FunctionalInterface
-    private interface CureAction { boolean apply(ServerPlayer target); }
+    private interface CurePrecheck { boolean test(ServerPlayer target); }
 
-    private static boolean applyCure(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
-                                     CureAction action, String targetKey) {
-        if (!(caster instanceof ServerPlayer sp)) return false;
+    @FunctionalInterface
+    private interface CureEffect { void apply(ServerPlayer target); }
+
+    private static Optional<ServerPlayer> resolveOfferedTaglockTarget(Player caster, ItemEntity offeredTaglock,
+                                                                      String noTaglockKey, String offlineKey) {
+        if (!(caster instanceof ServerPlayer sp)) return Optional.empty();
         Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.getItem());
         if (taglockUuid.isEmpty()) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.no_taglock"), false);
-            return false;
+            sp.displayClientMessage(Component.translatable(noTaglockKey), false);
+            return Optional.empty();
         }
         ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglockUuid.get());
         if (target == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.offline"), false);
+            sp.displayClientMessage(Component.translatable(offlineKey), false);
+            return Optional.empty();
+        }
+        return Optional.of(target);
+    }
+
+    private static boolean performOfferedCure(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                              CurePrecheck precheck, CureEffect effect, String targetKey,
+                                              ItemEntity... offerings) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<ServerPlayer> target = resolveOfferedTaglockTarget(
+                caster, offeredTaglock, "witchery.ritual.cure.no_taglock", "witchery.ritual.cure.offline");
+        if (target.isEmpty()) {
             return false;
         }
-        if (!action.apply(target)) {
+        if (!precheck.test(target.get())) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.cure.none"), false);
             return false;
         }
-        consumeOfferedItem(offeredTaglock);
-        target.displayClientMessage(Component.translatable(targetKey), false);
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.cure.no_power")
+                .offer(offeredTaglock);
+        for (ItemEntity offering : offerings) {
+            transaction.offer(offering);
+        }
+        if (!transaction.commit(caster)) {
+            return false;
+        }
+
+        effect.apply(target.get());
+        target.get().displayClientMessage(Component.translatable(targetKey), false);
         success(caster, level, center, "witchery.ritual.cure.success",
                 SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.8f, 3, 48);
         return true;
@@ -6294,146 +6320,106 @@ public class RitualExecutor {
     private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {
         Optional<CureMisfortuneOfferings> misfortune = findCureMisfortuneOfferings(level, center);
         if (misfortune.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, misfortune.get().taglockKit(), target -> {
-                if (!target.hasEffect(MobEffects.UNLUCK)) return false;
-                target.removeEffect(MobEffects.UNLUCK);
-                return true;
-            }, "curse.witchery.misfortune.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(misfortune.get().breathOfTheGoddess());
-            consumeOfferedItem(misfortune.get().goldNugget());
-            consumeOfferedItem(misfortune.get().bread());
-            consumeOfferedItem(misfortune.get().brewOfLove());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    misfortune.get().taglockKit(),
+                    target -> target.hasEffect(MobEffects.UNLUCK),
+                    target -> target.removeEffect(MobEffects.UNLUCK),
+                    "curse.witchery.misfortune.goddess_removal",
+                    misfortune.get().breathOfTheGoddess(),
+                    misfortune.get().goldNugget(),
+                    misfortune.get().bread(),
+                    misfortune.get().brewOfLove());
         }
 
         Optional<CureCreatureOfferings> curseCreature = findCureCreatureOfferings(level, center);
         if (curseCreature.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, curseCreature.get().taglockKit(), target -> {
-                boolean hadCurse = target.hasEffect(MobEffects.WITHER)
-                        || target.hasEffect(MobEffects.SLOWNESS)
-                        || target.hasEffect(MobEffects.WEAKNESS);
-                if (!hadCurse) return false;
-                target.removeEffect(MobEffects.WITHER);
-                target.removeEffect(MobEffects.SLOWNESS);
-                target.removeEffect(MobEffects.WEAKNESS);
-                return true;
-            }, "curse.witchery.cursed.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(curseCreature.get().breathOfTheGoddess());
-            consumeOfferedItem(curseCreature.get().spiderEye());
-            consumeOfferedItem(curseCreature.get().gunpowder());
-            consumeOfferedItem(curseCreature.get().brewOfLove());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    curseCreature.get().taglockKit(),
+                    target -> target.hasEffect(MobEffects.WITHER)
+                            || target.hasEffect(MobEffects.SLOWNESS)
+                            || target.hasEffect(MobEffects.WEAKNESS),
+                    target -> {
+                        target.removeEffect(MobEffects.WITHER);
+                        target.removeEffect(MobEffects.SLOWNESS);
+                        target.removeEffect(MobEffects.WEAKNESS);
+                    },
+                    "curse.witchery.cursed.goddess_removal",
+                    curseCreature.get().breathOfTheGoddess(),
+                    curseCreature.get().spiderEye(),
+                    curseCreature.get().gunpowder(),
+                    curseCreature.get().brewOfLove());
         }
 
         Optional<CureWakingNightmareOfferings> wakingNightmare = findCureWakingNightmareOfferings(level, center);
         if (wakingNightmare.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, wakingNightmare.get().taglockKit(), target -> {
-                WitcheryPlayerData data = WitcheryAttachments.get(target);
-                boolean hadNightmare = data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
-                if (!hadNightmare) return false;
-                data.setSpiritWorldIsDream(true);
-                data.setDemonicNightmare(false);
-                PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
-                return true;
-            }, "curse.witchery.waking_nightmare.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(wakingNightmare.get().breathOfTheGoddess());
-            consumeOfferedItem(wakingNightmare.get().goldenCarrot());
-            consumeOfferedItem(wakingNightmare.get().tormentedTwine());
-            consumeOfferedItem(wakingNightmare.get().brewOfLove());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    wakingNightmare.get().taglockKit(),
+                    target -> {
+                        WitcheryPlayerData data = WitcheryAttachments.get(target);
+                        return data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+                    },
+                    target -> {
+                        WitcheryPlayerData data = WitcheryAttachments.get(target);
+                        data.setSpiritWorldIsDream(true);
+                        data.setDemonicNightmare(false);
+                        PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
+                    },
+                    "curse.witchery.waking_nightmare.goddess_removal",
+                    wakingNightmare.get().breathOfTheGoddess(),
+                    wakingNightmare.get().goldenCarrot(),
+                    wakingNightmare.get().tormentedTwine(),
+                    wakingNightmare.get().brewOfLove());
         }
 
         Optional<CureOverheatingOfferings> overheating = findCureOverheatingOfferings(level, center);
         if (overheating.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, overheating.get().taglockKit(), target -> {
-                boolean hadOverheating = target.hasEffect(MobEffects.WEAKNESS) || target.isOnFire();
-                if (!hadOverheating) return false;
-                target.removeEffect(MobEffects.WEAKNESS);
-                target.clearFire();
-                return true;
-            }, "curse.witchery.overheating.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(overheating.get().breathOfTheGoddess());
-            consumeOfferedItem(overheating.get().icyNeedle());
-            consumeOfferedItem(overheating.get().blazeRod());
-            consumeOfferedItem(overheating.get().brewOfTheDepths());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    overheating.get().taglockKit(),
+                    target -> target.hasEffect(MobEffects.WEAKNESS) || target.isOnFire(),
+                    target -> {
+                        target.removeEffect(MobEffects.WEAKNESS);
+                        target.clearFire();
+                    },
+                    "curse.witchery.overheating.goddess_removal",
+                    overheating.get().breathOfTheGoddess(),
+                    overheating.get().icyNeedle(),
+                    overheating.get().blazeRod(),
+                    overheating.get().brewOfTheDepths());
         }
 
         Optional<CureSinkingOfferings> sinking = findCureSinkingOfferings(level, center);
         if (sinking.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, sinking.get().taglockKit(), target -> {
-                boolean hadSinking = target.hasEffect(MobEffects.SLOWNESS)
-                        || target.hasEffect(MobEffects.MINING_FATIGUE)
-                        || target.hasEffect(MobEffects.LEVITATION);
-                if (!hadSinking) return false;
-                target.removeEffect(MobEffects.SLOWNESS);
-                target.removeEffect(MobEffects.MINING_FATIGUE);
-                target.removeEffect(MobEffects.LEVITATION);
-                return true;
-            }, "curse.witchery.sinking.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(sinking.get().breathOfTheGoddess());
-            consumeOfferedItem(sinking.get().boneMeal());
-            consumeOfferedItem(sinking.get().netherWart());
-            consumeOfferedItem(sinking.get().brewOfTheDepths());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    sinking.get().taglockKit(),
+                    target -> target.hasEffect(MobEffects.SLOWNESS)
+                            || target.hasEffect(MobEffects.MINING_FATIGUE)
+                            || target.hasEffect(MobEffects.LEVITATION),
+                    target -> {
+                        target.removeEffect(MobEffects.SLOWNESS);
+                        target.removeEffect(MobEffects.MINING_FATIGUE);
+                        target.removeEffect(MobEffects.LEVITATION);
+                    },
+                    "curse.witchery.sinking.goddess_removal",
+                    sinking.get().breathOfTheGoddess(),
+                    sinking.get().boneMeal(),
+                    sinking.get().netherWart(),
+                    sinking.get().brewOfTheDepths());
         }
 
         Optional<CureInsanityOfferings> insanity = findCureInsanityOfferings(level, center);
         if (insanity.isPresent()) {
-            if (!(level instanceof ServerLevel sl)) return false;
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
-                return false;
-            }
-            boolean cured = applyCure(caster, level, center, insanity.get().taglockKit(), target -> {
-                boolean hadInsanity = target.hasEffect(MobEffects.NAUSEA) || target.hasEffect(MobEffects.BLINDNESS);
-                if (!hadInsanity) return false;
-                target.removeEffect(MobEffects.NAUSEA);
-                target.removeEffect(MobEffects.BLINDNESS);
-                return true;
-            }, "curse.witchery.insanity.goddess_removal");
-            if (!cured) return false;
-            consumeOfferedItem(insanity.get().breathOfTheGoddess());
-            consumeOfferedItem(insanity.get().potato());
-            consumeOfferedItem(insanity.get().sugar());
-            consumeOfferedItem(insanity.get().brewOfLove());
-            return true;
+            return performOfferedCure(caster, level, center,
+                    insanity.get().taglockKit(),
+                    target -> target.hasEffect(MobEffects.NAUSEA) || target.hasEffect(MobEffects.BLINDNESS),
+                    target -> {
+                        target.removeEffect(MobEffects.NAUSEA);
+                        target.removeEffect(MobEffects.BLINDNESS);
+                    },
+                    "curse.witchery.insanity.goddess_removal",
+                    insanity.get().breathOfTheGoddess(),
+                    insanity.get().potato(),
+                    insanity.get().sugar(),
+                    insanity.get().brewOfLove());
         }
 
         return false;
