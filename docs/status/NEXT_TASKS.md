@@ -73,10 +73,10 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 High-value player-discovery gaps to close in the in-game guide:
 
 - **Blocked-player items first** - first-pass Primer coverage for `Boline`, the four infusion source items (`Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, `Infernal Animus`), and `Anointing Paste` is now in; next follow-up is broader Chapter 11 rite coverage and any missing recipe visuals/cross-links.
-- **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; next documentation priority is the `Treefyd Seed` bridge plus better identity pages for `Spectral Familiar`, `Mystic Branch`, and `Necromantic Stone`.
+- **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; next documentation priority is the `Treefyd Seed` bridge plus the remaining identity page for `Spectral Familiar`.
 - **Treefyd seed bridge** - still open. The Primer now teaches `Rite of the Forest`, but the actual `Treefyd Seed` item/recipe path still needs to be surfaced in the port before the guide can honestly connect them.
-- **Tool/familiar identity gaps** - `Mystic Branch` now has a truthful Primer page for its current creature-power focus role; next documentation targets are what a `Spectral Familiar` actually is and what `Necromantic Stone` does as a standalone item.
-- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Necromantic Stone` as a standalone item, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
+- **Tool/familiar identity gaps** - `Mystic Branch` and `Necromantic Stone` now both have truthful Primer pages for their current port roles; the main remaining identity target is what a `Spectral Familiar` actually is in practical play.
+- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
 
 ---
 

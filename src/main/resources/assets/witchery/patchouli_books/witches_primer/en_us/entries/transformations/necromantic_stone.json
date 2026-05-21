@@ -1,0 +1,22 @@
+{
+  "name": "Necromantic Stone",
+  "icon": "witchery:necro_stone",
+  "category": "witchery:transformations",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A Necromantic Stone is the witch's first true token of authority over death-working. Many later rites ask for one, and an $(item)Alluring Skull$() only answers to it.$(br2)If the stone is missing from your path, several other necromantic workings become impossible to follow honestly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:necro_stone",
+      "text": "Work it on a small ritual circle at $(bold)night$(/). Offer an $(item)Attuned Stone$(), $(item)Bone$(), $(item)Rotten Flesh$(), $(item)Wood Ash$(), $(item)Gunpowder$(), and $(item)Spectral Dust$(), then keep $(bold)1000 altar power$(/) ready for the transformation.$(br2)If the rite succeeds, the attuned stone is consumed and a fresh Necromantic Stone forms in the circle."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Current Port Use",
+      "text": "In Witchery: Rewoven today, the stone already has two dependable roles: it is consumed or preserved by later rites such as $(l:circle_magic/prior_incarnation)Prior Incarnation$(/l), $(l:circle_magic/manifestation)Manifestation$(/l), fetish binding, and Spectral Stone work, and it can still wake or silence an $(item)Alluring Skull$().$(br2)The broader old undead-command behaviors are still future mechanics work, so treat this as a real progression ingredient first and a fuller necromancer's tool second."
+    }
+  ]
+}

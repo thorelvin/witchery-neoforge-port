@@ -67,10 +67,12 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The summon rite can exist without the player understanding what a Spectral Familiar actually is, how it behaves, or how it differs from Cat / Owl / Toad familiars. This needs a practical familiar entry, not just a recipe mention.
 7. Mystic Branch explanation - closed as a first truthful port pass.
    The Primer now explains how the live port actually grants the branch through the night infusion rite and how it currently spends stored creature-power charges as a practical focus item. The deeper old air-glyph / demonic-branch spellcasting lore is still future work at the mechanics level, but the player no longer receives the item with no explanation at all.
-8. Vampire armor coverage.
+8. Necromantic Stone explanation - closed as a first truthful port pass.
+   The Primer now explains how the restored night rite actually creates the stone again and documents the real current uses the port supports today: later necromantic rites and Alluring Skull control. The broader old undead-command behavior is still future mechanics work, but the player no longer sees the item referenced everywhere with no honest acquisition or use explanation.
+9. Vampire armor coverage.
    Vampirism itself is documented much better than the dedicated vampire armor set. The Chain Coat / Dress Coat / Helmet / Trousers / Oxford Boots / Top Hat family and their vampire-specific bonuses should be covered as a real equipment track, not left to the wiki.
-9. Minor completeness gaps.
-   Lower-priority omissions still worth tracking: `Bark Belt`, `Biting Belt`, `Beartrap`, `Necromantic Stone` as a standalone explained item, and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
+10. Minor completeness gaps.
+   Lower-priority omissions still worth tracking: `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
 
 ## Documentation priority order
 
@@ -79,7 +81,7 @@ Use this order when choosing book/completeness work instead of another renderer 
 1. Treefyd seed bridge next.
    The rites themselves now have first-pass coverage again, so the next discovery blocker is connecting `Rite of the Forest` honestly to the missing `Treefyd Seed` item/recipe path once that path exists in the port.
 2. Tool/familiar identity after that.
-   `Spectral Familiar` and `Necromantic Stone` should be explained next now that `Mystic Branch` has a first truthful Primer page.
+   `Spectral Familiar` is the main remaining identity page now that `Mystic Branch` and `Necromantic Stone` both have first truthful Primer coverage.
 3. Equipment and minor completeness after the blockers.
    Vampire armor coverage, belts, Beartrap, and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
 

@@ -697,12 +697,12 @@ Remaining gap:
 ### 50. Rite of Necromancy was missing entirely - Fixed / verify
 
 The next missing-rite pass is now closer to original Witchery:
-- `spectralstone` is reachable again as a small night-only ritual through a representative ritual `spectral_dust` route, instead of being absent from the modern dispatcher.
-- The restored route now produces a real Spectral Stone item again rather than leaving the feature family dead, the ported item carries explicit binding data + tooltip state instead of staying a plain anonymous item, and the old hold-to-release summon behavior is back so a charged stone can actually be used again.
-- It now also once more expects its old `Necro Stone`, `Congealed Spirit`, `Condensed Fear`, and `Boline` support set around the representative `spectral_dust` trigger, and once more consumes its original 6000 altar-power startup cost before the stone condenses.
+- The rite family now splits again instead of collapsing entirely into Spectral Stone creation: a plain `Attuned Stone` on the small ritual circle can once more become a `Necromantic Stone` at night through its original lighter 1000-power branch, and the heavier representative `spectral_dust` branch now once more condenses a real Spectral Stone from that necromantic base instead of leaving the feature family dead.
+- The restored Spectral Stone route still produces a real Spectral Stone item with explicit binding data + tooltip state, and the old hold-to-release summon behavior is back so a charged stone can actually be used again.
+- The two branches once more expect their old support sets more closely: `Attuned Stone` + `bone` + `rotten flesh` + `wood ash` + `gunpowder` + `Spectral Dust` for `Necromantic Stone`, and `Necromantic Stone` + `Congealed Spirit` + `Condensed Fear` + `Spectral Dust` + `Boline` for `Spectral Stone`, with the original 1000 / 6000 altar-power split restored.
 
 Remaining gap:
-- This still uses one representative trigger instead of the original multi-sacrifice recipe, and the modern item no longer uses the old metadata/icon split even though the release mechanic itself is back.
+- This still routes through representative dropped trigger items in the modern dispatcher instead of the old full ritual registry, and the port's `Necromantic Stone` item still lacks the broader old undead-command use behavior even though its acquisition path and Alluring Skull role are now truthful again.
 
 ### 51. Rite of Binding for Spectral Stone was missing entirely - Fixed / verify
 

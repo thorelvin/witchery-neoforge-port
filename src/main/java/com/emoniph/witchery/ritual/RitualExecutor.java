@@ -378,6 +378,9 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBanishDemon(player, level, center, true));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findNecromanticStoneOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfNecromanticStone(player, level, center));
+            }
             return matchedResult(riteOfBanishDemon(player, level, center, false));
         } else if (item.is(WitcheryItems.WAYSTONE.get())
                 && !WaystoneItem.isBound(item)
@@ -388,7 +391,7 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfNecromancy(player, level, center));
+            return matchedResult(riteOfSpectralStone(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfManifestationDream(player, level, center));
         } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -3178,7 +3181,44 @@ public class RitualExecutor {
     }
 
     /** Rite of Necromancy — infuses an empty Spectral Stone at night through a representative ritual-dust route. */
-    private static boolean riteOfNecromancy(Player player, Level level, BlockPos center) {
+    /** Rite of Necromancy — infuses an Attuned Stone into a Necromantic Stone at night. */
+    private static boolean riteOfNecromanticStone(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        Optional<NecromanticStoneOfferings> offerings = findNecromanticStoneOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.necro_stone.support"), false);
+            return false;
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 1000,
+                "witchery.ritual.necro_stone.no_power")
+                .offer(offerings.get().attunedStone())
+                .offer(offerings.get().bone())
+                .offer(offerings.get().rottenFlesh())
+                .offer(offerings.get().woodAsh())
+                .offer(offerings.get().gunpowder())
+                .offer(offerings.get().spectralDust());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        ItemStack output = new ItemStack(WitcheryItems.NECRO_STONE.get());
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.15, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, "witchery.ritual.necro_stone.success",
+                SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
+        WitcheryMod.LOGGER.info("Rite of Necromancy created a Necromantic Stone at {}", center);
+        return true;
+    }
+
+    /** Spectral Stone rite â€” condenses a Spectral Stone from an existing Necromantic Stone at night. */
+    private static boolean riteOfSpectralStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireNight(player, level, center)) {
             return false;
@@ -3189,16 +3229,16 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.spectral_stone.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.spectral_stone.no_power"), false);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 6000,
+                "witchery.ritual.spectral_stone.no_power")
+                .offer(offerings.get().necroStone())
+                .offer(offerings.get().congealedSpirit())
+                .offer(offerings.get().condensedFear())
+                .offer(offerings.get().spectralDust())
+                .offer(offerings.get().boline());
+        if (!transaction.commit(player)) {
             return false;
         }
-
-        consumeOfferedItem(offerings.get().necroStone());
-        consumeOfferedItem(offerings.get().congealedSpirit());
-        consumeOfferedItem(offerings.get().condensedFear());
-        consumeOfferedItem(offerings.get().boline());
 
         ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
         SpectralStoneItem.clearBinding(output);
@@ -4947,7 +4987,11 @@ public class RitualExecutor {
 
     private record ChargedCookFoodOfferings(ItemEntity chargedStone, ItemEntity woodAsh, ItemEntity blazePowder) {}
 
-    private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear, ItemEntity boline) {}
+    private record NecromanticStoneOfferings(ItemEntity attunedStone, ItemEntity bone, ItemEntity rottenFlesh,
+                                             ItemEntity woodAsh, ItemEntity gunpowder, ItemEntity spectralDust) {}
+
+    private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear,
+                                          ItemEntity spectralDust, ItemEntity boline) {}
 
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
 
@@ -5523,15 +5567,42 @@ public class RitualExecutor {
                 spectralDust.get()));
     }
 
+    private static Optional<NecromanticStoneOfferings> findNecromanticStoneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
+        Optional<ItemEntity> bone = findNearbyOffering(level, center, stack -> stack.is(Items.BONE));
+        Optional<ItemEntity> rottenFlesh = findNearbyOffering(level, center, stack -> stack.is(Items.ROTTEN_FLESH));
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
+        if (attunedStone.isEmpty() || bone.isEmpty() || rottenFlesh.isEmpty()
+                || woodAsh.isEmpty() || gunpowder.isEmpty() || spectralDust.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new NecromanticStoneOfferings(
+                attunedStone.get(),
+                bone.get(),
+                rottenFlesh.get(),
+                woodAsh.get(),
+                gunpowder.get(),
+                spectralDust.get()));
+    }
+
     private static Optional<SpectralStoneOfferings> findSpectralStoneOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
         Optional<ItemEntity> congealedSpirit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.CONGEALED_SPIRIT.get()));
         Optional<ItemEntity> condensedFear = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.CONDENSED_FEAR.get()));
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
         Optional<ItemEntity> boline = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BOLINE.get()));
-        if (necroStone.isEmpty() || congealedSpirit.isEmpty() || condensedFear.isEmpty() || boline.isEmpty()) {
+        if (necroStone.isEmpty() || congealedSpirit.isEmpty() || condensedFear.isEmpty()
+                || spectralDust.isEmpty() || boline.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new SpectralStoneOfferings(necroStone.get(), congealedSpirit.get(), condensedFear.get(), boline.get()));
+        return Optional.of(new SpectralStoneOfferings(
+                necroStone.get(),
+                congealedSpirit.get(),
+                condensedFear.get(),
+                spectralDust.get(),
+                boline.get()));
     }
 
     private static Optional<BindSpectralOfferings> findBindSpectralOfferings(Level level, BlockPos center) {
