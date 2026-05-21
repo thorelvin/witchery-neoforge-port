@@ -10,6 +10,10 @@
       "recipe": "witchery:chalk",
       "text": "Compound ritual chalk from $(item)Wood Ash$(), $(item)Gypsum$(), and a $(item)Tear of the Goddess$() in the old hand-crafted layout. Rewoven now restores that base recipe directly instead of leaving the first circle tool as a silent creative-only item."
     },
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.chalk.upgrades"
+    },
     { "type": "patchouli:spotlight", "item": "witchery:chalk", "text": "witchery.book.entry.chalk.variants" }
   ]
 }

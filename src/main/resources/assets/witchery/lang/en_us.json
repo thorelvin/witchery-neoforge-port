@@ -51,6 +51,7 @@
 
   "witchery.book.entry.chalk": "Chalk",
   "witchery.book.entry.chalk.page1": "Before you can perform a rite, you must prepare the ground for it. The circle is not mere tradition â€” it is the structure that makes the working possible, a closed space in which intention and power can accumulate until they are ready to be released.$(br2)Right-click with chalk on flat stone or earth to draw a glyph. Continue around the perimeter until the ring is complete. Then place your ingredient at the center and activate with an empty hand.",
+  "witchery.book.entry.chalk.upgrades": "When basic ritual chalk is no longer enough, return to the older way. Fill a heated Witch's Cauldron, drop the support ingredients into the bowl, keep an altar nearby, and use the base chalk on the cauldron itself.$(br2)$(li)Golden â€” Mandrake Root + Gold Nugget$(li)Infernal â€” Nether Wart + Blaze Powder$(li)Otherwhere â€” Nether Wart + Tear of the Goddess + Ender Pearl$(br2)Each working consumes altar power and transforms the offered ritual chalk into the stronger family.",
   "witchery.book.entry.chalk.variants": "Ritual chalk is the beginning. Golden chalk opens more demanding rites. Otherwhere chalk draws across the boundary of worlds. Infernal chalk speaks to things best not named lightly. Use each according to what you actually need, not what is most impressive.",
 
   "witchery.book.entry.drawing_circles": "Drawing Circles",
@@ -710,6 +711,11 @@
   "witchery.wolf_altar.mastery.2": "Your bond deepens. The pack grows stronger.",
   "witchery.wolf_altar.mastery.3": "You have mastered the wolf form.",
   "witchery.wolf_altar.max_mastery": "The wolf god has given all it can.",
+  "witchery.cauldron.chalk.support": "The cauldron lacks the support ingredients for a stronger chalk.",
+  "witchery.cauldron.chalk.no_power": "A nearby altar lacks the power to transform the chalk.",
+  "witchery.cauldron.chalk.golden.success": "Golden chalk settles from the cauldron.",
+  "witchery.cauldron.chalk.infernal.success": "Infernal chalk drinks in the heat of the cauldron.",
+  "witchery.cauldron.chalk.otherwhere.success": "Otherwhere chalk twists free from the cauldron's surface.",
   "witchery.curse.blocked_by_poppet": "A protective poppet negated the curse.",
   "witchery.curse.target_protected": "Your curse was blocked by a poppet.",
   "witchery.curse.misfortune.caster": "Curse of Misfortune cast.",

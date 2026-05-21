@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-21
+Last reconciled: 2026-05-22
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -103,7 +103,7 @@ Files:
 
 The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again instead of generic full-shape `Block` registrations, so their outline/support behavior is back to reading like drawn floor sigils instead of square blocks. The ritual chalk asset chain is corrected too: `circle_glyph` no longer uses a `cube_all` model and now matches the flat cutout/carpet-style path already used by the other chalk families.
 
-The base ritual chalk progression is now back too: the original hand-crafted Wood Ash / Gypsum / Tear of the Goddess recipe is restored, and the Primer now teaches it directly instead of leaving chalk as a creative-only starting tool. The upgraded golden / otherwhere / infernal chalk procurement path still remains follow-up work.
+The full chalk survival chain is now back on practical footing: the original hand-crafted Wood Ash / Gypsum / Tear of the Goddess ritual chalk recipe is restored, the Primer teaches it directly again, and Golden / Infernal / Otherwhere chalk now once more upgrade through a heated filled Witch's Cauldron with nearby altar power plus their original dropped support ingredients instead of remaining blocked behind creative-only access.
 
 ### 0a. Fake vampire/werewolf ritual routes were still exposed - Fixed / verify
 
