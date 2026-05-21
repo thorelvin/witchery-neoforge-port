@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Earth's Wrath",
+  "icon": "minecraft:lava_bucket",
+  "category": "witchery:circle_magic",
+  "sortnum": 14,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Earth's Wrath is the circle-working of buried fire made manifest. When the land below hides a real lava pool, this rite can drag that violence upward and force the ground into a fresh volcano.$(br2)It is less a spell of neat control than a bargain with pressure, stone, and ruin."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:lava_bucket",
+      "text": "In the live port, this rite is worked as a $(bold)large-circle$(/) staged terrain ritual through a representative $(item)Lava Bucket$() trigger. The ground below must contain a sizable lava pool or the rite will fail. If a nearby $(item)Bound Waystone$() is offered and lies close enough, the eruption may be retargeted there instead of at the casting circle."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "What Follows",
+      "text": "A successful cast does not resolve in one blink. The cone rises in pulses, throws the terrain upward, and opens its vent at the end of the working. Use it when you mean to scar the land, shape a dangerous landmark, or make a place no ordinary traveler will mistake for safe again."
+    }
+  ]
+}
