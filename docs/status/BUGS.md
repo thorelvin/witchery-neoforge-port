@@ -512,9 +512,10 @@ The small ritual storm family is now closer to original Witchery:
 - The larger outside-circle sibling is back too: `water_bucket` plus `wood_ash` now once more drives the broader 3-to-7-radius storm pattern and once more consumes its original 2000 altar-power startup cost.
 - The portable storm sibling is back as well: `gunpowder` plus `wood_ash` plus `Charged Attuned Stone` now once more drives the same broader storm pattern without altar-power drain instead of collapsing into the old invented direct-lightning route.
 - The old optional bound-waystone relocation extra is back in practical form too: offering a same-dimension bound waystone near the circle now retargets those storm-family bolts to the bound location again instead of always forcing the effect to stay on the casting circle.
+- Those same storm-family routes now also restore the old too-far failure behavior more closely: if the offered bound waystone is in the same dimension but beyond the original coven-scaled reach, the rite now fails with `witchery.rite.toofaraway` instead of silently falling back to the casting circle.
 
 Remaining gap:
-- The original ritual step would abort/refund when the copied location lay beyond the old `50 + 50*coven` range; the port currently just falls back to the local circle target in that edge case instead of failing mid-cast.
+- The storm family still runs through the port's simplified dispatcher and active-ritual queue rather than the original full sacrifice registry and tile-entity ritual lifecycle, even though the optional relocation extra is now much closer to 1.7.10 behavior.
 
 ### 38. Chalk variant parity was still mostly ignored by the ritual dispatcher - Fixed / verify
 
@@ -554,11 +555,12 @@ Remaining gap:
 The next ritual routing pass is now closer to original Witchery:
 - `Forestation` now routes from the medium ritual circle again instead of incorrectly living on the large-circle dispatcher.
 - That medium `Forestation` route now also restores its original startup altar cost and support gate more closely: the offered sapling now also expects a `Wicker Bundle`, `Brew of Sprouting`, and `Ent Twig`, once again consumes 4000 altar power, and now seeds/grows matching trees from the dropped sapling type instead of blindly bonemealing any nearby saplings.
+- That same `Forestation` route now also honours the old optional same-dimension bound-waystone relocation extra again in practical form, so a nearby bound waystone can retarget the grove growth away from the casting circle, and too-distant waystones now fail with the old rite-too-far feedback instead of being silently ignored.
 - The animal-calling `Beastial Call` behavior no longer fires from an arbitrary small ring; it now routes through a large otherwhere circle instead, which is much closer to the original `Call Beasts` rite.
 - That large otherwhere animal-calling route no longer resolves as a one-shot mass teleport either; it now queues the staged `Call Creatures`-style coven rite again and allures creatures in 60-tick pulses much closer to 1.7.10.
 
 Remaining gap:
-- Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, and `Forestation` still skips the old optional bound-waystone remote-target path plus the original staged tick-by-tick spread, but their ring size, chalk family, and practical support gating are now much closer to original parity.
+- Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, and `Forestation` still skips the original staged tick-by-tick spread even though the optional remote-target path is back, but their ring size, chalk family, and practical support gating are now much closer to original parity.
 
 ### 42. Familiar and reincarnation rites were still on the wrong circles - Fixed / verify
 

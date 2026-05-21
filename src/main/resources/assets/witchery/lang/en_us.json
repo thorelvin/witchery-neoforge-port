@@ -254,6 +254,7 @@
   "witchery.ritual.forest.support": "The rite needs a Wicker Bundle, Brew of Sprouting, and an Ent Twig around the offered sapling.",
   "witchery.ritual.forest.no_power": "A nearby altar lacks the power to raise the forest.",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",
+  "witchery.rite.toofaraway": "The rite cannot be performed so far away (a large coven may be needed).",
   "witchery.ritual.broiling.success": "The circle blazes — %s item stacks cooked.",
   "witchery.ritual.banish_demon.no_power": "A nearby altar lacks the power to banish the infernal presence.",
   "witchery.ritual.protection.success": "A ward surrounds you... Rite of Protection complete.",

@@ -919,11 +919,18 @@ public class RitualExecutor {
 
         BlockState saplingState = saplingBlock.defaultBlockState();
         int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
+        if (relocation.tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
+        BlockPos effectCenter = relocation.effectCenter();
         int radius = 20 + covenSize * 2;
         int attempts = 60 + covenSize * 5;
         int grown = 0;
         for (int i = 0; i < attempts; i++) {
-            BlockPos ground = findForestationAnchor(sl, center, radius, 8);
+            BlockPos ground = findForestationAnchor(sl, effectCenter, radius, 8);
             if (ground == null) {
                 continue;
             }
@@ -935,10 +942,13 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().wickerBundle());
         consumeOfferedItem(offerings.get().brewOfSprouting());
         consumeOfferedItem(offerings.get().entTwig());
+        if (relocation.boundWaystone() != null) {
+            consumeOfferedItem(relocation.boundWaystone());
+        }
         player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
-                grown, triggerSapling.getHoverName().getString(), center, player.getName().getString());
+                grown, triggerSapling.getHoverName().getString(), effectCenter, player.getName().getString());
         return true;
     }
 
@@ -3297,6 +3307,11 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
+        if (offerings.get().tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
         int requiredPower = variant == StormRiteVariant.BASE ? 1000 : variant == StormRiteVariant.LARGE ? 2000 : 0;
         if (requiredPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, requiredPower)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -4661,6 +4676,8 @@ public class RitualExecutor {
 
     private record RaiseColumnOfferings(ItemEntity brewOfSprouting, ItemEntity cactus, ItemEntity focus) {}
 
+    private record OptionalWaystoneRelocation(ItemEntity boundWaystone, BlockPos effectCenter, boolean tooFar) {}
+
     private enum StormRiteVariant {
         BASE,
         LARGE,
@@ -4668,7 +4685,7 @@ public class RitualExecutor {
     }
 
     private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh, ItemEntity chargedStone,
-                                  ItemEntity boundWaystone, BlockPos effectCenter) {}
+                                  ItemEntity boundWaystone, BlockPos effectCenter, boolean tooFar) {}
 
     private record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 
@@ -5428,6 +5445,24 @@ public class RitualExecutor {
         return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
     }
 
+    private static OptionalWaystoneRelocation findOptionalWaystoneRelocation(Level level, BlockPos center, int covenSize) {
+        Optional<ItemEntity> boundWaystone = findNearbyWaystoneOffering(level, center, true);
+        if (boundWaystone.isEmpty()) {
+            return new OptionalWaystoneRelocation(null, center, false);
+        }
+
+        ItemStack stack = boundWaystone.get().getItem();
+        Optional<ResourceKey<Level>> boundDim = WaystoneItem.getBoundDim(stack);
+        Optional<BlockPos> boundPos = WaystoneItem.getBoundPos(stack);
+        if (boundDim.isEmpty() || boundPos.isEmpty() || !boundDim.get().equals(level.dimension())) {
+            return new OptionalWaystoneRelocation(null, center, false);
+        }
+
+        int maxDistance = 50 + 50 * covenSize;
+        boolean tooFar = boundPos.get().distSqr(center) > (double) (maxDistance * maxDistance);
+        return new OptionalWaystoneRelocation(tooFar ? null : boundWaystone.get(), boundPos.get(), tooFar);
+    }
+
     private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant, int covenSize) {
         Optional<ItemEntity> weatherFocus = switch (variant) {
             case BASE -> findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
@@ -5442,23 +5477,9 @@ public class RitualExecutor {
                 || (variant == StormRiteVariant.PORTABLE && chargedStone.isEmpty())) {
             return Optional.empty();
         }
-        Optional<ItemEntity> boundWaystone = findNearbyWaystoneOffering(level, center, true);
-        BlockPos effectCenter = center;
-        ItemEntity consumedWaystone = null;
-        if (boundWaystone.isPresent()) {
-            ItemStack stack = boundWaystone.get().getItem();
-            Optional<ResourceKey<Level>> boundDim = WaystoneItem.getBoundDim(stack);
-            Optional<BlockPos> boundPos = WaystoneItem.getBoundPos(stack);
-            if (boundDim.isPresent() && boundPos.isPresent() && boundDim.get().equals(level.dimension())) {
-                int maxDistance = 50 + 50 * covenSize;
-                if (boundPos.get().distSqr(center) <= (double) (maxDistance * maxDistance)) {
-                    effectCenter = boundPos.get();
-                    consumedWaystone = boundWaystone.get();
-                }
-            }
-        }
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null),
-                consumedWaystone, effectCenter));
+                relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
