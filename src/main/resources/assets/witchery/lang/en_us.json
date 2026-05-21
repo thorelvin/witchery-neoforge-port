@@ -245,6 +245,7 @@
   "witchery.ritual.beastial_call.started": "The creatures hear your distant call.",
   "witchery.ritual.transpose_ores.success": "The circle begins drawing hidden ore to the surface.",
   "witchery.ritual.natures_power.success": "Wild growth answers the circle's call.",
+  "witchery.ritual.natures_power.support": "The rite needs Witchery saplings, oak, spruce, birch, and a Charged Attuned Stone.",
   "witchery.ritual.fertility.success": "Nature stirs (%s plants grown, %s villagers cured).",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",
   "witchery.ritual.broiling.success": "The circle blazes — %s item stacks cooked.",

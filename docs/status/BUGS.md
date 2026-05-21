@@ -662,10 +662,10 @@ Remaining gap:
 The next missing-feature pass is now closer to original Witchery:
 - The old medium ritual `naturespower` behavior is reachable again instead of being absent from the port.
 - The restored rite now runs as a long staged growth effect, picks random nearby ground anchors, greens the soil, spreads plants, bonemeals growth, scales its working radius and lifetime with nearby coven witches again, and now sustains against the same medium ritual ring it activates from instead of mistakenly requiring a large ring after queueing.
-- It is exposed through a representative medium ritual `brew_of_sprouting` route because the port still lacks the original charged-attuned-stone split and full sacrifice matcher.
+- It no longer fires from `brew_of_sprouting` alone: the port now also expects the original mixed sapling offering set plus a `Charged Attuned Stone` alongside the brew before the staged rite will queue.
 
 Remaining gap:
-- The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, so this restores the rite's world-shaping job without claiming exact 1.7.10 block-for-block growth parity.
+- The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, and the Witchery-sapling half currently uses the port's existing `rowan_sapling` / `alder_sapling` / `hawthorn_sapling` item forms rather than full old metadata-bearing block saplings, so this restores the rite's world-shaping job and its missing support-offering gate without claiming exact 1.7.10 block-for-block growth parity.
 
 ### 61. Small otherwhere waystone transposition was doing the wrong job - Fixed / verify
 

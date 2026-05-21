@@ -3095,6 +3095,12 @@ public class RitualExecutor {
     /** Rite of Nature's Power — gradually spreads fertile life around the circle. */
     private static boolean riteOfNaturesPower(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<NaturesPowerOfferings> offerings = findNaturesPowerOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.natures_power.support"), false);
+            return false;
+        }
         int covenSize = countNearbyCovenWitches(level, center);
         if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.MEDIUM,
                 center, 14, 8, 150, 20, covenSize)) {
@@ -3102,6 +3108,13 @@ public class RitualExecutor {
             return false;
         }
 
+        consumeOfferedItem(offerings.get().rowanSapling());
+        consumeOfferedItem(offerings.get().alderSapling());
+        consumeOfferedItem(offerings.get().hawthornSapling());
+        consumeOfferedItem(offerings.get().oakSapling());
+        consumeOfferedItem(offerings.get().spruceSapling());
+        consumeOfferedItem(offerings.get().birchSapling());
+        consumeOfferedItem(offerings.get().chargedStone());
         success(player, level, center, "witchery.ritual.natures_power.success",
                 SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40);
         return true;
@@ -3957,6 +3970,10 @@ public class RitualExecutor {
 
     private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
 
+    private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
+                                         ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
+                                         ItemEntity chargedStone) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4100,6 +4117,29 @@ public class RitualExecutor {
 
     private static Optional<ItemEntity> findNearbyObsidianOffering(Level level, BlockPos center) {
         return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
+    }
+
+    private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> rowanSapling = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ROWAN_SAPLING.get()));
+        Optional<ItemEntity> alderSapling = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ALDER_SAPLING.get()));
+        Optional<ItemEntity> hawthornSapling = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HAWTHORN_SAPLING.get()));
+        Optional<ItemEntity> oakSapling = findNearbyOffering(level, center, stack -> stack.is(Blocks.OAK_SAPLING.asItem()));
+        Optional<ItemEntity> spruceSapling = findNearbyOffering(level, center, stack -> stack.is(Blocks.SPRUCE_SAPLING.asItem()));
+        Optional<ItemEntity> birchSapling = findNearbyOffering(level, center, stack -> stack.is(Blocks.BIRCH_SAPLING.asItem()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (rowanSapling.isEmpty() || alderSapling.isEmpty() || hawthornSapling.isEmpty()
+                || oakSapling.isEmpty() || spruceSapling.isEmpty() || birchSapling.isEmpty()
+                || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new NaturesPowerOfferings(
+                rowanSapling.get(),
+                alderSapling.get(),
+                hawthornSapling.get(),
+                oakSapling.get(),
+                spruceSapling.get(),
+                birchSapling.get(),
+                chargedStone.get()));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
