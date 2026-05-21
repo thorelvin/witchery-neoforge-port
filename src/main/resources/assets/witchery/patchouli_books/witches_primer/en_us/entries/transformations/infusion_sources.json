@@ -1,0 +1,32 @@
+{
+  "name": "Infusion Sources",
+  "icon": "witchery:ghost_of_the_light",
+  "category": "witchery:transformations",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The four lasting infusions do not begin in the circle. They begin in the kettle.$(br2)Each source item below uses Redstone Soup as a base, asks a nearby altar for $(bold)4000 power$(/), and prepares the essence needed for one branch of permanent transformation."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:ghost_of_the_light",
+      "text": "$(bold)Ghost of the Light$(/): brew Redstone Soup with a Long Invisibility potion, a Long Fire Resistance potion, a Fire Protection Poppet, a torch, and Tongue of Dog.$(br2)This is the source for the Light infusion."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:soul_of_the_world",
+      "text": "$(bold)Soul of the World$(/): brew Redstone Soup with a Long Regeneration potion, an Enchanted Golden Apple, an Attuned Stone, a Mandrake Root, and a Rowan Sapling.$(br2)This is the source for the Overworld infusion."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:spirit_of_otherwhere",
+      "text": "$(bold)Spirit of Otherwhere$(/): brew Redstone Soup with a Long Swiftness potion, two Ender Eyes, a Drop of Luck, and Wool of Bat.$(br2)This is the source for the Otherwhere infusion."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:infernal_animus",
+      "text": "$(bold)Infernal Animus$(/): brew Redstone Soup with a Strong Harming potion, a Voodoo Poppet, a Demon Heart, Refined Evil, and a Blaze Rod.$(br2)This is the source for the Infernal infusion."
+    }
+  ]
+}

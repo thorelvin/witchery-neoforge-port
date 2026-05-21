@@ -1,0 +1,23 @@
+{
+  "name": "The Boline",
+  "icon": "witchery:boline",
+  "category": "witchery:getting_started",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:boline",
+      "text": "The Boline is the witch's field knife. It behaves much like shears, but it also harvests cobweb intact and safely gathers Blood Poppies, trapped plants, and other delicate ingredients that are ruined by rough hands.$(br2)Carry one before you start hedgecraft or necromancy. Sooner or later, the craft expects it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:boline",
+      "text": "Forge the blade from iron, bone, and an emerald. It fights no better than a wooden sword, but it endures like iron and matters far more as a tool than as a weapon."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Ritual Uses",
+      "text": "Several necromantic workings ask for a Boline among their offerings. Fetish binding and the Spectral Stone line both require one near the circle.$(br2)Some bound things also answer to a Boline after the rite is complete. If a witch's tool keeps reappearing in your workings, assume it is important."
+    }
+  ]
+}

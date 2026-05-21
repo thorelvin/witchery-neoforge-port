@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I",
+    "B",
+    "E"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:bone",
+    "E": "minecraft:emerald"
+  },
+  "result": {
+    "id": "witchery:boline",
+    "count": 1
+  }
+}

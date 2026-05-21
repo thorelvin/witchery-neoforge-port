@@ -72,7 +72,7 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 
 High-value player-discovery gaps to close in the in-game guide:
 
-- **Blocked-player items first** - explain `Boline`, the four infusion source items (`Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, `Infernal Animus`), and `Anointing Paste` with real acquisition/crafting guidance.
+- **Blocked-player items first** - first-pass Primer coverage for `Boline`, the four infusion source items (`Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, `Infernal Animus`), and `Anointing Paste` is now in; next follow-up is broader Chapter 11 rite coverage and any missing recipe visuals/cross-links.
 - **Missing rites in Chapter 11** - add the omitted rite coverage for `Rite of the Forest`, `Rite of Manifestation`, `Rite of Beastial Call`, `Rite of Broiling`, `Rite of Broken Earth`, `Rite of Earth's Wrath`, `Rite of Icy Expansion`, `Rite of Imprisonment`, `Rite of Moving Earth`, `Rite of Nature's Power`, `Rite of Prior Incarnation`, `Rite of Sanctity`, `Rite of Sky's Wrath`, and `Rite of Glyphic Transformation`.
 - **Treefyd seed bridge** - make sure `Rite of the Forest` explicitly teaches how players obtain `Treefyd Seeds`.
 - **Tool/familiar identity gaps** - document what a `Spectral Familiar` actually is and what `Mystic Branch` does as a usable item, not just as a ritual ingredient.

@@ -1,0 +1,23 @@
+{
+  "name": "Anointing Paste",
+  "icon": "witchery:anointing_paste",
+  "category": "witchery:brewing",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:anointing_paste",
+      "text": "Before kettles and distilleries, most witches learn the cauldron. Anointing Paste is what wakes an ordinary cauldron into a Witch's Cauldron.$(br2)It is one of the earliest real progression gates in the craft, because so many foundational reagents begin there."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:anointing_paste",
+      "text": "Blend Belladonna, Mandrake Root, Water Artichoke Globe, and Snowbell to make four paste. Keep some in reserve. You will come back to the cauldron often."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:cauldron",
+      "text": "Place a vanilla cauldron in the world and apply the paste directly to it. The Witch's Cauldron then needs a roaring fire beneath it and water in the bowl.$(br2)From there you begin Mutandis, ritual chalks, and many of the humble reagents the rest of Witchery depends on."
+    }
+  ]
+}
