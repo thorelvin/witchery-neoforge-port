@@ -554,9 +554,6 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonWither(player, level, center));
-        } else if (item.is(Items.SKELETON_SKULL) || item.is(Items.WITHER_SKELETON_SKULL)) {
-            riteOfBinding(player, level, center);
-            return successResult();
         } else if (item.is(WitcheryItems.TORMENT_SCROLL.get())) {
             return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
         } else {
@@ -2980,39 +2977,6 @@ public class RitualExecutor {
     }
 
     private record MovingEarthStep(BlockPos pos, int heading) {}
-
-    /**
-     * Rite of Binding — summons Death at a Large circle with a Skeleton/Wither Skull.
-     * Death is neutral until looked at; attacks then teleports to the looker.
-     */
-    private static void riteOfBinding(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return;
-        if (!(level instanceof ServerLevel sl)) return;
-        if (hasSummonCircleObstruction(sl, center)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
-            return;
-        }
-
-        // Lightning at midnight atmosphere
-        for (int i = 0; i < 8; i++) {
-            double angle = 2 * Math.PI * i / 8;
-            LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, sl);
-            bolt.setPos(center.getX() + 3 * Math.cos(angle) + 0.5, (double)(center.getY() + 1), center.getZ() + 3 * Math.sin(angle) + 0.5);
-            bolt.setVisualOnly(true);
-            sl.addFreshEntity(bolt);
-        }
-
-        var death = WitcheryEntities.DEATH.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-        if (death != null) death.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        death.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(death);
-
-        success(player, level, center, "witchery.ritual.binding.success",
-                SoundEvents.WITHER_SPAWN, 0.4f, 4, 80);
-        WitcheryMod.LOGGER.info("Rite of Binding: Death summoned by {}", sp.getName().getString());
-    }
 
     /**
      * Rite of Summoning the Lord of Torment.

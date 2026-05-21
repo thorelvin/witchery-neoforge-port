@@ -113,7 +113,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 90 | `witchery:exhale_of_horned_one` | |
 | 91 | `witchery:hint_of_rebirth` | |
 | 92 | `witchery:mutator` | |
-| 93 | `witchery:spectral_stone` | `Partial - rite family, binding data, and release-use restored` | Small Rite of Necromancy now creates it again, large Rite of Binding now stores up to 3 nearby same-type spectral mobs in item data, tooltip state is visible again, and holding use now releases the stored spirits again. Still needs in-game verification for summon feel and owner behavior. |
+| 93 | `witchery:spectral_stone` | `Partial - rite family, binding data, and release-use restored` | Small Rite of Necromancy now creates it again, medium `bindspectral` now stores up to 3 nearby same-type spectral mobs in item data, tooltip state is visible again, and holding use now releases the stored spirits again. Still needs in-game verification for summon feel and owner behavior. |
 | 94 | `witchery:poppet_shelf_compass` | |
 | 95 | `witchery:polynesia_charm` | |
 | 95a | `witchery:charm_of_disrupted_dreams` | `Done - missing item and Nightmare anti-strip protection restored` | Original string + fanciful-thread recipe is back, the item is registered with assets/lang, and Nightmare now skips random armor stripping when the player carries one. Needs in-game verification for tab order and feel. |
