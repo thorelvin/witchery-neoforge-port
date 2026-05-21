@@ -3999,12 +3999,14 @@ public class RitualExecutor {
     private static boolean riteOfSummonWither(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<SummonWitherOfferings> offerings = findSummonWitherOfferings(level, center);
-        if (offerings.isEmpty()) {
+        Optional<ExpensiveSummonWitherOfferings> expensiveOfferings = findExpensiveSummonWitherOfferings(level, center);
+        boolean useExpensive = expensiveOfferings.isPresent();
+        if (offerings.isEmpty() && expensiveOfferings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
+        if (!useExpensive && !consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.no_power"), false);
             return false;
@@ -4025,9 +4027,16 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(wither);
 
-        consumeOfferedItem(offerings.get().diamondVapour());
-        consumeOfferedItem(offerings.get().enderPearl());
-        offerings.get().villager().discard();
+        if (useExpensive) {
+            consumeOfferedItem(expensiveOfferings.get().diamond());
+            consumeOfferedItem(expensiveOfferings.get().enderPearl());
+            consumeOfferedItem(expensiveOfferings.get().attunedStone());
+            consumeOfferedItem(expensiveOfferings.get().chargedStone());
+        } else {
+            consumeOfferedItem(offerings.get().diamondVapour());
+            consumeOfferedItem(offerings.get().enderPearl());
+            offerings.get().villager().discard();
+        }
         success(player, level, center, "witchery.ritual.summon_wither.success",
                 SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
         WitcheryMod.LOGGER.info("Rite of Summon Wither cast by {}", player.getName().getString());
@@ -4038,7 +4047,9 @@ public class RitualExecutor {
     private static boolean riteOfSummonDemon(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<SummonDemonOfferings> offerings = findSummonDemonOfferings(level, center);
-        if (offerings.isEmpty()) {
+        Optional<ExpensiveSummonDemonOfferings> expensiveOfferings = findExpensiveSummonDemonOfferings(level, center);
+        boolean useExpensive = expensiveOfferings.isPresent();
+        if (offerings.isEmpty() && expensiveOfferings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.support"), false);
             return false;
@@ -4064,10 +4075,18 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(demon);
 
-        consumeOfferedItem(offerings.get().refinedEvil());
-        consumeOfferedItem(offerings.get().blazePowder());
-        consumeOfferedItem(offerings.get().enderPearl());
-        offerings.get().villager().discard();
+        if (useExpensive) {
+            consumeOfferedItem(expensiveOfferings.get().refinedEvil());
+            consumeOfferedItem(expensiveOfferings.get().blazeRod());
+            consumeOfferedItem(expensiveOfferings.get().enderPearl());
+            consumeOfferedItem(expensiveOfferings.get().attunedStone());
+            consumeOfferedItem(expensiveOfferings.get().chargedStone());
+        } else {
+            consumeOfferedItem(offerings.get().refinedEvil());
+            consumeOfferedItem(offerings.get().blazePowder());
+            consumeOfferedItem(offerings.get().enderPearl());
+            offerings.get().villager().discard();
+        }
         success(player, level, center, "witchery.ritual.summon_demon.success",
                 SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);
         WitcheryMod.LOGGER.info("Rite of Summon Demon cast by {}", player.getName().getString());
@@ -4268,8 +4287,14 @@ public class RitualExecutor {
 
     private record SummonWitherOfferings(ItemEntity diamondVapour, ItemEntity enderPearl, Villager villager) {}
 
+    private record ExpensiveSummonWitherOfferings(ItemEntity diamond, ItemEntity enderPearl, ItemEntity attunedStone,
+                                                  ItemEntity chargedStone) {}
+
     private record SummonDemonOfferings(ItemEntity refinedEvil, ItemEntity blazePowder, ItemEntity enderPearl,
                                         Villager villager) {}
+
+    private record ExpensiveSummonDemonOfferings(ItemEntity refinedEvil, ItemEntity blazeRod, ItemEntity enderPearl,
+                                                 ItemEntity attunedStone, ItemEntity chargedStone) {}
 
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
@@ -4532,6 +4557,21 @@ public class RitualExecutor {
         return Optional.of(new SummonWitherOfferings(diamondVapour.get(), enderPearl.get(), villager.get()));
     }
 
+    private static Optional<ExpensiveSummonWitherOfferings> findExpensiveSummonWitherOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (diamond.isEmpty() || enderPearl.isEmpty() || attunedStone.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ExpensiveSummonWitherOfferings(
+                diamond.get(),
+                enderPearl.get(),
+                attunedStone.get(),
+                chargedStone.get()));
+    }
+
     private static Optional<SummonDemonOfferings> findSummonDemonOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
         Optional<ItemEntity> blazePowder = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
@@ -4541,6 +4581,23 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SummonDemonOfferings(refinedEvil.get(), blazePowder.get(), enderPearl.get(), villager.get()));
+    }
+
+    private static Optional<ExpensiveSummonDemonOfferings> findExpensiveSummonDemonOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
+        Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (refinedEvil.isEmpty() || blazeRod.isEmpty() || enderPearl.isEmpty() || attunedStone.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ExpensiveSummonDemonOfferings(
+                refinedEvil.get(),
+                blazeRod.get(),
+                enderPearl.get(),
+                attunedStone.get(),
+                chargedStone.get()));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {

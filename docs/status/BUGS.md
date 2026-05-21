@@ -540,18 +540,20 @@ Remaining gap:
 The next missing-rite pass is now closer to original Witchery:
 - `summondemon` is reachable again as a large infernal rite through `tormented_twine`, instead of being absent from the modern dispatcher.
 - The restored route now summons the Witchery demon entity at the circle center, reuses the restored summoning-space obstruction check instead of blindly spawning into blocked circles, and once more expects `Refined Evil`, `blaze powder`, an `ender pearl`, a villager standing in the circle, and its original 3000 altar-power startup cost.
+- The old expensive no-villager demon sibling is now modeled too: the same route will also accept `Refined Evil`, a `blaze rod`, an `ender pearl`, `Attuned Stone`, and `Charged Attuned Stone` as the alternate support set instead of wrongly insisting on the villager path only.
 
 Remaining gap:
-- This is still routed through one representative ingredient instead of the full original summon registry, and the alternate expensive demon recipe is not modeled yet.
+- This is still routed through one representative ingredient instead of the full original summon registry, but both original support-set branches now exist behind that modern trigger.
 
 ### 47. Paired infernal wither summoning was still collapsed onto the wrong single ring - Fixed / verify
 
 The next missing-rite pass is now closer to original Witchery:
 - `summonwither` is still reachable through the representative `wither_skeleton_skull` route, but it now does so from the original large infernal circle and again expects the inner medium infernal companion ring instead of collapsing onto a lone medium infernal circle.
 - The restored route now spawns the Wither at the circle center, reuses the shared summoning-space obstruction check instead of blindly spawning inside blocked circles, and once more expects `Diamond Vapour`, an `ender pearl`, a villager standing in the circle, and its original 4000 altar-power startup cost.
+- The old expensive no-villager wither sibling is now modeled too: the same route will also accept a `diamond`, `ender pearl`, `Attuned Stone`, and `Charged Attuned Stone` as the alternate support set instead of wrongly requiring the villager branch only.
 
 Remaining gap:
-- This still uses one representative trigger instead of the original full multi-recipe summon registry, and the alternate expensive no-villager wither recipe is not modeled yet.
+- This still uses one representative trigger instead of the original full multi-recipe summon registry, but both original support-set branches now exist behind that modern trigger.
 
 ### 48. Small Ice Shell rite was missing entirely - Fixed / verify
 
