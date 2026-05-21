@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Sanctity",
+  "icon": "minecraft:feather",
+  "category": "witchery:circle_magic",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Sanctity is a small-circle ward for keeping unwanted creatures out. Once raised, the circle does not harm them. It repels them. The result is a brief sacred space where beasts and enemies alike find it difficult to cross the boundary and close in on the caster."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:feather",
+      "text": "Offer a $(item)Feather$() with $(item)Redstone$() on a small ritual circle and keep $(bold)500 altar power$(/) ready. The rite sustains a repulsive ward around the circle once it takes hold.$(br2)If you want the opposite effect, study $(l:circle_magic/rites)Imprisonment$(/l), which turns the same family of craft toward holding creatures within the boundary instead."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "Sanctity is a witch's quick answer to panic, interruption, and crowding. Cast it while preparing a longer working, defending a ritual site, or buying room against hostile wildlife. It is not permanent and it is not a wall, but for a little while it reminds the world to keep its distance."
+    }
+  ]
+}
