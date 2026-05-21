@@ -531,6 +531,7 @@ The next ritual lifecycle pass is now closer to original Witchery:
 - The staged loop now also runs on the original `30`-tick pulse cadence again instead of the port's too-fast `20`-tick approximation, and it now carries the queued coven size so the active rite can still abort/refund with the old `coven too small` failure if the ritual was somehow queued without real coven backing.
 - Taglock-based curse rites and the remaining medium otherwhere taglock-transposition route now validate their filled taglock target before succeeding, so invalid or offline targets no longer waste the sacrifice.
 - The non-original large filled-taglock `Transposition Pull` fallback is gone again; the original teleportation family is back to the real small bound-waystone path plus the medium otherwhere `RiteTeleportEntity` path instead of keeping that false-positive large-circle branch alive.
+- The stale dead inventory-taglock `Transposition Pull` helper and its leftover player-facing lang strings are gone too, so the codebase no longer quietly advertises an unreachable inventory-taglock pull route after that larger dispatcher cleanup.
 
 Remaining gap:
 - The ritual dispatcher is still a representative single-item shortcut for many rites, so more sacrifice-mapping cleanup is still needed even though this removes one of the larger false-role activations and one of the more obvious refund errors.
@@ -634,6 +635,7 @@ The next infernal-rite correction is now closer to original Witchery:
 - That Blight route now also restores the original staged expanding annulus instead of a flat one-shot radius, including the old 20-tick startup, 5-tick pulses, voodoo-poppet abort path, villager zombification edge, cow-to-mooshroom corruption, animal die-off, and the spreading land-blight pass.
 - Both rites now also restore their original support-sacrifice gates: Blindness once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Exhale of the Horned One`, `Brew of Ink`, `poisonous potato`, `spider eye`, and `diamond`, while Blight once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `fermented spider eye`, `poisonous potato`, `rotten flesh`, and `diamond`.
 - The false large-circle blight activation path was removed, so the world-blight effect no longer appears as a non-original extra large infernal rite.
+- The stale dead single-target Blindness/Blight helpers and the leftover taglock-style Rain of Toads helper are gone too, so code and lang no longer imply those wrong one-target mechanics still coexist beside the restored area/staged rites.
 
 Remaining gap:
 - These infernal rites are now much closer mechanically, but they still use simplified representative trigger items on top of those restored support offerings instead of the full original sacrifice registry.

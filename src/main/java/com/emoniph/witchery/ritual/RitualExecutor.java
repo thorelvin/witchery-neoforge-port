@@ -4986,8 +4986,6 @@ public class RitualExecutor {
 
     // ── Taglock / Waystone helpers ────────────────────────────────────────────
 
-    private record InventoryTaglock(int slot, UUID targetUuid) {}
-
     private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
 
     private record ForestationOfferings(ItemEntity wickerBundle, ItemEntity brewOfSprouting, ItemEntity entTwig) {}
@@ -5133,21 +5131,6 @@ public class RitualExecutor {
 
     private record InfuseBrewGraveOfferings(ItemEntity infusedBrewBase, ItemEntity bone, ItemEntity denseWeb,
                                             ItemEntity necroStone, Zombie zombie) {}
-
-    /** Find a filled taglock in the caster's inventory without consuming it yet. */
-    private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
-        var inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack s = inv.getItem(i);
-            if (!s.is(WitcheryItems.TAGLOCK_KIT.get())) continue;
-            if (!TaglockKitItem.isFilled(s)) continue;
-            Optional<UUID> uuid = TaglockKitItem.getUUID(s);
-            if (uuid.isPresent()) {
-                return Optional.of(new InventoryTaglock(i, uuid.get()));
-            }
-        }
-        return Optional.empty();
-    }
 
     /** Consume one item from the given inventory slot after the ritual target has been validated. */
     private static void consumeInventoryItem(Player player, int slot) {
@@ -6231,36 +6214,6 @@ public class RitualExecutor {
         return true;
     }
 
-    private static boolean riteOfTranspositionPull(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
-        if (taglock.isEmpty()) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.no_taglock"), false);
-            return false;
-        }
-        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
-        if (target == null) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.offline"), false);
-            return false;
-        }
-        if (hasCurseProtection(target)) {
-            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
-            return false;
-        }
-        if (triggerVoodooProtection(target)) {
-            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
-            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
-            return false;
-        }
-        consumeInventoryItem(sp, taglock.get().slot());
-        BlockPos dest = sp.blockPosition().above();
-        target.teleportTo(dest.getX() + 0.5, dest.getY(), dest.getZ() + 0.5);
-        target.displayClientMessage(Component.translatable("witchery.ritual.transposition_pull.pulled"), false);
-        success(player, level, center, "witchery.ritual.transposition_pull.success",
-                SoundEvents.ENDERMAN_TELEPORT, 0.8f, 2, 60);
-        return true;
-    }
-
     // ── Sprint 4 — Curse rites ────────────────────────────────────────────────
 
     /**
@@ -6337,38 +6290,6 @@ public class RitualExecutor {
             return false;
         }
 
-        action.apply(target);
-        target.displayClientMessage(Component.translatable(successKey + ".target"), false);
-        success(caster, level, center, successKey + ".caster",
-                SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
-        return true;
-    }
-
-    private static boolean applyCurse(Player caster, Level level, BlockPos center,
-                                      CurseAction action, String successKey, String failKey,
-                                      boolean checkHunterArmorProtection) {
-        if (!(caster instanceof ServerPlayer sp)) return false;
-        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
-        if (taglock.isEmpty()) {
-            sp.displayClientMessage(Component.translatable(failKey + ".no_taglock"), false);
-            return false;
-        }
-        ServerPlayer target = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
-        if (target == null) {
-            sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
-            return false;
-        }
-        if (checkHunterArmorProtection && hasCurseProtection(target)) {
-            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
-            return false;
-        }
-        // Voodoo Protection Poppet negates the curse
-        if (triggerVoodooProtection(target)) {
-            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
-            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
-            return false;
-        }
-        consumeInventoryItem(sp, taglock.get().slot());
         action.apply(target);
         target.displayClientMessage(Component.translatable(successKey + ".target"), false);
         success(caster, level, center, successKey + ".caster",
@@ -6561,22 +6482,6 @@ public class RitualExecutor {
         return false;
     }
 
-    /** Curse of Blindness — blinds target + nearby players for 3 minutes. */
-    private static boolean riteOfCurseBlindness(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target -> {
-            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 3600, 0));
-            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 3600, 0));
-        }, "witchery.curse.blindness", "witchery.curse.blindness", false);
-    }
-
-    /** Curse of Blight — withers the target. */
-    private static boolean riteOfCurseBlight(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target -> {
-            target.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 0));
-        }, "witchery.curse.blight", "witchery.curse.blight", false);
-    }
-
     /** Curse of Overheating — sets target on fire and applies fire vulnerability. */
     private static boolean riteOfCurseOverheating(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
@@ -6654,22 +6559,6 @@ public class RitualExecutor {
                 offerings.get().poisonousPotato(),
                 offerings.get().sugar(),
                 offerings.get().brewGrotesque());
-    }
-
-    /** Curse of Raining Toads — showers toads on the target. */
-    private static boolean riteOfCurseRainingToads(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target -> {
-            if (!(target.level() instanceof ServerLevel sl)) return;
-            for (int i = 0; i < 8; i++) {
-                var toad = WitcheryEntities.TOAD.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-                if (toad != null) {
-                    double dx = (sl.getRandom().nextDouble() - 0.5) * 6;
-                    double dz = (sl.getRandom().nextDouble() - 0.5) * 6;
-                    toad.setPos(target.getX() + dx, target.getY() + 4, target.getZ() + dz);
-                    sl.addFreshEntity(toad);
-                }
-            }
-        }, "witchery.curse.raining_toads", "witchery.curse.raining_toads", false);
     }
 
     /** Curse of Hell on Earth — summons lightning + hostile mobs around target (large circle). */
