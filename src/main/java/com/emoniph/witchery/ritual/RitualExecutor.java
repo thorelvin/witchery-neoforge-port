@@ -4378,14 +4378,15 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.support"), false);
             return false;
         }
+        int potencyBonus = cursePotencyBonus(player, level, center);
         boolean applied = performOfferedCurse(player, level, center,
                 offerings.get().taglockKit(),
                 2000,
                 "witchery.ritual.curse_creature.no_power",
                 target -> {
-                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
-                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1));
-                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200 + (potencyBonus * 60), 1 + Math.min(2, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
                 },
                 "witchery.curse.cursed",
                 "witchery.curse.cursed",
@@ -5145,6 +5146,14 @@ public class RitualExecutor {
 
     private static boolean hasActiveCurseMasteryFamiliar(ServerPlayer player) {
         return FamiliarHelper.hasActiveCatFamiliar(player);
+    }
+
+    private static int cursePotencyBonus(Player caster, Level level, BlockPos center) {
+        int bonus = countNearbyCovenWitches(level, center) / 2;
+        if (caster instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp)) {
+            bonus++;
+        }
+        return bonus;
     }
 
     private static void strikeCurseBacklashLightning(ServerPlayer player) {
@@ -6491,13 +6500,14 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.support"), false);
             return false;
         }
+        int potencyBonus = cursePotencyBonus(caster, level, center);
         return performOfferedCurse(caster, level, center,
                 offerings.get().taglockKit(),
                 2000,
                 "witchery.ritual.curse_overheating.no_power",
                 target -> {
-            target.igniteForTicks(200);
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 0));
+            target.igniteForTicks(200 + (potencyBonus * 80));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200 + (potencyBonus * 200), Math.min(2, potencyBonus)));
                 },
                 "witchery.curse.overheating",
                 "witchery.curse.overheating",
@@ -6517,14 +6527,15 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.support"), false);
             return false;
         }
+        int potencyBonus = cursePotencyBonus(caster, level, center);
         return performOfferedCurse(caster, level, center,
                 offerings.get().taglockKit(),
                 2000,
                 "witchery.ritual.curse_sinking.no_power",
                 target -> {
-            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400, 3));
-            target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400, 2));
-            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0)); // brief sink
+            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400 + (potencyBonus * 300), 3 + Math.min(1, potencyBonus)));
+            target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400 + (potencyBonus * 300), 2 + Math.min(1, potencyBonus)));
+            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20 + (potencyBonus * 10), 0)); // brief sink
                 },
                 "witchery.curse.sinking",
                 "witchery.curse.sinking",
@@ -6544,13 +6555,14 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.support"), false);
             return false;
         }
+        int potencyBonus = cursePotencyBonus(caster, level, center);
         return performOfferedCurse(caster, level, center,
                 offerings.get().taglockKit(),
                 2000,
                 "witchery.ritual.curse_insanity.no_power",
                 target -> {
-            target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
+            target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600 + (potencyBonus * 400), 1 + Math.min(1, potencyBonus)));
+            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100 + (potencyBonus * 40), 0));
                 },
                 "witchery.curse.insanity",
                 "witchery.curse.insanity",
