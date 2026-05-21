@@ -63,6 +63,7 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The previously omitted Chapter 11 rites now all have first-pass Primer coverage again, including `Rite of Moving Earth`. The remaining documentation work shifts from "missing rite entirely" toward better cross-links, item bridges, and deeper explanations for things like Treefyd Seeds, Spectral Familiars, and Mystic Branch use.
 5. Rite of the Forest / Treefyd seed bridge - closed.
    The missing `Treefyd Seeds` item path is now surfaced again: the original crafted seed recipe is back, the seed can once more be used on grass to raise an owned Treefyd, and the Primer now teaches that bridge directly instead of leaving Treefyd progression implied or hidden behind QA-only spawn paths.
+   Treefyd owner control is a little healthier too: owned Treefyds can now once again learn player-side ignore commands from filled `Taglock Kit`s, though the broader old creature-type and creature-ID social memory still remains future parity work.
 6. Spectral Familiar explanation - closed as a truthful Primer pass.
    The Primer now explains what the original Spectral Familiar was for, why the summon rite text mentions giving it a diamond, and that the current port still uses a bound Witch's Cat placeholder for the restored summon route until the dedicated spectral familiar entity/search behavior is implemented.
 7. Mystic Branch explanation - closed as a first truthful port pass.

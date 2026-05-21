@@ -20,8 +20,13 @@
     },
     {
       "type": "patchouli:text",
+      "title": "Teaching a Keeper",
+      "text": "A filled $(item)Taglock Kit$() can now teach an owned Treefyd to ignore a named player. Use the taglock on the Treefyd to add that person to its safe memory, or sneak-use the same taglock later to remove them again.$(br2)This gives the guardian a practical owner-side social command instead of forcing it to treat every non-owner player as a trespasser."
+    },
+    {
+      "type": "patchouli:text",
       "title": "Still Remaining",
-      "text": "The deeper memory and taglock command behavior from the old mod still remains future parity work. For now, think of the Treefyd as a real planted guardian with working ownership, cloning, upgrades, and sentinel mode, but not yet the full ignore-list and social-command creature from later Witchery history."
+      "text": "The deeper old creature-memory behavior still remains future parity work. For now, think of the Treefyd as a real planted guardian with working ownership, cloning, upgrades, sentinel mode, and player ignore commands, but not yet the full creature-type and creature-ID social-command memory from later Witchery history."
     }
   ]
 }

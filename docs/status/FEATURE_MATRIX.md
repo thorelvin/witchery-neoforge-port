@@ -108,7 +108,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Banshee | Partial | Gameplay works; GhostModel UV needs audit |
 | Spectre | Done | Flying ghost-type |
 | Poltergeist | Partial | Gameplay works; GhostModel UV needs audit |
-| Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, and a Boline once again toggles idle wandering into sentinel mode |
+| Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, and filled player `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or forget them again on sneak-use |
 | Ent | Done | Passive until hit; large model |
 | Mandrake mob | Done | MONSTER category; spawn placement registered |
 | Demon | Partial | Fireball mob; texture/UV audit still open |

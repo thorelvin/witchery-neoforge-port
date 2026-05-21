@@ -2,7 +2,11 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.TaglockKitItem;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +33,11 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /** Treefyd - wooden golem summoned by ritual. Guards the caster's base. */
@@ -37,6 +46,7 @@ public class TreefydEntity extends Monster {
     @Nullable
     private UUID ownerUuid;
     private boolean sentinel;
+    private final Map<UUID, String> ignoredPlayers = new LinkedHashMap<>();
 
     public TreefydEntity(EntityType<? extends TreefydEntity> type, Level level) {
         super(type, level);
@@ -103,6 +113,9 @@ public class TreefydEntity extends Monster {
         if (ownerUuid != null && ownerUuid.equals(entity.getUUID())) {
             return true;
         }
+        if (entity instanceof Player && ignoredPlayers.containsKey(entity.getUUID())) {
+            return true;
+        }
         if (entity instanceof TreefydEntity other) {
             return ownerUuid != null && ownerUuid.equals(other.ownerUuid);
         }
@@ -139,6 +152,13 @@ public class TreefydEntity extends Monster {
                 stack.shrink(1);
             }
             return InteractionResult.SUCCESS;
+        }
+
+        if (stack.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(stack)) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            return handlePlayerTaglockCommand(player, stack);
         }
 
         if (stack.is(WitcheryItems.CREEPER_HEART.get())) {
@@ -186,6 +206,7 @@ public class TreefydEntity extends Monster {
         clone.finalizeSpawn(level, level.getCurrentDifficultyAt(clone.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
         clone.setOwner(owner);
         clone.setPersistenceRequired();
+        clone.ignoredPlayers.putAll(this.ignoredPlayers);
         level.addFreshEntity(clone);
     }
 
@@ -201,6 +222,77 @@ public class TreefydEntity extends Monster {
         }
     }
 
+    private InteractionResult handlePlayerTaglockCommand(Player player, ItemStack stack) {
+        Optional<UUID> boundUuid = TaglockKitItem.getUUID(stack);
+        if (boundUuid.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        UUID targetUuid = boundUuid.get();
+        setTarget(null);
+
+        if (targetUuid.equals(player.getUUID())) {
+            showCurrentKnownPlayers(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        String targetName = TaglockKitItem.getBoundName(stack);
+        if (player.isShiftKeyDown()) {
+            if (ignoredPlayers.remove(targetUuid) != null) {
+                player.displayClientMessage(Component.translatable("witchery.treefyd.ignore_player_removed",
+                        displayKnownPlayerName(targetUuid, targetName)).withStyle(ChatFormatting.YELLOW), false);
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+            }
+            showCurrentKnownPlayers(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!ignoredPlayers.containsKey(targetUuid)) {
+            ignoredPlayers.put(targetUuid, targetName);
+            player.displayClientMessage(Component.translatable("witchery.treefyd.ignore_player_added",
+                    displayKnownPlayerName(targetUuid, targetName)).withStyle(ChatFormatting.GREEN), false);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+        }
+
+        showCurrentKnownPlayers(player);
+        return InteractionResult.SUCCESS;
+    }
+
+    private void showCurrentKnownPlayers(Player player) {
+        player.displayClientMessage(Component.translatable("witchery.treefyd.known_players",
+                describeKnownPlayers()).withStyle(ChatFormatting.GRAY), false);
+    }
+
+    private String describeKnownPlayers() {
+        List<String> names = new ArrayList<>();
+        if (ownerUuid != null) {
+            names.add(displayKnownPlayerName(ownerUuid, null));
+        }
+        for (Map.Entry<UUID, String> entry : ignoredPlayers.entrySet()) {
+            if (!entry.getKey().equals(ownerUuid)) {
+                names.add(displayKnownPlayerName(entry.getKey(), entry.getValue()));
+            }
+        }
+        return String.join(", ", names);
+    }
+
+    private String displayKnownPlayerName(UUID uuid, @Nullable String fallbackName) {
+        if (level() instanceof ServerLevel serverLevel) {
+            ServerPlayer online = serverLevel.getServer().getPlayerList().getPlayer(uuid);
+            if (online != null) {
+                return online.getName().getString();
+            }
+        }
+        if (fallbackName != null && !fallbackName.isBlank()) {
+            return fallbackName;
+        }
+        return uuid.toString();
+    }
+
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
@@ -208,6 +300,13 @@ public class TreefydEntity extends Monster {
             tag.putString("OwnerUUID", ownerUuid.toString());
         }
         tag.putBoolean("Sentinel", sentinel);
+        tag.putInt("IgnoredPlayerCount", ignoredPlayers.size());
+        int i = 0;
+        for (Map.Entry<UUID, String> entry : ignoredPlayers.entrySet()) {
+            tag.putString("IgnoredPlayerUUID" + i, entry.getKey().toString());
+            tag.putString("IgnoredPlayerName" + i, entry.getValue());
+            i++;
+        }
     }
 
     @Override
@@ -216,6 +315,18 @@ public class TreefydEntity extends Monster {
         String owner = tag.getStringOr("OwnerUUID", "");
         ownerUuid = owner.isEmpty() ? null : UUID.fromString(owner);
         sentinel = tag.getBooleanOr("Sentinel", false);
+        ignoredPlayers.clear();
+        int ignoredCount = tag.getIntOr("IgnoredPlayerCount", 0);
+        for (int i = 0; i < ignoredCount; i++) {
+            String ignoredUuid = tag.getStringOr("IgnoredPlayerUUID" + i, "");
+            if (ignoredUuid.isEmpty()) {
+                continue;
+            }
+            try {
+                ignoredPlayers.put(UUID.fromString(ignoredUuid), tag.getStringOr("IgnoredPlayerName" + i, ""));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
     }
 
     private static final class SentinelAwareWanderGoal extends WaterAvoidingRandomStrollGoal {
