@@ -343,8 +343,12 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             riteOfTotalEclipse(player, level, center);
             return successResult();
-        } else if ((item.is(Items.BONE_MEAL) || item.is(Items.BONE))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (item.is(Items.BONE_MEAL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findPortableFertilityOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfPortableFertility(player, level, center));
+            }
+            return matchedResult(riteOfFertility(player, level, center));
+        } else if (item.is(Items.BONE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlindness(player, level, center);
@@ -814,6 +818,53 @@ public class RitualExecutor {
         player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
         WitcheryMod.LOGGER.info("Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
+        return true;
+    }
+
+    /** Portable Rite of Fertility — the charged-stone / Mutandis Extremis variant without altar-power drain. */
+    private static boolean riteOfPortableFertility(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<PortableFertilityOfferings> offerings = findPortableFertilityOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.fertility.portable_support"), false);
+            return false;
+        }
+
+        int grown = 0;
+        for (BlockPos bp : BlockPos.betweenClosed(
+                center.offset(-10, -3, -10), center.offset(10, 3, 10))) {
+            BlockState s = sl.getBlockState(bp);
+            if (s.getBlock() instanceof BonemealableBlock bm
+                    && bm.isValidBonemealTarget(sl, bp, s)) {
+                if (bm.isBonemealSuccess(sl, sl.random, bp, s)) {
+                    bm.performBonemeal(sl, sl.random, bp, s);
+                    grown++;
+                }
+            }
+        }
+
+        int cured = 0;
+        for (ZombieVillager zv : sl.getEntitiesOfClass(ZombieVillager.class,
+                new AABB(center).inflate(15))) {
+            zv.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 3600, 0));
+            ItemEntity apple = new ItemEntity(sl,
+                    zv.getX(), zv.getY() + 0.5, zv.getZ(),
+                    new ItemStack(Items.GOLDEN_APPLE));
+            sl.addFreshEntity(apple);
+            cured++;
+        }
+
+        consumeOfferedItem(offerings.get().hintOfRebirth());
+        consumeOfferedItem(offerings.get().diamondVapour());
+        consumeOfferedItem(offerings.get().quicklime());
+        consumeOfferedItem(offerings.get().gypsum());
+        consumeOfferedItem(offerings.get().mutandisExtremis());
+        consumeOfferedItem(offerings.get().chargedStone());
+
+        player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
+        success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
+        WitcheryMod.LOGGER.info("Portable Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
         return true;
     }
 
@@ -4124,6 +4175,9 @@ public class RitualExecutor {
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
 
+    private record PortableFertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
+                                              ItemEntity gypsum, ItemEntity mutandisExtremis, ItemEntity chargedStone) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -4325,6 +4379,26 @@ public class RitualExecutor {
                 quicklime.get(),
                 gypsum.get(),
                 mutandis.get()));
+    }
+
+    private static Optional<PortableFertilityOfferings> findPortableFertilityOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> hintOfRebirth = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()));
+        Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
+        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        Optional<ItemEntity> gypsum = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.GYPSUM.get()));
+        Optional<ItemEntity> mutandisExtremis = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (hintOfRebirth.isEmpty() || diamondVapour.isEmpty() || quicklime.isEmpty() || gypsum.isEmpty()
+                || mutandisExtremis.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new PortableFertilityOfferings(
+                hintOfRebirth.get(),
+                diamondVapour.get(),
+                quicklime.get(),
+                gypsum.get(),
+                mutandisExtremis.get(),
+                chargedStone.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {

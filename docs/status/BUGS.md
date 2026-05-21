@@ -45,6 +45,7 @@ Current state:
 - `Hell on Earth` now also expects its original mixed three-ring stack again — large infernal outer ring, medium otherwhere middle ring, and small infernal inner ring — instead of activating from any generic large-circle `nether_star` drop.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - That small-circle fertility route now also restores its original support gate and startup cost again: it once more expects `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, and `Mutandis`, and once more consumes 3000 altar power before the growth pulse begins.
+- The old portable fertility sibling is back in practical form too: a `bone_meal` trigger with `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, `Mutandis Extremis`, and a nearby `Charged Attuned Stone` now takes the portable branch instead of collapsing into the normal altar-powered rite or the charged-stone banish path.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.

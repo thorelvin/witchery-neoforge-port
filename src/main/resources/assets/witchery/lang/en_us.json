@@ -250,6 +250,7 @@
   "witchery.ritual.fertility.success": "Nature stirs (%s plants grown, %s villagers cured).",
   "witchery.ritual.fertility.support": "The rite needs Hint of Rebirth, Diamond Vapour, quicklime, gypsum, and Mutandis.",
   "witchery.ritual.fertility.no_power": "A nearby altar lacks the power to awaken the fertility rite.",
+  "witchery.ritual.fertility.portable_support": "The portable rite needs Hint of Rebirth, Diamond Vapour, quicklime, gypsum, Mutandis Extremis, and a Charged Attuned Stone.",
   "witchery.ritual.forest.success": "The forest grows (%s trees summoned).",
   "witchery.ritual.broiling.success": "The circle blazes — %s item stacks cooked.",
   "witchery.ritual.banish_demon.no_power": "A nearby altar lacks the power to banish the infernal presence.",
