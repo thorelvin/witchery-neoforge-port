@@ -4022,6 +4022,17 @@ public class RitualExecutor {
     /** Rite of Summon Demon — summons a large infernal demon if the circle is clear. */
     private static boolean riteOfSummonDemon(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<SummonDemonOfferings> offerings = findSummonDemonOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.no_power"), false);
+            return false;
+        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -4038,6 +4049,10 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(demon);
 
+        consumeOfferedItem(offerings.get().refinedEvil());
+        consumeOfferedItem(offerings.get().blazePowder());
+        consumeOfferedItem(offerings.get().enderPearl());
+        offerings.get().villager().discard();
         success(player, level, center, "witchery.ritual.summon_demon.success",
                 SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);
         WitcheryMod.LOGGER.info("Rite of Summon Demon cast by {}", player.getName().getString());
@@ -4235,6 +4250,9 @@ public class RitualExecutor {
 
     private record SummonWitherOfferings(ItemEntity diamondVapour, ItemEntity enderPearl, Villager villager) {}
 
+    private record SummonDemonOfferings(ItemEntity refinedEvil, ItemEntity blazePowder, ItemEntity enderPearl,
+                                        Villager villager) {}
+
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
 
@@ -4405,6 +4423,24 @@ public class RitualExecutor {
         return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
     }
 
+    private static Optional<Villager> findNearbyVillagerSacrifice(Level level, BlockPos center) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radius = 1.5;
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        Villager closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (Villager villager : level.getEntitiesOfClass(Villager.class, bounds)) {
+            double distance = villager.position().distanceToSqr(centerPoint);
+            if (distance >= radiusSq || distance > closestDistance) {
+                continue;
+            }
+            closest = villager;
+            closestDistance = distance;
+        }
+        return Optional.ofNullable(closest);
+    }
+
     private static Optional<SpectralStoneOfferings> findSpectralStoneOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
         Optional<ItemEntity> congealedSpirit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.CONGEALED_SPIRIT.get()));
@@ -4456,29 +4492,22 @@ public class RitualExecutor {
     private static Optional<SummonWitherOfferings> findSummonWitherOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
         Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
-        if (diamondVapour.isEmpty() || enderPearl.isEmpty()) {
+        Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
+        if (diamondVapour.isEmpty() || enderPearl.isEmpty() || villager.isEmpty()) {
             return Optional.empty();
         }
+        return Optional.of(new SummonWitherOfferings(diamondVapour.get(), enderPearl.get(), villager.get()));
+    }
 
-        Vec3 centerPoint = Vec3.atCenterOf(center);
-        double radius = 1.5;
-        double radiusSq = radius * radius;
-        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
-        Villager closest = null;
-        double closestDistance = Double.MAX_VALUE;
-        for (Villager villager : level.getEntitiesOfClass(Villager.class, bounds)) {
-            double distance = villager.position().distanceToSqr(centerPoint);
-            if (distance >= radiusSq || distance > closestDistance) {
-                continue;
-            }
-            closest = villager;
-            closestDistance = distance;
-        }
-        if (closest == null) {
+    private static Optional<SummonDemonOfferings> findSummonDemonOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
+        Optional<ItemEntity> blazePowder = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
+        if (refinedEvil.isEmpty() || blazePowder.isEmpty() || enderPearl.isEmpty() || villager.isEmpty()) {
             return Optional.empty();
         }
-
-        return Optional.of(new SummonWitherOfferings(diamondVapour.get(), enderPearl.get(), closest));
+        return Optional.of(new SummonDemonOfferings(refinedEvil.get(), blazePowder.get(), enderPearl.get(), villager.get()));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {

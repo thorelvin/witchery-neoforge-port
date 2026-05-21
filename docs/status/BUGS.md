@@ -539,10 +539,10 @@ Remaining gap:
 
 The next missing-rite pass is now closer to original Witchery:
 - `summondemon` is reachable again as a large infernal rite through `tormented_twine`, instead of being absent from the modern dispatcher.
-- The restored route now summons the Witchery demon entity at the circle center and reuses the restored summoning-space obstruction check instead of blindly spawning into blocked circles.
+- The restored route now summons the Witchery demon entity at the circle center, reuses the restored summoning-space obstruction check instead of blindly spawning into blocked circles, and once more expects `Refined Evil`, `blaze powder`, an `ender pearl`, a villager standing in the circle, and its original 3000 altar-power startup cost.
 
 Remaining gap:
-- This is still routed through one representative ingredient instead of the full original sacrifice set, and the larger summon-creature family still needs fuller parity work beyond the restored witch/imp/demon paths.
+- This is still routed through one representative ingredient instead of the full original summon registry, and the alternate expensive demon recipe is not modeled yet.
 
 ### 47. Paired infernal wither summoning was still collapsed onto the wrong single ring - Fixed / verify
 
