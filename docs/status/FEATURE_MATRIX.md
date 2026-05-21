@@ -121,7 +121,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
 | Binky | Done | Spawns with Death; tameable via Binky's Skull |
-| Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut; trade GUI now stays open through the same trading-player flow vanilla merchants use, and the entity now renders on a dedicated Resurrected-style `ModelGoblin` body instead of a scaled zombie fallback |
+| Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut; trade GUI now stays open through the same trading-player flow vanilla merchants use, the entity now renders on a dedicated Resurrected-style `ModelGoblin` body instead of a scaled zombie fallback, and the four texture sheets now have a stronger goblin face/hood/leather pass with repainted custom ear+nose UV islands |
 | Flying Monkey | Done | Created via Mutandis Extremis on wolf+owl; waystone carry; dyeable |
 
 ---
