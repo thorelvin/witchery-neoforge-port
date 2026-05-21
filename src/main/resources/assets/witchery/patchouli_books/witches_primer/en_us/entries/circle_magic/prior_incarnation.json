@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Prior Incarnation",
+  "icon": "witchery:charged_attuned_stone",
+  "category": "witchery:circle_magic",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Prior Incarnation is a desperate infernal recovery-working for calling back what was lost in death. It does not reverse the death itself. It reaches into the place where your belongings fell and drags them back toward you before the world scatters them, claims them, or lets them rot away."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:charged_attuned_stone",
+      "text": "Work it on a small infernal circle with a $(item)Necromantic Stone$(), $(item)Tongue of Dog$(), $(item)Bone$(), $(item)Spectral Dust$(), and a $(item)Charged Attuned Stone$(). The necromantic stone is kept, while the charged stone returns as a plain attuned one.$(br2)The rite only works if you stand in the same world as the death and cast it within $(bold)16 blocks$(/) of the place you fell."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "When it succeeds, loose item drops from the death site are pulled back toward you, favoring your inventory first and dropping the rest at hand if you are too full. It is no answer to $(item)Keep Inventory$(), gravestone wards, or another world entirely. It is the witch's answer to a bad death while the trail is still warm."
+    }
+  ]
+}
