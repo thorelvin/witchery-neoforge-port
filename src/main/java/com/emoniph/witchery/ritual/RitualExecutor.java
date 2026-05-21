@@ -502,8 +502,6 @@ public class RitualExecutor {
             return matchedResult(riteOfCurseInsanity(player, level, center));
         } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCorruptPoppet(player, level, center));
-        } else if (item.is(Items.GOLD_NUGGET)) {
-            return matchedResult(riteOfCurseMisfortune(player, level, center));
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
@@ -5830,13 +5828,6 @@ public class RitualExecutor {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 0));
         }, "witchery.curse.blight", "witchery.curse.blight", false);
-    }
-
-    /** Curse of Misfortune — gives the target bad luck. */
-    private static boolean riteOfCurseMisfortune(Player caster, Level level, BlockPos center) {
-        return applyCurse(caster, level, center, target ->
-            target.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 6000, 1)),
-            "witchery.curse.misfortune", "witchery.curse.misfortune", false);
     }
 
     /** Curse of Overheating — sets target on fire and applies fire vulnerability. */

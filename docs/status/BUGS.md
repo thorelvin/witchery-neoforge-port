@@ -433,6 +433,15 @@ The next ritual-dispatch pass is now back in place:
 Remaining gap:
 - This fixes one concrete ingredient collision, but the broader risk from the simplified single-item dispatcher is still present until more of the original multi-sacrifice ritual mapping is restored or separated more safely.
 
+### 32b. Curse of Misfortune was a non-original medium taglock curse - Fixed / verify
+
+Another decompiled-vs-port ritual cleanup is now in place:
+
+- The original 1.7.10 recipe registry only exposes five `RiteCurseCreature(true, ...)` taglock curse routes: `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare`.
+- The port had invented an extra medium-circle `gold_nugget` `Curse of Misfortune` taglock route that does not exist in the original rite list.
+- That non-original Misfortune rite has now been removed from the dispatcher, so the ritual roster no longer overclaims a fake Witchery curse.
+- Generic `UNLUCK` / misfortune status handling remains in side systems like Statue of the Goddess and Seer Stone readings, but not as an original ritual route.
+
 ### 33. Large-circle Protection was incorrectly the fallback for unrelated ingredients - Fixed / verify
 
 The large-circle dispatcher is now stricter and closer to original Witchery:
