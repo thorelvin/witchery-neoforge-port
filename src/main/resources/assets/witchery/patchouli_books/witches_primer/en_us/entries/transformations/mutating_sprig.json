@@ -1,0 +1,23 @@
+{
+  "name": "Mutating Sprig",
+  "icon": "witchery:mutator",
+  "category": "witchery:transformations",
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:mutator",
+      "text": "The Mutating Sprig is hedgecraft made deliberate. Where $(item)Mutandis$() and $(item)Mutandis Extremis$() scatter possibilities, the sprig forces only a few old changes with a steadier hand. It is a tool, not a powder, and each successful working wears it down."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Brewing the Sprig",
+      "text": "Use the older cauldron path. Fill and heat a $(item)Witch's Cauldron$(), keep an altar nearby, drop in an $(item)Ent Twig$() and a $(item)Nether Wart$(), then use $(item)Mutandis Extremis$() on the cauldron.$(br2)The powder is spent, the altar pays the price, and a fresh sprig condenses from the bowl."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Mutations",
+      "text": "Rewoven now restores the core block workings: $(li)$(item)Grass Block$() becomes $(item)Mycelium$()$(li)$(item)Mycelium$() becomes $(item)Grass Block$()$(li)Underwater $(item)Dirt$() becomes $(item)Clay$()$(li)Underwater $(item)Clay$() becomes $(item)Dirt$()$(br2)The larger plant-construction mutations still remain follow-up work, so treat this as the first true return of the tool rather than the whole family."
+    }
+  ]
+}

@@ -107,6 +107,8 @@ The full chalk survival chain is now back on practical footing: the original han
 
 The first non-chalk cauldron drift is corrected too: `Drop of Luck` no longer overclaims a kettle recipe with extra Rowan Berries, and now once more distills from a heated filled Witch's Cauldron with nearby altar power, `Mutandis Extremis` as the trigger item, and the original Mandrake Root / Nether Wart / Tear of the Goddess / Refined Evil support set. The Primer now teaches that route directly.
 
+The next bounded cauldron progression slice is corrected too: the dormant `mutator` scaffold is now the real `Mutating Sprig` again, brewed from a heated filled Witch's Cauldron with nearby altar power, `Mutandis Extremis` as the trigger item, and the original `Nether Wart` / `Ent Twig` support set. The tool now once more restores its core controlled block mutations (Grass Block <-> Mycelium and underwater Dirt <-> Clay), while the wider advanced mutation-structure family honestly remains follow-up work instead of being silently implied as live.
+
 ### 0a. Fake vampire/werewolf ritual routes were still exposed - Fixed / verify
 
 The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of the Wolf` dispatcher routes have been removed again. A decompiled sweep of the original 1.7.10 `WitcheryRecipes` curse registry only shows the five real curse rites (`witcheryCursed`, `witcheryInsanity`, `witcherySinking`, `witcheryOverheating`, `witcheryWakingNightmare`), so these direct transformation rituals were overclaims introduced by the port rather than missing parity. Vampirism and lycanthropy themselves still exist through the port's real progression systems; only the non-original ritual shortcuts are gone.

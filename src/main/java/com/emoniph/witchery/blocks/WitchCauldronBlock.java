@@ -167,9 +167,9 @@ public class WitchCauldronBlock extends Block {
             return chalkResult;
         }
 
-        InteractionResult luckResult = tryBrewDropOfLuck(stack, state, level, pos, player);
-        if (luckResult.consumesAction()) {
-            return luckResult;
+        InteractionResult extremisResult = tryUseMutandisExtremisInCauldron(stack, state, level, pos, player);
+        if (extremisResult.consumesAction()) {
+            return extremisResult;
         }
 
         return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -296,7 +296,7 @@ public class WitchCauldronBlock extends Block {
         return InteractionResult.CONSUME;
     }
 
-    private InteractionResult tryBrewDropOfLuck(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+    private InteractionResult tryUseMutandisExtremisInCauldron(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
         if (!stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
             return InteractionResult.PASS;
         }
@@ -308,11 +308,22 @@ public class WitchCauldronBlock extends Block {
         Optional<ItemEntity> wart = findCauldronOffering(level, pos, Items.NETHER_WART);
         Optional<ItemEntity> tear = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
         Optional<ItemEntity> evil = findCauldronOffering(level, pos, WitcheryItems.REFINED_EVIL.get());
-        if (mandrake.isEmpty() || wart.isEmpty() || tear.isEmpty() || evil.isEmpty()) {
-            player.displayClientMessage(Component.translatable("witchery.cauldron.drop_of_luck.support"), false);
-            return InteractionResult.CONSUME;
+        if (mandrake.isPresent() && wart.isPresent() && tear.isPresent() && evil.isPresent()) {
+            return brewDropOfLuck(stack, state, level, pos, player, mandrake.get(), wart.get(), tear.get(), evil.get());
         }
 
+        Optional<ItemEntity> sprigWart = findCauldronOffering(level, pos, Items.NETHER_WART);
+        Optional<ItemEntity> entTwig = findCauldronOffering(level, pos, WitcheryItems.ENT_TWIG.get());
+        if (sprigWart.isPresent() && entTwig.isPresent()) {
+            return brewMutatingSprig(stack, state, level, pos, player, sprigWart.get(), entTwig.get());
+        }
+
+        player.displayClientMessage(Component.translatable("witchery.cauldron.extremis.support"), false);
+        return InteractionResult.CONSUME;
+    }
+
+    private InteractionResult brewDropOfLuck(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                             ItemEntity mandrake, ItemEntity wart, ItemEntity tear, ItemEntity evil) {
         AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
         if (altar == null || !altar.hasValidStructure() || altar.getPower() < 6930) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.drop_of_luck.no_power"), false);
@@ -326,7 +337,7 @@ public class WitchCauldronBlock extends Block {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        for (ItemEntity offering : List.of(mandrake.get(), wart.get(), tear.get(), evil.get())) {
+        for (ItemEntity offering : List.of(mandrake, wart, tear, evil)) {
             ItemStack offeringStack = offering.getItem();
             offeringStack.shrink(1);
             if (offeringStack.isEmpty()) {
@@ -344,6 +355,42 @@ public class WitchCauldronBlock extends Block {
         level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 1.1F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         player.displayClientMessage(Component.translatable("witchery.cauldron.drop_of_luck.success"), false);
+        return InteractionResult.CONSUME;
+    }
+
+    private InteractionResult brewMutatingSprig(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                                ItemEntity wart, ItemEntity entTwig) {
+        AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+        if (altar == null || !altar.hasValidStructure() || altar.getPower() < 3080) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.mutating_sprig.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!altar.consumePower(3080)) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.mutating_sprig.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        for (ItemEntity offering : List.of(wart, entTwig)) {
+            ItemStack offeringStack = offering.getItem();
+            offeringStack.shrink(1);
+            if (offeringStack.isEmpty()) {
+                offering.discard();
+            } else {
+                offering.setItem(offeringStack);
+            }
+        }
+        lowerFillLevel(state, level, pos);
+
+        ItemEntity resultEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, new ItemStack(WitcheryItems.MUTATOR.get()));
+        resultEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(resultEntity);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.05F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 1.2F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.mutating_sprig.success"), false);
         return InteractionResult.CONSUME;
     }
 
