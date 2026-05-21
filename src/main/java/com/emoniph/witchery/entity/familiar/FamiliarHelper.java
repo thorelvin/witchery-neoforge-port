@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity.familiar;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -139,6 +141,45 @@ public final class FamiliarHelper {
 
         familiar.setCustomName(Component.literal(pool[random.nextInt(pool.length)]));
         familiar.setCustomNameVisible(false);
+    }
+
+    @Nullable
+    public static ServerPlayer findBoundOwner(@Nullable TamableAnimal familiar) {
+        if (familiar == null || !(familiar.level() instanceof ServerLevel serverLevel) || serverLevel.getServer() == null) {
+            return null;
+        }
+
+        UUID familiarUuid = familiar.getUUID();
+        for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+            if (familiar.isOwnedBy(player)
+                    && WitcheryAttachments.get(player).getFamiliarUUID().map(familiarUuid::equals).orElse(false)) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    public static void markFamiliarDismissed(ServerPlayer player, @Nullable TamableAnimal familiar, boolean removeEntity) {
+        var data = WitcheryAttachments.get(player);
+        if (familiar != null) {
+            String familiarType = describeFamiliar(familiar);
+            if (!familiarType.isBlank()) {
+                data.setFamiliarType(familiarType);
+            }
+            if (familiar.hasCustomName()) {
+                data.setFamiliarName(familiar.getCustomName().getString());
+            }
+            data.setFamiliarSitting(familiar.isOrderedToSit());
+            data.setFamiliarNameVisible(familiar.isCustomNameVisible());
+        }
+
+        data.setFamiliarUUID(null);
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+
+        if (removeEntity && familiar != null && familiar.isAlive()) {
+            familiar.discard();
+        }
     }
 
     @Nullable
