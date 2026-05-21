@@ -53,7 +53,7 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 31, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 80, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());
