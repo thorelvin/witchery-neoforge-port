@@ -62,6 +62,16 @@ public class MutatingSprigItem extends Item {
             }
             return InteractionResult.CONSUME;
         }
+        if (tryCreateBloodRoses(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
         if (!tryMutate(level, pos, state)) {
             return InteractionResult.PASS;
         }
@@ -143,6 +153,25 @@ public class MutatingSprigItem extends Item {
         BlockState resultState = WitcheryBlocks.LEECH_CHEST.get().defaultBlockState()
                 .setValue(com.emoniph.witchery.blocks.LeechChestBlock.FACING, state.getValue(ChestBlock.FACING));
         level.setBlock(pos, resultState, 3);
+        return true;
+    }
+
+    private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(WitcheryBlocks.LEECH_CHEST.get())
+                || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (!level.getBlockState(pos.relative(direction)).is(Blocks.POPPY)) {
+                return false;
+            }
+        }
+
+        level.removeBlock(pos, false);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            level.setBlock(pos.relative(direction), WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState(), 3);
+        }
         return true;
     }
 
