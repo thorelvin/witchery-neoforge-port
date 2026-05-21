@@ -406,6 +406,16 @@ The old `infusionfuture` path is back in practical form:
 - The port now also once more expects a gold ingot, `Happenstance Oil`, and 2000 altar power before the rite completes.
 - Success now drops a fresh `Crystal Ball` item at the circle center instead of leaving the old rite absent from the dispatcher.
 
+### 32c. Seer Stone infusion rite and item were still missing - Fixed / verify
+
+The old `infusionseerstone` path is back in practical form:
+- `Quartz Sphere` on the small ritual circle now once again routes into the original night-only Seer Stone infusion instead of doing nothing or being swallowed by the medium Crystal Ball route.
+- The port now also once more expects mossy cobblestone, `Happenstance Oil`, and 2000 altar power before the rite completes.
+- Success now drops a fresh foil `Seer Stone` item at the circle center, and the item/model asset chain is registered again so the old ritual output is no longer just orphaned texture art in the repo.
+
+Remaining gap:
+- The Seer Stone's original right-click reading and coven-calling behavior is still not restored, so this patch brings back the ritual output and visible item without yet claiming full gameplay parity for the tool itself.
+
 ### 32. Curse of Insanity was unreachable because a non-original medium placeholder route claimed the same ingredient first - Fixed / verify
 
 The next ritual-dispatch pass is now back in place:

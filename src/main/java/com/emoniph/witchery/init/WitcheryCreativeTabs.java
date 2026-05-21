@@ -132,6 +132,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.MUTATOR.get());
                         output.accept(WitcheryItems.SPECTRAL_STONE.get());
                         output.accept(WitcheryItems.NECRO_STONE.get());
+                        output.accept(WitcheryItems.QUARTZ_SPHERE.get());
+                        output.accept(WitcheryItems.SEER_STONE.get());
                         output.accept(WitcheryItems.POPPET_SHELF_COMPASS.get());
                         output.accept(WitcheryItems.POLYNESIA_CHARM.get());
                         output.accept(WitcheryItems.PARASYTIC_LOUSE.get());

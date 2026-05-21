@@ -412,6 +412,9 @@ public class RitualExecutor {
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL));
+        } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfInfuseSeerStone(player, level, center));
         } else {
             if (item.isEmpty()) {
                 riteOfBlessing(player, level, center);
@@ -461,6 +464,12 @@ public class RitualExecutor {
             return matchedResult(riteOfInfuseMysticBranch(player, level, center));
         } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findCrystalBallOfferings(level, center).isEmpty()
+                    && findSeerStoneOfferings(level, center).isPresent()
+                    && RitualCircleDetector.hasRing(level, center, RitualCircleDetector.CircleSize.SMALL)
+                    && RitualCircleDetector.detectVariant(level, center, RitualCircleDetector.CircleSize.SMALL) == VARIANT_RITUAL) {
+                return ActivationResult.NO_MATCH;
+            }
             return matchedResult(riteOfInfuseCrystalBall(player, level, center));
         } else if (item.is(WitcheryItems.INFUSED_BREW_BASE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
@@ -3034,6 +3043,39 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Infusion — creates a Seer Stone from Quartz Sphere, mossy cobblestone, and Happenstance Oil at night. */
+    private static boolean riteOfInfuseSeerStone(Player player, Level level, BlockPos center) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<SeerStoneOfferings> offerings = findSeerStoneOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_seer.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_seer.no_power"), false);
+            return false;
+        }
+
+        consumeOfferedItem(offerings.get().quartzSphere());
+        consumeOfferedItem(offerings.get().mossyCobblestone());
+        consumeOfferedItem(offerings.get().happenstanceOil());
+
+        ItemStack output = new ItemStack(WitcheryItems.SEER_STONE.get());
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.25, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, "witchery.ritual.infusion_seer.success",
+                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+        WitcheryMod.LOGGER.info("Rite of Infusion created a Seer Stone at {}", center);
+        return true;
+    }
+
     /** Shared infused-brew rite trigger — chooses the original Soaring or Grave branch by offerings and sacrifice. */
     private static boolean riteOfInfuseBrew(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
@@ -4666,6 +4708,8 @@ public class RitualExecutor {
 
     private record CrystalBallOfferings(ItemEntity quartzSphere, ItemEntity goldIngot, ItemEntity happenstanceOil) {}
 
+    private record SeerStoneOfferings(ItemEntity quartzSphere, ItemEntity mossyCobblestone, ItemEntity happenstanceOil) {}
+
     private record InfuseBrewSoaringOfferings(ItemEntity infusedBrewBase, ItemEntity broom, ItemEntity feather,
                                               ItemEntity arthana, OwlFamiliarEntity owl) {}
 
@@ -4953,6 +4997,16 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new CrystalBallOfferings(quartzSphere.get(), goldIngot.get(), happenstanceOil.get()));
+    }
+
+    private static Optional<SeerStoneOfferings> findSeerStoneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> quartzSphere = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()));
+        Optional<ItemEntity> mossyCobblestone = findNearbyOffering(level, center, stack -> stack.is(Items.MOSSY_COBBLESTONE));
+        Optional<ItemEntity> happenstanceOil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HAPPENSTANCE_OIL.get()));
+        if (quartzSphere.isEmpty() || mossyCobblestone.isEmpty() || happenstanceOil.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SeerStoneOfferings(quartzSphere.get(), mossyCobblestone.get(), happenstanceOil.get()));
     }
 
     private static Optional<InfuseBrewSoaringOfferings> findInfuseBrewSoaringOfferings(Level level, BlockPos center) {
