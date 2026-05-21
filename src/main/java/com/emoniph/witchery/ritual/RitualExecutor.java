@@ -6647,13 +6647,11 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 10000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.no_power"), false);
-            return false;
-        }
-        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
+        return performOfferedCurse(caster, level, center,
+                offerings.get().taglockKit(),
+                10000,
+                "witchery.ritual.curse_waking_nightmare.no_power",
+                target -> {
             WitcheryPlayerData data = WitcheryAttachments.get(target);
             if (data.isInSpiritWorld()) {
                 data.setSpiritWorldIsDream(false); // flip to nightmare
@@ -6661,16 +6659,15 @@ public class RitualExecutor {
             }
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
-        }, "witchery.curse.waking_nightmare", "witchery.curse.waking_nightmare", true);
-        if (!applied) {
-            return false;
-        }
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().mellifluousHunger());
-        consumeOfferedItem(offerings.get().tormentedTwine());
-        consumeOfferedItem(offerings.get().emerald());
-        consumeOfferedItem(offerings.get().brewGrotesque());
-        return true;
+                },
+                "witchery.curse.waking_nightmare",
+                "witchery.curse.waking_nightmare",
+                true,
+                offerings.get().exhaleOfHornedOne(),
+                offerings.get().mellifluousHunger(),
+                offerings.get().tormentedTwine(),
+                offerings.get().emerald(),
+                offerings.get().brewGrotesque());
     }
 
     private static void spawnRingParticles(ServerLevel level, BlockPos center, int radius, int count) {
