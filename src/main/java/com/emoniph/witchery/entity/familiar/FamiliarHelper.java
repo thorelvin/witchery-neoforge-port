@@ -7,6 +7,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
@@ -20,6 +22,8 @@ import java.util.UUID;
  * player's current loaded dimension.
  */
 public final class FamiliarHelper {
+
+    public static final double BOUND_FAMILIAR_MAX_HEALTH = 50.0;
 
     private FamiliarHelper() {
     }
@@ -38,6 +42,7 @@ public final class FamiliarHelper {
         for (ServerLevel level : serverLevel.getServer().getAllLevels()) {
             Entity entity = level.getEntity(familiarUuid.get());
             if (entity instanceof TamableAnimal tameable && tameable.isOwnedBy(player)) {
+                promoteBoundFamiliar(tameable);
                 return tameable;
             }
         }
@@ -86,6 +91,23 @@ public final class FamiliarHelper {
         return "";
     }
 
+    public static void promoteBoundFamiliar(@Nullable TamableAnimal familiar) {
+        if (!(familiar instanceof FamiliarEntity)) {
+            return;
+        }
+
+        AttributeInstance maxHealth = familiar.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealth == null) {
+            return;
+        }
+
+        if (maxHealth.getBaseValue() < BOUND_FAMILIAR_MAX_HEALTH) {
+            maxHealth.setBaseValue(BOUND_FAMILIAR_MAX_HEALTH);
+            familiar.setHealth((float) BOUND_FAMILIAR_MAX_HEALTH);
+        }
+        familiar.setPersistenceRequired();
+    }
+
     @Nullable
     public static TamableAnimal restoreBoundFamiliar(ServerPlayer player, ServerLevel level, double x, double y, double z) {
         String familiarType = WitcheryAttachments.get(player).getFamiliarType();
@@ -105,7 +127,7 @@ public final class FamiliarHelper {
         }
 
         familiar.tame(player);
-        familiar.setPersistenceRequired();
+        promoteBoundFamiliar(familiar);
         familiar.setOrderedToSit(WitcheryAttachments.get(player).isFamiliarSitting());
         String familiarName = WitcheryAttachments.get(player).getFamiliarName();
         if (!familiarName.isBlank()) {

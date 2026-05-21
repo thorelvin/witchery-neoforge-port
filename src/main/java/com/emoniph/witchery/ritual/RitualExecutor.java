@@ -4590,9 +4590,10 @@ public class RitualExecutor {
             bound = converted;
         } else if (tameable instanceof FamiliarEntity familiar) {
             familiar.tame(player);
-            familiar.setPersistenceRequired();
             bound = familiar;
         }
+
+        FamiliarHelper.promoteBoundFamiliar(bound);
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.setFamiliarUUID(bound.getUUID());
