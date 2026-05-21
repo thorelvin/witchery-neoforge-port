@@ -2999,10 +2999,23 @@ public class RitualExecutor {
     /** Rite of Calling the Storm — triggers a thunderstorm and strikes 5–8 lightning bolts. */
     private static boolean riteOfWeatherCallStorm(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<StormOfferings> offerings = findStormOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.storm.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.storm.no_power"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL, center, 0, 3, 8)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
+        consumeOfferedItem(offerings.get().weatherFocus());
+        consumeOfferedItem(offerings.get().woodAsh());
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);
         return true;
@@ -4003,6 +4016,8 @@ public class RitualExecutor {
 
     private record RaiseColumnOfferings(ItemEntity brewOfSprouting, ItemEntity cactus, ItemEntity focus) {}
 
+    private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4202,6 +4217,16 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
+    }
+
+    private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> weatherFocus = findNearbyOffering(level, center,
+                stack -> stack.is(Items.SNOWBALL) || stack.is(Items.WATER_BUCKET));
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        if (weatherFocus.isEmpty() || woodAsh.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get()));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {

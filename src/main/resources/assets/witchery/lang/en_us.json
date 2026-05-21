@@ -440,6 +440,8 @@
   "witchery.ritual.creatures_of_night.already": "The curse of night already flows through your veins.",
   "witchery.vampire.sunburn": "The sun scorches your flesh!",
   "witchery.vampire.frenzy": "Blood frenzy — you must feed!",
+  "witchery.ritual.storm.support": "The rite needs snow or water with wood ash.",
+  "witchery.ritual.storm.no_power": "A nearby altar lacks the power to call the storm.",
   "witchery.vampire.bite.success": "You drain %s for %s blood. (%s/500)",
   "witchery.ritual.curse_of_wolf.success": "The beast stirs within you. Beware the full moon.",
   "witchery.ritual.curse_of_wolf.already": "The wolf already prowls inside you.",

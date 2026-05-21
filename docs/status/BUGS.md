@@ -442,6 +442,15 @@ The next ritual lifecycle pass is now closer to original Witchery:
 Remaining gap:
 - The ritual dispatcher is still a representative single-item shortcut for many rites, so more sacrifice-mapping cleanup is still needed even though this removes one of the larger false-role activations and one of the more obvious refund errors.
 
+### 37a. Weather Call Storm still ignored its original support offering and startup power - Fixed / verify
+
+The small ritual storm path is now closer to original Witchery:
+- `Weather Call Storm` no longer starts from a bare snowball or water bucket alone.
+- It now also expects the old `wood_ash` support offering again and once more consumes its original 1000 altar power before the staged storm queue begins.
+
+Remaining gap:
+- The old optional bound-waystone variant and the larger storm-family sibling are still deferred, so this restores the base rite's missing support/power gate without claiming the full storm family is recipe-perfect yet.
+
 ### 38. Chalk variant parity was still mostly ignored by the ritual dispatcher - Fixed / verify
 
 The next ritual activation pass is now closer to original Witchery:
