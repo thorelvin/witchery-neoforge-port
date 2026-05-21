@@ -163,6 +163,7 @@ public class RitualExecutor {
         WEATHER_CALL_STORM,
         ICE_SHELL,
         RAIN_OF_TOADS,
+        HELL_ON_EARTH,
         CALL_CREATURES,
         CLIMATE_CHANGE,
         NATURES_POWER,
@@ -190,6 +191,7 @@ public class RitualExecutor {
         private final int pulseInterval;
         private final int covenSize;
         private final float upkeepCost;
+        private final boolean enhanced;
         private final ItemStack sacrificedIngredient;
         private final List<ItemStack> supplementalSacrifices;
         private final List<BlockPos> path = new ArrayList<>();
@@ -203,7 +205,7 @@ public class RitualExecutor {
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
                              BlockPos effectCenter, int circleVariant,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
-                             int covenSize, float upkeepCost, int heading, long nextGameTime,
+                             int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
                              ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices) {
             this.type = type;
             this.center = center.immutable();
@@ -216,6 +218,7 @@ public class RitualExecutor {
             this.pulseInterval = pulseInterval;
             this.covenSize = covenSize;
             this.upkeepCost = upkeepCost;
+            this.enhanced = enhanced;
             this.heading = heading;
             this.nextGameTime = nextGameTime;
             this.sacrificedIngredient = sacrificedIngredient;
@@ -1905,6 +1908,7 @@ public class RitualExecutor {
             case WEATHER_CALL_STORM -> tickStormRitual(level, ritual);
             case ICE_SHELL -> tickIceShellRitual(level, ritual);
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
+            case HELL_ON_EARTH -> tickHellOnEarthRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
             case NATURES_POWER -> tickNaturesPowerRitual(level, ritual);
@@ -2000,6 +2004,27 @@ public class RitualExecutor {
 
         spawnFallingToads(level, ritual.center, ritual.minRadius, ritual.maxRadius, 8 + level.random.nextInt(10));
         return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickHellOnEarthRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        int maxRadius = ritual.maxRadius + ritual.covenSize * 2;
+        int currentRadius = ritual.stage + 3;
+        if (currentRadius <= maxRadius) {
+            spreadHellOnEarthRing(level, ritual.effectCenter, currentRadius, maxRadius, ritual.enhanced);
+            if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+                spawnRingParticles(level, ritual.effectCenter, currentRadius, 20);
+            }
+        }
+
+        if (currentRadius >= maxRadius && level.getGameTime() % 40L == 0L) {
+            if (!consumeNearbyRitualAltarPower(level, ritual, 16)) {
+                return false;
+            }
+            spawnHellOnEarthMob(level, ritual.effectCenter);
+        }
+
+        return ritual.stage <= ritual.targetStage;
     }
 
     private static boolean tickCallCreaturesRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2355,8 +2380,8 @@ public class RitualExecutor {
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                              BlockPos center, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading) {
-        return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage,
-                pulseInterval, covenSize, upkeepCost, heading, List.of());
+        return queueActiveRitual(level, type, circleSize, center, center, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, List.of(), false);
     }
 
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
@@ -2364,13 +2389,13 @@ public class RitualExecutor {
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices) {
         return queueActiveRitual(level, type, circleSize, center, center, minRadius, maxRadius, targetStage,
-                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices);
+                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices, false);
     }
 
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                              BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
-                                             List<ItemStack> supplementalSacrifices) {
+                                             List<ItemStack> supplementalSacrifices, boolean enhanced) {
         List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
         boolean occupied = rituals.stream().anyMatch(active -> active.center.equals(center));
         if (occupied) {
@@ -2380,11 +2405,19 @@ public class RitualExecutor {
         int circleVariant = RitualCircleDetector.detectVariant(level, center, circleSize);
         ItemStack sacrificedIngredient = PENDING_RITUAL_INGREDIENT.get();
         rituals.add(new ActiveRitual(type, center, circleSize, effectCenter, circleVariant, minRadius, maxRadius, targetStage, pulseInterval,
-                covenSize, upkeepCost, heading,
+                covenSize, upkeepCost, enhanced, heading,
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
                 List.copyOf(supplementalSacrifices)));
         return true;
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading,
+                                             List<ItemStack> supplementalSacrifices) {
+        return queueActiveRitual(level, type, circleSize, center, effectCenter, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices, false);
     }
 
     private static boolean hasSustainingCircle(ServerLevel level, ActiveRitual ritual) {
@@ -2423,6 +2456,98 @@ public class RitualExecutor {
         LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         bolt.setPos(surface.getX() + 0.5, surface.getY(), surface.getZ() + 0.5);
         level.addFreshEntity(bolt);
+    }
+
+    private static void spreadHellOnEarthRing(ServerLevel level, BlockPos center, int radius, int maxRadius, boolean enhanced) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+
+        while (x >= z) {
+            blightHellOnEarthPixel(level, center, center.getX() + x, center.getZ() + z, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() + z, center.getZ() + x, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() - x, center.getZ() + z, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() - z, center.getZ() + x, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() - x, center.getZ() - z, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() - z, center.getZ() - x, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() + x, center.getZ() - z, radius, maxRadius, enhanced);
+            blightHellOnEarthPixel(level, center, center.getX() + z, center.getZ() - x, radius, maxRadius, enhanced);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void blightHellOnEarthPixel(ServerLevel level, BlockPos center, int x, int z, int currentRadius,
+                                               int maxRadius, boolean enhanced) {
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(x, center.getY(), z));
+        BlockPos groundPos = surface.below();
+        if (groundPos.getY() <= level.getMinY()) {
+            return;
+        }
+
+        BlockState groundState = level.getBlockState(groundPos);
+        if (groundState.is(Blocks.SNOW) || groundState.is(Blocks.SNOW_BLOCK)) {
+            groundPos = groundPos.below();
+            groundState = level.getBlockState(groundPos);
+        }
+
+        applyHellOnEarthGround(level, groundPos, groundState, currentRadius, maxRadius, enhanced);
+    }
+
+    private static void applyHellOnEarthGround(ServerLevel level, BlockPos groundPos, BlockState groundState,
+                                               int currentRadius, int maxRadius, boolean enhanced) {
+        if (!(groundState.is(Blocks.DIRT)
+                || groundState.is(Blocks.GRASS_BLOCK)
+                || groundState.is(Blocks.MYCELIUM)
+                || groundState.is(Blocks.PODZOL)
+                || groundState.is(Blocks.COARSE_DIRT)
+                || groundState.is(Blocks.MUD))) {
+            return;
+        }
+
+        int divisor = currentRadius < maxRadius / 3 ? 2 : (currentRadius < maxRadius / 2 ? 4 : 6);
+        if (level.random.nextInt(divisor) != 0) {
+            return;
+        }
+
+        level.setBlockAndUpdate(groundPos, Blocks.NETHERRACK.defaultBlockState());
+        BlockPos firePos = groundPos.above();
+        if (enhanced && level.random.nextInt(3) == 0 && level.getBlockState(firePos).canBeReplaced()) {
+            level.setBlockAndUpdate(firePos, Blocks.FIRE.defaultBlockState());
+        }
+    }
+
+    private static void spawnHellOnEarthMob(ServerLevel level, BlockPos center) {
+        Mob mob;
+        double roll = level.random.nextDouble();
+        if (roll < 0.02) {
+            mob = WitcheryEntities.DEMON.get().create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        } else if (roll < 0.10) {
+            mob = EntityType.GHAST.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        } else if (roll < 0.40) {
+            mob = EntityType.BLAZE.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        } else if (roll < 0.60) {
+            mob = EntityType.MAGMA_CUBE.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        } else {
+            mob = EntityType.ZOMBIFIED_PIGLIN.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        }
+        if (mob == null) {
+            return;
+        }
+
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
+        mob.setPos(surface.getX() + 0.5, surface.getY() + 2.0, surface.getZ() + 0.5);
+        mob.setYRot(level.random.nextFloat() * 360.0f);
+        level.addFreshEntity(mob);
+        level.playSound(null, surface, SoundEvents.BLAZE_DEATH, SoundSource.HOSTILE, 1.0f, 1.0f);
+        level.sendParticles(ParticleTypes.EXPLOSION,
+                surface.getX() + 0.5, surface.getY() + 2.0, surface.getZ() + 0.5,
+                8, 0.3, 0.3, 0.3, 0.01);
     }
 
     private static void drawIceShellSphere(ServerLevel level, BlockPos center, int radius, Block block) {
@@ -4678,7 +4803,8 @@ public class RitualExecutor {
                                                  ItemEntity attunedStone, ItemEntity chargedStone) {}
 
     private record HellOnEarthOfferings(ItemEntity redstoneSoup, ItemEntity demonHeart, ItemEntity waystone,
-                                        ItemEntity netherStar, Villager villager) {}
+                                        ItemEntity netherStar, Villager villager, ItemEntity boundWaystone,
+                                        BlockPos effectCenter, boolean tooFar) {}
 
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
@@ -5404,12 +5530,17 @@ public class RitualExecutor {
                 || netherStar.isEmpty() || villager.isEmpty()) {
             return Optional.empty();
         }
+        int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         return Optional.of(new HellOnEarthOfferings(
                 redstoneSoup.get(),
                 demonHeart.get(),
                 waystone.get(),
                 netherStar.get(),
-                villager.get()));
+                villager.get(),
+                relocation.boundWaystone(),
+                relocation.effectCenter(),
+                relocation.tooFar()));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {
@@ -6143,26 +6274,53 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
+        if (offerings.get().tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
+        if (!(caster instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.no_power"), false);
             return false;
         }
-        return applyCurse(caster, level, center, target -> {
-            if (!(target.level() instanceof ServerLevel targetLevel)) return;
-            // Lightning strikes
-            for (int i = 0; i < 5; i++) {
-                double dx = (targetLevel.getRandom().nextDouble() - 0.5) * 10;
-                double dz = (targetLevel.getRandom().nextDouble() - 0.5) * 10;
-                LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, targetLevel);
-                bolt.setPos(target.getX() + dx, target.getY(), target.getZ() + dz);
-                targetLevel.addFreshEntity(bolt);
-            }
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 2400, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 2400, 1));
-        }, "witchery.curse.hell_on_earth", "witchery.curse.hell_on_earth", false)
-                && consumeHellOnEarthOfferings(offerings.get());
+        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        if (taglock.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.no_taglock"), false);
+            return false;
+        }
+        ServerPlayer target = sl.getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.offline"), false);
+            return false;
+        }
+        if (triggerVoodooProtection(target)) {
+            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+            return false;
+        }
+
+        int covenSize = countNearbyCovenWitches(level, center);
+        BlockPos effectCenter = offerings.get().boundWaystone() != null
+                ? offerings.get().effectCenter()
+                : target.blockPosition();
+        List<ItemStack> supplementalSacrifices = offerings.get().boundWaystone() != null
+                ? List.of(offerings.get().boundWaystone().getItem().copyWithCount(1))
+                : List.of();
+        if (!queueActiveRitual(sl, ActiveRitualType.HELL_ON_EARTH, RitualCircleDetector.CircleSize.LARGE,
+                center, effectCenter, 4, 20, 250, 5, covenSize, 200.0f, 0,
+                supplementalSacrifices, hasActiveCurseMasteryFamiliar(sp))) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+
+        consumeInventoryItem(sp, taglock.get().slot());
+        consumeHellOnEarthOfferings(offerings.get());
+        target.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.target"), false);
+        success(caster, level, center, "witchery.curse.hell_on_earth.caster",
+                SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        return true;
     }
 
     private static boolean consumeHellOnEarthOfferings(HellOnEarthOfferings offerings) {
@@ -6170,6 +6328,9 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.demonHeart());
         consumeOfferedItem(offerings.waystone());
         consumeOfferedItem(offerings.netherStar());
+        if (offerings.boundWaystone() != null) {
+            consumeOfferedItem(offerings.boundWaystone());
+        }
         offerings.villager().discard();
         return true;
     }
