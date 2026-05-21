@@ -352,6 +352,13 @@ public class RitualExecutor {
             return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(Items.BONE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfFertility(player, level, center));
+        } else if (item.is(WitcheryItems.BREATH_OF_GODDESS.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && (findCureInsanityOfferings(level, center).isPresent()
+                    || findCureSinkingOfferings(level, center).isPresent()
+                    || findCureOverheatingOfferings(level, center).isPresent()
+                    || findCureWakingNightmareOfferings(level, center).isPresent())) {
+            return matchedResult(riteOfBreathOfTheGoddessCure(player, level, center));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfBlindness(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -4665,6 +4672,18 @@ public class RitualExecutor {
                                                  ItemEntity tormentedTwine, ItemEntity emerald,
                                                  ItemEntity brewGrotesque) {}
 
+    private record CureInsanityOfferings(ItemEntity breathOfTheGoddess, ItemEntity potato,
+                                         ItemEntity sugar, ItemEntity brewOfLove) {}
+
+    private record CureSinkingOfferings(ItemEntity breathOfTheGoddess, ItemEntity boneMeal,
+                                        ItemEntity netherWart, ItemEntity brewOfTheDepths) {}
+
+    private record CureOverheatingOfferings(ItemEntity breathOfTheGoddess, ItemEntity icyNeedle,
+                                            ItemEntity blazeRod, ItemEntity brewOfTheDepths) {}
+
+    private record CureWakingNightmareOfferings(ItemEntity breathOfTheGoddess, ItemEntity goldenCarrot,
+                                                ItemEntity tormentedTwine, ItemEntity brewOfLove) {}
+
     private record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
                                           ItemEntity spectralDust) {}
 
@@ -5021,6 +5040,66 @@ public class RitualExecutor {
                 tormentedTwine.get(),
                 emerald.get(),
                 brewGrotesque.get()));
+    }
+
+    private static Optional<CureInsanityOfferings> findCureInsanityOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> potato = findNearbyOffering(level, center, stack -> stack.is(Items.POTATO));
+        Optional<ItemEntity> sugar = findNearbyOffering(level, center, stack -> stack.is(Items.SUGAR));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        if (breathOfTheGoddess.isEmpty() || potato.isEmpty() || sugar.isEmpty() || brewOfLove.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureInsanityOfferings(
+                breathOfTheGoddess.get(),
+                potato.get(),
+                sugar.get(),
+                brewOfLove.get()));
+    }
+
+    private static Optional<CureSinkingOfferings> findCureSinkingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> boneMeal = findNearbyOffering(level, center, stack -> stack.is(Items.BONE_MEAL));
+        Optional<ItemEntity> netherWart = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_WART));
+        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_DEPTHS.get()));
+        if (breathOfTheGoddess.isEmpty() || boneMeal.isEmpty() || netherWart.isEmpty() || brewOfTheDepths.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureSinkingOfferings(
+                breathOfTheGoddess.get(),
+                boneMeal.get(),
+                netherWart.get(),
+                brewOfTheDepths.get()));
+    }
+
+    private static Optional<CureOverheatingOfferings> findCureOverheatingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> icyNeedle = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()));
+        Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
+        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_DEPTHS.get()));
+        if (breathOfTheGoddess.isEmpty() || icyNeedle.isEmpty() || blazeRod.isEmpty() || brewOfTheDepths.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureOverheatingOfferings(
+                breathOfTheGoddess.get(),
+                icyNeedle.get(),
+                blazeRod.get(),
+                brewOfTheDepths.get()));
+    }
+
+    private static Optional<CureWakingNightmareOfferings> findCureWakingNightmareOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> goldenCarrot = findNearbyOffering(level, center, stack -> stack.is(Items.GOLDEN_CARROT));
+        Optional<ItemEntity> tormentedTwine = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        if (breathOfTheGoddess.isEmpty() || goldenCarrot.isEmpty() || tormentedTwine.isEmpty() || brewOfLove.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureWakingNightmareOfferings(
+                breathOfTheGoddess.get(),
+                goldenCarrot.get(),
+                tormentedTwine.get(),
+                brewOfLove.get()));
     }
 
     private static Optional<CorruptPoppetOfferings> findCorruptPoppetOfferings(Level level, BlockPos center) {
@@ -5585,6 +5664,33 @@ public class RitualExecutor {
         return true;
     }
 
+    @FunctionalInterface
+    private interface CureAction { boolean apply(ServerPlayer target); }
+
+    private static boolean applyCure(Player caster, Level level, BlockPos center,
+                                     CureAction action, String targetKey) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
+        if (taglock.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.no_taglock"), false);
+            return false;
+        }
+        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.offline"), false);
+            return false;
+        }
+        if (!action.apply(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.none"), false);
+            return false;
+        }
+        consumeInventoryItem(sp, taglock.get().slot());
+        target.displayClientMessage(Component.translatable(targetKey), false);
+        success(caster, level, center, "witchery.ritual.cure.success",
+                SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.8f, 3, 48);
+        return true;
+    }
+
     private static boolean triggerVoodooProtection(ServerPlayer player) {
         return PoppetEvents.damageBoundPoppet(player, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 350);
     }
@@ -5607,6 +5713,107 @@ public class RitualExecutor {
                     || s.is(WitcheryItems.HUNTER_BOOTS.get())) pieces++;
         }
         return pieces >= 4;
+    }
+
+    private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {
+        Optional<CureWakingNightmareOfferings> wakingNightmare = findCureWakingNightmareOfferings(level, center);
+        if (wakingNightmare.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                WitcheryPlayerData data = WitcheryAttachments.get(target);
+                boolean hadNightmare = data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+                if (!hadNightmare) return false;
+                data.setSpiritWorldIsDream(true);
+                data.setDemonicNightmare(false);
+                PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
+                return true;
+            }, "curse.witchery.waking_nightmare.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(wakingNightmare.get().breathOfTheGoddess());
+            consumeOfferedItem(wakingNightmare.get().goldenCarrot());
+            consumeOfferedItem(wakingNightmare.get().tormentedTwine());
+            consumeOfferedItem(wakingNightmare.get().brewOfLove());
+            return true;
+        }
+
+        Optional<CureOverheatingOfferings> overheating = findCureOverheatingOfferings(level, center);
+        if (overheating.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                boolean hadOverheating = target.hasEffect(MobEffects.WEAKNESS) || target.isOnFire();
+                if (!hadOverheating) return false;
+                target.removeEffect(MobEffects.WEAKNESS);
+                target.clearFire();
+                return true;
+            }, "curse.witchery.overheating.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(overheating.get().breathOfTheGoddess());
+            consumeOfferedItem(overheating.get().icyNeedle());
+            consumeOfferedItem(overheating.get().blazeRod());
+            consumeOfferedItem(overheating.get().brewOfTheDepths());
+            return true;
+        }
+
+        Optional<CureSinkingOfferings> sinking = findCureSinkingOfferings(level, center);
+        if (sinking.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                boolean hadSinking = target.hasEffect(MobEffects.SLOWNESS)
+                        || target.hasEffect(MobEffects.MINING_FATIGUE)
+                        || target.hasEffect(MobEffects.LEVITATION);
+                if (!hadSinking) return false;
+                target.removeEffect(MobEffects.SLOWNESS);
+                target.removeEffect(MobEffects.MINING_FATIGUE);
+                target.removeEffect(MobEffects.LEVITATION);
+                return true;
+            }, "curse.witchery.sinking.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(sinking.get().breathOfTheGoddess());
+            consumeOfferedItem(sinking.get().boneMeal());
+            consumeOfferedItem(sinking.get().netherWart());
+            consumeOfferedItem(sinking.get().brewOfTheDepths());
+            return true;
+        }
+
+        Optional<CureInsanityOfferings> insanity = findCureInsanityOfferings(level, center);
+        if (insanity.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                boolean hadInsanity = target.hasEffect(MobEffects.NAUSEA) || target.hasEffect(MobEffects.BLINDNESS);
+                if (!hadInsanity) return false;
+                target.removeEffect(MobEffects.NAUSEA);
+                target.removeEffect(MobEffects.BLINDNESS);
+                return true;
+            }, "curse.witchery.insanity.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(insanity.get().breathOfTheGoddess());
+            consumeOfferedItem(insanity.get().potato());
+            consumeOfferedItem(insanity.get().sugar());
+            consumeOfferedItem(insanity.get().brewOfLove());
+            return true;
+        }
+
+        return false;
     }
 
     /** Curse of Blindness — blinds target + nearby players for 3 minutes. */
