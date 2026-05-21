@@ -3916,6 +3916,17 @@ public class RitualExecutor {
     /** Rite of Summon Witch — summons a hostile witch if the circle is not obstructed. */
     private static boolean riteOfSummonWitch(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<SummonWitchOfferings> offerings = findSummonWitchOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_witch.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_witch.no_power"), false);
+            return false;
+        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -3932,6 +3943,11 @@ public class RitualExecutor {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(witch);
 
+        consumeOfferedItem(offerings.get().diamondVapour());
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().magmaCream());
+        consumeOfferedItem(offerings.get().arthana());
+        consumeOfferedItem(offerings.get().fermentedSpiderEye());
         success(player, level, center, "witchery.ritual.summon_witch.success",
                 SoundEvents.WITCH_CELEBRATE, 0.8f, 3, 48);
         WitcheryMod.LOGGER.info("Rite of Summon Witch cast by {}", player.getName().getString());
@@ -4200,6 +4216,9 @@ public class RitualExecutor {
 
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
+    private record SummonWitchOfferings(ItemEntity diamondVapour, ItemEntity exhaleOfHornedOne, ItemEntity magmaCream,
+                                        ItemEntity arthana, ItemEntity fermentedSpiderEye) {}
+
     private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                       ItemEntity gypsum, ItemEntity mutandis) {}
 
@@ -4398,6 +4417,24 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SummonFamiliarOfferings(egg.get(), goldIngot.get(), arthana.get()));
+    }
+
+    private static Optional<SummonWitchOfferings> findSummonWitchOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> magmaCream = findNearbyOffering(level, center, stack -> stack.is(Items.MAGMA_CREAM));
+        Optional<ItemEntity> arthana = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ARTHANA.get()));
+        Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
+        if (diamondVapour.isEmpty() || exhaleOfHornedOne.isEmpty() || magmaCream.isEmpty()
+                || arthana.isEmpty() || fermentedSpiderEye.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SummonWitchOfferings(
+                diamondVapour.get(),
+                exhaleOfHornedOne.get(),
+                magmaCream.get(),
+                arthana.get(),
+                fermentedSpiderEye.get()));
     }
 
     private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {

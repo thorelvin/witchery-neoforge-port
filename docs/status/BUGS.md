@@ -521,10 +521,10 @@ Remaining gap:
 
 The next missing-rite pass is now closer to original Witchery:
 - `summonwitch` is reachable again as a small infernal rite through `diamond_vapour`, instead of being absent from the modern dispatcher.
-- The restored route now spawns a hostile witch at the circle center and uses a proper summoning-space obstruction check instead of blindly spawning inside blocked space.
+- The restored route now spawns a hostile witch at the circle center, uses a proper summoning-space obstruction check instead of blindly spawning inside blocked space, and once more expects `Diamond Vapour`, `Exhale of the Horned One`, `magma cream`, `Arthana`, and `fermented spider eye` plus its original 2000 altar-power startup cost.
 
 Remaining gap:
-- The dispatcher is still using one representative original ingredient instead of the full original sacrifice set, but the shared summoning-space obstruction check now covers the restored witch/imp/demon/wither/death/Lord of Torment family instead of only the smallest infernal path.
+- The dispatcher is still using one representative original ingredient to select the rite instead of the full original sacrifice registry, but the shared summoning-space obstruction check now covers the restored witch/imp/demon/wither/death/Lord of Torment family instead of only the smallest infernal path.
 
 ### 45. Large infernal imp summoning was missing entirely - Fixed / verify
 
