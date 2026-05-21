@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +20,7 @@ public class BrewOfSproutingItem extends BrewItem {
     protected void applyEffect(Player player, Level level) {
         BlockPos center = player.blockPosition();
         Direction facing = player.getDirection();
+        int length = FamiliarHelper.hasActiveToadFamiliar(player) ? 10 : 8;
 
         // Find the surface the player is looking toward
         BlockPos start = center;
@@ -27,10 +29,10 @@ public class BrewOfSproutingItem extends BrewItem {
             start = start.relative(facing.getOpposite());
         }
 
-        // Grow 8 oak logs extending in the facing direction
+        // Grow a short oak branch extending in the facing direction.
         BlockState log = Blocks.OAK_LOG.defaultBlockState()
                 .setValue(RotatedPillarBlock.AXIS, facing.getAxis());
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < length; i++) {
             BlockPos bp = start.relative(facing, i);
             if (level.getBlockState(bp).isAir() || level.getBlockState(bp).liquid()) {
                 level.setBlockAndUpdate(bp, log);

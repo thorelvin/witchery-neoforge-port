@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -13,7 +14,9 @@ public class BrewOfThornsItem extends BrewItem {
     @Override
     protected void applyEffect(Player player, Level level) {
         BlockPos center = player.blockPosition();
-        // Grow a ring of cacti (3 high) around the player
+        int height = FamiliarHelper.hasActiveToadFamiliar(player) ? 4 : 3;
+
+        // Grow a ring of cacti around the player.
         int[][] ring = {{3,0},{-3,0},{0,3},{0,-3},{2,2},{-2,2},{2,-2},{-2,-2}};
         for (int[] off : ring) {
             BlockPos base = center.offset(off[0], 0, off[1]);
@@ -28,7 +31,7 @@ public class BrewOfThornsItem extends BrewItem {
                     && !level.getBlockState(ground.below()).is(Blocks.RED_SAND)) {
                 level.setBlockAndUpdate(ground.below(), Blocks.SAND.defaultBlockState());
             }
-            for (int h = 0; h < 3; h++) {
+            for (int h = 0; h < height; h++) {
                 BlockPos bp = ground.above(h);
                 if (level.getBlockState(bp).isAir()) {
                     level.setBlockAndUpdate(bp, Blocks.CACTUS.defaultBlockState());
