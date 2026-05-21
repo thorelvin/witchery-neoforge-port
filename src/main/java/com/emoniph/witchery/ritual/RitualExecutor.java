@@ -668,6 +668,7 @@ public class RitualExecutor {
 
         consumeOfferedItem(offerings.get().tearOfTheGoddess());
         consumeOfferedItem(offerings.get().odourOfPurity());
+        consumeOfferedItem(offerings.get().whiffOfMagic());
         consumeOfferedItem(offerings.get().diamond());
         consumeOfferedItem(offerings.get().demonicBlood());
 
@@ -4516,6 +4517,7 @@ public class RitualExecutor {
 
         consumeOfferedItem(offerings.get().breathOfTheGoddess());
         consumeOfferedItem(offerings.get().hintOfRebirth());
+        consumeOfferedItem(offerings.get().whiffOfMagic());
 
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
@@ -5016,9 +5018,10 @@ public class RitualExecutor {
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
     private record BindFamiliarOfferings(ItemEntity tearOfTheGoddess, ItemEntity odourOfPurity,
-                                         ItemEntity diamond, ItemEntity demonicBlood) {}
+                                         ItemEntity whiffOfMagic, ItemEntity diamond, ItemEntity demonicBlood) {}
 
-    private record CallFamiliarOfferings(ItemEntity breathOfTheGoddess, ItemEntity hintOfRebirth) {}
+    private record CallFamiliarOfferings(ItemEntity breathOfTheGoddess, ItemEntity hintOfRebirth,
+                                         ItemEntity whiffOfMagic) {}
 
     private record SummonImpOfferings(ItemEntity refinedEvil, ItemEntity infernalBlood, ItemEntity enderPearl,
                                       ItemEntity attunedStone) {}
@@ -5645,14 +5648,17 @@ public class RitualExecutor {
     private static Optional<BindFamiliarOfferings> findBindFamiliarOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> tearOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TEAR_OF_GODDESS.get()));
         Optional<ItemEntity> odourOfPurity = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ODOUR_OF_PURITY.get()));
+        Optional<ItemEntity> whiffOfMagic = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()));
         Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
         Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
-        if (tearOfTheGoddess.isEmpty() || odourOfPurity.isEmpty() || diamond.isEmpty() || demonicBlood.isEmpty()) {
+        if (tearOfTheGoddess.isEmpty() || odourOfPurity.isEmpty() || whiffOfMagic.isEmpty()
+                || diamond.isEmpty() || demonicBlood.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new BindFamiliarOfferings(
                 tearOfTheGoddess.get(),
                 odourOfPurity.get(),
+                whiffOfMagic.get(),
                 diamond.get(),
                 demonicBlood.get()));
     }
@@ -5660,12 +5666,14 @@ public class RitualExecutor {
     private static Optional<CallFamiliarOfferings> findCallFamiliarOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> hintOfRebirth = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()));
-        if (breathOfTheGoddess.isEmpty() || hintOfRebirth.isEmpty()) {
+        Optional<ItemEntity> whiffOfMagic = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()));
+        if (breathOfTheGoddess.isEmpty() || hintOfRebirth.isEmpty() || whiffOfMagic.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CallFamiliarOfferings(
                 breathOfTheGoddess.get(),
-                hintOfRebirth.get()));
+                hintOfRebirth.get(),
+                whiffOfMagic.get()));
     }
 
     private static Optional<SummonImpOfferings> findSummonImpOfferings(Level level, BlockPos center) {

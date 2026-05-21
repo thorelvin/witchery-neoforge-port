@@ -576,7 +576,7 @@ The next ritual routing pass is now closer to original Witchery:
 - `Prior Incarnation` now requires an infernal small circle again instead of activating from any small ring.
 - It now also once more expects its old `Necromantic Stone`, `Tongue of Dog`, `bone`, `Spectral Dust`, and `Charged Attuned Stone` support set, with the charged stone returning downgraded to a plain `Attuned Stone` instead of vanishing.
 - Familiar binding and familiar calling no longer live on the small-circle dispatcher; they now route through the medium ritual circle instead, which is much closer to the original `bindfamiliar` and `callfamiliar` rites.
-- That shared medium `whiff_of_magic` path now also restores the original familiar support gates and altar costs again: binding once more asks for Tear of the Goddess, Odour of Purity, a diamond, Demonic Blood, and 8000 altar power, while calling once more asks for Breath of the Goddess, Hint of Rebirth, and 1000 altar power.
+- That shared medium `whiff_of_magic` path now also restores the original familiar support gates and altar costs again: binding once more asks for Tear of the Goddess, Odour of Purity, `Whiff of Magic`, a diamond, Demonic Blood, and 8000 altar power, while calling once more asks for Breath of the Goddess, Hint of Rebirth, `Whiff of Magic`, and 1000 altar power.
 - The original small ritual `summonfamiliar` path is back too through a representative `drop_of_luck` trigger, and it once again summons a bound Witch's Cat into the circle instead of leaving the small ritual familiar branch missing entirely.
 
 Remaining gap:
