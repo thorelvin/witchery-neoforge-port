@@ -624,15 +624,10 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_familiar.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 8000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.bind_familiar.no_power"), false);
-            return false;
-        }
 
         AABB playerBounds = new AABB(center).inflate(FAMILIAR_BIND_RADIUS, 1.0, FAMILIAR_BIND_RADIUS);
         List<ServerPlayer> nearbyPlayers = sl.getEntitiesOfClass(ServerPlayer.class, playerBounds);
-        boolean boundAny = false;
+        List<FamiliarBindTarget> bindTargets = new ArrayList<>();
 
         for (ServerPlayer nearbyPlayer : nearbyPlayers) {
             if (nearbyPlayer.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5)
@@ -645,7 +640,27 @@ public class RitualExecutor {
                 continue;
             }
 
-            TamableAnimal familiar = bindFamiliarToPlayer(nearbyPlayer, sl, candidate);
+            bindTargets.add(new FamiliarBindTarget(nearbyPlayer, candidate));
+        }
+
+        if (bindTargets.isEmpty()) {
+            return false;
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 8000,
+                "witchery.ritual.bind_familiar.no_power")
+                .offer(offerings.get().tearOfTheGoddess())
+                .offer(offerings.get().odourOfPurity())
+                .offer(offerings.get().whiffOfMagic())
+                .offer(offerings.get().diamond())
+                .offer(offerings.get().demonicBlood());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        boolean boundAny = false;
+        for (FamiliarBindTarget bindTarget : bindTargets) {
+            TamableAnimal familiar = bindFamiliarToPlayer(bindTarget.player(), sl, bindTarget.candidate());
             if (familiar == null) {
                 continue;
             }
@@ -656,16 +671,10 @@ public class RitualExecutor {
                     6, 0.25, 0.25, 0.25, 0.02);
             boundAny = true;
         }
-
         if (!boundAny) {
+            WitcheryMod.LOGGER.warn("Rite of Bind Familiar committed at {} but no familiar could be finalized.", center);
             return false;
         }
-
-        consumeOfferedItem(offerings.get().tearOfTheGoddess());
-        consumeOfferedItem(offerings.get().odourOfPurity());
-        consumeOfferedItem(offerings.get().whiffOfMagic());
-        consumeOfferedItem(offerings.get().diamond());
-        consumeOfferedItem(offerings.get().demonicBlood());
 
         success(player, level, center, "witchery.ritual.bind_familiar.success",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
@@ -923,11 +932,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.forest.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.forest.no_power"), false);
-            return false;
-        }
 
         BlockState saplingState = saplingBlock.defaultBlockState();
         int covenSize = countNearbyCovenWitches(level, center);
@@ -937,6 +941,16 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 4000,
+                "witchery.ritual.forest.no_power")
+                .offer(offerings.get().wickerBundle())
+                .offer(offerings.get().brewOfSprouting())
+                .offer(offerings.get().entTwig())
+                .offer(relocation.boundWaystone());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         BlockPos effectCenter = relocation.effectCenter();
         int radius = 20 + covenSize * 2;
         int attempts = 60 + covenSize * 5;
@@ -951,12 +965,6 @@ public class RitualExecutor {
             }
         }
 
-        consumeOfferedItem(offerings.get().wickerBundle());
-        consumeOfferedItem(offerings.get().brewOfSprouting());
-        consumeOfferedItem(offerings.get().entTwig());
-        if (relocation.boundWaystone() != null) {
-            consumeOfferedItem(relocation.boundWaystone());
-        }
         player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
@@ -1770,6 +1778,46 @@ public class RitualExecutor {
     private static boolean hasNearbyRitualAltar(ServerLevel level, BlockPos center, int radius) {
         AltarBlockEntity altar = findNearbyRitualAltar(level, center, radius);
         return altar != null && altar.hasValidStructure() && altar.getPower() > 0;
+    }
+
+    private record FamiliarBindTarget(ServerPlayer player, TamableAnimal candidate) {}
+
+    private static final class RitualTransaction {
+        private final ServerLevel level;
+        private final BlockPos center;
+        private final int altarRadius;
+        private final int altarPowerCost;
+        private final String noPowerMessageKey;
+        private final List<ItemEntity> offerings = new ArrayList<>();
+
+        private RitualTransaction(ServerLevel level, BlockPos center, int altarRadius, int altarPowerCost,
+                                  String noPowerMessageKey) {
+            this.level = level;
+            this.center = center;
+            this.altarRadius = altarRadius;
+            this.altarPowerCost = altarPowerCost;
+            this.noPowerMessageKey = noPowerMessageKey;
+        }
+
+        private RitualTransaction offer(ItemEntity offering) {
+            if (offering != null) {
+                offerings.add(offering);
+            }
+            return this;
+        }
+
+        private boolean commit(Player player) {
+            if (altarPowerCost > 0 && !consumeNearbyRitualAltarPower(level, center, altarRadius, altarPowerCost)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable(noPowerMessageKey), false);
+                return false;
+            }
+
+            for (ItemEntity offering : offerings) {
+                consumeOfferedItem(offering);
+            }
+            return true;
+        }
     }
 
     private static boolean consumeNearbyRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
