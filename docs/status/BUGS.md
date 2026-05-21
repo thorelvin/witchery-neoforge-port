@@ -507,12 +507,13 @@ Remaining gap:
 
 ### 37a. Weather Call Storm still ignored its original support offering and startup power - Fixed / verify
 
-The small ritual storm path is now closer to original Witchery:
-- `Weather Call Storm` no longer starts from a bare snowball or water bucket alone.
-- It now also expects the old `wood_ash` support offering again and once more consumes its original 1000 altar power before the staged storm queue begins.
+The small ritual storm family is now closer to original Witchery:
+- The base inside-circle storm branch no longer starts from a bare `snowball`; it once more expects `wood_ash` and once more consumes its original 1000 altar power before the staged storm queue begins.
+- The larger outside-circle sibling is back too: `water_bucket` plus `wood_ash` now once more drives the broader 3-to-7-radius storm pattern and once more consumes its original 2000 altar-power startup cost.
+- The portable storm sibling is back as well: `gunpowder` plus `wood_ash` plus `Charged Attuned Stone` now once more drives the same broader storm pattern without altar-power drain instead of collapsing into the old invented direct-lightning route.
 
 Remaining gap:
-- The old optional bound-waystone variant and the larger storm-family sibling are still deferred, so this restores the base rite's missing support/power gate without claiming the full storm family is recipe-perfect yet.
+- The old optional bound-waystone relocation behavior is still deferred, so this restores the real storm-family trigger/support split without claiming that remote-target extra is back yet.
 
 ### 38. Chalk variant parity was still mostly ignored by the ritual dispatcher - Fixed / verify
 

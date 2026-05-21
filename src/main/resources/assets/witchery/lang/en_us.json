@@ -447,6 +447,7 @@
   "witchery.vampire.sunburn": "The sun scorches your flesh!",
   "witchery.vampire.frenzy": "Blood frenzy — you must feed!",
   "witchery.ritual.storm.support": "The rite needs snow or water with wood ash.",
+  "witchery.ritual.storm.portable_support": "The portable storm rite needs gunpowder, wood ash, and a charged attuned stone.",
   "witchery.ritual.storm.no_power": "A nearby altar lacks the power to call the storm.",
   "witchery.vampire.bite.success": "You drain %s for %s blood. (%s/500)",
   "witchery.werewolf.transformed": "The full moon calls — you feel the beast take hold!",

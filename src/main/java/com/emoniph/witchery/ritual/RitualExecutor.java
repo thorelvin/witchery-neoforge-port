@@ -398,12 +398,12 @@ public class RitualExecutor {
             return successResult();
         } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
             return matchedResult(riteOfIceShell(player, level, center));
-        } else if ((item.is(Items.SNOWBALL) || item.is(Items.WATER_BUCKET))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfWeatherCallStorm(player, level, center));
+        } else if (item.is(Items.SNOWBALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.BASE));
+        } else if (item.is(Items.WATER_BUCKET) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE));
         } else if (item.is(Items.GUNPOWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfSkysWrath(player, level, center);
-            return successResult();
+            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE));
         } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfSanctity(player, level, center));
@@ -1195,24 +1195,6 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
     // M21 — MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
-
-    /** Rite of Sky's Wrath — strikes lightning at 12 points around the circle. */
-    private static void riteOfSkysWrath(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        int strikes = 0;
-        for (int i = 0; i < 12; i++) {
-            double angle = 2 * Math.PI * i / 12;
-            int bx = center.getX() + (int) Math.round(4 * Math.cos(angle));
-            int bz = center.getZ() + (int) Math.round(4 * Math.sin(angle));
-            int by = sl.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, new BlockPos(bx, 0, bz)).getY();
-            LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, sl);
-            bolt.setPos(bx + 0.5, (double)by, bz + 0.5);
-            sl.addFreshEntity(bolt);
-            strikes++;
-        }
-        success(player, level, center, null, SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 5, 120);
-        WitcheryMod.LOGGER.info("Rite of Sky's Wrath: {} strikes around {}", strikes, center);
-    }
 
     /** Rite of Sanctity — sustains a repulsive protection circle around the rite. */
     private static boolean riteOfSanctity(Player player, Level level, BlockPos center) {
@@ -3292,26 +3274,37 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Calling the Storm — triggers a thunderstorm and strikes 5–8 lightning bolts. */
-    private static boolean riteOfWeatherCallStorm(Player player, Level level, BlockPos center) {
+    /** Rite of Sky's Wrath storm family — original inside/outside/portable small-circle branches. */
+    private static boolean riteOfWeatherCallStorm(Player player, Level level, BlockPos center, StormRiteVariant variant) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<StormOfferings> offerings = findStormOfferings(level, center);
+        Optional<StormOfferings> offerings = findStormOfferings(level, center, variant);
         if (offerings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.storm.support"), false);
+            String supportKey = variant == StormRiteVariant.PORTABLE
+                    ? "witchery.ritual.storm.portable_support"
+                    : "witchery.ritual.storm.support";
+            player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+        int requiredPower = variant == StormRiteVariant.BASE ? 1000 : variant == StormRiteVariant.LARGE ? 2000 : 0;
+        if (requiredPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, requiredPower)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.storm.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL, center, 0, 3, 8)) {
+        int minRadius = variant == StormRiteVariant.BASE ? 0 : 3;
+        int maxRadius = variant == StormRiteVariant.BASE ? 3 : 7;
+        int targetStage = variant == StormRiteVariant.BASE ? 8 : 18;
+        if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL,
+                center, minRadius, maxRadius, targetStage)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
         consumeOfferedItem(offerings.get().weatherFocus());
         consumeOfferedItem(offerings.get().woodAsh());
+        if (offerings.get().chargedStone() != null) {
+            consumeOfferedItem(offerings.get().chargedStone());
+        }
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);
         return true;
@@ -4653,7 +4646,13 @@ public class RitualExecutor {
 
     private record RaiseColumnOfferings(ItemEntity brewOfSprouting, ItemEntity cactus, ItemEntity focus) {}
 
-    private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh) {}
+    private enum StormRiteVariant {
+        BASE,
+        LARGE,
+        PORTABLE
+    }
+
+    private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh, ItemEntity chargedStone) {}
 
     private record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 
@@ -5413,14 +5412,21 @@ public class RitualExecutor {
         return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
     }
 
-    private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center) {
-        Optional<ItemEntity> weatherFocus = findNearbyOffering(level, center,
-                stack -> stack.is(Items.SNOWBALL) || stack.is(Items.WATER_BUCKET));
+    private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant) {
+        Optional<ItemEntity> weatherFocus = switch (variant) {
+            case BASE -> findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
+            case LARGE -> findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET));
+            case PORTABLE -> findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        };
         Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
-        if (weatherFocus.isEmpty() || woodAsh.isEmpty()) {
+        Optional<ItemEntity> chargedStone = variant == StormRiteVariant.PORTABLE
+                ? findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+                : Optional.empty();
+        if (weatherFocus.isEmpty() || woodAsh.isEmpty()
+                || (variant == StormRiteVariant.PORTABLE && chargedStone.isEmpty())) {
             return Optional.empty();
         }
-        return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get()));
+        return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null)));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
