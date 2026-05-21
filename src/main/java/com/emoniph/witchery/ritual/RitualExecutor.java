@@ -354,7 +354,8 @@ public class RitualExecutor {
             return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(WitcheryItems.BREATH_OF_GODDESS.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
-                && (findCureInsanityOfferings(level, center).isPresent()
+                && (findCureCreatureOfferings(level, center).isPresent()
+                    || findCureInsanityOfferings(level, center).isPresent()
                     || findCureSinkingOfferings(level, center).isPresent()
                     || findCureOverheatingOfferings(level, center).isPresent()
                     || findCureWakingNightmareOfferings(level, center).isPresent())) {
@@ -3355,8 +3356,7 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().chargedStone());
         consumeOfferedItem(offerings.get().redstoneSoup());
         consumeOfferedItem(offerings.get().reekOfMisfortune());
-        consumeOfferedItem(offerings.get().fermentedSpiderEye());
-        consumeOfferedItem(offerings.get().glisteringMelon());
+        consumeOfferedItem(offerings.get().poisonousPotato());
         consumeOfferedItem(offerings.get().rottenFlesh());
         consumeOfferedItem(offerings.get().diamond());
         success(player, level, center, "witchery.ritual.blight.success",
@@ -4005,7 +4005,7 @@ public class RitualExecutor {
         }
         consumeOfferedItem(offerings.get().taglockKit());
         consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().fermentedSpiderEye());
+        consumeOfferedItem(offerings.get().spiderEye());
         consumeOfferedItem(offerings.get().gunpowder());
         consumeOfferedItem(offerings.get().brewGrotesque());
         success(player, level, center, "witchery.ritual.curse_creature.success",
@@ -4654,7 +4654,7 @@ public class RitualExecutor {
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
 
     private record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
-                                          ItemEntity fermentedSpiderEye, ItemEntity gunpowder,
+                                          ItemEntity spiderEye, ItemEntity gunpowder,
                                           ItemEntity brewGrotesque) {}
 
     private record CurseSinkingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity inkSac,
@@ -4681,6 +4681,9 @@ public class RitualExecutor {
 
     private record CureWakingNightmareOfferings(ItemEntity breathOfTheGoddess, ItemEntity goldenCarrot,
                                                 ItemEntity tormentedTwine, ItemEntity brewOfLove) {}
+
+    private record CureCreatureOfferings(ItemEntity breathOfTheGoddess, ItemEntity spiderEye,
+                                         ItemEntity gunpowder, ItemEntity brewOfLove) {}
 
     private record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
                                           ItemEntity spectralDust) {}
@@ -4720,7 +4723,7 @@ public class RitualExecutor {
                                       ItemEntity spiderEye, ItemEntity diamond) {}
 
     private record BlightOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,
-                                   ItemEntity fermentedSpiderEye, ItemEntity glisteringMelon, ItemEntity rottenFlesh,
+                                   ItemEntity fermentedSpiderEye, ItemEntity poisonousPotato, ItemEntity rottenFlesh,
                                    ItemEntity diamond) {}
 
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
@@ -4962,19 +4965,34 @@ public class RitualExecutor {
     private static Optional<CurseCreatureOfferings> findCurseCreatureOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> taglockKit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TAGLOCK_KIT.get()));
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
+        Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
-        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || fermentedSpiderEye.isEmpty()
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || spiderEye.isEmpty()
                 || gunpowder.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseCreatureOfferings(
                 taglockKit.get(),
                 exhaleOfHornedOne.get(),
-                fermentedSpiderEye.get(),
+                spiderEye.get(),
                 gunpowder.get(),
                 brewGrotesque.get()));
+    }
+
+    private static Optional<CureCreatureOfferings> findCureCreatureOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
+        Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        if (breathOfTheGoddess.isEmpty() || spiderEye.isEmpty() || gunpowder.isEmpty() || brewOfLove.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureCreatureOfferings(
+                breathOfTheGoddess.get(),
+                spiderEye.get(),
+                gunpowder.get(),
+                brewOfLove.get()));
     }
 
     private static Optional<CurseSinkingOfferings> findCurseSinkingOfferings(Level level, BlockPos center) {
@@ -5714,6 +5732,32 @@ public class RitualExecutor {
     }
 
     private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {
+        Optional<CureCreatureOfferings> curseCreature = findCureCreatureOfferings(level, center);
+        if (curseCreature.isPresent()) {
+            if (!(level instanceof ServerLevel sl)) return false;
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                caster.displayClientMessage(Component.translatable("witchery.ritual.cure.no_power"), false);
+                return false;
+            }
+            boolean cured = applyCure(caster, level, center, target -> {
+                boolean hadCurse = target.hasEffect(MobEffects.WITHER)
+                        || target.hasEffect(MobEffects.SLOWNESS)
+                        || target.hasEffect(MobEffects.WEAKNESS);
+                if (!hadCurse) return false;
+                target.removeEffect(MobEffects.WITHER);
+                target.removeEffect(MobEffects.SLOWNESS);
+                target.removeEffect(MobEffects.WEAKNESS);
+                return true;
+            }, "curse.witchery.cursed.goddess_removal");
+            if (!cured) return false;
+            consumeOfferedItem(curseCreature.get().breathOfTheGoddess());
+            consumeOfferedItem(curseCreature.get().spiderEye());
+            consumeOfferedItem(curseCreature.get().gunpowder());
+            consumeOfferedItem(curseCreature.get().brewOfLove());
+            return true;
+        }
+
         Optional<CureWakingNightmareOfferings> wakingNightmare = findCureWakingNightmareOfferings(level, center);
         if (wakingNightmare.isPresent()) {
             if (!(level instanceof ServerLevel sl)) return false;

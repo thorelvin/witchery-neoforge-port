@@ -375,12 +375,12 @@ Remaining gap:
 
 The next ritual precondition pass is now back in place:
 - `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare` now require an actual thunderstorm again before they will cast, matching the old `ONLY_IN_STROM` recipe traits.
-- `Curse Creature` now also once more expects its original `Taglock Kit`, `Exhale of the Horned One`, `fermented spider eye`, `gunpowder`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
+- `Curse Creature` now also once more expects its original `Taglock Kit`, `Exhale of the Horned One`, `spider eye`, `gunpowder`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Insanity` now also once more expects its original `Exhale of the Horned One`, `poisonous potato`, `sugar`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Sinking` now also once more expects its original `Exhale of the Horned One`, `ink sac`, `nether wart`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Overheating` now also once more expects its original `Exhale of the Horned One`, the port's `Demonic Blood` item in the old Infernal Blood slot, a `blaze rod`, and `Brew of Grotesque` plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Waking Nightmare` now also once more expects its original `Exhale of the Horned One`, `Mellifluous Hunger`, `Tormented Twine`, `emerald`, and `Brew of Grotesque` support offerings plus its original 10000 altar-power startup cost, instead of firing for free once the storm check passes.
-- The first small ritual `Breath of the Goddess` cure family is now back too: Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power, using the port's existing inventory-taglock flow instead of dropped taglocks.
+- The first small ritual `Breath of the Goddess` cure family is now back too: Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power, using the port's existing inventory-taglock flow instead of dropped taglocks.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
 - These checks now happen before taglock consumption, so failed preconditions no longer waste the curse item flow.
 
