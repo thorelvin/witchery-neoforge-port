@@ -330,10 +330,11 @@ The protection barrier family is now back much closer to old Witchery:
 - The barrier itself now has real timed block/entity behavior again instead of being a dead placeholder block.
 - The smaller monster-only barrier variant now routes from the original small ritual ring instead of medium and once again asks for redstone plus its startup altar cost before sustaining.
 - The timed portable barrier variant is still reachable on its original medium circle, now expects `Charged Attuned Stone` again instead of collapsing onto plain `Attuned Stone`, and once more asks for its obsidian support offering.
+- The broader medium barrier and the smaller monster-only barrier now also honour the old optional same-dimension bound-waystone relocation extra again in practical form, so a nearby bound waystone can retarget the barrier away from the casting circle and too-distant waystones now fail with the original rite-too-far feedback instead of being silently ignored.
 - Sanctity and Imprisonment now also once more ask for redstone plus their original 500 altar-power startup cost instead of activating as effectively free wards once an altar merely exists nearby.
 
 Remaining gap:
-- This restores the practical barrier mechanics, startup altar costs, and most of the ring-size split, and the old charged-attuned-stone distinction is now back for the portable route, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly and the optional bound-waystone relocation behavior is still deferred.
+- This restores the practical barrier mechanics, startup altar costs, most of the ring-size split, the old optional relocation extra on the non-portable barrier branches, and the charged-attuned-stone distinction on the portable route, but the activation mapping is still modernized rather than matching the original multi-sacrifice recipes exactly.
 
 ### 26. Flowing Spirit world-block effects were still mostly missing - Fixed / verify
 

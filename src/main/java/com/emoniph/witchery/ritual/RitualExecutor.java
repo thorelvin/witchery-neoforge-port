@@ -1032,18 +1032,31 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.glowstone_support"), false);
             return false;
         }
+        int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
+        if (relocation.tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
+        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
+                ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
+                : List.of();
         if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.MEDIUM,
-                center, 6, 6, 0, 20, 0, 1.4f, 0)) {
+                center, relocation.effectCenter(), 6, 6, 0, 20, 0, 1.4f, 0, supplementalSacrifices)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
         consumeOfferedItem(glowstone.get());
+        if (relocation.boundWaystone() != null) {
+            consumeOfferedItem(relocation.boundWaystone());
+        }
         success(player, level, center, "witchery.ritual.protection.activated",
                 SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of Protection barrier raised at {} by {}", center, player.getName().getString());
@@ -1069,6 +1082,15 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
+        int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS
+                ? findOptionalWaystoneRelocation(level, center, covenSize)
+                : new OptionalWaystoneRelocation(null, center, false);
+        if (relocation.tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
 
         int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
         int startupPower = switch (type) {
@@ -1085,12 +1107,19 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, type, circleSize, center, radius, height, targetStage, 20, 0, upkeepCost, 0)) {
+        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
+                ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
+                : List.of();
+        if (!queueActiveRitual(sl, type, circleSize, center, relocation.effectCenter(),
+                radius, height, targetStage, 20, 0, upkeepCost, 0, supplementalSacrifices)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
         supportOffering.ifPresent(RitualExecutor::consumeOfferedItem);
+        if (relocation.boundWaystone() != null) {
+            consumeOfferedItem(relocation.boundWaystone());
+        }
         success(player, level, center, "witchery.ritual.protection.activated",
                 SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
         WitcheryMod.LOGGER.info("Rite of Protection variant {} raised at {} by {}", type, center, player.getName().getString());
@@ -2119,9 +2148,9 @@ public class RitualExecutor {
         }
 
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, true);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
-            spawnRingParticles(level, ritual.center, ritual.minRadius, 16);
+            spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 16);
         }
         return ritual.targetStage <= 0 || ritual.stage < ritual.targetStage;
     }
@@ -2134,18 +2163,18 @@ public class RitualExecutor {
         }
 
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, false);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, false);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
-            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+            spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
         return true;
     }
 
     private static boolean tickProtectionBarrierPortableRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.center, ritual.minRadius, ritual.maxRadius, true);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
-            spawnRingParticles(level, ritual.center, ritual.minRadius, 12);
+            spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
         return ritual.stage < ritual.targetStage;
     }
