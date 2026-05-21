@@ -1,6 +1,9 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.GrassperBlock;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -11,8 +14,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.material.Fluids;
 
 /**
  * Mutating Sprig - a controlled mutation tool for a few specific block changes.
@@ -34,6 +41,16 @@ public class MutatingSprigItem extends Item {
 
         BlockPos pos = ctx.getClickedPos();
         BlockState state = level.getBlockState(pos);
+        if (tryCreateGrasspers(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
         if (!tryMutate(level, pos, state)) {
             return InteractionResult.PASS;
         }
@@ -69,6 +86,30 @@ public class MutatingSprigItem extends Item {
             return true;
         }
         return false;
+    }
+
+    private static boolean tryCreateGrasspers(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.CHEST)
+                || !state.hasProperty(ChestBlock.TYPE)
+                || state.getValue(ChestBlock.TYPE) != ChestType.SINGLE
+                || !(level.getBlockEntity(pos) instanceof ChestBlockEntity chest)
+                || !chest.isEmpty()
+                || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (!level.getBlockState(pos.relative(direction)).is(Blocks.SHORT_GRASS)) {
+                return false;
+            }
+        }
+
+        level.removeBlock(pos, false);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos grassPos = pos.relative(direction);
+            level.setBlock(grassPos, WitcheryBlocks.GRASSPER.get().defaultBlockState().setValue(GrassperBlock.FACING, direction), 3);
+        }
+        return true;
     }
 
     private static boolean hasWaterOrIceAbove(Level level, BlockPos pos) {

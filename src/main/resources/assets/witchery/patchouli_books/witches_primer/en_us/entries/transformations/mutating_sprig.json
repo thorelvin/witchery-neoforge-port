@@ -17,7 +17,7 @@
     {
       "type": "patchouli:text",
       "title": "Practical Mutations",
-      "text": "Rewoven now restores the core block workings: $(li)$(item)Grass Block$() becomes $(item)Mycelium$()$(li)$(item)Mycelium$() becomes $(item)Grass Block$()$(li)Underwater $(item)Dirt$() becomes $(item)Clay$()$(li)Underwater $(item)Clay$() becomes $(item)Dirt$()$(br2)The larger plant-construction mutations still remain follow-up work, so treat this as the first true return of the tool rather than the whole family."
+      "text": "Rewoven now restores the core block workings: $(li)$(item)Grass Block$() becomes $(item)Mycelium$()$(li)$(item)Mycelium$() becomes $(item)Grass Block$()$(li)Underwater $(item)Dirt$() becomes $(item)Clay$()$(li)Underwater $(item)Clay$() becomes $(item)Dirt$()$(br2)The first plant-construction mutation is back too: use the sprig on an $(item)empty Chest$() sitting over a water source with $(item)Short Grass$() on each of its four sides, and those grasses will twist into four $(item)Grasspers$()."
     }
   ]
 }
