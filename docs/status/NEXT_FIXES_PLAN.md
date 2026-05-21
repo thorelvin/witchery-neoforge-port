@@ -59,8 +59,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The Primer now has a dedicated infusion-sources entry explaining how to obtain `Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, and `Infernal Animus`, so the player now has a real starting point for the four infusion paths instead of unexplained item names.
 3. Anointing Paste coverage - closed in first Primer pass.
    The Primer now shows the Anointing Paste recipe and explains that it is applied directly to a placed vanilla cauldron to create a Witch's Cauldron, closing the old "how do I even start cauldron brewing?" gap. A real Witch's Cauldron block foundation now also exists in the port with empty/water-cauldron conversion and real water-level handling; the remaining follow-up is the deeper cauldron recipe system rather than the block's existence.
-4. Missing rite coverage in the compendium.
-   Chapter 11 still omits a meaningful set of real rites that exist in the port or are intended parity targets. `Rite of the Forest`, `Rite of Manifestation`, `Rite of Beastial Call`, `Rite of Sky's Wrath`, `Rite of Sanctity`, `Rite of Imprisonment`, `Rite of Broiling`, `Rite of Broken Earth`, `Rite of Prior Incarnation`, `Rite of Glyphic Transformation`, `Rite of Nature's Power`, `Rite of Earth's Wrath`, and `Rite of Icy Expansion` now have first-pass Primer coverage again, but `Rite of Moving Earth` still needs real guide coverage. This is both a completeness gap and a progression gap because players cannot discover some real systems from the in-game guide alone.
+4. Missing rite coverage in the compendium - first pass now closed.
+   The previously omitted Chapter 11 rites now all have first-pass Primer coverage again, including `Rite of Moving Earth`. The remaining documentation work shifts from "missing rite entirely" toward better cross-links, item bridges, and deeper explanations for things like Treefyd Seeds, Spectral Familiars, and Mystic Branch use.
 5. Rite of the Forest / Treefyd seed bridge.
    The Primer now teaches the rite itself again, but the full `Treefyd Seed` bridge is still blocked by repo truth: the actual `Treefyd Seed` item/recipe path is not yet surfaced in the port. Finish that item path, then connect the guide to it directly.
 6. Spectral Familiar explanation.
@@ -76,8 +76,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
-1. Missing rite coverage next.
-   Fill the omitted Chapter 11 rites, with `Rite of the Forest` now serving as the model for how the rest should be reintroduced and with the remaining Treefyd-seed bridge still waiting on the missing item path.
+1. Treefyd seed bridge next.
+   The rites themselves now have first-pass coverage again, so the next discovery blocker is connecting `Rite of the Forest` honestly to the missing `Treefyd Seed` item/recipe path once that path exists in the port.
 2. Tool/familiar identity after that.
    `Mystic Branch`, `Spectral Familiar`, and `Necromantic Stone` should be explained once the player can at least enter the systems they belong to.
 3. Equipment and minor completeness after the blockers.
