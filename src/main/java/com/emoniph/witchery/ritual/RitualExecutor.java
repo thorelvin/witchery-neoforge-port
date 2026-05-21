@@ -52,6 +52,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -462,6 +463,10 @@ public class RitualExecutor {
         } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfInfuseCrystalBall(player, level, center));
+        } else if (item.is(WitcheryItems.INFUSED_BREW_BASE.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+            return matchedResult(riteOfInfuseBrew(player, level, center));
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfRainOfToads(player, level, center));
@@ -2993,6 +2998,67 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Shared infused-brew rite trigger — chooses the original Soaring or Grave branch by offerings and sacrifice. */
+    private static boolean riteOfInfuseBrew(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        Optional<InfuseBrewSoaringOfferings> soaringOfferings = findInfuseBrewSoaringOfferings(level, center);
+        if (soaringOfferings.isPresent()) {
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.ritual.infuse_brew.no_power"), false);
+                return false;
+            }
+
+            consumeOfferedItem(soaringOfferings.get().infusedBrewBase());
+            consumeOfferedItem(soaringOfferings.get().broom());
+            consumeOfferedItem(soaringOfferings.get().feather());
+            consumeOfferedItem(soaringOfferings.get().arthana());
+            soaringOfferings.get().owl().discard();
+
+            ItemEntity drop = new ItemEntity(sl,
+                    center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
+                    new ItemStack(WitcheryItems.BREW_OF_SOARING.get()));
+            drop.setDeltaMovement(0.0, 0.25, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.infuse_brew_soaring.success",
+                    SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+            WitcheryMod.LOGGER.info("Rite of Infusion created Brew of Soaring at {}", center);
+            return true;
+        }
+
+        Optional<InfuseBrewGraveOfferings> graveOfferings = findInfuseBrewGraveOfferings(level, center);
+        if (graveOfferings.isPresent()) {
+            if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.ritual.infuse_brew.no_power"), false);
+                return false;
+            }
+
+            consumeOfferedItem(graveOfferings.get().infusedBrewBase());
+            consumeOfferedItem(graveOfferings.get().bone());
+            consumeOfferedItem(graveOfferings.get().denseWeb());
+            consumeOfferedItem(graveOfferings.get().necroStone());
+            graveOfferings.get().zombie().discard();
+
+            ItemEntity drop = new ItemEntity(sl,
+                    center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
+                    new ItemStack(WitcheryItems.BREW_OF_GRAVE.get()));
+            drop.setDeltaMovement(0.0, 0.25, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.infuse_brew_grave.success",
+                    SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+            WitcheryMod.LOGGER.info("Rite of Infusion created Brew of the Grave at {}", center);
+            return true;
+        }
+
+        level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+        player.displayClientMessage(Component.translatable("witchery.ritual.infuse_brew.support"), false);
+        return false;
+    }
+
     private static Block glyphicTransformationTargetBlock(ItemStack ingredient) {
         if (ingredient.is(WitcheryItems.CHALK.get())) {
             return WitcheryBlocks.CIRCLE_GLYPH.get();
@@ -4391,6 +4457,12 @@ public class RitualExecutor {
 
     private record CrystalBallOfferings(ItemEntity quartzSphere, ItemEntity goldIngot, ItemEntity happenstanceOil) {}
 
+    private record InfuseBrewSoaringOfferings(ItemEntity infusedBrewBase, ItemEntity broom, ItemEntity feather,
+                                              ItemEntity arthana, OwlFamiliarEntity owl) {}
+
+    private record InfuseBrewGraveOfferings(ItemEntity infusedBrewBase, ItemEntity bone, ItemEntity denseWeb,
+                                            ItemEntity necroStone, Zombie zombie) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4537,18 +4609,33 @@ public class RitualExecutor {
     }
 
     private static Optional<Villager> findNearbyVillagerSacrifice(Level level, BlockPos center) {
+        return findNearbyLivingSacrifice(level, center, Villager.class);
+    }
+
+    private static Optional<OwlFamiliarEntity> findNearbyOwlSacrifice(Level level, BlockPos center) {
+        return findNearbyLivingSacrifice(level, center, OwlFamiliarEntity.class);
+    }
+
+    private static Optional<Zombie> findNearbyZombieSacrifice(Level level, BlockPos center) {
+        return findNearbyLivingSacrifice(level, center, Zombie.class);
+    }
+
+    private static <T extends LivingEntity> Optional<T> findNearbyLivingSacrifice(Level level, BlockPos center, Class<T> type) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
         double radius = 1.5;
         double radiusSq = radius * radius;
         AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
-        Villager closest = null;
+        T closest = null;
         double closestDistance = Double.MAX_VALUE;
-        for (Villager villager : level.getEntitiesOfClass(Villager.class, bounds)) {
-            double distance = villager.position().distanceToSqr(centerPoint);
+        for (T entity : level.getEntitiesOfClass(type, bounds)) {
+            if (!entity.isAlive()) {
+                continue;
+            }
+            double distance = entity.position().distanceToSqr(centerPoint);
             if (distance >= radiusSq || distance > closestDistance) {
                 continue;
             }
-            closest = villager;
+            closest = entity;
             closestDistance = distance;
         }
         return Optional.ofNullable(closest);
@@ -4609,6 +4696,40 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new CrystalBallOfferings(quartzSphere.get(), goldIngot.get(), happenstanceOil.get()));
+    }
+
+    private static Optional<InfuseBrewSoaringOfferings> findInfuseBrewSoaringOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> infusedBrewBase = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFUSED_BREW_BASE.get()));
+        Optional<ItemEntity> broom = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BROOM.get()));
+        Optional<ItemEntity> feather = findNearbyOffering(level, center, stack -> stack.is(Items.FEATHER));
+        Optional<ItemEntity> arthana = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ARTHANA.get()));
+        Optional<OwlFamiliarEntity> owl = findNearbyOwlSacrifice(level, center);
+        if (infusedBrewBase.isEmpty() || broom.isEmpty() || feather.isEmpty() || arthana.isEmpty() || owl.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new InfuseBrewSoaringOfferings(
+                infusedBrewBase.get(),
+                broom.get(),
+                feather.get(),
+                arthana.get(),
+                owl.get()));
+    }
+
+    private static Optional<InfuseBrewGraveOfferings> findInfuseBrewGraveOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> infusedBrewBase = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFUSED_BREW_BASE.get()));
+        Optional<ItemEntity> bone = findNearbyOffering(level, center, stack -> stack.is(Items.BONE));
+        Optional<ItemEntity> denseWeb = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DENSE_WEB.get()));
+        Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
+        Optional<Zombie> zombie = findNearbyZombieSacrifice(level, center);
+        if (infusedBrewBase.isEmpty() || bone.isEmpty() || denseWeb.isEmpty() || necroStone.isEmpty() || zombie.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new InfuseBrewGraveOfferings(
+                infusedBrewBase.get(),
+                bone.get(),
+                denseWeb.get(),
+                necroStone.get(),
+                zombie.get()));
     }
 
     private static Optional<SummonFamiliarOfferings> findSummonFamiliarOfferings(Level level, BlockPos center) {
