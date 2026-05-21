@@ -518,10 +518,11 @@ Remaining gap:
 The next ritual routing pass is now closer to original Witchery:
 - `Prior Incarnation` now requires an infernal small circle again instead of activating from any small ring.
 - Familiar binding and familiar calling no longer live on the small-circle dispatcher; they now route through the medium ritual circle instead, which is much closer to the original `bindfamiliar` and `callfamiliar` rites.
+- That shared medium `whiff_of_magic` path now also restores the original familiar support gates and altar costs again: binding once more asks for Tear of the Goddess, Odour of Purity, a diamond, Demonic Blood, and 8000 altar power, while calling once more asks for Breath of the Goddess, Hint of Rebirth, and 1000 altar power.
 - The original small ritual `summonfamiliar` path is back too through a representative `drop_of_luck` trigger, and it once again summons a bound Witch's Cat into the circle instead of leaving the small ritual familiar branch missing entirely.
 
 Remaining gap:
-- These rites are still triggered through simplified representative ingredients rather than the full original sacrifice sets, but their ring size and chalk family now line up much more closely with 1.7.10.
+- These rites are still triggered through simplified representative ingredients rather than the full original sacrifice sets, but their ring size, chalk family, support offerings, and altar-power costs now line up much more closely with 1.7.10.
 
 ### 43. Blindness and Blight were using the wrong mechanic entirely - Fixed / verify
 

@@ -623,6 +623,17 @@ public class RitualExecutor {
     /** Rite of Bind Familiar — binds nearby tamed familiar-capable creatures instead of spawning a new one. */
     private static boolean riteOfBindFamiliar(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<BindFamiliarOfferings> offerings = findBindFamiliarOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_familiar.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 8000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_familiar.no_power"), false);
+            return false;
+        }
 
         AABB playerBounds = new AABB(center).inflate(FAMILIAR_BIND_RADIUS, 1.0, FAMILIAR_BIND_RADIUS);
         List<ServerPlayer> nearbyPlayers = sl.getEntitiesOfClass(ServerPlayer.class, playerBounds);
@@ -654,6 +665,11 @@ public class RitualExecutor {
         if (!boundAny) {
             return false;
         }
+
+        consumeOfferedItem(offerings.get().tearOfTheGoddess());
+        consumeOfferedItem(offerings.get().odourOfPurity());
+        consumeOfferedItem(offerings.get().diamond());
+        consumeOfferedItem(offerings.get().demonicBlood());
 
         success(player, level, center, "witchery.ritual.bind_familiar.success",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
@@ -3907,6 +3923,17 @@ public class RitualExecutor {
     private static boolean riteOfCallFamiliar(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<CallFamiliarOfferings> offerings = findCallFamiliarOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.no_power"), false);
+            return false;
+        }
 
         WitcheryPlayerData familiarData = WitcheryAttachments.get(sp);
         double x = center.getX() + 0.5;
@@ -3948,6 +3975,9 @@ public class RitualExecutor {
                     Set.of(), familiar.getYRot(), familiar.getXRot(), false);
         }
         familiar.setOrderedToSit(familiarData.isFamiliarSitting());
+
+        consumeOfferedItem(offerings.get().breathOfTheGoddess());
+        consumeOfferedItem(offerings.get().hintOfRebirth());
 
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
@@ -4411,6 +4441,11 @@ public class RitualExecutor {
 
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
+    private record BindFamiliarOfferings(ItemEntity tearOfTheGoddess, ItemEntity odourOfPurity,
+                                         ItemEntity diamond, ItemEntity demonicBlood) {}
+
+    private record CallFamiliarOfferings(ItemEntity breathOfTheGoddess, ItemEntity hintOfRebirth) {}
+
     private record SummonImpOfferings(ItemEntity refinedEvil, ItemEntity infernalBlood, ItemEntity enderPearl,
                                       ItemEntity attunedStone) {}
 
@@ -4740,6 +4775,32 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SummonFamiliarOfferings(egg.get(), goldIngot.get(), arthana.get()));
+    }
+
+    private static Optional<BindFamiliarOfferings> findBindFamiliarOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> tearOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TEAR_OF_GODDESS.get()));
+        Optional<ItemEntity> odourOfPurity = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ODOUR_OF_PURITY.get()));
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        if (tearOfTheGoddess.isEmpty() || odourOfPurity.isEmpty() || diamond.isEmpty() || demonicBlood.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindFamiliarOfferings(
+                tearOfTheGoddess.get(),
+                odourOfPurity.get(),
+                diamond.get(),
+                demonicBlood.get()));
+    }
+
+    private static Optional<CallFamiliarOfferings> findCallFamiliarOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> hintOfRebirth = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()));
+        if (breathOfTheGoddess.isEmpty() || hintOfRebirth.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CallFamiliarOfferings(
+                breathOfTheGoddess.get(),
+                hintOfRebirth.get()));
     }
 
     private static Optional<SummonImpOfferings> findSummonImpOfferings(Level level, BlockPos center) {
