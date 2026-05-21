@@ -35,6 +35,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(OwlFamiliarEntity::new, MobCategory.CREATURE)
                             .sized(0.5F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "owl"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<RavenEntity>> RAVEN =
+            ENTITY_TYPES.register("raven", () ->
+                    EntityType.Builder.of(RavenEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 0.6F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "raven"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CatFamiliarEntity>> FAMILIAR_CAT =
             ENTITY_TYPES.register("familiar_cat", () ->
                     EntityType.Builder.of(CatFamiliarEntity::new, MobCategory.CREATURE)
@@ -194,6 +199,7 @@ public class WitcheryEntities {
 
         // Familiars — creature-category animals
         event.register(OWL.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(RAVEN.get(),         SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(FAMILIAR_CAT.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(TOAD.get(),          SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
     }
@@ -201,6 +207,7 @@ public class WitcheryEntities {
     @SubscribeEvent
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(OWL.get(),           OwlFamiliarEntity.createAttributes().build());
+        event.put(RAVEN.get(),         RavenEntity.createAttributes().build());
         event.put(FAMILIAR_CAT.get(),  CatFamiliarEntity.createAttributes().build());
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
         event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());

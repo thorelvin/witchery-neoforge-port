@@ -1,0 +1,27 @@
+package com.emoniph.witchery.init;
+
+import com.emoniph.witchery.WitcheryMod;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+public final class WitcherySoundEvents {
+
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
+            DeferredRegister.create(Registries.SOUND_EVENT, WitcheryMod.MODID);
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_1 = register("entity.raven.idle1");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_2 = register("entity.raven.idle2");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_3 = register("entity.raven.idle3");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_4 = register("entity.raven.idle4");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_5 = register("entity.raven.idle5");
+
+    private WitcherySoundEvents() {}
+
+    private static DeferredHolder<SoundEvent, SoundEvent> register(String path) {
+        Identifier id = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, path);
+        return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(id));
+    }
+}

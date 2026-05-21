@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-21 (trader menu pass + setup stations QA hut pass + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + rowan belladonna companion pass + Mutandis bush pool correction + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass + hobgoblin launch-structure fix + startup warning cleanup + ritual refund lifecycle pass + ritual chalk-family sustain pass + ritual family-gate pass + chalk block shape/model fix + infusion charge-state groundwork + infusion recharge rite + raven entity pass + raven command and spawn-egg tint pass)
+Last reconciled: 2026-05-21 (trader menu pass + setup stations QA hut pass + Torment portal/verifier follow-up + fetish visual parity pass + rowan spacing + rowan belladonna companion pass + rowan forest-modifier cleanup + Mutandis bush pool correction + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass + hobgoblin launch-structure fix + startup warning cleanup + ritual refund lifecycle pass + ritual chalk-family sustain pass + ritual family-gate pass + chalk block shape/model fix + infusion charge-state groundwork + infusion recharge rite + raven entity pass + raven natural spawn + raven command and spawn-egg tint pass)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -113,7 +113,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Mandrake mob | Done | MONSTER category; spawn placement registered |
 | Demon | Partial | Fireball mob; texture/UV audit still open |
 | Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
-| Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` now provide direct QA hooks for the real raven path |
+| Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; ravens now also spawn naturally in forest and cold overworld biomes instead of existing only through QA commands and Brew of Hitchcock, and `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` remain direct QA hooks for the real raven path |
 | Cat familiar | Partial | Gameplay works; body-proportion model needs tweak |
 | Toad familiar | Done | Tameable; collects items |
 | Broom | Done | Rideable; enchanted variant (Rite of Infusion) |
@@ -142,7 +142,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies, a custom `tree_clearance` placement filter now keeps rowan generation away from nearby logs/leaves so it gets a more open, special footprint, and a wild-only Rowan wrapper now lets some naturally spawned trees carry 1-2 Belladonna flowers without affecting player-grown saplings |
+| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies, a custom `tree_clearance` placement filter now keeps rowan generation away from nearby logs/leaves so it gets a more open, special footprint, a wild-only Rowan wrapper now lets some naturally spawned trees carry 1-2 Belladonna flowers without affecting player-grown saplings, and the older overlapping forest-only biome modifier is gone so that wrapper is the single live Rowan worldgen path |
 | Rowan berries | Done | Loot/drop chain |
 | Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage plus the old self-sample/offline-player drain safeguards, ember moss fire/spread/shears behavior, spanish moss fast growth plus non-ladder/high-flammability behavior, bramble hazard/spread plus original toughness, void bramble teleport plus owner-column removal/unbreakable/ritual-nulling profile, grassper item stash plus comparator output plus facing-aware model orientation, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, leaping lily buffs, and critter snare catch/release behavior are now restored closer to original, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks craft from rowan logs and are tagged as planks; rowan log, wood, planks, sapling, and lower-half door drops now mirror vanilla self-drop behavior; Rowan stairs and slab are restored with rowan plank models, recipes, tags, loot, and old `5/20` flammability; rowan door has original `5.0F` hardness plus UUID-locked key/keyring flow |
@@ -167,7 +167,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Rowan Wood Door | Done | UUID-locked; key given on placement; keyring combines keys |
 | Witches' Primer | Done | Patchouli optional; 8 categories; 42 atmospheric entries; 16 generated images; Witch's Hand + Book recipe, with Boline / Anointing Paste / infusion-source coverage now added, Mystic Branch now explained as a real current creature-power focus, Necromantic Stone now explained with its restored rite and current live uses, and the Chapter 11 missing-rite batch now extended through Rite of the Forest, Rite of Manifestation, Rite of Beastial Call, Rite of Sky's Wrath, Rite of Sanctity, Rite of Imprisonment, Rite of Broiling, Rite of Broken Earth, Rite of Moving Earth, Rite of Prior Incarnation, Rite of Glyphic Transformation, Rite of Nature's Power, Rite of Earth's Wrath, and Rite of Icy Expansion |
 | JEI recipe categories | Done | Kettle, Oven, Distillery, Spinning Wheel, Brazier |
-| Spawn eggs | Done | All 21 entities have eggs; Raven added alongside Hobgoblin/Flying Monkey/Binky |
+| Spawn eggs | Done | All 22 current living Witchery entities with egg-worthy QA value now have eggs, with Raven added alongside Hobgoblin/Flying Monkey/Binky |
 
 ---
 
@@ -185,7 +185,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | `/witchery fullmoon` | Done | Jump time to next full moon |
 | `/witchery clear` | Done | Wipe all witchery state |
 | `/witchery status` | Done | Multi-line player state dump, now including infusion current/max energy |
-| `/witchery spawn <entity>` | Done | 22 direct entity spawns plus dedicated wickerman and raven-flock helpers |
+| `/witchery spawn <entity>` | Done | 23 direct entity spawns plus dedicated wickerman and raven-flock helpers |
 | `/witchery ritual hitchcock [count]` | Done | Releases the Brew of Hitchcock raven flock directly for QA without consuming the brew item |
 | `/witchery dream` / `torment` / `exit` | Done | Dimension teleport + return |
 | `/witchery verify torment` | Done | Server-side Torment audit for fresh/deleted chunks, full legacy footprint/layout parity, and atmosphere data |

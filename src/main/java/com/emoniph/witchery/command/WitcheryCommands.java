@@ -254,10 +254,22 @@ public class WitcheryCommands {
                 .then(Commands.literal("setup")
                         .then(Commands.literal("stations")
                                 .executes(ctx -> setupStations(ctx.getSource()))))
+                .then(Commands.literal("ritual")
+                        .then(Commands.literal("hitchcock")
+                                .executes(ctx -> startHitchcockRitual(ctx.getSource()))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
+                                        .executes(ctx -> startHitchcockRitual(ctx.getSource(),
+                                                IntegerArgumentType.getInteger(ctx, "count"))))))
 
                 // ── Spawn ─────────────────────────────────────────────────────
                 .then(Commands.literal("spawn")
                         .then(Commands.literal("wickerman")     .executes(ctx -> spawnWickerman(ctx.getSource())))
+                        .then(Commands.literal("raven")         .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.RAVEN.get())))
+                        .then(Commands.literal("ravens")
+                                .executes(ctx -> spawnRavens(ctx.getSource(), com.emoniph.witchery.item.BrewOfHitchcockItem.DEFAULT_RAVEN_COUNT))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
+                                        .executes(ctx -> spawnRavens(ctx.getSource(),
+                                                IntegerArgumentType.getInteger(ctx, "count")))))
                         .then(Commands.literal("owl")           .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.OWL.get())))
                         .then(Commands.literal("familiar_cat")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.FAMILIAR_CAT.get())))
                         .then(Commands.literal("toad")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.TOAD.get())))
@@ -608,6 +620,55 @@ public class WitcheryCommands {
         sl.addFreshEntity(entity);
         src.sendSuccess(() -> Component.literal("Spawned " + type.getDescription().getString() + "."), false);
         return 1;
+    }
+
+    private static int spawnRavens(CommandSourceStack src, int count)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel sl)) return 0;
+
+        BlockPos center = player.blockPosition().relative(player.getDirection(), 5);
+        int spawned = com.emoniph.witchery.item.BrewOfHitchcockItem.spawnRavenFlock(
+                sl,
+                center.getX() + 0.5,
+                center.getY() + 1.0,
+                center.getZ() + 0.5,
+                count,
+                com.emoniph.witchery.item.BrewOfHitchcockItem.DEFAULT_RAVEN_SPREAD);
+        if (spawned <= 0) {
+            src.sendFailure(Component.literal("Failed to spawn ravens."));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal(
+                "Spawned " + spawned + " ravens at "
+                        + center.getX() + ", " + center.getY() + ", " + center.getZ() + "."), false);
+        return spawned;
+    }
+
+    private static int startHitchcockRitual(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        return startHitchcockRitual(src, com.emoniph.witchery.item.BrewOfHitchcockItem.DEFAULT_RAVEN_COUNT);
+    }
+
+    private static int startHitchcockRitual(CommandSourceStack src, int count)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel sl)) return 0;
+
+        int spawned = com.emoniph.witchery.item.BrewOfHitchcockItem.spawnRavenFlock(
+                sl,
+                player.getX(),
+                player.getY() + 1.0,
+                player.getZ(),
+                count,
+                com.emoniph.witchery.item.BrewOfHitchcockItem.DEFAULT_RAVEN_SPREAD);
+        if (spawned <= 0) {
+            src.sendFailure(Component.literal("Failed to start Brew of Hitchcock."));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal(
+                "Started Brew of Hitchcock and released " + spawned + " ravens."), false);
+        return spawned;
     }
 
     // ── New debug handlers ────────────────────────────────────────────────────

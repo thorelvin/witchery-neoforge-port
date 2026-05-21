@@ -1,6 +1,16 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/poltergeist_spawn_egg"
-  }
+﻿{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "witchery:item/template_spawn_egg",
+                  "tints":  [
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  8088189
+                                },
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  13126756
+                                }
+                            ]
+              }
 }

@@ -1,0 +1,27 @@
+{
+  "entity.raven.idle1": {
+    "sounds": [
+      "witchery:entity/raven/idle1"
+    ]
+  },
+  "entity.raven.idle2": {
+    "sounds": [
+      "witchery:entity/raven/idle2"
+    ]
+  },
+  "entity.raven.idle3": {
+    "sounds": [
+      "witchery:entity/raven/idle3"
+    ]
+  },
+  "entity.raven.idle4": {
+    "sounds": [
+      "witchery:entity/raven/idle4"
+    ]
+  },
+  "entity.raven.idle5": {
+    "sounds": [
+      "witchery:entity/raven/idle5"
+    ]
+  }
+}

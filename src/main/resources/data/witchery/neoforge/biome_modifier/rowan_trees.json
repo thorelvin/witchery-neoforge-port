@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "#minecraft:is_forest",
-  "features": "witchery:rowan_tree",
-  "step": "vegetal_decoration"
-}

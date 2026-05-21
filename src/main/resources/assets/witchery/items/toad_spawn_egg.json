@@ -1,6 +1,16 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/toad_spawn_egg"
-  }
+﻿{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "witchery:item/template_spawn_egg",
+                  "tints":  [
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  6717764
+                                },
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  12690283
+                                }
+                            ]
+              }
 }

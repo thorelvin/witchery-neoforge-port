@@ -1,6 +1,16 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/witch_hunter_spawn_egg"
-  }
+﻿{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "witchery:item/template_spawn_egg",
+                  "tints":  [
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  6967603
+                                },
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  13617592
+                                }
+                            ]
+              }
 }

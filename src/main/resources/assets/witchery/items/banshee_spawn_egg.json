@@ -1,6 +1,16 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/banshee_spawn_egg"
-  }
+﻿{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "witchery:item/template_spawn_egg",
+                  "tints":  [
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  14020072
+                                },
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  9426120
+                                }
+                            ]
+              }
 }

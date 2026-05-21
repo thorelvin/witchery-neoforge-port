@@ -398,6 +398,9 @@ public class WitcheryItems {
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.HORNED_HUNTSMAN.get())));
 
     // ── Familiar spawn eggs ────────────────────────────────────────────────────
+    public static final DeferredItem<SpawnEggItem> RAVEN_SPAWN_EGG =
+            ITEMS.register("raven_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.RAVEN.get())));
     public static final DeferredItem<SpawnEggItem> OWL_SPAWN_EGG =
             ITEMS.register("owl_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.OWL.get())));

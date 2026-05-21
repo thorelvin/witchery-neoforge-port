@@ -194,6 +194,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.HORNED_HUNTSMAN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.DEATH_SPAWN_EGG.get());
                         // Spawn eggs — familiars & sprint-8/9 entities
+                        output.accept(WitcheryItems.RAVEN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.OWL_SPAWN_EGG.get());
                         output.accept(WitcheryItems.FAMILIAR_CAT_SPAWN_EGG.get());
                         output.accept(WitcheryItems.TOAD_SPAWN_EGG.get());

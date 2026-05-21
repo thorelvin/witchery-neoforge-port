@@ -1,6 +1,16 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/spectre_spawn_egg"
-  }
+﻿{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "witchery:item/template_spawn_egg",
+                  "tints":  [
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  11065576
+                                },
+                                {
+                                    "type":  "minecraft:constant",
+                                    "value":  4882088
+                                }
+                            ]
+              }
 }

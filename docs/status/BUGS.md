@@ -936,6 +936,7 @@ The previous rowan worldgen improvement stopped trunks from dropping onto leaf-c
 Current state:
 - `rowan_tree.json` now keeps the `WORLD_SURFACE_WG` surface sample and adds a custom `tree_clearance` placement filter.
 - `TreeClearancePlacement` rejects rowan generation when nearby logs or leaves occupy the checked clearance box, giving rowan a more open footprint instead of letting it tuck straight into other tree canopies.
+- The old extra forest-only Rowan biome modifier has now been removed, so the newer wild-rowan wrapper is the single live worldgen path instead of sometimes double-adding rowan in forest biomes.
 - `MutandisItem` now includes vanilla `BUSH` in the shared plant mutation pool that Extremis inherits from, restoring the intended shrub outcome.
 - Mutandis mutation placement still normalizes upper-half double-plant clicks back to the lower half and safely clears orphaned upper halves when swapping away from double plants.
 - `fetish_witchs_ladder.json` now declares `minecraft:cutout`, matching the other transparent cross-style Witchery blocks so the original Witch's Ladder sprite no longer renders like an opaque block.
