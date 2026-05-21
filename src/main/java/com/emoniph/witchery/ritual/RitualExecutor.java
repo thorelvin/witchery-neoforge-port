@@ -6531,26 +6531,8 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.no_power"), false);
             return false;
         }
-        Optional<InventoryTaglock> taglock = findFilledTaglock(sp);
-        if (taglock.isEmpty()) {
-            sp.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.no_taglock"), false);
-            return false;
-        }
-        ServerPlayer target = sl.getServer().getPlayerList().getPlayer(taglock.get().targetUuid());
-        if (target == null) {
-            sp.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.offline"), false);
-            return false;
-        }
-        if (triggerVoodooProtection(target)) {
-            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
-            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
-            return false;
-        }
-
         int covenSize = countNearbyCovenWitches(level, center);
-        BlockPos effectCenter = offerings.get().boundWaystone() != null
-                ? offerings.get().effectCenter()
-                : target.blockPosition();
+        BlockPos effectCenter = offerings.get().effectCenter();
         List<ItemStack> supplementalSacrifices = offerings.get().boundWaystone() != null
                 ? List.of(offerings.get().boundWaystone().getItem().copyWithCount(1))
                 : List.of();
@@ -6561,9 +6543,7 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeInventoryItem(sp, taglock.get().slot());
         consumeHellOnEarthOfferings(offerings.get());
-        target.displayClientMessage(Component.translatable("witchery.curse.hell_on_earth.target"), false);
         success(caster, level, center, "witchery.curse.hell_on_earth.caster",
                 SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
         return true;

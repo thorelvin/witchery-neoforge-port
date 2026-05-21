@@ -404,7 +404,7 @@ The next ritual precondition pass is now back in place:
 - The first small ritual `Breath of the Goddess` cure family is now back too: Misfortune, Curse Creature, Insanity, Sinking, Overheating, and Waking Nightmare can once again be removed through their original support-item branches with 2000 altar power and an offered filled `Taglock Kit` instead of the port's old inventory-taglock shortcut.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
 - `Curse of Hell on Earth` now also once more expects `Redstone Soup`, a `Demon Heart`, an unbound `Waystone`, a `nether star`, a villager sacrifice, and its original 5000 altar-power startup cost before the curse lands.
-- `Curse of Hell on Earth` now also behaves like a real long-running expanding rite again instead of a one-shot taglock burst: the infernal ring spreads outward, blights the perimeter into netherrack, then periodically drains upkeep and spawns the old demon/ghast/blaze/magma-cube/zombified-piglin mix once the spread completes, while an optional same-dimension bound waystone can retarget the cursed area.
+- `Curse of Hell on Earth` now also behaves like a real long-running expanding rite again instead of a one-shot burst: the infernal ring spreads outward from the ritual center, or from an offered same-dimension bound-waystone retarget, blights the perimeter into netherrack, then periodically drains upkeep and spawns the old demon/ghast/blaze/magma-cube/zombified-piglin mix once the spread completes.
 - These checks now happen before taglock consumption, so failed preconditions no longer waste the curse item flow.
 
 Remaining gap:
