@@ -32,8 +32,8 @@ This backlog is separate from pure feature parity. The port is now far enough al
    Some rites still spend altar power or mutate state before all failure conditions are known. `riteOfBindFamiliar` and `riteOfTheForest` were the clearest reviewed examples, and the port now has a first small `RitualTransaction` helper covering those two paths, but the general risk still applies across the dispatcher. The rule should be: detect the matching rite, gather offerings, validate all preconditions, calculate costs, begin a transaction, consume power/items, apply or queue the rite, then commit or refund. The helper should keep expanding until one-off refund handling stops creeping back in.
 3. Persist active rituals, or deliberately cancel/refund them on shutdown.
    `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` are still static maps keyed by dimension, which is fine inside a single server session but unsafe across restart or reload because staged rites can silently disappear after ingredients and altar power were already consumed. The preferred fix is `SavedData`, a dimension attachment, or another durable ritual anchor. If full persistence is deferred, server stop/unload must at least cancel cleanly or refund stored sacrifices where possible.
-4. Reconcile the two kettle recipe systems.
-   The live kettle path uses `WitcheryRecipeTypes.KETTLE_BREWING`, but the legacy `WitcheryKettleRecipes` singleton plus `WitcheryKettleRecipeData::register` still hardcode a smaller fallback set. That is a long-term divergence risk for JEI, in-game brewing, docs, and QA. The port should have one source of truth: either remove the singleton entirely or turn it into data-generation or test coverage for the JSON recipe set.
+4. Keep kettle recipes on one authoritative source and add tests around them.
+   The dead `WitcheryKettleRecipes` singleton and `WitcheryKettleRecipeData` startup fallback are now gone, so the live kettle path only uses `WitcheryRecipeTypes.KETTLE_BREWING` JSON recipes. The remaining follow-up is test coverage so JEI, in-game brewing, docs, and QA stay aligned around that single source of truth.
 5. Audit the remaining transient player-state fields around Spirit World handling.
    `SpiritWorldState` is now explicitly copyable and `WitcheryPlayerData.copyFrom` / constructor paths no longer share it by reference, so the old clone/respawn shared-mutable-state bug is closed. The remaining follow-up is to decide whether the fields that still live outside the CODEC after `wolfMastery` are intentionally transient, and either document that choice or move them into a persistable nested state object.
 6. Wire config values through central helpers.
@@ -56,7 +56,7 @@ When architecture work is chosen instead of another parity patch, take these fir
 1. Introduce ritual transactions so rites do not consume power or items until all preconditions pass.
 2. Split `RitualExecutor` into registry-driven or definition-driven handlers.
 3. Audit and document the remaining transient player-state fields after the `SpiritWorldState` deep-copy fix.
-4. Remove or fully reconcile the legacy kettle singleton with the modern recipe-map system.
+4. Add tests around the now-single-source kettle recipe system.
 5. Persist or explicitly cancel/refund active rituals across stop/reload.
 6. Route ritual cost and biome-changing config through central helpers.
 7. Add GameTests for ritual failure/consumption and circle detection.

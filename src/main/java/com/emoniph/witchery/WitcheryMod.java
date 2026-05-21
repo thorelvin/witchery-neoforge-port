@@ -1,7 +1,6 @@
 package com.emoniph.witchery;
 
 import com.emoniph.witchery.config.WitcheryConfig;
-import com.emoniph.witchery.crafting.WitcheryKettleRecipeData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryChunkGenerators;
 import com.emoniph.witchery.init.WitcheryEntities;
@@ -58,9 +57,7 @@ public class WitcheryMod {
         }
     }
 
-    private void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(WitcheryKettleRecipeData::register);
-    }
+    private void commonSetup(FMLCommonSetupEvent event) {}
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("1")
