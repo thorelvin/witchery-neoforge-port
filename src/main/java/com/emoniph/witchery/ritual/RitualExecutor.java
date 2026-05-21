@@ -1416,9 +1416,23 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.unavailable"), false);
             return false;
         }
+        Optional<ManifestationOfferings> offerings = findManifestationOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl) || !consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.no_power"), false);
+            return false;
+        }
 
         int covenSize = countNearbyCovenWitches(level, center);
         int duration = 150 + covenSize * 25;
+        consumeOfferedItem(offerings.get().mellifluousHunger());
+        consumeOfferedItem(offerings.get().goldenPickaxe());
+        consumeOfferedItem(offerings.get().gunpowder());
         data.setManifestationTime(duration);
         data.setSkipManifestationTick(false);
         sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.duration", duration), false);
@@ -4685,6 +4699,10 @@ public class RitualExecutor {
 
     private record SeerStoneOfferings(ItemEntity quartzSphere, ItemEntity mossyCobblestone, ItemEntity happenstanceOil) {}
 
+    private record ManifestationOfferings(ItemEntity mellifluousHunger, ItemEntity necroStone,
+                                          ItemEntity goldenPickaxe, ItemEntity arthana,
+                                          ItemEntity gunpowder) {}
+
     private record InfuseBrewSoaringOfferings(ItemEntity infusedBrewBase, ItemEntity broom, ItemEntity feather,
                                               ItemEntity arthana, OwlFamiliarEntity owl) {}
 
@@ -5120,6 +5138,20 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SeerStoneOfferings(quartzSphere.get(), mossyCobblestone.get(), happenstanceOil.get()));
+    }
+
+    private static Optional<ManifestationOfferings> findManifestationOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> mellifluousHunger = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()));
+        Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
+        Optional<ItemEntity> goldenPickaxe = findNearbyOffering(level, center, stack -> stack.is(Items.GOLDEN_PICKAXE));
+        Optional<ItemEntity> arthana = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ARTHANA.get()));
+        Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        if (mellifluousHunger.isEmpty() || necroStone.isEmpty() || goldenPickaxe.isEmpty()
+                || arthana.isEmpty() || gunpowder.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ManifestationOfferings(mellifluousHunger.get(), necroStone.get(),
+                goldenPickaxe.get(), arthana.get(), gunpowder.get()));
     }
 
     private static Optional<InfuseBrewSoaringOfferings> findInfuseBrewSoaringOfferings(Level level, BlockPos center) {

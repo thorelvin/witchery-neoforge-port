@@ -614,6 +614,8 @@
   "witchery.ritual.cook.success": "The ritual flame cooked %s items.",
   "witchery.ritual.manifestation.success": "Your spirit is anchored to the mortal world.",
   "witchery.ritual.manifestation.unavailable": "Only a spirit walker in the Spirit World can weave manifestation.",
+  "witchery.ritual.manifestation.support": "The rite needs Mellifluous Hunger, a Necromantic Stone, a golden pickaxe, an Arthana, and gunpowder.",
+  "witchery.ritual.manifestation.no_power": "A nearby altar lacks the power to anchor your spirit to the mortal world.",
   "witchery.ritual.manifestation.duration": "Your manifested form will endure for %s seconds.",
   "witchery.ritual.manifestation.countdown": "Your manifested form fades in %s seconds.",
   "witchery.ritual.lord_of_torment.success": "The Lord of Torment has been summoned!",

@@ -78,7 +78,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Wispy/Disturbed Cotton | Partial | Spreading bush behavior, nightmare harvest swap, Spirit World placement, and disturbed->wispy Flowing Spirit cleansing restored; disturbed cotton still remains a placeable block in the port |
 | Dream Weaver (Dream Catcher) | Done | 5 weave effects applied on wake; buff arming follows a configurable sleep threshold again; Spirit World nightmare/demonic scans now only respect the `Nightmares` weave again, and wall placement uses the clicked face like the old hanging block |
 | Crystal Ball scrying | Done | 12 predictions; 500 altar power; 5s cooldown |
-| Rite of Manifestation | Partial | The rite now grants manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld as a ghost, timed return and Icy Needle recall are back, but ghost rendering/style polish is still open |
+| Rite of Manifestation | Partial | The rite now grants manifestation time again, once more expects `Mellifluous Hunger`, `Necromantic Stone`, a `golden_pickaxe`, an `Arthana`, `gunpowder`, and 5000 altar power before the timer is granted while keeping the stone/Arthana as returned tools, and Spirit Portal can spend that time to manifest the player into the Overworld as a ghost, with timed return and Icy Needle recall back; ghost rendering/style polish is still open |
 
 ---
 
