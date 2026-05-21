@@ -54,6 +54,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
@@ -435,8 +436,7 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfCallFamiliar(player, level, center));
         } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfTheForest(player, level, center);
-            return successResult();
+            return matchedResult(riteOfTheForest(player, level, center, item));
         } else if (isPotion(item, Potions.REGENERATION)
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
@@ -892,28 +892,49 @@ public class RitualExecutor {
     // LARGE rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of the Forest — instantly grows all saplings within 15 blocks. */
-    private static void riteOfTheForest(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
+    /** Rite of the Forest — seeds and grows a grove of the offered sapling type around the circle. */
+    private static boolean riteOfTheForest(Player player, Level level, BlockPos center, ItemStack triggerSapling) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!(triggerSapling.getItem() instanceof BlockItem blockItem)
+                || !(blockItem.getBlock() instanceof SaplingBlock saplingBlock)) {
+            return false;
+        }
+
+        Optional<ForestationOfferings> offerings = findForestationOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.forest.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.forest.no_power"), false);
+            return false;
+        }
+
+        BlockState saplingState = saplingBlock.defaultBlockState();
+        int covenSize = countNearbyCovenWitches(level, center);
+        int radius = 20 + covenSize * 2;
+        int attempts = 60 + covenSize * 5;
         int grown = 0;
-        for (BlockPos bp : BlockPos.betweenClosed(
-                center.offset(-15, -2, -15), center.offset(15, 10, 15))) {
-            BlockState s = sl.getBlockState(bp);
-            if (s.getBlock() instanceof SaplingBlock sapling) {
-                // Apply bone meal up to 10 times to force growth
-                for (int attempt = 0; attempt < 10; attempt++) {
-                    if (!sl.getBlockState(bp).is(s.getBlock())) break; // already grew
-                    if (sapling.isBonemealSuccess(sl, sl.random, bp, sl.getBlockState(bp))) {
-                        sapling.performBonemeal(sl, sl.random, bp, sl.getBlockState(bp));
-                        grown++;
-                        break;
-                    }
-                }
+        for (int i = 0; i < attempts; i++) {
+            BlockPos ground = findForestationAnchor(sl, center, radius, 8);
+            if (ground == null) {
+                continue;
+            }
+            if (seedForestationTree(sl, ground.above(), saplingState)) {
+                grown++;
             }
         }
+
+        consumeOfferedItem(offerings.get().wickerBundle());
+        consumeOfferedItem(offerings.get().brewOfSprouting());
+        consumeOfferedItem(offerings.get().entTwig());
         player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of the Forest grew {} trees", grown);
+        WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
+                grown, triggerSapling.getHoverName().getString(), center, player.getName().getString());
+        return true;
     }
 
     /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired ritual circles. */
@@ -3628,6 +3649,70 @@ public class RitualExecutor {
         }
     }
 
+    private static BlockPos findForestationAnchor(ServerLevel level, BlockPos center, int radius, int height) {
+        int radiusSq = (radius + 1) * (radius + 1);
+        int x = center.getX() - radius + level.random.nextInt(radius * 2 + 1);
+        int z = center.getZ() - radius + level.random.nextInt(radius * 2 + 1);
+        if (Mth.square(x - center.getX()) + Mth.square(z - center.getZ()) > radiusSq) {
+            x = center.getX() - radius + level.random.nextInt(radius * 2 + 1);
+            z = center.getZ() - radius + level.random.nextInt(radius * 2 + 1);
+            if (Mth.square(x - center.getX()) + Mth.square(z - center.getZ()) > radiusSq) {
+                return null;
+            }
+        }
+
+        int baseY = center.getY() - 1;
+        BlockPos direct = new BlockPos(x, baseY, z);
+        if (isForestationAnchor(level, direct)) {
+            return direct;
+        }
+
+        for (int offset = 1; offset < height; offset++) {
+            BlockPos up = new BlockPos(x, baseY + offset, z);
+            if (isForestationAnchor(level, up)) {
+                return up;
+            }
+            BlockPos down = new BlockPos(x, baseY - offset, z);
+            if (isForestationAnchor(level, down)) {
+                return down;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isForestationAnchor(ServerLevel level, BlockPos pos) {
+        BlockState ground = level.getBlockState(pos);
+        if (!ground.blocksMotion()) {
+            return false;
+        }
+        return level.getBlockState(pos.above()).canBeReplaced();
+    }
+
+    private static boolean seedForestationTree(ServerLevel level, BlockPos plantPos, BlockState saplingState) {
+        BlockState state = level.getBlockState(plantPos);
+        if (!state.is(saplingState.getBlock())) {
+            if (!state.canBeReplaced() || !saplingState.canSurvive(level, plantPos)) {
+                return false;
+            }
+            level.setBlock(plantPos, saplingState, 3);
+        }
+
+        if (!(saplingState.getBlock() instanceof SaplingBlock sapling)) {
+            return true;
+        }
+
+        for (int attempt = 0; attempt < 10; attempt++) {
+            BlockState current = level.getBlockState(plantPos);
+            if (!current.is(sapling)) {
+                return true;
+            }
+            if (sapling.isBonemealSuccess(level, level.random, plantPos, current)) {
+                sapling.performBonemeal(level, level.random, plantPos, current);
+            }
+        }
+        return true;
+    }
+
     private static boolean isTransposeOre(BlockState state, boolean includeGold) {
         if (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE)) {
             return true;
@@ -4448,6 +4533,8 @@ public class RitualExecutor {
 
     private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
 
+    private record ForestationOfferings(ItemEntity wickerBundle, ItemEntity brewOfSprouting, ItemEntity entTwig) {}
+
     private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear, ItemEntity boline) {}
 
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
@@ -4661,6 +4748,19 @@ public class RitualExecutor {
 
     private static Optional<ItemEntity> findNearbyObsidianOffering(Level level, BlockPos center) {
         return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
+    }
+
+    private static Optional<ForestationOfferings> findForestationOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> wickerBundle = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WICKER_BUNDLE.get()));
+        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_SPROUTING.get()));
+        Optional<ItemEntity> entTwig = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENT_TWIG.get()));
+        if (wickerBundle.isEmpty() || brewOfSprouting.isEmpty() || entTwig.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ForestationOfferings(
+                wickerBundle.get(),
+                brewOfSprouting.get(),
+                entTwig.get()));
     }
 
     private static Optional<Villager> findNearbyVillagerSacrifice(Level level, BlockPos center) {

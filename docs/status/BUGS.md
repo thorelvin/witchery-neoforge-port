@@ -507,11 +507,12 @@ Remaining gap:
 
 The next ritual routing pass is now closer to original Witchery:
 - `Forestation` now routes from the medium ritual circle again instead of incorrectly living on the large-circle dispatcher.
+- That medium `Forestation` route now also restores its original startup altar cost and support gate more closely: the offered sapling now also expects a `Wicker Bundle`, `Brew of Sprouting`, and `Ent Twig`, once again consumes 4000 altar power, and now seeds/grows matching trees from the dropped sapling type instead of blindly bonemealing any nearby saplings.
 - The animal-calling `Beastial Call` behavior no longer fires from an arbitrary small ring; it now routes through a large otherwhere circle instead, which is much closer to the original `Call Beasts` rite.
 - That large otherwhere animal-calling route no longer resolves as a one-shot mass teleport either; it now queues the staged `Call Creatures`-style coven rite again and allures creatures in 60-tick pulses much closer to 1.7.10.
 
 Remaining gap:
-- Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, but their ring size and chalk family are now much closer to original parity.
+- Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, and `Forestation` still skips the old optional bound-waystone remote-target path plus the original staged tick-by-tick spread, but their ring size, chalk family, and practical support gating are now much closer to original parity.
 
 ### 42. Familiar and reincarnation rites were still on the wrong circles - Fixed / verify
 
