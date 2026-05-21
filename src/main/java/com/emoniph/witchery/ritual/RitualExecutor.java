@@ -342,10 +342,9 @@ public class RitualExecutor {
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
             riteOfInfusion(player, level, center, InfusionType.INFERNAL);
             return successResult();
-        } else if ((item.is(Items.COAL) || item.is(Items.COAL_BLOCK) || item.is(Items.BLACK_DYE))
+        } else if ((item.is(Items.STONE_AXE) || item.is(Items.IRON_AXE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfTotalEclipse(player, level, center);
-            return successResult();
+            return matchedResult(riteOfTotalEclipse(player, level, center, item));
         } else if (item.is(Items.BONE_MEAL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (findPortableFertilityOfferings(level, center).isPresent()) {
                 return matchedResult(riteOfPortableFertility(player, level, center));
@@ -746,16 +745,43 @@ public class RitualExecutor {
     }
 
     /** Rite of Total Eclipse — forces midnight on the server. */
-    private static void riteOfTotalEclipse(Player player, Level level, BlockPos center) {
+    private static boolean riteOfTotalEclipse(Player player, Level level, BlockPos center, ItemStack trigger) {
         if (!requireDay(player, level, center)) {
-            return;
+            return false;
+        }
+        boolean portable = trigger.is(Items.IRON_AXE);
+        Optional<TotalEclipseOfferings> offerings = findTotalEclipseOfferings(level, center, portable);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.eclipse.support"), false);
+            return false;
+        }
+        if (!portable) {
+            if (!(level instanceof ServerLevel sl) || !consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.ritual.eclipse.no_power"), false);
+                return false;
+            }
         }
         if (level instanceof ServerLevel sl) {
+            consumeOfferedItem(offerings.get().quicklime());
+            if (portable && offerings.get().chargedStone() != null) {
+                ItemStack returnedStone = offerings.get().chargedStone().getItem()
+                        .copyWithCount(1)
+                        .transmuteCopy(WitcheryItems.ATTUNED_STONE.get());
+                consumeOfferedItem(offerings.get().chargedStone());
+                ItemEntity entity = new ItemEntity(sl,
+                        center.getX() + 0.5, center.getY() + 1.05, center.getZ() + 0.5,
+                        returnedStone);
+                entity.setDefaultPickUpDelay();
+                sl.addFreshEntity(entity);
+            }
             sl.setDayTime(18000L); // midnight
         }
         success(player, level, center, "witchery.ritual.eclipse.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 1, 24);
         WitcheryMod.LOGGER.info("Rite of Total Eclipse cast at {} by {}", center, player.getName().getString());
+        return true;
     }
 
     /** Rite of Beastial Call — restores the staged coven-gated creature-allure loop instead of a one-shot teleport. */
@@ -4703,6 +4729,8 @@ public class RitualExecutor {
                                           ItemEntity goldenPickaxe, ItemEntity arthana,
                                           ItemEntity gunpowder) {}
 
+    private record TotalEclipseOfferings(ItemEntity quicklime, ItemEntity chargedStone) {}
+
     private record InfuseBrewSoaringOfferings(ItemEntity infusedBrewBase, ItemEntity broom, ItemEntity feather,
                                               ItemEntity arthana, OwlFamiliarEntity owl) {}
 
@@ -5152,6 +5180,17 @@ public class RitualExecutor {
         }
         return Optional.of(new ManifestationOfferings(mellifluousHunger.get(), necroStone.get(),
                 goldenPickaxe.get(), arthana.get(), gunpowder.get()));
+    }
+
+    private static Optional<TotalEclipseOfferings> findTotalEclipseOfferings(Level level, BlockPos center, boolean portable) {
+        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        Optional<ItemEntity> chargedStone = portable
+                ? findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+                : Optional.empty();
+        if (quicklime.isEmpty() || (portable && chargedStone.isEmpty())) {
+            return Optional.empty();
+        }
+        return Optional.of(new TotalEclipseOfferings(quicklime.get(), chargedStone.orElse(null)));
     }
 
     private static Optional<InfuseBrewSoaringOfferings> findInfuseBrewSoaringOfferings(Level level, BlockPos center) {

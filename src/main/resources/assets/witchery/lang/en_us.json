@@ -241,6 +241,8 @@
   "witchery.ritual.no_circle": "No complete ritual circle found here.",
   "witchery.ritual.already_active": "That circle is already sustaining an active rite.",
   "witchery.ritual.eclipse.success": "The sky darkens... Rite of Total Eclipse complete.",
+  "witchery.ritual.eclipse.support": "The rite needs quicklime and a stone axe, or quicklime, an iron axe, and a Charged Attuned Stone.",
+  "witchery.ritual.eclipse.no_power": "A nearby altar lacks the power to darken the sky.",
   "witchery.ritual.beastial_call.success": "The creatures answer your call (%s drawn in).",
   "witchery.ritual.beastial_call.started": "The creatures hear your distant call.",
   "witchery.ritual.beastial_call.no_power": "A nearby altar lacks the power to call the beasts.",

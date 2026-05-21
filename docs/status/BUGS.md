@@ -577,6 +577,16 @@ The next ritual routing pass is now closer to original Witchery:
 Remaining gap:
 - These rites are still triggered through simplified representative ingredients rather than the full original sacrifice sets, but their ring size, chalk family, support offerings, and altar-power costs now line up much more closely with 1.7.10.
 
+### 42a. Total Eclipse was still using a placeholder trigger - Fixed / verify
+
+The next ritual parity pass is now closer to original Witchery:
+- `Total Eclipse` no longer fires from the port's fake coal-style placeholder trigger.
+- The normal small ritual branch now once again expects a `stone_axe`, `quicklime`, and 3000 altar power before forcing midnight.
+- The portable sibling is back in practical form too: an `iron_axe` trigger with `quicklime` and a nearby `Charged Attuned Stone` now casts the same eclipse without altar power, and the charged stone downgrades back into a plain `Attuned Stone` instead of simply vanishing.
+
+Remaining gap:
+- The ritual effect is now back on the original support split, but broader in-game verification is still open around repeated daytime casts and the practical feel of the portable charged-stone return.
+
 ### 43. Blindness and Blight were using the wrong mechanic entirely - Fixed / verify
 
 The next infernal-rite correction is now closer to original Witchery:
