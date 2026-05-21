@@ -164,6 +164,7 @@ public class RitualExecutor {
         ICE_SHELL,
         RAIN_OF_TOADS,
         BLINDNESS,
+        BLIGHT,
         HELL_ON_EARTH,
         CALL_CREATURES,
         CLIMATE_CHANGE,
@@ -1910,6 +1911,7 @@ public class RitualExecutor {
             case ICE_SHELL -> tickIceShellRitual(level, ritual);
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
             case BLINDNESS -> tickBlindnessRitual(level, ritual);
+            case BLIGHT -> tickBlightRitual(level, ritual);
             case HELL_ON_EARTH -> tickHellOnEarthRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
@@ -2020,6 +2022,25 @@ public class RitualExecutor {
             ritual.refundOnStop = true;
             return false;
         }
+        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.effectCenter, currentRadius, 18);
+        }
+        return currentRadius < maxRadius;
+    }
+
+    private static boolean tickBlightRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        int maxRadius = ritual.maxRadius + ritual.covenSize * 2;
+        int currentRadius = ritual.stage + 3;
+        if (currentRadius > maxRadius) {
+            return false;
+        }
+        if (!applyBlightRing(level, ritual.effectCenter, currentRadius, ritual.enhanced)) {
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
+        spreadBlightRing(level, ritual.effectCenter, currentRadius, ritual.enhanced);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
             spawnRingParticles(level, ritual.effectCenter, currentRadius, 18);
         }
@@ -2510,6 +2531,161 @@ public class RitualExecutor {
         }
 
         return true;
+    }
+
+    private static boolean applyBlightRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {
+        double radiusSq = (double) radius * radius;
+        double minSq = (double) Math.max(0, (radius - 1) * (radius - 1));
+        AABB bounds = new AABB(center).inflate(radius);
+
+        for (ServerPlayer victim : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            double distanceSq = victim.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq) {
+                continue;
+            }
+            if (triggerVoodooProtection(victim)) {
+                victim.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+                return false;
+            }
+            if (!victim.hasEffect(MobEffects.WITHER)) {
+                victim.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
+            }
+        }
+
+        for (Villager villager : level.getEntitiesOfClass(Villager.class, bounds)) {
+            double distanceSq = villager.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq || level.random.nextInt(10) != 0) {
+                continue;
+            }
+            ZombieVillager zombie = EntityType.ZOMBIE_VILLAGER.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            if (zombie == null) {
+                continue;
+            }
+            zombie.setPos(villager.getX(), villager.getY(), villager.getZ());
+            zombie.setYRot(villager.getYRot());
+            zombie.setBaby(villager.isBaby());
+            level.addFreshEntity(zombie);
+            villager.discard();
+        }
+
+        for (Cow cow : level.getEntitiesOfClass(Cow.class, bounds)) {
+            double distanceSq = cow.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq) {
+                continue;
+            }
+            if (level.random.nextInt(20) == 0) {
+                MushroomCow mooshroom = EntityType.MOOSHROOM.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+                if (mooshroom != null) {
+                    mooshroom.setPos(cow.getX(), cow.getY(), cow.getZ());
+                    mooshroom.setYRot(cow.getYRot());
+                    mooshroom.setBaby(cow.isBaby());
+                    level.addFreshEntity(mooshroom);
+                }
+                cow.discard();
+            } else if (level.random.nextInt(3) == 0) {
+                cow.hurt(level.damageSources().magic(), 20.0f);
+            }
+        }
+
+        for (Animal animal : level.getEntitiesOfClass(Animal.class, bounds)) {
+            if (animal instanceof Cow) {
+                continue;
+            }
+            double distanceSq = animal.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq || level.random.nextInt(3) != 0) {
+                continue;
+            }
+            animal.hurt(level.damageSources().magic(), 20.0f);
+        }
+
+        return true;
+    }
+
+    private static void spreadBlightRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+
+        while (x >= z) {
+            blightPixel(level, center, center.getX() + x, center.getZ() + z, enhanced);
+            blightPixel(level, center, center.getX() + z, center.getZ() + x, enhanced);
+            blightPixel(level, center, center.getX() - x, center.getZ() + z, enhanced);
+            blightPixel(level, center, center.getX() - z, center.getZ() + x, enhanced);
+            blightPixel(level, center, center.getX() - x, center.getZ() - z, enhanced);
+            blightPixel(level, center, center.getX() - z, center.getZ() - x, enhanced);
+            blightPixel(level, center, center.getX() + x, center.getZ() - z, enhanced);
+            blightPixel(level, center, center.getX() + z, center.getZ() - x, enhanced);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void blightPixel(ServerLevel level, BlockPos center, int x, int z, boolean enhanced) {
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(x, center.getY(), z));
+        BlockPos groundPos = surface.below();
+        if (groundPos.getY() <= level.getMinY()) {
+            return;
+        }
+
+        BlockState state = level.getBlockState(groundPos);
+        BlockPos abovePos = groundPos.above();
+        BlockState aboveState = level.getBlockState(abovePos);
+        if (aboveState.is(Blocks.SNOW) || aboveState.is(Blocks.SNOW_BLOCK)) {
+            level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
+        } else if (isBlightPlant(aboveState)) {
+            level.setBlockAndUpdate(abovePos, Blocks.DEAD_BUSH.defaultBlockState());
+        }
+
+        if (state.is(Blocks.FARMLAND)) {
+            level.setBlockAndUpdate(groundPos, Blocks.SOUL_SAND.defaultBlockState());
+            return;
+        }
+        if (state.is(Blocks.DIRT)
+                || state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.MYCELIUM)
+                || state.is(Blocks.PODZOL)
+                || state.is(Blocks.COARSE_DIRT)) {
+            int roll = level.random.nextInt(enhanced ? 4 : 5);
+            if (roll == 0) {
+                level.setBlockAndUpdate(groundPos, Blocks.SOUL_SAND.defaultBlockState());
+            } else if (roll == 1) {
+                level.setBlockAndUpdate(groundPos, Blocks.DIRT.defaultBlockState());
+            }
+        }
+    }
+
+    private static boolean isBlightPlant(BlockState state) {
+        return state.is(Blocks.DANDELION)
+                || state.is(Blocks.POPPY)
+                || state.is(Blocks.BLUE_ORCHID)
+                || state.is(Blocks.ALLIUM)
+                || state.is(Blocks.AZURE_BLUET)
+                || state.is(Blocks.RED_TULIP)
+                || state.is(Blocks.ORANGE_TULIP)
+                || state.is(Blocks.WHITE_TULIP)
+                || state.is(Blocks.PINK_TULIP)
+                || state.is(Blocks.OXEYE_DAISY)
+                || state.is(Blocks.CORNFLOWER)
+                || state.is(Blocks.LILY_OF_THE_VALLEY)
+                || state.is(Blocks.WITHER_ROSE)
+                || state.is(Blocks.SHORT_GRASS)
+                || state.is(Blocks.FERN)
+                || state.is(Blocks.DEAD_BUSH)
+                || state.is(Blocks.BROWN_MUSHROOM)
+                || state.is(Blocks.RED_MUSHROOM)
+                || state.is(Blocks.VINE)
+                || state.is(Blocks.LILY_PAD)
+                || state.is(Blocks.TALL_GRASS)
+                || state.is(Blocks.LARGE_FERN)
+                || state.is(Blocks.SUNFLOWER)
+                || state.is(Blocks.LILAC)
+                || state.is(Blocks.ROSE_BUSH)
+                || state.is(Blocks.PEONY);
     }
 
     private static void spreadHellOnEarthRing(ServerLevel level, BlockPos center, int radius, int maxRadius, boolean enhanced) {
@@ -3486,25 +3662,21 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.blight.support"), false);
             return false;
         }
-        AABB aabb = new AABB(center).inflate(15);
-        for (Player p : level.getEntitiesOfClass(Player.class, aabb)) {
-            p.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
+        if (!(level instanceof ServerLevel sl)) return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        boolean enhanced = player instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp);
+        if (!queueActiveRitual(sl, ActiveRitualType.BLIGHT, RitualCircleDetector.CircleSize.MEDIUM,
+                center, center, 0, 80, 77, 5, covenSize, 0.0f, 0, List.of(), enhanced)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
         }
-        for (Villager villager : level.getEntitiesOfClass(Villager.class, aabb)) {
-            if (level.random.nextFloat() < 0.1f) {
-                ZombieVillager zv = EntityType.ZOMBIE_VILLAGER.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-                if (zv != null) { zv.setPos(villager.getX(), villager.getY(), villager.getZ()); level.addFreshEntity(zv); }
-                villager.discard();
-            }
-        }
-        for (net.minecraft.world.entity.animal.cow.Cow cow : level.getEntitiesOfClass(net.minecraft.world.entity.animal.cow.Cow.class, new net.minecraft.world.phys.AABB(center).inflate(8))) {
-            double r2 = level.random.nextFloat();
-            var moo = WitcheryEntities.FAMILIAR_CAT.get().create((net.minecraft.server.level.ServerLevel) level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-            if (r2 < 0.15f) {
-                if (moo != null) { moo.setPos(cow.getX(), cow.getY(), cow.getZ()); level.addFreshEntity(moo); }
-                cow.discard();
-            } else if (r2 < 0.38f) {
-                cow.discard();
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
+        if (rituals != null) {
+            for (ActiveRitual ritual : rituals) {
+                if (ritual.center.equals(center) && ritual.type == ActiveRitualType.BLIGHT) {
+                    ritual.nextGameTime = sl.getGameTime() + 20L;
+                    break;
+                }
             }
         }
         consumeOfferedItem(offerings.get().chargedStone());
