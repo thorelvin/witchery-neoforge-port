@@ -4658,6 +4658,13 @@ public class RitualExecutor {
     private record CurseOverheatingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity demonicBlood,
                                              ItemEntity blazeRod, ItemEntity brewGrotesque) {}
 
+    private record CurseInsanityOfferings(ItemEntity exhaleOfHornedOne, ItemEntity glisteringMelonSlice,
+                                          ItemEntity sugar, ItemEntity brewGrotesque) {}
+
+    private record CurseWakingNightmareOfferings(ItemEntity exhaleOfHornedOne, ItemEntity mellifluousHunger,
+                                                 ItemEntity tormentedTwine, ItemEntity emerald,
+                                                 ItemEntity brewGrotesque) {}
+
     private record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
                                           ItemEntity spectralDust) {}
 
@@ -4980,6 +4987,39 @@ public class RitualExecutor {
                 exhaleOfHornedOne.get(),
                 demonicBlood.get(),
                 blazeRod.get(),
+                brewGrotesque.get()));
+    }
+
+    private static Optional<CurseInsanityOfferings> findCurseInsanityOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> glisteringMelonSlice = findNearbyOffering(level, center, stack -> stack.is(Items.GLISTERING_MELON_SLICE));
+        Optional<ItemEntity> sugar = findNearbyOffering(level, center, stack -> stack.is(Items.SUGAR));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        if (exhaleOfHornedOne.isEmpty() || glisteringMelonSlice.isEmpty() || sugar.isEmpty() || brewGrotesque.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CurseInsanityOfferings(
+                exhaleOfHornedOne.get(),
+                glisteringMelonSlice.get(),
+                sugar.get(),
+                brewGrotesque.get()));
+    }
+
+    private static Optional<CurseWakingNightmareOfferings> findCurseWakingNightmareOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> mellifluousHunger = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()));
+        Optional<ItemEntity> tormentedTwine = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()));
+        Optional<ItemEntity> emerald = findNearbyOffering(level, center, stack -> stack.is(Items.EMERALD));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        if (exhaleOfHornedOne.isEmpty() || mellifluousHunger.isEmpty() || tormentedTwine.isEmpty()
+                || emerald.isEmpty() || brewGrotesque.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CurseWakingNightmareOfferings(
+                exhaleOfHornedOne.get(),
+                mellifluousHunger.get(),
+                tormentedTwine.get(),
+                emerald.get(),
                 brewGrotesque.get()));
     }
 
@@ -5654,10 +5694,30 @@ public class RitualExecutor {
     /** Curse of Insanity — nausea + confusion. */
     private static boolean riteOfCurseInsanity(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
-        return applyCurse(caster, level, center, target -> {
+        Optional<CurseInsanityOfferings> offerings = findCurseInsanityOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.no_power"), false);
+            return false;
+        }
+        boolean applied = applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600, 1));
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
         }, "witchery.curse.insanity", "witchery.curse.insanity", false);
+        if (!applied) {
+            return false;
+        }
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().glisteringMelonSlice());
+        consumeOfferedItem(offerings.get().sugar());
+        consumeOfferedItem(offerings.get().brewGrotesque());
+        return true;
     }
 
     /** Curse of Raining Toads — showers toads on the target. */
@@ -5697,7 +5757,19 @@ public class RitualExecutor {
     /** Curse of Waking Nightmare — forces target into nightmare state if in Spirit World. */
     private static boolean riteOfCurseWakingNightmare(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
-        return applyCurse(caster, level, center, target -> {
+        Optional<CurseWakingNightmareOfferings> offerings = findCurseWakingNightmareOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 10000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.no_power"), false);
+            return false;
+        }
+        boolean applied = applyCurse(caster, level, center, target -> {
             WitcheryPlayerData data = WitcheryAttachments.get(target);
             if (data.isInSpiritWorld()) {
                 data.setSpiritWorldIsDream(false); // flip to nightmare
@@ -5706,6 +5778,15 @@ public class RitualExecutor {
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
         }, "witchery.curse.waking_nightmare", "witchery.curse.waking_nightmare", true);
+        if (!applied) {
+            return false;
+        }
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().mellifluousHunger());
+        consumeOfferedItem(offerings.get().tormentedTwine());
+        consumeOfferedItem(offerings.get().emerald());
+        consumeOfferedItem(offerings.get().brewGrotesque());
+        return true;
     }
 
     /** Updated Curse of the Wolf — targets a specific player via taglock. */
