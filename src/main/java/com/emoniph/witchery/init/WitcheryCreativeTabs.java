@@ -129,6 +129,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.HAWTHORN_SAPLING.get());
                         output.accept(WitcheryItems.MUTANDIS.get());
                         output.accept(WitcheryItems.MUTANDIS_EXTREMIS.get());
+                        output.accept(WitcheryItems.TREEFYD_SEEDS.get());
                         output.accept(WitcheryItems.MUTATOR.get());
                         output.accept(WitcheryItems.SPECTRAL_STONE.get());
                         output.accept(WitcheryItems.NECRO_STONE.get());

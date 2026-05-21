@@ -61,8 +61,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The Primer now shows the Anointing Paste recipe and explains that it is applied directly to a placed vanilla cauldron to create a Witch's Cauldron, closing the old "how do I even start cauldron brewing?" gap. A real Witch's Cauldron block foundation now also exists in the port with empty/water-cauldron conversion and real water-level handling; the remaining follow-up is the deeper cauldron recipe system rather than the block's existence.
 4. Missing rite coverage in the compendium - first pass now closed.
    The previously omitted Chapter 11 rites now all have first-pass Primer coverage again, including `Rite of Moving Earth`. The remaining documentation work shifts from "missing rite entirely" toward better cross-links, item bridges, and deeper explanations for things like Treefyd Seeds, Spectral Familiars, and Mystic Branch use.
-5. Rite of the Forest / Treefyd seed bridge.
-   The Primer now teaches the rite itself again, but the full `Treefyd Seed` bridge is still blocked by repo truth: the actual `Treefyd Seed` item/recipe path is not yet surfaced in the port. Finish that item path, then connect the guide to it directly.
+5. Rite of the Forest / Treefyd seed bridge - closed.
+   The missing `Treefyd Seeds` item path is now surfaced again: the original crafted seed recipe is back, the seed can once more be used on grass to raise an owned Treefyd, and the Primer now teaches that bridge directly instead of leaving Treefyd progression implied or hidden behind QA-only spawn paths.
 6. Spectral Familiar explanation.
    The summon rite can exist without the player understanding what a Spectral Familiar actually is, how it behaves, or how it differs from Cat / Owl / Toad familiars. This needs a practical familiar entry, not just a recipe mention.
 7. Mystic Branch explanation - closed as a first truthful port pass.
@@ -78,11 +78,9 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
-1. Treefyd seed bridge next.
-   The rites themselves now have first-pass coverage again, so the next discovery blocker is connecting `Rite of the Forest` honestly to the missing `Treefyd Seed` item/recipe path once that path exists in the port.
-2. Tool/familiar identity after that.
+1. Tool/familiar identity next.
    `Spectral Familiar` is the main remaining identity page now that `Mystic Branch` and `Necromantic Stone` both have first truthful Primer coverage.
-3. Equipment and minor completeness after the blockers.
+2. Equipment and minor completeness after the blockers.
    Vampire armor coverage, belts, Beartrap, and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
 
 ## Highest-priority structural fixes

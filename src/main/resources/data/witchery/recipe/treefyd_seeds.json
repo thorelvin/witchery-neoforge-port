@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XAX",
+    "CYD",
+    "XBX"
+  ],
+  "key": {
+    "X": "witchery:mutandis_extremis",
+    "A": "witchery:reek_of_misfortune",
+    "C": "witchery:ember_moss",
+    "Y": "witchery:artichoke",
+    "D": "witchery:mandrake_root",
+    "B": "witchery:tear_of_goddess"
+  },
+  "result": {
+    "id": "witchery:treefyd_seeds",
+    "count": 2
+  }
+}

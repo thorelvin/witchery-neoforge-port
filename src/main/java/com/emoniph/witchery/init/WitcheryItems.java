@@ -337,6 +337,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ANOINTING_PASTE    = ITEMS.registerSimpleItem("anointing_paste");
     public static final DeferredItem<Item> WORMY_APPLE        = ITEMS.registerSimpleItem("wormy_apple");
     public static final DeferredItem<Item> APPLE_OF_SLEEPING  = ITEMS.register("apple_of_sleeping", id -> new com.emoniph.witchery.item.AppleOfSleepingItem(itemProps(id)));
+    public static final DeferredItem<Item> TREEFYD_SEEDS      = ITEMS.register("treefyd_seeds", id -> new com.emoniph.witchery.item.TreefydSeedsItem(itemProps(id)));
 
     // ── Spawn eggs (creative only) ─────────────────────────────────────────────
     // 0x2E0047 = dark purple shell, 0xAAFF55 = bright witch-green spots

@@ -1,0 +1,22 @@
+{
+  "name": "Treefyd",
+  "icon": "witchery:treefyd_seeds",
+  "category": "witchery:creatures",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred like an ordinary crop. In the old craft, the witch first prepares Treefyd Seeds, then plants them on living grass so the rooted thing may wake and walk.$(br2)If the seed path is hidden, the creature effectively vanishes from honest survival play."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:treefyd_seeds",
+      "text": "Craft two Treefyd Seeds from $(item)Mutandis Extremis$(), $(item)Reek of Misfortune$(), $(item)Ember Moss$(), $(item)Artichoke$(), $(item)Mandrake Root$(), and a $(item)Tear of the Goddess$(). The ingredients are rare enough that a Treefyd should still feel like a serious choice."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Planting the Seed",
+      "text": "Use the seed on the top face of a grass block. The seed is spent and a Treefyd rises there as your own guardian instead of a wild hostile plant. In Witchery: Rewoven today, feeding an owned Treefyd another seed will also split off a fresh owned specimen.$(br2)The deeper memory, taglock, and heart-upgrade behaviors still remain future parity work."
+    }
+  ]
+}
