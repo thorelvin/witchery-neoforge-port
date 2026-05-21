@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Glyphic Transformation",
+  "icon": "witchery:chalk",
+  "category": "witchery:circle_magic",
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Some witches redraw whole circles by hand. Richer or lazier ones persuade the circle to rewrite itself.$(br2)Glyphic Transformation changes an existing ring from one chalk family to another. It does not create a circle from nothing. It only retunes marks that are already there."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:chalk",
+      "text": "Work the rite by offering the chalk family you want the circle to become: ordinary $(item)Chalk$(), $(item)Otherwhere Chalk$(), or $(item)Infernal Chalk$(). The rite also asks for $(item)Gypsum$(), an $(item)Arthana$(), and $(bold)1000 altar power$(/). The Arthana is returned when the work is done."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Choosing the Ring",
+      "text": "The live port follows the old practical rule: the amount of matching dropped chalk decides which ring is rewritten. $(bold)1$(/) chalk changes the small ring, $(bold)2$(/) changes the medium ring, and $(bold)3$(/) changes the large ring. Use it when you already have the right geometry drawn, but need to retune one circle family without starting over from bare ground."
+    }
+  ]
+}
