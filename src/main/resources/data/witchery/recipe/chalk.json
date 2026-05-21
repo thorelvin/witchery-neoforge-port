@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": {
+      "item": "witchery:wood_ash"
+    },
+    "g": {
+      "item": "witchery:gypsum"
+    },
+    "t": {
+      "item": "witchery:tear_of_goddess"
+    }
+  },
+  "pattern": [
+    "ata",
+    "aga",
+    "aga"
+  ],
+  "result": {
+    "count": 1,
+    "id": "witchery:chalk"
+  }
+}

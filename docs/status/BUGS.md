@@ -103,6 +103,8 @@ Files:
 
 The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again instead of generic full-shape `Block` registrations, so their outline/support behavior is back to reading like drawn floor sigils instead of square blocks. The ritual chalk asset chain is corrected too: `circle_glyph` no longer uses a `cube_all` model and now matches the flat cutout/carpet-style path already used by the other chalk families.
 
+The base ritual chalk progression is now back too: the original hand-crafted Wood Ash / Gypsum / Tear of the Goddess recipe is restored, and the Primer now teaches it directly instead of leaving chalk as a creative-only starting tool. The upgraded golden / otherwhere / infernal chalk procurement path still remains follow-up work.
+
 ### 0a. Fake vampire/werewolf ritual routes were still exposed - Fixed / verify
 
 The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of the Wolf` dispatcher routes have been removed again. A decompiled sweep of the original 1.7.10 `WitcheryRecipes` curse registry only shows the five real curse rites (`witcheryCursed`, `witcheryInsanity`, `witcherySinking`, `witcheryOverheating`, `witcheryWakingNightmare`), so these direct transformation rituals were overclaims introduced by the port rather than missing parity. Vampirism and lycanthropy themselves still exist through the port's real progression systems; only the non-original ritual shortcuts are gone.
