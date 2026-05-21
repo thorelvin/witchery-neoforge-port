@@ -374,6 +374,7 @@ Remaining gap:
 
 The next ritual precondition pass is now back in place:
 - `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare` now require an actual thunderstorm again before they will cast, matching the old `ONLY_IN_STROM` recipe traits.
+- `Curse Creature` now also once more expects its original `Taglock Kit`, `Exhale of the Horned One`, `fermented spider eye`, `gunpowder`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Hell on Earth` now requires the Overworld at night again instead of firing in any dimension at any time.
 - These checks now happen before taglock consumption, so failed preconditions no longer waste the curse item flow.
 

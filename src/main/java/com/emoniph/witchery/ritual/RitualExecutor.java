@@ -3724,6 +3724,18 @@ public class RitualExecutor {
     /** Rite of Cursing Creatures — applies Wither, Slowness and Weakness to nearby mobs. */
     private static boolean riteOfCurseCreature(Player player, Level level, BlockPos center) {
         if (!requireThunderstorm(player, level, center)) return false;
+        Optional<CurseCreatureOfferings> offerings = findCurseCreatureOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.no_power"), false);
+            return false;
+        }
         AABB aabb = new AABB(center).inflate(10);
         int count = 0;
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, aabb)) {
@@ -3733,6 +3745,11 @@ public class RitualExecutor {
             entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
             count++;
         }
+        consumeOfferedItem(offerings.get().taglockKit());
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().fermentedSpiderEye());
+        consumeOfferedItem(offerings.get().gunpowder());
+        consumeOfferedItem(offerings.get().brewGrotesque());
         success(player, level, center, "witchery.ritual.curse_creature.success",
                 SoundEvents.WITCH_CELEBRATE, 1f, 3, 32);
         WitcheryMod.LOGGER.info("Rite of Curse Creature afflicted {} entities", count);
@@ -4277,6 +4294,10 @@ public class RitualExecutor {
 
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
 
+    private record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
+                                          ItemEntity fermentedSpiderEye, ItemEntity gunpowder,
+                                          ItemEntity brewGrotesque) {}
+
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
     private record SummonImpOfferings(ItemEntity refinedEvil, ItemEntity infernalBlood, ItemEntity enderPearl,
@@ -4482,6 +4503,24 @@ public class RitualExecutor {
             closestDistance = distance;
         }
         return Optional.ofNullable(closest);
+    }
+
+    private static Optional<CurseCreatureOfferings> findCurseCreatureOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TAGLOCK_KIT.get()));
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
+        Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || fermentedSpiderEye.isEmpty()
+                || gunpowder.isEmpty() || brewGrotesque.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CurseCreatureOfferings(
+                taglockKit.get(),
+                exhaleOfHornedOne.get(),
+                fermentedSpiderEye.get(),
+                gunpowder.get(),
+                brewGrotesque.get()));
     }
 
     private static Optional<SpectralStoneOfferings> findSpectralStoneOfferings(Level level, BlockPos center) {

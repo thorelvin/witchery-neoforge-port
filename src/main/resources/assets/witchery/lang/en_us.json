@@ -564,6 +564,8 @@
   "witchery.rite.obstructedcircle": "The circle is too obstructed for this summoning rite.",
   "witchery.ritual.raise_column.success": "Stone rises from the earth.",
   "witchery.ritual.curse_creature.success": "Your curse seeps into nearby creatures.",
+  "witchery.ritual.curse_creature.support": "The rite needs a Taglock Kit, Exhale of the Horned One, a fermented spider eye, gunpowder, and Brew of Grotesque.",
+  "witchery.ritual.curse_creature.no_power": "A nearby altar lacks the power to curse the creatures.",
   "witchery.ritual.call_familiar.success": "Your familiar answers the call.",
   "witchery.ritual.call_familiar.none": "You have no familiar to call.",
   "witchery.ritual.summon_familiar.success": "A familiar slips from the circle and takes your scent.",
