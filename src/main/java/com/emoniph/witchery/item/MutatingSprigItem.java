@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.GrassperBlock;
+import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,9 +13,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -63,6 +67,26 @@ public class MutatingSprigItem extends Item {
             return InteractionResult.CONSUME;
         }
         if (tryCreateBloodRoses(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateWildBramble(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateVoidBramble(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -173,6 +197,89 @@ public class MutatingSprigItem extends Item {
             level.setBlock(pos.relative(direction), WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState(), 3);
         }
         return true;
+    }
+
+    private static boolean tryCreateWildBramble(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.CACTUS) || !hasSpanishMossWaterRing(level, pos)) {
+            return false;
+        }
+        if (countDiagonalGrasspersWith(level, pos, Items.BONE_MEAL.getDefaultInstance()) < 2
+                || countDiagonalGrasspersWith(level, pos, Items.BLAZE_POWDER.getDefaultInstance()) < 2) {
+            return false;
+        }
+
+        clearHorizontalMoss(level, pos);
+        clearDiagonalGrasspers(level, pos);
+        transformVerticalColumn(level, pos, Blocks.CACTUS, WitcheryBlocks.BRAMBLE.get(), 5);
+        return true;
+    }
+
+    private static boolean tryCreateVoidBramble(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.SUGAR_CANE) || !hasSpanishMossWaterRing(level, pos)) {
+            return false;
+        }
+        if (countDiagonalGrasspersWith(level, pos, Items.ENDER_PEARL.getDefaultInstance()) < 4) {
+            return false;
+        }
+
+        clearHorizontalMoss(level, pos);
+        clearDiagonalGrasspers(level, pos);
+        transformVerticalColumn(level, pos, Blocks.SUGAR_CANE, WitcheryBlocks.VOID_BRAMBLE.get(), 16);
+        return true;
+    }
+
+    private static boolean hasSpanishMossWaterRing(Level level, BlockPos pos) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos mossPos = pos.relative(direction);
+            if (!level.getBlockState(mossPos).is(WitcheryBlocks.SPANISH_MOSS.get())
+                    || !level.getFluidState(mossPos.below()).isSourceOfType(Fluids.WATER)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int countDiagonalGrasspersWith(Level level, BlockPos pos, ItemStack expected) {
+        int count = 0;
+        for (int xOffset : new int[] {-1, 1}) {
+            for (int zOffset : new int[] {-1, 1}) {
+                BlockPos grassperPos = pos.offset(xOffset, 0, zOffset);
+                if (!(level.getBlockEntity(grassperPos) instanceof GrassperBlockEntity grassper)
+                        || !level.getBlockState(grassperPos).is(WitcheryBlocks.GRASSPER.get())) {
+                    continue;
+                }
+                if (ItemStack.isSameItemSameComponents(grassper.getItem(), expected)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static void clearHorizontalMoss(Level level, BlockPos pos) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            level.removeBlock(pos.relative(direction), false);
+        }
+    }
+
+    private static void clearDiagonalGrasspers(Level level, BlockPos pos) {
+        for (int xOffset : new int[] {-1, 1}) {
+            for (int zOffset : new int[] {-1, 1}) {
+                BlockPos grassperPos = pos.offset(xOffset, 0, zOffset);
+                if (level.getBlockEntity(grassperPos) instanceof GrassperBlockEntity grassper) {
+                    grassper.takeItem();
+                }
+            }
+        }
+    }
+
+    private static void transformVerticalColumn(Level level, BlockPos pos, Block original, Block replacement, int maxHeight) {
+        for (int offset = maxHeight - 1; offset >= 0; offset--) {
+            BlockPos cursor = pos.above(offset);
+            if (level.getBlockState(cursor).is(original)) {
+                level.setBlock(cursor, replacement.defaultBlockState(), 3);
+            }
+        }
     }
 
     private static boolean hasWaterOrIceAbove(Level level, BlockPos pos) {
