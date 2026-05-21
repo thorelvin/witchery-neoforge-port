@@ -455,12 +455,6 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfEnchantBroom(player, level, center));
-        } else if (item.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())) {
-            riteOfInfernalPower(player, level, center);
-            return successResult();
-        } else if (item.is(Items.SPIDER_EYE)) {
-            riteOfTheSilentStep(player, level, center);
-            return successResult();
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfRainOfToads(player, level, center));
@@ -1323,27 +1317,6 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
     // NEW — MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
-
-    /** Rite of Infernal Power — Strength II + Fire Resistance + Speed II for 5 min. */
-    private static void riteOfInfernalPower(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,    6000, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.SPEED,  6000, 1));
-        success(player, level, center, "witchery.ritual.infernal_power.success",
-                SoundEvents.BLASTFURNACE_FIRE_CRACKLE, 0.7f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Infernal Power cast by {}", player.getName().getString());
-    }
-
-    /** Rite of the Silent Step — Speed III + Jump Boost II + Slow Falling for 3 min; removes hunger. */
-    private static void riteOfTheSilentStep(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.SPEED, 3600, 2));
-        player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,           3600, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,   3600, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.SATURATION,      200, 0));
-        success(player, level, center, "witchery.ritual.silent_step.success",
-                SoundEvents.CAT_AMBIENT, 1.2f, 2, 40);
-        WitcheryMod.LOGGER.info("Rite of the Silent Step cast by {}", player.getName().getString());
-    }
 
     // ══════════════════════════════════════════════════════════════════════════
     // NEW — LARGE rites

@@ -391,11 +391,12 @@ The next ritual trait pass is now back in place:
 Remaining gap:
 - More original recipe-trait coverage is still missing outside these rites, especially where the modern ingredient dispatcher has collapsed multiple legacy ritual recipes together.
 
-### 32. Curse of Insanity was unreachable because Silent Step claimed the same ingredient first - Fixed / verify
+### 32. Curse of Insanity was unreachable because a non-original medium placeholder route claimed the same ingredient first - Fixed / verify
 
 The next ritual-dispatch pass is now back in place:
-- `FERMENTED_SPIDER_EYE` no longer gets intercepted by `Silent Step` before the curse branch runs.
-- `Silent Step` now only claims `SPIDER_EYE`, so `Curse of Insanity` can actually be triggered again through the modern medium-circle dispatcher instead of being dead code.
+- `FERMENTED_SPIDER_EYE` no longer gets intercepted by the old non-original medium placeholder branch before the curse route runs.
+- The port no longer claims a fake `Silent Step` medium rite on `SPIDER_EYE` either; that placeholder path is gone because it does not exist in the original Witchery 1.7.10 rite registry or language data.
+- `Curse of Insanity` can therefore keep its infernal medium-circle route clear without the modern dispatcher inventing an extra Witchery rite that never existed.
 
 Remaining gap:
 - This fixes one concrete ingredient collision, but the broader risk from the simplified single-item dispatcher is still present until more of the original multi-sacrifice ritual mapping is restored or separated more safely.

@@ -528,8 +528,6 @@
   "witchery.ritual.charge_stone.success": "The attuned stone crackles with stored power.",
   "witchery.ritual.charge_stone.support": "The rite needs glowstone dust, redstone, wood ash, and quicklime.",
   "witchery.ritual.charge_stone.no_power": "A nearby altar lacks the power to charge the stone.",
-  "witchery.ritual.infernal_power.success": "Infernal fire courses through you.",
-  "witchery.ritual.silent_step.success": "Your step becomes silent as shadow.",
   "witchery.ritual.dragons_fury.success": "Dragon fire tears through %s enemies.",
   "witchery.ritual.bind_circle.success": "The circle is bound to the talisman.",
   "witchery.ritual.spectral_stone.success": "A Spectral Stone condenses from the rite.",
