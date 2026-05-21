@@ -91,6 +91,10 @@ public final class FamiliarHelper {
         return getActiveFamiliarType(player) == 3;
     }
 
+    public static boolean hasActiveToadFamiliar(Player player) {
+        return getActiveFamiliarType(player) == 2;
+    }
+
     public static String describeFamiliar(@Nullable TamableAnimal familiar) {
         if (familiar instanceof CatFamiliarEntity) {
             return "cat";

@@ -127,6 +127,9 @@ public class KettleBrewingRecipe implements Recipe<KettleRecipeInput> {
         if (player != null && hatBonus > 0 && player.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCHES_HAT.get())) {
             extracted.grow(hatBonus);
         }
+        if (player != null && FamiliarHelper.hasActiveToadFamiliar(player) && player.getRandom().nextFloat() < 0.05F) {
+            extracted.grow(1);
+        }
         return extracted;
     }
 
