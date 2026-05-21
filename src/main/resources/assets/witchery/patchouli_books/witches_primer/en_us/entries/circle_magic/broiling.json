@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Broiling",
+  "icon": "minecraft:sugar",
+  "category": "witchery:circle_magic",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Broiling is an infernal cooking-working for turning dropped raw food into cooked meals all at once. It is efficient, dramatic, and never entirely gentle. A clever witch uses it when a camp full of meat needs preparing faster than any oven or campfire could manage."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:sugar",
+      "text": "In the live port this rite is started from a small infernal circle with $(item)Sugar$() as the trigger. From there it splits into two support paths. The ordinary branch needs $(item)Wood Ash$() and $(item)Coal$(), and it draws $(bold)1000 altar power$(/). The hotter branch needs $(item)Wood Ash$(), $(item)Blaze Powder$(), and a $(item)Charged Attuned Stone$(), returning the stone as a plain attuned one once the fire settles."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "The ritual cooks every valid raw food stack lying in the flame's reach around the circle. The stronger branch is harsher: some of what you offer will come back as $(item)Charcoal$() instead of supper. Cast it when you want speed, volume, and a little risk rather than perfect kitchen manners."
+    }
+  ]
+}
