@@ -480,18 +480,26 @@ public class RitualExecutor {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
         } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfNaturesPower(player, level, center));
-        } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseCreature(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfBlight(player, level, center));
-        } else if (item.is(Items.CHORUS_FRUIT) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseSinking(player, level, center));
-        } else if (item.is(Items.PUFFERFISH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseOverheating(player, level, center));
-        } else if (item.is(Items.FERMENTED_SPIDER_EYE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseInsanity(player, level, center));
         } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCorruptPoppet(player, level, center));
+        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+                && TaglockKitItem.isFilled(item)
+                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
+            if (findCurseCreatureOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfCurseCreature(player, level, center));
+            }
+            if (findCurseSinkingOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfCurseSinking(player, level, center));
+            }
+            if (findCurseOverheatingOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfCurseOverheating(player, level, center));
+            }
+            if (findCurseInsanityOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfCurseInsanity(player, level, center));
+            }
+            return ActivationResult.NO_MATCH;
         } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
