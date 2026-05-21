@@ -431,6 +431,8 @@
   "witchery.ritual.transposition.no_waystone": "No bound waystone found.",
   "witchery.ritual.transposition_entity.success": "The bound soul is drawn into the circle.",
   "witchery.ritual.transposition_entity.no_taglock": "No filled taglock was offered.",
+  "witchery.ritual.transposition_entity.support": "The rite needs an unbound Waystone, Ender Dew, and an iron axe around the offered taglock.",
+  "witchery.ritual.transposition_entity.no_power": "A nearby altar lacks the power to draw the bound soul into the circle.",
   "witchery.ritual.transposition_entity.offline": "The bound target is not online.",
   "witchery.ritual.transposition_entity.spirit_world": "That transposition will not cross the Spirit World's veil.",
   "witchery.ritual.transposition_entity.pulled": "A witch has pulled you into a circle.",

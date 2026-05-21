@@ -794,10 +794,11 @@ Remaining gap:
 The next mechanical parity pass is now closer to original Witchery:
 - The medium otherwhere taglock rite no longer collapses into the large-circle pull mechanic or depends on an inventory search for a separate taglock.
 - It now reads the offered filled taglock directly again and teleports the bound target into the circle center, which is much closer to the old `RiteTeleportEntity` behavior.
+- That same rite now also restores its original support gate and startup cost more closely: it once more expects an unbound `Waystone`, `Ender Dew`, an `iron_axe`, and 3000 altar power around the offered filled taglock before the target is moved.
 - Spirit World crossovers are blocked again, and Witch Hunter dampening plus Voodoo Protection poppets still get a chance to stop the cast before the target is moved.
 
 Remaining gap:
-- The exact old multi-sacrifice recipe and full multi-circle matcher still sit behind the port's simplified dispatcher, so this restores the rite's real job without claiming byte-for-byte activation parity yet.
+- The full multi-circle matcher still sits behind the port's simplified dispatcher, but the rite's real job, support items, and altar-power cost are now much closer to byte-for-byte parity.
 
 ### 63. Mixed-ring ritual activation still dead-ended on the first detected circle - Fixed / verify
 

@@ -4707,6 +4707,8 @@ public class RitualExecutor {
 
     private record TotalEclipseOfferings(ItemEntity quicklime, ItemEntity chargedStone) {}
 
+    private record EntityTranspositionOfferings(ItemEntity waystone, ItemEntity enderDew, ItemEntity ironAxe) {}
+
     private record InfuseBrewSoaringOfferings(ItemEntity infusedBrewBase, ItemEntity broom, ItemEntity feather,
                                               ItemEntity arthana, OwlFamiliarEntity owl) {}
 
@@ -5169,6 +5171,17 @@ public class RitualExecutor {
         return Optional.of(new TotalEclipseOfferings(quicklime.get(), chargedStone.orElse(null)));
     }
 
+    private static Optional<EntityTranspositionOfferings> findEntityTranspositionOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> waystone = findNearbyOffering(level, center,
+                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && !WaystoneItem.isBound(stack));
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> ironAxe = findNearbyOffering(level, center, stack -> stack.is(Items.IRON_AXE));
+        if (waystone.isEmpty() || enderDew.isEmpty() || ironAxe.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new EntityTranspositionOfferings(waystone.get(), enderDew.get(), ironAxe.get()));
+    }
+
     private static Optional<InfuseBrewSoaringOfferings> findInfuseBrewSoaringOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> infusedBrewBase = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFUSED_BREW_BASE.get()));
         Optional<ItemEntity> broom = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BROOM.get()));
@@ -5605,6 +5618,11 @@ public class RitualExecutor {
     /** Medium otherwhere transposition — teleports the bound taglock target to the circle center. */
     private static boolean riteOfTranspositionEntity(Player player, Level level, BlockPos center, ItemStack taglock) {
         if (!(player instanceof ServerPlayer sp)) return false;
+        Optional<EntityTranspositionOfferings> offerings = findEntityTranspositionOfferings(level, center);
+        if (offerings.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.support"), false);
+            return false;
+        }
         Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
         if (uuid.isEmpty()) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.no_taglock"), false);
@@ -5629,8 +5647,15 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
+        if (!consumeNearbyRitualAltarPower((ServerLevel) level, center, 16, 3000)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.no_power"), false);
+            return false;
+        }
 
         BlockPos destination = center.above();
+        consumeOfferedItem(offerings.get().waystone());
+        consumeOfferedItem(offerings.get().enderDew());
+        consumeOfferedItem(offerings.get().ironAxe());
         if (target.level() == level) {
             target.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);
         } else {
