@@ -398,6 +398,13 @@ The old `infusiontree` path is back in practical form:
 - The port now also once more expects `Mystic Unguent` and 3000 altar power before the rite completes.
 - Success now drops a fresh `Mystic Branch` item at the circle center instead of leaving the old item obtainable only through non-ritual shortcuts.
 
+### 32b. Crystal Ball infusion rite was still missing from the medium ritual dispatcher - Fixed / verify
+
+The old `infusionfuture` path is back in practical form:
+- `Quartz Sphere` on the medium ritual circle now once again routes into the original night-only Crystal Ball infusion instead of doing nothing.
+- The port now also once more expects a gold ingot, `Happenstance Oil`, and 2000 altar power before the rite completes.
+- Success now drops a fresh `Crystal Ball` item at the circle center instead of leaving the old rite absent from the dispatcher.
+
 ### 32. Curse of Insanity was unreachable because a non-original medium placeholder route claimed the same ingredient first - Fixed / verify
 
 The next ritual-dispatch pass is now back in place:

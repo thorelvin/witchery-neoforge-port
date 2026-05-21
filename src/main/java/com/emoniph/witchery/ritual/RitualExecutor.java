@@ -459,6 +459,9 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfInfuseMysticBranch(player, level, center));
+        } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
+                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfInfuseCrystalBall(player, level, center));
         } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfRainOfToads(player, level, center));
@@ -2957,6 +2960,39 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Infusion — creates a Crystal Ball from Quartz Sphere, gold, and Happenstance Oil at night. */
+    private static boolean riteOfInfuseCrystalBall(Player player, Level level, BlockPos center) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<CrystalBallOfferings> offerings = findCrystalBallOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_future.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_future.no_power"), false);
+            return false;
+        }
+
+        consumeOfferedItem(offerings.get().quartzSphere());
+        consumeOfferedItem(offerings.get().goldIngot());
+        consumeOfferedItem(offerings.get().happenstanceOil());
+
+        ItemStack output = new ItemStack(WitcheryItems.CRYSTAL_BALL.get());
+        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+        drop.setDeltaMovement(0.0, 0.25, 0.0);
+        sl.addFreshEntity(drop);
+
+        success(player, level, center, "witchery.ritual.infusion_future.success",
+                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+        WitcheryMod.LOGGER.info("Rite of Infusion created a Crystal Ball at {}", center);
+        return true;
+    }
+
     private static Block glyphicTransformationTargetBlock(ItemStack ingredient) {
         if (ingredient.is(WitcheryItems.CHALK.get())) {
             return WitcheryBlocks.CIRCLE_GLYPH.get();
@@ -4353,6 +4389,8 @@ public class RitualExecutor {
 
     private record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 
+    private record CrystalBallOfferings(ItemEntity quartzSphere, ItemEntity goldIngot, ItemEntity happenstanceOil) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4561,6 +4599,16 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new MysticBranchOfferings(entTwig.get(), mysticUnguent.get()));
+    }
+
+    private static Optional<CrystalBallOfferings> findCrystalBallOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> quartzSphere = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()));
+        Optional<ItemEntity> goldIngot = findNearbyOffering(level, center, stack -> stack.is(Items.GOLD_INGOT));
+        Optional<ItemEntity> happenstanceOil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HAPPENSTANCE_OIL.get()));
+        if (quartzSphere.isEmpty() || goldIngot.isEmpty() || happenstanceOil.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CrystalBallOfferings(quartzSphere.get(), goldIngot.get(), happenstanceOil.get()));
     }
 
     private static Optional<SummonFamiliarOfferings> findSummonFamiliarOfferings(Level level, BlockPos center) {
