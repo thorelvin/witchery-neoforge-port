@@ -163,6 +163,7 @@ public class RitualExecutor {
         WEATHER_CALL_STORM,
         ICE_SHELL,
         RAIN_OF_TOADS,
+        BLINDNESS,
         HELL_ON_EARTH,
         CALL_CREATURES,
         CLIMATE_CHANGE,
@@ -1908,6 +1909,7 @@ public class RitualExecutor {
             case WEATHER_CALL_STORM -> tickStormRitual(level, ritual);
             case ICE_SHELL -> tickIceShellRitual(level, ritual);
             case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
+            case BLINDNESS -> tickBlindnessRitual(level, ritual);
             case HELL_ON_EARTH -> tickHellOnEarthRitual(level, ritual);
             case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
             case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
@@ -2004,6 +2006,24 @@ public class RitualExecutor {
 
         spawnFallingToads(level, ritual.center, ritual.minRadius, ritual.maxRadius, 8 + level.random.nextInt(10));
         return ritual.stage < ritual.targetStage;
+    }
+
+    private static boolean tickBlindnessRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        int maxRadius = ritual.maxRadius + ritual.covenSize * 2;
+        int currentRadius = ritual.stage + 3;
+        if (currentRadius > maxRadius) {
+            return false;
+        }
+        if (!applyBlindnessRing(level, ritual.effectCenter, currentRadius, ritual.enhanced)) {
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
+        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+            spawnRingParticles(level, ritual.effectCenter, currentRadius, 18);
+        }
+        return currentRadius < maxRadius;
     }
 
     private static boolean tickHellOnEarthRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2456,6 +2476,40 @@ public class RitualExecutor {
         LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         bolt.setPos(surface.getX() + 0.5, surface.getY(), surface.getZ() + 0.5);
         level.addFreshEntity(bolt);
+    }
+
+    private static boolean applyBlindnessRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {
+        double radiusSq = (double) radius * radius;
+        double minSq = (double) Math.max(0, (radius - 1) * (radius - 1));
+        int duration = (enhanced ? 5 : 2) * 1200;
+        AABB bounds = new AABB(center).inflate(radius);
+
+        for (ServerPlayer victim : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            double distanceSq = victim.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq) {
+                continue;
+            }
+            if (triggerVoodooProtection(victim)) {
+                victim.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+                return false;
+            }
+            if (!victim.hasEffect(MobEffects.BLINDNESS)) {
+                victim.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
+            }
+        }
+
+        for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (victim instanceof Player) {
+                continue;
+            }
+            double distanceSq = victim.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distanceSq <= minSq || distanceSq > radiusSq || victim.hasEffect(MobEffects.BLINDNESS)) {
+                continue;
+            }
+            victim.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
+        }
+
+        return true;
     }
 
     private static void spreadHellOnEarthRing(ServerLevel level, BlockPos center, int radius, int maxRadius, boolean enhanced) {
@@ -3394,12 +3448,22 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.blindness.support"), false);
             return false;
         }
-        AABB aabb = new AABB(center).inflate(10);
-        int count = 0;
-        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, aabb)) {
-            if (entity instanceof Player) continue;
-            entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 1200, 0));
-            count++;
+        if (!(level instanceof ServerLevel sl)) return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        boolean enhanced = player instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp);
+        if (!queueActiveRitual(sl, ActiveRitualType.BLINDNESS, RitualCircleDetector.CircleSize.SMALL,
+                center, center, 0, 80, 77, 5, covenSize, 0.0f, 0, List.of(), enhanced)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
+        if (rituals != null) {
+            for (ActiveRitual ritual : rituals) {
+                if (ritual.center.equals(center) && ritual.type == ActiveRitualType.BLINDNESS) {
+                    ritual.nextGameTime = sl.getGameTime() + 20L;
+                    break;
+                }
+            }
         }
         consumeOfferedItem(offerings.get().chargedStone());
         consumeOfferedItem(offerings.get().redstoneSoup());
@@ -3411,7 +3475,6 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().diamond());
         success(player, level, center, "witchery.ritual.blindness.success",
                 SoundEvents.BAT_AMBIENT, 0.5f, 3, 32);
-        WitcheryMod.LOGGER.info("Rite of Blindness afflicted {} entities", count);
         return true;
     }
 

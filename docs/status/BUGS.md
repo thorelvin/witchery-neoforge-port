@@ -605,6 +605,7 @@ Remaining gap:
 
 The next infernal-rite correction is now closer to original Witchery:
 - Small infernal `curseblindness` now runs the area `Rite of Blindness` again instead of incorrectly behaving like a taglock curse on one player.
+- That Blindness route now also restores the original staged expanding annulus instead of a flat one-shot radius, including the old 20-tick startup, 5-tick pulses, player-plus-mob targeting, voodoo-poppet abort path, and the longer 5-minute duration when the caster has curse-mastery familiar support.
 - Medium infernal `curseblight` now runs the area/world `Rite of Blight` again instead of incorrectly behaving like a single-target curse.
 - Both rites now also restore their original support-sacrifice gates: Blindness once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Exhale of the Horned One`, `Brew of Ink`, `poisonous potato`, `spider eye`, and `diamond`, while Blight once again expects `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `fermented spider eye`, `poisonous potato`, `rotten flesh`, and `diamond`.
 - The false large-circle blight activation path was removed, so the world-blight effect no longer appears as a non-original extra large infernal rite.
