@@ -754,7 +754,7 @@ The next Spirit World parity pass is now closer to original Witchery:
 - Icy Needle now matches the old ghost-state behavior again by sending a manifested player back to the Spirit World instead of waking them outright, and manifested death now safely snaps the player back to the Spirit World instead of leaving the Spirit World state corrupted.
 
 Remaining gap:
-- The practical mechanics and startup gate are back, but ghost rendering/style parity is still open because the modern port still lacks the old dedicated ghost visual/player-style layer.
+- The practical mechanics and startup gate are back, and manifested players now also regain a first-pass translucent ghost-style player layer. Remaining work is down to feel polish and broader in-game verification rather than missing presentation entirely.
 
 ### 56. Nightmare combat was still too strong and missed spear weakening - Fixed / verify
 

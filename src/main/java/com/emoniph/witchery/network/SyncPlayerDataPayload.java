@@ -25,7 +25,8 @@ public record SyncPlayerDataPayload(
         String infusionType,
         int infusionEnergy,
         int infusionMaxEnergy,
-        boolean inSpiritWorld
+        boolean inSpiritWorld,
+        boolean manifestedGhost
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncPlayerDataPayload> TYPE =
@@ -49,6 +50,7 @@ public record SyncPlayerDataPayload(
                             buf.readUtf(),
                             buf.readInt(),
                             buf.readInt(),
+                            buf.readBoolean(),
                             buf.readBoolean()
                     );
                 }
@@ -69,6 +71,7 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.infusionEnergy());
                     buf.writeInt(payload.infusionMaxEnergy());
                     buf.writeBoolean(payload.inSpiritWorld());
+                    buf.writeBoolean(payload.manifestedGhost());
                 }
             };
 
@@ -85,7 +88,8 @@ public record SyncPlayerDataPayload(
                 data.getInfusionType().name(),
                 data.getInfusionEnergy(),
                 data.getInfusionMaxEnergy(),
-                data.isInSpiritWorld()
+                data.isInSpiritWorld(),
+                data.isManifestedGhost()
         );
     }
 

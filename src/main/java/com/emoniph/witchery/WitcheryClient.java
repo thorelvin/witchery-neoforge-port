@@ -99,6 +99,7 @@ public class WitcheryClient {
             net.minecraft.client.renderer.entity.player.AvatarRenderer<?> ar = event.getPlayerRenderer(skin);
             if (ar != null) {
                 ar.addLayer(new WerewolfLayer(ar, event.getContext()));
+                ar.addLayer(new ManifestedGhostLayer(ar));
             }
         }
     }
@@ -179,6 +180,7 @@ public class WitcheryClient {
             data.setInfusionType(InfusionType.fromString(payload.infusionType()));
             data.setInfusionEnergy(payload.infusionEnergy(), payload.infusionMaxEnergy());
             data.setInSpiritWorld(payload.inSpiritWorld());
+            data.setManifestedGhost(payload.manifestedGhost());
         });
     }
 }
