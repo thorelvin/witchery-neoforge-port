@@ -47,7 +47,7 @@ public class WitcheryItems {
     // ── M4 ingredient-only items (not plantable) ───────────────────────────────
     public static final DeferredItem<Item> WOOD_ASH            = ITEMS.registerSimpleItem("wood_ash");
     public static final DeferredItem<Item> ROWAN_BERRIES       = ITEMS.registerSimpleItem("rowan_berries");
-    public static final DeferredItem<Item> WORMWOOD            = ITEMS.register("wormwood", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
+    public static final DeferredItem<Item> WORMWOOD            = ITEMS.registerSimpleItem("wormwood");
     public static final DeferredItem<Item> SNOWBELL            = ITEMS.register("snowbell", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
     public static final DeferredItem<Item> EXHALE_OF_HORNED_ONE = ITEMS.registerSimpleItem("exhale_of_horned_one");
     public static final DeferredItem<Item> HINT_OF_REBIRTH     = ITEMS.registerSimpleItem("hint_of_rebirth");
@@ -178,6 +178,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> CIRCLE_TALISMAN = ITEMS.register("circle_talisman", id -> new com.emoniph.witchery.item.CircleTalismanItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> WITCH_HAND = ITEMS.registerSimpleItem("witch_hand");
     public static final DeferredItem<Item> WITCH_SEEDS = ITEMS.register("witch_seeds", id -> new BlockItem(WitcheryBlocks.WITCH_CROP_BLOCK.get(), itemProps(id)));
+    public static final DeferredItem<Item> WORMWOOD_SEEDS = ITEMS.register("wormwood_seeds", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
     public static final DeferredItem<Item> MUTATOR = ITEMS.register("mutator", id -> new MutatingSprigItem(itemProps(id).durability(16)));
     public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));
     public static final DeferredItem<Item> POPPET_SHELF_COMPASS = ITEMS.registerSimpleItem("poppet_shelf_compass");

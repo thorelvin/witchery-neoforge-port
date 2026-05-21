@@ -28,11 +28,10 @@ public class WormwoodBlock extends CropBlock {
     }
 
     @Override
-    protected ItemLike getBaseSeedId() { return WitcheryItems.WORMWOOD.get(); }
+    protected ItemLike getBaseSeedId() { return WitcheryItems.WORMWOOD_SEEDS.get(); }
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK)
-                || state.is(Blocks.DIRT) || state.is(Blocks.COARSE_DIRT);
+        return state.is(Blocks.FARMLAND);
     }
 }

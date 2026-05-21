@@ -27,6 +27,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.ARTICHOKE.get());
                         output.accept(WitcheryItems.COTTON.get());
                         output.accept(WitcheryItems.WITCH_SEEDS.get());
+                        output.accept(WitcheryItems.WORMWOOD_SEEDS.get());
                         output.accept(WitcheryItems.SNOWBELL.get());
                         output.accept(WitcheryItems.BLOOD_ROSE.get());
                         output.accept(WitcheryItems.EMBER_MOSS.get());
