@@ -519,10 +519,7 @@ public class RitualExecutor {
     // ── Large ring dispatch ────────────────────────────────────────────────────
 
     private static ActivationResult dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if (isRawFood(item, level) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            riteOfBroiling(player, level, center);
-            return successResult();
-        } else if (isBeastialCallTrigger(item)
+        if (isBeastialCallTrigger(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfBeastialCall(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
@@ -1021,24 +1018,6 @@ public class RitualExecutor {
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 40);
         WitcheryMod.LOGGER.info("Infusion recharge rite activated at {} by {}", center, player.getName().getString());
         return true;
-    }
-
-    /** Rite of Broiling — cooks all raw food item entities in 10-block radius. */
-    private static void riteOfBroiling(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        int cooked = 0;
-        for (ItemEntity ie : sl.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(10))) {
-            var recipe = sl.getServer().getRecipeManager()
-                    .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(ie.getItem()), sl);
-            if (recipe.isPresent()) {
-                ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(ie.getItem()), sl.registryAccess());
-                ie.setItem(result.copyWithCount(ie.getItem().getCount()));
-                cooked++;
-            }
-        }
-        player.displayClientMessage(Component.translatable("witchery.ritual.broiling.success", cooked), false);
-        success(player, level, center, null, SoundEvents.BLASTFURNACE_FIRE_CRACKLE, 1f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Broiling cooked {} item stacks", cooked);
     }
 
     /** Rite of Protection Barrier (large) — sustains the broader monster barrier from the medium ritual ring. */
