@@ -68,6 +68,18 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 
 ---
 
+### 4. Witches' Primer / compendium completeness pass (medium, staged)
+
+High-value player-discovery gaps to close in the in-game guide:
+
+- **Blocked-player items first** - explain `Boline`, the four infusion source items (`Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, `Infernal Animus`), and `Anointing Paste` with real acquisition/crafting guidance.
+- **Missing rites in Chapter 11** - add the omitted rite coverage for `Rite of the Forest`, `Rite of Manifestation`, `Rite of Beastial Call`, `Rite of Broiling`, `Rite of Broken Earth`, `Rite of Earth's Wrath`, `Rite of Icy Expansion`, `Rite of Imprisonment`, `Rite of Moving Earth`, `Rite of Nature's Power`, `Rite of Prior Incarnation`, `Rite of Sanctity`, `Rite of Sky's Wrath`, and `Rite of Glyphic Transformation`.
+- **Treefyd seed bridge** - make sure `Rite of the Forest` explicitly teaches how players obtain `Treefyd Seeds`.
+- **Tool/familiar identity gaps** - document what a `Spectral Familiar` actually is and what `Mystic Branch` does as a usable item, not just as a ritual ingredient.
+- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Necromantic Stone` as a standalone item, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
+
+---
+
 ## Long-term art direction
 
 - **Original replacement art pass (deferred, post-parity)** - once mechanical parity is in a trustworthy state, plan a broad replacement pass for textures, sounds, and other audiovisual assets so the port is not just reusing/riffing on old Witchery content. The target should be "new art with the same gameplay identity and mood", not a straight rip of the original assets. Treat original Witchery as tone/mechanics reference, not as the final art source, and prefer building a distinct visual/audio identity before any public release push.

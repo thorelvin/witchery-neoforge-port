@@ -49,6 +49,42 @@ This backlog is separate from pure feature parity. The port is now far enough al
 11. Add tests around the risky systems.
    The next quality jump is not just "more green builds" but focused tests around the systems most likely to regress: circle detection, ring ordering, ritual dispatch, no-consumption-on-failure rules, active-rite refunds, player-data copy/persistence, kettle recipe matching, and altar 2x3 validation plus contributor caps. The existing `gameTestServer` run config makes GameTests the most natural fit.
 
+## Documentation and discovery backlog
+
+Mechanical parity is not enough if the in-game book or player-facing guidance still leaves major progression chains unexplained. This backlog is specifically about closing the "player can craft/use it in the port, but the Witchery book flow still fails to teach it" gap.
+
+1. Boline coverage.
+   The Boline is used throughout fetish rites and the Spectral Stone rite, but the current documentation flow still does not clearly explain what it is, what it does, and how to craft it. This is a blocked-player issue because it appears as a required ritual tool before it is properly introduced.
+2. Infusion source item coverage.
+   Chapter 12 references `Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, and `Infernal Animus` as the four infusion sources, but the current documentation path does not tell the player how to obtain any of them. This needs a real "how to start infusion progression" explanation, not just item names.
+3. Anointing Paste coverage.
+   The cauldron conversion path currently assumes the player already knows what Anointing Paste is and how to make it. Add its recipe and usage explanation before or alongside the kettle/cauldron guidance.
+4. Missing rite coverage in the compendium.
+   Chapter 11 still omits a meaningful set of real rites that exist in the port or are intended parity targets: `Rite of the Forest`, `Rite of Manifestation`, `Rite of Beastial Call`, `Rite of Broiling`, `Rite of Broken Earth`, `Rite of Earth's Wrath`, `Rite of Icy Expansion`, `Rite of Imprisonment`, `Rite of Moving Earth`, `Rite of Nature's Power`, `Rite of Prior Incarnation`, `Rite of Sanctity`, `Rite of Sky's Wrath`, and `Rite of Glyphic Transformation`. This is both a completeness gap and a progression gap because players cannot discover some real systems from the in-game guide alone.
+5. Rite of the Forest / Treefyd seed bridge.
+   `Treefyd Seeds` are referenced later, but the documentation still does not connect them back to the `Rite of the Forest`, which is how the player is supposed to obtain them. This should be treated as a high-value rite-entry fix, not a trivia cleanup.
+6. Spectral Familiar explanation.
+   The summon rite can exist without the player understanding what a Spectral Familiar actually is, how it behaves, or how it differs from Cat / Owl / Toad familiars. This needs a practical familiar entry, not just a recipe mention.
+7. Mystic Branch explanation.
+   The item appears as a ritual/ignition ingredient, but its actual tool-like spellcasting role is still not documented well enough. Add its active-use identity, especially the named spell behavior, so it does not look like a dead crafting stick.
+8. Vampire armor coverage.
+   Vampirism itself is documented much better than the dedicated vampire armor set. The Chain Coat / Dress Coat / Helmet / Trousers / Oxford Boots / Top Hat family and their vampire-specific bonuses should be covered as a real equipment track, not left to the wiki.
+9. Minor completeness gaps.
+   Lower-priority omissions still worth tracking: `Bark Belt`, `Biting Belt`, `Beartrap`, `Necromantic Stone` as a standalone explained item, and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
+
+## Documentation priority order
+
+Use this order when choosing book/completeness work instead of another renderer or rite patch:
+
+1. Blocked-player knowledge first.
+   `Boline`, the four infusion source items, and `Anointing Paste` should come first because they can leave players unable to start or understand major systems.
+2. Missing rite coverage next.
+   Fill the omitted Chapter 11 rites, with `Rite of the Forest` treated as especially important because it explains the Treefyd seed chain.
+3. Tool/familiar identity after that.
+   `Mystic Branch`, `Spectral Familiar`, and `Necromantic Stone` should be explained once the player can at least enter the systems they belong to.
+4. Equipment and minor completeness after the blockers.
+   Vampire armor coverage, belts, Beartrap, and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
+
 ## Highest-priority structural fixes
 
 When architecture work is chosen instead of another parity patch, take these first:
