@@ -22,6 +22,45 @@ Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA che
 14. Restore deferred systems that still need real implementation, especially Custom Brews, Mirror World work, and remaining rite coverage.
 15. Add a repeatable regression checklist so future parity work can be verified subsystem-by-subsystem instead of rediscovered manually.
 
+## Architecture and maintenance backlog
+
+This backlog is separate from pure feature parity. The port is now far enough along that some of the biggest remaining risks are architectural drift, hidden state bugs, and multiple sources of truth. These items should be pulled in whenever they directly reduce parity risk or unblock safer future work.
+
+1. Split `RitualExecutor` into a registry/definition model.
+   The class is still the biggest technical-debt hotspot in the repo because it combines dispatch, preconditions, altar power, offering consumption, active-rite queueing, staged ticking, terrain/entity effects, refunds, climate plans, and utility scans. The long `dispatchSmall` / `dispatchMedium` / `dispatchLarge` chains are especially hard to audit because parity depends on trigger identity, chalk family, companion rings, and fallthrough order. The preferred end state is a `RitualDefinition`-style model with explicit circle requirements, trigger predicates, offering requirements, preconditions, ritual actions, and optional active-rite factories so dispatch becomes "find matching definitions, validate, execute transaction" instead of a giant ordered `if` chain.
+2. Introduce ritual transactions and remove mutation-before-validation cases.
+   Some rites still spend altar power or mutate state before all failure conditions are known. `riteOfBindFamiliar` and `riteOfTheForest` are the clearest reviewed examples, but the general risk applies across the dispatcher. The rule should be: detect the matching rite, gather offerings, validate all preconditions, calculate costs, begin a transaction, consume power/items, apply or queue the rite, then commit or refund. A small `RitualTransaction` helper would eliminate a lot of one-off refund handling and sharply reduce future regressions.
+3. Persist active rituals, or deliberately cancel/refund them on shutdown.
+   `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` are still static maps keyed by dimension, which is fine inside a single server session but unsafe across restart or reload because staged rites can silently disappear after ingredients and altar power were already consumed. The preferred fix is `SavedData`, a dimension attachment, or another durable ritual anchor. If full persistence is deferred, server stop/unload must at least cancel cleanly or refund stored sacrifices where possible.
+4. Reconcile the two kettle recipe systems.
+   The live kettle path uses `WitcheryRecipeTypes.KETTLE_BREWING`, but the legacy `WitcheryKettleRecipes` singleton plus `WitcheryKettleRecipeData::register` still hardcode a smaller fallback set. That is a long-term divergence risk for JEI, in-game brewing, docs, and QA. The port should have one source of truth: either remove the singleton entirely or turn it into data-generation or test coverage for the JSON recipe set.
+5. Deep-copy `SpiritWorldState` in player data.
+   `WitcheryPlayerData.copyFrom` already deep-copies familiar and infusion state but still shares `SpiritWorldState` by reference through `this.sw = other.sw`. That is a classic shared-mutable-state bug source during clone, respawn, or copy flows. `SpiritWorldState` should become explicitly copyable, and the fields that currently live outside the CODEC after `wolfMastery` should either be documented as intentionally transient or moved into a persistable nested state object.
+6. Wire config values through central helpers.
+   `WitcheryConfig.RITUAL_POWER_MULTIPLIER` and `ALLOW_BIOME_CHANGING` should not remain "defined but inconsistently enforced" knobs. Ritual power should route through one shared cost helper, and biome-changing rites should honor the biome-changing flag before final consumption or queueing, not only at effect time.
+7. Reduce expensive ritual activation and upkeep scans.
+   Some current scans are still acceptable for local QA but too expensive for repeated public-server usage. `isRitualAreaNulled` currently scans a very large cube, altar lookups repeat for startup/upkeep checks, and some active rites still redraw or rescan broad areas frequently. The next performance pass should focus on narrower scan ranges, indexing/cache helpers for Void Brambles and nearby altars, chunk-budgeted active-rite work, and using registries/tags/block entities where they remove repeated brute-force scans.
+8. Use helper methods for IDs and registry boilerplate.
+   There are still literal `"witchery"` identifiers and repeated registry patterns across blocks, items, and entities. Small helpers for `id(path)`, resource keys, block items, spawn eggs, wood families, chalk variants, and similar patterns would reduce copy-paste drift and make later cleanup work safer.
+9. Replace hardcoded altar environmental categories with tags where possible.
+   `AltarBlockEntity.classify` still hardcodes large sets of vanilla logs, leaves, flowers, crops, and plants. That gives precise control, but it is brittle on modern Minecraft where vanilla families evolve over time. Prefer broad vanilla tags first (`LOGS`, `LEAVES`, `SAPLINGS`, flower/crop tags where available), then keep Witchery-specific contributors as explicit custom tags or special cases.
+10. Clean up release metadata before any public release push.
+   `neoforge.mods.toml` still carries development-template comments and placeholders, and the optional JEI/Patchouli metadata should be reconciled with the actual dependency state in `build.gradle`. This is lower priority than parity, but it should be finished before any serious public release packaging.
+11. Add tests around the risky systems.
+   The next quality jump is not just "more green builds" but focused tests around the systems most likely to regress: circle detection, ring ordering, ritual dispatch, no-consumption-on-failure rules, active-rite refunds, player-data copy/persistence, kettle recipe matching, and altar 2x3 validation plus contributor caps. The existing `gameTestServer` run config makes GameTests the most natural fit.
+
+## Highest-priority structural fixes
+
+When architecture work is chosen instead of another parity patch, take these first:
+
+1. Introduce ritual transactions so rites do not consume power or items until all preconditions pass.
+2. Split `RitualExecutor` into registry-driven or definition-driven handlers.
+3. Fix `WitcheryPlayerData.copyFrom` so `SpiritWorldState` is deep-copied.
+4. Remove or fully reconcile the legacy kettle singleton with the modern recipe-map system.
+5. Persist or explicitly cancel/refund active rituals across stop/reload.
+6. Route ritual cost and biome-changing config through central helpers.
+7. Add GameTests for ritual failure/consumption and circle detection.
+
 ## Finish-phase focus
 
 The current pass started with steps 1, 5, and 6, and has now pushed step 2 again through the restored Summoning, Moving Earth, Raise Column, Protection, Sanctity, and Imprisonment rite lifecycles, the first supplementary-sacrifice refund-safe Climate Change abort path, the first remembered-chalk-family sustain check for active rites, the first broader direct-route chalk-family cleanup on Broiling / Broken Earth / Moving Earth / Raise Column / Volcano / Flying Ointment, the first paired-ring activation requirements restored on Flying Ointment, `summonwither`, the four player infusion rites, and Hell on Earth's mixed-ring curse, step 7, most of step 9, the altar-adjacent parity work in step 10, and the practical Leech Chest / Taglock / Poppet Shelf / Dream Catcher / Refilling Chest behavior in step 11 forward.
