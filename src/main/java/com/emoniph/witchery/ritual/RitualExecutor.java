@@ -3310,6 +3310,11 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.support"), false);
             return false;
         }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 8000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.no_power"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;

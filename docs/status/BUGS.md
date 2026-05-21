@@ -500,7 +500,7 @@ Remaining gap:
 
 The next ritual lifecycle pass is now closer to original Witchery:
 - `Rain of Toads` now routes from the medium-circle dispatcher into the staged coven weather rite again instead of incorrectly firing a non-original taglock curse path.
-- `Rain of Toads` now also once more expects its original support offerings (`Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Toe of Frog`, a water bucket, and `Belladonna`) before that staged medium infernal weather rite will queue.
+- `Rain of Toads` now also once more expects its original support offerings (`Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Toe of Frog`, a water bucket, and `Belladonna`) before that staged medium infernal weather rite will queue, and it once again consumes its original `8000` altar-power startup cost instead of starting for free.
 - Taglock-based curse rites and the remaining medium otherwhere taglock-transposition route now validate their filled taglock target before succeeding, so invalid or offline targets no longer waste the sacrifice.
 - The non-original large filled-taglock `Transposition Pull` fallback is gone again; the original teleportation family is back to the real small bound-waystone path plus the medium otherwhere `RiteTeleportEntity` path instead of keeping that false-positive large-circle branch alive.
 
