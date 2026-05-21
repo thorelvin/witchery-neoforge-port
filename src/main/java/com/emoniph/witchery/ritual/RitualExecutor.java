@@ -355,8 +355,6 @@ public class RitualExecutor {
                 return matchedResult(riteOfPortableFertility(player, level, center));
             }
             return matchedResult(riteOfFertility(player, level, center));
-        } else if (item.is(Items.BONE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(WitcheryItems.BREATH_OF_GODDESS.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && (findCureMisfortuneOfferings(level, center).isPresent()
