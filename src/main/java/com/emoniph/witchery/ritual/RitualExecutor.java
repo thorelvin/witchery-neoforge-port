@@ -977,16 +977,17 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
+                "witchery.ritual.charge_stone.no_power")
+                .offer(offerings.get().glowstone())
+                .offer(offerings.get().redstone())
+                .offer(offerings.get().woodAsh())
+                .offer(offerings.get().quicklime());
+        if (!transaction.commit(player)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.no_power"), false);
             return false;
         }
 
-        consumeOfferedItem(offerings.get().glowstone());
-        consumeOfferedItem(offerings.get().redstone());
-        consumeOfferedItem(offerings.get().woodAsh());
-        consumeOfferedItem(offerings.get().quicklime());
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
                 center.getY() + 1.5,
@@ -3303,14 +3304,14 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_tree.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
+                "witchery.ritual.infusion_tree.no_power")
+                .offer(offerings.get().entTwig())
+                .offer(offerings.get().mysticUnguent());
+        if (!transaction.commit(player)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_tree.no_power"), false);
             return false;
         }
-
-        consumeOfferedItem(offerings.get().entTwig());
-        consumeOfferedItem(offerings.get().mysticUnguent());
 
         ItemStack output = new ItemStack(WitcheryItems.MYSTIC_BRANCH.get());
         ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
@@ -3335,15 +3336,15 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_future.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
+                "witchery.ritual.infusion_future.no_power")
+                .offer(offerings.get().quartzSphere())
+                .offer(offerings.get().goldIngot())
+                .offer(offerings.get().happenstanceOil());
+        if (!transaction.commit(player)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_future.no_power"), false);
             return false;
         }
-
-        consumeOfferedItem(offerings.get().quartzSphere());
-        consumeOfferedItem(offerings.get().goldIngot());
-        consumeOfferedItem(offerings.get().happenstanceOil());
 
         ItemStack output = new ItemStack(WitcheryItems.CRYSTAL_BALL.get());
         ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
@@ -3368,15 +3369,15 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_seer.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
+                "witchery.ritual.infusion_seer.no_power")
+                .offer(offerings.get().quartzSphere())
+                .offer(offerings.get().mossyCobblestone())
+                .offer(offerings.get().happenstanceOil());
+        if (!transaction.commit(player)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.infusion_seer.no_power"), false);
             return false;
         }
-
-        consumeOfferedItem(offerings.get().quartzSphere());
-        consumeOfferedItem(offerings.get().mossyCobblestone());
-        consumeOfferedItem(offerings.get().happenstanceOil());
 
         ItemStack output = new ItemStack(WitcheryItems.SEER_STONE.get());
         ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
@@ -3395,16 +3396,17 @@ public class RitualExecutor {
 
         Optional<InfuseBrewSoaringOfferings> soaringOfferings = findInfuseBrewSoaringOfferings(level, center);
         if (soaringOfferings.isPresent()) {
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
+                    "witchery.ritual.infuse_brew.no_power")
+                    .offer(soaringOfferings.get().infusedBrewBase())
+                    .offer(soaringOfferings.get().broom())
+                    .offer(soaringOfferings.get().feather())
+                    .offer(soaringOfferings.get().arthana());
+            if (!transaction.commit(player)) {
                 level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                player.displayClientMessage(Component.translatable("witchery.ritual.infuse_brew.no_power"), false);
                 return false;
             }
 
-            consumeOfferedItem(soaringOfferings.get().infusedBrewBase());
-            consumeOfferedItem(soaringOfferings.get().broom());
-            consumeOfferedItem(soaringOfferings.get().feather());
-            consumeOfferedItem(soaringOfferings.get().arthana());
             soaringOfferings.get().owl().discard();
 
             ItemEntity drop = new ItemEntity(sl,
@@ -3421,16 +3423,17 @@ public class RitualExecutor {
 
         Optional<InfuseBrewGraveOfferings> graveOfferings = findInfuseBrewGraveOfferings(level, center);
         if (graveOfferings.isPresent()) {
-            if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
+                    "witchery.ritual.infuse_brew.no_power")
+                    .offer(graveOfferings.get().infusedBrewBase())
+                    .offer(graveOfferings.get().bone())
+                    .offer(graveOfferings.get().denseWeb())
+                    .offer(graveOfferings.get().necroStone());
+            if (!transaction.commit(player)) {
                 level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                player.displayClientMessage(Component.translatable("witchery.ritual.infuse_brew.no_power"), false);
                 return false;
             }
 
-            consumeOfferedItem(graveOfferings.get().infusedBrewBase());
-            consumeOfferedItem(graveOfferings.get().bone());
-            consumeOfferedItem(graveOfferings.get().denseWeb());
-            consumeOfferedItem(graveOfferings.get().necroStone());
             graveOfferings.get().zombie().discard();
 
             ItemEntity drop = new ItemEntity(sl,
