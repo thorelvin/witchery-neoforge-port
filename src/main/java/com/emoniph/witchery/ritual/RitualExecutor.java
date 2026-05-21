@@ -408,8 +408,7 @@ public class RitualExecutor {
                     ActiveRitualType.PROTECTION_BARRIER_MONSTERS,
                     RitualCircleDetector.CircleSize.SMALL, 4, 5));
         } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            riteOfCookItem(player, level, center);
-            return successResult();
+            return matchedResult(riteOfCookItem(player, level, center));
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL));
@@ -4353,28 +4352,92 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Cooking — smelt all raw food items dropped within 5 blocks. */
-    private static void riteOfCookItem(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
+    /** Rite of Cooking — cooks nearby food with the original support-gated and charged branches. */
+    private static boolean riteOfCookItem(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        Optional<ChargedCookFoodOfferings> chargedOfferings = findChargedCookFoodOfferings(level, center);
+        Optional<CookFoodOfferings> normalOfferings = chargedOfferings.isEmpty()
+                ? findCookFoodOfferings(level, center)
+                : Optional.empty();
+        if (chargedOfferings.isEmpty() && normalOfferings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.cook.support"), false);
+            return false;
+        }
+
+        boolean charged = chargedOfferings.isPresent();
+        if (!charged && !consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.cook.no_power"), false);
+            return false;
+        }
+
+        double burnChance = charged ? 0.16 : 0.08;
         AABB aabb = new AABB(center).inflate(5);
         int cooked = 0;
         for (ItemEntity ie : level.getEntitiesOfClass(ItemEntity.class, aabb)) {
             ItemStack stack = ie.getItem();
             Optional<RecipeHolder<SmeltingRecipe>> recipe =
-                    ((net.minecraft.server.level.ServerLevel) level).getServer().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
-            if (recipe.isPresent()) {
-                ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(stack), level.registryAccess());
-                if (!result.isEmpty()) {
-                    ie.setItem(result);
-                    cooked++;
+                    sl.getServer().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
+            if (recipe.isEmpty()) {
+                continue;
+            }
+            ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(stack), level.registryAccess());
+            if (result.isEmpty() || !result.has(DataComponents.FOOD) || stack.getCount() <= 0) {
+                continue;
+            }
+
+            int size = stack.getCount();
+            int burnCount = 0;
+            for (int i = 0; i < size; i++) {
+                if (level.random.nextDouble() < burnChance) {
+                    burnCount++;
                 }
             }
+
+            ie.discard();
+            if (size - burnCount > 0) {
+                ItemStack cookedStack = result.copyWithCount(size - burnCount);
+                ItemEntity cookedEntity = new ItemEntity(level,
+                        center.getX() + 0.5,
+                        center.getY() + 0.05,
+                        center.getZ() + 0.5,
+                        cookedStack);
+                cookedEntity.setDeltaMovement(0.0, 0.0, 0.0);
+                level.addFreshEntity(cookedEntity);
+            }
+            if (burnCount > 0) {
+                ItemEntity burntEntity = new ItemEntity(level,
+                        center.getX() + 0.5,
+                        center.getY() + 0.05,
+                        center.getZ() + 0.5,
+                        new ItemStack(Items.CHARCOAL, burnCount));
+                burntEntity.setDeltaMovement(0.0, 0.0, 0.0);
+                level.addFreshEntity(burntEntity);
+            }
+            cooked++;
         }
-        if (cooked > 0) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.cook.success", cooked), false);
+
+        if (cooked <= 0) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.cook.none"), false);
+            return false;
         }
+
+        if (charged) {
+            consumeOfferedItem(chargedOfferings.get().chargedStone());
+            consumeOfferedItem(chargedOfferings.get().woodAsh());
+            consumeOfferedItem(chargedOfferings.get().blazePowder());
+        } else {
+            consumeOfferedItem(normalOfferings.get().woodAsh());
+            consumeOfferedItem(normalOfferings.get().coal());
+        }
+
+        player.displayClientMessage(Component.translatable("witchery.ritual.cook.success", cooked), false);
         level.playSound(null, center, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1f, 1f);
-        if (level instanceof ServerLevel slevel) spawnRingParticles(slevel, center, 3, 24);
+        spawnRingParticles(sl, center, 3, 24);
+        return true;
     }
 
     /** Rite of the Crater — excavates downward in pulses, closer to the old staged ritual. */
@@ -4534,6 +4597,10 @@ public class RitualExecutor {
     private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
 
     private record ForestationOfferings(ItemEntity wickerBundle, ItemEntity brewOfSprouting, ItemEntity entTwig) {}
+
+    private record CookFoodOfferings(ItemEntity woodAsh, ItemEntity coal) {}
+
+    private record ChargedCookFoodOfferings(ItemEntity chargedStone, ItemEntity woodAsh, ItemEntity blazePowder) {}
 
     private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear, ItemEntity boline) {}
 
@@ -4761,6 +4828,28 @@ public class RitualExecutor {
                 wickerBundle.get(),
                 brewOfSprouting.get(),
                 entTwig.get()));
+    }
+
+    private static Optional<CookFoodOfferings> findCookFoodOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<ItemEntity> coal = findNearbyOffering(level, center, stack -> stack.is(Items.COAL));
+        if (woodAsh.isEmpty() || coal.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CookFoodOfferings(woodAsh.get(), coal.get()));
+    }
+
+    private static Optional<ChargedCookFoodOfferings> findChargedCookFoodOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<ItemEntity> blazePowder = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
+        if (chargedStone.isEmpty() || woodAsh.isEmpty() || blazePowder.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ChargedCookFoodOfferings(
+                chargedStone.get(),
+                woodAsh.get(),
+                blazePowder.get()));
     }
 
     private static Optional<Villager> findNearbyVillagerSacrifice(Level level, BlockPos center) {
