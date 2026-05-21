@@ -4345,24 +4345,25 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.no_power"), false);
-            return false;
-        }
-        boolean applied = applyCurse(player, level, center, offerings.get().taglockKit(), target -> {
-            target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
-            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
-        }, "witchery.curse.cursed", "witchery.curse.cursed", true);
+        boolean applied = performOfferedCurse(player, level, center,
+                offerings.get().taglockKit(),
+                2000,
+                "witchery.ritual.curse_creature.no_power",
+                target -> {
+                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1));
+                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
+                },
+                "witchery.curse.cursed",
+                "witchery.curse.cursed",
+                true,
+                offerings.get().exhaleOfHornedOne(),
+                offerings.get().spiderEye(),
+                offerings.get().gunpowder(),
+                offerings.get().brewGrotesque());
         if (!applied) {
             return false;
         }
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().spiderEye());
-        consumeOfferedItem(offerings.get().gunpowder());
-        consumeOfferedItem(offerings.get().brewGrotesque());
         WitcheryMod.LOGGER.info("Curse Creature afflicted the filled-taglock target");
         return true;
     }
