@@ -109,7 +109,7 @@
   "witchery.book.entry.brazier.conjurations": "$(li)$(bold)Conjure Spectres$(/) — Wormwood, Bat Wool, Graveyard Dust. Something emerges.$(li)$(bold)Anguish of the Dead$(/) — Tear of Goddess, Blaze Rod, Golden Apple. Strength radiates outward.$(li)$(bold)Deathly Veil$(/) — Fermented Eye, Ender Pearl, Diamond. Light passes through.$(li)$(bold)Fortification of the Corpse$(/) — Tear of Goddess, Diamond, Golden Apple. Resistance, for those nearby.$(li)$(bold)Graveyard Mist$(/) — Nether Wart, Quicklime, Blaze Powder. You will know it by the smoke.",
 
   "witchery.book.entry.fetishes": "Fetishes",
-  "witchery.book.entry.fetishes.page1": "A spirit bound to a physical object becomes something useful. The scarecrow that watches with intent, the effigy that senses intrusion, the ladder that extends a boundary — each is a different vessel for the same principle.$(br2)To create a fetish, place the host object in a large circle with an Attuned Stone, a Necromantic Stone, and a Boline. Sacrifice the required spirits near the circle. The rite binds them to the vessel.",
+  "witchery.book.entry.fetishes.page1": "A spirit bound to a physical object becomes something useful. The scarecrow that watches with intent, the effigy that senses intrusion, the ladder that extends a boundary — each is a different vessel for the same principle.$(br2)To create a fetish, place the host object in a medium circle with an Attuned Stone, a Necromantic Stone, and a Boline. Sacrifice the required spirits near the circle. The rite binds them to the vessel.",
   "witchery.book.entry.fetishes.effects.title": "What a Fetish Does",
   "witchery.book.entry.fetishes.effects": "$(li)$(bold)Voodoo Protection$(/) — carried protection poppets become more effective nearby$(li)$(bold)Sentinel$(/) — spectres emerge against uninvited guests$(li)$(bold)Shrieking$(/) — emits a redstone pulse and a banshee's cry$(li)$(bold)Disorientation$(/) — armed or armored trespassers find their senses unreliable$(li)$(bold)Ghost Walking$(/) — those walking the spirit world nearby are not hurried back$(br2)Use a Boline to cycle the trigger mode. Use a Taglock Kit to specify who is and is not an intruder.",
 
@@ -436,6 +436,8 @@
   "witchery.ritual.transposition_entity.offline": "The bound target is not online.",
   "witchery.ritual.transposition_entity.spirit_world": "That transposition will not cross the Spirit World's veil.",
   "witchery.ritual.transposition_entity.pulled": "A witch has pulled you into a circle.",
+  "witchery.ritual.bind_fetish.support": "The rite needs an Attuned Stone, a Necromantic Stone, and a Boline around the fetish.",
+  "witchery.ritual.bind_fetish.no_power": "A nearby altar lacks the power to bind the fetish.",
   "witchery.ritual.prior_incarnation.success": "The past gives back %s item stack(s).",
   "witchery.ritual.prior_incarnation.support": "The rite needs a Necromantic Stone, Tongue of Dog, a bone, Spectral Dust, and a Charged Attuned Stone.",
   "witchery.ritual.prior_incarnation.no_death": "No death has been recorded for this life.",

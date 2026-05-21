@@ -4896,6 +4896,12 @@ public class RitualExecutor {
      */
     private static boolean riteOfBindSpiritsToFetish(Player player, Level level, BlockPos center, ItemStack fetishItem) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<BindFetishOfferings> offerings = findBindFetishOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_fetish.support"), false);
+            return false;
+        }
 
         double r = 16;
         AABB box = new AABB(center).inflate(r);
@@ -4910,6 +4916,15 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.fetish.no_spirits"), false);
             return false;
         }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_fetish.no_power"), false);
+            return false;
+        }
+
+        consumeOfferedItem(offerings.get().attunedStone());
+        consumeOfferedItem(offerings.get().necroStone());
+        consumeOfferedItem(offerings.get().boline());
 
         // Consume entities
         consumeSpirits(spirits,      spiritCount(effectId));
@@ -4977,6 +4992,8 @@ public class RitualExecutor {
     private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear, ItemEntity boline) {}
 
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
+
+    private record BindFetishOfferings(ItemEntity attunedStone, ItemEntity necroStone, ItemEntity boline) {}
 
     private record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
                                           ItemEntity spiderEye, ItemEntity gunpowder,
@@ -5521,6 +5538,16 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new BindSpectralOfferings(spectralDust.get(), boline.get()));
+    }
+
+    private static Optional<BindFetishOfferings> findBindFetishOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
+        Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
+        Optional<ItemEntity> boline = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BOLINE.get()));
+        if (attunedStone.isEmpty() || necroStone.isEmpty() || boline.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindFetishOfferings(attunedStone.get(), necroStone.get(), boline.get()));
     }
 
     private static Optional<MysticBranchOfferings> findMysticBranchOfferings(Level level, BlockPos center) {
