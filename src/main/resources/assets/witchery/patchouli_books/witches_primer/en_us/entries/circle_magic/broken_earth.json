@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Broken Earth",
+  "icon": "witchery:brew_of_erosion",
+  "category": "witchery:circle_magic",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Rite of Broken Earth is a small ritual working for tearing open the ground beyond the circle. It is a rough, practical piece of witchcraft: less subtle than a ward, less elegant than a grove-raising rite, but excellent when a witch needs a trench, a hazard, or a sudden gap where moments before there was only solid ground."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:brew_of_erosion",
+      "text": "Offer a $(item)Brew of Erosion$() on a small ritual circle. In the old craft the line of force runs outward from the circle according to the brew's position, and the live port keeps the same basic spirit by carving a crevice ahead of the casting point.$(br2)This is a ritual of earth-breaking, not fine mining, so choose your direction before you commit."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Practical Use",
+      "text": "Use Broken Earth to disrupt pursuers, split a battlefield, expose shallow layers, or make a sudden barrier where none stood before. It is blunt magic and should be treated as such: effective, noisy, and inclined to ruin the ground as thoroughly as it solves the problem."
+    }
+  ]
+}
