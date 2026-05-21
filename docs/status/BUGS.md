@@ -44,6 +44,7 @@ Current state:
 - Those same four player infusions now also restore their original altar startup costs again instead of infusing players for free: Light costs 2000 altar power, while Overworld, Otherwhere, and Infernal each cost 4000.
 - `Hell on Earth` now also expects its original mixed three-ring stack again — large infernal outer ring, medium otherwhere middle ring, and small infernal inner ring — instead of activating from any generic large-circle `nether_star` drop.
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
+- That small-circle fertility route now also restores its original support gate and startup cost again: it once more expects `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, and `Mutandis`, and once more consumes 3000 altar power before the growth pulse begins.
 - Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring.

@@ -345,8 +345,7 @@ public class RitualExecutor {
             return successResult();
         } else if ((item.is(Items.BONE_MEAL) || item.is(Items.BONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfFertility(player, level, center);
-            return successResult();
+            return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBlindness(player, level, center);
             return successResult();
@@ -767,8 +766,19 @@ public class RitualExecutor {
     }
 
     /** Rite of Fertility — bone-meals all crops in 10-block radius; cures zombie villagers. */
-    private static void riteOfFertility(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
+    private static boolean riteOfFertility(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<FertilityOfferings> offerings = findFertilityOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.fertility.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.fertility.no_power"), false);
+            return false;
+        }
         int grown = 0;
         for (BlockPos bp : BlockPos.betweenClosed(
                 center.offset(-10, -3, -10), center.offset(10, 3, 10))) {
@@ -795,9 +805,16 @@ public class RitualExecutor {
             cured++;
         }
 
+        consumeOfferedItem(offerings.get().hintOfRebirth());
+        consumeOfferedItem(offerings.get().diamondVapour());
+        consumeOfferedItem(offerings.get().quicklime());
+        consumeOfferedItem(offerings.get().gypsum());
+        consumeOfferedItem(offerings.get().mutandis());
+
         player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
         WitcheryMod.LOGGER.info("Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
+        return true;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -4104,6 +4121,9 @@ public class RitualExecutor {
 
     private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
 
+    private record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
+                                      ItemEntity gypsum, ItemEntity mutandis) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -4288,6 +4308,23 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SummonFamiliarOfferings(egg.get(), goldIngot.get(), arthana.get()));
+    }
+
+    private static Optional<FertilityOfferings> findFertilityOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> hintOfRebirth = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()));
+        Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
+        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        Optional<ItemEntity> gypsum = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.GYPSUM.get()));
+        Optional<ItemEntity> mutandis = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MUTANDIS.get()));
+        if (hintOfRebirth.isEmpty() || diamondVapour.isEmpty() || quicklime.isEmpty() || gypsum.isEmpty() || mutandis.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new FertilityOfferings(
+                hintOfRebirth.get(),
+                diamondVapour.get(),
+                quicklime.get(),
+                gypsum.get(),
+                mutandis.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
