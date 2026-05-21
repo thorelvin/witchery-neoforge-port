@@ -703,11 +703,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_familiar.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.summon_familiar.no_power"), false);
-            return false;
-        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -719,21 +714,21 @@ public class RitualExecutor {
             return false;
         }
 
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_familiar.no_power")
+                .offer(offerings.get().egg())
+                .offer(offerings.get().goldIngot())
+                .offer(offerings.get().arthana());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         familiar.snapTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5, player.getYRot(), 0.0F);
         familiar.setOrderedToSit(false);
         familiar.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(familiar);
 
-        TamableAnimal bound = bindFamiliarToPlayer(sp, sl, familiar);
-        if (bound == null) {
-            familiar.discard();
-            return false;
-        }
-
-        consumeOfferedItem(offerings.get().egg());
-        consumeOfferedItem(offerings.get().goldIngot());
-        consumeOfferedItem(offerings.get().arthana());
+        bindFamiliarToPlayer(sp, sl, familiar);
 
         success(player, level, center, "witchery.ritual.summon_familiar.success",
                 SoundEvents.CAT_AMBIENT, 1.0f, 2, 24);
@@ -4597,11 +4592,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_witch.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.summon_witch.no_power"), false);
-            return false;
-        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -4613,16 +4603,21 @@ public class RitualExecutor {
             return false;
         }
 
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_witch.no_power")
+                .offer(offerings.get().diamondVapour())
+                .offer(offerings.get().exhaleOfHornedOne())
+                .offer(offerings.get().magmaCream())
+                .offer(offerings.get().arthana())
+                .offer(offerings.get().fermentedSpiderEye());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         witch.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
         witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(witch);
 
-        consumeOfferedItem(offerings.get().diamondVapour());
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().magmaCream());
-        consumeOfferedItem(offerings.get().arthana());
-        consumeOfferedItem(offerings.get().fermentedSpiderEye());
         success(player, level, center, "witchery.ritual.summon_witch.success",
                 SoundEvents.WITCH_CELEBRATE, 0.8f, 3, 48);
         WitcheryMod.LOGGER.info("Rite of Summon Witch cast by {}", player.getName().getString());
@@ -4639,11 +4634,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_imp.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.summon_imp.no_power"), false);
-            return false;
-        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -4655,15 +4645,20 @@ public class RitualExecutor {
             return false;
         }
 
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 5000, "witchery.ritual.summon_imp.no_power")
+                .offer(offerings.get().refinedEvil())
+                .offer(offerings.get().infernalBlood())
+                .offer(offerings.get().enderPearl())
+                .offer(offerings.get().attunedStone());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         imp.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
         imp.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(imp);
 
-        consumeOfferedItem(offerings.get().refinedEvil());
-        consumeOfferedItem(offerings.get().infernalBlood());
-        consumeOfferedItem(offerings.get().enderPearl());
-        consumeOfferedItem(offerings.get().attunedStone());
         success(player, level, center, "witchery.ritual.summon_imp.success",
                 SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
         WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
@@ -4681,11 +4676,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.support"), false);
             return false;
         }
-        if (!useExpensive && !consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.no_power"), false);
-            return false;
-        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -4697,19 +4687,27 @@ public class RitualExecutor {
             return false;
         }
 
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, useExpensive ? 0 : 4000,
+                "witchery.ritual.summon_wither.no_power");
+        if (useExpensive) {
+            transaction.offer(expensiveOfferings.get().diamond())
+                    .offer(expensiveOfferings.get().enderPearl())
+                    .offer(expensiveOfferings.get().attunedStone())
+                    .offer(expensiveOfferings.get().chargedStone());
+        } else {
+            transaction.offer(offerings.get().diamondVapour())
+                    .offer(offerings.get().enderPearl());
+        }
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         wither.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
         wither.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(wither);
 
-        if (useExpensive) {
-            consumeOfferedItem(expensiveOfferings.get().diamond());
-            consumeOfferedItem(expensiveOfferings.get().enderPearl());
-            consumeOfferedItem(expensiveOfferings.get().attunedStone());
-            consumeOfferedItem(expensiveOfferings.get().chargedStone());
-        } else {
-            consumeOfferedItem(offerings.get().diamondVapour());
-            consumeOfferedItem(offerings.get().enderPearl());
+        if (!useExpensive) {
             offerings.get().villager().discard();
         }
         success(player, level, center, "witchery.ritual.summon_wither.success",
@@ -4729,11 +4727,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.no_power"), false);
-            return false;
-        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -4745,21 +4738,28 @@ public class RitualExecutor {
             return false;
         }
 
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000, "witchery.ritual.summon_demon.no_power");
+        if (useExpensive) {
+            transaction.offer(expensiveOfferings.get().refinedEvil())
+                    .offer(expensiveOfferings.get().blazeRod())
+                    .offer(expensiveOfferings.get().enderPearl())
+                    .offer(expensiveOfferings.get().attunedStone())
+                    .offer(expensiveOfferings.get().chargedStone());
+        } else {
+            transaction.offer(offerings.get().refinedEvil())
+                    .offer(offerings.get().blazePowder())
+                    .offer(offerings.get().enderPearl());
+        }
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
         demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
         demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         sl.addFreshEntity(demon);
 
-        if (useExpensive) {
-            consumeOfferedItem(expensiveOfferings.get().refinedEvil());
-            consumeOfferedItem(expensiveOfferings.get().blazeRod());
-            consumeOfferedItem(expensiveOfferings.get().enderPearl());
-            consumeOfferedItem(expensiveOfferings.get().attunedStone());
-            consumeOfferedItem(expensiveOfferings.get().chargedStone());
-        } else {
-            consumeOfferedItem(offerings.get().refinedEvil());
-            consumeOfferedItem(offerings.get().blazePowder());
-            consumeOfferedItem(offerings.get().enderPearl());
+        if (!useExpensive) {
             offerings.get().villager().discard();
         }
         success(player, level, center, "witchery.ritual.summon_demon.success",
