@@ -669,6 +669,17 @@ public class RitualExecutor {
     private static boolean riteOfSummonFamiliar(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<SummonFamiliarOfferings> offerings = findSummonFamiliarOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_familiar.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_familiar.no_power"), false);
+            return false;
+        }
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -691,6 +702,10 @@ public class RitualExecutor {
             familiar.discard();
             return false;
         }
+
+        consumeOfferedItem(offerings.get().egg());
+        consumeOfferedItem(offerings.get().goldIngot());
+        consumeOfferedItem(offerings.get().arthana());
 
         success(player, level, center, "witchery.ritual.summon_familiar.success",
                 SoundEvents.CAT_AMBIENT, 1.0f, 2, 24);
@@ -4087,6 +4102,8 @@ public class RitualExecutor {
 
     private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
 
+    private record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity arthana) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -4261,6 +4278,16 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new BindSpectralOfferings(spectralDust.get(), boline.get()));
+    }
+
+    private static Optional<SummonFamiliarOfferings> findSummonFamiliarOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> egg = findNearbyOffering(level, center, stack -> stack.is(Items.EGG));
+        Optional<ItemEntity> goldIngot = findNearbyOffering(level, center, stack -> stack.is(Items.GOLD_INGOT));
+        Optional<ItemEntity> arthana = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ARTHANA.get()));
+        if (egg.isEmpty() || goldIngot.isEmpty() || arthana.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SummonFamiliarOfferings(egg.get(), goldIngot.get(), arthana.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
