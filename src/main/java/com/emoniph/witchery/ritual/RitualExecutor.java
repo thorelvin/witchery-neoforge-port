@@ -2038,10 +2038,11 @@ public class RitualExecutor {
 
     private static boolean tickVolcanoRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
+        BlockPos effectCenter = ritual.effectCenter;
         if (ritual.stage == 1) {
-            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 1.0f);
+            level.playSound(null, effectCenter, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 1.0f);
             level.sendParticles(ParticleTypes.PORTAL,
-                    ritual.center.getX() + 0.5, ritual.center.getY() + 0.5, ritual.center.getZ() + 0.5,
+                    effectCenter.getX() + 0.5, effectCenter.getY() + 0.5, effectCenter.getZ() + 0.5,
                     16, 0.5, 1.0, 0.5, 0.0);
         }
 
@@ -2051,41 +2052,41 @@ public class RitualExecutor {
             for (int yOffset = 1; yOffset <= ritual.stage; yOffset++) {
                 float layerRadius = radius - (height - ritual.stage - 1 + yOffset) * radius / (float) height;
                 int actualRadius = Math.max((int) Math.ceil(layerRadius), 1);
-                drawVolcanoFilledCircle(level, ritual.center, ritual.center.getY() + yOffset - 1, actualRadius, yOffset, true);
+                drawVolcanoFilledCircle(level, effectCenter, effectCenter.getY() + yOffset - 1, actualRadius, yOffset, true);
                 if (ritual.stage == height) {
-                    int belowY = ritual.center.getY() - 1;
-                    for (int reduce = 0; belowY > ritual.center.getY() - 5; reduce++, belowY--) {
-                        drawVolcanoFilledCircle(level, ritual.center, belowY, Math.max(radius - reduce, 2), yOffset, false);
+                    int belowY = effectCenter.getY() - 1;
+                    for (int reduce = 0; belowY > effectCenter.getY() - 5; reduce++, belowY--) {
+                        drawVolcanoFilledCircle(level, effectCenter, belowY, Math.max(radius - reduce, 2), yOffset, false);
                     }
                 }
-                liftVolcanoEntities(level, ritual.center, ritual.center.getY() + yOffset, actualRadius);
+                liftVolcanoEntities(level, effectCenter, effectCenter.getY() + yOffset, actualRadius);
             }
             return true;
         }
 
         if (ritual.stage >= height * 2) {
-            openVolcanoVent(level, ritual.center);
+            openVolcanoVent(level, effectCenter);
             return false;
         }
 
         if (ritual.stage == height * 2 - 1) {
-            level.setBlock(ritual.center.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
-            level.setBlock(ritual.center.above(), Blocks.LAVA.defaultBlockState(), 3);
+            level.setBlock(effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
+            level.setBlock(effectCenter.above(), Blocks.LAVA.defaultBlockState(), 3);
             switch (level.random.nextInt(8)) {
-                case 0 -> level.setBlock(ritual.center.offset(1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
-                case 1 -> level.setBlock(ritual.center.offset(0, height - 1, 1), Blocks.AIR.defaultBlockState(), 3);
-                case 2 -> level.setBlock(ritual.center.offset(-1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
-                case 3 -> level.setBlock(ritual.center.offset(0, height - 1, -1), Blocks.AIR.defaultBlockState(), 3);
+                case 0 -> level.setBlock(effectCenter.offset(1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
+                case 1 -> level.setBlock(effectCenter.offset(0, height - 1, 1), Blocks.AIR.defaultBlockState(), 3);
+                case 2 -> level.setBlock(effectCenter.offset(-1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
+                case 3 -> level.setBlock(effectCenter.offset(0, height - 1, -1), Blocks.AIR.defaultBlockState(), 3);
                 default -> {
                 }
             }
         } else {
-            level.setBlock(ritual.center.above(), Blocks.SAND.defaultBlockState(), 3);
-            level.setBlock(ritual.center.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
+            level.setBlock(effectCenter.above(), Blocks.SAND.defaultBlockState(), 3);
+            level.setBlock(effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
         }
 
         if (ritual.stage % 4 == 0) {
-            spawnRingParticles(level, ritual.center, Math.max(radius / 2, 4), 18);
+            spawnRingParticles(level, effectCenter, Math.max(radius / 2, 4), 18);
         }
         return true;
     }
@@ -3405,16 +3406,30 @@ public class RitualExecutor {
     /** Rite of Earth's Wrath — raises a volcano if a lava pool lies below the circle. */
     private static boolean riteOfVolcano(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!hasVolcanoLavaPool(sl, center)) {
+        int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
+        if (relocation.tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
+        BlockPos effectCenter = relocation.effectCenter();
+        if (!hasVolcanoLavaPool(sl, effectCenter)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.missinglava"), false);
             return false;
         }
 
+        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
+                ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
+                : List.of();
         if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, RitualCircleDetector.CircleSize.LARGE, center,
-                8, 8, 0, 15, countNearbyCovenWitches(level, center))) {
+                effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0, supplementalSacrifices)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
+        }
+        if (relocation.boundWaystone() != null) {
+            consumeOfferedItem(relocation.boundWaystone());
         }
 
         success(player, level, center, "witchery.ritual.volcano.success",

@@ -666,9 +666,10 @@ Remaining gap:
 The next missing-rite pass is now closer to original Witchery:
 - `volcano` is reachable again as a staged large-circle terrain rite through a representative `lava_bucket` route, instead of being absent from the port entirely.
 - The restored route now checks for a real lava pool beneath the circle before activation, raises the sand/sandstone cone in pulses instead of resolving as a one-shot terrain edit, and opens the center vent at the end of the eruption sequence.
+- That same restored route now also honours the old optional same-dimension bound-waystone relocation extra again in practical form, so a nearby bound waystone can retarget the eruption away from the casting circle, and too-distant waystones now fail with the old rite-too-far feedback instead of being silently ignored.
 
 Remaining gap:
-- This still uses one representative trigger instead of the original multi-sacrifice set, and the modern terrain helper is a little cleaner and more deterministic than the original block-protection aware sand placement loop.
+- This still uses one representative trigger instead of the original multi-sacrifice set, and the modern terrain helper is a little cleaner and more deterministic than the original block-protection aware sand placement loop even though the optional remote-target path is now back.
 
 ### 53. Rite of Shifting Seasons was missing entirely - Fixed / verify
 
