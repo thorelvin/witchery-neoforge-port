@@ -1933,6 +1933,13 @@ public class RitualExecutor {
     }
 
     private static boolean tickRainOfToadsRitual(ServerLevel level, ActiveRitual ritual) {
+        if (ritual.covenSize < 1) {
+            level.playSound(null, ritual.center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
+
         ritual.stage++;
         if (ritual.stage <= 3) {
             spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
@@ -3310,12 +3317,8 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 8000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.no_power"), false);
-            return false;
-        }
-        if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200)) {
+        int covenSize = countNearbyCovenWitches(level, center);
+        if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200, 30, covenSize)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
