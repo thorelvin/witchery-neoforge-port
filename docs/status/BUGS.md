@@ -561,9 +561,10 @@ The next ritual routing pass is now closer to original Witchery:
 - That same `Forestation` route now also honours the old optional same-dimension bound-waystone relocation extra again in practical form, so a nearby bound waystone can retarget the grove growth away from the casting circle, and too-distant waystones now fail with the old rite-too-far feedback instead of being silently ignored.
 - The animal-calling `Beastial Call` behavior no longer fires from an arbitrary small ring; it now routes through a large otherwhere circle instead, which is much closer to the original `Call Beasts` rite.
 - That large otherwhere animal-calling route no longer resolves as a one-shot mass teleport either; it now queues the staged `Call Creatures`-style coven rite again and allures creatures in 60-tick pulses much closer to 1.7.10.
+- `Beastial Call` now also restores its original trigger set and altar startup cost again instead of using the port's loose placeholder triggers: the large otherwhere rite once more accepts `milk_bucket`, `hay_block`, `apple`, `beef`, `cod`, `red_mushroom`, `carrot`, or `wheat_seeds`, and once more consumes 6000 altar power before the staged attraction loop begins.
 
 Remaining gap:
-- Both routes are still using representative single-item triggers inside the simplified dispatcher instead of the full original sacrifice sets, and `Forestation` still skips the original staged tick-by-tick spread even though the optional remote-target path is back, but their ring size, chalk family, and practical support gating are now much closer to original parity.
+- `Forestation` still skips the original staged tick-by-tick spread even though the optional remote-target path is back, and both routes still live inside the port's simplified dispatcher instead of the original recipe registry, but their ring size, chalk family, and practical support gating are now much closer to original parity.
 
 ### 42. Familiar and reincarnation rites were still on the wrong circles - Fixed / verify
 

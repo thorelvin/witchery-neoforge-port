@@ -527,7 +527,7 @@ public class RitualExecutor {
         if (isRawFood(item, level) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             riteOfBroiling(player, level, center);
             return successResult();
-        } else if ((item.is(Items.WHEAT) || item.is(Items.CARROT) || item.is(Items.APPLE) || item.is(Items.BONE))
+        } else if (isBeastialCallTrigger(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfBeastialCall(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
@@ -762,6 +762,11 @@ public class RitualExecutor {
     private static boolean riteOfBeastialCall(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireCoven(player, level, center, 3)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.beastial_call.no_power"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES, RitualCircleDetector.CircleSize.LARGE,
                 center, 0, 0, 250, 60)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
@@ -770,6 +775,17 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.beastial_call.started",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72);
         return true;
+    }
+
+    private static boolean isBeastialCallTrigger(ItemStack item) {
+        return item.is(Items.MILK_BUCKET)
+                || item.is(Blocks.HAY_BLOCK.asItem())
+                || item.is(Items.APPLE)
+                || item.is(Items.BEEF)
+                || item.is(Items.COD)
+                || item.is(Blocks.RED_MUSHROOM.asItem())
+                || item.is(Items.CARROT)
+                || item.is(Items.WHEAT_SEEDS);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
