@@ -1,0 +1,22 @@
+{
+  "name": "Rite of Manifestation",
+  "icon": "witchery:mellifluous_hunger",
+  "category": "witchery:circle_magic",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Manifestation is not a way into the Spirit World. It is the way back out, briefly, once you are already there.$(br2)Draw a small Otherwhere circle in the Spirit World, then work the rite from within it. The result is not a body. It is permission to become more solid for a little while."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:mellifluous_hunger",
+      "text": "The rite asks for $(item)Spectral Dust$(), $(item)Mellifluous Hunger$(), a $(item)Necromantic Stone$(), a $(item)Golden Pickaxe$(), an $(item)Arthana$(), and $(item)Gunpowder$(), plus $(bold)5000 altar power$(/).$(br2)The stone and Arthana are returned. More nearby Coven Witches lengthen the manifestation."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:spirit_portal",
+      "text": "Once the rite is complete, pass through a $(item)Spirit Portal$() in the Spirit World to emerge into the Overworld as a ghost-like traveler at the matching location. Your manifestation lasts a short time, can be ended early with an $(item)Icy Needle$(), and collapses on death or when the timer expires."
+    }
+  ]
+}
