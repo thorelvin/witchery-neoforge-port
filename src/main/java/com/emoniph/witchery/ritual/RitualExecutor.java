@@ -420,10 +420,6 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfInfuseSeerStone(player, level, center));
         } else {
-            if (item.isEmpty()) {
-                riteOfBlessing(player, level, center);
-                return successWithoutConsumption();
-            }
             return ActivationResult.NO_MATCH;
         }
     }
@@ -726,14 +722,6 @@ public class RitualExecutor {
                 SoundEvents.CAT_AMBIENT, 1.0f, 2, 24);
         WitcheryMod.LOGGER.info("Rite of Summon Familiar cast by {}", player.getName().getString());
         return true;
-    }
-
-    /** Rite of Blessing — fallback small-circle rite when no ingredient is present. */
-    private static void riteOfBlessing(Player player, Level level, BlockPos center) {
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,   1200, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.SPEED, 1200, 0));
-        success(player, level, center, "witchery.ritual.infusion.success",
-                SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
     }
 
     /** Rite of Total Eclipse — forces midnight on the server. */

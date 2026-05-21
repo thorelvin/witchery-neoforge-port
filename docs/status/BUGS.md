@@ -486,14 +486,14 @@ The medium-circle dispatcher is now stricter and closer to original Witchery:
 Remaining gap:
 - This removes a major false-positive activation path, but Summoning is still routed through a single representative item instead of the full original sacrifice set.
 
-### 35. Small-circle Blessing was incorrectly the fallback for unrelated ingredients - Fixed / verify
+### 35. Small-circle Blessing fallback was still a non-original public route - Fixed / verify
 
 The small-circle dispatcher is now stricter and closer to original Witchery:
-- `Blessing` no longer fires for arbitrary unrecognised small-circle ingredients.
-- The simple blessing effect is now limited to an actually empty small-circle activation instead of acting as a catch-all for wrong items, which is much closer to the original explicit recipe-matching model.
+- The leftover empty small-circle `Blessing` shortcut is gone again.
+- A decompiled sweep of the original 1.7.10 ritual registry and rite docs turns up no public blessing cast, so small circles now only activate on source-backed rites instead of handing out a free regeneration/speed fallback when no ingredient is present.
 
 Remaining gap:
-- The port still keeps a lightweight empty-circle blessing shortcut, so this removes the false-positive item path without claiming full original ritual-registry matching yet.
+- None for this route; this was a dispatcher overclaim rather than a missing Witchery mechanic.
 
 ### 36. Day/night ritual gates used overly loose manual time windows - Fixed / verify
 
