@@ -4652,6 +4652,12 @@ public class RitualExecutor {
                                           ItemEntity fermentedSpiderEye, ItemEntity gunpowder,
                                           ItemEntity brewGrotesque) {}
 
+    private record CurseSinkingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity inkSac,
+                                         ItemEntity netherWart, ItemEntity brewGrotesque) {}
+
+    private record CurseOverheatingOfferings(ItemEntity exhaleOfHornedOne, ItemEntity demonicBlood,
+                                             ItemEntity blazeRod, ItemEntity brewGrotesque) {}
+
     private record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
                                           ItemEntity spectralDust) {}
 
@@ -4944,6 +4950,36 @@ public class RitualExecutor {
                 exhaleOfHornedOne.get(),
                 fermentedSpiderEye.get(),
                 gunpowder.get(),
+                brewGrotesque.get()));
+    }
+
+    private static Optional<CurseSinkingOfferings> findCurseSinkingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> inkSac = findNearbyOffering(level, center, stack -> stack.is(Items.INK_SAC));
+        Optional<ItemEntity> netherWart = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_WART));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        if (exhaleOfHornedOne.isEmpty() || inkSac.isEmpty() || netherWart.isEmpty() || brewGrotesque.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CurseSinkingOfferings(
+                exhaleOfHornedOne.get(),
+                inkSac.get(),
+                netherWart.get(),
+                brewGrotesque.get()));
+    }
+
+    private static Optional<CurseOverheatingOfferings> findCurseOverheatingOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        if (exhaleOfHornedOne.isEmpty() || demonicBlood.isEmpty() || blazeRod.isEmpty() || brewGrotesque.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CurseOverheatingOfferings(
+                exhaleOfHornedOne.get(),
+                demonicBlood.get(),
+                blazeRod.get(),
                 brewGrotesque.get()));
     }
 
@@ -5559,20 +5595,60 @@ public class RitualExecutor {
     /** Curse of Overheating — sets target on fire and applies fire vulnerability. */
     private static boolean riteOfCurseOverheating(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
-        return applyCurse(caster, level, center, target -> {
+        Optional<CurseOverheatingOfferings> offerings = findCurseOverheatingOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.no_power"), false);
+            return false;
+        }
+        boolean applied = applyCurse(caster, level, center, target -> {
             target.igniteForTicks(200);
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 0));
         }, "witchery.curse.overheating", "witchery.curse.overheating", false);
+        if (!applied) {
+            return false;
+        }
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().demonicBlood());
+        consumeOfferedItem(offerings.get().blazeRod());
+        consumeOfferedItem(offerings.get().brewGrotesque());
+        return true;
     }
 
     /** Curse of Sinking — extreme slowness and mining fatigue. */
     private static boolean riteOfCurseSinking(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
-        return applyCurse(caster, level, center, target -> {
+        Optional<CurseSinkingOfferings> offerings = findCurseSinkingOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.support"), false);
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.no_power"), false);
+            return false;
+        }
+        boolean applied = applyCurse(caster, level, center, target -> {
             target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400, 3));
             target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400, 2));
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0)); // brief sink
         }, "witchery.curse.sinking", "witchery.curse.sinking", false);
+        if (!applied) {
+            return false;
+        }
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().inkSac());
+        consumeOfferedItem(offerings.get().netherWart());
+        consumeOfferedItem(offerings.get().brewGrotesque());
+        return true;
     }
 
     /** Curse of Insanity — nausea + confusion. */
