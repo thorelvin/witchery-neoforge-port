@@ -3037,6 +3037,17 @@ public class RitualExecutor {
     /** Rite of Raising the Column — gradually lifts real terrain instead of stamping stone into the air. */
     private static boolean riteOfRaiseColumn(Player player, Level level, BlockPos center, RitualCircleDetector.CircleSize circleSize) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<RaiseColumnOfferings> offerings = findRaiseColumnOfferings(level, center, circleSize);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            String supportKey = switch (circleSize) {
+                case SMALL -> "witchery.ritual.raise_column.small_support";
+                case MEDIUM -> "witchery.ritual.raise_column.medium_support";
+                case LARGE -> "witchery.ritual.raise_column.large_support";
+            };
+            player.displayClientMessage(Component.translatable(supportKey), false);
+            return false;
+        }
 
         int baseRadius = switch (circleSize) {
             case SMALL -> 4;
@@ -3051,6 +3062,9 @@ public class RitualExecutor {
             return false;
         }
 
+        consumeOfferedItem(offerings.get().brewOfSprouting());
+        consumeOfferedItem(offerings.get().cactus());
+        consumeOfferedItem(offerings.get().focus());
         success(player, level, center, "witchery.ritual.raise_column.success",
                 SoundEvents.STONE_BREAK, 0.8f, 3, 32);
         return true;
@@ -3987,6 +4001,8 @@ public class RitualExecutor {
     private record TransposeOresOfferings(ItemEntity enderPearl, ItemEntity ironIngot, ItemEntity blazePowder,
                                           ItemEntity diamondVapour, ItemEntity chargedStone) {}
 
+    private record RaiseColumnOfferings(ItemEntity brewOfSprouting, ItemEntity cactus, ItemEntity focus) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4171,6 +4187,21 @@ public class RitualExecutor {
                 blazePowder.get(),
                 diamondVapour.get(),
                 chargedStone.get()));
+    }
+
+    private static Optional<RaiseColumnOfferings> findRaiseColumnOfferings(Level level, BlockPos center,
+                                                                           RitualCircleDetector.CircleSize circleSize) {
+        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_SPROUTING.get()));
+        Optional<ItemEntity> cactus = findNearbyOffering(level, center, stack -> stack.is(Blocks.CACTUS.asItem()));
+        Optional<ItemEntity> focus = switch (circleSize) {
+            case SMALL -> findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+            case MEDIUM -> findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE));
+            case LARGE -> findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
+        };
+        if (brewOfSprouting.isEmpty() || cactus.isEmpty() || focus.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {

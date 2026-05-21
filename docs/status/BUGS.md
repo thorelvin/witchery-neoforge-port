@@ -254,9 +254,10 @@ The Raise Column rite is back much closer to old Witchery now:
 - It pulses every 5 ticks again, matching the old rite cadence.
 - Small, medium, and large circles now use their original escalating base radii again.
 - Nearby coven witches now expand the lifted radius again, instead of being ignored.
+- The three size variants no longer fire from bare dropped stone alone: they now also once more expect the old `brew_of_sprouting` + cactus + size-specific powder support sets (`gunpowder` on small, `redstone` on medium, `glowstone dust` on large) before the staged lift will queue.
 
 Remaining gap:
-- The original 1.7.10 rite moved tile entities as part of the terrain lift; the port still skips block-entity columns for safety until that migration logic is restored cleanly.
+- The original 1.7.10 rite moved tile entities as part of the terrain lift, and the old small-circle optional bound-waystone extra is still deferred; the port still skips block-entity columns for safety until that migration logic is restored cleanly.
 
 ### 20. Crater was an instant sphere delete instead of a staged excavation rite - Fixed / verify
 
