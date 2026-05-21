@@ -17,4 +17,16 @@ public class WitcheryDimensions {
     public static final ResourceKey<Level> TORMENT =
             ResourceKey.create(Registries.DIMENSION,
                     Identifier.fromNamespaceAndPath("witchery", "torment"));
+
+    public static final ResourceKey<Level> MIRROR_WORLD =
+            ResourceKey.create(Registries.DIMENSION,
+                    Identifier.fromNamespaceAndPath("witchery", "mirror_world"));
+
+    public static boolean isMirrorWorld(Level level) {
+        return level.dimension().equals(MIRROR_WORLD);
+    }
+
+    public static boolean isMirrorWorld(ResourceKey<Level> dimension) {
+        return dimension.equals(MIRROR_WORLD);
+    }
 }

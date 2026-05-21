@@ -83,6 +83,7 @@ import java.util.List;
  * /witchery status                  — show own witchery data
  * /witchery spawn <entity>          — spawn entity 2 blocks ahead
  * /witchery dream                   — enter the Spirit World dimension
+ * /witchery mirror                  — enter the Mirror World dimension
  * /witchery torment                 — enter the Torment dimension
  * /witchery exit                    — return to previous dimension
  * /witchery give primer             — give the Witches' Primer guidebook
@@ -196,6 +197,9 @@ public class WitcheryCommands {
                 // ── Dimensions ───────────────────────────────────────────────
                 .then(Commands.literal("dream")
                         .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.DREAM_WORLD)))
+
+                .then(Commands.literal("mirror")
+                        .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.MIRROR_WORLD)))
 
                 .then(Commands.literal("torment")
                         .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.TORMENT)))
@@ -493,9 +497,10 @@ public class WitcheryCommands {
      *
      * Torment uses its dedicated maze-entry helper instead of this generic scan.
      */
-    private static double[] findSafeEntry(ServerLevel level, ResourceKey<Level> dim) {
+    private static double[] findSafeEntry(ServerLevel level, ResourceKey<Level> dim, BlockPos referencePos) {
         // Force full chunk generation at spawn point (synchronous on server thread)
-        level.getChunk(0, 0, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, true);
+        BlockPos chunkAnchor = dim.equals(WitcheryDimensions.MIRROR_WORLD) ? referencePos : BlockPos.ZERO;
+        level.getChunk(chunkAnchor.getX() >> 4, chunkAnchor.getZ() >> 4, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, true);
 
         if (dim.equals(WitcheryDimensions.SPIRIT_WORLD)) {
             // Overworld-style terrain: scan from 200 down to find solid surface
@@ -508,6 +513,20 @@ public class WitcheryCommands {
                 }
             }
             return new double[]{ 0.5, 65, 0.5 };
+        }
+
+        if (dim.equals(WitcheryDimensions.MIRROR_WORLD)) {
+            int x = referencePos.getX();
+            int z = referencePos.getZ();
+            for (int y = 200; y >= -60; y--) {
+                var floor = new net.minecraft.core.BlockPos(x, y, z);
+                if (!level.getBlockState(floor).isAir()
+                        && level.getBlockState(floor.above()).isAir()
+                        && level.getBlockState(floor.above().above()).isAir()) {
+                    return new double[]{ x + 0.5, y + 1, z + 0.5 };
+                }
+            }
+            return new double[]{ x + 0.5, 65, z + 0.5 };
         }
 
         return new double[]{ 0.5, 64, 0.5 };
@@ -531,7 +550,7 @@ public class WitcheryCommands {
         data.setReturnPos(player.blockPosition(), player.level().dimension());
         sync(player, data);
 
-        double[] safePos = findSafeEntry(target, dim);
+        double[] safePos = findSafeEntry(target, dim, player.blockPosition());
         player.teleportTo(target, safePos[0], (double)(safePos[1]), safePos[2], java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
         src.sendSuccess(() -> Component.literal("Entered " + dim.identifier().getPath() + "."), false);
         return 1;

@@ -40,6 +40,12 @@ public class WitcheryClientEvents {
     public static void onComputeFogColor(ViewportEvent.ComputeFogColor event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
+        if (WitcheryDimensions.isMirrorWorld(mc.level)) {
+            event.setRed(0.0f);
+            event.setGreen(0.03f);
+            event.setBlue(0.1f);
+            return;
+        }
         if (!mc.level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
 
         WitcheryPlayerData data = WitcheryAttachments.get(mc.player);

@@ -56,6 +56,8 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 - **Dimension type:** `effects: the_end`, `fixed_time: 18000`, `has_skylight: false`, `ambient_light: 0.1`
 - **Biome:** fog ~`RGB(0, 8, 26)`, sky very dark
 - **Entry:** Mirror block ritual
+- **Current foundation:** dimension key/data now exists, `/witchery mirror` can enter it for QA, landing uses the player's current X/Z with a safe surface scan, the client now forces the dark-blue fog tone, and server tick enforcement now keeps the realm clear of rain and thunder
+- **Next real steps:** mirrored terrain rules, ingress block/ritual, and hostile player-clone inhabitants
 
 ---
 
@@ -69,6 +71,38 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 ## Long-term art direction
 
 - **Original replacement art pass (deferred, post-parity)** - once mechanical parity is in a trustworthy state, plan a broad replacement pass for textures, sounds, and other audiovisual assets so the port is not just reusing/riffing on old Witchery content. The target should be "new art with the same gameplay identity and mood", not a straight rip of the original assets. Treat original Witchery as tone/mechanics reference, not as the final art source, and prefer building a distinct visual/audio identity before any public release push.
+
+---
+
+## Raven feature expansion (deferred, post core-parity)
+
+The new raven should not stop at "real bird instead of parrot". It can become one of the port's signature systems once the main parity backlog is under control.
+
+- **Raven familiar track** - allow a raven to bind to a player more like a true witch companion than a passive mob. Core behaviors to target: follow at medium range, perch near the player when idle, recall/teleport back if lost, and respect sit/stay-style commands without becoming a full wolf clone.
+- **Murder of crows events** - add a low-frequency ambient system where a random murder of ravens can gather under the right mood conditions: storms, dusk, full moon, cursed land, nightmares, recent death, or active infernal rites. These flocks should feel like omens first and combat second.
+- **Brew of Hitchcock escalation** - keep the current raven flock as the baseline, but later let the brew optionally interact with the murder system so a cast in the right conditions can chain into a larger local frenzy instead of always spawning the same simple flock burst.
+- **Omen mechanics** - ravens are a good fit for soft warnings. They could circle above nearby curses, corpse locations, hidden hostile mobs, dream/nightmare disturbances, or ritual sites that are about to fail. This gives them a unique identity beyond "owl but darker".
+- **Scouting and messenger utility** - a bound raven could be sent toward a nearby point of interest and return with a rough result rather than exact minimap-like data. Good candidates: nearest bound waystone, nearest witch structure, last death location, active nightmare corpse, or the last place a player slept.
+- **Ingredient and object interactions** - ravens can make the world feel more alive if they steal, drop, or deliver small items. Future hooks could include pecking up seeds/shiny items, carrying a single lightweight delivery item, or occasionally bringing back minor curios when sent out.
+- **Ritual integration** - ravens fit Witchery best when they cross into magic systems. Future ideas: perch on circles during certain rites, react to infernal/otherwhere chalk families differently, help reveal valid ritual centers, or serve as an optional omen/sacrifice/witness mechanic in new Rewoven-specific content.
+- **Dream and Spirit World hooks** - ravens could become one of the cleaner bridges between dimensions and states. Examples: black-feather apparitions in the Spirit World, ravens warning of demonic nightmare risk, or a manifested raven familiar that can still find the player while ghosted.
+- **Social and world flavor** - coven witches and hobgoblins can both gain flavor from raven presence. Witches might occasionally keep or summon ravens, while hobgoblins could fear them, throw food at them, or react to them as bad luck.
+- **Rowan and ward interactions** - ravens should not ignore the rest of the mod's rules. Rowan protections, sanctity barriers, dream catchers, and other warding systems should influence where raven omens gather and whether they can cross into protected areas.
+
+### Suggested rollout order
+
+1. **Bound raven familiar** - follow, perch, recall, persistence, and basic command handling.
+2. **Improved Hitchcock flock** - reuse the existing raven entity for a better flock event with more variation and less "spawn 12 birds and stop".
+3. **Ambient murder/omen system** - rare flock gathering tied to weather, moon, curse, and nightmare signals.
+4. **Utility interactions** - scouting, returning to the player, simple messenger/item-carry hooks.
+5. **Deep system hooks** - ritual, Spirit World, curse, and ward integration.
+
+### Design guardrails
+
+- Ravens should feel **uncanny, useful, and slightly unpredictable**, not like a reskinned vanilla pet.
+- Prefer **information, omen, and atmosphere** over raw combat power.
+- Keep their strongest mechanics tied to **witchcraft context**: weather, rites, curses, death, dreams, waystones, and familiars.
+- If the project leans into original replacement art later, the raven is a strong candidate for becoming part of **Witchery: Rewoven's own identity**, including custom sounds, animation, and eventual unique ritual content.
 
 ---
 
