@@ -63,8 +63,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The previously omitted Chapter 11 rites now all have first-pass Primer coverage again, including `Rite of Moving Earth`. The remaining documentation work shifts from "missing rite entirely" toward better cross-links, item bridges, and deeper explanations for things like Treefyd Seeds, Spectral Familiars, and Mystic Branch use.
 5. Rite of the Forest / Treefyd seed bridge - closed.
    The missing `Treefyd Seeds` item path is now surfaced again: the original crafted seed recipe is back, the seed can once more be used on grass to raise an owned Treefyd, and the Primer now teaches that bridge directly instead of leaving Treefyd progression implied or hidden behind QA-only spawn paths.
-6. Spectral Familiar explanation.
-   The summon rite can exist without the player understanding what a Spectral Familiar actually is, how it behaves, or how it differs from Cat / Owl / Toad familiars. This needs a practical familiar entry, not just a recipe mention.
+6. Spectral Familiar explanation - closed as a truthful Primer pass.
+   The Primer now explains what the original Spectral Familiar was for, why the summon rite text mentions giving it a diamond, and that the current port still uses a bound Witch's Cat placeholder for the restored summon route until the dedicated spectral familiar entity/search behavior is implemented.
 7. Mystic Branch explanation - closed as a first truthful port pass.
    The Primer now explains how the live port actually grants the branch through the night infusion rite and how it currently spends stored creature-power charges as a practical focus item. The deeper old air-glyph / demonic-branch spellcasting lore is still future work at the mechanics level, but the player no longer receives the item with no explanation at all.
 8. Necromantic Stone explanation - closed as a first truthful port pass.
@@ -78,9 +78,7 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
-1. Tool/familiar identity next.
-   `Spectral Familiar` is the main remaining identity page now that `Mystic Branch` and `Necromantic Stone` both have first truthful Primer coverage.
-2. Equipment and minor completeness after the blockers.
+1. Equipment and minor completeness next.
    Vampire armor coverage, belts, Beartrap, and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
 
 ## Highest-priority structural fixes

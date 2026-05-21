@@ -1,0 +1,22 @@
+{
+  "name": "Spectral Familiar",
+  "icon": "witchery:drop_of_luck",
+  "category": "witchery:creatures",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "In old Witchery, the $(item)Rite of Summoning$() did not call an owl, toad, or cat that already lived in the world. It called a $(bold)Spectral Familiar$(/) instead: a ghostly companion whose purpose was to seek out shinies and strange things for its witch.$(br2)That is why the old rite text tells you to try giving the familiar a diamond."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Current Port Truth",
+      "text": "Witchery: Rewoven has the restored small-circle summon route, its real support offerings, and its altar cost back, but the separate Spectral Familiar creature is not yet implemented as its own entity. For now, the rite still produces a bound $(item)Witch's Cat$() so the branch remains usable without falsely claiming full parity.$(br2)Treat this as an honest placeholder, not the finished familiar."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "What Still Remains",
+      "text": "The future parity step is to restore the true summoned familiar: its own identity, visuals, and the old search-for-shinies role that made it distinct from Owl, Cat, and Toad familiars.$(br2)Until then, the practical familiar systems to rely on are the bound Owl, Cat, and Toad lines described elsewhere in this chapter."
+    }
+  ]
+}

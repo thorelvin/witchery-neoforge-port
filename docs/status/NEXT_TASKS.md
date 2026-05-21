@@ -73,9 +73,9 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 High-value player-discovery gaps to close in the in-game guide:
 
 - **Blocked-player items first** - first-pass Primer coverage for `Boline`, the four infusion source items (`Ghost of the Light`, `Soul of the World`, `Spirit of Otherwhere`, `Infernal Animus`), and `Anointing Paste` is now in; next follow-up is broader Chapter 11 rite coverage and any missing recipe visuals/cross-links.
-- **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; the next documentation priority has now shifted past the closed `Treefyd Seed` bridge to the remaining identity page for `Spectral Familiar`.
+- **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; the main remaining guidebook work is now completeness/polish rather than missing rite basics.
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
-- **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, and `Treefyd Seeds` now all have truthful Primer pages for their current port roles; the main remaining identity target is what a `Spectral Familiar` actually is in practical play.
+- **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
 - **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
 
 ---
