@@ -26,14 +26,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
 /** Treefyd - wooden golem summoned by ritual. Guards the caster's base. */
 public class TreefydEntity extends Monster {
+    private final WaterAvoidingRandomStrollGoal wanderGoal = new SentinelAwareWanderGoal(this, 0.7);
     @Nullable
     private UUID ownerUuid;
+    private boolean sentinel;
 
     public TreefydEntity(EntityType<? extends TreefydEntity> type, Level level) {
         super(type, level);
@@ -52,7 +55,7 @@ public class TreefydEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.7));
+        this.goalSelector.addGoal(4, wanderGoal);
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -83,6 +86,10 @@ public class TreefydEntity extends Monster {
 
     public boolean isOwnedBy(Player player) {
         return ownerUuid != null && ownerUuid.equals(player.getUUID());
+    }
+
+    public boolean isSentinel() {
+        return sentinel;
     }
 
     private boolean shouldTarget(@Nullable LivingEntity entity) {
@@ -118,18 +125,56 @@ public class TreefydEntity extends Monster {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.is(WitcheryItems.TREEFYD_SEEDS.get()) || !isOwnedBy(player)) {
+        if (!isOwnedBy(player)) {
             return super.mobInteract(player, hand);
         }
-        if (level().isClientSide()) {
+
+        if (stack.is(WitcheryItems.TREEFYD_SEEDS.get())) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+
+            spawnClone((ServerLevel) level(), player);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
             return InteractionResult.SUCCESS;
         }
 
-        spawnClone((ServerLevel) level(), player);
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
+        if (stack.is(WitcheryItems.CREEPER_HEART.get())) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            applyUpgrade(100.0D, 4.0D);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+
+        if (stack.is(WitcheryItems.DEMON_HEART.get())) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            applyUpgrade(150.0D, 5.0D);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        if (stack.is(WitcheryItems.BOLINE.get())) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            sentinel = !sentinel;
+            if (sentinel) {
+                getNavigation().stop();
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.mobInteract(player, hand);
     }
 
     private void spawnClone(ServerLevel level, Player owner) {
@@ -144,12 +189,25 @@ public class TreefydEntity extends Monster {
         level.addFreshEntity(clone);
     }
 
+    private void applyUpgrade(double maxHealth, double attackDamage) {
+        AttributeInstance health = getAttribute(Attributes.MAX_HEALTH);
+        AttributeInstance attack = getAttribute(Attributes.ATTACK_DAMAGE);
+        if (health != null) {
+            health.setBaseValue(maxHealth);
+            setHealth(getMaxHealth());
+        }
+        if (attack != null) {
+            attack.setBaseValue(attackDamage);
+        }
+    }
+
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (ownerUuid != null) {
             tag.putString("OwnerUUID", ownerUuid.toString());
         }
+        tag.putBoolean("Sentinel", sentinel);
     }
 
     @Override
@@ -157,5 +215,25 @@ public class TreefydEntity extends Monster {
         super.readAdditionalSaveData(tag);
         String owner = tag.getStringOr("OwnerUUID", "");
         ownerUuid = owner.isEmpty() ? null : UUID.fromString(owner);
+        sentinel = tag.getBooleanOr("Sentinel", false);
+    }
+
+    private static final class SentinelAwareWanderGoal extends WaterAvoidingRandomStrollGoal {
+        private final TreefydEntity treefyd;
+
+        private SentinelAwareWanderGoal(TreefydEntity treefyd, double speedModifier) {
+            super(treefyd, speedModifier);
+            this.treefyd = treefyd;
+        }
+
+        @Override
+        public boolean canUse() {
+            return !treefyd.isSentinel() && super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !treefyd.isSentinel() && super.canContinueToUse();
+        }
     }
 }

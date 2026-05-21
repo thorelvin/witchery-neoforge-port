@@ -16,7 +16,12 @@
     {
       "type": "patchouli:text",
       "title": "Planting the Seed",
-      "text": "Use the seed on the top face of a grass block. The seed is spent and a Treefyd rises there as your own guardian instead of a wild hostile plant. In Witchery: Rewoven today, feeding an owned Treefyd another seed will also split off a fresh owned specimen.$(br2)The deeper memory, taglock, and heart-upgrade behaviors still remain future parity work."
+      "text": "Use the seed on the top face of a grass block. The seed is spent and a Treefyd rises there as your own guardian instead of a wild hostile plant. In Witchery: Rewoven today, feeding an owned Treefyd another seed will also split off a fresh owned specimen.$(br2)A $(item)Creeper Heart$() hardens it, a $(item)Demon Heart$() hardens it further, and a $(item)Boline$() now toggles whether it wanders when idle."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Still Remaining",
+      "text": "The deeper memory and taglock command behavior from the old mod still remains future parity work. For now, think of the Treefyd as a real planted guardian with working ownership, cloning, upgrades, and sentinel mode, but not yet the full ignore-list and social-command creature from later Witchery history."
     }
   ]
 }
