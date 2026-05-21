@@ -785,6 +785,7 @@ public class RitualExecutor {
     private static boolean riteOfBeastialCall(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireCoven(player, level, center, 3)) return false;
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.beastial_call.no_power"), false);
@@ -1008,6 +1009,7 @@ public class RitualExecutor {
     /** Rite of Infusion Recharge — sustains a charging field for infused players standing in paired ritual circles. */
     private static boolean riteOfInfusionRecharge(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 4000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_recharge.no_power"), false);
@@ -1059,6 +1061,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
@@ -1122,6 +1125,7 @@ public class RitualExecutor {
             case PROTECTION_BARRIER_PORTABLE -> 0.0f;
             default -> 0.0f;
         };
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (startupPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupPower)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
@@ -1254,6 +1258,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
             return false;
         }
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 500)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
@@ -1278,6 +1283,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
             return false;
         }
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 500)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
@@ -2434,8 +2440,7 @@ public class RitualExecutor {
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices, boolean enhanced) {
         List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
-        boolean occupied = rituals.stream().anyMatch(active -> active.center.equals(center));
-        if (occupied) {
+        if (hasActiveRitualAt(level, center)) {
             return false;
         }
 
@@ -2446,6 +2451,19 @@ public class RitualExecutor {
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
                 List.copyOf(supplementalSacrifices)));
+        return true;
+    }
+
+    private static boolean hasActiveRitualAt(ServerLevel level, BlockPos center) {
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
+        return rituals != null && rituals.stream().anyMatch(active -> active.center.equals(center));
+    }
+
+    private static boolean ensureActiveRitualCenterAvailable(Player player, ServerLevel level, BlockPos center) {
+        if (hasActiveRitualAt(level, center)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
         return true;
     }
 
@@ -3697,6 +3715,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         int requiredPower = variant == StormRiteVariant.BASE ? 1000 : variant == StormRiteVariant.LARGE ? 2000 : 0;
         if (requiredPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, requiredPower)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -6560,6 +6579,7 @@ public class RitualExecutor {
             return false;
         }
         if (!(caster instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
+        if (!ensureActiveRitualCenterAvailable(caster, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             caster.displayClientMessage(Component.translatable("witchery.ritual.hell_on_earth.no_power"), false);
