@@ -396,6 +396,7 @@ Remaining gap:
 The next ritual precondition pass is now back in place:
 - `Curse Creature`, `Curse of Insanity`, `Curse of Sinking`, `Curse of Overheating`, and `Curse of Waking Nightmare` now require an actual thunderstorm again before they will cast, matching the old `ONLY_IN_STROM` recipe traits.
 - `Curse Creature` now also once more expects its original `Taglock Kit`, `Exhale of the Horned One`, `spider eye`, `gunpowder`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
+- `Curse Creature` now also once more spends that offered filled `Taglock Kit` on the bound victim instead of splashing nearby mobs, so the public target flow finally lines up with the original taglock curse family again.
 - `Curse of Insanity` now also once more expects its original `Exhale of the Horned One`, `poisonous potato`, `sugar`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Sinking` now also once more expects its original `Exhale of the Horned One`, `ink sac`, `nether wart`, and `Brew of Grotesque` support offerings plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
 - `Curse of Overheating` now also once more expects its original `Exhale of the Horned One`, the port's `Demonic Blood` item in the old Infernal Blood slot, a `blaze rod`, and `Brew of Grotesque` plus its original 2000 altar-power startup cost, instead of firing for free once the storm check passes.
@@ -408,6 +409,7 @@ The next ritual precondition pass is now back in place:
 
 Remaining gap:
 - This restores some of the missing activation traits, but the ingredient-dispatch ritual system still does not model the full original recipe registry and its trait matrix yet.
+- `Curse Creature` still uses the port's temporary Wither/Slowness/Weakness approximation rather than the old persistent `witcheryCursed` curse-state engine, so full long-tail parity for that one branch is still open.
 
 ### 31. Total Eclipse and broom infusion were missing original day/night gates - Fixed / verify
 

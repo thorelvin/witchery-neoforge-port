@@ -4284,7 +4284,7 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Cursing Creatures — applies Wither, Slowness and Weakness to nearby mobs. */
+    /** Curse Creature — current port approximation targets the bound victim directly. */
     private static boolean riteOfCurseCreature(Player player, Level level, BlockPos center) {
         if (!requireThunderstorm(player, level, center)) return false;
         Optional<CurseCreatureOfferings> offerings = findCurseCreatureOfferings(level, center);
@@ -4299,23 +4299,19 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.curse_creature.no_power"), false);
             return false;
         }
-        AABB aabb = new AABB(center).inflate(10);
-        int count = 0;
-        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, aabb)) {
-            if (entity instanceof Player) continue;
-            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
-            entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1));
-            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
-            count++;
+        boolean applied = applyCurse(player, level, center, offerings.get().taglockKit(), target -> {
+            target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
+            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
+        }, "witchery.curse.cursed", "witchery.curse.cursed", true);
+        if (!applied) {
+            return false;
         }
-        consumeOfferedItem(offerings.get().taglockKit());
         consumeOfferedItem(offerings.get().exhaleOfHornedOne());
         consumeOfferedItem(offerings.get().spiderEye());
         consumeOfferedItem(offerings.get().gunpowder());
         consumeOfferedItem(offerings.get().brewGrotesque());
-        success(player, level, center, "witchery.ritual.curse_creature.success",
-                SoundEvents.WITCH_CELEBRATE, 1f, 3, 32);
-        WitcheryMod.LOGGER.info("Rite of Curse Creature afflicted {} entities", count);
+        WitcheryMod.LOGGER.info("Curse Creature afflicted the filled-taglock target");
         return true;
     }
 
