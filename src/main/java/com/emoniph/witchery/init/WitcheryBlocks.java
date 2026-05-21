@@ -136,6 +136,8 @@ public class WitcheryBlocks {
 
     // Machines / Multiblocks
     public static final DeferredBlock<KettleBlock>      KETTLE        = BLOCKS.registerBlock("kettle",         KettleBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
+    public static final DeferredBlock<WitchCauldronBlock> WITCH_CAULDRON = BLOCKS.registerBlock("witch_cauldron",
+            WitchCauldronBlock::new, BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAULDRON));
     public static final DeferredBlock<DistilleryBlock>  DISTILLERY    = BLOCKS.registerBlock("distillery",     DistilleryBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).lightLevel(state -> state.getValue(DistilleryBlock.LIT) ? 6 : 0).noOcclusion());
     public static final DeferredBlock<SpinningWheelBlock> SPINNING_WHEEL = BLOCKS.registerBlock("spinning_wheel", SpinningWheelBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f).noOcclusion());
     public static final DeferredBlock<WitchesOvenBlock> WITCHES_OVEN  = BLOCKS.registerBlock("witches_oven",   WitchesOvenBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).lightLevel(state -> state.getValue(WitchesOvenBlock.LIT) ? 13 : 0).noOcclusion());
