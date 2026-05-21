@@ -38,6 +38,11 @@
       "type": "patchouli:text",
       "title": "Void Bramble",
       "text": "The stranger sister begins the same way, but with $(item)Sugar Cane$() in the center. Water still rings the stalk, $(item)Spanish Moss$() still hangs over each source, and the four diagonal $(item)Grasspers$() must each hold an $(item)Ender Pearl$().$(br2)Use the sprig on the cane and the whole stalk twists into $(item)Void Bramble$(), which answers the old Ender Bramble role by throwing intruders elsewhere."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Wormwood",
+      "text": "The old conjurer's herb is also back on the sprig. Raise a fully grown $(item)Wheat$() plant, keep the four diagonal corners watered one block down, and plant $(item)Wispy Cotton$() on each cardinal side. Use the sprig on the ripe wheat and the cotton will be consumed, leaving a fresh young $(item)Wormwood$() in its place.$(br2)That gives the Brazier's necromantic smoke a proper survival bridge again."
     }
   ]
 }

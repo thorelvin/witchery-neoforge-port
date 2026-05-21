@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.material.Fluids;
 
@@ -87,6 +88,16 @@ public class MutatingSprigItem extends Item {
             return InteractionResult.CONSUME;
         }
         if (tryCreateVoidBramble(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateWormwood(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -225,6 +236,31 @@ public class MutatingSprigItem extends Item {
         clearHorizontalMoss(level, pos);
         clearDiagonalGrasspers(level, pos);
         transformVerticalColumn(level, pos, Blocks.SUGAR_CANE, WitcheryBlocks.VOID_BRAMBLE.get(), 16);
+        return true;
+    }
+
+    private static boolean tryCreateWormwood(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.WHEAT)
+                || !state.hasProperty(BlockStateProperties.AGE_7)
+                || state.getValue(BlockStateProperties.AGE_7) < 7) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (!level.getBlockState(pos.relative(direction)).is(WitcheryBlocks.WISPY_COTTON.get())) {
+                return false;
+            }
+        }
+        for (int xOffset : new int[] {-1, 1}) {
+            for (int zOffset : new int[] {-1, 1}) {
+                if (!level.getFluidState(pos.offset(xOffset, -1, zOffset)).isSourceOfType(Fluids.WATER)) {
+                    return false;
+                }
+            }
+        }
+
+        clearHorizontalMoss(level, pos);
+        level.setBlock(pos, WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), 3);
         return true;
     }
 
