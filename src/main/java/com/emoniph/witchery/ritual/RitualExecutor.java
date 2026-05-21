@@ -351,8 +351,7 @@ public class RitualExecutor {
         } else if (item.is(Items.BONE) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfFertility(player, level, center));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            riteOfBlindness(player, level, center);
-            return successResult();
+            return matchedResult(riteOfBlindness(player, level, center));
         } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonWitch(player, level, center));
         } else if (item.is(WitcheryItems.DROP_OF_LUCK.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -473,8 +472,7 @@ public class RitualExecutor {
         } else if (item.is(Items.MAGMA_CREAM) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseCreature(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            riteOfBlight(player, level, center);
-            return successResult();
+            return matchedResult(riteOfBlight(player, level, center));
         } else if (item.is(Items.CHORUS_FRUIT) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseSinking(player, level, center));
         } else if (item.is(Items.PUFFERFISH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -3103,7 +3101,13 @@ public class RitualExecutor {
     }
 
     /** Rite of Blindness — blinds all non-player living entities within 10 blocks for 60 seconds. */
-    private static void riteOfBlindness(Player player, Level level, BlockPos center) {
+    private static boolean riteOfBlindness(Player player, Level level, BlockPos center) {
+        Optional<BlindnessOfferings> offerings = findBlindnessOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.blindness.support"), false);
+            return false;
+        }
         AABB aabb = new AABB(center).inflate(10);
         int count = 0;
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, aabb)) {
@@ -3111,13 +3115,28 @@ public class RitualExecutor {
             entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 1200, 0));
             count++;
         }
+        consumeOfferedItem(offerings.get().chargedStone());
+        consumeOfferedItem(offerings.get().redstoneSoup());
+        consumeOfferedItem(offerings.get().reekOfMisfortune());
+        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
+        consumeOfferedItem(offerings.get().brewOfInk());
+        consumeOfferedItem(offerings.get().poisonousPotato());
+        consumeOfferedItem(offerings.get().spiderEye());
+        consumeOfferedItem(offerings.get().diamond());
         success(player, level, center, "witchery.ritual.blindness.success",
                 SoundEvents.BAT_AMBIENT, 0.5f, 3, 32);
         WitcheryMod.LOGGER.info("Rite of Blindness afflicted {} entities", count);
+        return true;
     }
 
     /** Rite of Blight — withers players, zombifies villagers, slays animals nearby. */
-    private static void riteOfBlight(Player player, Level level, BlockPos center) {
+    private static boolean riteOfBlight(Player player, Level level, BlockPos center) {
+        Optional<BlightOfferings> offerings = findBlightOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.blight.support"), false);
+            return false;
+        }
         AABB aabb = new AABB(center).inflate(15);
         for (Player p : level.getEntitiesOfClass(Player.class, aabb)) {
             p.addEffect(new MobEffectInstance(MobEffects.WITHER, 2400, 1));
@@ -3139,7 +3158,16 @@ public class RitualExecutor {
                 cow.discard();
             }
         }
-        // Animal loop removed temporarily
+        consumeOfferedItem(offerings.get().chargedStone());
+        consumeOfferedItem(offerings.get().redstoneSoup());
+        consumeOfferedItem(offerings.get().reekOfMisfortune());
+        consumeOfferedItem(offerings.get().fermentedSpiderEye());
+        consumeOfferedItem(offerings.get().glisteringMelon());
+        consumeOfferedItem(offerings.get().rottenFlesh());
+        consumeOfferedItem(offerings.get().diamond());
+        success(player, level, center, "witchery.ritual.blight.success",
+                SoundEvents.WITHER_SPAWN, 0.5f, 2, 40);
+        return true;
     }
 
     /** Rite of Rain of Toads — sets thunderstorm, strikes lightning, spawns toads. */
@@ -4178,6 +4206,14 @@ public class RitualExecutor {
     private record PortableFertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
                                               ItemEntity gypsum, ItemEntity mutandisExtremis, ItemEntity chargedStone) {}
 
+    private record BlindnessOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,
+                                      ItemEntity exhaleOfHornedOne, ItemEntity brewOfInk, ItemEntity poisonousPotato,
+                                      ItemEntity spiderEye, ItemEntity diamond) {}
+
+    private record BlightOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,
+                                   ItemEntity fermentedSpiderEye, ItemEntity glisteringMelon, ItemEntity rottenFlesh,
+                                   ItemEntity diamond) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -4399,6 +4435,52 @@ public class RitualExecutor {
                 gypsum.get(),
                 mutandisExtremis.get(),
                 chargedStone.get()));
+    }
+
+    private static Optional<BlindnessOfferings> findBlindnessOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
+        Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
+        Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
+        Optional<ItemEntity> brewOfInk = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_INK.get()));
+        Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
+        Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        if (chargedStone.isEmpty() || redstoneSoup.isEmpty() || reekOfMisfortune.isEmpty() || exhaleOfHornedOne.isEmpty()
+                || brewOfInk.isEmpty() || poisonousPotato.isEmpty() || spiderEye.isEmpty() || diamond.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BlindnessOfferings(
+                chargedStone.get(),
+                redstoneSoup.get(),
+                reekOfMisfortune.get(),
+                exhaleOfHornedOne.get(),
+                brewOfInk.get(),
+                poisonousPotato.get(),
+                spiderEye.get(),
+                diamond.get()));
+    }
+
+    private static Optional<BlightOfferings> findBlightOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
+        Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
+        Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
+        Optional<ItemEntity> glisteringMelon = findNearbyOffering(level, center, stack -> stack.is(Items.GLISTERING_MELON_SLICE));
+        Optional<ItemEntity> rottenFlesh = findNearbyOffering(level, center, stack -> stack.is(Items.ROTTEN_FLESH));
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        if (chargedStone.isEmpty() || redstoneSoup.isEmpty() || reekOfMisfortune.isEmpty() || fermentedSpiderEye.isEmpty()
+                || glisteringMelon.isEmpty() || rottenFlesh.isEmpty() || diamond.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BlightOfferings(
+                chargedStone.get(),
+                redstoneSoup.get(),
+                reekOfMisfortune.get(),
+                fermentedSpiderEye.get(),
+                glisteringMelon.get(),
+                rottenFlesh.get(),
+                diamond.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
