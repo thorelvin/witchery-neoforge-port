@@ -2047,9 +2047,10 @@ public class RitualExecutor {
 
     private static boolean tickRaiseColumnRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
+        BlockPos effectCenter = ritual.effectCenter;
         if (ritual.stage == 1) {
-            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 0.8f);
-            spawnRingParticles(level, ritual.center, Math.max(ritual.minRadius, 3), 32);
+            level.playSound(null, effectCenter, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7f, 0.8f);
+            spawnRingParticles(level, effectCenter, Math.max(ritual.minRadius, 3), 32);
         }
 
         int baseRadius = ritual.minRadius;
@@ -2057,11 +2058,11 @@ public class RitualExecutor {
         int effectiveRadius = baseRadius + ritual.covenSize * 2;
         int airSpace = baseRadius * 2;
 
-        for (int y = ritual.center.getY() + airSpace; y >= ritual.center.getY() - height; y--) {
-            raiseColumnLayer(level, ritual.center, y, effectiveRadius, y == ritual.center.getY() - 1);
+        for (int y = effectCenter.getY() + airSpace; y >= effectCenter.getY() - height; y--) {
+            raiseColumnLayer(level, effectCenter, y, effectiveRadius, y == effectCenter.getY() - 1);
         }
 
-        liftRaiseColumnEntities(level, ritual.center, effectiveRadius, airSpace);
+        liftRaiseColumnEntities(level, effectCenter, effectiveRadius, airSpace);
         return ritual.stage < ritual.targetStage;
     }
 
@@ -3417,9 +3418,22 @@ public class RitualExecutor {
             case LARGE -> 9;
         };
         int height = 8;
+        int covenSize = countNearbyCovenWitches(level, center);
+        OptionalWaystoneRelocation relocation = circleSize == RitualCircleDetector.CircleSize.SMALL
+                ? findOptionalWaystoneRelocation(level, center, covenSize)
+                : new OptionalWaystoneRelocation(null, center, false);
+        if (relocation.tooFar()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
+            return false;
+        }
+        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
+                ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
+                : List.of();
 
         if (!queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN, circleSize, center,
-                baseRadius, height, height - 1, 5, countNearbyCovenWitches(level, center))) {
+                relocation.effectCenter(), baseRadius, height, height - 1, 5, covenSize, 0.0f, 0,
+                supplementalSacrifices)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -3427,6 +3441,9 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().brewOfSprouting());
         consumeOfferedItem(offerings.get().cactus());
         consumeOfferedItem(offerings.get().focus());
+        if (relocation.boundWaystone() != null) {
+            consumeOfferedItem(relocation.boundWaystone());
+        }
         success(player, level, center, "witchery.ritual.raise_column.success",
                 SoundEvents.STONE_BREAK, 0.8f, 3, 32);
         return true;
