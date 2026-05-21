@@ -437,6 +437,7 @@
   "witchery.ritual.transposition_entity.spirit_world": "That transposition will not cross the Spirit World's veil.",
   "witchery.ritual.transposition_entity.pulled": "A witch has pulled you into a circle.",
   "witchery.ritual.prior_incarnation.success": "The past gives back %s item stack(s).",
+  "witchery.ritual.prior_incarnation.support": "The rite needs a Necromantic Stone, Tongue of Dog, a bone, Spectral Dust, and a Charged Attuned Stone.",
   "witchery.ritual.prior_incarnation.no_death": "No death has been recorded for this life.",
   "witchery.ritual.prior_incarnation.wrong_dim": "Your death occurred in another dimension.",
   "witchery.ritual.prior_incarnation.too_far": "You must cast this within 16 blocks of where you died.",

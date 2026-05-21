@@ -1192,6 +1192,11 @@ public class RitualExecutor {
     /** Rite of Prior Incarnation — summons dropped items near the caster's last death spot. */
     private static boolean riteOfPriorIncarnation(Player player, Level level, BlockPos center) {
         if (!(player instanceof ServerPlayer sp)) return false;
+        Optional<PriorIncarnationOfferings> offerings = findPriorIncarnationOfferings(level, center);
+        if (offerings.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.prior_incarnation.support"), false);
+            return false;
+        }
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
         Optional<BlockPos> deathOpt = data.getLastDeathPos();
         if (deathOpt.isEmpty()) {
@@ -1221,6 +1226,16 @@ public class RitualExecutor {
             }
             recalled++;
         }
+        consumeOfferedItem(offerings.get().dogTongue());
+        consumeOfferedItem(offerings.get().bone());
+        consumeOfferedItem(offerings.get().spectralDust());
+        ItemStack returnedStone = offerings.get().chargedStone().getItem()
+                .copyWithCount(1)
+                .transmuteCopy(WitcheryItems.ATTUNED_STONE.get());
+        consumeOfferedItem(offerings.get().chargedStone());
+        ItemEntity stoneEntity = new ItemEntity(level, center.getX() + 0.5, center.getY() + 1.05, center.getZ() + 0.5, returnedStone);
+        stoneEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(stoneEntity);
         sp.displayClientMessage(Component.translatable("witchery.ritual.prior_incarnation.success", recalled), false);
         success(player, level, center, null, SoundEvents.ENDERMAN_TELEPORT, 1f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Prior Incarnation: recalled {} stacks for {}", recalled, sp.getName().getString());
@@ -4701,6 +4716,10 @@ public class RitualExecutor {
 
     private record SeerStoneOfferings(ItemEntity quartzSphere, ItemEntity mossyCobblestone, ItemEntity happenstanceOil) {}
 
+    private record PriorIncarnationOfferings(ItemEntity necroStone, ItemEntity dogTongue,
+                                             ItemEntity bone, ItemEntity spectralDust,
+                                             ItemEntity chargedStone) {}
+
     private record ManifestationOfferings(ItemEntity mellifluousHunger, ItemEntity necroStone,
                                           ItemEntity goldenPickaxe, ItemEntity arthana,
                                           ItemEntity gunpowder) {}
@@ -5144,6 +5163,20 @@ public class RitualExecutor {
             return Optional.empty();
         }
         return Optional.of(new SeerStoneOfferings(quartzSphere.get(), mossyCobblestone.get(), happenstanceOil.get()));
+    }
+
+    private static Optional<PriorIncarnationOfferings> findPriorIncarnationOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
+        Optional<ItemEntity> dogTongue = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TONGUE_OF_DOG.get()));
+        Optional<ItemEntity> bone = findNearbyOffering(level, center, stack -> stack.is(Items.BONE));
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (necroStone.isEmpty() || dogTongue.isEmpty() || bone.isEmpty()
+                || spectralDust.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new PriorIncarnationOfferings(necroStone.get(), dogTongue.get(), bone.get(),
+                spectralDust.get(), chargedStone.get()));
     }
 
     private static Optional<ManifestationOfferings> findManifestationOfferings(Level level, BlockPos center) {
