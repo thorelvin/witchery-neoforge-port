@@ -400,14 +400,11 @@ public class RitualExecutor {
             return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE));
         } else if (item.is(Items.GUNPOWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE));
-        } else if ((item.is(Items.GOLD_INGOT) || item.is(Items.GOLD_BLOCK))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (item.is(Items.FEATHER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfSanctity(player, level, center));
-        } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfImprisonment(player, level, center));
-        } else if ((item.is(Blocks.COBWEB.asItem()) || item.is(WitcheryItems.DENSE_WEB.get()))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (item.is(Items.OBSIDIAN.asItem()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_MONSTERS,
                     RitualCircleDetector.CircleSize.SMALL, 4, 5));

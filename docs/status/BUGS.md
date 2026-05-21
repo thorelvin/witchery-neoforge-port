@@ -48,7 +48,7 @@ Current state:
 - Fertility now routes from the original small ritual circle again instead of the wrong medium ring.
 - That small-circle fertility route now also restores its original support gate and startup cost again: it once more expects `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, and `Mutandis`, and once more consumes 3000 altar power before the growth pulse begins.
 - The old portable fertility sibling is back in practical form too: a `bone_meal` trigger with `Hint of Rebirth`, `Diamond Vapour`, `quicklime`, `gypsum`, `Mutandis Extremis`, and a nearby `Charged Attuned Stone` now takes the portable branch instead of collapsing into the normal altar-powered rite or the charged-stone banish path.
-- Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, while the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
+- Sanctity, Imprisonment, and the monster-only barrier variant now route from small ritual circles again, their trigger identities are back closer to original (`feather` for Sanctity, `slime_ball` for Imprisonment, and `obsidian` for the monster-only barrier instead of the old gold/obsidian/cobweb placeholders), and the broader Protection dome now queues from its original medium ritual ring instead of the wrong large route.
 - `bindspectral` now routes from the original medium ritual circle again instead of the wrong large ring.
 - Fetish binding now routes from the original medium ritual circle again instead of the wrong large ring, and it once more expects an `Attuned Stone`, a `Necromantic Stone`, a `Boline`, and 6000 altar power before consuming spirits.
 - `Nature's Power` now routes from the original medium ritual circle again instead of the wrong large ring, and its staged active-rite state now remembers that same medium ring instead of collapsing under a stray large-ring sustain check.
@@ -294,6 +294,7 @@ The Sanctity and Imprisonment rites are back much closer to old Witchery now:
 - Both now require a nearby working altar to keep running and consume altar power over time.
 - Sanctity now behaves like a repulsive ward, while Imprisonment now keeps nearby creatures penned toward the circle instead of acting as a one-tick trap.
 - Both now also queue from the original small ritual circle again instead of the wrong medium ring.
+- Their public trigger items are also back closer to the original registry now: `feather` for Sanctity, `slime_ball` for Imprisonment, and `obsidian` for the nearby monster-only barrier instead of the port's old gold/obsidian/cobweb stand-ins.
 
 Remaining gap:
 - The original mod split the full protection family across several different sacrifice shapes. The modern dispatcher is closer now on small-vs-medium ring size, and the portable barrier now keys off `Charged Attuned Stone` again instead of plain `Attuned Stone`, but the family still uses representative trigger items rather than the full original multi-sacrifice matcher.
