@@ -1,5 +1,8 @@
 package com.emoniph.witchery.entity.familiar;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -38,6 +41,21 @@ public abstract class FamiliarEntity extends TamableAnimal {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.3);
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (this.isOwnedBy(player) && this.isOrderedToSit() && player.isShiftKeyDown()) {
+            if (player.level().isClientSide()) {
+                return InteractionResult.CONSUME;
+            }
+            if (player instanceof ServerPlayer serverPlayer) {
+                FamiliarHelper.markFamiliarDismissed(serverPlayer, this, true);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.mobInteract(player, hand);
     }
 
     // Intentional: subclasses override isFood with their taming item when taming is implemented

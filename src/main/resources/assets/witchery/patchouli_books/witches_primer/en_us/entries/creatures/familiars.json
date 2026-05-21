@@ -6,6 +6,7 @@
   "pages": [{"type":"patchouli:image","images":["witchery:textures/patchouli/familiars.png"],"border":false},
     { "type": "patchouli:text", "text": "witchery.book.entry.familiars.page1" },
     { "type": "patchouli:entity", "entity": "witchery:owl", "text": "witchery.book.entry.familiars.owl" },
-    { "type": "patchouli:entity", "entity": "witchery:familiar_cat", "text": "witchery.book.entry.familiars.cat" }
+    { "type": "patchouli:entity", "entity": "witchery:familiar_cat", "text": "witchery.book.entry.familiars.cat" },
+    { "type": "patchouli:entity", "entity": "witchery:toad", "text": "witchery.book.entry.familiars.toad" }
   ]
 }
