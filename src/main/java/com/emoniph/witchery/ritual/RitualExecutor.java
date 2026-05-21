@@ -1293,6 +1293,11 @@ public class RitualExecutor {
                 sp.displayClientMessage(Component.translatable("witchery.ritual.enchant_broom.already"), false);
             return false;
         }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.enchant_broom.no_power"), false);
+            return false;
+        }
         broom.setEnchanted(true);
         success(player, level, center, "witchery.ritual.enchant_broom.success",
                 SoundEvents.BEACON_POWER_SELECT, 1f, 3, 48);

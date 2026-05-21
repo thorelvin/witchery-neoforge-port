@@ -381,7 +381,7 @@ Remaining gap:
 
 The next ritual trait pass is now back in place:
 - `Rite of Total Eclipse` now requires daytime again before it will fire, matching the old `ONLY_AT_DAY` recipe trait instead of allowing free midnight shifts at any time.
-- The broom infusion rite triggered by `Flying Ointment` now requires nighttime again and once more expects the original medium-plus-small ritual ring pair instead of activating from a lone large ritual circle.
+- The broom infusion rite triggered by `Flying Ointment` now requires nighttime again, once more expects the original medium-plus-small ritual ring pair, and now also once more consumes its original 3000 altar-power startup cost instead of enchanting brooms for free.
 - These checks now fail early with the same snare/message style as the other restored ritual preconditions.
 
 Remaining gap:
