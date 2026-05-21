@@ -3242,26 +3242,25 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
-        int available = countNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
-        if (available <= 0) {
+        List<Entity> capturedSpectralEntities = findNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
+        if (capturedSpectralEntities.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.no_power"), false);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 5000, "witchery.ritual.bind_spectral.no_power")
+                .offer(offerings.get().spectralDust())
+                .offer(offerings.get().boline());
+        if (!transaction.commit(player)) {
             return false;
         }
-        int count = consumeNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
+
+        int count = consumeCapturedSpectralCreatures(sl, capturedSpectralEntities);
         if (count <= 0) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
-
-        consumeOfferedItem(offerings.get().spectralDust());
-        consumeOfferedItem(offerings.get().boline());
 
         ItemStack output = spectralStone.copy();
         output.setCount(1);
@@ -3497,7 +3496,8 @@ public class RitualExecutor {
         return nearestType;
     }
 
-    private static int consumeNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type, double radius, int maxCount) {
+    private static List<Entity> findNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type,
+                                                            double radius, int maxCount) {
         AABB area = new AABB(center).inflate(radius);
         Vec3 centerVec = Vec3.atCenterOf(center);
         double radiusSquared = radius * radius;
@@ -3516,42 +3516,24 @@ public class RitualExecutor {
             }
         }
         sorted.sort((left, right) -> Double.compare(left.distanceToSqr(centerVec), right.distanceToSqr(centerVec)));
+        if (sorted.size() > maxCount) {
+            return new ArrayList<>(sorted.subList(0, maxCount));
+        }
+        return sorted;
+    }
 
+    private static int consumeCapturedSpectralCreatures(ServerLevel level, List<Entity> capturedEntities) {
         int count = 0;
-        for (Entity entity : sorted) {
+        for (Entity entity : capturedEntities) {
+            if (!entity.isAlive() || entity.isRemoved()) {
+                continue;
+            }
             entity.discard();
             level.playSound(null, entity.blockPosition(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.HOSTILE, 0.4f, 1.4f);
             level.sendParticles(ParticleTypes.PORTAL,
                     entity.getX(), entity.getY() + 0.5, entity.getZ(),
                     12, 0.2, 0.2, 0.2, 0.05);
             count++;
-            if (count >= maxCount) {
-                break;
-            }
-        }
-        return count;
-    }
-
-    private static int countNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type, double radius, int maxCount) {
-        AABB area = new AABB(center).inflate(radius);
-        Vec3 centerVec = Vec3.atCenterOf(center);
-        double radiusSquared = radius * radius;
-
-        List<? extends Entity> candidates = switch (type) {
-            case SPECTRE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class, area);
-            case BANSHEE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class, area);
-            case POLTERGEIST -> level.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, area);
-            default -> List.of();
-        };
-
-        int count = 0;
-        for (Entity candidate : candidates) {
-            if (candidate.distanceToSqr(centerVec) <= radiusSquared) {
-                count++;
-                if (count >= maxCount) {
-                    break;
-                }
-            }
         }
         return count;
     }
