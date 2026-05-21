@@ -47,6 +47,7 @@ public class TreefydEntity extends Monster {
     private UUID ownerUuid;
     private boolean sentinel;
     private final Map<UUID, String> ignoredPlayers = new LinkedHashMap<>();
+    private final Map<UUID, String> ignoredCreatures = new LinkedHashMap<>();
 
     public TreefydEntity(EntityType<? extends TreefydEntity> type, Level level) {
         super(type, level);
@@ -116,6 +117,9 @@ public class TreefydEntity extends Monster {
         if (entity instanceof Player && ignoredPlayers.containsKey(entity.getUUID())) {
             return true;
         }
+        if (ignoredCreatures.containsKey(entity.getUUID())) {
+            return true;
+        }
         if (entity instanceof TreefydEntity other) {
             return ownerUuid != null && ownerUuid.equals(other.ownerUuid);
         }
@@ -158,7 +162,7 @@ public class TreefydEntity extends Monster {
             if (level().isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
-            return handlePlayerTaglockCommand(player, stack);
+            return handleTaglockCommand(player, stack);
         }
 
         if (stack.is(WitcheryItems.CREEPER_HEART.get())) {
@@ -207,6 +211,7 @@ public class TreefydEntity extends Monster {
         clone.setOwner(owner);
         clone.setPersistenceRequired();
         clone.ignoredPlayers.putAll(this.ignoredPlayers);
+        clone.ignoredCreatures.putAll(this.ignoredCreatures);
         level.addFreshEntity(clone);
     }
 
@@ -222,17 +227,23 @@ public class TreefydEntity extends Monster {
         }
     }
 
-    private InteractionResult handlePlayerTaglockCommand(Player player, ItemStack stack) {
+    private InteractionResult handleTaglockCommand(Player player, ItemStack stack) {
         Optional<UUID> boundUuid = TaglockKitItem.getUUID(stack);
         if (boundUuid.isEmpty()) {
             return InteractionResult.PASS;
         }
 
-        UUID targetUuid = boundUuid.get();
+        if (TaglockKitItem.isPlayerTaglock(stack)) {
+            return handlePlayerTaglockCommand(player, stack, boundUuid.get());
+        }
+        return handleCreatureTaglockCommand(player, stack, boundUuid.get());
+    }
+
+    private InteractionResult handlePlayerTaglockCommand(Player player, ItemStack stack, UUID targetUuid) {
         setTarget(null);
 
         if (targetUuid.equals(player.getUUID())) {
-            showCurrentKnownPlayers(player);
+            showCurrentKnownEntities(player);
             return InteractionResult.SUCCESS;
         }
 
@@ -245,7 +256,7 @@ public class TreefydEntity extends Monster {
                     stack.shrink(1);
                 }
             }
-            showCurrentKnownPlayers(player);
+            showCurrentKnownEntities(player);
             return InteractionResult.SUCCESS;
         }
 
@@ -258,16 +269,50 @@ public class TreefydEntity extends Monster {
             }
         }
 
-        showCurrentKnownPlayers(player);
+        showCurrentKnownEntities(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void showCurrentKnownPlayers(Player player) {
-        player.displayClientMessage(Component.translatable("witchery.treefyd.known_players",
-                describeKnownPlayers()).withStyle(ChatFormatting.GRAY), false);
+    private InteractionResult handleCreatureTaglockCommand(Player player, ItemStack stack, UUID targetUuid) {
+        setTarget(null);
+
+        if (targetUuid.equals(getUUID())) {
+            showCurrentKnownEntities(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        String targetName = TaglockKitItem.getBoundName(stack);
+        if (player.isShiftKeyDown()) {
+            if (ignoredCreatures.remove(targetUuid) != null) {
+                player.displayClientMessage(Component.translatable("witchery.treefyd.ignore_creature_removed",
+                        targetName).withStyle(ChatFormatting.YELLOW), false);
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+            }
+            showCurrentKnownEntities(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!ignoredCreatures.containsKey(targetUuid)) {
+            ignoredCreatures.put(targetUuid, targetName);
+            player.displayClientMessage(Component.translatable("witchery.treefyd.ignore_creature_added",
+                    targetName).withStyle(ChatFormatting.GREEN), false);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+        }
+
+        showCurrentKnownEntities(player);
+        return InteractionResult.SUCCESS;
     }
 
-    private String describeKnownPlayers() {
+    private void showCurrentKnownEntities(Player player) {
+        player.displayClientMessage(Component.translatable("witchery.treefyd.known_entities",
+                describeKnownEntities()).withStyle(ChatFormatting.GRAY), false);
+    }
+
+    private String describeKnownEntities() {
         List<String> names = new ArrayList<>();
         if (ownerUuid != null) {
             names.add(displayKnownPlayerName(ownerUuid, null));
@@ -275,6 +320,11 @@ public class TreefydEntity extends Monster {
         for (Map.Entry<UUID, String> entry : ignoredPlayers.entrySet()) {
             if (!entry.getKey().equals(ownerUuid)) {
                 names.add(displayKnownPlayerName(entry.getKey(), entry.getValue()));
+            }
+        }
+        for (String name : ignoredCreatures.values()) {
+            if (!name.isBlank()) {
+                names.add(name);
             }
         }
         return String.join(", ", names);
@@ -307,6 +357,13 @@ public class TreefydEntity extends Monster {
             tag.putString("IgnoredPlayerName" + i, entry.getValue());
             i++;
         }
+        tag.putInt("IgnoredCreatureCount", ignoredCreatures.size());
+        i = 0;
+        for (Map.Entry<UUID, String> entry : ignoredCreatures.entrySet()) {
+            tag.putString("IgnoredCreatureUUID" + i, entry.getKey().toString());
+            tag.putString("IgnoredCreatureName" + i, entry.getValue());
+            i++;
+        }
     }
 
     @Override
@@ -324,6 +381,18 @@ public class TreefydEntity extends Monster {
             }
             try {
                 ignoredPlayers.put(UUID.fromString(ignoredUuid), tag.getStringOr("IgnoredPlayerName" + i, ""));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        ignoredCreatures.clear();
+        int ignoredCreatureCount = tag.getIntOr("IgnoredCreatureCount", 0);
+        for (int i = 0; i < ignoredCreatureCount; i++) {
+            String ignoredUuid = tag.getStringOr("IgnoredCreatureUUID" + i, "");
+            if (ignoredUuid.isEmpty()) {
+                continue;
+            }
+            try {
+                ignoredCreatures.put(UUID.fromString(ignoredUuid), tag.getStringOr("IgnoredCreatureName" + i, ""));
             } catch (IllegalArgumentException ignored) {
             }
         }

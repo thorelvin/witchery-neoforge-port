@@ -54,7 +54,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Feature | Status | Notes |
 |---|---:|---|
 | Poppet binding | Done | UUID/name stored via modern item data |
-| Taglock Kit | Done | Collects UUID+name from right-clicked players again and can now also pull stored samples from Blood Rose and Leech Chest; Blood Rose extraction once again refuses your own stored sample and offline players instead of minting a false taglock; split-stack handling restored closer to original |
+| Taglock Kit | Done | Collects UUID+name from right-clicked players again, can now also bind living-creature signatures for Treefyd social commands, and can now also pull stored player samples from Blood Rose and Leech Chest; Blood Rose extraction once again refuses your own stored sample and offline players instead of minting a false taglock; split-stack handling restored closer to original |
 | Leech Chest | Partial | 27-slot storage, recent-player queue, Taglock Kit extraction, and stored-player block-drop persistence are restored closer to original; broader in-game parity verification is still open |
 | Protection poppets | Done | Death, earth, water, fire, hunger, voodoo, poppet-shield |
 | Offensive poppets | Done | Voodoo and Vampiric implemented |
@@ -108,7 +108,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 | Banshee | Partial | Gameplay works; GhostModel UV needs audit |
 | Spectre | Done | Flying ghost-type |
 | Poltergeist | Partial | Gameplay works; GhostModel UV needs audit |
-| Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, and filled player `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or forget them again on sneak-use |
+| Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, and filled `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or one exact creature and forget them again on sneak-use |
 | Ent | Done | Passive until hit; large model |
 | Mandrake mob | Done | MONSTER category; spawn placement registered |
 | Demon | Partial | Fireball mob; texture/UV audit still open |
