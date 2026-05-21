@@ -4430,11 +4430,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.no_power"), false);
-            return false;
-        }
 
         WitcheryPlayerData familiarData = WitcheryAttachments.get(sp);
         double x = center.getX() + 0.5;
@@ -4448,6 +4443,14 @@ public class RitualExecutor {
                 player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
                 return false;
             }
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 1000, "witchery.ritual.call_familiar.no_power")
+                .offer(offerings.get().breathOfTheGoddess())
+                .offer(offerings.get().hintOfRebirth())
+                .offer(offerings.get().whiffOfMagic());
+        if (!transaction.commit(player)) {
+            return false;
         }
 
         java.util.UUID familiarUuid = familiar.getUUID();
@@ -4476,10 +4479,6 @@ public class RitualExecutor {
                     Set.of(), familiar.getYRot(), familiar.getXRot(), false);
         }
         familiar.setOrderedToSit(familiarData.isFamiliarSitting());
-
-        consumeOfferedItem(offerings.get().breathOfTheGoddess());
-        consumeOfferedItem(offerings.get().hintOfRebirth());
-        consumeOfferedItem(offerings.get().whiffOfMagic());
 
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
