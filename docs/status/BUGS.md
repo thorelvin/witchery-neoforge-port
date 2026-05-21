@@ -412,9 +412,11 @@ The old `infusionseerstone` path is back in practical form:
 - `Quartz Sphere` on the small ritual circle now once again routes into the original night-only Seer Stone infusion instead of doing nothing or being swallowed by the medium Crystal Ball route.
 - The port now also once more expects mossy cobblestone, `Happenstance Oil`, and 2000 altar power before the rite completes.
 - Success now drops a fresh foil `Seer Stone` item at the circle center, and the item/model asset chain is registered again so the old ritual output is no longer just orphaned texture art in the repo.
+- The Seer Stone now also has useful right-click behavior again instead of being a dead ritual trophy: sneaking reads the user, looking directly at another player reads them, and ordinary use now calls a nearby Coven Witch toward the player if one is loaded in range.
+- The restored readout now covers manifestation time, bound familiar identity, nearby Coven Witch count, and the practical curse/nightmare states the port currently tracks, which is much closer to the original tool's inspection role.
 
 Remaining gap:
-- The Seer Stone's original right-click reading and coven-calling behavior is still not restored, so this patch brings back the ritual output and visible item without yet claiming full gameplay parity for the tool itself.
+- The deeper original remembered-coven membership list, spell-knowledge reading, and exact persistent curse-level introspection are still not restored, so the item now has practical parity without yet matching every old data source behind the original Seer Stone text.
 
 ### 32. Curse of Insanity was unreachable because a non-original medium placeholder route claimed the same ingredient first - Fixed / verify
 

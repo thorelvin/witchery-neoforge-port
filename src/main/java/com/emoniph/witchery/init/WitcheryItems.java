@@ -296,7 +296,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> NECRO_STONE        = ITEMS.registerSimpleItem("necro_stone");
     public static final DeferredItem<Item> QUARTZ_SPHERE      = ITEMS.registerSimpleItem("quartz_sphere");
     public static final DeferredItem<Item> SEER_STONE         = ITEMS.register("seer_stone",
-            id -> new Item(itemProps(id).stacksTo(1)) {
+            id -> new com.emoniph.witchery.item.SeerStoneItem(itemProps(id).stacksTo(1)) {
                 @Override
                 public boolean isFoil(ItemStack stack) {
                     return true;

@@ -102,7 +102,7 @@ Sleeping, Frost, Love, Revealing, Raising, Wasting, Erosion, Foulness, Infection
 
 | Entity | Status | Notes |
 |---|---:|---|
-| Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue, and stable merchant opening via the vanilla trading-player flow |
+| Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue, and stable merchant opening via the vanilla trading-player flow; Seer Stone can now pull a nearby loaded Coven Witch toward the player again as a practical local-coven fallback even though the deeper remembered-coven membership system is still not ported |
 | Witch Hunter | Done | Ranged+melee; silver bolts; targets vampires/werewolves |
 | Banshee | Partial | Gameplay works; GhostModel UV needs audit |
 | Spectre | Done | Flying ghost-type |
