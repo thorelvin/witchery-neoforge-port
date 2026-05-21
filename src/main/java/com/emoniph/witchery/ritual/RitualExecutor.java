@@ -6217,6 +6217,48 @@ public class RitualExecutor {
         return true;
     }
 
+    private static boolean performOfferedCurse(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey, boolean checkHunterArmorProtection,
+                                               ItemEntity... offerings) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.getItem());
+        if (taglockUuid.isEmpty()) {
+            sp.displayClientMessage(Component.translatable(failKey + ".no_taglock"), false);
+            return false;
+        }
+        ServerPlayer target = sl.getServer().getPlayerList().getPlayer(taglockUuid.get());
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
+            return false;
+        }
+        if (checkHunterArmorProtection && hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (triggerVoodooProtection(target)) {
+            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+            return false;
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, altarPowerCost, noPowerKey)
+                .offer(offeredTaglock);
+        for (ItemEntity offering : offerings) {
+            transaction.offer(offering);
+        }
+        if (!transaction.commit(caster)) {
+            return false;
+        }
+
+        action.apply(target);
+        target.displayClientMessage(Component.translatable(successKey + ".target"), false);
+        success(caster, level, center, successKey + ".caster",
+                SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        return true;
+    }
+
     private static boolean applyCurse(Player caster, Level level, BlockPos center,
                                       CurseAction action, String successKey, String failKey,
                                       boolean checkHunterArmorProtection) {
@@ -6459,24 +6501,21 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_overheating.no_power"), false);
-            return false;
-        }
-        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
+        return performOfferedCurse(caster, level, center,
+                offerings.get().taglockKit(),
+                2000,
+                "witchery.ritual.curse_overheating.no_power",
+                target -> {
             target.igniteForTicks(200);
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 0));
-        }, "witchery.curse.overheating", "witchery.curse.overheating", false);
-        if (!applied) {
-            return false;
-        }
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().demonicBlood());
-        consumeOfferedItem(offerings.get().blazeRod());
-        consumeOfferedItem(offerings.get().brewGrotesque());
-        return true;
+                },
+                "witchery.curse.overheating",
+                "witchery.curse.overheating",
+                false,
+                offerings.get().exhaleOfHornedOne(),
+                offerings.get().demonicBlood(),
+                offerings.get().blazeRod(),
+                offerings.get().brewGrotesque());
     }
 
     /** Curse of Sinking — extreme slowness and mining fatigue. */
@@ -6488,25 +6527,22 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_sinking.no_power"), false);
-            return false;
-        }
-        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
+        return performOfferedCurse(caster, level, center,
+                offerings.get().taglockKit(),
+                2000,
+                "witchery.ritual.curse_sinking.no_power",
+                target -> {
             target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400, 3));
             target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400, 2));
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0)); // brief sink
-        }, "witchery.curse.sinking", "witchery.curse.sinking", false);
-        if (!applied) {
-            return false;
-        }
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().inkSac());
-        consumeOfferedItem(offerings.get().netherWart());
-        consumeOfferedItem(offerings.get().brewGrotesque());
-        return true;
+                },
+                "witchery.curse.sinking",
+                "witchery.curse.sinking",
+                false,
+                offerings.get().exhaleOfHornedOne(),
+                offerings.get().inkSac(),
+                offerings.get().netherWart(),
+                offerings.get().brewGrotesque());
     }
 
     /** Curse of Insanity — nausea + confusion. */
@@ -6518,24 +6554,21 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            caster.displayClientMessage(Component.translatable("witchery.ritual.curse_insanity.no_power"), false);
-            return false;
-        }
-        boolean applied = applyCurse(caster, level, center, offerings.get().taglockKit(), target -> {
+        return performOfferedCurse(caster, level, center,
+                offerings.get().taglockKit(),
+                2000,
+                "witchery.ritual.curse_insanity.no_power",
+                target -> {
             target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600, 1));
             target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
-        }, "witchery.curse.insanity", "witchery.curse.insanity", false);
-        if (!applied) {
-            return false;
-        }
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().poisonousPotato());
-        consumeOfferedItem(offerings.get().sugar());
-        consumeOfferedItem(offerings.get().brewGrotesque());
-        return true;
+                },
+                "witchery.curse.insanity",
+                "witchery.curse.insanity",
+                false,
+                offerings.get().exhaleOfHornedOne(),
+                offerings.get().poisonousPotato(),
+                offerings.get().sugar(),
+                offerings.get().brewGrotesque());
     }
 
     /** Curse of Raining Toads — showers toads on the target. */
