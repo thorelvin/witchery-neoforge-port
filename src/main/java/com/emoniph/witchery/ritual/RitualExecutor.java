@@ -2778,6 +2778,22 @@ public class RitualExecutor {
         if (!requireNight(player, level, center)) {
             return false;
         }
+        Optional<SpectralStoneOfferings> offerings = findSpectralStoneOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.spectral_stone.support"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.spectral_stone.no_power"), false);
+            return false;
+        }
+
+        consumeOfferedItem(offerings.get().necroStone());
+        consumeOfferedItem(offerings.get().congealedSpirit());
+        consumeOfferedItem(offerings.get().condensedFear());
+        consumeOfferedItem(offerings.get().boline());
 
         ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
         SpectralStoneItem.clearBinding(output);
@@ -2799,6 +2815,12 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.already"), false);
             return false;
         }
+        Optional<BindSpectralOfferings> offerings = findBindSpectralOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.support"), false);
+            return false;
+        }
 
         SpectralStoneItem.StoredType storedType = findNearestSpectralType(sl, center, 5.0);
         if (storedType == SpectralStoneItem.StoredType.NONE) {
@@ -2806,13 +2828,26 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
-
+        int available = countNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
+        if (available <= 0) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.no_power"), false);
+            return false;
+        }
         int count = consumeNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
         if (count <= 0) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
+
+        consumeOfferedItem(offerings.get().spectralDust());
+        consumeOfferedItem(offerings.get().boline());
 
         ItemStack output = spectralStone.copy();
         output.setCount(1);
@@ -2919,6 +2954,30 @@ public class RitualExecutor {
             count++;
             if (count >= maxCount) {
                 break;
+            }
+        }
+        return count;
+    }
+
+    private static int countNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type, double radius, int maxCount) {
+        AABB area = new AABB(center).inflate(radius);
+        Vec3 centerVec = Vec3.atCenterOf(center);
+        double radiusSquared = radius * radius;
+
+        List<? extends Entity> candidates = switch (type) {
+            case SPECTRE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.SpectreEntity.class, area);
+            case BANSHEE -> level.getEntitiesOfClass(com.emoniph.witchery.entity.BansheeEntity.class, area);
+            case POLTERGEIST -> level.getEntitiesOfClass(com.emoniph.witchery.entity.PoltergeistEntity.class, area);
+            default -> List.of();
+        };
+
+        int count = 0;
+        for (Entity candidate : candidates) {
+            if (candidate.distanceToSqr(centerVec) <= radiusSquared) {
+                count++;
+                if (count >= maxCount) {
+                    break;
+                }
             }
         }
         return count;
@@ -4024,6 +4083,10 @@ public class RitualExecutor {
 
     private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
 
+    private record SpectralStoneOfferings(ItemEntity necroStone, ItemEntity congealedSpirit, ItemEntity condensedFear, ItemEntity boline) {}
+
+    private record BindSpectralOfferings(ItemEntity spectralDust, ItemEntity boline) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -4178,6 +4241,26 @@ public class RitualExecutor {
 
     private static Optional<ItemEntity> findNearbyObsidianOffering(Level level, BlockPos center) {
         return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
+    }
+
+    private static Optional<SpectralStoneOfferings> findSpectralStoneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> necroStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.NECRO_STONE.get()));
+        Optional<ItemEntity> congealedSpirit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.CONGEALED_SPIRIT.get()));
+        Optional<ItemEntity> condensedFear = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.CONDENSED_FEAR.get()));
+        Optional<ItemEntity> boline = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BOLINE.get()));
+        if (necroStone.isEmpty() || congealedSpirit.isEmpty() || condensedFear.isEmpty() || boline.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SpectralStoneOfferings(necroStone.get(), congealedSpirit.get(), condensedFear.get(), boline.get()));
+    }
+
+    private static Optional<BindSpectralOfferings> findBindSpectralOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> spectralDust = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
+        Optional<ItemEntity> boline = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BOLINE.get()));
+        if (spectralDust.isEmpty() || boline.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindSpectralOfferings(spectralDust.get(), boline.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
