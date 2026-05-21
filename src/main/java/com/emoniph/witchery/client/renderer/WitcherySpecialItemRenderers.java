@@ -15,6 +15,7 @@ import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
 import com.emoniph.witchery.client.model.StatueGoddessModel;
+import com.emoniph.witchery.client.model.WitchesOvenModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
@@ -41,6 +42,7 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("spinning_wheel"), SpinningWheelUnbaked.MAP_CODEC);
         event.register(id("poppet_shelf"), PoppetShelfUnbaked.MAP_CODEC);
         event.register(id("fume_funnel"), FumeFunnelUnbaked.MAP_CODEC);
+        event.register(id("witches_oven"), WitchesOvenUnbaked.MAP_CODEC);
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
         event.register(id("chalice"), ChaliceUnbaked.MAP_CODEC);
@@ -238,6 +240,38 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<FumeFunnelUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record WitchesOvenSpecialRenderer(WitchesOvenModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("witches_oven");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record WitchesOvenUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<WitchesOvenUnbaked> MAP_CODEC = MapCodec.unit(new WitchesOvenUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new WitchesOvenSpecialRenderer(new WitchesOvenModel(context.entityModelSet().bakeLayer(WitchesOvenModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<WitchesOvenUnbaked> type() {
             return MAP_CODEC;
         }
     }

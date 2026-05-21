@@ -41,7 +41,7 @@ public class FumeFunnelBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new FumeFunnelBlockEntity(pos, state); }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {

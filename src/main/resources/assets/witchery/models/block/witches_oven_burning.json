@@ -1,7 +1,7 @@
 {
   "parent": "witchery:block/witches_oven",
   "textures": {
-    "oven": "witchery:block/witches_oven_burning",
-    "particle": "witchery:block/witches_oven_burning"
+    "oven": "witchery:block/witches_oven",
+    "particle": "witchery:block/witches_oven"
   }
 }
