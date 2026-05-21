@@ -3079,6 +3079,12 @@ public class RitualExecutor {
     /** Rite of Transpose Ores — lifts hidden ore blocks into the circle over time. */
     private static boolean riteOfTransposeOres(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<TransposeOresOfferings> offerings = findTransposeOresOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.transpose_ores.support"), false);
+            return false;
+        }
         int covenSize = countNearbyCovenWitches(level, center);
         int pulses = 30 + covenSize * 5;
         if (!queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES, RitualCircleDetector.CircleSize.LARGE,
@@ -3087,6 +3093,10 @@ public class RitualExecutor {
             return false;
         }
 
+        consumeOfferedItem(offerings.get().enderPearl());
+        consumeOfferedItem(offerings.get().ironIngot());
+        consumeOfferedItem(offerings.get().blazePowder());
+        consumeOfferedItem(offerings.get().chargedStone());
         success(player, level, center, "witchery.ritual.transpose_ores.success",
                 SoundEvents.END_PORTAL_FRAME_FILL, 0.9f, 4, 40);
         return true;
@@ -3974,6 +3984,9 @@ public class RitualExecutor {
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
 
+    private record TransposeOresOfferings(ItemEntity enderPearl, ItemEntity ironIngot, ItemEntity blazePowder,
+                                          ItemEntity diamondVapour, ItemEntity chargedStone) {}
+
     /** Find a filled taglock in the caster's inventory without consuming it yet. */
     private static Optional<InventoryTaglock> findFilledTaglock(Player player) {
         var inv = player.getInventory();
@@ -4139,6 +4152,24 @@ public class RitualExecutor {
                 oakSapling.get(),
                 spruceSapling.get(),
                 birchSapling.get(),
+                chargedStone.get()));
+    }
+
+    private static Optional<TransposeOresOfferings> findTransposeOresOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
+        Optional<ItemEntity> ironIngot = findNearbyOffering(level, center, stack -> stack.is(Items.IRON_INGOT));
+        Optional<ItemEntity> blazePowder = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
+        Optional<ItemEntity> diamondVapour = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (enderPearl.isEmpty() || ironIngot.isEmpty() || blazePowder.isEmpty()
+                || diamondVapour.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new TransposeOresOfferings(
+                enderPearl.get(),
+                ironIngot.get(),
+                blazePowder.get(),
+                diamondVapour.get(),
                 chargedStone.get()));
     }
 
