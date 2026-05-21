@@ -182,6 +182,7 @@ public class RitualExecutor {
     private static final class ActiveRitual {
         private final ActiveRitualType type;
         private final BlockPos center;
+        private final BlockPos effectCenter;
         private final RitualCircleDetector.CircleSize circleSize;
         private final int circleVariant;
         private final int minRadius;
@@ -201,12 +202,13 @@ public class RitualExecutor {
         private boolean refundOnStop;
 
         private ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
-                             int circleVariant,
+                             BlockPos effectCenter, int circleVariant,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
                              int covenSize, float upkeepCost, int heading, long nextGameTime,
                              ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices) {
             this.type = type;
             this.center = center.immutable();
+            this.effectCenter = effectCenter.immutable();
             this.circleSize = circleSize;
             this.circleVariant = circleVariant;
             this.minRadius = minRadius;
@@ -1840,22 +1842,22 @@ public class RitualExecutor {
     private static boolean tickStormRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
         switch (ritual.stage) {
-            case 1, 2 -> spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
+            case 1, 2 -> spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.effectCenter);
             case 3 -> {
-                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
-                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
+                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.effectCenter);
+                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.effectCenter);
             }
             case 4 -> {
                 if (!level.isThundering()) {
                     int stormTicks = (300 + level.random.nextInt(600)) * 20;
                     level.setWeatherParameters(0, stormTicks, true, true);
                 }
-                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
+                spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.effectCenter);
             }
             default -> {
                 int extraBolts = level.random.nextInt(4);
                 for (int i = 0; i < extraBolts; i++) {
-                    spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.center);
+                    spawnRitualBolt(level, ritual.minRadius, ritual.maxRadius, ritual.effectCenter);
                     if (i > 0) {
                         ritual.stage++;
                     }
@@ -2290,6 +2292,14 @@ public class RitualExecutor {
                                              BlockPos center, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices) {
+        return queueActiveRitual(level, type, circleSize, center, center, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices);
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading,
+                                             List<ItemStack> supplementalSacrifices) {
         List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
         boolean occupied = rituals.stream().anyMatch(active -> active.center.equals(center));
         if (occupied) {
@@ -2298,7 +2308,7 @@ public class RitualExecutor {
 
         int circleVariant = RitualCircleDetector.detectVariant(level, center, circleSize);
         ItemStack sacrificedIngredient = PENDING_RITUAL_INGREDIENT.get();
-        rituals.add(new ActiveRitual(type, center, circleSize, circleVariant, minRadius, maxRadius, targetStage, pulseInterval,
+        rituals.add(new ActiveRitual(type, center, circleSize, effectCenter, circleVariant, minRadius, maxRadius, targetStage, pulseInterval,
                 covenSize, upkeepCost, heading,
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
@@ -3277,7 +3287,8 @@ public class RitualExecutor {
     /** Rite of Sky's Wrath storm family — original inside/outside/portable small-circle branches. */
     private static boolean riteOfWeatherCallStorm(Player player, Level level, BlockPos center, StormRiteVariant variant) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<StormOfferings> offerings = findStormOfferings(level, center, variant);
+        int covenSize = countNearbyCovenWitches(level, center);
+        Optional<StormOfferings> offerings = findStormOfferings(level, center, variant, covenSize);
         if (offerings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             String supportKey = variant == StormRiteVariant.PORTABLE
@@ -3296,7 +3307,8 @@ public class RitualExecutor {
         int maxRadius = variant == StormRiteVariant.BASE ? 3 : 7;
         int targetStage = variant == StormRiteVariant.BASE ? 8 : 18;
         if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL,
-                center, minRadius, maxRadius, targetStage)) {
+                center, offerings.get().effectCenter(), minRadius, maxRadius, targetStage,
+                RITUAL_PULSE_INTERVAL, covenSize, 0.0f, 0, List.of())) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -3304,6 +3316,9 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().woodAsh());
         if (offerings.get().chargedStone() != null) {
             consumeOfferedItem(offerings.get().chargedStone());
+        }
+        if (offerings.get().boundWaystone() != null) {
+            consumeOfferedItem(offerings.get().boundWaystone());
         }
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);
@@ -4652,7 +4667,8 @@ public class RitualExecutor {
         PORTABLE
     }
 
-    private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh, ItemEntity chargedStone) {}
+    private record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh, ItemEntity chargedStone,
+                                  ItemEntity boundWaystone, BlockPos effectCenter) {}
 
     private record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 
@@ -5412,7 +5428,7 @@ public class RitualExecutor {
         return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
     }
 
-    private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant) {
+    private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant, int covenSize) {
         Optional<ItemEntity> weatherFocus = switch (variant) {
             case BASE -> findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
             case LARGE -> findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET));
@@ -5426,7 +5442,23 @@ public class RitualExecutor {
                 || (variant == StormRiteVariant.PORTABLE && chargedStone.isEmpty())) {
             return Optional.empty();
         }
-        return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null)));
+        Optional<ItemEntity> boundWaystone = findNearbyWaystoneOffering(level, center, true);
+        BlockPos effectCenter = center;
+        ItemEntity consumedWaystone = null;
+        if (boundWaystone.isPresent()) {
+            ItemStack stack = boundWaystone.get().getItem();
+            Optional<ResourceKey<Level>> boundDim = WaystoneItem.getBoundDim(stack);
+            Optional<BlockPos> boundPos = WaystoneItem.getBoundPos(stack);
+            if (boundDim.isPresent() && boundPos.isPresent() && boundDim.get().equals(level.dimension())) {
+                int maxDistance = 50 + 50 * covenSize;
+                if (boundPos.get().distSqr(center) <= (double) (maxDistance * maxDistance)) {
+                    effectCenter = boundPos.get();
+                    consumedWaystone = boundWaystone.get();
+                }
+            }
+        }
+        return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null),
+                consumedWaystone, effectCenter));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
