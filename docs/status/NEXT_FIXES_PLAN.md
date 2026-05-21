@@ -136,7 +136,7 @@ Use this as the current unattended run order for the next autonomous/daytime pas
    Keep shrinking `RitualExecutor` only when the refactor directly improves parity work: extract activation-result helpers, sacrifice-resolution helpers, staged lifecycle/refund helpers, or clearer ring/ingredient dispatch helpers if they remove a real mismatch or make the next parity fix safer. Do not do abstract cleanup for its own sake; refactoring is allowed when it measurably improves correctness, traceability, or future parity speed.
 3. Finish Spirit World and familiar polish that still affects play feel.
    Best implementation path:
-   Prioritise manifested-player presentation, corpse visibility/state, remaining nightmare/portal edge cases, and any deeper familiar state details beyond the now-restored `50`-health bind/restore promotion, old-style default familiar naming on bind/blank-name restore, and current recreate-by-type flow.
+   Prioritise manifested-player presentation, corpse visibility/state, remaining nightmare/portal edge cases, and any deeper familiar state details beyond the now-restored `50`-health bind/restore promotion, old-style default familiar naming on bind/blank-name restore, light damage-sharing on player hurt, and current recreate-by-type flow.
 4. Start the first targeted sound parity sweep once a subsystem is stable enough.
    Best implementation path:
    Focus first on ritual fail/sustain/complete cues, then machine active/burning/idle feedback, then Spirit World and special-block interactions. Use original Witchery 1.7.10 as the final judge for cadence and intent, and use modern NeoForge examples only for sound registration/playback patterns.
