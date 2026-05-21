@@ -58,7 +58,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_LEAVES);
     public static final DeferredItem<BlockItem> ROWAN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SAPLING);
     public static final DeferredItem<BlockItem> WISPY_COTTON     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WISPY_COTTON);
-    public static final DeferredItem<BlockItem> DISTURBED_COTTON = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DISTURBED_COTTON);
+    public static final DeferredItem<BlockItem> DISTURBED_COTTON = ITEMS.register("disturbed_cotton",
+            id -> new com.emoniph.witchery.item.DisturbedCottonItem(WitcheryBlocks.DISTURBED_COTTON.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> BLOOD_ROSE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_ROSE);
     public static final DeferredItem<BlockItem> EMBER_MOSS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.EMBER_MOSS);
     public static final DeferredItem<BlockItem> GLINT_WEED = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GLINT_WEED);

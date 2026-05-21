@@ -20,7 +20,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 6 | `witchery:belladonna` | | Ok
 | 7 | `witchery:mandrake_root` | `Partial - original spawn-vs-drop branch restored` | Mature harvest now checks difficulty and original weighted summon chance instead of always spawning a mandrake. Needs in-game verification.
 | 8 | `witchery:artichoke` | | Ok
-| 9 | `witchery:cotton` | `Partial - restored closer to old Somnian Cotton behavior` | Now behaves like a spreading bush instead of a staged crop, nightmare harvest can yield disturbed cotton again, and the plant render/loot path is aligned. Needs in-game verification and a final decision on whether the extra placeable disturbed-cotton block should stay.
+| 9 | `witchery:cotton` | `Partial - restored closer to old Somnian Cotton behavior` | Now behaves like a spreading bush instead of a staged crop, nightmare harvest can yield disturbed cotton again, the plant render/loot path is aligned, and carried disturbed cotton no longer places back into the world like an extra plant block. Needs in-game verification.
 | 10 | `witchery:witch_seeds` | | What is this? Plants on farmland. Real item in mod?
 | 11 | `witchery:snowbell` | | Ok, bone meal grow
 | 12 | `witchery:blood_rose` | `Partial - blood sample storage and drain safeguards restored` | Walking through the rose now stores the last player's UUID/name, switches to the full rose variant, and lets Taglock Kits pull that sample later. Blood Rose extraction once again refuses to hand you your own stored sample and also refuses offline targets instead of creating a false taglock. Needs in-game verification.
