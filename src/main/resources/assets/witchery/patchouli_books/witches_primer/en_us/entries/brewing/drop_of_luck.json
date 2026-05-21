@@ -1,0 +1,17 @@
+{
+  "name": "witchery.book.entry.drop_of_luck",
+  "icon": "witchery:drop_of_luck",
+  "category": "witchery:brewing",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:drop_of_luck",
+      "text": "witchery.book.entry.drop_of_luck.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.drop_of_luck.page2"
+    }
+  ]
+}

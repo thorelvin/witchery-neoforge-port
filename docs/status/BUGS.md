@@ -105,6 +105,8 @@ The four chalk circle marks now use a dedicated thin `ChalkCircleBlock` again in
 
 The full chalk survival chain is now back on practical footing: the original hand-crafted Wood Ash / Gypsum / Tear of the Goddess ritual chalk recipe is restored, the Primer teaches it directly again, and Golden / Infernal / Otherwhere chalk now once more upgrade through a heated filled Witch's Cauldron with nearby altar power plus their original dropped support ingredients instead of remaining blocked behind creative-only access.
 
+The first non-chalk cauldron drift is corrected too: `Drop of Luck` no longer overclaims a kettle recipe with extra Rowan Berries, and now once more distills from a heated filled Witch's Cauldron with nearby altar power, `Mutandis Extremis` as the trigger item, and the original Mandrake Root / Nether Wart / Tear of the Goddess / Refined Evil support set. The Primer now teaches that route directly.
+
 ### 0a. Fake vampire/werewolf ritual routes were still exposed - Fixed / verify
 
 The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of the Wolf` dispatcher routes have been removed again. A decompiled sweep of the original 1.7.10 `WitcheryRecipes` curse registry only shows the five real curse rites (`witcheryCursed`, `witcheryInsanity`, `witcherySinking`, `witcheryOverheating`, `witcheryWakingNightmare`), so these direct transformation rituals were overclaims introduced by the port rather than missing parity. Vampirism and lycanthropy themselves still exist through the port's real progression systems; only the non-original ritual shortcuts are gone.
