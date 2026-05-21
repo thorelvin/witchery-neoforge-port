@@ -59,6 +59,7 @@ Current state:
 - Blank Circle Talismans now bind from any present circle stack again instead of being incorrectly trapped behind the large-circle dispatcher, and the stored talisman data no longer defaults missing rings back to ritual glyphs.
 - `summonwither` now routes from the original large infernal ring only when the inner medium infernal ring is present again, instead of collapsing onto a single medium infernal circle.
 - The small ritual bound-waystone copy path is back closer to original too: a dropped bound waystone on ritual chalk now copies its location onto one extra offered unbound waystone, consumes the original Ender Dew plus diamond support offerings again, and spits out two bound waystones instead of falsely collapsing into the representative Banish Demon branch.
+- Rain of Toads now also once more expects its original support offerings before the staged medium infernal weather rite will queue: `Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Toe of Frog`, a water bucket, and `Belladonna`.
 - Weather Call Storm, Rain of Toads, Summoning, Moving Earth, Raise Column, Crater, Sanctity, and Imprisonment now run as staged active rituals instead of one-shot effects.
 - Active rites now stop if the sustaining circle is broken and no longer stack onto an already-busy center.
 
@@ -487,6 +488,7 @@ Remaining gap:
 
 The next ritual lifecycle pass is now closer to original Witchery:
 - `Rain of Toads` now routes from the medium-circle dispatcher into the staged coven weather rite again instead of incorrectly firing a non-original taglock curse path.
+- `Rain of Toads` now also once more expects its original support offerings (`Charged Attuned Stone`, `Redstone Soup`, `Reek of Misfortune`, `Toe of Frog`, a water bucket, and `Belladonna`) before that staged medium infernal weather rite will queue.
 - Taglock-based curse rites and the remaining medium otherwhere taglock-transposition route now validate their filled taglock target before succeeding, so invalid or offline targets no longer waste the sacrifice.
 - The non-original large filled-taglock `Transposition Pull` fallback is gone again; the original teleportation family is back to the real small bound-waystone path plus the medium otherwhere `RiteTeleportEntity` path instead of keeping that false-positive large-circle branch alive.
 

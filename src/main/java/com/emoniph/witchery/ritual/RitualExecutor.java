@@ -3331,10 +3331,22 @@ public class RitualExecutor {
     private static boolean riteOfRainOfToads(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireCoven(player, level, center, 1)) return false;
+        Optional<RainOfToadsOfferings> offerings = findRainOfToadsOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.support"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
+        consumeOfferedItem(offerings.get().chargedStone());
+        consumeOfferedItem(offerings.get().redstoneSoup());
+        consumeOfferedItem(offerings.get().reekOfMisfortune());
+        consumeOfferedItem(offerings.get().toeOfFrog());
+        consumeOfferedItem(offerings.get().waterBucket());
+        consumeOfferedItem(offerings.get().belladonna());
         success(player, level, center, "witchery.ritual.rain_of_toads.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40);
         return true;
@@ -4689,6 +4701,9 @@ public class RitualExecutor {
                                    ItemEntity fermentedSpiderEye, ItemEntity poisonousPotato, ItemEntity rottenFlesh,
                                    ItemEntity diamond) {}
 
+    private record RainOfToadsOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,
+                                        ItemEntity toeOfFrog, ItemEntity waterBucket, ItemEntity belladonna) {}
+
     private record NaturesPowerOfferings(ItemEntity rowanSapling, ItemEntity alderSapling, ItemEntity hawthornSapling,
                                          ItemEntity oakSapling, ItemEntity spruceSapling, ItemEntity birchSapling,
                                          ItemEntity chargedStone) {}
@@ -5380,6 +5395,26 @@ public class RitualExecutor {
                 poisonousPotato.get(),
                 rottenFlesh.get(),
                 diamond.get()));
+    }
+
+    private static Optional<RainOfToadsOfferings> findRainOfToadsOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
+        Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
+        Optional<ItemEntity> toeOfFrog = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TOE_OF_FROG.get()));
+        Optional<ItemEntity> waterBucket = findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET));
+        Optional<ItemEntity> belladonna = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BELLADONNA.get()));
+        if (chargedStone.isEmpty() || redstoneSoup.isEmpty() || reekOfMisfortune.isEmpty()
+                || toeOfFrog.isEmpty() || waterBucket.isEmpty() || belladonna.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new RainOfToadsOfferings(
+                chargedStone.get(),
+                redstoneSoup.get(),
+                reekOfMisfortune.get(),
+                toeOfFrog.get(),
+                waterBucket.get(),
+                belladonna.get()));
     }
 
     private static Optional<NaturesPowerOfferings> findNaturesPowerOfferings(Level level, BlockPos center) {
