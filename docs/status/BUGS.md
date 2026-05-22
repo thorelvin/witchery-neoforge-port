@@ -934,7 +934,7 @@ Remaining gap:
 The next early/mid-game brew batch is now closer to source:
 - `Brew of Sleeping` no longer uses the old wheat/sugar/spider-eye placeholder set and now once again asks for `Purified Milk`, `cookie`, `Brew of Love`, `Whiff of Magic`, `Icy Needle`, and `Artichoke`, which better fits the Spirit World progression the Primer already points players toward.
 - `Brew of Ink` no longer relies on the old sugar/wheat/pumpkin filler chain and now once again asks for black dye, `quicklime`, `Oil of Vitriol`, `slime_ball`, `Belladonna`, and `Rowan Berries`.
-- `Brew of Ice` no longer uses the placeholder snowball/ice/sugar/wheat/pumpkin/apple mix and now once again asks for `Icy Needle`, `snowball`, `Artichoke`, `glistering_melon_slice`, `red_mushroom`, and `Odour of Purity`.
+- `Brew of Frost` no longer uses the placeholder snowball/ice/sugar/wheat/pumpkin/apple mix and now once again asks for `Icy Needle`, `snowball`, `Artichoke`, `glistering_melon_slice`, `red_mushroom`, and `Odour of Purity`, while `Brew of Ice` now once again sits on the old `Brew of Frost` + `Diamond Vapour` distillery upgrade path instead of duplicating Frost directly in the kettle.
 - `Brew of Cursed Leaping` no longer uses the old rotten-flesh/sugar/wheat/pumpkin placeholder set and now once again asks for `bone`, `apple`, `Brew of Sprouting`, `Belladonna`, `feather`, and `cod`.
 
 Remaining gap:
