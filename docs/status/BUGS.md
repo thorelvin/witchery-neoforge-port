@@ -127,7 +127,7 @@ The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of t
 
 ### 1c. Base alchemy ingredient chain had hidden and missing steps - Fixed / verify
 
-`odour_of_purity`, `oil_of_vitriol`, and the related early-game intermediates were already registered with real item assets and real Witchery recipes, including the `fanciful_thread` spinning recipe that consumes `odour_of_purity`. The actual break was lower in the chain: `clay_jar_soft` had its crafting recipe, but the smelting step into the usable `clay_jar` item was missing, which made parts of the oven/distillery progression look absent in survival.
+`odour_of_purity`, `oil_of_vitriol`, and the related early-game intermediates were already registered with real item assets and real Witchery recipes, including the `fanciful_thread` spinning recipe that consumes `odour_of_purity`. The actual break was lower in the chain: `clay_jar_soft` had its crafting recipe, but the smelting step into the usable `clay_jar` item was missing, which made parts of the oven/distillery progression look absent in survival. The false standalone `Breath of the Goddess` + `bone_meal` distillery shortcut for `Odour of Purity` is gone again after source comparison too, so `Odour of Purity` now only comes from the original Diamond Vapour distillery branches instead of an invented direct route.
 
 Current state:
 - `clay_jar_soft -> clay_jar` now has the missing furnace smelting recipe again.
