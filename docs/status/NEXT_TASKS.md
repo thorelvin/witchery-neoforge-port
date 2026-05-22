@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post Grassper held-item pose pass)
+Last reconciled: 2026-05-22 (post Rowan Door hinge placement pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -28,7 +28,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
 | `grassper` | Stash/item display path restored; verify held-item cup pose in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
-| `rowan_door` | Facing issue when placed? Not tested | Small |
+| `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
 | `leaping_lily` | Custom lily visuals restored; needs in-game verification only | Low |
 | Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 227 entries now have distinct source/wiki-backed item models or clear alias models after the local, decompiled, and wiki-scrape icon passes, while 18 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
@@ -177,6 +177,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Glowglobe render polish switched the placed block model from cutout to translucent so the original low-alpha `glow_globe` sprite can render as a soft spirit light again instead of behaving like a masked plant cross. The remaining task is in-game visibility verification.
 - Kettle ceiling-hung pass added a `hanging` blockstate, restored the compact decompiled `hanging_kettle` model/texture path when a solid block supports the kettle from above, and kept the existing side-post support behavior for between-post setups. Remaining work is in-game verification of the two visual/support variants.
 - Grassper held-item polish moved the stored-item render out of the plant model transform and back toward the original off-center petal-cup pose with a gentle spin. The one-item stash, comparator output, and state sync were already restored; remaining work is in-game visual verification.
+- Rowan Door placement polish removed the forced right-hinge override so vanilla clicked-side and neighbor-aware hinge placement can run again while keeping the UUID key/keyring locking flow intact. Remaining work is in-game lock/unlock and facing verification.
 
 ---
 

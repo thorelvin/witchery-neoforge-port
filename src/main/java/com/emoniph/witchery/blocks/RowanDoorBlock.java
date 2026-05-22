@@ -12,10 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -37,12 +35,6 @@ public class RowanDoorBlock extends DoorBlock implements EntityBlock {
 
     public RowanDoorBlock(BlockBehaviour.Properties props) {
         super(BlockSetType.OAK, props);
-    }
-
-    @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        return state == null ? null : state.setValue(HINGE, DoorHingeSide.RIGHT);
     }
 
     // ── Block entity — only LOWER half gets one ───────────────────────────────

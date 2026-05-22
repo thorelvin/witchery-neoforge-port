@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -25,6 +25,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Mirror World missing from climate-rite exclusion list | 2 min | Fixed — see bug #6 |
 | Done | Spectral familiar ore search misses deepslate range | 20-30 min | Fixed — see bug #4 |
 | Done | Verify rowan placed-feature biome modifier injection | 15-30 min | Already injected — see bug #7 |
+| Done | Rowan Door forced right-hinge placement | 5 min | Fixed - see bug #1b.i |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
@@ -194,6 +195,10 @@ The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of t
 ### 1b. Kettle side supports were too strict for fence rigs - Fixed / verify
 
 `KettleBlock` now accepts fences, walls, iron bars, and sturdy full blocks as valid side supports again instead of requiring only the old narrow support subset. The kettle no longer exposes a full-cube support shape to neighbors, so support posts can hold it up without visually linking into the kettle body. Ceiling-supported placements now also use a dedicated `hanging` blockstate with the decompiled compact `hanging_kettle` model/texture path instead of always drawing the side-post form. `/witchery setup stations` now clears a 20x20 pad in front of the player only at and above door/player height, then rebuilds a full Rowan QA hut five blocks ahead with an 11x11 footprint, a 3-deep stone-brick foundation, lit windows and a Rowan door, a linked altar, a cobblestone-supported kettle over a campfire with a nearby water cauldron, a distillery, a witch's oven with a fume funnel above it, a spinning wheel, a stocked double chest, indoor Coven Witch + Hobgoblin trader spawns, and ceiling Glowglobes for light. The hut shell now sits one block lower while the altar, machines, chest, and traders stay on the original player-height test plane, the altar rig is offset off the back wall so the Rowan wall no longer disappears behind it, and the hut window panes now recompute their connected state from the finished frame so they visually meet the Rowan walls instead of only later pane neighbors. The oven, distillery, and spinning wheel are preloaded with one ready recipe each for faster machine QA.
+
+### 1b.i. Rowan Door forced right-hinge placement - Fixed / verify
+
+`RowanDoorBlock` no longer overrides `DoorBlock#getStateForPlacement` to force every placement into `HINGE=RIGHT`. The Rowan blockstate already supports both hinge variants, so vanilla clicked-side and neighbor-aware hinge selection can run again while the UUID key/keyring lock flow stays on `setPlacedBy` and `useWithoutItem`.
 
 ### 1c. Base alchemy ingredient chain had hidden and missing steps - Fixed / verify
 
