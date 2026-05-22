@@ -48,6 +48,9 @@ public class WitcheryBlocks {
     // Wood & Rowan family
     public static final DeferredBlock<Block> ROWAN_PLANKS = BLOCKS.registerSimpleBlock("rowan_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
+    public static final DeferredBlock<Block> BLOOD_STAINED_WOOL = BLOCKS.registerSimpleBlock("blood_stained_wool",
+            BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WHITE_WOOL)
+                    .mapColor(MapColor.COLOR_RED));
     public static final DeferredBlock<WitcheryWoodStairBlock> ROWAN_STAIRS = BLOCKS.registerBlock("rowan_stairs",
             props -> new WitcheryWoodStairBlock(ROWAN_PLANKS.get().defaultBlockState(),
                     props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),

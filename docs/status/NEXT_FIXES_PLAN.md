@@ -70,8 +70,8 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
    The Primer now explains how the live port actually grants the branch through the night infusion rite and how it currently spends stored creature-power charges as a practical focus item. The deeper old air-glyph / demonic-branch spellcasting lore is still future work at the mechanics level, but the player no longer receives the item with no explanation at all.
 8. Necromantic Stone explanation - closed as a first truthful port pass.
    The Primer now explains how the restored night rite actually creates the stone again and documents the real current uses the port supports today: later necromantic rites and Alluring Skull control. The broader old undead-command behavior is still future mechanics work, but the player no longer sees the item referenced everywhere with no honest acquisition or use explanation.
-9. Vampire armor coverage - partially closed as a wearable recipe pass.
-   `Woven Cruor` plus the primary Vampire Top Hat / Dress Coat / Dress Jacket / Trousers / Skirted Trousers / Oxford Boots / Helmet / Chain Coat / Chain Coat Ladies family now exist as real wearable armor items with source/wiki recipes and Primer coverage. Remaining work is the old vampire-only Bone Needle -> Blood-stained Wool path, exact Resurrected alias decisions, in-game armor QA, and the old light/medium set bonuses.
+9. Vampire armor coverage - partially closed as a wearable recipe/acquisition pass.
+   `Blood-stained Wool`, `Woven Cruor`, and the primary Vampire Top Hat / Dress Coat / Dress Jacket / Trousers / Skirted Trousers / Oxford Boots / Helmet / Chain Coat / Chain Coat Ladies family now exist as real items with source/wiki recipes and Primer coverage. Bone Needle can now turn placed White Wool into Blood-stained Wool for vampire players by spending 125 blood; because old vampire level progression is not represented in the port yet, this first practical pass gates by vampire state plus blood cost. Remaining work is exact level-gate parity, exact Resurrected alias decisions, in-game armor QA, and the old light/medium set bonuses.
 10. Minor completeness gaps.
    `Beartrap` and `Wolftrap` now have their first practical block/recipe/trap behavior back and first-pass Primer usage coverage. The explicit `Wicker Man` layout/pattern is also now covered in the Primer. Lower-priority omissions still worth tracking are the full old Wolftrap full-moon bait-summon path and deeper Vampire clothing set-bonus behavior.
 
@@ -80,7 +80,7 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
 1. Equipment and minor completeness next.
-   Vampire clothing now has first-pass recipe/armor coverage, so the remaining equipment gap is behavioral: old light/medium set bonuses, Blood-stained Wool acquisition, and exact alias/remap decisions.
+   Vampire clothing now has first-pass recipe/armor/acquisition coverage, so the remaining equipment gap is behavioral: old light/medium set bonuses, exact vampire level-gate parity, and exact alias/remap decisions.
 
 ## Highest-priority structural fixes
 

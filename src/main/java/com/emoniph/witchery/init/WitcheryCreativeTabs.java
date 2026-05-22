@@ -70,6 +70,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.DEMON_HEART.get());
                         output.accept(WitcheryItems.COFFIN.get());
                         output.accept(WitcheryItems.ROWAN_PLANKS.get());
+                        output.accept(WitcheryItems.BLOOD_STAINED_WOOL.get());
                         output.accept(WitcheryItems.ROWAN_STAIRS.get());
                         output.accept(WitcheryItems.ROWAN_SLAB.get());
                         output.accept(WitcheryItems.ROWAN_DOOR.get());

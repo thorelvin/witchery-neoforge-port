@@ -141,6 +141,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> DEMON_HEART = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DEMON_HEART);
     public static final DeferredItem<BlockItem> COFFIN               = ITEMS.registerSimpleBlockItem(WitcheryBlocks.COFFIN);
     public static final DeferredItem<BlockItem> ROWAN_PLANKS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_PLANKS);
+    public static final DeferredItem<BlockItem> BLOOD_STAINED_WOOL   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_STAINED_WOOL);
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
     public static final DeferredItem<BlockItem> ROWAN_SLAB           = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SLAB);
     public static final DeferredItem<Item>      WITCHES_PRIMER       = ITEMS.register("witches_primer", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
@@ -299,7 +300,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> INFUSED_BREW_OF_THE_GRAVE = ITEMS.registerSimpleItem("infused_brew_of_the_grave");
 
     // ── Ingredient items (Task 2 batch) ───────────────────────────────────────
-    public static final DeferredItem<Item> BONE_NEEDLE        = ITEMS.registerSimpleItem("bone_needle");
+    public static final DeferredItem<Item> BONE_NEEDLE        = ITEMS.register("bone_needle", id -> new BoneNeedleItem(itemProps(id)));
     public static final DeferredItem<Item> BREATH_OF_GODDESS  = ITEMS.registerSimpleItem("breath_of_goddess");
     public static final DeferredItem<Item> CONDENSED_FEAR     = ITEMS.registerSimpleItem("condensed_fear");
     public static final DeferredItem<Item> TONGUE_OF_DOG      = ITEMS.registerSimpleItem("tongue_of_dog");
@@ -437,7 +438,6 @@ public class WitcheryItems {
             "hawthorn_stairs",
             "hawthorn_slab",
             "biome_note",
-            "blood_stained_wool",
             "blooded_waystone",
             "bound_waystone",
             "bone_bolt",
