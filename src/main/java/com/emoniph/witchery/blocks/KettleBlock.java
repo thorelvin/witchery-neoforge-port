@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -37,17 +38,20 @@ import net.minecraft.world.entity.InsideBlockEffectApplier;
 public class KettleBlock extends BaseEntityBlock {
     public static final MapCodec<KettleBlock> CODEC = simpleCodec(KettleBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty HANGING = BooleanProperty.create("hanging");
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public KettleBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(HANGING, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, HANGING);
     }
 
     @Nullable
@@ -58,7 +62,9 @@ public class KettleBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockState state = defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        BlockState state = defaultBlockState()
+                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
+                .setValue(HANGING, hasCeilingSupport(ctx.getLevel(), ctx.getClickedPos().above()));
         return state.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? state : null;
     }
 
@@ -74,6 +80,10 @@ public class KettleBlock extends BaseEntityBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        if (state.getValue(HANGING) && hasCeilingSupport(level, pos.above())) {
+            return true;
+        }
+
         Direction facing = state.getValue(FACING);
         Direction left = facing.getClockWise();
         Direction right = facing.getCounterClockWise();
@@ -102,9 +112,16 @@ public class KettleBlock extends BaseEntityBlock {
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block,
                                 net.minecraft.world.level.redstone.@org.jspecify.annotations.Nullable Orientation orientation, boolean isMoving) {
-        if (!level.isClientSide() && !canSurvive(state, level, pos)) {
-            level.destroyBlock(pos, true);
-            return;
+        if (!level.isClientSide()) {
+            BlockState supportedState = state.setValue(HANGING, hasCeilingSupport(level, pos.above()));
+            if (!canSurvive(supportedState, level, pos)) {
+                level.destroyBlock(pos, true);
+                return;
+            }
+            if (supportedState != state) {
+                level.setBlock(pos, supportedState, 3);
+                return;
+            }
         }
         super.neighborChanged(state, level, pos, block, orientation, isMoving);
     }
@@ -215,5 +232,9 @@ public class KettleBlock extends BaseEntityBlock {
                 || supportState.is(BlockTags.FENCES)
                 || supportState.is(BlockTags.WALLS)
                 || supportState.is(Blocks.IRON_BARS);
+    }
+
+    private static boolean hasCeilingSupport(LevelReader level, BlockPos supportPos) {
+        return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.DOWN);
     }
 }
