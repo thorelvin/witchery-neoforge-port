@@ -189,6 +189,8 @@ Witchery spawn eggs now use a local copy of the vanilla two-layer spawn-egg temp
 `MandrakeBlock` now restores the old branch between "normal crop drop" and "spawn a hostile mandrake" instead of always doing both. The mature crop now checks difficulty and the original day/night weighted chance before summoning the mob.
 The awakened `Mandrake` itself is closer too: nearby players now once again ride a short-refresh nausea loop until the creature is killed instead of the port's old poison-on-hit placeholder, the creature now points back at the old ghast-scream family instead of the silverfish placeholder, and craftable `Earmuffs` once again block that nausea while worn. Earmuffs now also suppress the first practical Banshee scream-damage pass and hush both the Mandrake ghast-family cue and the restored custom Banshee scream on the client, while exact Mandrake-specific scream audio flavor and broader old sound-muting feel are still follow-up work.
 
+The Banshee itself is closer too: direct 1.7.2 comparison showed the old mob still used a chase/collision goal but had `0.0` base melee damage, so the periodic scream remained its real threat rather than contact hits. The port now mirrors that profile again while keeping the restored scream loop and Earmuffs protection in place.
+
 ### 10. Broom forced-hover controls drifted downward too aggressively - Fixed / verify
 
 `BroomEntity` now uses a movement model closer to the 1.7.10 broom: forward input drives acceleration, rider pitch controls lift, owl-familiar strafe support is restored, the mounted broom no longer applies a constant hover-drop, and riding now cancels fall damage again. `BroomItem` also remounts only empty nearby brooms.
