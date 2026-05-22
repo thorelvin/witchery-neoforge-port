@@ -1019,6 +1019,13 @@ Direct comparison with the old 1.7.2 kettle registry showed the port still only 
 Remaining gap:
 - Final in-game verification is still open for the restored splash-potion variants, especially whether they feel sensible in JEI and ordinary infusion progression despite originally being hidden from the old in-book recipe list.
 
+### 82. Witchery saplings still missed the shared sapling tags - Fixed / verify
+
+The port had already restored `rowan_sapling`, plus the ingredient-side `alder_sapling` and `hawthorn_sapling`, but they were not actually inside the shared Minecraft sapling tags. That meant several live systems still quietly treated them as second-class ingredients: `Wicker Bundle` could not honestly accept them, sapling-led rite dispatch and climate focus logic would skip them, and the oven still needed a one-off Rowan exception. The shared item-tag bridge is now back in place, `rowan_sapling` also now sits in the block sapling tag, and the oven no longer needs its special-case Rowan fallback.
+
+Remaining gap:
+- Alder and Hawthorn still remain item-form sapling ingredients rather than full placeable tree families, so this fixes the progression/tag bridge without overclaiming the broader tree/worldgen half yet.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

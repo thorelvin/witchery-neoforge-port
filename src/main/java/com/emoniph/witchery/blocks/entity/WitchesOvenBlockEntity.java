@@ -233,8 +233,7 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
     }
 
     private static boolean isSaplingInput(ItemStack input) {
-        return input.is(ItemTags.SAPLINGS)
-                || input.is(WitcheryBlocks.ROWAN_SAPLING.get().asItem());
+        return input.is(ItemTags.SAPLINGS);
     }
 
     private int getFumeFunnels() {
