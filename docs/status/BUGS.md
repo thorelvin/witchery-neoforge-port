@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -31,6 +31,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Treefyd invisible visual path | 5-10 min | Fixed - old 1.7 zero-plane model geometry and original 64x32 texture parity restored; needs in-game visual verification |
 | Done | Poltergeist wrong mapping / holes | 5 min | Fixed - old all-part mirror UV flags restored; needs in-game visual verification |
 | Done | Banshee mouth/face patch mismatch | 10-15 min | Fixed - screaming state now syncs to renderer and old flat mouth plane visibility is restored; needs in-game visual verification |
+| Done | Mandrake texture holes / model drift | 5-10 min | Fixed - old mirror UVs, zero-depth leaf crown, and arm-only twitch restored; needs in-game visual verification |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
