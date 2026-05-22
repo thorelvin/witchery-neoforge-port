@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.blocks.GrassperBlock;
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,6 +12,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +29,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Mutating Sprig - a controlled mutation tool for a few specific block changes.
@@ -58,6 +66,16 @@ public class MutatingSprigItem extends Item {
             return InteractionResult.CONSUME;
         }
         if (tryCreateLeechChest(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateCritterSnare(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -191,6 +209,33 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
+    private static boolean tryCreateCritterSnare(Level level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.COBWEB) || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
+            return false;
+        }
+
+        Zombie zombie = findSnaredZombie(level, pos);
+        if (zombie == null) {
+            return false;
+        }
+
+        List<ItemEntity> saplings = new ArrayList<>();
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            ItemEntity sapling = findDroppedAlderSapling(level, pos.relative(direction), saplings);
+            if (sapling == null) {
+                return false;
+            }
+            saplings.add(sapling);
+        }
+
+        for (ItemEntity sapling : saplings) {
+            consumeOne(sapling);
+        }
+        zombie.discard();
+        level.setBlock(pos, WitcheryBlocks.CRITTER_SNARE.get().defaultBlockState(), 3);
+        return true;
+    }
+
     private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state) {
         if (!state.is(WitcheryBlocks.LEECH_CHEST.get())
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
@@ -262,6 +307,40 @@ public class MutatingSprigItem extends Item {
         clearHorizontalMoss(level, pos);
         level.setBlock(pos, WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), 3);
         return true;
+    }
+
+    private static Zombie findSnaredZombie(Level level, BlockPos pos) {
+        return level.getEntitiesOfClass(Zombie.class, new AABB(pos), zombie -> zombie.isAlive() && !zombie.isRemoved())
+                .stream()
+                .min(Comparator.comparingDouble(zombie -> zombie.distanceToSqr(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5)))
+                .orElse(null);
+    }
+
+    private static ItemEntity findDroppedAlderSapling(Level level, BlockPos pos, List<ItemEntity> excluded) {
+        return level.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(0.35, 0.25, 0.35), itemEntity ->
+                        itemEntity.isAlive()
+                                && !itemEntity.isRemoved()
+                                && !excluded.contains(itemEntity)
+                                && itemEntity.getItem().is(WitcheryItems.ALDER_SAPLING.get()))
+                .stream()
+                .min(Comparator.comparingDouble(itemEntity -> itemEntity.distanceToSqr(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5)))
+                .orElse(null);
+    }
+
+    private static void consumeOne(ItemEntity entity) {
+        ItemStack stack = entity.getItem();
+        stack.shrink(1);
+        if (stack.isEmpty()) {
+            entity.discard();
+            return;
+        }
+        entity.setItem(stack);
     }
 
     private static boolean hasSpanishMossWaterRing(Level level, BlockPos pos) {

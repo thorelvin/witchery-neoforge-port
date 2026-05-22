@@ -26,6 +26,11 @@
     },
     {
       "type": "patchouli:text",
+      "title": "Critter Snare",
+      "text": "For the old snare route, suspend a $(item)Cobweb$() over a water source, drop an $(item)Alder Sapling$() on each of its four sides, and trap a $(thing)Zombie$() in the web. Touch the cobweb with the sprig and it will twist into a $(item)Critter Snare$().$(br2)That gives you the proper survival bridge into bat, silverfish, slime, and magma-cube snare chains again."
+    },
+    {
+      "type": "patchouli:text",
       "title": "Blood Roses",
       "text": "Once you have a $(item)Leech Chest$(), set it over a water source and place a $(item)Poppy$() on each of its four sides. Use the sprig on the Leech Chest and the chest will be consumed, leaving four $(item)Blood Roses$().$(br2)Those roses then keep fresh taglock samples until you draw them out with a $(item)Taglock Kit$()."
     },

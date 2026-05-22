@@ -74,7 +74,8 @@ public class CritterSnareBlock extends Block {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return Block.canSupportCenter(level, pos.below(), Direction.UP);
+        return Block.canSupportCenter(level, pos.below(), Direction.UP)
+                || level.getFluidState(pos.below()).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER);
     }
 
     @Override
