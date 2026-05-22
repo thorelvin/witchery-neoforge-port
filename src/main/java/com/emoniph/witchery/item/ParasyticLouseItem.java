@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.entity.ParasyticLouseEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -71,6 +73,7 @@ public class ParasyticLouseItem extends Item {
         }
 
         louse.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, player.getYRot(), 0.0F);
+        louse.setBitePotionContents(stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY));
         louse.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.MOB_SUMMONED, null);
         louse.setPersistenceRequired();
         serverLevel.addFreshEntity(louse);

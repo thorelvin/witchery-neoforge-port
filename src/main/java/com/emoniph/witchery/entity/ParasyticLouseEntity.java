@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -9,6 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 
 /**
@@ -30,6 +33,8 @@ import net.minecraft.world.level.Level;
  * harvested back into its carried item on interaction.
  */
 public class ParasyticLouseEntity extends Monster {
+    private PotionContents bitePotionContents = PotionContents.EMPTY;
+
     public ParasyticLouseEntity(EntityType<? extends ParasyticLouseEntity> type, Level level) {
         super(type, level);
     }
@@ -59,11 +64,44 @@ public class ParasyticLouseEntity extends Monster {
             return InteractionResult.SUCCESS;
         }
 
-        ItemEntity item = new ItemEntity(level(), getX(), getY() + 0.4, getZ(), new ItemStack(WitcheryItems.PARASYTIC_LOUSE.get()));
+        ItemStack stack = new ItemStack(WitcheryItems.PARASYTIC_LOUSE.get());
+        if (bitePotionContents.hasEffects()) {
+            stack.set(DataComponents.POTION_CONTENTS, bitePotionContents);
+        }
+
+        ItemEntity item = new ItemEntity(level(), getX(), getY() + 0.4, getZ(), stack);
         item.setDefaultPickUpDelay();
         level().addFreshEntity(item);
         discard();
         return InteractionResult.SUCCESS_SERVER;
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        boolean hurt = super.doHurtTarget(level, target);
+        if (hurt && target instanceof LivingEntity living && bitePotionContents.hasEffects()) {
+            bitePotionContents.applyToLivingEntity(living, 1.0F);
+            bitePotionContents = PotionContents.EMPTY;
+        }
+        return hurt;
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (bitePotionContents.hasEffects()) {
+            tag.store("BitePotionContents", PotionContents.CODEC, bitePotionContents);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        bitePotionContents = tag.read("BitePotionContents", PotionContents.CODEC).orElse(PotionContents.EMPTY);
+    }
+
+    public void setBitePotionContents(PotionContents contents) {
+        bitePotionContents = contents == null ? PotionContents.EMPTY : contents;
     }
 
     @Override

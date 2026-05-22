@@ -12,7 +12,7 @@ public class ParasyticLouseRenderer extends MobRenderer<ParasyticLouseEntity, Li
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/louse.png");
 
     public ParasyticLouseRenderer(EntityRendererProvider.Context context) {
-        super(context, new ParasyticLouseModel(context.bakeLayer(ParasyticLouseModel.LAYER_LOCATION)), 0.2F);
+        super(context, new ParasyticLouseModel(context.bakeLayer(ParasyticLouseModel.LAYER_LOCATION)), 0.3F);
     }
 
     @Override
@@ -23,5 +23,10 @@ public class ParasyticLouseRenderer extends MobRenderer<ParasyticLouseEntity, Li
     @Override
     public Identifier getTextureLocation(LivingEntityRenderState state) {
         return TEXTURE;
+    }
+
+    @Override
+    protected float getFlipDegrees() {
+        return 180.0F;
     }
 }
