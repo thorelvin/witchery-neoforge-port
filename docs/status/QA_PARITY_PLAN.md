@@ -59,6 +59,7 @@ Priority mechanics checklist:
 
 Current entity verification note:
 - Broom flight should be retested specifically for the old snap-back symptom: mount via item or `/witchery spawn broom`, fly forward and upward for more than several seconds, and confirm the broom no longer returns toward its placement point while preserving pitch lift and Soaring/Owl speed bonuses.
+- Witch Hunter aggro should be retested after the target-parity pass: spawn a hunter near a Coven Witch, undead mob, Demon/Blaze-style demonic target, and a player carrying a Voodoo or Vampiric Poppet, then confirm it selects valid supernatural targets without attacking ordinary players.
 
 ### 2. Sound parity
 

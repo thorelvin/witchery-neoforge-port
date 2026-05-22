@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Witch Hunter anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -25,6 +25,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Mirror World missing from climate-rite exclusion list | 2 min | Fixed — see bug #6 |
 | Done | Spectral familiar ore search misses deepslate range | 20-30 min | Fixed — see bug #4 |
 | Done | Verify rowan placed-feature biome modifier injection | 15-30 min | Already injected — see bug #7 |
+| Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
 
 ---
@@ -213,6 +214,13 @@ Current state:
 
 Remaining gap:
 - This is a first practical drop-bridge restoration, not the full old Arthana combat/event stack. The broader skull/spectral-dust/undead edge-case family still remains follow-up work if parity pressure reaches it.
+
+### 1e. Witch Hunter target family was too narrow - Fixed / verify
+
+The port already targeted Coven Witches, but it had drifted away from the original hunter's broader anti-supernatural role by only looking for vampire/werewolf players plus witch mobs. `WitchHunterEntity` now uses one source-backed target predicate that keeps Coven Witch targeting and also hunts undead entity-tag mobs, the original vanilla demonic family (`Ghast`, `Blaze`, `Magma Cube`, `Wither`), the port's `DemonEntity`, vanilla witches, vampires/werewolves, and players carrying `Voodoo Poppet` or `Vampiric Poppet`.
+
+Remaining gap:
+- The exact old delayed "black magic performed" hunter-spawn pressure is still not restored here; this pass only fixes local aggro target selection. In-game verification should spawn a Witch Hunter near a Coven Witch, a zombie/skeleton, a demon/blaze-style target, and a player carrying a Voodoo/Vampiric Poppet.
 
 ### 2. GhostModel mouth protrusion - Fixed
 

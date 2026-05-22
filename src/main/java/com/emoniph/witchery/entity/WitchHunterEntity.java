@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -74,18 +77,49 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // Target players who are vampires or werewolves
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(
-                this, Player.class, 10, true, false, (e, sl) -> isWitchyPlayer(e)));
-        // Target vanilla witches and Witchery coven witches
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Witch.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CovenWitchEntity.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(
+                this, LivingEntity.class, 10, false, true, (e, sl) -> isHunterTarget(e)));
+    }
+
+    private boolean isHunterTarget(LivingEntity entity) {
+        if (entity == this || !entity.isAlive()) {
+            return false;
+        }
+        if (entity instanceof Player) {
+            return isWitchyPlayer(entity);
+        }
+        return entity instanceof Witch
+                || entity instanceof CovenWitchEntity
+                || entity.getType().is(EntityTypeTags.UNDEAD)
+                || isDemonic(entity);
     }
 
     private boolean isWitchyPlayer(LivingEntity entity) {
         if (!(entity instanceof ServerPlayer sp)) return false;
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        return data.isVampire() || data.isWerewolf();
+        return data.isVampire()
+                || data.isWerewolf()
+                || hasInventoryItem(sp, WitcheryItems.VOODOO_POPPET.get())
+                || hasInventoryItem(sp, WitcheryItems.VAMPIRIC_POPPET.get());
+    }
+
+    private static boolean isDemonic(LivingEntity entity) {
+        EntityType<?> type = entity.getType();
+        return entity instanceof DemonEntity
+                || type == EntityType.GHAST
+                || type == EntityType.BLAZE
+                || type == EntityType.MAGMA_CUBE
+                || type == EntityType.WITHER;
+    }
+
+    private static boolean hasInventoryItem(Player player, Item item) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (stack.is(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ── Ranged attack ─────────────────────────────────────────────────────────

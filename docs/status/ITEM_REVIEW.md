@@ -244,7 +244,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
-| M5 | `coven_witch` | `/witchery spawn coven_witch` | | Some witches ok, some spawn as pink black. Should figth witch hunters?
+| M5 | `coven_witch` | `/witchery spawn coven_witch` | | Some witches ok, some spawn as pink black. Witch Hunters now target Coven Witches; texture variants still need verification.
 | M6 | `hobgoblin` | `/witchery spawn hobgoblin` | | Looks fine, trade works
 | M7 | `raven` | `/witchery spawn raven` | | Works fine, but eye layers does not always follow head. Maybe remove and give them only red eye pixels. Wings should flap out in fligth not stay close to body. Feet should be along body, not sticking out.
 | M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull and drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder
@@ -259,7 +259,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M12 | `banshee` | `/witchery spawn banshee` | | Still have error on mouth/face
 | M13 | `spectre` | `/witchery spawn spectre` | | Looks ok.
 | M14 | `poltergeist` | `/witchery spawn poltergeist` | | Wrong mapping, have holes
-| M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Should hunt coven witches?
+| M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Coven Witch targeting was already present; this pass also restores the broader old target family for undead mobs, demonic mobs, vanilla witches, vampires/werewolves, and players carrying Voodoo/Vampiric Poppets. Needs in-game aggro verification.
 | M16 | `treefyd` | `/witchery spawn treefyd` | | Does not show. Egg makes something invisible on ground that i can destroy
 | M17 | `parasytic_louse` | `/witchery spawn parasytic_louse` | |
 | M18 | `demon` | `/witchery spawn demon` | | Looks good, but wings are wrong angle. Imp wings are correct.

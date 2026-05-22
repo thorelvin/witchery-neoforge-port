@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-20 (post trader menu pass + setup stations QA hut helper + base alchemy item pass + kettle/oven polish + hobgoblin resurrected model pass + hobgoblin launch-structure fix + startup warning cleanup)
+Last reconciled: 2026-05-22 (post Witch Hunter target parity + broom ridden sync + current item/block parity sweep)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -163,6 +163,12 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 ---
 
 ## Completed this session ✅
+
+### Witch Hunter target parity (2026-05-22)
+
+- `WitchHunterEntity` now keeps Coven Witch targeting and restores the broader old anti-supernatural target set: undead mobs, vanilla demonic mobs, the port's `DemonEntity`, vanilla witches, vampires/werewolves, and players carrying Voodoo/Vampiric Poppets. `./gradlew.bat compileJava processResources` passes. The old delayed black-magic hunter-spawn pressure remains a separate future parity slice.
+
+---
 
 ### Broom ridden movement sync (2026-05-22)
 

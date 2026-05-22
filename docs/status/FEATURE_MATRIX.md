@@ -106,7 +106,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Entity | Status | Notes |
 |---|---:|---|
 | Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue, and stable merchant opening via the vanilla trading-player flow; Seer Stone can now pull a nearby loaded Coven Witch toward the player again as a practical local-coven fallback even though the deeper remembered-coven membership system is still not ported |
-| Witch Hunter | Done | Ranged+melee; silver bolts; targets vampires/werewolves |
+| Witch Hunter | Done | Ranged+melee; silver bolts; target selection now tracks the old anti-supernatural role more closely by hunting undead mobs, demonic mobs, vanilla witches, Coven Witches, vampires/werewolves, and players carrying Voodoo/Vampiric Poppets |
 | Banshee | Partial | Gameplay is closer again: the Banshee now restores a first practical periodic scream-damage loop on nearby players, Earmuffs once again suppress that damage while worn, the original custom Banshee scream asset is back in use instead of the old ghast placeholder while still being hushed client-side by Earmuffs, and the old `0.0` melee-damage profile is back so the scream is once again the real danger; GhostModel UV audit is still follow-up |
 | Spectre | Done | Flying ghost-type |
 | Poltergeist | Partial | Gameplay works; GhostModel UV needs audit |
