@@ -984,6 +984,13 @@ Remaining gap:
 Remaining gap:
 - Final in-game verification is still open for the restored Bat Wool survival bridge, especially ordinary bat farming feel versus the restored chest/trade fallback paths.
 
+### 77. Spectral Dust still had a false distillery shortcut - Fixed / verify
+
+`Spectral Dust` now stays on its real spectral-creature progression only. The false direct distillery shortcut is gone again after 1.7.2 plus Resurrected comparison, so the item now comes from the existing Spectre / Banshee / Poltergeist drop tables plus Torment chest loot instead of an invented `Subdued Spirit` + `gunpowder` distill.
+
+Remaining gap:
+- Final in-game verification is still open for the restored spectral-dust survival bridge, especially ordinary ghost-hunting feel versus the Torment-loot fallback path.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
