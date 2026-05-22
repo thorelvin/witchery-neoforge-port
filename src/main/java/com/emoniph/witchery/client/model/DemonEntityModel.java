@@ -29,6 +29,9 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
     private final ModelPart leftLeg;
     private final ModelPart wingRight;
     private final ModelPart wingLeft;
+    private static final float WING_X_ROT = 0.3047198F;
+    private static final float WING_Y_ROT = -0.6698132F;
+    private static final float WING_Z_ROT = -0.6283185F;
 
     public DemonEntityModel(ModelPart root) {
         super(root);
@@ -90,15 +93,15 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
 
         // ── Wings — attached high on back (y=-8), original rotations preserved
         root.addOrReplaceChild("wing_right",
-                CubeListBuilder.create().texOffs(93, 0).addBox(0, 0, 0, 14, 21, 1),
+                CubeListBuilder.create().texOffs(93, 0).addBox(0, 0, 0, 14, 21, 0),
                 PartPose.offsetAndRotation(1, -8, 3,
-                        0.3047198f, -0.6698132f, -0.6283185f));
+                        WING_X_ROT, WING_Y_ROT, WING_Z_ROT));
 
         // wing_left uses same box as wing_right; the PI+0.67 yRot mirrors it to the left side
         root.addOrReplaceChild("wing_left",
-                CubeListBuilder.create().texOffs(93, 0).addBox(0, 0, 0, 14, 21, 1),
+                CubeListBuilder.create().texOffs(93, 0).addBox(0, 0, 0, 14, 21, 0),
                 PartPose.offsetAndRotation(-1, -8, 3,
-                        -0.3047198f, (float) Math.PI + 0.6698132f, 0.6283185f));
+                        -WING_X_ROT, (float) Math.PI - WING_Y_ROT, -WING_Z_ROT));
 
         return LayerDefinition.create(mesh, 128, 32);
     }
@@ -106,7 +109,6 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
     public void setupAnim(LivingEntityRenderState state) {
         float limbSwing = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
-        float ageInTicks = state.ageInTicks;
         float netHeadYaw = state.yRot;
         float headPitch = state.xRot;
         head.yRot = state.yRot * Mth.DEG_TO_RAD;
@@ -118,8 +120,11 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
         rightArm.xRot = -swing;
         leftArm.xRot  =  swing;
 
-        float flapBase = Mth.sin(ageInTicks * 0.08f) * 0.08f;
-        wingRight.zRot = -0.6283185f + flapBase;
-        wingLeft.zRot  =  0.6283185f - flapBase;
+        wingRight.xRot = WING_X_ROT;
+        wingRight.yRot = WING_Y_ROT;
+        wingRight.zRot = WING_Z_ROT;
+        wingLeft.xRot = -WING_X_ROT;
+        wingLeft.yRot = (float) Math.PI - WING_Y_ROT;
+        wingLeft.zRot = -WING_Z_ROT;
     }
 }

@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -15,6 +15,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Fix Mandrake spawn category mismatch | 1-5 min | Fixed (MONSTER category + spawn placement registered) |
 | Done | Register spawn placements for biome-spawned mobs | 10-20 min | Fixed |
 | Done | Demon UV/texture-size audit | 20-45 min | Fixed - model corrected to 128x32, all UVs at y=0 row, wings added |
+| Done | Demon wing source-pose mismatch | 5-10 min | Fixed - zero-depth source wing planes restored and non-source idle flap removed; needs in-game visual verification |
 | Done | Werewolf pre-render body hide | 20-45 min | Fixed - SyncPlayerDataPayload now includes entityId; handleOnClient updates correct tracked entity |
 | Done | Verify Torment visibility / darkness | 10-20 min | Fixed - Force no longer blocks light and Torment now has low ambient skylight |
 | Done | Decide Torment red pulse/fog effect | 5-20 min | Decision made; keep red biome sky/fog without Nether pulse |
@@ -245,7 +246,7 @@ Current `GhostModel` has no mouth part - it was never introduced in the port. Ar
 
 ### 4. Demon model transparent holes - Fixed
 
-`demon.png` is 128x32. Model now declares `128, 32`. All part UVs corrected to y=0 row: body `texOffs(64,0)`, arms `texOffs(48,0)`, legs `texOffs(32,0)`. Head detail parts (horns, tusks, snout, lip) restored. Wings added at `texOffs(93,0)`.
+`demon.png` is 128x32. Model now declares `128, 32`. All part UVs corrected to y=0 row: body `texOffs(64,0)`, arms `texOffs(48,0)`, legs `texOffs(32,0)`. Head detail parts (horns, tusks, snout, lip) restored. Wings use the source zero-depth planes at `texOffs(93,0)` and no longer apply the non-source idle z-flap, keeping the static decompiled wing angle family that matches the correctly presented Imp path. Final in-game wing-angle verification is still open.
 
 ---
 

@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Death scythe attachment coordinate polish)
+Last reconciled: 2026-05-22 (Demon wing source-pose polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -114,7 +114,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, and filled `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or one exact creature and forget them again on sneak-use |
 | Ent | Done | Passive until hit; large model |
 | Mandrake mob | Partial | MONSTER category and spawn placement are registered again, the awakened mob now restores a first practical short-refresh nausea scream on nearby players instead of the port's old poison-on-hit placeholder, its sound cues now point back at the original ghast-scream family instead of the older silverfish placeholder, and craftable Earmuffs once again block that nausea while worn while also hushing the current scream cue on the client; exact custom Mandrake-specific scream audio is still follow-up |
-| Demon | Partial | Fireball mob; texture/UV audit still open |
+| Demon | Partial | Fireball mob; texture/UV audit fixed; wing planes now use the source-static zero-depth pose without the non-source idle flap, pending in-game wing-angle verification |
 | Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
 | Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; ravens now also spawn naturally in forest and cold overworld biomes instead of existing only through QA commands and Brew of Hitchcock, and `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` remain direct QA hooks for the real raven path |
 | Cat familiar | Partial | Gameplay works; body-proportion model needs tweak |
@@ -208,7 +208,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
 | Banshee/Poltergeist GhostModel UV | Polish | One audit pass needed |
 | Cat familiar model proportions | Polish | Body geometry tweak |
-| Demon UV/texture | Polish | Partially fixed; verify in-game |
+| Demon UV/texture | Polish | UV/texture-size fixed and wing source-pose polish applied; verify in-game |
 | Nightmare behavior verification | Polish | Needs in-game test |
 | Torment maze | Partial | Legacy block/layout parity restored, the exit portal now renders as a thin old-style plane again, the stray random chamber structure-set path is removed, and `/witchery verify torment` now covers the repeatable full-footprint server-side audit; still needs fresh-dimension in-game verification |
 | Mirror World dimension | Large | Foundation landed: key, dimension JSON/type JSON, debug entry command, same-X/Z safe landing, first-pass blue-fog atmosphere, and explicit no-rain/no-lightning enforcement are in; mirror-specific terrain logic, ingress ritual/block, and clone inhabitants still remain |
