@@ -163,7 +163,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 119 | `witchery:brew_of_the_grotesque` | |
 | 120 | `witchery:brew_of_revealing` | |
 | 121 | `witchery:brew_of_poison` | |
-| 122 | `witchery:brew_of_frost` | |
+| 122 | `witchery:brew_of_ice` | Displays as `Brew of Frost` like original Witchery |
 | 123 | `witchery:brew_of_foaming` | |
 
 ---

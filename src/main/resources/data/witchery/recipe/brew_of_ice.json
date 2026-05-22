@@ -8,7 +8,7 @@
     {"id": "minecraft:red_mushroom"},
     {"id": "witchery:odour_of_purity"}
   ],
-  "result": {"id": "witchery:brew_of_frost", "count": 3},
+  "result": {"id": "witchery:brew_of_ice", "count": 3},
   "power": 1000.0,
   "color": 6750208
 }

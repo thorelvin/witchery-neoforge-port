@@ -6,7 +6,6 @@ import com.emoniph.witchery.item.BrewOfErosionItem;
 import com.emoniph.witchery.item.BrewOfFoamingItem;
 import com.emoniph.witchery.item.BrewOfFoulnessItem;
 import com.emoniph.witchery.item.BrewOfFlowingSpiritItem;
-import com.emoniph.witchery.item.BrewOfFrostItem;
 import com.emoniph.witchery.item.BrewOfInfectionItem;
 import com.emoniph.witchery.item.BrewOfLoveItem;
 import com.emoniph.witchery.item.BrewOfRaisingItem;
@@ -220,7 +219,6 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_THE_GROTESQUE  = ITEMS.register("brew_of_the_grotesque", id -> new BrewOfTheGrotesqueItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_REVEALING      = ITEMS.register("brew_of_revealing", id -> new BrewOfRevealingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_POISON         = ITEMS.register("brew_of_poison", id -> new BrewOfPoisonItem(itemProps(id)));
-    public static final DeferredItem<Item> BREW_OF_FROST          = ITEMS.register("brew_of_frost", id -> new BrewOfFrostItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FOAMING        = ITEMS.register("brew_of_foaming", id -> new BrewOfFoamingItem(itemProps(id)));
 
     // ── Brews — implemented ───────────────────────────────────────────────────

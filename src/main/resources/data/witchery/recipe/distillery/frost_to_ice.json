@@ -1,7 +1,0 @@
-{
-  "type": "witchery:distillery",
-  "ingredient1": {"id": "witchery:brew_of_frost"},
-  "ingredient2": {"id": "witchery:diamond_vapour"},
-  "result": {"id": "witchery:brew_of_ice"},
-  "cookingtime": 250
-}

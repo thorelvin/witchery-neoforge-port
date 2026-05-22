@@ -169,7 +169,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BREW_OF_THE_GROTESQUE.get());
                         output.accept(WitcheryItems.BREW_OF_REVEALING.get());
                         output.accept(WitcheryItems.BREW_OF_POISON.get());
-                        output.accept(WitcheryItems.BREW_OF_FROST.get());
+                        output.accept(WitcheryItems.BREW_OF_ICE.get());
                         output.accept(WitcheryItems.BREW_OF_FOAMING.get());
                         // Infusion brew bases (M19)
                         output.accept(WitcheryItems.GHOST_OF_THE_LIGHT.get());
