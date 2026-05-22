@@ -25,7 +25,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `dream_catcher` | Places on wrong surface (left side instead of face clicked) | Small |
 | `kettle` | Missing 3D rope/string model detail | Small |
 | `poppet_shelf` | Poppets don't visually appear on top of shelf | Medium |
-| `mandrake_root` | Retest Mandrake summon branch and scream sickness; Earmuffs still missing | Small |
+| `mandrake_root` | Retest Mandrake summon branch and Earmuffs protection; Banshee/sound-side parity still missing | Small |
 | `grassper` | Wrong texture wrapping / should hold items | Medium |
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |

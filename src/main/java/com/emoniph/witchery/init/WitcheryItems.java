@@ -202,6 +202,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WITCHES_HAT = ITEMS.registerSimpleItem("witches_hat");
     public static final DeferredItem<Item> WITCHES_ROBE = ITEMS.registerSimpleItem("witches_robe");
     public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.registerSimpleItem("witches_shoes");
+    public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", id ->
+            new EarmuffsItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> HUNTER_HELMET = ITEMS.registerSimpleItem("hunter_helmet");
     public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.registerSimpleItem("hunter_chestplate");
     public static final DeferredItem<Item> HUNTER_LEGGINGS = ITEMS.registerSimpleItem("hunter_leggings");

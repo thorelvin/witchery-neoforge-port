@@ -1,0 +1,22 @@
+{
+  "name": "Mandrake",
+  "icon": "witchery:mandrake_root",
+  "category": "witchery:creatures",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Mandrake is never a polite harvest. In the older craft, a mature root sometimes comes quietly and sometimes wakes as a shrieking creature instead, especially at night and under harsher conditions.$(br2)Witchery: Rewoven now restores that split more honestly: when the crop does awaken, the living root keeps nearby players sickened until it is killed."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:earmuffs",
+      "text": "Craft $(item)Earmuffs$() from leather and white wool before gathering a large Mandrake patch. Wearing them in the head slot now blocks the restored nausea scream, which makes repeated harvests far less miserable.$(br2)The deeper old sound-muting behavior is still rough around the edges, so think of them first as practical Mandrake protection."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "What Still Remains",
+      "text": "The current port is strongest on the crop's summon-vs-drop branch and on the first practical protection loop: grow the crop, expect the scream, and wear Earmuffs if you plan to farm roots in quantity.$(br2)Exact scream audio flavor and the old Banshee interaction are still follow-up parity work."
+    }
+  ]
+}

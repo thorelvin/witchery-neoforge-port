@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.item.EarmuffsItem;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -54,6 +55,9 @@ public class MandrakeEntity extends Monster {
 
         for (Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(SCREAM_RADIUS),
                 LivingEntity::isAlive)) {
+            if (EarmuffsItem.isWorn(player)) {
+                continue;
+            }
             player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, SCREAM_DURATION_TICKS, SCREAM_AMPLIFIER, false, true));
         }
     }
