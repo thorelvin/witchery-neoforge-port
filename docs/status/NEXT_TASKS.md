@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (Mandrake model/UV parity polish)
+Last reconciled: 2026-05-22 (Nightmare attack-pose/tendril parity polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -165,7 +165,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
-- **Nightmare behavior** — `/witchery dream`, wait for nightmare roll; verify: single nightmare spawns, targets only victim, green fog in nightmare, re-spawns after kill with 30s delay, drops Mellifluous Hunger
+- **Nightmare behavior/visuals** — `/witchery dream`, wait for nightmare roll; verify: single nightmare spawns, targets only victim, arms lift while attacking, tendrils sway without texture holes, green fog in nightmare, re-spawns after kill with 30s delay, drops Mellifluous Hunger
 - **Torment maze** — delete `run/client/saves/<world>/dimensions/witchery/torment/` folder, re-enter; verify: 6 levels, invisible Force walls/ceilings with collision, Bedrock floor/frame, old portal chamber near x=8/z=68, and 3 refilling chest rooms per level
 
 ---
@@ -191,6 +191,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Poltergeist mirror-UV parity polish kept the original 1.7 `poltergeist.png` asset and restored the old model's all-part `mirror=true` UV setup instead of mirroring only the left-side limbs. Remaining work is in-game wrong-mapping/holes verification.
 - Banshee screaming mouth parity polish kept the original 1.7 `banshee.png` asset, removed the non-source GhostModel chin plate, restored the old flat zero-depth mouth plane, and synced Banshee screaming state so the mouth renders only during screams. Remaining work is in-game face/mouth verification.
 - Mandrake model/UV parity polish kept the original 1.7 `mandrake.png` asset, restored all-part mirror UVs, put the leaf crown back to the old zero-depth plane, and removed the non-source head/leg walking in favor of the original arm-only twitch. Remaining work is in-game texture-hole verification.
+- Nightmare attack-pose/tendril parity polish kept the original 1.7 `nightmare.png` asset, synced the 15-tick melee attack timer to the client render state, restored the old triangle-wave arm lift while attacking, and put the trailing tendrils back on the original mirror-UV, entity-id sway, and anchor-position setup. Remaining work is in-game attack-pose/tendril verification.
 
 ---
 

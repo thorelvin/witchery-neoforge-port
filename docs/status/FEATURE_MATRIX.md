@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Mandrake model/UV parity polish)
+Last reconciled: 2026-05-22 (Nightmare attack-pose/tendril parity polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -122,7 +122,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Parasytic Louse | Partial | Real Mutating Sprig silverfish-snare route, dedicated hostile entity, carried item form, and QA spawn command are back again, but the old bite-potion variants and longer practical verification still remain follow-up |
 | Broom | Done | Rideable; enchanted variant (Rite of Infusion); the current flight model restores forward acceleration, pitch lift, no forced mounted hover-drop, fall cancellation while riding, and a controlled-client sync path so the broom should no longer rubber-band back toward its spawn point during flight |
 | Spirit | Done | Passive flying Spirit World mob |
-| Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; in-game behavior verification pending |
+| Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; visual path now syncs the melee attack timer and entity id to restore the old triangle-wave arm lift, tendril sway, mirror UV flags, and source tendril anchors; in-game behavior/visual verification pending |
 | Flame Imp | Done | Ranged soulfire; Torment patrol |
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit; scythe attachment pivot now matches the original 1.7 runtime pose coordinates and needs only final in-game angle/contact verification |
@@ -209,7 +209,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Banshee GhostModel UV | Polish | Old screaming-mouth visibility restored; remaining work is in-game verification only |
 | Cat familiar model proportions | Polish | Body geometry tweak |
 | Demon UV/texture | Polish | UV/texture-size fixed and wing source-pose polish applied; verify in-game |
-| Nightmare behavior verification | Polish | Needs in-game test |
+| Nightmare behavior verification | Polish | Attack-pose/tendril render parity restored; needs in-game test |
 | Torment maze | Partial | Legacy block/layout parity restored, the exit portal now renders as a thin old-style plane again, the stray random chamber structure-set path is removed, and `/witchery verify torment` now covers the repeatable full-footprint server-side audit; still needs fresh-dimension in-game verification |
 | Mirror World dimension | Large | Foundation landed: key, dimension JSON/type JSON, debug entry command, same-X/Z safe landing, first-pass blue-fog atmosphere, and explicit no-rain/no-lightning enforcement are in; mirror-specific terrain logic, ingress ritual/block, and clone inhabitants still remain |
 | Village additions | Large | Bookshop, guards deferred |

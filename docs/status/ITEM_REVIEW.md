@@ -1,4 +1,4 @@
-Current visual follow-ups: Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
+Current visual follow-ups: Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -289,7 +289,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M16 | `treefyd` | `/witchery spawn treefyd` | | Old 1.7 visual path restored: the active texture matches the original 64x32 `textures/entities/treefyd.png`, and the model now uses the original zero-width/depth petal, tongue, and crossed leaf planes instead of widened port boxes. Needs in-game verification that the reported invisible spawn is visible now.
 | M17 | `parasytic_louse` | `/witchery spawn parasytic_louse` | |
 | M18 | `demon` | `/witchery spawn demon` | | Looks good; wing plane depth and the non-source idle flap were corrected back to the static decompiled pose used by the Imp-style wing path. Needs in-game verification for final wing angle.
-| M19 | `nightmare` | `/witchery spawn nightmare` | | Should lift arms when attacking player?
+| M19 | `nightmare` | `/witchery spawn nightmare` | Old 1.7 texture hash already matched; attack timer now syncs to the renderer, the model restores the source triangle-wave arm lift while attacking, and the tendrils now use the original entity-id sway moduli, mirror UV flags, and anchor positions. Needs in-game attack-pose verification. |
 | M20 | `horned_huntsman` | `/witchery spawn horned_huntsman` | | Looks correct, has boss bar
 
 ### Torment Dimension Bosses / Specials

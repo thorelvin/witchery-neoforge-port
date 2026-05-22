@@ -4,6 +4,9 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -39,10 +42,11 @@ import java.util.UUID;
  * Drops Mellifluous Hunger only in Spirit World.
  */
 public class NightmareEntity extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACK_TIMER =
+            SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.INT);
 
     private int defenseTimer = 0;
     private boolean defended = false;
-    private int attackTimer = 0;
 
     // Victim tracking - only this player is targeted.
     private UUID victimUUID = null;
@@ -50,6 +54,12 @@ public class NightmareEntity extends Monster {
 
     public NightmareEntity(EntityType<? extends NightmareEntity> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ATTACK_TIMER, 0);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -104,7 +114,8 @@ public class NightmareEntity extends Monster {
         super.tick();
         if (!this.level().isClientSide()) {
             if (defenseTimer > 0 && --defenseTimer == 0) defended = false;
-            if (attackTimer > 0) attackTimer--;
+            int attackTimer = getAttackTimer();
+            if (attackTimer > 0) setAttackTimer(attackTimer - 1);
 
             if (tickCount % 40 == 0 && victimUUID != null && level() instanceof ServerLevel serverLevel) {
                 Player victim = serverLevel.getPlayerByUUID(victimUUID);
@@ -157,7 +168,7 @@ public class NightmareEntity extends Monster {
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
-        attackTimer = 15;
+        setAttackTimer(15);
         boolean weakenedOutsideSpiritWorld = !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD);
         AttributeInstance attackAttribute = this.getAttribute(Attributes.ATTACK_DAMAGE);
         double oldBaseAttack = attackAttribute != null ? attackAttribute.getBaseValue() : 0.0;
@@ -205,7 +216,11 @@ public class NightmareEntity extends Monster {
     }
 
     public int getAttackTimer() {
-        return attackTimer;
+        return entityData.get(DATA_ATTACK_TIMER);
+    }
+
+    private void setAttackTimer(int attackTimer) {
+        entityData.set(DATA_ATTACK_TIMER, Math.max(0, attackTimer));
     }
 
     @Override
