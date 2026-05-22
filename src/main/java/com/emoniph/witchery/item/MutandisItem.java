@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -9,7 +10,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -82,18 +85,30 @@ public class MutandisItem extends Item {
         }
 
         // ── Normal pool mutation ───────────────────────────────────────────────
-        List<BlockState> pool = buildPool(state, level);
-        boolean inPool = pool.stream().anyMatch(s -> s.getBlock() == block);
+        List<MutationOutcome> pool = buildPool(level);
+        boolean inPool = pool.stream()
+                .map(MutationOutcome::blockState)
+                .filter(s -> s != null)
+                .anyMatch(s -> s.getBlock() == block);
         if (!inPool) return InteractionResult.PASS;
 
-        pool.removeIf(s -> s.getBlock() == block || !canPlaceMutation(level, mutationPos, state, s));
+        pool.removeIf(outcome -> {
+            BlockState outcomeState = outcome.blockState();
+            return outcomeState != null
+                    && (outcomeState.getBlock() == block || !canPlaceMutation(level, mutationPos, state, outcomeState));
+        });
         if (pool.isEmpty()) return InteractionResult.PASS;
 
         int sourceAge = getAge(state);
-        BlockState chosen = pool.get(level.random.nextInt(pool.size()));
-        chosen = applyAge(chosen, sourceAge);
+        MutationOutcome chosen = pool.get(level.random.nextInt(pool.size()));
 
-        placeMutation(level, mutationPos, state, chosen);
+        if (chosen.blockState() != null) {
+            BlockState chosenState = applyAge(chosen.blockState(), sourceAge);
+            placeMutation(level, mutationPos, state, chosenState);
+        } else {
+            clearMutationSource(level, mutationPos, state);
+            Block.popResource(level, mutationPos, new ItemStack(chosen.item()));
+        }
         spawnEffects(level, mutationPos);
         consumeItem(ctx);
         return InteractionResult.SUCCESS;
@@ -101,55 +116,57 @@ public class MutandisItem extends Item {
 
     // ── Pool construction ─────────────────────────────────────────────────────
 
-    private List<BlockState> buildPool(BlockState state, Level level) {
-        List<BlockState> pool = new ArrayList<>();
+    private List<MutationOutcome> buildPool(Level level) {
+        List<MutationOutcome> pool = new ArrayList<>();
 
         // Witchery plants + saplings
-        pool.add(WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState());
-        pool.add(WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState());
-        pool.add(WitcheryBlocks.EMBER_MOSS.get().defaultBlockState());
-        pool.add(WitcheryBlocks.GLINT_WEED.get().defaultBlockState());
-        pool.add(WitcheryBlocks.SPANISH_MOSS.get().defaultBlockState());
-        pool.add(WitcheryBlocks.BRAMBLE.get().defaultBlockState());
+        pool.add(MutationOutcome.block(WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState()));
+        pool.add(MutationOutcome.item(WitcheryItems.ALDER_SAPLING.get()));
+        pool.add(MutationOutcome.item(WitcheryItems.HAWTHORN_SAPLING.get()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.EMBER_MOSS.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.GLINT_WEED.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.SPANISH_MOSS.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.BRAMBLE.get().defaultBlockState()));
 
         // Witchery crops (age applied from source at use-time)
-        pool.add(WitcheryBlocks.BELLADONNA.get().defaultBlockState());
-        pool.add(WitcheryBlocks.MANDRAKE.get().defaultBlockState());
-        pool.add(WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState());
-        pool.add(WitcheryBlocks.SNOWBELL.get().defaultBlockState());
-        pool.add(WitcheryBlocks.ARTICHOKE.get().defaultBlockState());
+        pool.add(MutationOutcome.block(WitcheryBlocks.BELLADONNA.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.MANDRAKE.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.SNOWBELL.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.ARTICHOKE.get().defaultBlockState()));
 
         // Vanilla saplings
-        pool.add(Blocks.OAK_SAPLING.defaultBlockState());
-        pool.add(Blocks.SPRUCE_SAPLING.defaultBlockState());
-        pool.add(Blocks.BIRCH_SAPLING.defaultBlockState());
-        pool.add(Blocks.JUNGLE_SAPLING.defaultBlockState());
-        pool.add(Blocks.ACACIA_SAPLING.defaultBlockState());
-        pool.add(Blocks.DARK_OAK_SAPLING.defaultBlockState());
+        pool.add(MutationOutcome.block(Blocks.OAK_SAPLING.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.SPRUCE_SAPLING.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.BIRCH_SAPLING.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.JUNGLE_SAPLING.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.ACACIA_SAPLING.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.DARK_OAK_SAPLING.defaultBlockState()));
 
         // Vanilla plants
-        pool.add(Blocks.DANDELION.defaultBlockState());
-        pool.add(Blocks.POPPY.defaultBlockState());
-        pool.add(Blocks.BUSH.defaultBlockState());
-        pool.add(Blocks.FERN.defaultBlockState());
-        pool.add(Blocks.DEAD_BUSH.defaultBlockState());
-        pool.add(Blocks.SHORT_GRASS.defaultBlockState());
+        pool.add(MutationOutcome.block(Blocks.DANDELION.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.POPPY.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.BUSH.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.FERN.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.DEAD_BUSH.defaultBlockState()));
+        pool.add(MutationOutcome.block(Blocks.SHORT_GRASS.defaultBlockState()));
 
         // Spirit World: nether wart can appear from normal Mutandis in that dim
         if (level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
-            pool.add(Blocks.NETHER_WART.defaultBlockState());
+            pool.add(MutationOutcome.block(Blocks.NETHER_WART.defaultBlockState()));
         }
 
         // Extremis: vanilla crops + nether wart
         if (extremis) {
-            pool.add(Blocks.WHEAT.defaultBlockState());
-            pool.add(Blocks.CARROTS.defaultBlockState());
-            pool.add(Blocks.POTATOES.defaultBlockState());
-            pool.add(Blocks.BEETROOTS.defaultBlockState());
-            pool.add(Blocks.SUGAR_CANE.defaultBlockState());
-            pool.add(Blocks.MELON_STEM.defaultBlockState());
-            pool.add(Blocks.PUMPKIN_STEM.defaultBlockState());
-            pool.add(Blocks.NETHER_WART.defaultBlockState());
+            pool.add(MutationOutcome.block(Blocks.WHEAT.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.CARROTS.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.POTATOES.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.BEETROOTS.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.SUGAR_CANE.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.MELON_STEM.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.PUMPKIN_STEM.defaultBlockState()));
+            pool.add(MutationOutcome.block(Blocks.NETHER_WART.defaultBlockState()));
         }
 
         return pool;
@@ -212,6 +229,13 @@ public class MutandisItem extends Item {
         level.setBlock(pos, targetState, 3);
     }
 
+    private static void clearMutationSource(Level level, BlockPos pos, BlockState currentState) {
+        if (currentState.getBlock() instanceof DoublePlantBlock) {
+            clearUpperHalf(level, pos, currentState.getBlock());
+        }
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+    }
+
     private static void clearUpperHalf(Level level, BlockPos pos, Block block) {
         BlockPos abovePos = pos.above();
         if (isUpperHalfOf(level.getBlockState(abovePos), block)) {
@@ -251,6 +275,16 @@ public class MutandisItem extends Item {
     private static void consumeItem(UseOnContext ctx) {
         if (ctx.getPlayer() != null && !ctx.getPlayer().isCreative()) {
             ctx.getItemInHand().shrink(1);
+        }
+    }
+
+    private record MutationOutcome(BlockState blockState, Item item) {
+        private static MutationOutcome block(BlockState state) {
+            return new MutationOutcome(state, null);
+        }
+
+        private static MutationOutcome item(ItemLike item) {
+            return new MutationOutcome(null, item.asItem());
         }
     }
 }

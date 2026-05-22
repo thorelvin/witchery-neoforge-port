@@ -17,7 +17,7 @@
     {
       "type": "patchouli:text",
       "title": "Hedge Mutations",
-      "text": "Use Mutandis directly on natural plants or saplings. In Rewoven today the normal powder can roll Witchery plants and saplings, vanilla saplings, flowers, fern, short grass, dead bush, and the small vanilla bush shrub. In the Spirit World, the same pool can also reveal Nether Wart.$(br2)It is still a mutating powder, not a fertilizer. Expect transformation, not growth."
+      "text": "Use Mutandis directly on natural plants or saplings. In Rewoven today the normal powder can roll Witchery plants and saplings, the ingredient-side $(item)Alder$() and $(item)Hawthorn Saplings$(), vanilla saplings, flowers, fern, short grass, dead bush, and the small vanilla bush shrub. In the Spirit World, the same pool can also reveal Nether Wart.$(br2)It is still a mutating powder, not a fertilizer. Expect transformation, not growth."
     },
     {
       "type": "patchouli:crafting",

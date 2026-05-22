@@ -131,8 +131,8 @@ The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of t
 
 Current state:
 - `clay_jar_soft -> clay_jar` now has the missing furnace smelting recipe again.
-- The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the current `alder_sapling` / `hawthorn_sapling` ingredient placeholders.
-- `alder_sapling` and `hawthorn_sapling` still need a broader survival/worldgen pass later; this fix makes the base item chain visible and the jar progression usable again without claiming those placeholder ingredients are fully world-integrated yet.
+- The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the current `alder_sapling` / `hawthorn_sapling` ingredient items.
+- `alder_sapling` and `hawthorn_sapling` are no longer creative-only placeholders, because normal `Mutandis` can now surface them again as ingredient outcomes, which unblocks the current Brew of Sprouting / oven chain in survival. The broader placeable-tree/worldgen half still remains future work, so they are intentionally still item-form stand-ins rather than full sapling blocks.
 
 ### 2. GhostModel mouth protrusion - Fixed
 
