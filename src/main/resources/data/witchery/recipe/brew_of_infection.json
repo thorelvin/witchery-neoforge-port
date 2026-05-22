@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:poisonous_potato"},
-    {"id": "minecraft:spider_eye"},
-    {"id": "minecraft:fermented_spider_eye"},
+    {"id": "witchery:toe_of_frog"},
+    {"id": "witchery:creeper_heart"},
+    {"id": "witchery:wormy_apple"},
+    {"id": "witchery:belladonna"},
     {"id": "minecraft:rotten_flesh"},
-    {"id": "minecraft:slime_ball"},
-    {"id": "minecraft:gunpowder"}
+    {"id": "witchery:mutandis"}
   ],
   "result": {"id": "witchery:brew_of_infection", "count": 3},
   "power": 0.0,

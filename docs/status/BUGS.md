@@ -940,6 +940,17 @@ The next early/mid-game brew batch is now closer to source:
 Remaining gap:
 - Final in-game verification is still open for this corrected brew batch, especially the feel of the restored Spirit World and curse-side ingredient bridges in ordinary survival play.
 
+### 72. More everyday brews still used flattened placeholder kettle mixes - Fixed / verify
+
+The next survival-brew batch is now closer to source:
+- `Brew of Love` no longer uses the old dirt/sugar/apple filler path and now once again asks for `poppy`, `Whiff of Magic`, `Artichoke`, `golden_carrot`, `lily_pad`, and `cocoa_beans`.
+- `Brew of Raising` no longer uses the old wheat/spider-eye/gunpowder/sugar filler path and now once again asks for `Bat Wool`, `Mutandis`, `redstone`, `Oil of Vitriol`, `bone`, and `rotten_flesh`, with its old 500-power cost still intact.
+- `Brew of Infection` no longer uses the old poisonous-potato/spider-eye/slime/gunpowder filler path and now once again asks for `Toe of Frog`, `Creeper Heart`, `Wormy Apple`, `Belladonna`, `rotten_flesh`, and `Mutandis`.
+- `Brew of Wasting` no longer uses the old bone/fermented-spider-eye/gunpowder filler path and now once again asks for `Mellifluous Hunger`, `rotten_flesh`, `Belladonna`, `Ember Moss`, `poisonous_potato`, and `spider_eye`.
+
+Remaining gap:
+- Final in-game verification is still open for this corrected brew batch, especially how the restored infection/wasting chains feel in ordinary survival compared with the current item availability curve.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

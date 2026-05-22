@@ -1,14 +1,15 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:poisonous_potato"},
-    {"id": "minecraft:fermented_spider_eye"},
-    {"id": "minecraft:bone"},
+    {"id": "witchery:mellifluous_hunger"},
     {"id": "minecraft:rotten_flesh"},
+    {"id": "witchery:belladonna"},
+    {"id": "witchery:ember_moss"},
+    {"id": "minecraft:poisonous_potato"},
     {"id": "minecraft:spider_eye"},
-    {"id": "minecraft:gunpowder"}
   ],
   "result": {"id": "witchery:brew_of_wasting", "count": 3},
   "power": 0.0,
-  "color": -12342236
+  "color": -12342236,
+  "hatBonus": 1
 }
