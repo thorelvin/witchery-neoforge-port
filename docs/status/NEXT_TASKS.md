@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Parasytic Louse potion-bite parity slice)
+Last reconciled: 2026-05-23 (Parasytic Louse hotbar defense parity slice)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -166,7 +166,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 
 - **Flying Monkey model** - `/witchery spawn flying_monkey` and verify the source monkey body, wings, ears, tail, landed/flying animation, and feather tint close the reported wrong-model/texture-holes issue
 - **Flame Imp model** - `/witchery spawn flame_imp`, provoke it, and verify the source right-arm punch/body twist now plays during melee; power one up and verify the old taller powered render scale
-- **Parasytic Louse potion bite** - craft `parasytic_louse` with a non-water vanilla potion, place it, let it bite a target, and verify the carried potion effects apply once and then clear; verify pickup preserves unused potion payloads
+- **Parasytic Louse potion bite/hotbar defense** - craft `parasytic_louse` with a non-water vanilla potion, place it, let it bite a target, and verify the carried potion effects apply once and then clear; verify pickup preserves unused potion payloads. Then keep a potion-fed louse in the hotbar and verify hostile effects bite the attacker while beneficial effects bite the player, clear the louse payload, and cost 1 magic damage
 - **Spirit render** - enter the Spirit World or spawn a spirit and verify it now appears as the old small translucent wisp with no visible shadow instead of an opaque yellow ball
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
@@ -201,7 +201,8 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Spirit translucent render polish kept the original 1.7 `spirit.png` asset and model geometry, restored the old renderer's translucent white alpha, zero shadow radius, and source translate/half-scale transform so the Spirit World spirit should render as a small wisp instead of an opaque yellow blob. Remaining work is in-game visibility verification.
 - Flying Monkey source model/render parity polish replaced the scaled zombie renderer with a dedicated `ModelMonkey`-style 64x32 model, restored the wing/arm/leg/tail landed-vs-flight animation family, source shadow radius, and decompiled feather tint math. Remaining work is in-game wrong-model/texture-hole verification.
 - Flame Imp attack-pose/powered render parity polish synced vanilla melee swing progress into the renderer, restored the old source right-arm punch/body twist, restored powered 1.5x vertical render scale, and returned the renderer to the source 0.5 shadow radius. Remaining work is in-game attack-pose/powered-height verification.
-- Parasytic Louse potion-bite parity slice restored the old louse-plus-drinkable-potion crafting path in first practical form, carries `PotionContents` from item to placed louse and back when picked up, applies the stored potion effects once on a successful bite, then clears the payload. The renderer also returns to the source 0.3 shadow radius and 180-degree death flip. Remaining work is in-game bite/pickup verification plus the deeper hotbar defensive louse/belt behavior.
+- Parasytic Louse potion-bite parity slice restored the old louse-plus-drinkable-potion crafting path in first practical form, carries `PotionContents` from item to placed louse and back when picked up, applies the stored potion effects once on a successful bite, then clears the payload. The renderer also returns to the source 0.3 shadow radius and 180-degree death flip.
+- Parasytic Louse hotbar defense parity slice restored the old practical hotbar trigger: when a player takes damage, the first potion-fed louse in the 9-slot hotbar bites once, sends harmful effects to the living attacker or beneficial effects to the player, clears back to a plain louse, and costs the player 1 magic damage with a recursion guard. Remaining follow-up is in-game louse QA plus the separate `Biting Belt` equipment behavior.
 
 ---
 
