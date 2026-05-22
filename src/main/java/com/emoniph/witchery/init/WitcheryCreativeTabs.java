@@ -157,6 +157,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.WITCHES_SHOES.get());
                         output.accept(WitcheryItems.EARMUFFS.get());
                         output.accept(WitcheryItems.BITING_BELT.get());
+                        output.accept(WitcheryItems.BARK_BELT.get());
                         output.accept(WitcheryItems.HUNTER_HELMET.get());
                         output.accept(WitcheryItems.HUNTER_CHESTPLATE.get());
                         output.accept(WitcheryItems.HUNTER_LEGGINGS.get());

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SES",
+    "GBG",
+    "SHS"
+  ],
+  "key": {
+    "S": "witchery:brew_of_flowing_spirit",
+    "E": "minecraft:emerald",
+    "G": "witchery:ent_twig",
+    "B": "witchery:biting_belt",
+    "H": "witchery:creeper_heart"
+  },
+  "result": {
+    "id": "witchery:bark_belt",
+    "count": 1
+  }
+}
