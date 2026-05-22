@@ -158,6 +158,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> WICKER_BUNDLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WICKER_BUNDLE);
     public static final DeferredItem<BlockItem> BLOODIED_WICKER_BUNDLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOODIED_WICKER_BUNDLE);
     public static final DeferredItem<BlockItem> CRITTER_SNARE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CRITTER_SNARE);
+    public static final DeferredItem<BlockItem> BEARTRAP = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BEARTRAP);
     public static final DeferredItem<BlockItem> WITCH_DOOR = ITEMS.register("witch_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.WITCH_DOOR.get(), itemProps(id)));
     public static final DeferredItem<Item> COTTON = ITEMS.register("cotton", id -> new BlockItem(WitcheryBlocks.COTTON_CROP.get(), itemProps(id)));
 
@@ -415,7 +416,6 @@ public class WitcheryItems {
             "hawthorn_planks",
             "hawthorn_stairs",
             "hawthorn_slab",
-            "beartrap",
             "biome_note",
             "blood_stained_wool",
             "blooded_waystone",

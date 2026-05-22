@@ -229,6 +229,9 @@ public class WitcheryBlocks {
     public static final DeferredBlock<CritterSnareBlock> CRITTER_SNARE = BLOCKS.registerBlock("critter_snare",
             CritterSnareBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.5f).noOcclusion().noCollision());
+    public static final DeferredBlock<BeartrapBlock> BEARTRAP = BLOCKS.registerBlock("beartrap",
+            BeartrapBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 10.0f).noOcclusion().noCollision());
     public static final DeferredBlock<Block> PLANT_MINE       = BLOCKS.registerSimpleBlock("plant_mine",       BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<DoorBlock> WITCH_DOOR = BLOCKS.registerBlock("witch_door",
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),

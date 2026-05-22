@@ -86,6 +86,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.WICKER_BUNDLE.get());
                         output.accept(WitcheryItems.BLOODIED_WICKER_BUNDLE.get());
                         output.accept(WitcheryItems.CRITTER_SNARE.get());
+                        output.accept(WitcheryItems.BEARTRAP.get());
                         output.accept(WitcheryItems.WITCH_DOOR.get());
                         // Items
                         output.accept(WitcheryItems.BROOM.get());
