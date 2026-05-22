@@ -40,7 +40,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.registerSimpleItem("mandrake_root");
     public static final DeferredItem<Item> MANDRAKE_SEEDS = ITEMS.register("mandrake_seeds", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
     public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
-    public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new BlockItem(WitcheryBlocks.ARTICHOKE.get(), itemProps(id)));
+    public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new ArtichokeSeedItem(itemProps(id)));
     public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────

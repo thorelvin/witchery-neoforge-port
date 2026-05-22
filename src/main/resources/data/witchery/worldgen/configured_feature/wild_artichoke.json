@@ -26,8 +26,7 @@
           "predicate": {
             "type": "minecraft:matching_blocks",
             "blocks": [
-              "minecraft:grass_block",
-              "minecraft:dirt"
+              "minecraft:water"
             ],
             "offset": [
               0,
