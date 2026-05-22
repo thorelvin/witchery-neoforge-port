@@ -1,0 +1,29 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {
+      "id": "witchery:redstone_soup"
+    },
+    {
+      "id": "witchery:brew_of_flowing_spirit"
+    },
+    {
+      "id": "witchery:creeper_heart"
+    },
+    {
+      "id": "witchery:toe_of_frog"
+    },
+    {
+      "id": "witchery:owlets_wing"
+    },
+    {
+      "id": "witchery:tongue_of_dog"
+    }
+  ],
+  "result": {
+    "id": "witchery:infused_brew_base",
+    "count": 1
+  },
+  "power": 3000.0,
+  "hatBonus": 1
+}

@@ -1005,6 +1005,13 @@ The `Foul Fume` + `Quicklime` and `Breath of the Goddess` + `lapis_lazuli` disti
 Remaining gap:
 - Final in-game verification is still open for the restored byproduct outputs and their feel in the early clay-jar distillery loop.
 
+### 80. The first Infused Brew Base kettle route was still missing - Fixed / verify
+
+Direct 1.7.2 comparison showed the port only had the later "divide one base into two" kettle route for `Infused Brew Base`, which left the original first batch missing from ordinary survival progression. The missing source-backed brew is now back: `Redstone Soup` plus `Brew of Flowing Spirit`, `Creeper Heart`, `Toe of Frog`, `Owlet's Wing`, and `Tongue of Dog` now once again produces the first `Infused Brew Base` for 3000 altar power, while the existing Hint of Rebirth / Mandrake Root / Bat Wool / Bramble follow-up still doubles a base into two.
+
+Remaining gap:
+- Final in-game verification is still open for the restored first-base progression, especially how it feels alongside the existing medium-circle infused-brew rites for Soaring and the Grave.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

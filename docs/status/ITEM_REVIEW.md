@@ -179,7 +179,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 128 | `witchery:mystic_unguent` | |
 | 129 | `witchery:flying_ointment` | |
 | 130 | `witchery:happenstance_oil` | |
-| 131 | `witchery:infused_brew_base` | |
+| 131 | `witchery:infused_brew_base` | `Done - both source-backed kettle routes now exist again` | The missing first `Infused Brew Base` kettle route is back on Redstone Soup + Brew of Flowing Spirit + Creeper Heart + Toe of Frog + Owlet's Wing + Tongue of Dog for 3000 altar power, while the existing Hint of Rebirth / Mandrake Root / Bat Wool / Bramble follow-up still doubles one base into two. |
 | 132 | `witchery:infused_brew_of_soaring` | |
 | 133 | `witchery:infused_brew_of_the_grave` | |
 
