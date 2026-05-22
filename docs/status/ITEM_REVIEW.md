@@ -232,7 +232,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 ## Legacy Source Placeholder Items - TODO Triage
 
-These items are now registered through `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS`, exposed on the Witchery creative tab, and translated with a `(Placeholder)` suffix. The icon pass points `babas_hat`, `necromancer_robes`, `biting_belt`, `bark_belt`, `ice_slippers`, `ruby_slippers`, `seeping_shoes`, `devils_tongue_charm`, `water_diviner`, `lava_diviner`, `bucket_hollow_tears`, `hollow_tears`, `silver_dust`, and the Alder/Hawthorn plank/stair/slab placeholders at existing source-backed textures; the rest still use the shared placeholder icon. They intentionally have no recipes, custom classes, block behavior, equipment behavior, fluid handling, or rite integration yet; each row below is a TODO marker rather than a parity claim.
+These items are now registered through `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS`, exposed on the Witchery creative tab, and translated with a `(Placeholder)` suffix. The icon pass points `babas_hat`, `necromancer_robes`, `biting_belt`, `bark_belt`, `ice_slippers`, `ruby_slippers`, `seeping_shoes`, `devils_tongue_charm`, `water_diviner`, `lava_diviner`, `bucket_hollow_tears`, `hollow_tears`, `silver_dust`, the Alder/Hawthorn plank/stair/slab placeholders, and the Soul Brew/contract families at existing source-backed textures; the rest still use the shared placeholder icon. They intentionally have no recipes, custom classes, block behavior, equipment behavior, fluid handling, or rite integration yet; each row below is a TODO marker rather than a parity claim.
 
 | Group | Placeholder item IDs |
 |---|---|
