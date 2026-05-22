@@ -1,0 +1,27 @@
+{
+  "name": "witchery.book.entry.creature_traps",
+  "icon": "witchery:beartrap",
+  "category": "witchery:creatures",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.creature_traps.page1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:beartrap",
+      "text": "witchery.book.entry.creature_traps.beartrap"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:wolftrap",
+      "text": "witchery.book.entry.creature_traps.wolftrap"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "witchery.book.entry.creature_traps.remaining.title",
+      "text": "witchery.book.entry.creature_traps.remaining"
+    }
+  ]
+}

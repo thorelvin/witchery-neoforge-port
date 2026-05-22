@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Wolftrap silvered trap parity slice)
+Last reconciled: 2026-05-23 (Creature traps Primer coverage)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -109,7 +109,7 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; the main remaining guidebook work is now completeness/polish rather than missing rite basics.
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
-- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Beartrap` / `Wolftrap` usage, and the explicit `Wicker Man` pattern/layout.
+- **Equipment/completeness follow-up** - `Beartrap` / `Wolftrap` usage coverage is now in; remaining high-value book polish is vampire armor bonuses and the explicit `Wicker Man` pattern/layout.
 - **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 241 remaining inert placeholder items, including 114 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, custom-brew derivatives, block-like items, or exact-alias remaps.
 
 ---
@@ -209,8 +209,9 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Parasytic Louse hotbar defense parity slice restored the old practical hotbar trigger: when a player takes damage, the first potion-fed louse in the 9-slot hotbar bites once, sends harmful effects to the living attacker or beneficial effects to the player, clears back to a plain louse, and costs the player 1 magic damage with a recursion guard. Remaining follow-up is in-game louse QA.
 - Biting Belt potion-defense parity slice promoted `biting_belt` out of the inert placeholder roster, restored the source shaped recipe, added a belt-plus-potion recipe that stores up to two removable potion bites, made it wearable in the legs slot, and restored the old fallback defensive bite after hotbar lice fail. Remaining follow-up is in-game recipe/equip/defense QA plus visual-model polish.
 - Bark Belt charge-defense parity slice promoted `bark_belt` out of the inert placeholder roster, restored its source shaped recipe from Biting Belt / Flowing Spirit brew / emerald / Ent Twigs / Creeper Heart, made it wearable in the legs slot, restored grass/mycelium recharge, and restored its charge-spending non-wooden entity-damage shield. Remaining follow-up is in-game recharge/damage QA plus HUD/model polish.
-- Beartrap trap-block parity slice promoted `beartrap` out of the inert placeholder roster, registered it as a real low-profile placeable block/item, restored the source shaped recipe, added loot/model/blockstate resources, and restored the first practical old trap loop: one-second arming delay, living-entity snap shut, 4 damage, strong slowness, creative-player bypass, and manual open/close toggling. Remaining follow-up is in-game trap QA, dedicated open/closed visuals/sounds, Primer coverage, and owner/hidden behavior.
-- Wolftrap silvered trap parity slice promoted `wolftrap` out of the inert placeholder roster, registered it as a real low-profile placeable block/item using the shared Beartrap behavior, restored a modern practical version of the source upgrade recipe from Beartrap plus silver ingots, Null Catalysts, and live Wolfsbane flowers, and made the silvered variant ignore ordinary living entities while snapping shut on werewolf players. Remaining follow-up is in-game trap QA, dedicated open/closed visuals/sounds, Primer coverage, owner/hidden behavior, and the full moon/sheep/Wolf Altar bait-summon tile-entity path.
+- Beartrap trap-block parity slice promoted `beartrap` out of the inert placeholder roster, registered it as a real low-profile placeable block/item, restored the source shaped recipe, added loot/model/blockstate resources, and restored the first practical old trap loop: one-second arming delay, living-entity snap shut, 4 damage, strong slowness, creative-player bypass, and manual open/close toggling. Remaining follow-up is in-game trap QA, dedicated open/closed visuals/sounds, and owner/hidden behavior.
+- Wolftrap silvered trap parity slice promoted `wolftrap` out of the inert placeholder roster, registered it as a real low-profile placeable block/item using the shared Beartrap behavior, restored a modern practical version of the source upgrade recipe from Beartrap plus silver ingots, Null Catalysts, and live Wolfsbane flowers, and made the silvered variant ignore ordinary living entities while snapping shut on werewolf players. Remaining follow-up is in-game trap QA, dedicated open/closed visuals/sounds, owner/hidden behavior, and the full moon/sheep/Wolf Altar bait-summon tile-entity path.
+- Creature traps Primer coverage added a new Witches' Primer entry for `Beartrap` and `Wolftrap`, with their restored crafting recipes, current arming/snap behavior, silvered werewolf-only behavior, and an honest note that the old full-moon sheep/Wolf Altar bait-summon path remains future tile-entity work.
 
 ---
 
