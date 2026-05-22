@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.EarmuffsItem;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -121,8 +122,8 @@ public class BansheeEntity extends Monster {
         }
 
         if (startedScreaming || tickCount % SCREAM_SOUND_INTERVAL_TICKS == 0) {
-            level().playSound(null, blockPosition(), SoundEvents.GHAST_SCREAM,
-                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 1.15f);
+            level().playSound(null, blockPosition(), WitcherySoundEvents.ENTITY_BANSHEE_SCREAM.get(),
+                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 1.0f + random.nextFloat() * 0.3f);
         }
     }
 

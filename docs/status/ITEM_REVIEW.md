@@ -137,7 +137,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 100 | `witchery:witches_hat` | |
 | 101 | `witchery:witches_robe` | |
 | 102 | `witchery:witches_shoes` | |
-| 102a | `witchery:earmuffs` | `Partial - real protective headwear restored` | Earmuffs now exist again as a leather head-slot item with the original leather + white-wool recipe, block the restored Mandrake nausea scream while worn, suppress the first practical Banshee scream damage pass, and now hush the current ghast-scream placeholder cues on the client. Custom art polish, custom scream assets, and the broader old sound-muting feel are still follow-up. |
+| 102a | `witchery:earmuffs` | `Partial - real protective headwear restored` | Earmuffs now exist again as a leather head-slot item with the original leather + white-wool recipe, block the restored Mandrake nausea scream while worn, suppress the first practical Banshee scream damage pass, and now hush both the ghast-family Mandrake cue and the restored custom Banshee scream client-side. Custom art polish and the broader old sound-muting feel are still follow-up. |
 | 103 | `witchery:hunter_helmet` | |
 | 104 | `witchery:hunter_chestplate` | |
 | 105 | `witchery:hunter_leggings` | |

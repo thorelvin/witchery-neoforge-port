@@ -1,4 +1,9 @@
 {
+  "entity.banshee.scream": {
+    "sounds": [
+      "witchery:entity/banshee/scream"
+    ]
+  },
   "entity.raven.idle1": {
     "sounds": [
       "witchery:entity/raven/idle1"
