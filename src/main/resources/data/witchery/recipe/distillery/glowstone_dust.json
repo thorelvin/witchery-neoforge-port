@@ -1,0 +1,22 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "minecraft:blaze_powder"
+  },
+  "ingredient2": {
+    "id": "minecraft:gunpowder"
+  },
+  "jars": 1,
+  "outputs": [
+    {
+      "id": "minecraft:glowstone_dust"
+    },
+    {
+      "id": "minecraft:glowstone_dust"
+    },
+    {
+      "id": "witchery:reek_of_misfortune"
+    }
+  ],
+  "cookingtime": 800
+}

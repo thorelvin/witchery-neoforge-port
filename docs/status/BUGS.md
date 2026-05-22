@@ -991,6 +991,13 @@ Remaining gap:
 Remaining gap:
 - Final in-game verification is still open for the restored spectral-dust survival bridge, especially ordinary ghost-hunting feel versus the Torment-loot fallback path.
 
+### 78. Glowstone Dust distillery branch was still missing - Fixed / verify
+
+The old one-jar `blaze_powder` + `gunpowder` distillery branch is back again after direct 1.7.2 comparison. Glowstone Dust no longer depends only on vanilla mining or unrelated substitute routes for Witchery progression, and the recipe once again yields the original `Reek of Misfortune` byproduct alongside two Glowstone Dust.
+
+Remaining gap:
+- Final in-game verification is still open for the restored Glowstone Dust / Reek of Misfortune branch and how it feels in the early infernal-alchemy loop.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
