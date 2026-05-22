@@ -160,6 +160,16 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.EARMUFFS.get());
                         output.accept(WitcheryItems.BITING_BELT.get());
                         output.accept(WitcheryItems.BARK_BELT.get());
+                        output.accept(WitcheryItems.WOVEN_CRUOR.get());
+                        output.accept(WitcheryItems.VAMPIRE_TOP_HAT.get());
+                        output.accept(WitcheryItems.VAMPIRE_DRESS_COAT.get());
+                        output.accept(WitcheryItems.VAMPIRE_DRESS_JACKET.get());
+                        output.accept(WitcheryItems.VAMPIRE_TROUSERS.get());
+                        output.accept(WitcheryItems.VAMPIRE_SKIRTED_TROUSERS.get());
+                        output.accept(WitcheryItems.VAMPIRE_OXFORD_BOOTS.get());
+                        output.accept(WitcheryItems.VAMPIRE_HELMET.get());
+                        output.accept(WitcheryItems.VAMPIRE_CHAIN_COAT.get());
+                        output.accept(WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get());
                         output.accept(WitcheryItems.HUNTER_HELMET.get());
                         output.accept(WitcheryItems.HUNTER_CHESTPLATE.get());
                         output.accept(WitcheryItems.HUNTER_LEGGINGS.get());

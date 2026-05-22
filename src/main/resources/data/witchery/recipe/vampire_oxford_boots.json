@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "W W",
+    "W W"
+  ],
+  "key": {
+    "W": "witchery:woven_cruor"
+  },
+  "result": {
+    "id": "witchery:vampire_oxford_boots"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WWW",
+    "WWW",
+    "W W"
+  ],
+  "key": {
+    "W": "witchery:woven_cruor"
+  },
+  "result": {
+    "id": "witchery:vampire_dress_coat"
+  }
+}

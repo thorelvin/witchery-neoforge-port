@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " I ",
+    "IHI",
+    " I "
+  ],
+  "key": {
+    "H": "witchery:vampire_top_hat",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "witchery:vampire_helmet"
+  }
+}
