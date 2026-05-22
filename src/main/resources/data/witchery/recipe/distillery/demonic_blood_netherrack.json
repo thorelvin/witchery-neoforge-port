@@ -1,0 +1,22 @@
+{
+  "type": "witchery:distillery",
+  "ingredient1": {
+    "id": "witchery:demon_heart"
+  },
+  "ingredient2": {
+    "id": "minecraft:netherrack"
+  },
+  "jars": 2,
+  "outputs": [
+    {
+      "id": "minecraft:soul_sand"
+    },
+    {
+      "id": "witchery:demonic_blood"
+    },
+    {
+      "id": "witchery:demonic_blood"
+    }
+  ],
+  "cookingtime": 800
+}
