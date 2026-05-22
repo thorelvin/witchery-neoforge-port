@@ -6,6 +6,7 @@ import com.emoniph.witchery.crafting.KettleBrewingRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipeSerializer;
 import com.emoniph.witchery.crafting.OvenRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
+import com.emoniph.witchery.crafting.BitingBeltPotionRecipe;
 import com.emoniph.witchery.crafting.ParasyticLousePotionRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipeSerializer;
 import com.emoniph.witchery.crafting.RowanKeyringRecipe;
@@ -46,4 +47,8 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<ParasyticLousePotionRecipe>> PARASYTIC_LOUSE_POTION =
             RECIPE_SERIALIZERS.register("parasytic_louse_potion",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(ParasyticLousePotionRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<BitingBeltPotionRecipe>> BITING_BELT_POTION =
+            RECIPE_SERIALIZERS.register("biting_belt_potion",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(BitingBeltPotionRecipe::new));
 }

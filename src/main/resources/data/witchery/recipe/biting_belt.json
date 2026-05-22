@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "L#H",
+    "LSL",
+    "L L"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "#": "witchery:parasytic_louse",
+    "H": "witchery:mellifluous_hunger",
+    "S": "witchery:golden_thread"
+  },
+  "result": {
+    "id": "witchery:biting_belt",
+    "count": 1
+  }
+}

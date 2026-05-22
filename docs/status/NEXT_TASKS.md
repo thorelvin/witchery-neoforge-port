@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Parasytic Louse hotbar defense parity slice)
+Last reconciled: 2026-05-23 (Biting Belt potion-defense parity slice)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,7 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
 | `leaping_lily` | Custom lily visuals restored; needs in-game verification only | Low |
-| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. All 245 now point at non-shared source/wiki-backed item models or clear alias models; none still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
+| Legacy placeholder items | 244 source/wiki/decompiled item IDs remain registered and visible as inert creative-tab placeholders after `Biting Belt` was promoted to a real wearable: the remaining original 130 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. All 244 remaining placeholders point at non-shared source/wiki-backed item models or clear alias models; none still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
@@ -109,8 +109,8 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; the main remaining guidebook work is now completeness/polish rather than missing rite basics.
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
-- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
-- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 245 inert placeholder items, including 114 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, custom-brew derivatives, or exact-alias remaps.
+- **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
+- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 244 remaining inert placeholder items, including 114 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, custom-brew derivatives, or exact-alias remaps.
 
 ---
 
@@ -167,6 +167,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Flying Monkey model** - `/witchery spawn flying_monkey` and verify the source monkey body, wings, ears, tail, landed/flying animation, and feather tint close the reported wrong-model/texture-holes issue
 - **Flame Imp model** - `/witchery spawn flame_imp`, provoke it, and verify the source right-arm punch/body twist now plays during melee; power one up and verify the old taller powered render scale
 - **Parasytic Louse potion bite/hotbar defense** - craft `parasytic_louse` with a non-water vanilla potion, place it, let it bite a target, and verify the carried potion effects apply once and then clear; verify pickup preserves unused potion payloads. Then keep a potion-fed louse in the hotbar and verify hostile effects bite the attacker while beneficial effects bite the player, clear the louse payload, and cost 1 magic damage
+- **Biting Belt potion defense** - craft `biting_belt`, load it with up to two non-water vanilla potions, wear it in the legs slot, take entity damage with no usable hotbar louse, and verify it consumes one stored effect, routes harmful effects to the attacker or beneficial effects to the player, skips already-active/instant-heal effects, and costs 1 magic damage
 - **Spirit render** - enter the Spirit World or spawn a spirit and verify it now appears as the old small translucent wisp with no visible shadow instead of an opaque yellow ball
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
@@ -184,7 +185,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Decompiled asset pass restored distinct item models/textures for 107 more placeholders, including the Resurrected brew aliases, books, contracts, bolts, fume ingredients, several tools, and companion override models for the placeholder crossbow/spear visuals. Current count: 154 distinct placeholder icons/models, 91 still on the shared placeholder icon.
 - Wiki/existing-icon pass restored 46 more confident placeholder icons/models, including glass goblets, Gulg's Gurdle, Mog's Quiver, Horn of the Hunt, Player Compass, Blooded Waystone, vampire garments, odd-porkchop aliases, and generic brew bottle silhouettes. Current count: 200 distinct placeholder icons/models, 45 still on the shared placeholder icon.
 - Exact wiki-icon pass restored 27 more placeholder icons/models, including traps, heads, ice/snow block-family items, Sun Collector, Staff of Duplication, Twisting Band, silvered hunter gear, and Witch Hunter Dawn gear. Current count: 227 distinct placeholder icons/models, 18 still on the shared placeholder icon.
-- Final shared-placeholder model pass wired the last 18 placeholder item definitions away from `legacy_placeholder`. The 12 custom-brew plant target items plus `Biome Note` now use local FTB wiki scrape PNGs, while `Leonard's Urn`, `Lilith's Blood`, `Meaty Stew`, `Trapped Plant`, and `Warm Blood` use clear source-backed alias models until their real mechanics/art are implemented. Current count: all 245 placeholder items have non-shared item models; zero still use the shared placeholder icon.
+- Final shared-placeholder model pass wired the last 18 placeholder item definitions away from `legacy_placeholder`. The 12 custom-brew plant target items plus `Biome Note` now use local FTB wiki scrape PNGs, while `Leonard's Urn`, `Lilith's Blood`, `Meaty Stew`, `Trapped Plant`, and `Warm Blood` use clear source-backed alias models until their real mechanics/art are implemented. Current count: all 244 remaining placeholder items have non-shared item models; zero still use the shared placeholder icon.
 - Koboldite art correction restored the user-approved live-backup icons for `Koboldite Pickaxe`, `Koboldite Dust`, `Koboldite Nugget`, and `Koboldite Ingot` from `docs/art/item-backups/2026-05-22-live-before-old-assets-restore`; keep these instead of the older restored koboldite sprites.
 - Glowglobe render polish switched the placed block model from cutout to translucent so the original low-alpha `glow_globe` sprite can render as a soft spirit light again instead of behaving like a masked plant cross. The remaining task is in-game visibility verification.
 - Kettle ceiling-hung pass added a `hanging` blockstate, restored the compact decompiled `hanging_kettle` model/texture path when a solid block supports the kettle from above, and kept the existing side-post support behavior for between-post setups. Remaining work is in-game verification of the two visual/support variants.
@@ -202,7 +203,8 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Flying Monkey source model/render parity polish replaced the scaled zombie renderer with a dedicated `ModelMonkey`-style 64x32 model, restored the wing/arm/leg/tail landed-vs-flight animation family, source shadow radius, and decompiled feather tint math. Remaining work is in-game wrong-model/texture-hole verification.
 - Flame Imp attack-pose/powered render parity polish synced vanilla melee swing progress into the renderer, restored the old source right-arm punch/body twist, restored powered 1.5x vertical render scale, and returned the renderer to the source 0.5 shadow radius. Remaining work is in-game attack-pose/powered-height verification.
 - Parasytic Louse potion-bite parity slice restored the old louse-plus-drinkable-potion crafting path in first practical form, carries `PotionContents` from item to placed louse and back when picked up, applies the stored potion effects once on a successful bite, then clears the payload. The renderer also returns to the source 0.3 shadow radius and 180-degree death flip.
-- Parasytic Louse hotbar defense parity slice restored the old practical hotbar trigger: when a player takes damage, the first potion-fed louse in the 9-slot hotbar bites once, sends harmful effects to the living attacker or beneficial effects to the player, clears back to a plain louse, and costs the player 1 magic damage with a recursion guard. Remaining follow-up is in-game louse QA plus the separate `Biting Belt` equipment behavior.
+- Parasytic Louse hotbar defense parity slice restored the old practical hotbar trigger: when a player takes damage, the first potion-fed louse in the 9-slot hotbar bites once, sends harmful effects to the living attacker or beneficial effects to the player, clears back to a plain louse, and costs the player 1 magic damage with a recursion guard. Remaining follow-up is in-game louse QA.
+- Biting Belt potion-defense parity slice promoted `biting_belt` out of the inert placeholder roster, restored the source shaped recipe, added a belt-plus-potion recipe that stores up to two removable potion bites, made it wearable in the legs slot, and restored the old fallback defensive bite after hotbar lice fail. Remaining follow-up is in-game recipe/equip/defense QA plus visual-model polish.
 
 ---
 

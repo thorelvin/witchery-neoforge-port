@@ -73,7 +73,7 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 9. Vampire armor coverage.
    Vampirism itself is documented much better than the dedicated vampire armor set. The Chain Coat / Dress Coat / Helmet / Trousers / Oxford Boots / Top Hat family and their vampire-specific bonuses should be covered as a real equipment track, not left to the wiki.
 10. Minor completeness gaps.
-   Lower-priority omissions still worth tracking: `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
+   Lower-priority omissions still worth tracking: `Bark Belt`, `Beartrap`, and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
 
 ## Documentation priority order
 
