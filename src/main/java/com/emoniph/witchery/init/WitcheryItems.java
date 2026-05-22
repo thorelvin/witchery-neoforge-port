@@ -33,10 +33,12 @@ public class WitcheryItems {
 
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
-    // These items are BOTH the planting seed AND the harvested ingredient.
+    // Belladonna and Mandrake still combine seed + harvest for now, while
+    // Water Artichoke has its separate seed/globe split restored closer to source.
     public static final DeferredItem<Item> BELLADONNA = ITEMS.register("belladonna", id -> new BlockItem(WitcheryBlocks.BELLADONNA.get(), itemProps(id)));
     public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.register("mandrake_root", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
-    public static final DeferredItem<Item> ARTICHOKE = ITEMS.register("artichoke", id -> new BlockItem(WitcheryBlocks.ARTICHOKE.get(), itemProps(id)));
+    public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
+    public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new BlockItem(WitcheryBlocks.ARTICHOKE.get(), itemProps(id)));
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────
     public static final DeferredItem<Item> FANCIFUL_THREAD     = ITEMS.registerSimpleItem("fanciful_thread");

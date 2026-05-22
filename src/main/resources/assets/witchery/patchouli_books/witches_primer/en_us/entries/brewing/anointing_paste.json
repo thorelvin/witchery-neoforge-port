@@ -12,7 +12,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "witchery:anointing_paste",
-      "text": "Blend Belladonna, Mandrake Root, Water Artichoke Globe, and Snowbell to make four paste. Keep some in reserve. You will come back to the cauldron often."
+      "text": "Blend Belladonna, Mandrake Root, Water Artichoke Globe, and Snowbell to make four paste. Water Artichoke now once again has a separate seed item in Rewoven, so grow it for the globe rather than treating the planting stock as the reagent itself.$(br2)Keep some paste in reserve. You will come back to the cauldron often."
     },
     {
       "type": "patchouli:spotlight",

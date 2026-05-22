@@ -19,7 +19,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 5 | `witchery:rowan_sapling` | `Done - self-drop loot restored` | Works, bone meal too; now drops itself when broken.
 | 6 | `witchery:belladonna` | | Ok
 | 7 | `witchery:mandrake_root` | `Partial - original spawn-vs-drop branch restored` | Mature harvest now checks difficulty and original weighted summon chance instead of always spawning a mandrake. Needs in-game verification.
-| 8 | `witchery:artichoke` | | Ok
+| 8 | `witchery:artichoke` | `Partial - restored as the separate Water Artichoke Globe harvest item` | Water Artichoke no longer self-plants through the harvested ingredient: the `artichoke` item now stands as the harvested globe used in recipes again, while planting uses a dedicated seed item. The crop still uses the port's temporary land-growth placement instead of the original water-only logic. |
+| 8a | `witchery:artichoke_seeds` | `Partial - dedicated Water Artichoke seed item restored` | Planting now uses a real `Water Artichoke Seeds` item again, and mature harvest yields seeds plus the globe ingredient closer to original. The seed still plants into the port's temporary land-grown crop rather than the original still-water-only setup. |
 | 9 | `witchery:cotton` | `Partial - restored closer to old Somnian Cotton behavior` | Now behaves like a spreading bush instead of a staged crop, nightmare harvest can yield disturbed cotton again, the plant render/loot path is aligned, and carried disturbed cotton no longer places back into the world like an extra plant block. Needs in-game verification.
 | 10 | `witchery:witch_seeds` | | What is this? Plants on farmland. Real item in mod?
 | 11 | `witchery:snowbell` | | Ok, bone meal grow

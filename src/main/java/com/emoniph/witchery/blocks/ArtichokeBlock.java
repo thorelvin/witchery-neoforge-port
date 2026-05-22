@@ -33,7 +33,7 @@ public class ArtichokeBlock extends CropBlock {
     }
 
     @Override
-    protected ItemLike getBaseSeedId() { return WitcheryItems.ARTICHOKE.get(); }
+    protected ItemLike getBaseSeedId() { return WitcheryItems.ARTICHOKE_SEEDS.get(); }
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
