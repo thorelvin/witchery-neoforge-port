@@ -134,6 +134,18 @@ Current state:
 - The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the restored `alder_sapling` / `hawthorn_sapling` sapling blocks.
 - `alder_sapling` and `hawthorn_sapling` are no longer creative-only placeholders: normal `Mutandis` now surfaces them again, they are back as placeable sapling blocks, and that unblocks the current Brew of Sprouting / oven / Forestation chain in survival.
 
+### 1d. Arthana no longer supported the old special-drop survival bridge - Fixed / verify
+
+The first practical Arthana drop pass is back in place. The port had already restored the altar-placement side of the tool, but a lot of the old ingredient progression still quietly depended on Arthana-backed mob drops that were either too flat or missing altogether.
+
+Current state:
+- Bat Wool and Tongue of Dog now use chances much closer to the original drop bridge again: ordinary kills are back on the lower baseline, while Arthana kills strongly boost them instead of leaving those materials on a flat placeholder rate.
+- Creepers now once again have a real Creeper Heart drop path, with Arthana boosting the chance the way old Witchery expected instead of leaving the heart effectively unbacked in survival.
+- Owl and Toad kills now once again get an Arthana follow-up boost on top of their base loot-table path, so Owlet's Wing and Toe of Frog progression is no longer locked to the flatter always-the-same drop feel.
+
+Remaining gap:
+- This is a first practical drop-bridge restoration, not the full old Arthana combat/event stack. The broader skull/spectral-dust/undead edge-case family still remains follow-up work if parity pressure reaches it.
+
 ### 2. GhostModel mouth protrusion - Fixed
 
 Current `GhostModel` has no mouth part - it was never introduced in the port. Arm UV sharing (both arms at `texOffs(0,0)`) may still cause slight Poltergeist texture mirroring issues but no protrusion geometry exists. Verify in-game if arm UV ever looks wrong.

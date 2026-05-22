@@ -88,7 +88,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 |---|---|---|
 | 62 | `witchery:broom` | `Partial - control model rewritten closer to 1.7.10` | Forward acceleration, pitch lift, no forced hover-drop, and mounted fall cancellation are restored. Needs in-game verification.
 | 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path` | Needs in-game verification.
-| 64 | `witchery:arthana` | `Partial - altar placement/range bonus restored` | Now places cleanly on altar, updates bonuses immediately, and restores the old altar range boost. Visual work still needed.
+| 64 | `witchery:arthana` | `Partial - altar placement plus first special-drop bridge restored` | Now places cleanly on altar, updates bonuses immediately, restores the old altar range boost, and once again drives a first practical special-drop pass for Bat Wool, Tongue of Dog, Toe of Frog, Owlet's Wing, and Creeper Heart acquisition when used as the killing weapon. Full old combat/drop edge-case parity still needs follow-up. |
 | 65 | `witchery:boline` | |
 | 66 | `witchery:chalk` | `Partial - placed glyph block path corrected` | Ritual chalk now places a thin floor glyph again instead of a cube block: `circle_glyph` uses the flat cutout/carpet model path and the chalk-circle blocks now share a dedicated low-profile block shape. Needs in-game verification for final outline/selection feel.
 | 67 | `witchery:mystic_branch` | `Partial - altar placement/enhancement bonus restored` | Can now be placed on altar again and correctly grants the enhancement bonus in the altar scan. In-hand creature-power use still works.
