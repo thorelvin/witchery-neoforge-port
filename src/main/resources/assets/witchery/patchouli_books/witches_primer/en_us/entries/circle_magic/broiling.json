@@ -16,7 +16,7 @@
     {
       "type": "patchouli:text",
       "title": "Practical Use",
-      "text": "The ritual cooks every valid raw food stack lying in the flame's reach around the circle. The stronger branch is harsher: some of what you offer will come back as $(item)Charcoal$() instead of supper. Cast it when you want speed, volume, and a little risk rather than perfect kitchen manners."
+      "text": "The ritual cooks every valid raw food stack lying in the flame's reach around the circle. If there is nothing raw to catch, the working now fizzles before the ordinary altar branch spends its strength. The stronger branch is harsher: some of what you offer will come back as $(item)Charcoal$() instead of supper. Cast it when you want speed, volume, and a little risk rather than perfect kitchen manners."
     }
   ]
 }

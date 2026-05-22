@@ -564,6 +564,7 @@ The next ritual activation pass is now closer to original Witchery:
 - The ritual protection family now again expects ritual chalk instead of accepting any chalk variant for `Protection`, `Sanctity`, `Imprisonment`, and the medium barrier variants.
 - `Total Eclipse`, `Weather Call Storm`, and infernal `Cook Food` now also require the original chalk family instead of activating from any ring variant.
 - That infernal `Cook Food` route now also restores both original support branches instead of firing from `sugar` alone: the ordinary altar path once more expects `Wood Ash`, coal, and 1000 altar power, while the hotter charged branch now once more expects a `Charged Attuned Stone`, `Wood Ash`, and blaze powder and again burns food into charcoal at the higher old failure rate instead of perfectly smelting every stack.
+- That same infernal `Cook Food` route now also restores the old abort-on-empty behavior from `RiteCookItem`: if no smeltable food lies within the ritual flame, it now fails before spending the ordinary altar-power/support transaction instead of quietly burning 1000 power into a no-op.
 
 Remaining gap:
 - This restores the first real glyph-family gate, but the modern dispatcher still does not model the original full multi-circle and multi-sacrifice registry, especially for otherwhere rites and the mixed-circle large rituals like `Hell on Earth`.

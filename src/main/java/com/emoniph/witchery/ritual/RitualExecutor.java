@@ -4814,24 +4814,36 @@ public class RitualExecutor {
         }
 
         boolean charged = chargedOfferings.isPresent();
-        if (!charged && !consumeNearbyRitualAltarPower(sl, center, 16, 1000)) {
+        double burnChance = charged ? 0.16 : 0.08;
+        List<ItemEntity> cookableItems = findCookableFoodItems(sl, new AABB(center).inflate(5));
+        if (cookableItems.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.cook.no_power"), false);
+            player.displayClientMessage(Component.translatable("witchery.ritual.cook.none"), false);
             return false;
         }
 
-        double burnChance = charged ? 0.16 : 0.08;
-        AABB aabb = new AABB(center).inflate(5);
+        if (charged) {
+            consumeOfferedItem(chargedOfferings.get().chargedStone());
+            consumeOfferedItem(chargedOfferings.get().woodAsh());
+            consumeOfferedItem(chargedOfferings.get().blazePowder());
+        } else {
+            RitualTransaction transaction = new RitualTransaction(sl, center, 16, 1000,
+                    "witchery.ritual.cook.no_power")
+                    .offer(normalOfferings.get().woodAsh())
+                    .offer(normalOfferings.get().coal());
+            if (!transaction.commit(player)) {
+                return false;
+            }
+        }
+
         int cooked = 0;
-        for (ItemEntity ie : level.getEntitiesOfClass(ItemEntity.class, aabb)) {
+        for (ItemEntity ie : cookableItems) {
             ItemStack stack = ie.getItem();
-            Optional<RecipeHolder<SmeltingRecipe>> recipe =
-                    sl.getServer().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
-            if (recipe.isEmpty()) {
+            if (!ie.isAlive() || stack.getCount() <= 0) {
                 continue;
             }
-            ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(stack), level.registryAccess());
-            if (result.isEmpty() || !result.has(DataComponents.FOOD) || stack.getCount() <= 0) {
+            ItemStack result = smeltedFoodResult(sl, stack);
+            if (result.isEmpty()) {
                 continue;
             }
 
@@ -4866,25 +4878,34 @@ public class RitualExecutor {
             cooked++;
         }
 
-        if (cooked <= 0) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.cook.none"), false);
-            return false;
-        }
-
-        if (charged) {
-            consumeOfferedItem(chargedOfferings.get().chargedStone());
-            consumeOfferedItem(chargedOfferings.get().woodAsh());
-            consumeOfferedItem(chargedOfferings.get().blazePowder());
-        } else {
-            consumeOfferedItem(normalOfferings.get().woodAsh());
-            consumeOfferedItem(normalOfferings.get().coal());
-        }
-
         player.displayClientMessage(Component.translatable("witchery.ritual.cook.success", cooked), false);
         level.playSound(null, center, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1f, 1f);
         spawnRingParticles(sl, center, 3, 24);
         return true;
+    }
+
+    private static List<ItemEntity> findCookableFoodItems(ServerLevel level, AABB search) {
+        List<ItemEntity> cookable = new ArrayList<>();
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, search)) {
+            if (smeltedFoodResult(level, itemEntity.getItem()).isEmpty()) {
+                continue;
+            }
+            cookable.add(itemEntity);
+        }
+        return cookable;
+    }
+
+    private static ItemStack smeltedFoodResult(ServerLevel level, ItemStack stack) {
+        Optional<RecipeHolder<SmeltingRecipe>> recipe =
+                level.getServer().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
+        if (recipe.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(stack), level.registryAccess());
+        if (result.isEmpty() || !result.has(DataComponents.FOOD) || stack.getCount() <= 0) {
+            return ItemStack.EMPTY;
+        }
+        return result;
     }
 
     /** Rite of the Crater — excavates downward in pulses, closer to the old staged ritual. */
