@@ -34,6 +34,12 @@ public class WitcheryItems {
                 net.minecraft.core.registries.Registries.ITEM, id));
     }
 
+    private static Item vampireArmor(net.minecraft.resources.Identifier id,
+                                     net.minecraft.world.item.equipment.ArmorMaterial material,
+                                     net.minecraft.world.item.equipment.ArmorType type) {
+        return new Item(itemProps(id).humanoidArmor(material, type));
+    }
+
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
     // Witchery crops now split closer to source between planting stock and the
@@ -226,22 +232,49 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WOVEN_CRUOR = ITEMS.registerSimpleItem("woven_cruor");
     public static final DeferredItem<Item> VAMPIRE_TOP_HAT = ITEMS.register("vampire_top_hat", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> VAMPIRE_VEIL_HAT = ITEMS.register("vampire_veil_hat", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.HELMET));
     public static final DeferredItem<Item> VAMPIRE_DRESS_COAT = ITEMS.register("vampire_dress_coat", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> VAMPIRE_DRESS_JACKET = ITEMS.register("vampire_dress_jacket", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> VAMPIRE_COAT = ITEMS.register("vampire_coat", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.CHESTPLATE));
+    public static final DeferredItem<Item> VAMPIRE_CORSET = ITEMS.register("vampire_corset", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.CHESTPLATE));
     public static final DeferredItem<Item> VAMPIRE_TROUSERS = ITEMS.register("vampire_trousers", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
     public static final DeferredItem<Item> VAMPIRE_SKIRTED_TROUSERS = ITEMS.register("vampire_skirted_trousers", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
+    public static final DeferredItem<Item> VAMPIRE_SKIRT = ITEMS.register("vampire_skirt", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.LEGGINGS));
     public static final DeferredItem<Item> VAMPIRE_OXFORD_BOOTS = ITEMS.register("vampire_oxford_boots", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> VAMPIRE_SHOES = ITEMS.register("vampire_shoes", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.BOOTS));
+    public static final DeferredItem<Item> VAMPIRE_HEELS = ITEMS.register("vampire_heels", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    net.minecraft.world.item.equipment.ArmorType.BOOTS));
     public static final DeferredItem<Item> VAMPIRE_HELMET = ITEMS.register("vampire_helmet", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> VAMPIRE_CHAIN_COAT = ITEMS.register("vampire_chain_coat", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> VAMPIRE_CHAIN_COAT_LADIES = ITEMS.register("vampire_chain_coat_ladies", id -> new Item(itemProps(id)
             .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> VAMPIRE_CHESTPLATE = ITEMS.register("vampire_chestplate", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.IRON,
+                    net.minecraft.world.item.equipment.ArmorType.CHESTPLATE));
+    public static final DeferredItem<Item> VAMPIRE_LEGGINGS = ITEMS.register("vampire_leggings", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.IRON,
+                    net.minecraft.world.item.equipment.ArmorType.LEGGINGS));
+    public static final DeferredItem<Item> VAMPIRE_BOOTS = ITEMS.register("vampire_boots", id ->
+            vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.IRON,
+                    net.minecraft.world.item.equipment.ArmorType.BOOTS));
     public static final DeferredItem<Item> HUNTER_HELMET = ITEMS.registerSimpleItem("hunter_helmet");
     public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.registerSimpleItem("hunter_chestplate");
     public static final DeferredItem<Item> HUNTER_LEGGINGS = ITEMS.registerSimpleItem("hunter_leggings");
@@ -583,15 +616,6 @@ public class WitcheryItems {
             "dawn_hunter_leggings",
             "dawn_hunter_boots",
             "gulgs_grudle",
-            "vampire_veil_hat",
-            "vampire_coat",
-            "vampire_corset",
-            "vampire_chestplate",
-            "vampire_skirt",
-            "vampire_leggings",
-            "vampire_shoes",
-            "vampire_heels",
-            "vampire_boots",
             "soft_clay_jar",
             "diamond_vapor",
             "vitriol_oil",

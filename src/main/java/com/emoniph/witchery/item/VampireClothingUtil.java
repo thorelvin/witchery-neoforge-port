@@ -28,6 +28,8 @@ public final class VampireClothingUtil {
         int pieces = 0;
         if (isMediumHead(entity.getItemBySlot(EquipmentSlot.HEAD))) pieces++;
         if (isMediumChest(entity.getItemBySlot(EquipmentSlot.CHEST))) pieces++;
+        if (isMediumLegs(entity.getItemBySlot(EquipmentSlot.LEGS))) pieces++;
+        if (isMediumFeet(entity.getItemBySlot(EquipmentSlot.FEET))) pieces++;
         return pieces;
     }
 
@@ -49,21 +51,27 @@ public final class VampireClothingUtil {
     }
 
     private static boolean isLightHead(ItemStack stack) {
-        return stack.is(WitcheryItems.VAMPIRE_TOP_HAT.get());
+        return stack.is(WitcheryItems.VAMPIRE_TOP_HAT.get())
+                || stack.is(WitcheryItems.VAMPIRE_VEIL_HAT.get());
     }
 
     private static boolean isLightChest(ItemStack stack) {
         return stack.is(WitcheryItems.VAMPIRE_DRESS_COAT.get())
-                || stack.is(WitcheryItems.VAMPIRE_DRESS_JACKET.get());
+                || stack.is(WitcheryItems.VAMPIRE_DRESS_JACKET.get())
+                || stack.is(WitcheryItems.VAMPIRE_COAT.get())
+                || stack.is(WitcheryItems.VAMPIRE_CORSET.get());
     }
 
     private static boolean isLightLegs(ItemStack stack) {
         return stack.is(WitcheryItems.VAMPIRE_TROUSERS.get())
-                || stack.is(WitcheryItems.VAMPIRE_SKIRTED_TROUSERS.get());
+                || stack.is(WitcheryItems.VAMPIRE_SKIRTED_TROUSERS.get())
+                || stack.is(WitcheryItems.VAMPIRE_SKIRT.get());
     }
 
     private static boolean isLightFeet(ItemStack stack) {
-        return stack.is(WitcheryItems.VAMPIRE_OXFORD_BOOTS.get());
+        return stack.is(WitcheryItems.VAMPIRE_OXFORD_BOOTS.get())
+                || stack.is(WitcheryItems.VAMPIRE_SHOES.get())
+                || stack.is(WitcheryItems.VAMPIRE_HEELS.get());
     }
 
     private static boolean isMediumHead(ItemStack stack) {
@@ -72,6 +80,15 @@ public final class VampireClothingUtil {
 
     private static boolean isMediumChest(ItemStack stack) {
         return stack.is(WitcheryItems.VAMPIRE_CHAIN_COAT.get())
-                || stack.is(WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get());
+                || stack.is(WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get())
+                || stack.is(WitcheryItems.VAMPIRE_CHESTPLATE.get());
+    }
+
+    private static boolean isMediumLegs(ItemStack stack) {
+        return stack.is(WitcheryItems.VAMPIRE_LEGGINGS.get());
+    }
+
+    private static boolean isMediumFeet(ItemStack stack) {
+        return stack.is(WitcheryItems.VAMPIRE_BOOTS.get());
     }
 }
