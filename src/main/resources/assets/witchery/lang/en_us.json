@@ -68,7 +68,7 @@
   "witchery.book.entry.rites.examples": "$(li)$(bold)Infusion$(/) (small, infusion brew) â€” grants a lasting magical nature$(li)$(bold)Familiar Binding$(/) (small, Attuned Stone) â€” binds a tamed animal as companion$(li)$(bold)Rite of the Forest$(/) (large, any sapling) â€” grows a grove of magical woodland$(li)$(bold)Waystone Binding$(/) (small+medium, waystone items) â€” establishes teleportation anchors$(li)$(bold)Rite of Transposition$(/) (medium+large, bound waystone) â€” moves you or another",
 
   "witchery.book.entry.taglock_kit": "Taglock Kit",
-  "witchery.book.entry.taglock_kit.page1": "A taglock is a thread of sympathy connecting a practitioner to their subject. Without it, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target.$(br2)Right-click a consenting player directly, or sleep in a bed and use the kit on those still-warm sheets afterward. Blood Roses and Leech Chests can hold the same sort of sample for later theft. Guard your own sleep accordingly.",
+  "witchery.book.entry.taglock_kit.page1": "A taglock is a thread of sympathy connecting a practitioner to their subject. Without it, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target.$(br2)Right-click a living creature directly, or steal a player's sample by crouching up behind them if you can manage it. Clumsy attempts may fail and alert the target. Blood Roses, Leech Chests, and even a freshly slept-in bed can hold the same sort of sample for later theft. Guard your own sleep accordingly.",
   "witchery.book.entry.taglock_kit.recipe": "A glass bottle and a pin. Simple enough, and deliberately so â€” the difficulty is in what you do with it afterward.",
 
   "witchery.book.entry.poppets": "Poppets",
@@ -284,6 +284,8 @@
   "witchery.taglock_kit.tooltip.empty": "Empty â€” right-click a living creature to collect its taglock",
   "witchery.taglock_kit.tooltip.filled": "Contains taglock of: %s",
   "witchery.taglock_kit.collected": "Collected taglock from %s.",
+  "witchery.taglock_kit.failed": "Failed to get taglock, the other player noticed!",
+  "witchery.taglock_kit.discovered": "Someone just tried to take a taglock from you, but failed!",
   "witchery.taglock_kit.already_full": "Taglock already contains data for %s.",
   "witchery.taglock_kit.collected_bed": "Collected taglock from the bed: %s.",
   "witchery.taglock_kit.no_bed_sample": "This bed does not hold a fresh taglock sample.",

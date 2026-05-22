@@ -27,6 +27,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,9 @@ public class TaglockKitItem extends Item {
     private static final String TAG_UUID = "taglock_uuid";
     private static final String TAG_NAME = "taglock_name";
     private static final String TAG_TYPE = "taglock_entity_type";
+    private static final double PLAYER_TAGLOCK_BASE_FAIL_CHANCE = 0.2;
+    private static final double PLAYER_TAGLOCK_NOT_CROUCHING_PENALTY = 0.2;
+    private static final double PLAYER_TAGLOCK_NOT_BEHIND_PENALTY = 0.4;
 
     public TaglockKitItem(Properties props) { super(props); }
 
@@ -58,6 +62,14 @@ public class TaglockKitItem extends Item {
         }
 
         if (target instanceof Player targetPlayer) {
+            if (playerTaglockAttemptFails(user, targetPlayer)) {
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.failed")
+                        .withStyle(ChatFormatting.RED), false);
+                targetPlayer.displayClientMessage(Component.translatable("witchery.taglock_kit.discovered")
+                        .withStyle(ChatFormatting.GREEN), false);
+                return InteractionResult.CONSUME;
+            }
+
             bindSinglePlayerTaglock(user, stack, targetPlayer.getUUID(), targetPlayer.getName().getString());
 
             user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected",
@@ -266,6 +278,33 @@ public class TaglockKitItem extends Item {
         if (!user.getInventory().add(filledStack)) {
             user.drop(filledStack, false);
         }
+    }
+
+    private static boolean playerTaglockAttemptFails(Player user, Player target) {
+        double failChance = PLAYER_TAGLOCK_BASE_FAIL_CHANCE;
+        if (!user.isCrouching()) {
+            failChance += PLAYER_TAGLOCK_NOT_CROUCHING_PENALTY;
+        }
+        if (!isBehindTarget(user, target)) {
+            failChance += PLAYER_TAGLOCK_NOT_BEHIND_PENALTY;
+        }
+        return user.getRandom().nextDouble() < failChance;
+    }
+
+    private static boolean isBehindTarget(Player user, Player target) {
+        Vec3 targetLook = target.getLookAngle();
+        Vec3 horizontalLook = new Vec3(targetLook.x, 0.0, targetLook.z);
+        if (horizontalLook.lengthSqr() < 1.0E-6) {
+            return false;
+        }
+
+        Vec3 toUser = user.position().subtract(target.position());
+        Vec3 horizontalToUser = new Vec3(toUser.x, 0.0, toUser.z);
+        if (horizontalToUser.lengthSqr() < 1.0E-6) {
+            return false;
+        }
+
+        return horizontalLook.normalize().dot(horizontalToUser.normalize()) < 0.0;
     }
 
     private static BlockPos getBedHeadPos(BlockState state, BlockPos pos) {

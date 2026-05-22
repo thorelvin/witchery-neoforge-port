@@ -265,6 +265,7 @@ The first real storage-parity pass is now back in place:
 - `Taglock Kit` can now pull a stored non-self target from `Leech Chest` again and reports the old failure cases more sensibly: only your own taglock, or players no longer online.
 - `Taglock Kit` also splits stacked kits correctly again when filling a single one, instead of binding an entire stack at once.
 - The old bed path is back too in practical form: sleeping in a normal bed now stores the sleeper's sample on that bed head for the current server session, and an empty `Taglock Kit` can once more pull it back out later instead of leaving the classic self-tag route dead.
+- Direct player taglock theft now once again has a real stealth/failure path too, so careless attempts can fail and warn the victim instead of every right-clicked player sample succeeding automatically.
 - Breaking and replacing the `Leech Chest` now preserves that stored player queue on the dropped chest item again instead of wiping it.
 - `Leech Chest` once again refuses to open when the lid is blocked by a solid block or a sitting cat, matching the old chest-like access rules more closely.
 - `Leech Chest` once again exposes real chest-style comparator output and now refreshes that signal correctly as its contents change.
