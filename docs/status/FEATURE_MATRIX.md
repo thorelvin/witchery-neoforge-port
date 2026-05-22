@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Ent old model/mapping parity polish)
+Last reconciled: 2026-05-22 (Cat familiar old ocelot render/model parity polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -117,7 +117,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Demon | Partial | Fireball mob; texture/UV audit fixed; wing planes now use the source-static zero-depth pose without the non-source idle flap, pending in-game wing-angle verification |
 | Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
 | Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; ravens now also spawn naturally in forest and cold overworld biomes instead of existing only through QA commands and Brew of Hitchcock, and `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` remain direct QA hooks for the real raven path |
-| Cat familiar | Partial | Gameplay works; body-proportion model needs tweak |
+| Cat familiar | Partial | Gameplay works; renderer now uses the dedicated old-ocelot-layout `CatFamiliarModel`, original Witchery `blackcat.png`, old body/leg/tail anchors, and ordered-sit pose state; needs in-game body/tail verification |
 | Toad familiar | Done | Tameable; collects nearby dropped items, restores the old brew-mastery bonus with a `5%` extra-brew chance on kettle extraction, and now gives a first practical mastery pass to Sprouting/Thorns/Vines/Erosion when the witch drinks them |
 | Parasytic Louse | Partial | Real Mutating Sprig silverfish-snare route, dedicated hostile entity, carried item form, and QA spawn command are back again, but the old bite-potion variants and longer practical verification still remain follow-up |
 | Broom | Done | Rideable; enchanted variant (Rite of Infusion); the current flight model restores forward acceleration, pitch lift, no forced mounted hover-drop, fall cancellation while riding, and a controlled-client sync path so the broom should no longer rubber-band back toward its spawn point during flight |
@@ -207,7 +207,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, Climate Change now preserves/refunds its consumed support sacrifices on queued-abort paths, and active rites now keep their original chalk family during sustain, but the original tile-entity ritual queue/refund system is still only partially recreated |
 | Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
 | Banshee GhostModel UV | Polish | Old screaming-mouth visibility restored; remaining work is in-game verification only |
-| Cat familiar model proportions | Polish | Body geometry tweak |
+| Cat familiar model proportions | Done | Old RenderOcelot-style model/texture path restored; verify body/tail in-game |
 | Demon UV/texture | Polish | UV/texture-size fixed and wing source-pose polish applied; verify in-game |
 | Nightmare behavior verification | Polish | Attack-pose/tendril render parity restored; needs in-game test |
 | Torment maze | Partial | Legacy block/layout parity restored, the exit portal now renders as a thin old-style plane again, the stray random chamber structure-set path is removed, and `/witchery verify torment` now covers the repeatable full-footprint server-side audit; still needs fresh-dimension in-game verification |

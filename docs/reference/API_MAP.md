@@ -116,6 +116,6 @@ Biome `features` arrays need the expected generation-step sub-array structure.
 | Model | Note |
 |---|---|
 | GhostModel | Original Spectre/Banshee/Poltergeist texture is 64×32; mouth zero-depth quad should not become a visible cuboid. |
-| Cat familiar | Original used ocelot-like UV/layout; body should not be rotated 90° on X. |
+| Cat familiar | Original `RenderWitchCat` used vanilla `RenderOcelot`/`ModelOcelot`; keep the old ocelot UV/layout, horizontal body rotation, leg anchors, and two root tail segments. |
 | Ent | Texture is large; confirm `256×256` before declaring layer texture size. |
 | Demon | Verify whether texture is `64×32` or `64×64` before remapping limbs. |

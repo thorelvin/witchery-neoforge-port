@@ -262,7 +262,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
 | M1 | `owl` | `/witchery spawn owl` | | Spawn a white owl
-| M2 | `familiar_cat` | `/witchery spawn cat` | | The body is wrong. The belly is faarback, and tail hangs between back legs.
+| M2 | `familiar_cat` | `/witchery spawn cat` | | Old RenderOcelot-style model/texture path restored: dedicated `CatFamiliarModel`, original `blackcat.png`, old body/leg/tail anchors, and sitting pose state. Needs in-game verification that the belly/tail issue is closed.
 | M3 | `toad` | `/witchery spawn toad` | | Looks ok
 | M4 | `spectral_familiar` | `/witchery spawn spectral` or `witchery:spectral_familiar_spawn_egg` | | Spawn egg now appears in the Witchery creative tab; still needs in-game identity/visual verification against the ore-seeking spectral familiar behavior.
 

@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Cat familiar old ocelot render/model parity polish; Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -11,7 +11,8 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Priority | Item | Effort | Status |
 |---|---|---:|---|
 | Done | Remove GhostModel mouth protrusion | 2-5 min | Fixed (mouth part never present in port) |
-| Done | Fix CatFamiliarModel body rotation | 1-5 min | Fixed (body uses PartPose.offset, no rotation) |
+| Done | Fix CatFamiliarModel body rotation | 1-5 min | Superseded by old RenderOcelot layout restoration; the body is intentionally horizontal via the original ModelOcelot rotation |
+| Done | Cat familiar old ocelot render/model parity | 10-15 min | Fixed - Cat renderer now uses Witchery `blackcat.png` plus dedicated old-ocelot body/leg/tail anchors and sit state; needs in-game verification |
 | Done | Fix Mandrake spawn category mismatch | 1-5 min | Fixed (MONSTER category + spawn placement registered) |
 | Done | Register spawn placements for biome-spawned mobs | 10-20 min | Fixed |
 | Done | Demon UV/texture-size audit | 20-45 min | Fixed - model corrected to 128x32, all UVs at y=0 row, wings added |
@@ -244,9 +245,17 @@ Current `GhostModel` has no mouth part - it was never introduced in the port. Ar
 
 ---
 
-### 3. Familiar cat body rotation - Fixed
+### 3. Familiar cat old ocelot model path - Fixed / verify
 
-`CatFamiliarModel` body already uses `PartPose.offset(0, 11, 2)` (no rotation). Leg positions are `(+-3, 18, 7)` back and `(+-3, 18, -5)` front.
+Direct source comparison found that original `RenderWitchCat` extended `RenderOcelot` and used Witchery `textures/entities/blackcat.png`. The previous port had a dedicated `CatFamiliarModel`, but the live renderer was still pointed at modern vanilla `CatModel` plus `minecraft:textures/entity/cat/all_black.png`, while the custom model itself had a shortened/back-shifted body and child tail segment.
+
+Current state:
+- `CatFamiliarRenderer` now bakes `CatFamiliarModel.LAYER_LOCATION` and renders with `witchery:textures/entity/blackcat.png`.
+- `CatFamiliarModel` now uses the old ocelot-style head/body/leg/tail UV anchors, the original horizontal body pose, full front-leg length, and two root tail segments.
+- The renderer extracts `isOrderedToSit()` into a cat render state so the old sitting posture remains available.
+
+Remaining gap:
+- Needs in-game verification that `/witchery spawn cat` closes the reported belly-too-far-back and tail-between-legs visual issue.
 
 ---
 
