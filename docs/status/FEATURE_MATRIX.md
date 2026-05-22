@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Cat familiar old ocelot render/model parity polish)
+Last reconciled: 2026-05-22 (Raven eye-layer removal and flight-pose polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -116,7 +116,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Mandrake mob | Partial | MONSTER category and spawn placement are registered again, the awakened mob now restores a first practical short-refresh nausea scream on nearby players instead of the port's old poison-on-hit placeholder, its sound cues now point back at the original ghast-scream family instead of the older silverfish placeholder, craftable Earmuffs once again block that nausea while worn while also hushing the current scream cue on the client, and the visual model now restores old mirror UVs, the zero-depth leaf crown, and original arm-only walking twitch; exact custom Mandrake-specific scream audio and in-game texture-hole verification are still follow-up |
 | Demon | Partial | Fireball mob; texture/UV audit fixed; wing planes now use the source-static zero-depth pose without the non-source idle flap, pending in-game wing-angle verification |
 | Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
-| Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; ravens now also spawn naturally in forest and cold overworld biomes instead of existing only through QA commands and Brew of Hitchcock, and `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` remain direct QA hooks for the real raven path |
+| Raven | Done | Native Witchery raven entity/renderer/spawn egg now replaces the Brew of Hitchcock parrot placeholder, using the decompiled Common Raven model, textures, and idle sounds as the base; ravens now also spawn naturally in forest and cold overworld biomes instead of existing only through QA commands and Brew of Hitchcock, the separate eye render layer is removed in favor of baked red eye pixels on the base texture, and airborne ravens now use a stronger spread-wing/tucked-leg pose; `/witchery spawn raven`, `/witchery spawn ravens [count]`, and `/witchery ritual hitchcock [count]` remain direct QA hooks for the real raven path |
 | Cat familiar | Partial | Gameplay works; renderer now uses the dedicated old-ocelot-layout `CatFamiliarModel`, original Witchery `blackcat.png`, old body/leg/tail anchors, and ordered-sit pose state; needs in-game body/tail verification |
 | Toad familiar | Done | Tameable; collects nearby dropped items, restores the old brew-mastery bonus with a `5%` extra-brew chance on kettle extraction, and now gives a first practical mastery pass to Sprouting/Thorns/Vines/Erosion when the witch drinks them |
 | Parasytic Louse | Partial | Real Mutating Sprig silverfish-snare route, dedicated hostile entity, carried item form, and QA spawn command are back again, but the old bite-potion variants and longer practical verification still remain follow-up |

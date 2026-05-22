@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (Cat familiar old ocelot render/model parity polish)
+Last reconciled: 2026-05-22 (Raven eye-layer removal and flight-pose polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---

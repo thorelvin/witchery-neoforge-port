@@ -13,15 +13,20 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
-public class RavenModel extends EntityModel<LivingEntityRenderState> {
+public class RavenModel extends EntityModel<RavenModel.RavenRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "raven"), "main");
 
     private static final float HEAD_BASE_PITCH = 0.0873F;
     private static final float TAIL_BASE_PITCH = -0.3927F;
+    private static final float WING_BASE_X = -0.4363F;
+    private static final float WING_BASE_RIGHT_Y = 0.1309F;
+    private static final float WING_BASE_LEFT_Y = -0.1309F;
     private static final float WING_BASE_RIGHT = 0.1745F;
     private static final float WING_BASE_LEFT = -0.1745F;
+    private static final float LEG_BASE_RIGHT_Y = 0.2182F;
+    private static final float LEG_BASE_LEFT_Y = -0.2182F;
 
     private final ModelPart head;
     private final ModelPart upperBeak;
@@ -35,6 +40,10 @@ public class RavenModel extends EntityModel<LivingEntityRenderState> {
     private final ModelPart wingLeft;
     private final ModelPart wingLeft2;
     private final ModelPart wingLeft3;
+
+    public static class RavenRenderState extends LivingEntityRenderState {
+        public boolean flying;
+    }
 
     public RavenModel(ModelPart root) {
         super(root);
@@ -169,14 +178,50 @@ public class RavenModel extends EntityModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(RavenRenderState state) {
         float limbSwing = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks = state.ageInTicks;
 
+        resetRavenPose();
         this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
         this.head.xRot = HEAD_BASE_PITCH + state.xRot * Mth.DEG_TO_RAD * 0.65F;
 
+        if (state.flying) {
+            animateFlight(ageInTicks);
+        } else {
+            animateGrounded(limbSwing, limbSwingAmount, ageInTicks);
+        }
+    }
+
+    private void resetRavenPose() {
+        this.wingRight.xRot = WING_BASE_X;
+        this.wingRight.yRot = WING_BASE_RIGHT_Y;
+        this.wingRight.zRot = WING_BASE_RIGHT;
+        this.wingLeft.xRot = WING_BASE_X;
+        this.wingLeft.yRot = WING_BASE_LEFT_Y;
+        this.wingLeft.zRot = WING_BASE_LEFT;
+        this.wingRight2.xRot = 0.0F;
+        this.wingRight2.yRot = 0.0F;
+        this.wingRight2.zRot = 0.0F;
+        this.wingLeft2.xRot = 0.0F;
+        this.wingLeft2.yRot = 0.0F;
+        this.wingLeft2.zRot = 0.0F;
+        this.wingRight3.xRot = 0.0F;
+        this.wingRight3.yRot = 0.0F;
+        this.wingRight3.zRot = 0.0F;
+        this.wingLeft3.xRot = 0.0F;
+        this.wingLeft3.yRot = 0.0F;
+        this.wingLeft3.zRot = 0.0F;
+        this.rightLeg.xRot = 0.0F;
+        this.rightLeg.yRot = LEG_BASE_RIGHT_Y;
+        this.leftLeg.xRot = 0.0F;
+        this.leftLeg.yRot = LEG_BASE_LEFT_Y;
+        this.upperBeak.xRot = 0.0F;
+        this.bottomBeak.xRot = 0.0F;
+    }
+
+    private void animateGrounded(float limbSwing, float limbSwingAmount, float ageInTicks) {
         float wingFlap = Mth.sin(ageInTicks * 1.2F) * (0.18F + Mth.clamp(limbSwingAmount * 0.55F, 0.0F, 0.55F));
         this.wingRight.zRot = WING_BASE_RIGHT + wingFlap;
         this.wingLeft.zRot = WING_BASE_LEFT - wingFlap;
@@ -188,8 +233,26 @@ public class RavenModel extends EntityModel<LivingEntityRenderState> {
         this.rightLeg.xRot = Mth.cos(limbSwing * 0.9F) * 1.1F * limbSwingAmount;
         this.leftLeg.xRot = Mth.cos(limbSwing * 0.9F + Mth.PI) * 1.1F * limbSwingAmount;
         this.tail.xRot = TAIL_BASE_PITCH + limbSwingAmount * 0.15F + Mth.sin(ageInTicks * 0.08F) * 0.03F;
+    }
 
-        this.upperBeak.xRot = 0.0F;
-        this.bottomBeak.xRot = 0.0F;
+    private void animateFlight(float ageInTicks) {
+        float flap = (Mth.sin(ageInTicks * 1.45F) + 1.0F) * 0.5F;
+        this.wingRight.xRot = 1.35F + flap * 0.55F;
+        this.wingRight.yRot = -0.55F - flap * 0.25F;
+        this.wingRight.zRot = -1.10F - flap * 0.55F;
+        this.wingLeft.xRot = this.wingRight.xRot;
+        this.wingLeft.yRot = 0.55F + flap * 0.25F;
+        this.wingLeft.zRot = 1.10F + flap * 0.55F;
+        this.wingRight2.xRot = -0.18F - flap * 0.18F;
+        this.wingRight2.yRot = -0.20F - flap * 0.35F;
+        this.wingLeft2.xRot = this.wingRight2.xRot;
+        this.wingLeft2.yRot = 0.20F + flap * 0.35F;
+        this.wingRight3.xRot = -0.10F - flap * 0.12F;
+        this.wingRight3.yRot = -0.10F - flap * 0.25F;
+        this.wingLeft3.xRot = this.wingRight3.xRot;
+        this.wingLeft3.yRot = 0.10F + flap * 0.25F;
+        this.rightLeg.xRot = -1.42F + Mth.sin(ageInTicks * 0.8F) * 0.04F;
+        this.leftLeg.xRot = this.rightLeg.xRot;
+        this.tail.xRot = TAIL_BASE_PITCH + 0.18F + Mth.sin(ageInTicks * 0.7F) * 0.05F;
     }
 }

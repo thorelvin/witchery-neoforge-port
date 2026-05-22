@@ -272,7 +272,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 |---|---|---|---|
 | M5 | `coven_witch` | `/witchery spawn coven_witch` | | Some witches ok, some spawn as pink black. Witch Hunters now target Coven Witches; texture variants still need verification.
 | M6 | `hobgoblin` | `/witchery spawn hobgoblin` | | Looks fine, trade works
-| M7 | `raven` | `/witchery spawn raven` | | Works fine, but eye layers does not always follow head. Maybe remove and give them only red eye pixels. Wings should flap out in fligth not stay close to body. Feet should be along body, not sticking out.
+| M7 | `raven` | `/witchery spawn raven` | | Separate eye render layer removed and its visible pixels baked into `raven.png` as red eye pixels; airborne pose now spreads wings out and tucks legs closer to the body. Needs in-game verification for the final flight silhouette.
 | M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull and drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder
 | M9 | `flying_monkey` | `/witchery spawn flying_monkey` | | Does not show correct. Holes in texture. Wrong model?
 | M10 | `ent` | `/witchery spawn ent` | Old 1.7 texture hash already matched; model now restores source mirror UV flags, conditional target-face plate, inner leaf fill boxes, animated root-leg walk, synced attack arm lift, axe vulnerability, and knock-up melee throw. Needs in-game verification that the reported wrong mapping/holes are closed. |

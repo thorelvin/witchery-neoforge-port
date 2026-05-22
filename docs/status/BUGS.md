@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Cat familiar old ocelot render/model parity polish; Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Raven eye-layer removal and flight-pose polish; Cat familiar old ocelot render/model parity polish; Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -35,6 +35,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Mandrake texture holes / model drift | 5-10 min | Fixed - old mirror UVs, zero-depth leaf crown, and arm-only twitch restored; needs in-game visual verification |
 | Done | Nightmare attack arms / tendril model drift | 10-15 min | Fixed - attack timer now syncs to renderer, and old triangle-wave arm lift, entity-id tendril sway, mirror UVs, and source tendril anchors are restored; needs in-game visual verification |
 | Done | Ent wrong mapping / holes | 15-20 min | Fixed - old mirror UVs, conditional face plate, inner leaf fill boxes, animated root-leg walk, attack arm lift, axe vulnerability, and knock-up throw restored; needs in-game visual verification |
+| Done | Raven eye layer / flight silhouette polish | 10-15 min | Fixed - separate eye layer removed, red eye pixels baked into base texture, and airborne wings/legs use a stronger flight pose; needs in-game verification |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |

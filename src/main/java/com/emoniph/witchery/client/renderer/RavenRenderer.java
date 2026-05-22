@@ -4,26 +4,30 @@ import com.emoniph.witchery.client.model.RavenModel;
 import com.emoniph.witchery.entity.RavenEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 
-public class RavenRenderer extends MobRenderer<RavenEntity, LivingEntityRenderState, RavenModel> {
+public class RavenRenderer extends MobRenderer<RavenEntity, RavenModel.RavenRenderState, RavenModel> {
 
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/raven.png");
 
     public RavenRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new RavenModel(ctx.bakeLayer(RavenModel.LAYER_LOCATION)), 0.35F);
-        this.addLayer(new RavenEyesLayer(this));
     }
 
     @Override
-    public LivingEntityRenderState createRenderState() {
-        return new LivingEntityRenderState();
+    public RavenModel.RavenRenderState createRenderState() {
+        return new RavenModel.RavenRenderState();
     }
 
     @Override
-    public Identifier getTextureLocation(LivingEntityRenderState state) {
+    public void extractRenderState(RavenEntity entity, RavenModel.RavenRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.flying = !entity.onGround();
+    }
+
+    @Override
+    public Identifier getTextureLocation(RavenModel.RavenRenderState state) {
         return TEXTURE;
     }
 }
