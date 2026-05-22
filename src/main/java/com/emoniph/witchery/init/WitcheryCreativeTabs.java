@@ -28,7 +28,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.COTTON.get());
                         output.accept(WitcheryItems.WITCH_SEEDS.get());
                         output.accept(WitcheryItems.WORMWOOD_SEEDS.get());
-                        output.accept(WitcheryItems.SNOWBELL.get());
+                        output.accept(WitcheryItems.SNOWBELL_SEEDS.get());
                         output.accept(WitcheryItems.BLOOD_ROSE.get());
                         output.accept(WitcheryItems.EMBER_MOSS.get());
                         output.accept(WitcheryItems.GLINT_WEED.get());
@@ -112,6 +112,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.ROWAN_BERRIES.get());
                         output.accept(WitcheryItems.ARTICHOKE.get());
                         output.accept(WitcheryItems.WORMWOOD.get());
+                        output.accept(WitcheryItems.SNOWBELL.get());
                         output.accept(WitcheryItems.EXHALE_OF_HORNED_ONE.get());
                         output.accept(WitcheryItems.HINT_OF_REBIRTH.get());
                         output.accept(WitcheryItems.BREATH_OF_GODDESS.get());

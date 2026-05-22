@@ -28,7 +28,7 @@ public class SnowbellBlock extends CropBlock {
     }
 
     @Override
-    protected ItemLike getBaseSeedId() { return WitcheryItems.SNOWBELL.get(); }
+    protected ItemLike getBaseSeedId() { return WitcheryItems.SNOWBELL_SEEDS.get(); }
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {

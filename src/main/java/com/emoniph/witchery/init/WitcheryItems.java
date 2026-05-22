@@ -34,11 +34,13 @@ public class WitcheryItems {
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
     // Belladonna and Mandrake still combine seed + harvest for now, while
-    // Water Artichoke has its separate seed/globe split restored closer to source.
+    // Water Artichoke and Snowbell have their separate seed/harvest splits
+    // restored closer to source.
     public static final DeferredItem<Item> BELLADONNA = ITEMS.register("belladonna", id -> new BlockItem(WitcheryBlocks.BELLADONNA.get(), itemProps(id)));
     public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.register("mandrake_root", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
     public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
     public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new BlockItem(WitcheryBlocks.ARTICHOKE.get(), itemProps(id)));
+    public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────
     public static final DeferredItem<Item> FANCIFUL_THREAD     = ITEMS.registerSimpleItem("fanciful_thread");
@@ -50,7 +52,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WOOD_ASH            = ITEMS.registerSimpleItem("wood_ash");
     public static final DeferredItem<Item> ROWAN_BERRIES       = ITEMS.registerSimpleItem("rowan_berries");
     public static final DeferredItem<Item> WORMWOOD            = ITEMS.registerSimpleItem("wormwood");
-    public static final DeferredItem<Item> SNOWBELL            = ITEMS.register("snowbell", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
+    public static final DeferredItem<Item> SNOWBELL            = ITEMS.registerSimpleItem("snowbell");
     public static final DeferredItem<Item> EXHALE_OF_HORNED_ONE = ITEMS.registerSimpleItem("exhale_of_horned_one");
     public static final DeferredItem<Item> HINT_OF_REBIRTH     = ITEMS.registerSimpleItem("hint_of_rebirth");
 
