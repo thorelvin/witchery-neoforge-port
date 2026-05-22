@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -28,6 +28,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Verify rowan placed-feature biome modifier injection | 15-30 min | Already injected — see bug #7 |
 | Done | Rowan Door forced right-hinge placement | 5 min | Fixed - see bug #1b.i |
 | Done | Death scythe attachment coordinate mismatch | 5 min | Fixed - original runtime pivot restored; needs in-game visual verification |
+| Done | Treefyd invisible visual path | 5-10 min | Fixed - old 1.7 zero-plane model geometry and original 64x32 texture parity restored; needs in-game visual verification |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |

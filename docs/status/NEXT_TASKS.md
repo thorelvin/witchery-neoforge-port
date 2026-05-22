@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (Demon wing source-pose polish)
+Last reconciled: 2026-05-22 (Treefyd old visual parity polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -158,6 +158,8 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Setup hut** - run `/witchery setup stations`; verify the command clears the intended 20x20 pad in front of the player without digging below door/player height, the 11x11 Rowan hut shell/foundation still sits one block lower while the altar/machines/chest/traders stay on the original player-height test plane, the 3-deep stone-brick foundation still hides uneven ground, the Rowan door/windows plus the new horizontal Rowan log header generate correctly, the window panes now visually meet the Rowan walls, the ceiling Glowglobes light the hut cleanly, the altar sits off the back wall and still links as a real 2x3 multiblock, the cobblestone-supported kettle survives over the campfire, the water cauldron lands beside the kettle, the distillery/oven/spinning wheel face into the room, the fume funnel links cleanly above the oven, the oven cook arrow still sits on the correct upper lane, the stocked double chest contains the intended QA supplies, and the indoor Coven Witch + Hobgoblin both spawn and keep their trade GUIs open
 - **Base alchemy chain** - smelt `clay_jar_soft` into `clay_jar`, then retest the oven/distillery loop; confirm `odour_of_purity`, `oil_of_vitriol`, and the other early intermediates now show in the Witchery creative tab for fast QA
 
+- **Treefyd model** - `/witchery spawn treefyd` and verify the restored old 1.7 zero-plane petals, tongue, and crossed leaves now render visibly with the original 64x32 texture
+
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
 - **Nightmare behavior** — `/witchery dream`, wait for nightmare roll; verify: single nightmare spawns, targets only victim, green fog in nightmare, re-spawns after kill with 30s delay, drops Mellifluous Hunger
@@ -182,6 +184,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Rowan Door placement polish removed the forced right-hinge override so vanilla clicked-side and neighbor-aware hinge placement can run again while keeping the UUID key/keyring locking flow intact. Remaining work is in-game lock/unlock and facing verification.
 - Death scythe attachment polish corrected the ported runtime pivot from the swapped `x=0, z=-0.8` values back to the original 1.7 `x=-0.8, z=0` pose, so the scythe should sit sideways at Death's hand instead of drifting forward. Remaining work is in-game angle/contact verification.
 - Demon wing source-pose polish restored the wings to zero-depth source planes and removed the non-source idle z-flap so the demon now keeps the same static decompiled wing angle family as the correctly presented Imp. Remaining work is in-game wing-angle verification.
+- Treefyd old visual parity polish kept the user-directed old version rather than the Resurrected variant: the active texture hash matches the original 1.7 64x32 asset, and the model now restores the old zero-width/depth petal, tongue, and crossed leaf planes plus original UV offsets. Remaining work is in-game visibility verification.
 
 ---
 
