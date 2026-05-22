@@ -162,6 +162,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.DEATHS_ROBE.get());
                         output.accept(WitcheryItems.DEATHS_SHOES.get());
                         output.accept(WitcheryItems.DEATHS_HAND.get());
+                        // Legacy source placeholders: visible TODO markers for missing item mechanics.
+                        WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.values().forEach(item -> output.accept(item.get()));
                         // Brews
                         output.accept(WitcheryItems.BREW_OF_RAISING.get());
                         output.accept(WitcheryItems.BREW_OF_SLEEPING.get());
@@ -208,6 +210,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.RAVEN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.OWL_SPAWN_EGG.get());
                         output.accept(WitcheryItems.FAMILIAR_CAT_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.SPECTRAL_FAMILIAR_SPAWN_EGG.get());
                         output.accept(WitcheryItems.TOAD_SPAWN_EGG.get());
                         output.accept(WitcheryItems.HOBGOBLIN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get());

@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post Witch Hunter black-magic pressure + target parity + broom ridden sync)
+Last reconciled: 2026-05-22 (post legacy placeholder item registry sweep)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,6 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Needs real texture (currently snowbell placeholder) | Small |
+| Legacy placeholder items | 123 missing source/wiki item IDs are now registered and visible as inert creative-tab placeholders; replace the placeholder model and implement mechanics/recipes one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
@@ -43,7 +44,7 @@ Items from spec not yet implemented:
 | **Health/hunger save-restore** | §8 | ✅ Done | Saved in `SpiritWorldState` sub-codec; restored on exit |
 | **Demonic Nightmare events** | §13 | ✅ Done | Every 100t: 50% SmallFireball, 65% LargeFireball, 75% demon spawn (if <10 hostiles, <2 demons) |
 | **Corpse entity** | §9 | ✅ Done | `witchery:corpse` (MISC mob, sleeping pose, visible humanoid sleeping-body renderer) spawns on SW entry, removed on exit, killing it forces player back; UUID tracked in `SpiritWorldState` |
-| **Flowing Spirit entity effects** | §21 | Partial | Regen/weakness, disturbed-cotton cleansing, and Nightmare defense suppression are back; the old anti-armor charm interaction tied to Nightmare attacks is still missing because `Charm of Disrupted Dreams` is not restored as an item yet |
+| **Flowing Spirit entity effects** | §21 | Partial | Regen/weakness, disturbed-cotton cleansing, Nightmare defense suppression, and `Charm of Disrupted Dreams` armor-strip protection are back; remaining work is in-game feel verification rather than missing item coverage |
 | **Spirit Portal activation** | §22 | ✅ Done | Snow-frame portal now opens again from a Flowing Spirit source in the Spirit World and is used by the restored manifestation loop |
 | **Rite of Manifestation ghost** | §23 | Partial | The rite now grants 2.5 min + 25s per coven witch of manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld, timed return and Icy Needle recall are back, and manifested players now have a first-pass translucent ghost layer; remaining work is in-game feel/style polish |
 
@@ -109,6 +110,7 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
 - **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
+- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 123 inert placeholder items. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, or custom-brew derivatives.
 
 ---
 
@@ -163,6 +165,12 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 ---
 
 ## Completed this session ✅
+
+### Legacy placeholder item registry sweep (2026-05-22)
+
+- Added `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS` with 123 inert source/wiki item IDs that were not registered yet, exposed them in the Witchery creative tab, gave them a shared placeholder item model, and added explicit `(Placeholder)` language keys. `ITEM_REVIEW.md` now tracks the roster as TODO groups rather than hidden missing items. `spectral_familiar_spawn_egg` is also now visible in the creative tab.
+
+---
 
 ### Witch Hunter black-magic pressure (2026-05-22)
 

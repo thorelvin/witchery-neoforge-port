@@ -22,6 +22,10 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class WitcheryItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(WitcheryMod.MODID);
 
@@ -351,6 +355,141 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WORMY_APPLE        = ITEMS.registerSimpleItem("wormy_apple");
     public static final DeferredItem<Item> APPLE_OF_SLEEPING  = ITEMS.register("apple_of_sleeping", id -> new com.emoniph.witchery.item.AppleOfSleepingItem(itemProps(id)));
     public static final DeferredItem<Item> TREEFYD_SEEDS      = ITEMS.register("treefyd_seeds", id -> new com.emoniph.witchery.item.TreefydSeedsItem(itemProps(id)));
+
+    // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
+    public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
+            "babas_hat",
+            "necromancer_robes",
+            "biting_belt",
+            "bark_belt",
+            "ice_slippers",
+            "ruby_slippers",
+            "seeping_shoes",
+            "devils_tongue_charm",
+            "water_diviner",
+            "lava_diviner",
+            "bucket_hollow_tears",
+            "alder_door",
+            "fume_filter",
+            "infernal_blood",
+            "odd_porkchop_raw",
+            "odd_porkchop_cooked",
+            "book_oven",
+            "book_distilling",
+            "book_circle_magic",
+            "book_infusions",
+            "book_herbology",
+            "book_biomes",
+            "book_wands",
+            "book_burning",
+            "nullified_leather",
+            "bolt_stake",
+            "bolt_anti_magic",
+            "bolt_holy",
+            "bolt_splitting",
+            "brew_of_soul_hunger",
+            "brew_of_soul_anguish",
+            "brew_of_soul_fear",
+            "brew_of_soul_torment",
+            "contract_ownership",
+            "contract_torment",
+            "contract_blaze",
+            "contract_resist_fire",
+            "contract_evaporate",
+            "contract_fiery_touch",
+            "contract_smelting",
+            "silver_dust",
+            "alder_boat",
+            "hawthorn_boat",
+            "hawthorn_door",
+            "beartrap",
+            "biome_note",
+            "blood_stained_wool",
+            "blooded_waystone",
+            "bound_waystone",
+            "bone_bolt",
+            "book_biomes_extended",
+            "brews_and_infusions_book",
+            "collecting_fumes_book",
+            "conjuration_and_fetishes_book",
+            "extended_biomes_book",
+            "immortals_observations_book",
+            "symbology_book",
+            "witches_brews_book",
+            "cane_sword",
+            "charged_crossbow",
+            "cooked_sheep_liver",
+            "creative_bat_wolf_token",
+            "creative_medallion",
+            "dandelion_of_ink",
+            "dandelion_of_sprouting",
+            "dandelion_of_thorns",
+            "dandelion_of_webs",
+            "duplication_grenade",
+            "filtered_fume_funnel",
+            "garlic",
+            "garlic_garland",
+            "glass_goblet",
+            "glass_goblet_full",
+            "gulgs_girdle",
+            "hellhound_head",
+            "horn_of_the_hunt",
+            "ice_slab",
+            "ice_stairs",
+            "ice_stockade",
+            "mogs_quiver",
+            "moon_charm",
+            "nullifying_bolt",
+            "perpetual_ice",
+            "player_compass",
+            "poppy_of_ink",
+            "poppy_of_sprouting",
+            "poppy_of_thorns",
+            "poppy_of_webs",
+            "sheep_liver",
+            "shrub_of_ink",
+            "shrub_of_sprouting",
+            "shrub_of_thorns",
+            "shrub_of_webs",
+            "snow_pressure_plate",
+            "snow_slab",
+            "snow_stairs",
+            "staff_of_duplication",
+            "sun_collector",
+            "sun_grenade",
+            "twisting_band",
+            "universal_antidote",
+            "vampire_chain_coat",
+            "vampire_chain_coat_ladies",
+            "vampire_dress_coat",
+            "vampire_dress_jacket",
+            "vampire_helmet",
+            "vampire_oxford_boots",
+            "vampire_skirted_trousers",
+            "vampire_top_hat",
+            "vampire_trousers",
+            "witch_hunter_dawn_boots",
+            "witch_hunter_dawn_coat",
+            "witch_hunter_dawn_hat",
+            "witch_hunter_dawn_trousers",
+            "wolf_head",
+            "wolftrap",
+            "wooden_bolt",
+            "wolfsbane",
+            "wolfsbane_seeds",
+            "brew_of_endless_water",
+            "warm_blood",
+            "liliths_blood",
+            "leonards_urn"
+    );
+
+    private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
+        LinkedHashMap<String, DeferredItem<Item>> placeholders = new LinkedHashMap<>();
+        for (String id : ids) {
+            placeholders.put(id, ITEMS.registerSimpleItem(id));
+        }
+        return Collections.unmodifiableMap(placeholders);
+    }
 
     // ── Spawn eggs (creative only) ─────────────────────────────────────────────
     // 0x2E0047 = dark purple shell, 0xAAFF55 = bright witch-green spots
