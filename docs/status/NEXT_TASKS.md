@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (Poltergeist mirror-UV parity polish)
+Last reconciled: 2026-05-22 (Banshee screaming mouth parity polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -160,6 +160,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 
 - **Treefyd model** - `/witchery spawn treefyd` and verify the restored old 1.7 zero-plane petals, tongue, and crossed leaves now render visibly with the original 64x32 texture
 - **Poltergeist model** - `/witchery spawn poltergeist` and verify the restored old all-part mirror UV flags close the reported wrong-mapping/holes issue
+- **Banshee model** - `/witchery spawn banshee`, provoke/approach it, and verify the flat source mouth appears only while screaming and no chin/face patch protrudes at rest
 
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
@@ -187,6 +188,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Demon wing source-pose polish restored the wings to zero-depth source planes and removed the non-source idle z-flap so the demon now keeps the same static decompiled wing angle family as the correctly presented Imp. Remaining work is in-game wing-angle verification.
 - Treefyd old visual parity polish kept the user-directed old version rather than the Resurrected variant: the active texture hash matches the original 1.7 64x32 asset, and the model now restores the old zero-width/depth petal, tongue, and crossed leaf planes plus original UV offsets. Remaining work is in-game visibility verification.
 - Poltergeist mirror-UV parity polish kept the original 1.7 `poltergeist.png` asset and restored the old model's all-part `mirror=true` UV setup instead of mirroring only the left-side limbs. Remaining work is in-game wrong-mapping/holes verification.
+- Banshee screaming mouth parity polish kept the original 1.7 `banshee.png` asset, removed the non-source GhostModel chin plate, restored the old flat zero-depth mouth plane, and synced Banshee screaming state so the mouth renders only during screams. Remaining work is in-game face/mouth verification.
 
 ---
 

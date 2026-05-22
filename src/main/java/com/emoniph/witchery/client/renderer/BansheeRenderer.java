@@ -6,14 +6,21 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
-public class BansheeRenderer extends MobRenderer<BansheeEntity, net.minecraft.client.renderer.entity.state.LivingEntityRenderState, GhostModel> {
+public class BansheeRenderer extends MobRenderer<BansheeEntity, GhostModel.GhostRenderState, GhostModel> {
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/banshee.png");
     @Override
-    public net.minecraft.client.renderer.entity.state.LivingEntityRenderState createRenderState() { return new net.minecraft.client.renderer.entity.state.LivingEntityRenderState(); }
+    public GhostModel.GhostRenderState createRenderState() { return new GhostModel.GhostRenderState(); }
 
     public BansheeRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new GhostModel(ctx.bakeLayer(GhostModel.LAYER_BANSHEE), false), 0.5F);
     }
-    @Override public Identifier getTextureLocation(net.minecraft.client.renderer.entity.state.LivingEntityRenderState state) { return TEXTURE; }
+
+    @Override
+    public void extractRenderState(BansheeEntity entity, GhostModel.GhostRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.screaming = entity.isScreaming();
+    }
+
+    @Override public Identifier getTextureLocation(GhostModel.GhostRenderState state) { return TEXTURE; }
 }

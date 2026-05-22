@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Poltergeist mirror-UV parity polish)
+Last reconciled: 2026-05-22 (Banshee screaming mouth parity polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -108,7 +108,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 |---|---:|---|
 | Coven Witch | Done | AbstractVillager; names, skins, trades, dialogue, and stable merchant opening via the vanilla trading-player flow; Seer Stone can now pull a nearby loaded Coven Witch toward the player again as a practical local-coven fallback even though the deeper remembered-coven membership system is still not ported |
 | Witch Hunter | Done | Ranged+melee; silver bolts; target selection now tracks the old anti-supernatural role more closely by hunting undead mobs, demonic mobs, vanilla witches, Coven Witches, vampires/werewolves, players carrying Voodoo/Vampiric Poppets, and remembered black-magic casters; successful curse rites and offensive poppet use now also seed the old delayed hunter-spawn pressure in first practical form |
-| Banshee | Partial | Gameplay is closer again: the Banshee now restores a first practical periodic scream-damage loop on nearby players, Earmuffs once again suppress that damage while worn, the original custom Banshee scream asset is back in use instead of the old ghast placeholder while still being hushed client-side by Earmuffs, and the old `0.0` melee-damage profile is back so the scream is once again the real danger; GhostModel UV audit is still follow-up |
+| Banshee | Partial | Gameplay is closer again: the Banshee now restores a first practical periodic scream-damage loop on nearby players, Earmuffs once again suppress that damage while worn, the original custom Banshee scream asset is back in use instead of the old ghast placeholder while still being hushed client-side by Earmuffs, the old `0.0` melee-damage profile is back so the scream is once again the real danger, and the visual path now syncs screaming state to restore the old flat mouth plane only while screaming instead of the non-source always-visible chin/face patch; needs in-game face/mouth verification |
 | Spectre | Done | Flying ghost-type |
 | Poltergeist | Partial | Gameplay works; the dedicated Poltergeist model now matches the old 1.7 all-part `mirror=true` UV setup with the original texture hash, pending in-game verification that the reported wrong-mapping/holes issue is closed |
 | Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, filled `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or one exact creature and forget them again on sneak-use, and the visual path is back on the user-directed old 1.7 model/texture family with zero-plane petals/tongue/leaves and the original 64x32 texture hash; needs in-game visibility verification |
@@ -206,7 +206,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Circle talisman | Done | Store+deploy complete; golden chalk bug fixed; blank binding no longer large-circle locked |
 | Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, Climate Change now preserves/refunds its consumed support sacrifices on queued-abort paths, and active rites now keep their original chalk family during sustain, but the original tile-entity ritual queue/refund system is still only partially recreated |
 | Werewolf body-hide rendering | Polish | Model works; artifact in playermodel hide |
-| Banshee GhostModel UV | Polish | One audit pass needed; Poltergeist now uses its dedicated source model with old mirror UV flags restored |
+| Banshee GhostModel UV | Polish | Old screaming-mouth visibility restored; remaining work is in-game verification only |
 | Cat familiar model proportions | Polish | Body geometry tweak |
 | Demon UV/texture | Polish | UV/texture-size fixed and wing source-pose polish applied; verify in-game |
 | Nightmare behavior verification | Polish | Needs in-game test |

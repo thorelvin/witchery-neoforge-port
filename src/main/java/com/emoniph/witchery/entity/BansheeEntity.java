@@ -2,6 +2,9 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.EarmuffsItem;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,6 +30,8 @@ import java.util.UUID;
  * Now restores a first practical scream-damage loop with Earmuffs protection.
  */
 public class BansheeEntity extends Monster {
+    private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
+            SynchedEntityData.defineId(BansheeEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int SCREAM_START_INTERVAL_TICKS = 100;
     private static final int SCREAM_REPEAT_INTERVAL_TICKS = 20;
     private static final int SCREAM_SOUND_INTERVAL_TICKS = 60;
@@ -35,13 +40,18 @@ public class BansheeEntity extends Monster {
     private static final float SCREAM_DAMAGE_RATIO = 0.1F;
 
     private UUID ownerUuid;
-    private boolean screaming;
 
     public BansheeEntity(EntityType<? extends BansheeEntity> type, Level level) {
         super(type, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setPathfindingMalus(PathType.DANGER_FIRE, -1f);
         this.setPathfindingMalus(PathType.WATER, -1f);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_SCREAMING, false);
     }
 
     @Override
@@ -91,7 +101,7 @@ public class BansheeEntity extends Monster {
             return;
         }
 
-        int screamInterval = screaming ? SCREAM_REPEAT_INTERVAL_TICKS : SCREAM_START_INTERVAL_TICKS;
+        int screamInterval = isScreaming() ? SCREAM_REPEAT_INTERVAL_TICKS : SCREAM_START_INTERVAL_TICKS;
         if (tickCount % screamInterval != 0) {
             return;
         }
@@ -105,8 +115,8 @@ public class BansheeEntity extends Monster {
             }
 
             foundVictim = true;
-            if (!screaming) {
-                screaming = true;
+            if (!isScreaming()) {
+                setScreaming(true);
                 startedScreaming = true;
             }
 
@@ -117,7 +127,7 @@ public class BansheeEntity extends Monster {
         }
 
         if (!foundVictim) {
-            screaming = false;
+            setScreaming(false);
             return;
         }
 
@@ -130,6 +140,14 @@ public class BansheeEntity extends Monster {
     @Override
     public boolean canAttack(LivingEntity target) {
         return !isOwner(target) && super.canAttack(target);
+    }
+
+    public boolean isScreaming() {
+        return entityData.get(DATA_SCREAMING);
+    }
+
+    private void setScreaming(boolean screaming) {
+        entityData.set(DATA_SCREAMING, screaming);
     }
 
     @Override
