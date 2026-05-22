@@ -60,6 +60,7 @@ public class WitcheryClient {
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
         Map.entry(RavenModel.LAYER_LOCATION,           RavenModel::createBodyLayer),
         Map.entry(ToadModel.LAYER_LOCATION,            ToadModel::createBodyLayer),
+        Map.entry(ParasyticLouseModel.LAYER_LOCATION,  ParasyticLouseModel::createBodyLayer),
         Map.entry(CatFamiliarModel.LAYER_LOCATION,     CatFamiliarModel::createBodyLayer),
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
         Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
@@ -130,6 +131,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.FAMILIAR_CAT.get(),    CatFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPECTRAL_FAMILIAR.get(), SpectralFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.TOAD.get(),             ToadFamiliarRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.PARASYTIC_LOUSE.get(),  ParasyticLouseRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.COVEN_WITCH.get(),     CovenWitchRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.WITCH_HUNTER.get(),    WitchHunterRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.BANSHEE.get(),         BansheeRenderer::new);

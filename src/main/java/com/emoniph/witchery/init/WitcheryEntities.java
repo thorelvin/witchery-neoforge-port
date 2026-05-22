@@ -56,6 +56,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(ToadFamiliarEntity::new, MobCategory.CREATURE)
                             .sized(0.7F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "toad"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<ParasyticLouseEntity>> PARASYTIC_LOUSE =
+            ENTITY_TYPES.register("parasytic_louse", () ->
+                    EntityType.Builder.of(ParasyticLouseEntity::new, MobCategory.MONSTER)
+                            .sized(0.3F, 0.7F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "parasytic_louse"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CovenWitchEntity>> COVEN_WITCH =
             ENTITY_TYPES.register("coven_witch", () ->
                     EntityType.Builder.of(CovenWitchEntity::new, MobCategory.CREATURE)
@@ -209,6 +214,7 @@ public class WitcheryEntities {
         event.register(FAMILIAR_CAT.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(SPECTRAL_FAMILIAR.get(), SpawnPlacementTypes.ON_GROUND,    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(TOAD.get(),          SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(PARASYTIC_LOUSE.get(), SpawnPlacementTypes.ON_GROUND,      Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
     }
 
     @SubscribeEvent
@@ -218,6 +224,7 @@ public class WitcheryEntities {
         event.put(FAMILIAR_CAT.get(),  CatFamiliarEntity.createAttributes().build());
         event.put(SPECTRAL_FAMILIAR.get(), SpectralFamiliarEntity.createAttributes().build());
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
+        event.put(PARASYTIC_LOUSE.get(), ParasyticLouseEntity.createAttributes().build());
         event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());
         event.put(WITCH_HUNTER.get(),  WitchHunterEntity.createAttributes().build());
         event.put(BANSHEE.get(),       BansheeEntity.createAttributes().build());

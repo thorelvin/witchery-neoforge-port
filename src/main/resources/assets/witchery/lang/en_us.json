@@ -429,6 +429,7 @@
   "entity.witchery.familiar_cat": "Witch's Cat",
   "entity.witchery.spectral_familiar": "Spectral Familiar",
   "entity.witchery.toad": "Toad",
+  "entity.witchery.parasytic_louse": "Parasytic Louse",
   "witchery.ritual.bind_familiar.success": "A familiar has been bound to you.",
   "witchery.ritual.bind_familiar.support": "The rite needs Tear of the Goddess, Odour of Purity, Whiff of Magic, a diamond, and Demonic Blood.",
   "witchery.ritual.bind_familiar.no_power": "A nearby altar lacks the power to bind the familiar.",

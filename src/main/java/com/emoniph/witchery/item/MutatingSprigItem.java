@@ -109,6 +109,16 @@ public class MutatingSprigItem extends Item {
             }
             return InteractionResult.CONSUME;
         }
+        if (tryCreateParasyticLouse(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
         if (tryCreateBloodRoses(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
@@ -314,6 +324,36 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
+    private static boolean tryCreateParasyticLouse(Level level, BlockPos pos, BlockState state) {
+        if (!(level instanceof ServerLevel serverLevel)
+                || !state.is(WitcheryBlocks.CRITTER_SNARE.get())
+                || !state.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
+                || state.getValue(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT) != 2) {
+            return false;
+        }
+        if (countHorizontalBlocks(level, pos, Blocks.VINE) < 2
+                || countHorizontalWaterBelow(level, pos) < 1
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.MUTANDIS.get().getDefaultInstance()) < 2
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.ATTUNED_STONE_CHARGED.get().getDefaultInstance()) < 1
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.TONGUE_OF_DOG.get().getDefaultInstance()) < 1) {
+            return false;
+        }
+
+        var louse = WitcheryEntities.PARASYTIC_LOUSE.get().create(serverLevel, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (louse == null) {
+            return false;
+        }
+
+        level.removeBlock(pos, false);
+        clearDiagonalGrasspers(level, pos);
+        louse.snapTo(pos.getX() + 0.5D, pos.getY() + 0.001D, pos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
+        louse.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        louse.setPersistenceRequired();
+        serverLevel.addFreshEntity(louse);
+        return true;
+    }
+
     private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state) {
         if (!state.is(WitcheryBlocks.LEECH_CHEST.get())
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
@@ -467,6 +507,26 @@ public class MutatingSprigItem extends Item {
             if (adjacentState.is(WitcheryBlocks.CRITTER_SNARE.get())
                     && adjacentState.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
                     && adjacentState.getValue(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT) == caughtType) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int countHorizontalBlocks(Level level, BlockPos pos, Block block) {
+        int count = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (level.getBlockState(pos.relative(direction)).is(block)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int countHorizontalWaterBelow(Level level, BlockPos pos) {
+        int count = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (level.getFluidState(pos.relative(direction).below()).isSourceOfType(Fluids.WATER)) {
                 count++;
             }
         }

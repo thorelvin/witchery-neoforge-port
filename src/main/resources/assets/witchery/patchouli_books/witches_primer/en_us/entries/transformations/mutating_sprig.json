@@ -41,6 +41,11 @@
     },
     {
       "type": "patchouli:text",
+      "title": "Parasytic Louse",
+      "text": "The crueler little route is back as well. Fill a central $(item)Critter Snare$() with a $(thing)Silverfish$(), grow at least two $(item)Vines$() on its four sides, and keep water below at least one of those side positions. The four diagonal $(item)Grasspers$() must together hold two $(item)Mutandis$(), one $(item)Charged Attuned Stone$(), and one $(item)Tongue of Dog$().$(br2)Use the sprig on the silverfish snare and it will twist into a living $(item)Parasytic Louse$(), which you can later pick back up into item form by handling it directly."
+    },
+    {
+      "type": "patchouli:text",
       "title": "Blood Roses",
       "text": "Once you have a $(item)Leech Chest$(), set it over a water source and place a $(item)Poppy$() on each of its four sides. Use the sprig on the Leech Chest and the chest will be consumed, leaving four $(item)Blood Roses$().$(br2)Those roses then keep fresh taglock samples until you draw them out with a $(item)Taglock Kit$()."
     },
