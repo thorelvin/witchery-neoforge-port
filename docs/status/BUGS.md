@@ -998,6 +998,13 @@ The old one-jar `blaze_powder` + `gunpowder` distillery branch is back again aft
 Remaining gap:
 - Final in-game verification is still open for the restored Glowstone Dust / Reek of Misfortune branch and how it feels in the early infernal-alchemy loop.
 
+### 79. Two core distillery byproducts still used the wrong vanilla item - Fixed / verify
+
+The `Foul Fume` + `Quicklime` and `Breath of the Goddess` + `lapis_lazuli` distills now once again return the original `slime_ball` byproduct instead of the port's mistaken `glass_bottle` mapping. That brings `Oil of Vitriol` and `Tear of the Goddess` back in line with both the old 1.7.2 source and the later data-driven ports.
+
+Remaining gap:
+- Final in-game verification is still open for the restored byproduct outputs and their feel in the early clay-jar distillery loop.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
