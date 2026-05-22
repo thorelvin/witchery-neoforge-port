@@ -108,7 +108,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 81 | `witchery:circle_talisman` | |
 | 82 | `witchery:witch_hand` | |
 | 83 | `witchery:fanciful_thread` | |
-| 84 | `witchery:redstone_soup` | |
+| 84 | `witchery:redstone_soup` | `Done - source-backed kettle base only` | The false direct distillery shortcut is gone again; Redstone Soup now stays on its original kettle progression as the base for infusions and related alchemy chains. |
 | 85 | `witchery:diamond_vapour` | |
 | 86 | `witchery:bat_wool` | |
 | 86a | `witchery:concentrated_bat_ball` | `Done - classic critter-snare crafting bridge restored` | The real intermediate item is back: four bat-filled `Critter Snare`s with four `Slime Ball`s now craft into `Concentrated Bat Ball` again, and `Brew of Bats` now uses that chain instead of the old bat-spawn-egg placeholder. |

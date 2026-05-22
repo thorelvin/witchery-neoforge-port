@@ -970,6 +970,13 @@ Remaining gap:
 Remaining gap:
 - Final in-game verification is still open for this corrected batch, especially the feel of the restored Spirit World herb/material progression in ordinary survival.
 
+### 75. Redstone Soup still had a false distillery shortcut - Fixed / verify
+
+`Redstone Soup` now stays on its real kettle-side progression only. The false direct distillery shortcut is gone again after 1.7.2 plus Resurrected comparison, so the item once more comes from the original 1000-power kettle chain (`redstone`, `Drop of Luck`, `Bat Wool`, `Tongue of Dog`, `Belladonna`, and `Mandrake Root`) instead of an invented bottle-and-redstone distill.
+
+Remaining gap:
+- Final in-game verification is still open for the restored Redstone Soup bridge and its downstream infusion-item chain.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
