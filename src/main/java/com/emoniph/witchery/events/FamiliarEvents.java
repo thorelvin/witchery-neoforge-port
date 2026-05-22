@@ -41,9 +41,8 @@ public final class FamiliarEvents {
 
         if (redirectedDamage >= 1.0F) {
             familiar.hurt(event.getSource(), redirectedDamage);
+            event.setNewDamage(Math.max(0.0F, event.getNewDamage() - redirectedDamage));
         }
-
-        event.setNewDamage(Math.max(0.0F, event.getNewDamage() - redirectedDamage));
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

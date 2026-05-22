@@ -34,11 +34,11 @@ Current target:
 - [x] **M12** — All 13 brew effects implemented (Raising: spawns zombies; Wasting: AoE Wither+Slow; Erosion: degrades stone/dirt; Foulness: AoE nausea+poison; Infection: AoE poison spread; Grotesque: Strength IV+Resistance+Slow; FlowingSpirit: Invisibility+SlowFall+NightVision; Foaming: places cobwebs; Poison: Poison III on drinker)
 - [x] **M11** — Witches Oven (OvenRecipe extends AbstractCookingRecipe + SimpleCookingSerializer; WitchesOvenBlockEntity with furnace-style tick; WitchesOvenMenu + WitchesOvenScreen; 3 recipes: logs→ash, nether_wart→exhale_of_horned_one, quartz→lime_dye)
 - [x] **Broom** — BroomEntity extends Mob (not Entity — MobRenderer needs LivingEntity; Entity-based vehicles need custom EntityRenderer); mobInteract() not interact() for Mob subclasses; empty readAdditionalSaveData/addAdditionalSaveData cause override errors when base class uses HolderLookup.Provider variant — just omit them; flight: setNoGravity(true)+manual deltaMovement in tick() using rider.zza and getLookAngle(); positionRider() places passenger on handle; BroomItem.use() spawns entity + startRiding(); /witchery spawn broom works
-- [x] **M29** — Polish pass (K1 sounds: Banshee→PHANTOM, Spectre→VEX, Mandrake→SILVERFISH; K5 config: WitcheryConfig.java with ModConfigSpec registered via modContainer.registerConfig — BoolValue→ConfigValue<Boolean> in NeoForge 1.21.1; 13 crafting recipes: bone_needle/clay_jar_soft/quicklime/frozen_heart/graveyard_dust/attuned_stone/null_catalyst/anointing_paste/wormy_apple/wicker_bundle + 3 shaped (mutandis/null_catalyst_initial/quartz_sphere); 2 new items: anointing_paste/wormy_apple)
+- [x] **M29** — Polish pass (K1 sounds: Banshee→PHANTOM, Spectre→VEX, Mandrake→SILVERFISH; K5 config: WitcheryConfig.java with ModConfigSpec registered via modContainer.registerConfig — BoolValue→ConfigValue<Boolean> in NeoForge 1.21.11; 13 crafting recipes: bone_needle/clay_jar_soft/quicklime/frozen_heart/graveyard_dust/attuned_stone/null_catalyst/anointing_paste/wormy_apple/wicker_bundle + 3 shaped (mutandis/null_catalyst_initial/quartz_sphere); 2 new items: anointing_paste/wormy_apple)
 - [x] **M27** — Horror + Summoned Entities (Banshee/Spectre/Poltergeist: Monster+FlyingMoveControl+FlyingPathNavigation — FlyingMob base class rejects PathfinderMob goals; Treefyd/Ent: ground Monsters, passive Ent retaliates only; Mandrake: fast tiny mob with poison on hit; Demon: Monster+RangedAttackMob throws SmallFireball(level,entity,vec3.scale); GhostModel shared by 3 flying types with LAYER_BANSHEE/LAYER_SPECTRE/LAYER_POLTERGEIST; RangedBowAttackGoal needs explicit generic type <EntityClass> to avoid inference error; SmallFireball constructor is (Level, LivingEntity, Vec3) not (Level, LivingEntity, double, double, double))
 - [x] **M24** — Witch NPCs (CovenWitchEntity: AbstractVillager+Mob.createMobAttributes, 5 random skins, 10 trades for witchery ingredients, WitchModel renderer; WitchHunterEntity: Monster+RangedAttackMob, targets vampire/werewolf players+Witch via NearestAttackableTargetGoal, bow ranged attack+melee, 3 random skins; WitchHunterModel: biped+hat brim+hat top+coat; /witchery spawn command; API notes: ItemCost in trading package not world.item, AbstractVillager needs rewardTradeXp override, SpawnGroupData needs explicit import)
-- [x] **M23** — Lycanthropy + 3D werewolf render layer (WerewolfModel: HierarchicalModel from ModelWerewolf 64×64, body hunched PI/9, digitigrade legs, ears/snout/mane/tail; WerewolfLayer: RenderLayer on PlayerRenderer via EntityRenderersEvent.AddLayers; only renders when isWerewolf+fullMoon+isNight; texture=wolfman.png copied from resurrected werewolf.png; API notes: AddLayers.getSkins() returns Set<PlayerSkin.Model> not Set<String> in 1.21.1; renderToBuffer(PoseStack, VertexConsumer, light, overlay) order — PoseStack first) (WerewolfEvents.java: full moon=getMoonPhase()==0; wolf form on full-moon night: Speed III+Strength II+Jump II+Hunger II+NightVision refreshed every 100t; transformationLevel set to 1f on first activation; Curse of the Wolf ritual=LARGE+BONE/BONE_BLOCK; TODO: silver weakness, wolfsbane debuff, howling)
-- [x] **M22** — Vampirism (VampireEvents.java: tick drain 1/100t, igniteForTicks(40) sunburn in daylight+sky+no helmet, blood thresholds 0-50 frenzy/51-150 weak/151-349 night vision/350-500 speed+strength; EntityInteract bite=empty hand+non-player LivingEntity→2 damage+bloodValue; Creatures of the Night ritual=MEDIUM+DEMON_HEART→setVampire+250 blood; API note: setSecondsOnFire→igniteForTicks in 1.21.1)
+- [x] **M23** — Lycanthropy + 3D werewolf render layer (WerewolfModel: HierarchicalModel from ModelWerewolf 64×64, body hunched PI/9, digitigrade legs, ears/snout/mane/tail; WerewolfLayer: RenderLayer on PlayerRenderer via EntityRenderersEvent.AddLayers; only renders when isWerewolf+fullMoon+isNight; texture=wolfman.png copied from resurrected werewolf.png; API notes: AddLayers.getSkins() returns Set<PlayerSkin.Model> not Set<String> in 1.21.11; renderToBuffer(PoseStack, VertexConsumer, light, overlay) order — PoseStack first) (WerewolfEvents.java: full moon=getMoonPhase()==0; wolf form on full-moon night: Speed III+Strength II+Jump II+Hunger II+NightVision refreshed every 100t; transformationLevel set to 1f on first activation; Curse of the Wolf ritual=LARGE+BONE/BONE_BLOCK; TODO: silver weakness, wolfsbane debuff, howling)
+- [x] **M22** — Vampirism (VampireEvents.java: tick drain 1/100t, igniteForTicks(40) sunburn in daylight+sky+no helmet, blood thresholds 0-50 frenzy/51-150 weak/151-349 night vision/350-500 speed+strength; EntityInteract bite=empty hand+non-player LivingEntity→2 damage+bloodValue; Creatures of the Night ritual=MEDIUM+DEMON_HEART→setVampire+250 blood; API note: setSecondsOnFire→igniteForTicks in 1.21.11)
 - [x] **M21** — Environment & Transport Rituals (7 new rites; SMALL: Transposition=ender_pearl→respawn point, PriorIncarnation=rotten_flesh→recall items from last death within 16b; MEDIUM: SkysWrath=gunpowder→12 real lightning strikes, Sanctity=gold_ingot→repel mobs 25b + Resistance II, Imprisonment=obsidian→Slowness V+Weakness on mobs in 10b; LARGE: MovingEarth=dirt/gravel/sand→raise 5×5 column 5b, BrokenEarth=flint→dig 3-wide 5-deep trench in look direction; WitcheryPlayerData gains lastDeathPos+lastDeathDimension; PoppetEvents LOWEST-priority handler records death pos when not cancelled)
 - [x] **M20** — Familiar Entities (Owl/Cat/Toad custom entities extending TamableAnimal; WitcheryEntities DeferredRegister; OwlModel+ToadModel ported from original 64x32/32x32 UV layouts; CatFamiliarModel simplified cat shape; three MobRenderer subclasses; RiteBindFamiliar via feather/fish/slimeball in SMALL circle; Owl warns of nearby mobs, Toad collects dropped items, Cat avoids Phantoms/Creepers)
 - [x] **M19** — Infusion Base System (InfusionType enum; WitcheryPlayerData + SyncPayload updated; 10 new items: 4 brew bases, mystic unguent, flying ointment, happenstance oil, infused brew base + 2 infused brews; 4 kettle recipes; Rite of Infusion dispatches per brew base; InfusionEvents passive tick effects; all item/block textures audited and filled from original assets)
@@ -51,7 +51,7 @@ Current target:
 
 ### 2026-05-18 — MC 1.21.11 / NeoForge 21.11.42 migration
 
-Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a real compile error.
+Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoForge 21.11.42). Every item below caused a real compile error.
 
 **Entity combat**
 - `LivingEntity.hurt(DamageSource, float)` is now `final` in Entity. Override point is `hurtServer(ServerLevel, DamageSource, float) → boolean`. Return `super.hurtServer(...)` to chain.
@@ -332,9 +332,9 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 
 
 ### 2026-05-15 (M20 — Familiar Entities)
-- TamableAnimal is at net.minecraft.world.entity.TamableAnimal (NOT world.entity.passive) in 1.21.1
-- Mob.createMobAttributes() replaces Animal.createAnimalAttributes() which was removed in 1.21.1
-- Inventory.add(ItemStack) returns boolean in 1.21.1 (not ItemStack remainder)
+- TamableAnimal is at net.minecraft.world.entity.TamableAnimal (NOT world.entity.passive) in 1.21.11
+- Mob.createMobAttributes() replaces Animal.createAnimalAttributes() which was removed in 1.21.11
+- Inventory.add(ItemStack) returns boolean in 1.21.11 (not ItemStack remainder)
 - AvoidEntityGoal<T> requires explicit type parameter when Java can't infer: new AvoidEntityGoal<Phantom>(...)
 - EntityAttributeCreationEvent handler goes in @EventBusSubscriber(bus=MOD) class alongside DeferredRegister
 - Entity textures go in textures/entity/ (new folder); model LayerLocations in WitcheryClient.LAYER_DEFS list
@@ -395,7 +395,7 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 - M9: SyncPlayerDataPayload uses StreamCodec<RegistryFriendlyByteBuf, T> (not ByteBuf) for playToClient
 - M9: RegisterPayloadHandlersEvent (not RegisterPayloadsEvent) + event.registrar("1").playToClient(...)
 - M9: WitcheryPlayerEvents uses @EventBusSubscriber (forge bus, not mod bus) for player lifecycle events
-- M8: ChalkItem.hurtAndBreak takes EquipmentSlot not InteractionHand in 1.21.1
+- M8: ChalkItem.hurtAndBreak takes EquipmentSlot not InteractionHand in 1.21.11
 - M8: LightningBolt spawned via new LightningBolt(EntityType.LIGHTNING_BOLT, level) + addFreshEntity() + setVisualOnly(true)
 - M8: CIRCLE block uses carpet model (16×1×16 thin flat block) for chalk mark appearance
 - M8: Ritual trigger: right-click any floor block with arthana; scans ring one Y level above clicked block
@@ -412,7 +412,7 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 
 ### 2026-05-14
 - Decompiled all three jars (witchery-1.7.2-0.19.0, companion, WitcheryResurrected 1.12.2)
-- Renamed all camelCase texture files to snake_case (required by 1.21.1 resource location rules)
+- Renamed all camelCase texture files to snake_case (required by 1.21.11 resource location rules)
 - BESR pattern established: ModelPart divides by /16 internally — do NOT add explicit scale(0.0625)
 - Standard BESR transform: translate(0.5,0.5,0.5) → rotateZ(180) → translate(0,-1,0) → rotateY(-90)
 - noOcclusion() required on all BESR blocks so block below is visible through legs/frame gaps
@@ -439,7 +439,7 @@ Full compile-clean migration from 1.21.1/21.1.229. Every item below caused a rea
 
 ### 2026-05-15 (Poppet shelf + coven witch)
 - Poppet shelf switched from custom 4-slot menu/screen to vanilla `ChestMenu(MenuType.GENERIC_9x1, id, playerInv, this, 1)` — original had 9 slots and used `player.displayGUIChest()`
-- `ChestMenu.oneRow(id, playerInv)` in 1.21.1 takes only 2 args (no container) — use the full constructor instead
+- `ChestMenu.oneRow(id, playerInv)` in 1.21.11 takes only 2 args (no container) — use the full constructor instead
 - Coven Witch: `AbstractVillager`; override `showProgressBar()→false`, `getVillagerXp()→0`, `canRestock()→true` for no-prerequisites trading
 - Coven Witch random names: generate from first/surname arrays in `finalizeSpawn()`; set via `setCustomName(Component.literal(...))`
 - `Component.translatable(key).getString()` on server returns raw key — send `Component.translatable(key)` directly and let client translate

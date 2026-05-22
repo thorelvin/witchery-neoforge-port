@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-05-20
+Last updated: 2026-05-22
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -33,7 +33,7 @@ Use these as implementation examples when the modern runtime differs from 1.7.10
   - [Sounds](https://docs.minecraftforge.net/en/1.21.x/gameeffects/sounds/)
   - [Sound Providers](https://docs.minecraftforge.net/en/1.21.x/datagen/client/sounds/)
 - Working NeoForge example repos:
-  - [umfhero/WoodMek-NeoForge-1.21.1](https://github.com/umfhero/WoodMek-NeoForge-1.21.1)
+  - [umfhero/WoodMek-NeoForge-1.21.1](https://github.com/umfhero/WoodMek-NeoForge-1.21.1) *(1.21.1 example — API may differ)*
   - [jeremiahwinsley/pylons](https://github.com/jeremiahwinsley/pylons)
 
 These examples are especially useful for modern screen rendering, sound/event registration, menu syncing, data generation, and block entity rendering patterns.
@@ -56,6 +56,9 @@ Priority mechanics checklist:
 4. Spirit World: Dream Catcher rules, Nightmare/Demonic Nightmare cadence, corpse rules, Flowing Spirit, plant interactions.
 5. Blocks and plants: cotton, blood rose, brambles including Void Bramble ritual nulling, grassper, glowglobe, critter snare, wicker bundle, crystal ball, coffin, brazier, fetish blocks.
 6. Entities: broom flight, familiar powers, mob AI, renderer-linked gameplay expectations.
+
+Current entity verification note:
+- Broom flight should be retested specifically for the old snap-back symptom: mount via item or `/witchery spawn broom`, fly forward and upward for more than several seconds, and confirm the broom no longer returns toward its placement point while preserving pitch lift and Soaring/Owl speed bonuses.
 
 ### 2. Sound parity
 

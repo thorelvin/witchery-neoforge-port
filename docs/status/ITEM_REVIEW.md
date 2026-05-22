@@ -86,8 +86,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 
 | # | Item ID | Notes |
 |---|---|---|
-| 62 | `witchery:broom` | `Partial - control model rewritten closer to 1.7.10` | Forward acceleration, pitch lift, no forced hover-drop, and mounted fall cancellation are restored. Needs in-game verification.
-| 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path` | Needs in-game verification.
+| 62 | `witchery:broom` | `Partial - control model rewritten closer to 1.7.10; snap-back fix applied` | Forward acceleration, pitch lift, no forced hover-drop, mounted fall cancellation, and controlled-client vehicle sync are restored so the broom should no longer pull back toward its spawn point while flying. Needs in-game verification.
+| 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path and snap-back fix` | Needs in-game verification.
 | 64 | `witchery:arthana` | `Partial - altar placement plus first special-drop bridge restored` | Now places cleanly on altar, updates bonuses immediately, restores the old altar range boost, and once again drives a first practical special-drop pass for Bat Wool, Tongue of Dog, Toe of Frog, Owlet's Wing, and Creeper Heart acquisition when used as the killing weapon. Full old combat/drop edge-case parity still needs follow-up. |
 | 65 | `witchery:boline` | |
 | 66 | `witchery:chalk` | `Partial - placed glyph block path corrected` | Ritual chalk now places a thin floor glyph again instead of a cube block: `circle_glyph` uses the flat cutout/carpet model path and the chalk-circle blocks now share a dedicated low-profile block shape. Needs in-game verification for final outline/selection feel.
@@ -224,3 +224,60 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 151 | `witchery:hobgoblin_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
 | 152 | `witchery:flying_monkey_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
 | 153 | `witchery:binky_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+
+---
+
+## Mob Review
+
+Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviour notes in the `Notes` column.
+
+### Familiars
+
+| # | Entity ID | Spawn cmd | Notes |
+|---|---|---|---|
+| M1 | `owl` | `/witchery spawn owl` | | Spawn a white owl
+| M2 | `familiar_cat` | `/witchery spawn cat` | | The body is wrong. The belly is faarback, and tail hangs between back legs.
+| M3 | `toad` | `/witchery spawn toad` | | Looks ok
+| M4 | `spectral_familiar` | `/witchery spawn spectral` | | Cant find in eggs. Found command. Is it the invisible entity teleporting around me all the time? With ender man dust?
+
+### Passive / Neutral NPCs
+
+| # | Entity ID | Spawn cmd | Notes |
+|---|---|---|---|
+| M5 | `coven_witch` | `/witchery spawn coven_witch` | | Some witches ok, some spawn as pink black. Should figth witch hunters?
+| M6 | `hobgoblin` | `/witchery spawn hobgoblin` | | Looks fine, trade works
+| M7 | `raven` | `/witchery spawn raven` | | Works fine, but eye layers does not always follow head. Maybe remove and give them only red eye pixels. Wings should flap out in fligth not stay close to body. Feet should be along body, not sticking out.
+| M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull and drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder
+| M9 | `flying_monkey` | `/witchery spawn flying_monkey` | | Does not show correct. Holes in texture. Wrong model?
+| M10 | `ent` | `/witchery spawn ent` | | Wrong mapping, have holes
+
+### Hostile Mobs
+
+| # | Entity ID | Spawn cmd | Notes |
+|---|---|---|---|
+| M11 | `mandrake_mob` | `/witchery spawn mandrake` | Still texture error, have holes. ✅ Ground fix applied 2026-05-22 |
+| M12 | `banshee` | `/witchery spawn banshee` | | Still have error on mouth/face
+| M13 | `spectre` | `/witchery spawn spectre` | | Looks ok.
+| M14 | `poltergeist` | `/witchery spawn poltergeist` | | Wrong mapping, have holes
+| M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Should hunt coven witches?
+| M16 | `treefyd` | `/witchery spawn treefyd` | | Does not show. Egg makes something invisible on ground that i can destroy
+| M17 | `parasytic_louse` | `/witchery spawn parasytic_louse` | |
+| M18 | `demon` | `/witchery spawn demon` | | Looks good, but wings are wrong angle. Imp wings are correct.
+| M19 | `nightmare` | `/witchery spawn nightmare` | | Should lift arms when attacking player?
+| M20 | `horned_huntsman` | `/witchery spawn horned_huntsman` | | Looks correct, has boss bar
+
+### Torment Dimension Bosses / Specials
+
+| # | Entity ID | Spawn cmd | Notes |
+|---|---|---|---|
+| M21 | `lord_of_torment` | `/witchery spawn lord_of_torment` | | Looks fine
+| M22 | `death` | `/witchery spawn death` | | Death no longer spawns mounted over Binky; scythe attachment still needs its own visual pass.
+| M23 | `flame_imp` | `/witchery spawn flame_imp` | | Looks correct, attacks player on egg throw. Should punch with arms on attack?
+
+### Spirit World / Misc
+
+| # | Entity ID | Spawn cmd | Notes |
+|---|---|---|---|
+| M24 | `spirit` | (spawns in Spirit World) | | Shows like a yellow opaque ball that flies around?
+| M25 | `corpse` | (spawns on Spirit World entry) | |
+| M26 | `broom` | `/witchery spawn broom` | | Snap-back fix applied 2026-05-22: ridden movement now predicts on the controlling client and avoids a second server simulation. Retest whether the broom can leave its spawn area normally.

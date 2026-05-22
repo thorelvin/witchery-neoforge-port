@@ -30,7 +30,7 @@ Generated: 2026-05-16
 
 - `docs/reference/API_MAP.md`
   - Split from old `PORTING_GUIDE.md`.
-  - Focused on 1.7.10 Forge → NeoForge 1.21.1 conversions.
+  - Focused on 1.7.10 Forge → NeoForge 1.21.11 conversions.
 
 - `docs/reference/PORTING_NOTES.md`
   - Preserved mostly intact as chronological notes, with a warning not to load it all unless needed.

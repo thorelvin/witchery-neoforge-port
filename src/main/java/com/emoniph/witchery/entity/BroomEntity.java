@@ -72,22 +72,30 @@ public class BroomEntity extends Mob {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void travel(net.minecraft.world.phys.Vec3 travelVector) {
+        // Block vanilla LivingEntity travel() — broom uses its own move() call in tick()
+    }
 
+    @Override
+    public void tick() {
         Entity passenger = getFirstPassenger();
         if (passenger instanceof LivingEntity rider) {
             updateRiderBuffFlags(rider);
-            handleRiddenMovement(rider);
+            if (level().isClientSide()) {
+                handleRiddenMovement(rider);
+            }
         } else {
             riderHasOwlFamiliar = false;
             riderHasSoaringBrew = false;
             handleUnriddenMovement();
         }
 
-        move(MoverType.SELF, getDeltaMovement());
-        setDeltaMovement(getDeltaMovement().scale(0.99));
-        alignToMotion();
+        super.tick(); // entity state updates (hurt flash, passengers, etc.) — aiStep() is now a no-op
+        if (!(passenger instanceof LivingEntity) || level().isClientSide()) {
+            move(MoverType.SELF, getDeltaMovement());
+            setDeltaMovement(getDeltaMovement().scale(0.99));
+            alignToMotion();
+        }
     }
 
     private void handleRiddenMovement(LivingEntity rider) {
@@ -157,13 +165,14 @@ public class BroomEntity extends Mob {
         if (!(rider instanceof Player player)) {
             return;
         }
-        if (!(level() instanceof net.minecraft.server.level.ServerLevel)) {
-            return;
-        }
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         riderHasSoaringBrew = data.hasSoaringBuff();
-        riderHasOwlFamiliar = FamiliarHelper.hasActiveOwlFamiliar(player);
+        if (level() instanceof net.minecraft.server.level.ServerLevel) {
+            riderHasOwlFamiliar = FamiliarHelper.hasActiveOwlFamiliar(player);
+        } else {
+            riderHasOwlFamiliar = data.getFamiliarUUID().isPresent() && "owl".equals(data.getFamiliarType());
+        }
     }
 
     private Vec3 clampSpeed(Vec3 motion) {

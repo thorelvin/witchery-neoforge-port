@@ -92,6 +92,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BOLINE.get());
                         output.accept(WitcheryItems.CHALK.get());
                         output.accept(WitcheryItems.MYSTIC_BRANCH.get());
+                        output.accept(WitcheryItems.DEBUG_DEATH_WARD.get());
                         output.accept(WitcheryItems.TAGLOCK_KIT.get());
                         output.accept(WitcheryItems.POPPET.get());
                         output.accept(WitcheryItems.DEATH_PROTECTION_POPPET.get());
@@ -144,6 +145,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.SEER_STONE.get());
                         output.accept(WitcheryItems.POPPET_SHELF_COMPASS.get());
                         output.accept(WitcheryItems.POLYNESIA_CHARM.get());
+                        output.accept(WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get());
                         output.accept(WitcheryItems.PARASYTIC_LOUSE.get());
                         output.accept(WitcheryItems.BUCKET_SPIRIT.get());
                         output.accept(WitcheryItems.HAND_BOW.get());

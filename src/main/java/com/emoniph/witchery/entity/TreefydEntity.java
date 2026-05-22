@@ -370,7 +370,15 @@ public class TreefydEntity extends Monster {
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         String owner = tag.getStringOr("OwnerUUID", "");
-        ownerUuid = owner.isEmpty() ? null : UUID.fromString(owner);
+        if (owner.isEmpty()) {
+            ownerUuid = null;
+        } else {
+            try {
+                ownerUuid = UUID.fromString(owner);
+            } catch (IllegalArgumentException ignored) {
+                ownerUuid = null;
+            }
+        }
         sentinel = tag.getBooleanOr("Sentinel", false);
         ignoredPlayers.clear();
         int ignoredCount = tag.getIntOr("IgnoredPlayerCount", 0);

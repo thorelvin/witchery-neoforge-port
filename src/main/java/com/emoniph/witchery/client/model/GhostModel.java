@@ -57,9 +57,16 @@ public class GhostModel extends EntityModel<net.minecraft.client.renderer.entity
                 PartPose.offset(0, 0, 0));
 
         // Flat face detail (mouth/jaw plate) — from original ModelSpectre texOffs(56,0)
+        // texOffs(40,0): needs u=40..50 — within 64px; old (56,0) overflowed to u=66
         head.addOrReplaceChild("mouth",
-                CubeListBuilder.create().texOffs(56, 0).addBox(0f, 0f, 0f, 4, 5, 1),
+                CubeListBuilder.create().texOffs(40, 0).addBox(0f, 0f, 0f, 4, 5, 1),
                 PartPose.offset(-2f, -4f, -4.1f));
+
+        // Opaque chin plate at the base of the head (y=0) to cover transparent lower-head pixels.
+        // Uses body UV region (texOffs 16,0) which is opaque in banshee.png.
+        head.addOrReplaceChild("chin_plate",
+                CubeListBuilder.create().texOffs(16, 0).addBox(-4, 0, -4, 8, 1, 8),
+                PartPose.ZERO);
 
         // Torso
         root.addOrReplaceChild("body",

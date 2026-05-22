@@ -6,12 +6,8 @@
     "w w"
   ],
   "key": {
-    "l": {
-      "item": "minecraft:leather"
-    },
-    "w": {
-      "item": "minecraft:white_wool"
-    }
+    "l": "minecraft:leather",
+    "w": "minecraft:white_wool"
   },
   "result": {
     "id": "witchery:earmuffs"

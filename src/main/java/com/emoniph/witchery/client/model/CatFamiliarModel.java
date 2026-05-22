@@ -47,10 +47,10 @@ public class CatFamiliarModel extends EntityModel<net.minecraft.client.renderer.
                 CubeListBuilder.create().texOffs(0, 0).addBox(-2.5f, -2f, -3f, 5, 4, 5),
                 PartPose.offset(0f, 12f, -5f));
 
-        // Body — 4×16×6 with xRot=HALF_PI so it lies flat (16 units become length)
+        // Body — 4×12×6 with xRot=HALF_PI so it lies flat (12 units become length, matching original ocelot)
         root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(20, 0).addBox(-2f, 0f, -3f, 4, 16, 6),
-                PartPose.offsetAndRotation(0f, 12f, 4f, Mth.HALF_PI, 0f, 0f));
+                CubeListBuilder.create().texOffs(20, 0).addBox(-2f, 0f, -3f, 4, 12, 6),
+                PartPose.offsetAndRotation(0f, 12f, 2f, Mth.HALF_PI, 0f, 0f));
 
         // Front legs
         root.addOrReplaceChild("leg_front_left",
@@ -64,11 +64,11 @@ public class CatFamiliarModel extends EntityModel<net.minecraft.client.renderer.
         // Back legs
         root.addOrReplaceChild("leg_back_left",
                 CubeListBuilder.create().texOffs(16, 13).addBox(-1f, 0f, -1f, 2, 6, 2),
-                PartPose.offset(-1.2f, 16f, 6f));
+                PartPose.offset(-1.2f, 16f, 4f));
 
         root.addOrReplaceChild("leg_back_right",
                 CubeListBuilder.create().texOffs(16, 13).addBox(-1f, 0f, -1f, 2, 6, 2),
-                PartPose.offset(1.2f, 16f, 6f));
+                PartPose.offset(1.2f, 16f, 4f));
 
         // Tail (two segments)
         PartDefinition tail1 = root.addOrReplaceChild("tail1",

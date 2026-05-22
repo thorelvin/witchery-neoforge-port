@@ -1,6 +1,6 @@
 # CLAUDE.md — Witchery NeoForge Port
 
-You are helping build a modern NeoForge 1.21.1 fan port / continuation of the original Witchery mod.
+You are helping build a modern NeoForge 1.21.11 fan port / continuation of the original Witchery mod.
 
 This file is always loaded by Claude Code. Keep it short. Do not import large docs here with `@...`; read the relevant docs only when needed.
 
@@ -14,8 +14,8 @@ This file is always loaded by Claude Code. Keep it short. Do not import large do
 
 ## Target
 
-- Minecraft: 1.21.1
-- NeoForge: 21.1.229
+- Minecraft: 1.21.11
+- NeoForge: 21.11.42
 - Java: 21
 - Style: feature-faithful where useful, modern NeoForge internals where practical.
 

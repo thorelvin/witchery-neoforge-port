@@ -34,7 +34,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -53,8 +52,8 @@ import java.util.Optional;
 public class WitchCauldronBlock extends Block {
 
     public static final MapCodec<WitchCauldronBlock> CODEC = simpleCodec(WitchCauldronBlock::new);
-    public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_CAULDRON;
     public static final int MAX_FILL_LEVEL = 3;
+    public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, MAX_FILL_LEVEL);
     private static final VoxelShape INSIDE = box(2.0, 4.0, 2.0, 14.0, 16.0, 14.0);
     private static final VoxelShape SHAPE = Shapes.join(
             Shapes.block(),

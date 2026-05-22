@@ -42,6 +42,10 @@ public class CoffinModel extends Model.Simple {
         base.addOrReplaceChild("lid",
                 CubeListBuilder.create().texOffs(4, 1).addBox(-1.0F, -1.0F, 0.0F, 16.0F, 2.0F, 16.0F),
                 PartPose.offset(-7.0F, -11.0F, 0.0F));
+        // inner floor: DOWN face (→ world-UP after ZP-180 flip) lands on opaque lid-area pixels
+        base.addOrReplaceChild("inner_floor",
+                CubeListBuilder.create().texOffs(4, 1).addBox(-7.0F, -0.5F, 0.0F, 14.0F, 1.0F, 14.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(mesh, 128, 128);
     }
 
@@ -63,6 +67,10 @@ public class CoffinModel extends Model.Simple {
         base.addOrReplaceChild("lid",
                 CubeListBuilder.create().texOffs(4, 0).addBox(-1.0F, -1.0F, 0.0F, 16.0F, 2.0F, 16.0F),
                 PartPose.offset(-7.0F, -11.0F, -16.0F));
+        // inner floor: DOWN face (→ world-UP after ZP-180 flip) lands on opaque lid-area pixels
+        base.addOrReplaceChild("inner_floor",
+                CubeListBuilder.create().texOffs(4, 1).addBox(-7.0F, -0.5F, -14.0F, 14.0F, 1.0F, 14.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(mesh, 128, 128);
     }
 

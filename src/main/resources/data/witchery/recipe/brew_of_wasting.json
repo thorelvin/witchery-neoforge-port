@@ -6,7 +6,7 @@
     {"id": "witchery:belladonna"},
     {"id": "witchery:ember_moss"},
     {"id": "minecraft:poisonous_potato"},
-    {"id": "minecraft:spider_eye"},
+    {"id": "minecraft:spider_eye"}
   ],
   "result": {"id": "witchery:brew_of_wasting", "count": 3},
   "power": 0.0,

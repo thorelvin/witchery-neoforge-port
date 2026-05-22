@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22
+Last reconciled: 2026-05-22 (broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -19,6 +19,12 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Verify Torment visibility / darkness | 10-20 min | Fixed - Force no longer blocks light and Torment now has low ambient skylight |
 | Done | Decide Torment red pulse/fog effect | 5-20 min | Decision made; keep red biome sky/fog without Nether pulse |
 | Done | Restore Torment maze block/layout parity | 20-45 min | Fixed - legacy Bedrock/Force `GenerateMaze.display` layout restored |
+| Done | `riteOfInfusion` consumes ingredient on power failure | 5-10 min | Fixed — see bug #2 |
+| Done | Familiar damage redirection free mitigation on small hits | 10-20 min | Fixed — see bug #3 |
+| Done | TreefydEntity owner UUID crashes on corrupt save | 5 min | Fixed — see bug #5 |
+| Done | Mirror World missing from climate-rite exclusion list | 2 min | Fixed — see bug #6 |
+| Done | Spectral familiar ore search misses deepslate range | 20-30 min | Fixed — see bug #4 |
+| Done | Verify rowan placed-feature biome modifier injection | 15-30 min | Already injected — see bug #7 |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
 
 ---
@@ -89,11 +95,73 @@ Current state:
 Remaining gap:
 - The original tile-entity ritual queue, upkeep lifecycle, and abort/refund behavior are only partially restored.
 - The Charging family is functionally back now, but it still runs through the port's simplified active-ritual queue and refund/upkeep handling rather than the full original tile-entity rite registry.
+- `RitualTransaction` is a clear improvement but still consumes altar power first, then offerings, with no rollback path. A post-commit failure can still lose resources. Stronger pattern: `validate → prepareEffect → commit → applyEffect`. Queuing and rollback data should also be stored before final resource consumption.
+- `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` remain static maps keyed by dimension — session memory, not saved world state. Long-running rituals can still vanish on server stop/reload after consuming resources. Use level `SavedData`, a dimension attachment, or a ritual-anchor block entity. At minimum, treat shutdown/unload as an abort and refund stored sacrificed ingredients.
 - See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
 Files:
 - `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
 - `src/main/java/com/emoniph/witchery/events/RitualEvents.java`
+
+---
+
+### 2. `riteOfInfusion` consumes dropped ingredient on power failure — Fixed
+
+`riteOfInfusion` now returns `boolean`. On power failure it returns `false`; on success `true`. All four `dispatchSmall` call sites changed from `riteOfInfusion(...); return successResult()` to `return matchedResult(riteOfInfusion(...))`, so a failed power check no longer reports success and the dropped ingredient is no longer consumed.
+
+Files:
+- `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
+
+---
+
+### 3. Familiar damage redirection gives free mitigation on small hits — Fixed
+
+`event.setNewDamage(...)` is now inside the `redirectedDamage >= 1.0F` block alongside `familiar.hurt(...)`. Player damage is only reduced when the familiar actually receives the hit; sub-1.0 redirections no longer silently discount player damage for free.
+
+Files:
+- `src/main/java/com/emoniph/witchery/events/FamiliarEvents.java`
+
+---
+
+### 4. Spectral familiar ore search misses modern below-zero ore layers — Fixed
+
+Two changes:
+
+1. **Arrival distance** (`SpectralFamiliarFindOreGoal`): distance check now uses `perch.getY()` instead of `this.familiar.getY()`, so the familiar must be vertically aligned with the perch before `finishSearch()` fires.
+
+2. **Ore search depth** (`SpectralFamiliarEntity`): search loop now starts from `level().getMinY()` instead of `y = 1`, covering deepslate layers. `SEARCH_SPECS` maxDepth ceilings updated for 1.21.11 distributions: Diamond/Emerald 16, Gold 32, Iron 72, Redstone 16, Lapis 64, Coal 128.
+
+Files:
+- `src/main/java/com/emoniph/witchery/entity/familiar/SpectralFamiliarFindOreGoal.java`
+- `src/main/java/com/emoniph/witchery/entity/familiar/SpectralFamiliarEntity.java`
+
+---
+
+### 5. `TreefydEntity` owner UUID loading can crash on corrupt saves — Fixed
+
+`readAdditionalSaveData` now parses `OwnerUUID` inside a `try/catch (IllegalArgumentException)` matching the same pattern used for ignored-player and ignored-creature UUIDs. A corrupted or legacy owner string sets `ownerUuid = null` rather than crashing entity loading.
+
+Files:
+- `src/main/java/com/emoniph/witchery/entity/TreefydEntity.java`
+
+---
+
+### 6. Mirror World not excluded from climate-change rites — Fixed
+
+`WitcheryDimensions.MIRROR_WORLD` added to the `canPerformClimateRite` rejection list alongside Nether, End, Spirit World, and Torment. Climate-change rites now fail immediately in Mirror World, consistent with its tick handler suppressing weather.
+
+Files:
+- `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
+
+---
+
+### 7. Rowan placed-feature injection into biomes — Already present, not a bug
+
+Verified: `witchery:rowan_tree` is injected by two existing biome modifiers:
+- `data/neoforge/biome_modifier/witchery_forest.json` — `#minecraft:is_forest` biomes
+- `data/neoforge/biome_modifier/witchery_cold.json` — `#minecraft:is_taiga` and `#witchery:is_cold` biomes
+
+The concern in the original notes was based on incomplete inspection. No action required.
 
 ---
 
@@ -194,6 +262,7 @@ The Banshee itself is closer too: direct 1.7.2 comparison showed the old mob sti
 ### 10. Broom forced-hover controls drifted downward too aggressively - Fixed / verify
 
 `BroomEntity` now uses a movement model closer to the 1.7.10 broom: forward input drives acceleration, rider pitch controls lift, owl-familiar strafe support is restored, the mounted broom no longer applies a constant hover-drop, and riding now cancels fall damage again. `BroomItem` also remounts only empty nearby brooms.
+The follow-up snap-back bug from riding that updated model is now addressed too: ridden brooms predict the old pitch/forward movement on the controlling client, while the server accepts the normal controlled-vehicle position packet instead of running a second independent ridden simulation that could pull the broom back toward its spawn point. The client-side control path also reads synced Soaring/Owl state for the original speed bonuses.
 
 ### 11. Dream Catcher sleep threshold was hardcoded - Fixed / verify
 

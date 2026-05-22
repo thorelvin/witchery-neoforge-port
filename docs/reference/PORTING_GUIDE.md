@@ -1,10 +1,10 @@
-# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.1
+# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.11
 
 This is the fast implementation manual. For exact API gotchas, search `docs/reference/PORTING_NOTES.md` and `docs/reference/API_MAP.md`.
 
 ## Goal
 
-Build a working, feature-faithful Witchery fan port on modern NeoForge 1.21.1.
+Build a working, feature-faithful Witchery fan port on modern NeoForge 1.21.11.
 
 - Preserve player-facing behavior where useful.
 - Use modern NeoForge architecture where old APIs are obsolete.

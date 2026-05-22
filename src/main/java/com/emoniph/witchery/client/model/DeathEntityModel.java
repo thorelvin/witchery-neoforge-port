@@ -79,9 +79,10 @@ public class DeathEntityModel extends EntityModel<net.minecraft.client.renderer.
         PartDefinition rightArmDef = root.addOrReplaceChild("right_arm",
             CubeListBuilder.create().texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4),
             PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+        // scythe rotation matches original ModelDeath: setRotation(0,0,0) — no rotation
         PartDefinition scytheDef = rightArmDef.addOrReplaceChild("scythe",
             CubeListBuilder.create(),
-            PartPose.offsetAndRotation(-6.0F, 10.0F, 0.0F, (float)(Math.PI / 2), 0.0F, 0.0F));
+            PartPose.offset(-6.0F, 10.0F, 0.0F));
 
         // Scythe Shaft
         scytheDef.addOrReplaceChild("shaft",
@@ -89,8 +90,9 @@ public class DeathEntityModel extends EntityModel<net.minecraft.client.renderer.
             PartPose.ZERO);
 
         // Scythe Blade
+        // blade: original depth=0, use 1 to avoid baking crash in 1.21.11
         scytheDef.addOrReplaceChild("blade",
-            CubeListBuilder.create().texOffs(36, 0).addBox(0.0F, -16.0F, 0.0F, 13, 4, 0),
+            CubeListBuilder.create().texOffs(36, 0).addBox(0.0F, -16.0F, -0.5F, 13, 4, 1),
             PartPose.ZERO);
 
         return LayerDefinition.create(mesh, 64, 64);
@@ -114,7 +116,11 @@ public class DeathEntityModel extends EntityModel<net.minecraft.client.renderer.
         rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
         leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
 
-        scythe.yRot = -0.8F;
+        // Original render: rotationPointX=0, rotationPointY=8.1, rotationPointZ=-0.8, rotateAngleX=PI/2
+        scythe.x = 0.0F;
+        scythe.y = 8.1F;
+        scythe.z = -0.8F;
+        scythe.yRot = 0.0F;
         scythe.zRot = 0.0F;
         scythe.xRot = (float) (Math.PI / 2);
 

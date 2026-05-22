@@ -101,7 +101,7 @@ Adds witchcraft, brews, rituals, familiars, vampires, werewolves, and more.
 [[dependencies.${mod_id}]]
     modId="patchouli"
     type="optional"
-    versionRange="[1.21.1-75,)"
+    versionRange="*"
     ordering="AFTER"
     side="BOTH"
 

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -76,8 +77,9 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
         // Target players who are vampires or werewolves
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(
                 this, Player.class, 10, true, false, (e, sl) -> isWitchyPlayer(e)));
-        // Target vanilla witches
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<net.minecraft.world.entity.monster.Witch>(this, Witch.class, true));
+        // Target vanilla witches and Witchery coven witches
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Witch.class, true));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CovenWitchEntity.class, true));
     }
 
     private boolean isWitchyPlayer(LivingEntity entity) {

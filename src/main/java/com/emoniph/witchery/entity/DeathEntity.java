@@ -1,21 +1,16 @@
 package com.emoniph.witchery.entity;
 
-import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
@@ -25,8 +20,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -69,23 +62,6 @@ public class DeathEntity extends Monster {
     // Death uses no AI goals — all behaviour is tick-driven
     @Override
     protected void registerGoals() {}
-
-    // Spawn Binky when Death first appears
-    @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor levelAccessor, DifficultyInstance difficulty,
-                                        EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnData) {
-        SpawnGroupData data = super.finalizeSpawn(levelAccessor, difficulty, spawnType, spawnData);
-        if (levelAccessor instanceof ServerLevel sl) {
-            BinkyEntity binky = WitcheryEntities.BINKY.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-            if (binky != null) {
-                binky.setPos(getX(), getY(), getZ());
-                binky.finalizeSpawn(sl, difficulty, EntitySpawnReason.MOB_SUMMONED, null);
-                sl.addFreshEntity(binky);
-                this.startRiding(binky);
-            }
-        }
-        return data;
-    }
 
     // ── Boss bar ──────────────────────────────────────────────────────────────
 

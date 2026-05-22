@@ -431,6 +431,8 @@
   "witchery.infusion.overworld.tooltip": "Infused with nature. Hastens growth and sharpens the senses.",
   "witchery.infusion.otherwhere.tooltip": "Infused with the void. Grants slow fall and heightened agility.",
   "witchery.infusion.infernal.tooltip": "Infused with darkness. Fire cannot harm you; strength flows freely.",
+  "item.witchery.debug_death_ward": "Debug Death Ward",
+  "item.witchery.debug_death_ward.tooltip": "QA charm: damage cannot drop you below one heart while it is in your inventory.",
   "entity.witchery.owl": "Owl",
   "entity.witchery.familiar_cat": "Witch's Cat",
   "entity.witchery.spectral_familiar": "Spectral Familiar",

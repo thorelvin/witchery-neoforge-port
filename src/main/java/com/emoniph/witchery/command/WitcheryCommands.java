@@ -18,6 +18,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
@@ -77,7 +78,7 @@ import java.util.List;
  * /witchery infusion <type>
  * /witchery wolfmastery <0-3>       — set wolf mastery level
  * /witchery soaring [ticks]         — grant soaring brew buff
- * /witchery familiar <type>         — set familiar type (owl/cat/toad/none)
+ * /witchery familiar <type>         — set familiar type (owl/cat/toad/spectral/none)
  * /witchery fullmoon                — advance time to next full-moon midnight
  * /witchery clear                   — wipe all witchery state from self
  * /witchery status                  — show own witchery data
@@ -95,7 +96,7 @@ public class WitcheryCommands {
     private static final List<String> INFUSION_TYPES =
             List.of("NONE", "LIGHT", "OVERWORLD", "OTHERWHERE", "INFERNAL");
     private static final List<String> FAMILIAR_TYPES =
-            List.of("none", "owl", "cat", "toad");
+            List.of("none", "owl", "cat", "toad", "spectral");
     private static final int SETUP_HOUSE_SIZE = 11;
     private static final int SETUP_FOUNDATION_DEPTH = 3;
     private static final int SETUP_CLEAR_HEIGHT = 7;
@@ -389,14 +390,26 @@ public class WitcheryCommands {
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         WitcheryPlayerData d = WitcheryAttachments.get(p);
-        if (type.equalsIgnoreCase("none")) {
+        String lower = type.toLowerCase(java.util.Locale.ROOT);
+        if (lower.equals("none")) {
             d.clearFamiliar();
             sync(p, d);
             src.sendSuccess(() -> Component.literal("Familiar cleared."), false);
+        } else if (lower.equals("owl") || lower.equals("cat") || lower.equals("toad") || lower.equals("spectral")) {
+            d.clearFamiliar();
+            d.setFamiliarType(lower);
+            sync(p, d);
+            if (p.level() instanceof ServerLevel sl) {
+                var familiar = FamiliarHelper.restoreBoundFamiliar(p, sl, p.getX(), p.getY() + 1, p.getZ());
+                if (familiar != null) {
+                    src.sendSuccess(() -> Component.literal("Familiar set to " + lower + " and spawned."), false);
+                } else {
+                    src.sendSuccess(() -> Component.literal("Familiar type set to " + lower + " (spawn failed — try /witchery familiar " + lower + " again or use the rite)."), false);
+                }
+            }
         } else {
             src.sendSuccess(() -> Component.literal(
-                    "Use the Rite of Familiar Binding in-game to bind a real familiar. "
-                    + "This command only supports clearing (type=none)."), false);
+                    "Unknown familiar type '" + type + "'. Valid types: owl, cat, toad, spectral, none."), false);
         }
         return 1;
     }

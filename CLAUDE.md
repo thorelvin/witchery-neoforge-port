@@ -38,7 +38,7 @@ Read only the doc needed for the task:
 - `docs/status/BUGS.md` - active bug list and priority order.
 - `docs/status/NEXT_TASKS.md` - recommended next implementation slices.
 - `docs/reference/PORTING_GUIDE.md` - quick implementation recipes and workflow.
-- `docs/reference/API_MAP.md` - 1.7.10 Forge to NeoForge API mapping reference. Some notes still say 1.21.1; project target is 1.21.11.
+- `docs/reference/API_MAP.md` - 1.7.10 Forge to NeoForge 1.21.11 API mapping reference.
 - `docs/reference/PORTING_NOTES.md` - chronological API gotchas; search before guessing.
 - `docs/reference/OBSCURE_MECHANICS.md` - obscure original behavior notes.
 - `docs/roadmap/CLAUDE_HANDOFF_CURRENT_SCOPE.md` - current additive gameplay scope, naming decisions, and source priority for Witch Forest / curse / structure / mob expansion work.

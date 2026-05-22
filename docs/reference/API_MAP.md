@@ -1,4 +1,4 @@
-# API Map — Old Forge 1.7.10 → NeoForge 1.21.1
+# API Map — Old Forge 1.7.10 → NeoForge 1.21.11
 
 Use this as a quick reference. For session-specific gotchas, search `PORTING_NOTES.md`.
 
@@ -84,7 +84,7 @@ Biome `features` arrays need the expected generation-step sub-array structure.
 
 ## Events
 
-| Old / issue | NeoForge 1.21.1 note |
+| Old / issue | NeoForge 1.21.11 note |
 |---|---|
 | `LivingDeathEvent` | Cancellable on game bus |
 | `LivingDamageEvent.Pre` | Use for damage before armor reduction |

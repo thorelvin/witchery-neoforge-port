@@ -120,7 +120,8 @@ public class WitcheryItems {
         };
     }
     // ── Death boss drops (outfit items already registered above as DEATHS_HOOD/ROBE/SHOES/HAND)
-    public static final DeferredItem<Item> BINKYS_SKULL = ITEMS.registerSimpleItem("binkys_skull");
+    public static final DeferredItem<Item> BINKYS_SKULL =
+            ITEMS.register("binkys_skull", id -> new com.emoniph.witchery.item.BinkysSkullItem(itemProps(id)));
 
     // ── Flame Imp items ────────────────────────────────────────────────────────
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> DEMONIC_CONTRACT =
@@ -166,6 +167,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> CHALK_OTHERWHERE = ITEMS.register("chalk_otherwhere", id -> new com.emoniph.witchery.item.ChalkItem(() -> WitcheryBlocks.CIRCLE_OTHERWHERE.get(), itemProps(id).durability(64)));
     public static final DeferredItem<Item> CHALK_INFERNAL = ITEMS.register("chalk_infernal", id -> new com.emoniph.witchery.item.ChalkItem(() -> WitcheryBlocks.CIRCLE_INFERNAL.get(), itemProps(id).durability(64)));
     public static final DeferredItem<Item> MYSTIC_BRANCH = ITEMS.register("mystic_branch", id -> new MysticBranchItem(itemProps(id)));
+    public static final DeferredItem<Item> DEBUG_DEATH_WARD =
+            ITEMS.register("debug_death_ward", id -> new DebugDeathWardItem(itemProps(id)));
     public static final DeferredItem<Item> TAGLOCK_KIT = ITEMS.register("taglock_kit", id -> new com.emoniph.witchery.item.TaglockKitItem(itemProps(id).stacksTo(16)));
 
     // ── Poppets ────────────────────────────────────────────────────────────────

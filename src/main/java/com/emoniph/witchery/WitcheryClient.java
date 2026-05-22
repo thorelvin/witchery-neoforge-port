@@ -38,7 +38,6 @@ import java.util.function.Supplier;
 public class WitcheryClient {
     public static final List<Map.Entry<ModelLayerLocation, Supplier<LayerDefinition>>> LAYER_DEFS = List.of(
         Map.entry(WitchesOvenModel.LAYER_LOCATION,    WitchesOvenModel::createBodyLayer),
-        Map.entry(KettleModel.LAYER_LOCATION,          KettleModel::createBodyLayer),
         Map.entry(DistilleryModel.LAYER_LOCATION,      DistilleryModel::createBodyLayer),
         Map.entry(PoppetShelfModel.LAYER_LOCATION,     PoppetShelfModel::createBodyLayer),
         Map.entry(CandelabraModel.LAYER_LOCATION,      CandelabraModel::createBodyLayer),
@@ -68,7 +67,7 @@ public class WitcheryClient {
         Map.entry(HobgoblinModel.LAYER_LOCATION,       HobgoblinModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_BANSHEE,            GhostModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_SPECTRE,            GhostModel::createBodyLayer),
-        Map.entry(GhostModel.LAYER_POLTERGEIST,        GhostModel::createBodyLayer),
+        Map.entry(PoltergeistModel.LAYER_LOCATION,     PoltergeistModel::createBodyLayer),
         Map.entry(TreefydModel.LAYER_LOCATION,         TreefydModel::createBodyLayer),
         Map.entry(EntModel.LAYER_LOCATION,             EntModel::createBodyLayer),
         Map.entry(MandrakeEntityModel.LAYER_LOCATION,  MandrakeEntityModel::createBodyLayer),

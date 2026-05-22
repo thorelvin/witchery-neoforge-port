@@ -2,9 +2,13 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -14,6 +18,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -36,6 +42,33 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private final List<StoredPlayer> recentPlayers = new ArrayList<>();
     private String customName = "";
     private int openCount = 0;
+    private int openTimer = 0;
+
+    // Client-side animation state — openCount is synced from server via handleUpdateTag
+    public float lidAngle = 0f;
+    public float oLidAngle = 0f;
+
+    public float getOpenNess(float partialTick) {
+        return Mth.lerp(partialTick, oLidAngle, lidAngle);
+    }
+
+    public static void clientTick(Level level, BlockPos pos, BlockState state, LeechChestBlockEntity be) {
+        be.oLidAngle = be.lidAngle;
+        if (be.openCount > 0) {
+            be.lidAngle = Math.min(1.0f, be.lidAngle + 0.1f);
+        } else {
+            be.lidAngle = Math.max(0.0f, be.lidAngle - 0.1f);
+        }
+    }
+
+    public static void serverTick(Level level, BlockPos pos, BlockState state, LeechChestBlockEntity be) {
+        if (be.openTimer > 0) {
+            be.openTimer--;
+            if (be.openTimer == 0) {
+                be.updateOpenCount(0);
+            }
+        }
+    }
 
     public LeechChestBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.LEECH_CHEST.get(), pos, state);
@@ -189,31 +222,39 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     }
 
     public void startOpen(Player player) {
-        if (isRemoved() || player.isSpectator()) {
-            return;
-        }
-        updateOpenCount(openCount + 1);
+        if (isRemoved() || player.isSpectator()) return;
+        openTimer = 200;
+        updateOpenCount(Math.max(1, openCount));
     }
 
     public void stopOpen(Player player) {
-        if (isRemoved() || player.isSpectator()) {
-            return;
-        }
-        updateOpenCount(openCount - 1);
+        if (isRemoved() || player.isSpectator()) return;
+        openTimer = 0;
+        updateOpenCount(Math.max(0, openCount - 1));
     }
 
     private void updateOpenCount(int newOpenCount) {
-        int clamped = Math.max(0, newOpenCount);
-        if (level == null || clamped == openCount) {
-            openCount = clamped;
-            return;
-        }
+        openCount = Math.max(0, newOpenCount);
+        if (level == null || level.isClientSide()) return;
+        BlockState blockState = getBlockState();
+        level.updateNeighborsAt(worldPosition, blockState.getBlock());
+        level.updateNeighborsAt(worldPosition.below(), blockState.getBlock());
+        sync(); // sends AnimOpen to clients via getUpdatePacket / getUpdateTag
+    }
 
-        openCount = clamped;
-        BlockState state = getBlockState();
-        level.updateNeighborsAt(worldPosition, state.getBlock());
-        level.updateNeighborsAt(worldPosition.below(), state.getBlock());
-        level.sendBlockUpdated(worldPosition, state, state, 3);
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("AnimOpen", openCount > 0 ? 1 : 0);
+        if (!customName.isEmpty()) {
+            tag.putString(KEY_CUSTOM_NAME, customName);
+        }
+        return tag;
     }
 
     @Override
@@ -244,6 +285,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         ContainerHelper.loadAllItems(tag, items);
         customName = tag.getStringOr(KEY_CUSTOM_NAME, "");
         loadStoredPlayers(tag);
+        openCount = tag.getIntOr("AnimOpen", 0);
     }
 
     private void saveStoredPlayers(net.minecraft.world.level.storage.ValueOutput tag) {

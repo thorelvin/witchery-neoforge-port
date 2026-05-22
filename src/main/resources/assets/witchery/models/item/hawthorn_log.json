@@ -1,3 +1,6 @@
 {
-  "parent": "witchery:block/hawthorn_log"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/hawthorn_log"
+  }
 }

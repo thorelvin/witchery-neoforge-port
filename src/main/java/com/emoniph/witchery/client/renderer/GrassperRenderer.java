@@ -78,10 +78,11 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, null);
 
         if (!state.itemRenderState.isEmpty()) {
-            ps.translate(0.0, 0.80, 0.0);
-            ps.mulPose(Axis.ZP.rotationDegrees(180));
+            // translate in ZP-flipped space: item world-y = 1.5 - 1.10 = 0.40, sits inside the petal cup
+            ps.translate(0.0, 1.10, 0.0);
+            ps.mulPose(Axis.ZP.rotationDegrees(180)); // un-flip for normal item orientation
             ps.mulPose(Axis.YP.rotationDegrees(state.rotation * 0.5f));
-            ps.scale(0.9f, 0.9f, 0.9f);
+            ps.scale(2.0f, 2.0f, 2.0f); // GROUND context is already ~0.5x; 2.0x gives ~1x visible size
             state.itemRenderState.submit(ps, collector, state.lightCoords,
                     net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
         }

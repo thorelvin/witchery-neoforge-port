@@ -2,64 +2,61 @@
   "render_type": "minecraft:translucent",
   "parent": "block/block",
   "textures": {
-    "4": "witchery:block/crystal_ball",
-    "particle": "witchery:block/crystal_ball"
+    "ball": "minecraft:block/purple_stained_glass",
+    "stand": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/purple_stained_glass"
   },
   "elements": [
     {
       "name": "CrystalNorth",
       "from": [5.5, 1.5, 5.5],
       "to": [10.5, 6.5, 10.5],
-      "rotation": {"angle": 0, "axis": "y", "origin": [13.5, 9.5, 13.5]},
       "faces": {
-        "north": {"uv": [1, 1, 6, 6], "texture": "#4"},
-        "east": {"uv": [6, 0, 11, 5], "texture": "#4"},
-        "south": {"uv": [2, 1, 7, 6], "texture": "#4"},
-        "west": {"uv": [6, 0, 11, 5], "texture": "#4"},
-        "up": {"uv": [1, 1, 6, 6], "texture": "#4"},
-        "down": {"uv": [2, 1, 7, 6], "texture": "#4"}
+        "north": {"uv": [0, 0, 5, 5], "texture": "#ball"},
+        "east":  {"uv": [0, 0, 5, 5], "texture": "#ball"},
+        "south": {"uv": [0, 0, 5, 5], "texture": "#ball"},
+        "west":  {"uv": [0, 0, 5, 5], "texture": "#ball"},
+        "up":    {"uv": [0, 0, 5, 5], "texture": "#ball"},
+        "down":  {"uv": [0, 0, 5, 5], "texture": "#ball"}
       }
     },
     {
       "name": "HolderDown",
       "from": [5.5, 0, 5.5],
       "to": [10.5, 1, 10.5],
-      "rotation": {"angle": 0, "axis": "y", "origin": [15.5, 8, 13.5]},
       "faces": {
-        "north": {"uv": [6, 9, 9, 10], "texture": "#4"},
-        "east": {"uv": [4, 9, 9, 10], "texture": "#4"},
-        "south": {"uv": [5, 9, 10, 10], "texture": "#4"},
-        "west": {"uv": [6, 8, 11, 9], "texture": "#4"},
-        "up": {"uv": [5, 9, 10, 14], "texture": "#4"},
-        "down": {"uv": [9, 9, 14, 14], "texture": "#4"}
+        "north": {"uv": [0, 0, 5, 1], "texture": "#stand"},
+        "east":  {"uv": [0, 0, 5, 1], "texture": "#stand"},
+        "south": {"uv": [0, 0, 5, 1], "texture": "#stand"},
+        "west":  {"uv": [0, 0, 5, 1], "texture": "#stand"},
+        "up":    {"uv": [0, 0, 5, 5], "texture": "#stand"},
+        "down":  {"uv": [0, 0, 5, 5], "texture": "#stand"}
       }
     },
     {
       "name": "HolderUP",
       "from": [6, 1, 6],
       "to": [10, 2, 10],
-      "rotation": {"angle": 0, "axis": "y", "origin": [13.5, 9, 13.5]},
       "faces": {
-        "north": {"uv": [6, 8, 10, 9], "texture": "#4"},
-        "east": {"uv": [4, 8, 8, 9], "texture": "#4"},
-        "south": {"uv": [5, 8, 9, 9], "texture": "#4"},
-        "west": {"uv": [4, 8, 8, 9], "texture": "#4"},
-        "up": {"uv": [10, 10, 14, 14], "texture": "#4"},
-        "down": {"uv": [7, 10, 11, 14], "texture": "#4"}
+        "north": {"uv": [0, 0, 4, 1], "texture": "#stand"},
+        "east":  {"uv": [0, 0, 4, 1], "texture": "#stand"},
+        "south": {"uv": [0, 0, 4, 1], "texture": "#stand"},
+        "west":  {"uv": [0, 0, 4, 1], "texture": "#stand"},
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#stand"},
+        "down":  {"uv": [0, 0, 4, 4], "texture": "#stand"}
       }
     },
     {
       "name": "crystalInner",
       "from": [6.5, 2.6, 6.5],
       "to": [9.5, 5.6, 9.5],
-      "rotation": {"angle": 0, "axis": "y", "origin": [14.5, 10.6, 14.5]},
       "faces": {
-        "north": {"uv": [1, 7, 4, 10], "texture": "#4"},
-        "east": {"uv": [1, 7, 4, 10], "texture": "#4"},
-        "south": {"uv": [1, 6, 4, 9], "texture": "#4"},
-        "west": {"uv": [1, 6, 4, 9], "texture": "#4"},
-        "up": {"uv": [0, 6, 3, 9], "texture": "#4"},
-        "down": {"uv": [0, 7, 3, 10], "texture": "#4"}
+        "north": {"uv": [0, 0, 3, 3], "texture": "#ball"},
+        "east":  {"uv": [0, 0, 3, 3], "texture": "#ball"},
+        "south": {"uv": [0, 0, 3, 3], "texture": "#ball"},
+        "west":  {"uv": [0, 0, 3, 3], "texture": "#ball"},
+        "up":    {"uv": [0, 0, 3, 3], "texture": "#ball"},
+        "down":  {"uv": [0, 0, 3, 3], "texture": "#ball"}
       }
     }
   ]

@@ -94,8 +94,9 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
                 PartPose.offsetAndRotation(1, -8, 3,
                         0.3047198f, -0.6698132f, -0.6283185f));
 
+        // wing_left uses same box as wing_right; the PI+0.67 yRot mirrors it to the left side
         root.addOrReplaceChild("wing_left",
-                CubeListBuilder.create().texOffs(93, 0).mirror().addBox(-14, 0, 0, 14, 21, 1),
+                CubeListBuilder.create().texOffs(93, 0).addBox(0, 0, 0, 14, 21, 1),
                 PartPose.offsetAndRotation(-1, -8, 3,
                         -0.3047198f, (float) Math.PI + 0.6698132f, 0.6283185f));
 

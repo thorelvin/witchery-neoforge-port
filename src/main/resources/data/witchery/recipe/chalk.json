@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "a": {
-      "item": "witchery:wood_ash"
-    },
-    "g": {
-      "item": "witchery:gypsum"
-    },
-    "t": {
-      "item": "witchery:tear_of_goddess"
-    }
+    "a": "witchery:wood_ash",
+    "g": "witchery:gypsum",
+    "t": "witchery:tear_of_goddess"
   },
   "pattern": [
     "ata",

@@ -1,4 +1,4 @@
-# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.1
+# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.11
 
 ## Project Goal
 
@@ -12,7 +12,7 @@ Old code is used as a **behavior reference only**, not as code to paste.
 
 1. One subsystem at a time — never port the whole mod in one step.
 2. Do not delete assets, data files, lang files, or textures unless explicitly told.
-3. Reuse decompiled source logic freely — adapt to NeoForge 1.21.1 APIs as needed. Rewrite only when the original approach is poor or the API has fundamentally changed.
+3. Reuse decompiled source logic freely — adapt to NeoForge 1.21.11 APIs as needed. Rewrite only when the original approach is poor or the API has fundamentally changed.
 4. After every coding milestone, confirm `gradlew compileJava` passes.
 5. Keep PORTING_NOTES.md updated with API gotchas after each milestone.
 6. Keep FEATURE_MATRIX.md status updated.
@@ -90,7 +90,7 @@ See **OLD_TO_NEW_API_MAP.md** for the full table and **PORTING_NOTES.md** for se
 | Old dimension provider | JSON in `data/modid/dimension/` |
 ---
 
-# Full API Map — Old Forge 1.7.10 → NeoForge 1.21.1
+# Full API Map — Old Forge 1.7.10 → NeoForge 1.21.11
 
 ## Registration
 
@@ -114,7 +114,7 @@ See **OLD_TO_NEW_API_MAP.md** for the full table and **PORTING_NOTES.md** for se
 | `ISidedInventory` | `IItemHandler` capability or `WorldlyContainer` |
 | `TileEntitySpecialRenderer` | `BlockEntityRenderer<T>` |
 | `RenderShape.ENTITYBLOCK_ANIMATED` | Same — `BaseEntityBlock.getRenderShape()` |
-| Chest-like container (9 slots) | `new ChestMenu(MenuType.GENERIC_9x1, id, playerInv, container, 1)` — `oneRow()` overloads don't accept a container in 1.21.1 |
+| Chest-like container (9 slots) | `new ChestMenu(MenuType.GENERIC_9x1, id, playerInv, container, 1)` — `oneRow()` overloads don't accept a container in 1.21.11 |
 
 ---
 
@@ -129,7 +129,7 @@ See **OLD_TO_NEW_API_MAP.md** for the full table and **PORTING_NOTES.md** for se
 | `GL11.glRotatef(180, 0, 0, 1)` | `poseStack.mulPose(Axis.ZP.rotationDegrees(180))` |
 | `GL11.glScalef(0.0625, ...)` | **Do NOT add** — `ModelPart` divides by 16 internally |
 | `RenderType.entityCutout` | Same; use `entityCutoutNoCull` for thin flat-face models |
-| `renderToBuffer(buffer, light, overlay)` | `renderToBuffer(poseStack, buffer, light, overlay)` — **PoseStack first** in 1.21.1 |
+| `renderToBuffer(buffer, light, overlay)` | `renderToBuffer(poseStack, buffer, light, overlay)` — **PoseStack first** in 1.21.11 |
 | `AddLayers.getSkins()` | Returns `Set<PlayerSkin.Model>` not `Set<String>` |
 | `EntityRenderDispatcher.getRenderer(entity)` | Returns raw `EntityRenderer<Entity>` — cast via `Object` then `instanceof` |
 
@@ -170,7 +170,7 @@ Textures were painted for the original UV layout; wrong UV = garbled or invisibl
 |---|---|
 | `World.getBlockId(x,y,z)` | `Level.getBlockState(pos)` |
 | `World.setBlock(x,y,z,block)` | `Level.setBlockAndUpdate(pos, state)` |
-| `entity.setSecondsOnFire(n)` | `entity.igniteForTicks(n * 20)` — renamed in 1.21.1 |
+| `entity.setSecondsOnFire(n)` | `entity.igniteForTicks(n * 20)` — renamed in 1.21.11 |
 | Force chunk generation | `serverLevel.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true)` — synchronous on server thread |
 | Set weather | `serverLevel.setWeatherParameters(clearDuration, rainDuration, isRaining, isThundering)` |
 
@@ -178,7 +178,7 @@ Textures were painted for the original UV layout; wrong UV = garbled or invisibl
 
 ## Dimensions
 
-Custom dimensions are fully data-driven in 1.21.1:
+Custom dimensions are fully data-driven in 1.21.11:
 - `data/<modid>/dimension_type/<name>.json` — physical properties (ambient light, ceiling, skylight, effects)
 - `data/<modid>/dimension/<name>.json` — references dimension type + chunk generator
 - `data/<modid>/worldgen/biome/<name>.json` — custom biome (features array must be 10 sub-arrays, not bare `[]`)

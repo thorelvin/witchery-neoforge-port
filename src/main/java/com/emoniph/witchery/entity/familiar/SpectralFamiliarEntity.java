@@ -33,14 +33,17 @@ import java.util.List;
  */
 public class SpectralFamiliarEntity extends FamiliarEntity {
 
+    // maxDepth is the upper Y bound (exclusive) of the search scan.
+    // The scan starts from level.getMinY() so deepslate ore layers are included.
+    // Values reflect the peak distribution ceiling for each ore in 1.21.11.
     private static final List<SearchSpec> SEARCH_SPECS = List.of(
-            new SearchSpec(Items.DIAMOND, BlockTags.DIAMOND_ORES, 14),
-            new SearchSpec(Items.EMERALD, BlockTags.EMERALD_ORES, 14),
-            new SearchSpec(Items.GOLD_INGOT, BlockTags.GOLD_ORES, 30),
-            new SearchSpec(Items.IRON_INGOT, BlockTags.IRON_ORES, 64),
-            new SearchSpec(Items.REDSTONE, BlockTags.REDSTONE_ORES, 16),
-            new SearchSpec(Items.LAPIS_LAZULI, BlockTags.LAPIS_ORES, 30),
-            new SearchSpec(Items.COAL, BlockTags.COAL_ORES, 64)
+            new SearchSpec(Items.DIAMOND,    BlockTags.DIAMOND_ORES,  16),
+            new SearchSpec(Items.EMERALD,    BlockTags.EMERALD_ORES,  16),
+            new SearchSpec(Items.GOLD_INGOT, BlockTags.GOLD_ORES,     32),
+            new SearchSpec(Items.IRON_INGOT, BlockTags.IRON_ORES,     72),
+            new SearchSpec(Items.REDSTONE,   BlockTags.REDSTONE_ORES, 16),
+            new SearchSpec(Items.LAPIS_LAZULI, BlockTags.LAPIS_ORES,  64),
+            new SearchSpec(Items.COAL,       BlockTags.COAL_ORES,    128)
     );
 
     @Nullable
@@ -173,7 +176,7 @@ public class SpectralFamiliarEntity extends FamiliarEntity {
         BlockPos best = null;
         double bestDistance = Double.MAX_VALUE;
 
-        for (int y = 1; y < spec.maxDepth(); y++) {
+        for (int y = this.level().getMinY(); y < spec.maxDepth(); y++) {
             for (int x = origin.getX() - 4; x < origin.getX() + 4; x++) {
                 for (int z = origin.getZ() - 4; z < origin.getZ() + 4; z++) {
                     BlockPos orePos = new BlockPos(x, y, z);

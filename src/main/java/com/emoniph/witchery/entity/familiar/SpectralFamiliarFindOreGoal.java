@@ -62,7 +62,7 @@ public class SpectralFamiliarFindOreGoal extends Goal {
             return;
         }
 
-        if (this.familiar.distanceToSqr(perch.getX() + 0.5, this.familiar.getY(), perch.getZ() + 0.5) > 2.0) {
+        if (this.familiar.distanceToSqr(perch.getX() + 0.5, perch.getY(), perch.getZ() + 0.5) > 2.0) {
             moveTowardPerch();
             return;
         }

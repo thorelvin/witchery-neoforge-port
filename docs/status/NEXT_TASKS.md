@@ -16,15 +16,15 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `altar` | Should be 2×3 multiblock; item graphic wrong (just a square); top should be red | Large |
 | `distillery` | Retest machine GUI after explicit source-region blit fix | Low |
 | `spinning_wheel` | Retest machine GUI after explicit source-region blit fix | Low |
-| `witches_oven` | Retest machine GUI after explicit source-region blit fix; faces left when placed | Medium |
-| `crystal_ball` | Must be transparent (currently solid pink-black or wrong) | Small |
-| `coffin` | Shows only one side in inventory | Medium |
+| `witches_oven` | Retest machine GUI after explicit source-region blit fix | Low |
+| `crystal_ball` | ✅ Now purple stained-glass orb on polished-blackstone stand | Small |
+| `coffin` | ✅ Item now 3D box using coffin_head.png UV regions; verify in-game angles | Medium |
 | `alluring_skull` | Dedicated animated skull-head render still approximated through static block models | Low |
 | `demon_heart` | Retest custom model no-cull face fill in-world | Low |
 | `chalice` | Final GUI pose / placed-block verification | Low |
 | `dream_catcher` | Places on wrong surface (left side instead of face clicked) | Small |
 | `kettle` | Missing 3D rope/string model detail | Small |
-| `poppet_shelf` | Poppets don't visually appear on top of shelf | Medium |
+| `poppet_shelf` | ✅ Items now visible; verify in-game positioning | Low |
 | `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
 | `grassper` | Wrong texture wrapping / should hold items | Medium |
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
@@ -68,7 +68,39 @@ Reflected overworld terrain with hostile player-clone inhabitants.
 
 ---
 
-### 4. Witches' Primer / compendium completeness pass (medium, staged)
+### 4a. Debug command: add `spectral` to `/witchery familiar` suggestions — Done
+
+`"spectral"` added to `FAMILIAR_TYPES` suggestions. `setFamiliar` handler now accepts `owl`, `cat`, `toad`, and `spectral` — stores the type via `setFamiliarType`, then calls `FamiliarHelper.restoreBoundFamiliar` to spawn the entity near the player. `"none"` still clears. Unknown types get an error message listing valid options.
+
+---
+
+### 4b. Small code quality items (deferred — after parity complete)
+
+These are individually small but accumulate maintenance debt. **Do not action until all major parity work (Mirror World, Custom Brew, Spirit World gaps) is stable** — they carry non-zero risk of altering observable behavior mid-sprint.
+
+- **`ConcentratedBatBallRecipe.assemble`** calls `matches(input, null)`. Current `matches` ignores the level so it works, but passing `null` into a `Level`-typed API is brittle. Extract a private pattern-check method called from both `matches` and `assemble`.
+- **`TaglockKitItem.isPlayerTaglock`** returns `true` on unfilled stacks because it only checks whether there is no entity type tag. Should be: `return isFilled(stack) && getBoundEntityTypeId(stack).isEmpty()`.
+- **`MutatingSprigItem`** repeats the same "spawn effects + damage held item + return consume" block for every successful transform. Extract a `finishUse(ctx, pos)` helper. Also, `tryCreateWormwood` checks for Wispy Cotton but calls `clearHorizontalMoss` — rename to `clearHorizontalRing` to match its actual behavior.
+- **Registry classes** contain many hard-coded `"witchery"` string literals. An `id(String path)` helper would reduce copy/paste mistakes across blocks, entities, dimensions, and worldgen.
+
+---
+
+### 4c. RitualExecutor decomposition (deferred — after parity complete)
+
+**Do not start until Mirror World, Custom Brew, and all open ritual-parity bugs are closed.** Trigger-order changes in this file can silently break which rite fires; doing it mid-parity-sprint is high risk.
+
+`RitualExecutor` currently handles dispatch, precondition checking, item/power transactions, active ritual queueing, terrain effects, curse logic, climate-change biome rewriting, and utility scans — too many jobs in one file. There are also duplicated imports and a dead `isRawFood` helper.
+
+`RitualTransaction` is a good first extraction; the next step is a `RitualDefinition` or per-rite handler registry so each rite owns its own validation, cost, and effect logic. Also strengthen `RitualTransaction` to validate → prepare → commit → apply order with a rollback path before this decomposition begins.
+
+Priority for decomposition once unblocked: curse logic → active-rite queueing → terrain/climate effects → utility scans.
+
+Files:
+- `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
+
+---
+
+### 5. Witches' Primer / compendium completeness pass (medium, staged)
 
 High-value player-discovery gaps to close in the in-game guide:
 
@@ -131,6 +163,27 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 ---
 
 ## Completed this session ✅
+
+### Broom ridden movement sync (2026-05-22)
+
+- `BroomEntity` now avoids the ridden-flight client/server tug-of-war that could pull the player back toward the broom's spawn point. The controlling client predicts the old Witchery forward/pitch flight model, while the server accepts the normal controlled-vehicle movement packet instead of running a second independent ridden simulation. The client control path also reads synced Soaring/Owl state for broom-speed bonuses. `./gradlew.bat compileJava processResources` passes.
+
+---
+
+### Crystal ball, coffin item, leech chest (2026-05-22)
+
+- `crystal_ball.json` block/item model — replaced yellow placeholder texture with `minecraft:block/purple_stained_glass` (translucent orb) + `polished_blackstone` (stand). `render_type: translucent` already present, `noOcclusion()` already set.
+- `models/item/coffin.json` — replaced flat `item/generated` sprite with a 3D `block/block` box using `coffin_head.png` texture. UV regions calculated from CoffinModel texOffs offsets (lid top, side wall, end wall). Shows all 3 faces in GUI.
+- **Leech chest open animation**: `startOpen(player)` now called in `LeechChestBlock.useWithoutItem`; `updateOpenCount` sends `level.blockEvent(id=1, param=openCount)` to sync open state to client; `triggerEvent` sets `clientOpenCount`; server ticker auto-closes after 200 ticks (10 s) of inactivity; client ticker animates `lidAngle`; `LeechChestModel.setLidAngle` rotates all 4 lid quadrants by `angle * HALF_PI` (yRot). Inside texture becomes visible once lid opens.
+
+---
+
+### Renderer fixes (2026-05-22)
+
+- `WitchesOvenRenderer` — `state.yaw` changed from `facing.getOpposite().toYRot()` to `facing.toYRot()`; oven no longer faces 180° backward
+- `PoppetShelfRenderer` — item y changed from `0.60f` to `-0.15f`; after ZP-180 flip positive local y = downward, so items were rendering below the floor; negative y places them above the shelf surface
+
+---
 
 ### Item Review — Blocks pass (2026-05-18)
 

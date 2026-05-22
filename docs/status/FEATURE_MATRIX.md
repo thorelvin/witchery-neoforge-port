@@ -1,4 +1,4 @@
-﻿# Feature Matrix - Witchery NeoForge 1.21.1 Port
+﻿# Feature Matrix - Witchery NeoForge 1.21.11 Port
 
 Legend: Done / Partial / Not started / Deferred
 
@@ -119,13 +119,13 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Cat familiar | Partial | Gameplay works; body-proportion model needs tweak |
 | Toad familiar | Done | Tameable; collects nearby dropped items, restores the old brew-mastery bonus with a `5%` extra-brew chance on kettle extraction, and now gives a first practical mastery pass to Sprouting/Thorns/Vines/Erosion when the witch drinks them |
 | Parasytic Louse | Partial | Real Mutating Sprig silverfish-snare route, dedicated hostile entity, carried item form, and QA spawn command are back again, but the old bite-potion variants and longer practical verification still remain follow-up |
-| Broom | Done | Rideable; enchanted variant (Rite of Infusion) |
+| Broom | Done | Rideable; enchanted variant (Rite of Infusion); the current flight model restores forward acceleration, pitch lift, no forced mounted hover-drop, fall cancellation while riding, and a controlled-client sync path so the broom should no longer rubber-band back toward its spawn point during flight |
 | Spirit | Done | Passive flying Spirit World mob |
 | Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; in-game behavior verification pending |
 | Flame Imp | Done | Ranged soulfire; Torment patrol |
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
-| Binky | Done | Spawns with Death; tameable via Binky's Skull |
+| Binky | Done | Summoned by right-clicking the ground with Binky's Skull; Death no longer spawns mounted on Binky; slain Binky returns the skull; now renders on the vanilla skeleton-horse base instead of the old white-horse placeholder |
 | Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut; trade GUI now stays open through the same trading-player flow vanilla merchants use, the entity now renders on a dedicated Resurrected-style `ModelGoblin` body instead of a scaled zombie fallback, and the four texture sheets now have a stronger goblin face/hood/leather pass with repainted custom ear+nose UV islands plus filled arm-back/underside UVs |
 | Flying Monkey | Partial | The false direct `Mutandis Extremis` shortcut is gone again and the real mature-cocoa + cobweb + charged-stone/poppy/double-Extremis Grassper mutation route is back, while taming, dyeing, and bound-waystone carry still work; the deeper old taglock-fetch behavior remains follow-up |
 
@@ -145,7 +145,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 
 | Feature | Status | Notes |
 |---|---:|---|
-| Rowan tree / witch sapling | Done | TreeGrower; rare (1-in-120); `WORLD_SURFACE_WG` placement now avoids dropping Rowan trunks into existing forest canopies, a custom `tree_clearance` placement filter now keeps rowan generation away from nearby logs/leaves so it gets a more open, special footprint, a wild-only Rowan wrapper now lets some naturally spawned trees carry 1-2 Belladonna flowers without affecting player-grown saplings, and the older overlapping forest-only biome modifier is gone so that wrapper is the single live Rowan worldgen path |
+| Rowan tree / witch sapling | Done | TreeGrower; natural Rowan rarity is now tuned to `1-in-100`, `WORLD_SURFACE_WG` placement still avoids dropping trunks into bad surface samples, the custom `tree_clearance` veto is now relaxed to a small nearby-canopy check instead of blocking a broad `7x11x7` volume, a wild-only Rowan wrapper lets some naturally spawned trees carry 1-2 Belladonna flowers without affecting player-grown saplings, and the older overlapping forest-only biome modifier is gone so that wrapper is the single live Rowan worldgen path |
 | Rowan berries | Done | Loot/drop chain; the false farmland `Rowan Seeds` / `Rowan Crop` shortcut has been removed again after decompiled/source comparison, so Rowan Berries stay on the real tree-side progression path |
 | Wild magical plants | Partial | All 10 plants are registered/worldgen-capable; blood rose taglock storage plus the old self-sample/offline-player drain safeguards and the classic Leech Chest-over-water + four-poppy Mutating Sprig creation route, ember moss fire/spread/shears behavior, spanish moss fast growth plus non-ladder/high-flammability behavior, bramble hazard/spread plus original toughness and the classic cactus + Spanish Moss + Grassper mutation route, void bramble teleport plus owner-column removal/unbreakable/ritual-nulling profile and the classic sugar-cane + Spanish Moss + Ender Pearl Grassper mutation route, grassper item stash plus comparator output plus facing-aware model orientation and the classic empty-chest-over-water + four-grass Mutating Sprig creation route, glint weed full light/flame ambience/spread, glowglobe light/particles plus no-drop/no-pick ambient behavior, leaping lily buffs, critter snare catch/release behavior plus the classic cobweb-over-water + four Alder Saplings + trapped Zombie Mutating Sprig creation route and the classic silverfish-snare + vines + water + Grassper Parasytic Louse route, and the Belladonna / Mandrake / Water Artichoke / Snowbell seed-vs-harvest splits are now restored closer to original, with Water Artichoke now once again planted by right-clicking still water through its dedicated seed item, short grass/ferns once again yielding those herb seeds at the old relative weights, and Snowbell once more yielding mature snowballs plus occasional Icy Needles, but in-game verification and a few edge behaviors are still open |
 | Rowan Wood family | Done | Planks craft from rowan logs and are tagged as planks; rowan log, wood, planks, sapling, and lower-half door drops now mirror vanilla self-drop behavior; Rowan stairs and slab are restored with rowan plank models, recipes, tags, loot, and old `5/20` flammability; rowan door has original `5.0F` hardness plus UUID-locked key/keyring flow |

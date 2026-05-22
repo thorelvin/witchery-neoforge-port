@@ -1,4 +1,4 @@
-# Witchery → NeoForge 1.21.1 — Detailed Porting Plan
+# Witchery → NeoForge 1.21.11 — Detailed Porting Plan
 
 > Reference sources: original decompiled jars, WitcheryResurrected 1.12.2, weebly getting-started wiki  
 > Last updated: 2026-05-15
@@ -981,7 +981,7 @@ This makes placing Torment Portals near other players a griefing tool.
 - `WAYSTONE` item already registered (no function yet)
 - `Rite of Binding`: checks for Waystone in center slot of circle, writes NBT, consumes 4000 altar power
 - `Rite of Transposition`: reads Waystone NBT, calls `player.teleportTo(level, x, y, z, yaw, pitch)`
-- Cross-dimension: use `ServerPlayer.teleport(ServerLevel, ...)` in NeoForge 1.21.1
+- Cross-dimension: use `ServerPlayer.teleport(ServerLevel, ...)` in NeoForge 1.21.11
 
 ---
 

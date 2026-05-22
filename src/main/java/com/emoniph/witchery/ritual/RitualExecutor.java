@@ -330,23 +330,19 @@ public class RitualExecutor {
         if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
-            riteOfInfusion(player, level, center, InfusionType.LIGHT);
-            return successResult();
+            return matchedResult(riteOfInfusion(player, level, center, InfusionType.LIGHT));
         } else if (item.is(WitcheryItems.SOUL_OF_THE_WORLD.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
-            riteOfInfusion(player, level, center, InfusionType.OVERWORLD);
-            return successResult();
+            return matchedResult(riteOfInfusion(player, level, center, InfusionType.OVERWORLD));
         } else if (item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get())
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)) {
-            riteOfInfusion(player, level, center, InfusionType.OTHERWHERE);
-            return successResult();
+            return matchedResult(riteOfInfusion(player, level, center, InfusionType.OTHERWHERE));
         } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
-            riteOfInfusion(player, level, center, InfusionType.INFERNAL);
-            return successResult();
+            return matchedResult(riteOfInfusion(player, level, center, InfusionType.INFERNAL));
         } else if ((item.is(Items.STONE_AXE) || item.is(Items.IRON_AXE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfTotalEclipse(player, level, center, item));
@@ -583,9 +579,9 @@ public class RitualExecutor {
     // ══════════════════════════════════════════════════════════════════════════
 
     /** Rite of Infusion — applies a typed infusion to the player from a brew base. */
-    private static void riteOfInfusion(Player player, Level level, BlockPos center, InfusionType type) {
-        if (!(player instanceof ServerPlayer sp)) return;
-        if (!(level instanceof ServerLevel sl)) return;
+    private static boolean riteOfInfusion(Player player, Level level, BlockPos center, InfusionType type) {
+        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
 
         int startupCost = switch (type) {
             case LIGHT -> 2000;
@@ -595,7 +591,7 @@ public class RitualExecutor {
         if (startupCost > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupCost)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             sp.displayClientMessage(Component.translatable("witchery.ritual.infusion.no_power"), false);
-            return;
+            return false;
         }
 
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
@@ -613,6 +609,7 @@ public class RitualExecutor {
         PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
         success(player, level, center, msgKey, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
+        return true;
     }
 
     /** Rite of Bind Familiar — binds nearby tamed familiar-capable creatures instead of spawning a new one. */
@@ -1698,7 +1695,8 @@ public class RitualExecutor {
         if (level.dimension().equals(Level.NETHER)
                 || level.dimension().equals(Level.END)
                 || level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
-                || level.dimension().equals(WitcheryDimensions.TORMENT)) {
+                || level.dimension().equals(WitcheryDimensions.TORMENT)
+                || level.dimension().equals(WitcheryDimensions.MIRROR_WORLD)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.wrongdimension"), false);
             return false;

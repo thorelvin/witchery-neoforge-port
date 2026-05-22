@@ -6,7 +6,7 @@
     {"id": "witchery:artichoke"},
     {"id": "minecraft:golden_carrot"},
     {"id": "minecraft:lily_pad"},
-    {"id": "minecraft:cocoa_beans"},
+    {"id": "minecraft:cocoa_beans"}
   ],
   "result": {"id": "witchery:brew_of_love", "count": 3},
   "power": 0.0,

@@ -1,31 +1,29 @@
 package com.emoniph.witchery.client.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
-import java.util.List;
+import net.minecraft.util.Mth;
 
 public class LeechChestModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "leech_chest"), "main");
 
-    private final List<ModelPart> parts;
+    private final ModelPart lidBl;
+    private final ModelPart lidFr;
+    private final ModelPart lidBr;
+    private final ModelPart lidFl;
 
     public LeechChestModel(ModelPart root) {
-        super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
-        parts = List.of(
-            root.getChild("chest_below"),
-            root.getChild("chest_lid_bl"), root.getChild("chest_lid_fr"),
-            root.getChild("chest_lid_br"), root.getChild("chest_lid_fl"),
-            root.getChild("sac1"), root.getChild("sac2"), root.getChild("sac3")
-        );
+        super(root, RenderTypes::entityCutout);
+        lidBl = root.getChild("chest_lid_bl");
+        lidFr = root.getChild("chest_lid_fr");
+        lidBr = root.getChild("chest_lid_br");
+        lidFl = root.getChild("chest_lid_fl");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -44,4 +42,12 @@ public class LeechChestModel extends Model.Simple {
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    /** Rotate all four lid quadrants outward; angle 0=closed, 1=fully open. */
+    public void setLidAngle(float angle) {
+        float rot = angle * Mth.HALF_PI;
+        lidBl.yRot = rot;
+        lidFr.yRot = rot;
+        lidBr.yRot = rot;
+        lidFl.yRot = rot;
     }
+}

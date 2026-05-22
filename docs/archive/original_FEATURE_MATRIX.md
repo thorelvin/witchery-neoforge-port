@@ -1,4 +1,4 @@
-# Feature Matrix — Witchery NeoForge 1.21.1 Port
+# Feature Matrix — Witchery NeoForge 1.21.11 Port
 
 Legend: ✅ Done · 🔄 Partial · 🔲 Not started · ⏸ Deferred
 

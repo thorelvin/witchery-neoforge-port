@@ -1,6 +1,7 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.LeechChestBlockEntity;
+import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -22,6 +23,8 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +56,15 @@ public class LeechChestBlock extends BaseEntityBlock {
 
     @Nullable @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new LeechChestBlockEntity(pos, state); }
+
+    @Override
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide()) {
+            return createTickerHelper(type, WitcheryBlockEntities.LEECH_CHEST.get(), LeechChestBlockEntity::clientTick);
+        }
+        return createTickerHelper(type, WitcheryBlockEntities.LEECH_CHEST.get(), LeechChestBlockEntity::serverTick);
+    }
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
@@ -108,6 +120,7 @@ public class LeechChestBlock extends BaseEntityBlock {
         }
         if (level.getBlockEntity(pos) instanceof LeechChestBlockEntity chest) {
             chest.storePlayer(player);
+            chest.startOpen(player);
             player.openMenu(chest);
             return InteractionResult.CONSUME;
         }

@@ -3,7 +3,7 @@
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 120
+      "chance": 100
     },
     {
       "type": "minecraft:in_square"
@@ -18,9 +18,9 @@
     },
     {
       "type": "witchery:tree_clearance",
-      "horizontal_radius": 3,
+      "horizontal_radius": 1,
       "min_y": 0,
-      "max_y": 10
+      "max_y": 6
     },
     {
       "type": "minecraft:biome"
