@@ -1,4 +1,4 @@
-Current visual follow-ups: Ent old model/mapping parity, Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, Demon source-wing pose, and Spirit translucent wisp rendering were polished 2026-05-22; all need in-game visual verification.
+Current visual follow-ups: Flying Monkey source model/render parity, Ent old model/mapping parity, Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, Demon source-wing pose, and Spirit translucent wisp rendering were polished 2026-05-22/23; all need in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -274,7 +274,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M6 | `hobgoblin` | `/witchery spawn hobgoblin` | | Looks fine, trade works
 | M7 | `raven` | `/witchery spawn raven` | | Separate eye render layer removed and its visible pixels baked into `raven.png` as red eye pixels; airborne pose now spreads wings out and tucks legs closer to the body. Needs in-game verification for the final flight silhouette.
 | M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull and drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder
-| M9 | `flying_monkey` | `/witchery spawn flying_monkey` | | Does not show correct. Holes in texture. Wrong model?
+| M9 | `flying_monkey` | `/witchery spawn flying_monkey` | | Source `ModelMonkey`-style renderer restored: dedicated body/head/ears/nose/wings/tail model, old landed/flying wing and limb animation, source shadow radius, and feather tint math are back instead of the scaled zombie model. Needs in-game verification that wrong-model/texture-hole report is closed. |
 | M10 | `ent` | `/witchery spawn ent` | Old 1.7 texture hash already matched; model now restores source mirror UV flags, conditional target-face plate, inner leaf fill boxes, animated root-leg walk, synced attack arm lift, axe vulnerability, and knock-up melee throw. Needs in-game verification that the reported wrong mapping/holes are closed. |
 
 ### Hostile Mobs
