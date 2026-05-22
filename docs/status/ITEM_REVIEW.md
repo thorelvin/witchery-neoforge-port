@@ -1,4 +1,4 @@
-Current visual follow-ups: Ent old model/mapping parity, Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
+Current visual follow-ups: Ent old model/mapping parity, Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, Demon source-wing pose, and Spirit translucent wisp rendering were polished 2026-05-22; all need in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -304,6 +304,6 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
-| M24 | `spirit` | (spawns in Spirit World) | | Shows like a yellow opaque ball that flies around?
+| M24 | `spirit` | (spawns in Spirit World) | | Old renderer parity restored: source `spirit.png`/model kept, translucent 0.6-alpha white material, zero shadow, and source translate/half-scale transform are back. Needs in-game verification that it no longer appears as a yellow opaque ball. |
 | M25 | `corpse` | (spawns on Spirit World entry) | |
 | M26 | `broom` | `/witchery spawn broom` | | Snap-back fix applied 2026-05-22: ridden movement now predicts on the controlling client and avoids a second server simulation. Retest whether the broom can leave its spawn area normally.
