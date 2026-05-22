@@ -963,7 +963,7 @@ Remaining gap:
 
 ### 74. Flowing Spirit still used a generic vanilla placeholder kettle mix - Fixed / verify
 
-`Brew of Flowing Spirit` is now back on its original Spirit World ingredient family instead of the old blaze/ender/glowstone placeholder set. The kettle recipe once again asks for `Fanciful Thread`, `Water Artichoke Globe`, `Mandrake Root`, `Spanish Moss`, `Glint Weed`, and `Bat Wool` while still remaining Spirit World-only, which better matches the restored ghost-travel and Spirit Portal progression the brew now feeds.
+`Brew of Flowing Spirit` is now back on its original Spirit World ingredient family instead of the old blaze/ender/glowstone placeholder set. The kettle recipe once again asks for `Fanciful Thread`, `Water Artichoke Globe`, `Mandrake Root`, `Spanish Moss`, `Glint Weed`, and `Bat Wool` while still remaining Spirit World-only, the false `Brew of Frost` + `snow_block` distillery shortcut is gone again, and the real follow-up distillery path remains the original `Brew of Flowing Spirit` + `Oil of Vitriol` branch that yields `Focused Will`, `Condensed Fear`, and `Brew of Hollow Tears`.
 
 Remaining gap:
 - Final in-game verification is still open for this corrected batch, especially the feel of the restored Spirit World herb/material progression in ordinary survival.
