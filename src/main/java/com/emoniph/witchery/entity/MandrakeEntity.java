@@ -16,9 +16,13 @@ import net.minecraft.world.level.Level;
 
 /**
  * Mandrake mob — tiny screaming creature that emerges from harvesting mandrake at night.
- * Poisons anyone it strikes and flees from players.
+ * Keeps nearby players nauseated until it is killed, much closer to source.
  */
 public class MandrakeEntity extends Monster {
+    private static final int SCREAM_INTERVAL_TICKS = 10;
+    private static final int SCREAM_DURATION_TICKS = 40;
+    private static final int SCREAM_AMPLIFIER = 1;
+    private static final double SCREAM_RADIUS = 8.0;
 
     public MandrakeEntity(EntityType<? extends MandrakeEntity> type, Level level) {
         super(type, level);
@@ -42,12 +46,16 @@ public class MandrakeEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.Entity target) {
-        boolean result = super.doHurtTarget(level, target);
-        if (result && target instanceof LivingEntity le) {
-            le.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
+    public void tick() {
+        super.tick();
+        if (level().isClientSide() || tickCount % SCREAM_INTERVAL_TICKS != 0) {
+            return;
         }
-        return result;
+
+        for (Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(SCREAM_RADIUS),
+                LivingEntity::isAlive)) {
+            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, SCREAM_DURATION_TICKS, SCREAM_AMPLIFIER, false, true));
+        }
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.SILVERFISH_AMBIENT; }

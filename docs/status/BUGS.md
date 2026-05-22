@@ -187,6 +187,7 @@ Witchery spawn eggs now use a local copy of the vanilla two-layer spawn-egg temp
 ### 9. Mandrake harvest always double-rewarded the player - Fixed / verify
 
 `MandrakeBlock` now restores the old branch between "normal crop drop" and "spawn a hostile mandrake" instead of always doing both. The mature crop now checks difficulty and the original day/night weighted chance before summoning the mob.
+The awakened `Mandrake` itself is closer too: nearby players now once again ride a short-refresh nausea loop until the creature is killed instead of the port's old poison-on-hit placeholder, though the dedicated Earmuffs protection item is still future work.
 
 ### 10. Broom forced-hover controls drifted downward too aggressively - Fixed / verify
 
