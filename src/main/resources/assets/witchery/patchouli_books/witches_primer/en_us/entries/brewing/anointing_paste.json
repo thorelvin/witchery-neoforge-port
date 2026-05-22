@@ -12,7 +12,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "witchery:anointing_paste",
-      "text": "Blend Belladonna, Mandrake Root, Water Artichoke Globe, and the cold reagent shown in the recipe to make four paste. Water Artichoke and Snowbell now both have separate seed items in Rewoven, and Snowbell harvest is back closer to the old pattern with seeds, snowballs, and the occasional Icy Needle.$(br2)The exact early-brewing cold ingredient chain is still being audited, so for now follow the recipe as shown and keep some paste in reserve. You will come back to the cauldron often."
+      "text": "Blend Belladonna, Mandrake Root, Water Artichoke Globe, and the cold reagent shown in the recipe to make four paste. Belladonna, Mandrake, Water Artichoke, and Snowbell now all use separate seed items in Rewoven, so grow them for the real harvest ingredients instead of treating the planting stock as the reagent itself.$(br2)The exact early-brewing cold ingredient chain is still being audited, so for now follow the recipe as shown and keep some paste in reserve. You will come back to the cauldron often."
     },
     {
       "type": "patchouli:spotlight",

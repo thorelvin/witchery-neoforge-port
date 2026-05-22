@@ -39,7 +39,7 @@ public class MandrakeBlock extends CropBlock {
     }
 
     @Override
-    protected ItemLike getBaseSeedId() { return WitcheryItems.MANDRAKE_ROOT.get(); }
+    protected ItemLike getBaseSeedId() { return WitcheryItems.MANDRAKE_SEEDS.get(); }
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {

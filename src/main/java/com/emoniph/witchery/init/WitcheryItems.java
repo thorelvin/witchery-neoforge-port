@@ -33,11 +33,12 @@ public class WitcheryItems {
 
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
-    // Belladonna and Mandrake still combine seed + harvest for now, while
-    // Water Artichoke and Snowbell have their separate seed/harvest splits
-    // restored closer to source.
-    public static final DeferredItem<Item> BELLADONNA = ITEMS.register("belladonna", id -> new BlockItem(WitcheryBlocks.BELLADONNA.get(), itemProps(id)));
-    public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.register("mandrake_root", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
+    // Witchery crops now split closer to source between planting stock and the
+    // harvested ingredient item they produce.
+    public static final DeferredItem<Item> BELLADONNA = ITEMS.registerSimpleItem("belladonna");
+    public static final DeferredItem<Item> BELLADONNA_SEEDS = ITEMS.register("belladonna_seeds", id -> new BlockItem(WitcheryBlocks.BELLADONNA.get(), itemProps(id)));
+    public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.registerSimpleItem("mandrake_root");
+    public static final DeferredItem<Item> MANDRAKE_SEEDS = ITEMS.register("mandrake_seeds", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
     public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
     public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new BlockItem(WitcheryBlocks.ARTICHOKE.get(), itemProps(id)));
     public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
