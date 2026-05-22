@@ -187,7 +187,7 @@ Witchery spawn eggs now use a local copy of the vanilla two-layer spawn-egg temp
 ### 9. Mandrake harvest always double-rewarded the player - Fixed / verify
 
 `MandrakeBlock` now restores the old branch between "normal crop drop" and "spawn a hostile mandrake" instead of always doing both. The mature crop now checks difficulty and the original day/night weighted chance before summoning the mob.
-The awakened `Mandrake` itself is closer too: nearby players now once again ride a short-refresh nausea loop until the creature is killed instead of the port's old poison-on-hit placeholder, and craftable `Earmuffs` once again block that nausea while worn. Earmuffs now also suppress the first practical Banshee scream-damage pass, while exact scream audio flavor and broader old sound-muting feel are still follow-up work.
+The awakened `Mandrake` itself is closer too: nearby players now once again ride a short-refresh nausea loop until the creature is killed instead of the port's old poison-on-hit placeholder, the creature now points back at the old ghast-scream family instead of the silverfish placeholder, and craftable `Earmuffs` once again block that nausea while worn. Earmuffs now also suppress the first practical Banshee scream-damage pass and hush the current ghast-scream placeholder cue on the client, while exact scream audio flavor and broader old sound-muting feel are still follow-up work.
 
 ### 10. Broom forced-hover controls drifted downward too aggressively - Fixed / verify
 

@@ -62,7 +62,7 @@ public class MandrakeEntity extends Monster {
         }
     }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SILVERFISH_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.SILVERFISH_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SILVERFISH_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return SoundEvents.GHAST_SCREAM; }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.GHAST_SCREAM; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.GHAST_DEATH; }
 }
