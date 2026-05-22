@@ -2,11 +2,13 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.entity.BloodRoseBlockEntity;
 import com.emoniph.witchery.blocks.entity.LeechChestBlockEntity;
+import com.emoniph.witchery.data.BedTaglockSavedData;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.FlyingMonkeyEntity;
 import com.emoniph.witchery.entity.TreefydEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -22,6 +24,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,9 +73,11 @@ public class TaglockKitItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
+        BlockState clickedState = ctx.getLevel().getBlockState(ctx.getClickedPos());
         boolean bloodRose = ctx.getLevel().getBlockState(ctx.getClickedPos()).is(WitcheryBlocks.BLOOD_ROSE.get());
         boolean leechChest = ctx.getLevel().getBlockState(ctx.getClickedPos()).is(WitcheryBlocks.LEECH_CHEST.get());
-        if (!bloodRose && !leechChest) {
+        boolean bed = clickedState.getBlock() instanceof BedBlock;
+        if (!bloodRose && !leechChest && !bed) {
             return InteractionResult.PASS;
         }
         if (ctx.getLevel().isClientSide()) {
@@ -85,6 +92,22 @@ public class TaglockKitItem extends Item {
         if (isFilled(stack)) {
             user.displayClientMessage(Component.translatable("witchery.taglock_kit.already_full",
                     getBoundName(stack)).withStyle(ChatFormatting.RED), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (bed) {
+            BlockPos headPos = getBedHeadPos(clickedState, ctx.getClickedPos());
+            Optional<BedTaglockSavedData.BedTaglockEntry> entry = BedTaglockSavedData.getEntry(ctx.getLevel(), headPos);
+            if (entry.isPresent()) {
+                bindSinglePlayerTaglock(user, stack, entry.get().uuid(), entry.get().name());
+                BedTaglockSavedData.clearEntry(ctx.getLevel(), headPos);
+                user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_bed",
+                        entry.get().name()).withStyle(ChatFormatting.GREEN), false);
+                return InteractionResult.CONSUME;
+            }
+
+            user.displayClientMessage(Component.translatable("witchery.taglock_kit.no_bed_sample")
+                    .withStyle(ChatFormatting.RED), false);
             return InteractionResult.CONSUME;
         }
 
@@ -243,6 +266,13 @@ public class TaglockKitItem extends Item {
         if (!user.getInventory().add(filledStack)) {
             user.drop(filledStack, false);
         }
+    }
+
+    private static BlockPos getBedHeadPos(BlockState state, BlockPos pos) {
+        if (!(state.getBlock() instanceof BedBlock) || state.getValue(BedBlock.PART) == BedPart.HEAD) {
+            return pos;
+        }
+        return pos.relative(BedBlock.getConnectedDirection(state));
     }
 
     private static CompoundTag getTag(ItemStack stack) {

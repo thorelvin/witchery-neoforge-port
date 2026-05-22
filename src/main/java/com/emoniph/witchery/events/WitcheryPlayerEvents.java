@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.CoffinBlock;
 import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.DreamCatcherBlockEntity;
+import com.emoniph.witchery.data.BedTaglockSavedData;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
@@ -31,6 +32,9 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -96,9 +100,20 @@ public class WitcheryPlayerEvents {
 
     @SubscribeEvent
     public static void onCanPlayerSleep(CanPlayerSleepEvent event) {
-        if (event.getProblem() == null) return;
         BlockPos pos = event.getPos();
-        if (!event.getLevel().getBlockState(pos).is(WitcheryBlocks.COFFIN.get())) return;
+        if (pos == null) return;
+        BlockState state = event.getLevel().getBlockState(pos);
+        if (event.getProblem() == null) {
+            if (!(event.getLevel() instanceof ServerLevel level) || !(state.getBlock() instanceof BedBlock)) {
+                return;
+            }
+            BlockPos headPos = state.getValue(BedBlock.PART) == BedPart.HEAD
+                    ? pos
+                    : pos.relative(BedBlock.getConnectedDirection(state));
+            BedTaglockSavedData.setEntry(level, headPos, event.getEntity().getUUID(), event.getEntity().getName().getString());
+            return;
+        }
+        if (!state.is(WitcheryBlocks.COFFIN.get())) return;
         WitcheryPlayerData data = WitcheryAttachments.get(event.getEntity());
         if (data.isVampire()) {
             event.setProblem(null);
