@@ -48,9 +48,9 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         ItemStack stack = be.getItem();
+        net.minecraft.world.level.Level beLevel = be.getLevel();
         if (!stack.isEmpty()) {
             Vec3 bePos = Vec3.atCenterOf(be.getBlockPos());
-            net.minecraft.world.level.Level beLevel = be.getLevel();
             itemModelResolver.updateForTopItem(state.itemRenderState, stack, ItemDisplayContext.GROUND, beLevel,
                     new net.minecraft.world.entity.ItemOwner() {
                         public net.minecraft.world.level.Level level() { return beLevel; }
@@ -60,7 +60,8 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         } else {
             state.itemRenderState = new ItemStackRenderState();
         }
-        state.rotation = (float) (be.getBlockPos().hashCode() % 360);
+        state.rotation = beLevel == null ? (float) (be.getBlockPos().hashCode() % 360)
+                : ((beLevel.getGameTime() + partialTick) * 4.0f) % 360.0f;
         Direction facing = be.getBlockState().hasProperty(GrassperBlock.FACING)
                 ? be.getBlockState().getValue(GrassperBlock.FACING)
                 : Direction.NORTH;
@@ -76,16 +77,17 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         ps.mulPose(Axis.YP.rotationDegrees(state.blockRotation));
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords,
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, null);
+        ps.popPose();
 
         if (!state.itemRenderState.isEmpty()) {
-            // translate in ZP-flipped space: item world-y = 1.5 - 1.10 = 0.40, sits inside the petal cup
-            ps.translate(0.0, 1.10, 0.0);
-            ps.mulPose(Axis.ZP.rotationDegrees(180)); // un-flip for normal item orientation
+            ps.pushPose();
+            // Old Grassper rendered its held item separately, slightly off-center in the petal cup.
+            ps.translate(0.65, 0.45, 0.65);
             ps.mulPose(Axis.YP.rotationDegrees(state.rotation * 0.5f));
-            ps.scale(2.0f, 2.0f, 2.0f); // GROUND context is already ~0.5x; 2.0x gives ~1x visible size
+            ps.scale(1.5f, 1.5f, 1.5f);
             state.itemRenderState.submit(ps, collector, state.lightCoords,
                     net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
+            ps.popPose();
         }
-        ps.popPose();
     }
 }

@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post ceiling-hung kettle pass)
+Last reconciled: 2026-05-22 (post Grassper held-item pose pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -26,7 +26,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `kettle` | Side-post and ceiling-hung model/support paths restored; verify filled/hanging world-state visuals in-game | Low |
 | `poppet_shelf` | ✅ Items now visible; verify in-game positioning | Low |
 | `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
-| `grassper` | Wrong texture wrapping / should hold items | Medium |
+| `grassper` | Stash/item display path restored; verify held-item cup pose in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Custom lily visuals restored; needs in-game verification only | Low |
@@ -176,6 +176,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Koboldite art correction restored the user-approved live-backup icons for `Koboldite Pickaxe`, `Koboldite Dust`, `Koboldite Nugget`, and `Koboldite Ingot` from `docs/art/item-backups/2026-05-22-live-before-old-assets-restore`; keep these instead of the older restored koboldite sprites.
 - Glowglobe render polish switched the placed block model from cutout to translucent so the original low-alpha `glow_globe` sprite can render as a soft spirit light again instead of behaving like a masked plant cross. The remaining task is in-game visibility verification.
 - Kettle ceiling-hung pass added a `hanging` blockstate, restored the compact decompiled `hanging_kettle` model/texture path when a solid block supports the kettle from above, and kept the existing side-post support behavior for between-post setups. Remaining work is in-game verification of the two visual/support variants.
+- Grassper held-item polish moved the stored-item render out of the plant model transform and back toward the original off-center petal-cup pose with a gentle spin. The one-item stash, comparator output, and state sync were already restored; remaining work is in-game visual verification.
 
 ---
 
