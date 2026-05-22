@@ -1,14 +1,15 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:book"},
-    {"id": "minecraft:sugar"},
-    {"id": "minecraft:fermented_spider_eye"},
-    {"id": "minecraft:slime_ball"},
-    {"id": "minecraft:nether_wart"},
-    {"id": "minecraft:rotten_flesh"}
+    {"id": "witchery:mutandis_extremis"},
+    {"id": "witchery:mandrake_root"},
+    {"id": "witchery:artichoke"},
+    {"id": "witchery:tongue_of_dog"},
+    {"id": "minecraft:golden_apple"},
+    {"id": "minecraft:poisonous_potato"}
   ],
   "result": {"id": "witchery:brew_of_the_grotesque", "count": 3},
   "power": 500.0,
-  "color": -13491946
+  "color": -13491946,
+  "hatBonus": 1
 }

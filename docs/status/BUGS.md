@@ -951,6 +951,16 @@ The next survival-brew batch is now closer to source:
 Remaining gap:
 - Final in-game verification is still open for this corrected brew batch, especially how the restored infection/wasting chains feel in ordinary survival compared with the current item availability curve.
 
+### 73. Revealing, Erosion, and Grotesque brews still used placeholder ingredient sets - Fixed / verify
+
+The next source-backed kettle batch is now closer to original Witchery:
+- `Brew of Revealing` no longer uses the old glowstone/blaze/ender-pearl placeholder chain and now once again asks for `carrot`, two `spider_eye`, a `night_vision` potion, `brown_mushroom`, and `Odour of Purity`.
+- `Brew of Erosion` no longer uses the old sand/gravel/flint/iron placeholder chain and now once again asks for two `Oil of Vitriol`, `quicklime`, `Belladonna`, `dandelion`, and `magma_cream`.
+- `Brew of the Grotesque` no longer uses the old book/sugar/nether-wart/rotten-flesh placeholder chain and now once again asks for `Mutandis Extremis`, `Mandrake Root`, `Artichoke`, `Tongue of Dog`, a `golden_apple`, and a `poisonous_potato`.
+
+Remaining gap:
+- Final in-game verification is still open for this corrected batch, especially the `night_vision` potion matching on Brew of Revealing and the feel of the restored grotesque/erosion survival chain.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

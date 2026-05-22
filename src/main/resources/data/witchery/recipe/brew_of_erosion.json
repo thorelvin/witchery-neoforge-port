@@ -1,14 +1,15 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:sand"},
-    {"id": "minecraft:gravel"},
-    {"id": "minecraft:flint"},
-    {"id": "minecraft:iron_ingot"},
-    {"id": "minecraft:spider_eye"},
-    {"id": "minecraft:fermented_spider_eye"}
+    {"id": "witchery:oil_of_vitriol"},
+    {"id": "witchery:oil_of_vitriol"},
+    {"id": "witchery:quicklime"},
+    {"id": "witchery:belladonna"},
+    {"id": "minecraft:dandelion"},
+    {"id": "minecraft:magma_cream"}
   ],
   "result": {"id": "witchery:brew_of_erosion", "count": 3},
   "power": 0.0,
-  "color": -4456656
+  "color": -4456656,
+  "hatBonus": 1
 }

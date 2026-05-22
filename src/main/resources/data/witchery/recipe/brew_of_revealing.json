@@ -1,14 +1,23 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:glowstone_dust"},
-    {"id": "minecraft:blaze_powder"},
-    {"id": "minecraft:ender_pearl"},
-    {"id": "minecraft:nether_wart"},
-    {"id": "minecraft:sugar"},
+    {"id": "minecraft:carrot"},
+    {"id": "minecraft:spider_eye"},
     {"id": "minecraft:spider_eye"}
+    ,
+    {
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:night_vision"
+        }
+      }
+    },
+    {"id": "minecraft:brown_mushroom"},
+    {"id": "witchery:odour_of_purity"}
   ],
   "result": {"id": "witchery:brew_of_revealing", "count": 3},
   "power": 0.0,
-  "color": -52480
+  "color": -52480,
+  "hatBonus": 1
 }
