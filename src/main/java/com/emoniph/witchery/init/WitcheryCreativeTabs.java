@@ -23,8 +23,10 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.ROWAN_LEAVES.get());
                         output.accept(WitcheryItems.ROWAN_SAPLING.get());
                         output.accept(WitcheryItems.ALDER_LOG.get());
+                        output.accept(WitcheryItems.ALDER_LEAVES.get());
                         output.accept(WitcheryItems.ALDER_SAPLING.get());
                         output.accept(WitcheryItems.HAWTHORN_LOG.get());
+                        output.accept(WitcheryItems.HAWTHORN_LEAVES.get());
                         output.accept(WitcheryItems.HAWTHORN_SAPLING.get());
                         output.accept(WitcheryItems.BELLADONNA_SEEDS.get());
                         output.accept(WitcheryItems.MANDRAKE_SEEDS.get());

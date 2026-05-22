@@ -67,8 +67,10 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_LEAVES);
     public static final DeferredItem<BlockItem> ROWAN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SAPLING);
     public static final DeferredItem<BlockItem> ALDER_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_LOG);
+    public static final DeferredItem<BlockItem> ALDER_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_LEAVES);
     public static final DeferredItem<BlockItem> ALDER_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_SAPLING);
     public static final DeferredItem<BlockItem> HAWTHORN_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_LOG);
+    public static final DeferredItem<BlockItem> HAWTHORN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_LEAVES);
     public static final DeferredItem<BlockItem> HAWTHORN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_SAPLING);
     public static final DeferredItem<BlockItem> WISPY_COTTON     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WISPY_COTTON);
     public static final DeferredItem<BlockItem> DISTURBED_COTTON = ITEMS.register("disturbed_cotton",
@@ -370,6 +372,9 @@ public class WitcheryItems {
             "lava_diviner",
             "bucket_hollow_tears",
             "alder_door",
+            "alder_planks",
+            "alder_stairs",
+            "alder_slab",
             "fume_filter",
             "infernal_blood",
             "odd_porkchop_raw",
@@ -402,6 +407,9 @@ public class WitcheryItems {
             "alder_boat",
             "hawthorn_boat",
             "hawthorn_door",
+            "hawthorn_planks",
+            "hawthorn_stairs",
+            "hawthorn_slab",
             "beartrap",
             "biome_note",
             "blood_stained_wool",
