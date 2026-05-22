@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post soul brew/contract icon pass)
+Last reconciled: 2026-05-22 (post remaining source-backed placeholder icon pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,7 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Needs real texture (currently snowbell placeholder) | Small |
-| Legacy placeholder items | 131 missing source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders; 30 entries with existing source-backed textures now have distinct icons, while the rest still use the shared placeholder model. Implement mechanics/recipes one family at a time | Varies |
+| Legacy placeholder items | 131 missing source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders; 47 entries with existing source-backed textures now have distinct icons, while the rest still use the shared placeholder model. Implement mechanics/recipes one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
