@@ -116,10 +116,10 @@ public class DeathEntityModel extends EntityModel<net.minecraft.client.renderer.
         rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
         leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
 
-        // Original render: rotationPointX=0, rotationPointY=8.1, rotationPointZ=-0.8, rotateAngleX=PI/2
-        scythe.x = 0.0F;
+        // Original render: rotationPointX=-0.8, rotationPointY=8.1, rotationPointZ=0, rotateAngleX=PI/2
+        scythe.x = -0.8F;
         scythe.y = 8.1F;
-        scythe.z = -0.8F;
+        scythe.z = 0.0F;
         scythe.yRot = 0.0F;
         scythe.zRot = 0.0F;
         scythe.xRot = (float) (Math.PI / 2);

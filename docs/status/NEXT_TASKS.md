@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post final shared-placeholder model pass)
+Last reconciled: 2026-05-22 (Death scythe attachment coordinate polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -19,7 +19,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `witches_oven` | Retest machine GUI after explicit source-region blit fix | Low |
 | `crystal_ball` | ✅ Now purple stained-glass orb on polished-blackstone stand | Small |
 | `coffin` | ✅ Item now 3D box using coffin_head.png UV regions; verify in-game angles | Medium |
-| `alluring_skull` | Dedicated animated skull-head render still approximated through static block models | Low |
+| `alluring_skull` | Dedicated skull-head renderer path is restored; final scale/lighting verification only | Low |
 | `demon_heart` | Retest custom model no-cull face fill in-world | Low |
 | `chalice` | Final GUI pose / placed-block verification | Low |
 | `dream_catcher` | Clicked-face wall placement is restored; needs in-game verification only | Low |
@@ -159,6 +159,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Base alchemy chain** - smelt `clay_jar_soft` into `clay_jar`, then retest the oven/distillery loop; confirm `odour_of_purity`, `oil_of_vitriol`, and the other early intermediates now show in the Witchery creative tab for fast QA
 
 - **Demon model** — `/witchery spawn demon` and verify horns/wings look correct after model fix
+- **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
 - **Nightmare behavior** — `/witchery dream`, wait for nightmare roll; verify: single nightmare spawns, targets only victim, green fog in nightmare, re-spawns after kill with 30s delay, drops Mellifluous Hunger
 - **Torment maze** — delete `run/client/saves/<world>/dimensions/witchery/torment/` folder, re-enter; verify: 6 levels, invisible Force walls/ceilings with collision, Bedrock floor/frame, old portal chamber near x=8/z=68, and 3 refilling chest rooms per level
 
@@ -179,6 +180,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Kettle ceiling-hung pass added a `hanging` blockstate, restored the compact decompiled `hanging_kettle` model/texture path when a solid block supports the kettle from above, and kept the existing side-post support behavior for between-post setups. Remaining work is in-game verification of the two visual/support variants.
 - Grassper held-item polish moved the stored-item render out of the plant model transform and back toward the original off-center petal-cup pose with a gentle spin. The one-item stash, comparator output, and state sync were already restored; remaining work is in-game visual verification.
 - Rowan Door placement polish removed the forced right-hinge override so vanilla clicked-side and neighbor-aware hinge placement can run again while keeping the UUID key/keyring locking flow intact. Remaining work is in-game lock/unlock and facing verification.
+- Death scythe attachment polish corrected the ported runtime pivot from the swapped `x=0, z=-0.8` values back to the original 1.7 `x=-0.8, z=0` pose, so the scythe should sit sideways at Death's hand instead of drifting forward. Remaining work is in-game angle/contact verification.
 
 ---
 

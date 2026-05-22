@@ -1,4 +1,4 @@
-Deaths scythe is wrong angle. Not touching hand.
+Death scythe attachment coordinate polish applied 2026-05-22; needs in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -297,7 +297,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
 | M21 | `lord_of_torment` | `/witchery spawn lord_of_torment` | | Looks fine
-| M22 | `death` | `/witchery spawn death` | | Death no longer spawns mounted over Binky; scythe attachment still needs its own visual pass.
+| M22 | `death` | `/witchery spawn death` | | Death no longer spawns mounted over Binky; scythe attachment pivot now matches the original 1.7 runtime pose coordinates (`x=-0.8`, `y=8.1`, `z=0`) instead of sliding forward from the hand. Needs in-game visual verification for final angle/hand contact.
 | M23 | `flame_imp` | `/witchery spawn flame_imp` | | Looks correct, attacks player on egg throw. Should punch with arms on attack?
 
 ### Spirit World / Misc

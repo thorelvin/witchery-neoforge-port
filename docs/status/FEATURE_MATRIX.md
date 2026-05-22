@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (final shared-placeholder model pass)
+Last reconciled: 2026-05-22 (Death scythe attachment coordinate polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -125,7 +125,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; in-game behavior verification pending |
 | Flame Imp | Done | Ranged soulfire; Torment patrol |
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
-| Death entity | Done | 1000 HP boss; stare-aggro; drops outfit |
+| Death entity | Done | 1000 HP boss; stare-aggro; drops outfit; scythe attachment pivot now matches the original 1.7 runtime pose coordinates and needs only final in-game angle/contact verification |
 | Binky | Done | Summoned by right-clicking the ground with Binky's Skull; Death no longer spawns mounted on Binky; slain Binky returns the skull; now renders on the vanilla skeleton-horse base instead of the old white-horse placeholder |
 | Hobgoblin | Done | Forest merchant; 5 trades; lead AI; Hobgoblin Hut; trade GUI now stays open through the same trading-player flow vanilla merchants use, the entity now renders on a dedicated Resurrected-style `ModelGoblin` body instead of a scaled zombie fallback, and the four texture sheets now have a stronger goblin face/hood/leather pass with repainted custom ear+nose UV islands plus filled arm-back/underside UVs |
 | Flying Monkey | Partial | The false direct `Mutandis Extremis` shortcut is gone again and the real mature-cocoa + cobweb + charged-stone/poppy/double-Extremis Grassper mutation route is back, while taming, dyeing, and bound-waystone carry still work; the deeper old taglock-fetch behavior remains follow-up |
