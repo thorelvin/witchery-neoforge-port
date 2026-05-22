@@ -907,6 +907,17 @@ The asset chain is now complete again:
 Remaining gap:
 - Final in-game verification is still open, but the pink-black fallback should now be gone in inventory, hand, and other item render contexts.
 
+### 69. Brew of Bats still used a fake bat spawn egg ingredient - Fixed / verify
+
+The bat-brewing progression is now closer to source:
+- `Concentrated Bat Ball` now exists again as a real item with the restored classic crafting bridge: four bat-filled `Critter Snare` items packed with four `Slime Ball`s in the old ring pattern.
+- `Brew of Bats` no longer uses the port's temporary `minecraft:bat_spawn_egg` placeholder or the wrong wheat/pumpkin chain.
+- The live kettle recipe now once again asks for `Concentrated Bat Ball`, `Bat Wool`, `apple`, `sugar`, `fermented spider eye`, and `gunpowder`, which matches the source-backed Witchery progression much more closely.
+- The Mutating Sprig Primer entry now teaches that recovered survival bridge directly so the restored Critter Snare route leads somewhere practical for players.
+
+Remaining gap:
+- Final in-game verification is still open for the exact crafting-grid feel and the corrected Brew of Bats kettle output path.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

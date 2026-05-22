@@ -27,7 +27,7 @@
     {
       "type": "patchouli:text",
       "title": "Critter Snare",
-      "text": "For the old snare route, suspend a $(item)Cobweb$() over a water source, drop an $(item)Alder Sapling$() on each of its four sides, and trap a $(thing)Zombie$() in the web. Touch the cobweb with the sprig and it will twist into a $(item)Critter Snare$().$(br2)That gives you the proper survival bridge into bat, silverfish, slime, and magma-cube snare chains again."
+      "text": "For the old snare route, suspend a $(item)Cobweb$() over a water source, drop an $(item)Alder Sapling$() on each of its four sides, and trap a $(thing)Zombie$() in the web. Touch the cobweb with the sprig and it will twist into a $(item)Critter Snare$().$(br2)That gives you the proper survival bridge into bat, silverfish, slime, and magma-cube snare chains again. Four bat-filled snares packed with $(item)Slime Balls$() now also make the old $(item)Concentrated Bat Ball$(), which is the true bridge into $(item)Brew of Bats$()."
     },
     {
       "type": "patchouli:text",

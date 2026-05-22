@@ -111,6 +111,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 84 | `witchery:redstone_soup` | |
 | 85 | `witchery:diamond_vapour` | |
 | 86 | `witchery:bat_wool` | |
+| 86a | `witchery:concentrated_bat_ball` | `Done - classic critter-snare crafting bridge restored` | The real intermediate item is back: four bat-filled `Critter Snare`s with four `Slime Ball`s now craft into `Concentrated Bat Ball` again, and `Brew of Bats` now uses that chain instead of the old bat-spawn-egg placeholder. |
 | 87 | `witchery:wood_ash` | |
 | 88 | `witchery:rowan_berries` | |
 | 89 | `witchery:wormwood` | `Partial - classic mutation route plus separate harvest item restored closer to original` | The old advanced mutation bridge is back: fully grown wheat with four adjacent Wispy Cotton and four diagonal water corners now once again mutates into young Wormwood when touched by a Mutating Sprig. Wormwood is now also split back away from its seed, so the crop yields a real herb item while planting uses a dedicated seed again. Needs in-game verification for growth/drop feel.

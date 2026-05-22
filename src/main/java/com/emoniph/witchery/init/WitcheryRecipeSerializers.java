@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.crafting.ConcentratedBatBallRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipeSerializer;
 import com.emoniph.witchery.crafting.OvenRecipe;
@@ -36,4 +37,8 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<RowanKeyringRecipe>> ROWAN_KEYRING =
             RECIPE_SERIALIZERS.register("rowan_keyring",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(RowanKeyringRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<ConcentratedBatBallRecipe>> CONCENTRATED_BAT_BALL =
+            RECIPE_SERIALIZERS.register("concentrated_bat_ball",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(ConcentratedBatBallRecipe::new));
 }

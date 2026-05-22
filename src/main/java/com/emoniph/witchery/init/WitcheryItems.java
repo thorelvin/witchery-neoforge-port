@@ -48,6 +48,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> REDSTONE_SOUP       = ITEMS.registerSimpleItem("redstone_soup");
     public static final DeferredItem<Item> DIAMOND_VAPOUR      = ITEMS.registerSimpleItem("diamond_vapour");
     public static final DeferredItem<Item> BAT_WOOL            = ITEMS.registerSimpleItem("bat_wool");
+    public static final DeferredItem<Item> CONCENTRATED_BAT_BALL = ITEMS.registerSimpleItem("concentrated_bat_ball");
 
     // ── M4 ingredient-only items (not plantable) ───────────────────────────────
     public static final DeferredItem<Item> WOOD_ASH            = ITEMS.registerSimpleItem("wood_ash");
