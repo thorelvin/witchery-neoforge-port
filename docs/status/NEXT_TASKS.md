@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post remaining source-backed placeholder icon pass)
+Last reconciled: 2026-05-22 (post exact decompiled registry alias placeholder pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,7 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Needs real texture (currently snowbell placeholder) | Small |
-| Legacy placeholder items | 131 missing source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders; 47 entries with existing source-backed textures now have distinct icons, while the rest still use the shared placeholder model. Implement mechanics/recipes one family at a time | Varies |
+| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 47 entries with existing source-backed textures now have distinct icons, while 198 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
@@ -110,7 +110,7 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
 - **Equipment/completeness follow-up** - cover vampire armor bonuses, `Bark Belt`, `Biting Belt`, `Beartrap`, and the explicit `Wicker Man` pattern/layout.
-- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 123 inert placeholder items. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, or custom-brew derivatives.
+- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 245 inert placeholder items, including 114 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire gear, hobgoblin rewards, custom-brew derivatives, or exact-alias remaps.
 
 ---
 
@@ -169,6 +169,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 ### Legacy placeholder item registry sweep (2026-05-22)
 
 - Added `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS` with 123 inert source/wiki item IDs that were not registered yet, exposed them in the Witchery creative tab, gave them a shared placeholder item model, and added explicit `(Placeholder)` language keys. `ITEM_REVIEW.md` now tracks the roster as TODO groups rather than hidden missing items. `spectral_familiar_spawn_egg` is also now visible in the creative tab.
+- Follow-up exact-registry pass added 114 additional 1.12 Resurrected item IDs from `WitcheryGeneralItems`, `WitcheryBrewItems`, `WitcheryBookItems`, `WitcheryBoltItems`, `WitcheryContractItems`, `WitcheryEquipmentItems`, `WitcheryFumeItems`, and `WitcheryIngredientItems` as inert placeholders with shared item models and `(Placeholder)` translations. A `javap` audit now reports zero exact item-init registry strings missing from the port.
 
 ---
 
