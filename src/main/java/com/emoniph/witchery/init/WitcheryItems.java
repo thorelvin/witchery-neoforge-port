@@ -182,7 +182,6 @@ public class WitcheryItems {
     public static final DeferredItem<Item> DIVINER = ITEMS.registerSimpleItem("diviner");
     public static final DeferredItem<Item> CIRCLE_TALISMAN = ITEMS.register("circle_talisman", id -> new com.emoniph.witchery.item.CircleTalismanItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> WITCH_HAND = ITEMS.registerSimpleItem("witch_hand");
-    public static final DeferredItem<Item> WITCH_SEEDS = ITEMS.register("witch_seeds", id -> new BlockItem(WitcheryBlocks.WITCH_CROP_BLOCK.get(), itemProps(id)));
     public static final DeferredItem<Item> WORMWOOD_SEEDS = ITEMS.register("wormwood_seeds", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
     public static final DeferredItem<Item> MUTATOR = ITEMS.register("mutator", id -> new MutatingSprigItem(itemProps(id).durability(16)));
     public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));

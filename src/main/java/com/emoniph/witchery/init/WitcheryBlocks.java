@@ -87,7 +87,6 @@ public class WitcheryBlocks {
     public static final DeferredBlock<MandrakeBlock>    MANDRAKE        = BLOCKS.registerBlock("mandrake",    MandrakeBlock::new,    () -> cropProps());
     public static final DeferredBlock<ArtichokeBlock>   ARTICHOKE       = BLOCKS.registerBlock("artichoke",   ArtichokeBlock::new,   () -> cropProps());
     public static final DeferredBlock<CottonBlock>      COTTON_CROP     = BLOCKS.registerBlock("cotton",      CottonBlock::new,      () -> cropProps());
-    public static final DeferredBlock<WitchCropBlock>   WITCH_CROP_BLOCK= BLOCKS.registerBlock("witch_crop",  WitchCropBlock::new,   () -> cropProps());
     public static final DeferredBlock<SnowbellBlock>    SNOWBELL        = BLOCKS.registerBlock("snowbell",    SnowbellBlock::new,    () -> cropProps());
     public static final DeferredBlock<WormwoodBlock>    WORMWOOD_PLANT  = BLOCKS.registerBlock("wormwood",    WormwoodBlock::new,    () -> cropProps());
 
