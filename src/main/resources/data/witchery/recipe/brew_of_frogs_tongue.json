@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "witchery:toe_of_frog"},
-    {"id": "minecraft:sugar"},
+    {"id": "minecraft:red_mushroom"},
     {"id": "minecraft:wheat"},
-    {"id": "minecraft:pumpkin_seeds"},
-    {"id": "minecraft:apple"},
-    {"id": "minecraft:fermented_spider_eye"}
+    {"id": "witchery:brew_of_webs"},
+    {"id": "witchery:artichoke"},
+    {"id": "minecraft:slime_ball"},
+    {"id": "witchery:toe_of_frog"}
   ],
   "result": {"id": "witchery:brew_of_frogs_tongue", "count": 3},
   "power": 1000.0,

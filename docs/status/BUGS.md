@@ -918,6 +918,17 @@ The bat-brewing progression is now closer to source:
 Remaining gap:
 - Final in-game verification is still open for the exact crafting-grid feel and the corrected Brew of Bats kettle output path.
 
+### 70. Hitchcock and Frog's Tongue brews still used the placeholder apple-sugar-pumpkin chain - Fixed / verify
+
+These two familiar-adjacent kettle recipes are now closer to source:
+- `Brew of Hitchcock` no longer uses the old placeholder `ender_pearl` / sugar / wheat / pumpkin-seeds / apple / fermented-spider-eye mix.
+- It now once again asks for `brown_mushroom`, `wheat_seeds`, `Brew of Thorns`, `Bat Wool`, `feather`, and `Owlet's Wing`, which lines up with the restored raven-focused progression much better.
+- `Brew of Frog's Tongue` no longer uses the old placeholder toe-of-frog plus apple/sugar/pumpkin chain either.
+- It now once again asks for `red_mushroom`, `wheat`, `Brew of Webs`, `Artichoke`, `slime_ball`, and `Toe of Frog`, which fits the restored toad-side progression and plant split much more honestly.
+
+Remaining gap:
+- Final in-game verification is still open for both corrected kettle recipes, especially their feel alongside the current raven and toad familiar implementations.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
