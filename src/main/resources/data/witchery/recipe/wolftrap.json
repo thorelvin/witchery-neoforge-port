@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SNS",
+    "W#W",
+    "SNS"
+  ],
+  "key": {
+    "#": "witchery:beartrap",
+    "S": "witchery:silver_ingot",
+    "N": "witchery:wolfsbane_flower",
+    "W": "witchery:null_catalyst"
+  },
+  "result": {
+    "id": "witchery:wolftrap",
+    "count": 1
+  }
+}

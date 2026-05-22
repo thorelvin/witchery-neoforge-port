@@ -159,6 +159,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> BLOODIED_WICKER_BUNDLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOODIED_WICKER_BUNDLE);
     public static final DeferredItem<BlockItem> CRITTER_SNARE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CRITTER_SNARE);
     public static final DeferredItem<BlockItem> BEARTRAP = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BEARTRAP);
+    public static final DeferredItem<BlockItem> WOLFTRAP = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WOLFTRAP);
     public static final DeferredItem<BlockItem> WITCH_DOOR = ITEMS.register("witch_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.WITCH_DOOR.get(), itemProps(id)));
     public static final DeferredItem<Item> COTTON = ITEMS.register("cotton", id -> new BlockItem(WitcheryBlocks.COTTON_CROP.get(), itemProps(id)));
 
@@ -487,7 +488,6 @@ public class WitcheryItems {
             "witch_hunter_dawn_hat",
             "witch_hunter_dawn_trousers",
             "wolf_head",
-            "wolftrap",
             "wooden_bolt",
             "wolfsbane",
             "wolfsbane_seeds",

@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-23 (Beartrap trap-block parity slice; Bark Belt charge-defense parity slice; Biting Belt potion-defense parity slice; Parasytic Louse hotbar defense parity slice; Parasytic Louse potion-bite parity slice; Flame Imp attack-pose/powered render parity polish; Flying Monkey source model/render parity polish; Spirit translucent render/source transform polish; Raven eye-layer removal and flight-pose polish; Cat familiar old ocelot render/model parity polish; Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-23 (Wolftrap silvered trap parity slice; Beartrap trap-block parity slice; Bark Belt charge-defense parity slice; Biting Belt potion-defense parity slice; Parasytic Louse hotbar defense parity slice; Parasytic Louse potion-bite parity slice; Flame Imp attack-pose/powered render parity polish; Flying Monkey source model/render parity polish; Spirit translucent render/source transform polish; Raven eye-layer removal and flight-pose polish; Cat familiar old ocelot render/model parity polish; Ent old model/mapping parity polish; Nightmare attack-pose/tendril parity polish; Mandrake model/UV parity polish; Banshee screaming mouth parity polish; Poltergeist mirror-UV parity polish; Treefyd old visual parity polish; Demon wing source-pose polish; Death scythe attachment coordinate polish; Rowan Door hinge placement polish; Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -43,7 +43,8 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Parasytic Louse hotbar defense missing | 10-15 min | Fixed - potion-fed hotbar lice now bite once when the player is hurt, route harmful effects to the living attacker or beneficial effects to the player, clear the payload, and charge the old 1 magic damage bite cost; needs in-game verification |
 | Done | Biting Belt equipment behavior missing | 20-30 min | Fixed - `biting_belt` is now a real legs-slot wearable, has source-shaped and potion-loading recipes, stores up to two potion bites, and consumes one fallback defensive bite after hotbar lice fail; needs in-game recipe/equip/defense verification |
 | Done | Bark Belt charge defense missing | 20-30 min | Fixed - `bark_belt` is now a real legs-slot wearable, has the source shaped recipe, recharges on grass/mycelium, and spends bark pieces to block non-wooden entity damage while dropping sticks; needs in-game recharge/damage verification |
-| Done | Beartrap was still an inert placeholder | 20-30 min | Fixed - `beartrap` is now a real placeable trap block with source-shaped recipe, low flat model, loot table, one-second arming delay, manual open/close toggle, creative-player bypass, and first practical snap damage/slowness behavior; needs in-game trap verification plus `wolftrap` follow-up |
+| Done | Beartrap was still an inert placeholder | 20-30 min | Fixed - `beartrap` is now a real placeable trap block with source-shaped recipe, low flat model, loot table, one-second arming delay, manual open/close toggle, creative-player bypass, and first practical snap damage/slowness behavior; needs in-game trap verification plus owner/hidden follow-up |
+| Done | Wolftrap was still an inert placeholder | 20-30 min | Fixed - `wolftrap` is now a real silvered Beartrap-family block with practical source upgrade recipe and werewolf-player-only snap damage/slowness behavior; needs in-game werewolf trap verification plus full bait/summon follow-up |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
 | Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
@@ -1174,7 +1175,14 @@ Remaining gap:
 Direct Resurrected comparison showed the old Beartrap was a low, non-colliding, manually toggleable trap block with a short arming delay after placement/opening. The port only had an inert creative-tab placeholder item. The first practical Beartrap slice is now live as a real `BlockItem` plus placeable low-profile block with the source shaped recipe, flat cutout model, loot table, axis placement, one-second arming delay, manual open/close toggle, creative-player bypass, and snap behavior that closes on living entities for 4 generic damage plus strong slowness.
 
 Remaining gap:
-- In-game trap QA, dedicated open/closed visuals/sounds, owner/hidden behavior, and the silvered `wolftrap` upgrade path remain follow-up work.
+- In-game trap QA, dedicated open/closed visuals/sounds, and owner/hidden behavior remain follow-up work.
+
+### 85. Wolftrap was still an inert placeholder - Fixed / verify
+
+Direct Resurrected comparison showed `wolftrap` was the silvered Beartrap-family variant, crafted from a Beartrap with silver, Null Catalyst, and Wolfsbane, and then expanded by a tile entity into full-moon/sheep/Wolf Altar werewolf baiting. The port only had an inert placeholder item. The first practical Wolftrap slice is now live as a real low-profile block/item sharing the Beartrap behavior, with a modern source-shaped upgrade recipe using `witchery:silver_ingot`, `witchery:null_catalyst`, and the live `witchery:wolfsbane_flower`. It ignores ordinary living entities and snaps shut on werewolf players for 4 damage plus strong slowness.
+
+Remaining gap:
+- In-game werewolf trap QA, dedicated open/closed visuals/sounds, owner/hidden behavior, and the old full-moon/sheep/Wolf Altar bait-summon tile-entity path remain follow-up work.
 
 ---
 

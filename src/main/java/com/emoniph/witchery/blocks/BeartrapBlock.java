@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,8 +40,15 @@ public class BeartrapBlock extends Block {
     private static final int ARM_DELAY_TICKS = 20;
     private static final VoxelShape SHAPE = box(3.2, 0.1, 3.2, 12.8, 1.6, 12.8);
 
+    private final boolean silvered;
+
     public BeartrapBlock(BlockBehaviour.Properties properties) {
+        this(properties, false);
+    }
+
+    public BeartrapBlock(BlockBehaviour.Properties properties, boolean silvered) {
         super(properties);
+        this.silvered = silvered;
         registerDefaultState(stateDefinition.any()
                 .setValue(CLOSED, false)
                 .setValue(ARMED, false)
@@ -86,7 +94,8 @@ public class BeartrapBlock extends Block {
                 || state.getValue(CLOSED)
                 || !state.getValue(ARMED)
                 || !(entity instanceof LivingEntity living)
-                || entity instanceof Player player && player.isCreative()) {
+                || entity instanceof Player player && player.isCreative()
+                || !canTrap(living)) {
             return;
         }
 
@@ -123,5 +132,10 @@ public class BeartrapBlock extends Block {
 
     private static float soundPitch(RandomSource random) {
         return 0.4F / (random.nextFloat() * 0.4F + 0.8F);
+    }
+
+    private boolean canTrap(LivingEntity living) {
+        return !silvered
+                || living instanceof Player player && WitcheryAttachments.get(player).isWerewolf();
     }
 }
