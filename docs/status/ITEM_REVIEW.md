@@ -1,4 +1,4 @@
-Current visual follow-ups: Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
+Current visual follow-ups: Ent old model/mapping parity, Nightmare attack-pose/tendril parity, Mandrake old model/UV parity, Banshee old screaming mouth visibility, Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -275,7 +275,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M7 | `raven` | `/witchery spawn raven` | | Works fine, but eye layers does not always follow head. Maybe remove and give them only red eye pixels. Wings should flap out in fligth not stay close to body. Feet should be along body, not sticking out.
 | M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull and drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder
 | M9 | `flying_monkey` | `/witchery spawn flying_monkey` | | Does not show correct. Holes in texture. Wrong model?
-| M10 | `ent` | `/witchery spawn ent` | | Wrong mapping, have holes
+| M10 | `ent` | `/witchery spawn ent` | Old 1.7 texture hash already matched; model now restores source mirror UV flags, conditional target-face plate, inner leaf fill boxes, animated root-leg walk, synced attack arm lift, axe vulnerability, and knock-up melee throw. Needs in-game verification that the reported wrong mapping/holes are closed. |
 
 ### Hostile Mobs
 

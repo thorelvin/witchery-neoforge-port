@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (Nightmare attack-pose/tendril parity polish)
+Last reconciled: 2026-05-22 (Ent old model/mapping parity polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -112,7 +112,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Spectre | Done | Flying ghost-type |
 | Poltergeist | Partial | Gameplay works; the dedicated Poltergeist model now matches the old 1.7 all-part `mirror=true` UV setup with the original texture hash, pending in-game verification that the reported wrong-mapping/holes issue is closed |
 | Treefyd | Done | Treefyd Seeds now exist again as a survival-crafted item with the original Mutandis Extremis recipe shape, planting a seed on grass now raises an owner-safe Treefyd instead of leaving the creature trapped behind QA-only spawn paths, feeding an owned Treefyd another seed now clones it into a fresh owned guardian, Creeper Heart and Demon Heart once again apply the old durability/damage upgrades, a Boline once again toggles idle wandering into sentinel mode, filled `Taglock Kit`s can now once more teach an owned Treefyd to ignore named players or one exact creature and forget them again on sneak-use, and the visual path is back on the user-directed old 1.7 model/texture family with zero-plane petals/tongue/leaves and the original 64x32 texture hash; needs in-game visibility verification |
-| Ent | Done | Passive until hit; large model |
+| Ent | Partial | Passive until hit; original texture hash matches, and the visual path now restores the old mirror UV flags, conditional face plate, inner leaf fill boxes, root-leg walking animation, and synced attack arm lift. Melee now also restores the old knock-up throw and axe vulnerability; needs in-game wrong-mapping/holes verification |
 | Mandrake mob | Partial | MONSTER category and spawn placement are registered again, the awakened mob now restores a first practical short-refresh nausea scream on nearby players instead of the port's old poison-on-hit placeholder, its sound cues now point back at the original ghast-scream family instead of the older silverfish placeholder, craftable Earmuffs once again block that nausea while worn while also hushing the current scream cue on the client, and the visual model now restores old mirror UVs, the zero-depth leaf crown, and original arm-only walking twitch; exact custom Mandrake-specific scream audio and in-game texture-hole verification are still follow-up |
 | Demon | Partial | Fireball mob; texture/UV audit fixed; wing planes now use the source-static zero-depth pose without the non-source idle flap, pending in-game wing-angle verification |
 | Owl familiar | Done | Tameable; warns of danger; soaring speed bonus |
