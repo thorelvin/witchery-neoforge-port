@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post exact decompiled registry alias placeholder pass)
+Last reconciled: 2026-05-22 (post decompiled placeholder texture/model pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,7 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Needs real texture (currently snowbell placeholder) | Small |
-| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 47 entries with existing source-backed textures now have distinct icons, while 198 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
+| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 154 entries now have distinct source-backed item models/textures after the local and decompiled asset passes, while 91 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
@@ -170,6 +170,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 
 - Added `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS` with 123 inert source/wiki item IDs that were not registered yet, exposed them in the Witchery creative tab, gave them a shared placeholder item model, and added explicit `(Placeholder)` language keys. `ITEM_REVIEW.md` now tracks the roster as TODO groups rather than hidden missing items. `spectral_familiar_spawn_egg` is also now visible in the creative tab.
 - Follow-up exact-registry pass added 114 additional 1.12 Resurrected item IDs from `WitcheryGeneralItems`, `WitcheryBrewItems`, `WitcheryBookItems`, `WitcheryBoltItems`, `WitcheryContractItems`, `WitcheryEquipmentItems`, `WitcheryFumeItems`, and `WitcheryIngredientItems` as inert placeholders with shared item models and `(Placeholder)` translations. A `javap` audit now reports zero exact item-init registry strings missing from the port.
+- Decompiled asset pass restored distinct item models/textures for 107 more placeholders, including the Resurrected brew aliases, books, contracts, bolts, fume ingredients, several tools, and companion override models for the placeholder crossbow/spear visuals. Current count: 154 distinct placeholder icons/models, 91 still on the shared placeholder icon.
 
 ---
 

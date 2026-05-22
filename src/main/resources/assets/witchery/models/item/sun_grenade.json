@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/sun_grenade",
+    "layer1": "witchery:item/quartz_sphere"
+  }
+}

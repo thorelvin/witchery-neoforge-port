@@ -1,0 +1,375 @@
+{
+  "textures": {
+    "1": "witchery:item/deaths_hand_scythe",
+    "2": "witchery:item/deaths_holding_hand",
+    "particle": "witchery:item/deaths_holding_hand"
+  },
+  "elements": [
+    {
+      "name": "hand",
+      "from": [
+        6,
+        6,
+        7
+      ],
+      "to": [
+        9.7,
+        9.7,
+        10.7
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          9
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            0,
+            9,
+            4
+          ],
+          "rotation": 270,
+          "texture": "#2"
+        },
+        "east": {
+          "uv": [
+            3,
+            8,
+            7,
+            12
+          ],
+          "rotation": 90,
+          "texture": "#2"
+        },
+        "south": {
+          "uv": [
+            3,
+            12,
+            7,
+            16
+          ],
+          "rotation": 90,
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            7,
+            8,
+            11,
+            12
+          ],
+          "rotation": 90,
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            9,
+            0,
+            13,
+            4
+          ],
+          "rotation": 90,
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            1,
+            0,
+            5,
+            4
+          ],
+          "rotation": 90,
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "stickUno",
+      "from": [
+        7,
+        -9,
+        8
+      ],
+      "to": [
+        8,
+        7,
+        9
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          15,
+          -1,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#missing"
+        },
+        "down": {
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "texture": "#1"
+        }
+      }
+    },
+    {
+      "name": "stickDos",
+      "from": [
+        7,
+        7,
+        8
+      ],
+      "to": [
+        8,
+        23,
+        9
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          15,
+          15,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            0,
+            3,
+            16
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            3,
+            0,
+            4,
+            16
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            2,
+            0,
+            3,
+            16
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            3,
+            0,
+            4,
+            16
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#missing"
+        }
+      }
+    },
+    {
+      "name": "blade",
+      "from": [
+        -5,
+        16,
+        8.5
+      ],
+      "to": [
+        7,
+        23,
+        8.5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          3,
+          24,
+          16.5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            0,
+            16,
+            7
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0,
+            7
+          ],
+          "texture": "#missing"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0,
+            7
+          ],
+          "texture": "#missing"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            12,
+            0
+          ],
+          "texture": "#missing"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            12,
+            0
+          ],
+          "texture": "#missing"
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [
+        0.25,
+        -2,
+        -0.75
+      ],
+      "scale": [
+        -1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        0.25,
+        -2,
+        -0.75
+      ],
+      "scale": [
+        -1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        -1,
+        1,
+        -1
+      ]
+    },
+    "firstperson_lefthand": {
+      "scale": [
+        -1,
+        1,
+        -1
+      ]
+    },
+    "gui": {
+      "rotation": [
+        -180,
+        0,
+        145
+      ],
+      "translation": [
+        0,
+        -0.25,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  }
+}

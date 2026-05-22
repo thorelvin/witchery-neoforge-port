@@ -1,0 +1,46 @@
+{
+  "parent": "witchery:item/huntsmans_spear",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [
+        -33.75,
+        -112.5,
+        -35
+      ],
+      "translation": [
+        -2,
+        -3,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -33.75,
+        67.5,
+        35
+      ],
+      "translation": [
+        -2,
+        -3,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        90,
+        -135,
+        90
+      ],
+      "translation": [
+        -3.5,
+        -3.5,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    }
+  }
+}

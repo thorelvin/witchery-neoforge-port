@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/clay_jar",
+    "layer1": "witchery:item/diamond_vapor"
+  }
+}

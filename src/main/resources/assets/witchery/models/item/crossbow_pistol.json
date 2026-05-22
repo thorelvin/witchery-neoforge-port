@@ -1,0 +1,104 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/crossbow_standby"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -90,
+        0,
+        -60
+      ],
+      "translation": [
+        2,
+        0.1,
+        -3
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -90,
+        0,
+        30
+      ],
+      "translation": [
+        2,
+        0.1,
+        -3
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -90,
+        0,
+        -55
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -90,
+        0,
+        35
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "witchery:pulling": 1
+      },
+      "model": "witchery:item/crossbow_pulling_0"
+    },
+    {
+      "predicate": {
+        "witchery:pulling": 1,
+        "witchery:pull": 0.5
+      },
+      "model": "witchery:item/crossbow_pulling_1"
+    },
+    {
+      "predicate": {
+        "witchery:pulling": 1,
+        "witchery:pull": 0.75
+      },
+      "model": "witchery:item/crossbow_pulling_2"
+    },
+    {
+      "predicate": {
+        "witchery:charged": 1
+      },
+      "model": "witchery:item/charged_crossbow"
+    }
+  ]
+}

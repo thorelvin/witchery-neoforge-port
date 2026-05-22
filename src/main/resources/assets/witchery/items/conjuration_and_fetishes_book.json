@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/legacy_placeholder"
+    "model": "witchery:item/conjuration_and_fetishes_book"
   }
 }
