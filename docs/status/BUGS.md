@@ -977,6 +977,13 @@ Remaining gap:
 Remaining gap:
 - Final in-game verification is still open for the restored Redstone Soup bridge and its downstream infusion-item chain.
 
+### 76. Bat Wool still had a false distillery shortcut - Fixed / verify
+
+`Bat Wool` now stays on its real creature-and-loot progression only. The false direct distillery shortcut is gone again after 1.7.2 plus Resurrected comparison, so the item now comes from the existing bat drop path plus the already-restored apothecary / witch-hut / torment-chamber chest loot and coven-witch trade routes instead of an invented `string` + `Rowan Berries` distill.
+
+Remaining gap:
+- Final in-game verification is still open for the restored Bat Wool survival bridge, especially ordinary bat farming feel versus the restored chest/trade fallback paths.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

@@ -110,7 +110,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 83 | `witchery:fanciful_thread` | |
 | 84 | `witchery:redstone_soup` | `Done - source-backed kettle base only` | The false direct distillery shortcut is gone again; Redstone Soup now stays on its original kettle progression as the base for infusions and related alchemy chains. |
 | 85 | `witchery:diamond_vapour` | |
-| 86 | `witchery:bat_wool` | |
+| 86 | `witchery:bat_wool` | `Done - source-backed drop/loot/trade acquisition only` | The false direct distillery shortcut is gone again; Bat Wool now stays on the real bat-drop path plus the restored apothecary / witch-hut / torment-chamber chest loot and coven-witch trade routes instead of an invented `string` + `Rowan Berries` distill. |
 | 86a | `witchery:concentrated_bat_ball` | `Done - classic critter-snare crafting bridge restored` | The real intermediate item is back: four bat-filled `Critter Snare`s with four `Slime Ball`s now craft into `Concentrated Bat Ball` again, and `Brew of Bats` now uses that chain instead of the old bat-spawn-egg placeholder. |
 | 87 | `witchery:wood_ash` | |
 | 88 | `witchery:rowan_berries` | |
