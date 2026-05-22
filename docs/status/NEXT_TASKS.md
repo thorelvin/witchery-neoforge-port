@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Flying Monkey source model/render parity polish)
+Last reconciled: 2026-05-23 (Flame Imp attack-pose/powered render parity polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -165,6 +165,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Ent model** - `/witchery spawn ent`, provoke it, and verify the restored old mirror UVs, face plate, inner leaf fill, root-leg walk, and attack arm lift close the reported wrong-mapping/holes issue
 
 - **Flying Monkey model** - `/witchery spawn flying_monkey` and verify the source monkey body, wings, ears, tail, landed/flying animation, and feather tint close the reported wrong-model/texture-holes issue
+- **Flame Imp model** - `/witchery spawn flame_imp`, provoke it, and verify the source right-arm punch/body twist now plays during melee; power one up and verify the old taller powered render scale
 - **Spirit render** - enter the Spirit World or spawn a spirit and verify it now appears as the old small translucent wisp with no visible shadow instead of an opaque yellow ball
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
@@ -198,6 +199,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Ent old model/mapping parity polish kept the original 1.7 `ent.png` asset, restored the source model's missing conditional face plate and inner leaf fill boxes, put all parts back on mirror UVs, restored animated root-leg walking and synced melee attack arm lifts, and brought back the old axe vulnerability plus knock-up throw behavior. Remaining work is in-game wrong-mapping/holes verification.
 - Spirit translucent render polish kept the original 1.7 `spirit.png` asset and model geometry, restored the old renderer's translucent white alpha, zero shadow radius, and source translate/half-scale transform so the Spirit World spirit should render as a small wisp instead of an opaque yellow blob. Remaining work is in-game visibility verification.
 - Flying Monkey source model/render parity polish replaced the scaled zombie renderer with a dedicated `ModelMonkey`-style 64x32 model, restored the wing/arm/leg/tail landed-vs-flight animation family, source shadow radius, and decompiled feather tint math. Remaining work is in-game wrong-model/texture-hole verification.
+- Flame Imp attack-pose/powered render parity polish synced vanilla melee swing progress into the renderer, restored the old source right-arm punch/body twist, restored powered 1.5x vertical render scale, and returned the renderer to the source 0.5 shadow radius. Remaining work is in-game attack-pose/powered-height verification.
 
 ---
 

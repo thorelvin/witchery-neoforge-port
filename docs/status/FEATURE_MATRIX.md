@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-23 (Flying Monkey source model/render parity polish)
+Last reconciled: 2026-05-23 (Flame Imp attack-pose/powered render parity polish)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -123,7 +123,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Broom | Done | Rideable; enchanted variant (Rite of Infusion); the current flight model restores forward acceleration, pitch lift, no forced mounted hover-drop, fall cancellation while riding, and a controlled-client sync path so the broom should no longer rubber-band back toward its spawn point during flight |
 | Spirit | Done | Passive flying Spirit World mob; old translucent white alpha, zero shadow, and source translate/half-scale renderer path restored so it should no longer appear as an opaque yellow ball |
 | Nightmare | Partial | Exists; Charm of Disrupted Dreams anti-strip behavior restored; visual path now syncs the melee attack timer and entity id to restore the old triangle-wave arm lift, tendril sway, mirror UV flags, and source tendril anchors; in-game behavior/visual verification pending |
-| Flame Imp | Done | Ranged soulfire; Torment patrol |
+| Flame Imp | Done | Ranged soulfire; Torment patrol; renderer now syncs vanilla melee swing progress so the old source right-arm punch/body twist plays again, powered imps use the original taller 1.5x render scale, and the shadow radius matches the source renderer; needs in-game attack-pose/powered-height verification |
 | Lord of Torment | Done | 500 HP boss; phase 1->2 loop |
 | Death entity | Done | 1000 HP boss; stare-aggro; drops outfit; scythe attachment pivot now matches the original 1.7 runtime pose coordinates and needs only final in-game angle/contact verification |
 | Binky | Done | Summoned by right-clicking the ground with Binky's Skull; Death no longer spawns mounted on Binky; slain Binky returns the skull; now renders on the vanilla skeleton-horse base instead of the old white-horse placeholder |

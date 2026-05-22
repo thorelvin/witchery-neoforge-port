@@ -1,6 +1,5 @@
 package com.emoniph.witchery.client.model;
 
-import com.emoniph.witchery.entity.FlameImpEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -11,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 /** Flame Imp model — ported from ModelImp (64×64). */
-public class FlameImpModel extends EntityModel<net.minecraft.client.renderer.entity.state.LivingEntityRenderState> {
+public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "flame_imp"), "main");
@@ -21,6 +20,11 @@ public class FlameImpModel extends EntityModel<net.minecraft.client.renderer.ent
     private final ModelPart rightLeg, leftLeg;
     private final ModelPart chest;
     private final ModelPart wingRight, wingLeft;
+
+    public static class FlameImpRenderState extends LivingEntityRenderState {
+        public float attackProgress;
+        public boolean powered;
+    }
 
     public FlameImpModel(ModelPart root) {
         super(root);
@@ -91,8 +95,9 @@ public class FlameImpModel extends EntityModel<net.minecraft.client.renderer.ent
         return LayerDefinition.create(mesh, 64, 64);
     }
 
-        @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    @Override
+    public void setupAnim(FlameImpRenderState state) {
+        super.setupAnim(state);
         float limbSwing = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks = state.ageInTicks;
@@ -111,6 +116,8 @@ public class FlameImpModel extends EntityModel<net.minecraft.client.renderer.ent
         leftLeg.xRot  = Mth.cos(limbSwing * 0.6662f + Mth.PI)  * 1.4f * limbSwingAmount;
         rightLeg.yRot = 0; leftLeg.yRot = 0;
 
+        applyAttackSwing(state.attackProgress);
+
         // Idle arm sway
         float swayC = Mth.cos(ageInTicks * 0.09f) * 0.05f + 0.05f;
         float swayS = Mth.sin(ageInTicks * 0.067f) * 0.05f;
@@ -120,5 +127,30 @@ public class FlameImpModel extends EntityModel<net.minecraft.client.renderer.ent
         // Leg spacing
         rightLeg.x = -1.5f + 0.1f;
         leftLeg.x  =  1.5f - 0.1f;
+    }
+
+    private void applyAttackSwing(float swingProgress) {
+        if (swingProgress <= 0.0F) {
+            return;
+        }
+
+        body.yRot = Mth.sin(Mth.sqrt(swingProgress) * Mth.PI * 2.0F) * 0.2F;
+        rightArm.z = Mth.sin(body.yRot) * 5.0F;
+        rightArm.x = -Mth.cos(body.yRot) * 5.0F;
+        leftArm.z = -Mth.sin(body.yRot) * 5.0F;
+        leftArm.x = Mth.cos(body.yRot) * 5.0F;
+        rightArm.yRot += body.yRot;
+        leftArm.yRot += body.yRot;
+        leftArm.xRot += body.yRot;
+
+        float eased = 1.0F - swingProgress;
+        eased *= eased;
+        eased *= eased;
+        eased = 1.0F - eased;
+        float punch = Mth.sin(eased * Mth.PI);
+        float headDip = Mth.sin(swingProgress * Mth.PI) * -(head.xRot - 0.7F) * 0.75F;
+        rightArm.xRot -= punch * 1.2F + headDip;
+        rightArm.yRot += body.yRot * 2.0F;
+        rightArm.zRot = Mth.sin(swingProgress * Mth.PI) * -0.4F;
     }
 }
