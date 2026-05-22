@@ -1,0 +1,32 @@
+{
+  "name": "witchery.book.entry.wicker_man",
+  "icon": "witchery:bloodied_wicker_bundle",
+  "category": "witchery:creatures",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "witchery.book.entry.wicker_man.page1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:wicker_bundle",
+      "text": "witchery.book.entry.wicker_man.wicker"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "witchery:bloodied_wicker_bundle",
+      "text": "witchery.book.entry.wicker_man.bloodied"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "witchery.book.entry.wicker_man.layout.title",
+      "text": "witchery.book.entry.wicker_man.layout"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "witchery.book.entry.wicker_man.ignition.title",
+      "text": "witchery.book.entry.wicker_man.ignition"
+    }
+  ]
+}

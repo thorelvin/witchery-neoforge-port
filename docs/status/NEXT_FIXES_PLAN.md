@@ -73,14 +73,14 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 9. Vampire armor coverage.
    Vampirism itself is documented much better than the dedicated vampire armor set. The Chain Coat / Dress Coat / Helmet / Trousers / Oxford Boots / Top Hat family and their vampire-specific bonuses should be covered as a real equipment track, not left to the wiki.
 10. Minor completeness gaps.
-   `Beartrap` and `Wolftrap` now have their first practical block/recipe/trap behavior back and first-pass Primer usage coverage. Lower-priority omissions still worth tracking are the full old Wolftrap full-moon bait-summon path and the explicit `Wicker Man` layout/pattern that Chapter 30 currently references without actually showing.
+   `Beartrap` and `Wolftrap` now have their first practical block/recipe/trap behavior back and first-pass Primer usage coverage. The explicit `Wicker Man` layout/pattern is also now covered in the Primer. Lower-priority omissions still worth tracking are the full old Wolftrap full-moon bait-summon path and broader vampire armor equipment coverage.
 
 ## Documentation priority order
 
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
 1. Equipment and minor completeness next.
-   Vampire armor coverage and the explicit Wicker Man layout are important, but they sit below the earlier progression blockers.
+   Vampire armor coverage remains the main book-side equipment gap now that trap usage and Wicker Man layout coverage are in; it still sits below the earlier progression blockers.
 
 ## Highest-priority structural fixes
 
