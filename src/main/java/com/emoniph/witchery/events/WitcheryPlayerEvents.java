@@ -11,6 +11,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.BroomEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
+import com.emoniph.witchery.entity.WitchHunterEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -187,6 +188,7 @@ public class WitcheryPlayerEvents {
                 tickDemonicNightmare(player, spiritWorld);
             }
         }
+        WitchHunterEntity.tickBlackMagicHunterPressure(player);
 
         if (player.tickCount % 20 != 0) return;
 

@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.WitchHunterEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.PoppetItem;
@@ -69,6 +70,7 @@ public class PoppetEvents {
         target.hurt(event.getSource(), redirectedDamage);
         damagePoppet(location, VAMPIRIC_POPPET_DAMAGE);
         event.setNewDamage(0.0F);
+        WitchHunterEntity.blackMagicPerformed(player);
 
         target.displayClientMessage(Component.translatable("witchery.poppet.vampiric.target_hurt",
                 player.getName()), false);

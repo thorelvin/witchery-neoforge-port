@@ -1,6 +1,6 @@
 # Active Bugs & Fix Plan
 
-Last reconciled: 2026-05-22 (Witch Hunter anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
+Last reconciled: 2026-05-22 (Witch Hunter black-magic pressure + anti-supernatural target parity + broom ridden movement snap-back fix + six bugs closed: riteOfInfusion void return, familiar free mitigation, TreefydEntity UUID crash, Mirror World climate exclusion, spectral familiar ore depth + arrival, rowan worldgen verified)
 
 This file is the active sprint board. When a bug is fixed, move it to **Fixed / Verify** with the commit/task notes instead of deleting it.
 
@@ -26,6 +26,7 @@ This file is the active sprint board. When a bug is fixed, move it to **Fixed / 
 | Done | Spectral familiar ore search misses deepslate range | 20-30 min | Fixed — see bug #4 |
 | Done | Verify rowan placed-feature biome modifier injection | 15-30 min | Already injected — see bug #7 |
 | Done | Witch Hunter target family was too narrow | 10-20 min | Fixed - see bug #1e |
+| Done | Witch Hunter black-magic pressure was absent | 20-30 min | Fixed - see bug #1e |
 | Feature | Spirit World vegetation + Nightmare spawning polish | 1-3 hrs | Backlog |
 
 ---
@@ -217,10 +218,12 @@ Remaining gap:
 
 ### 1e. Witch Hunter target family was too narrow - Fixed / verify
 
-The port already targeted Coven Witches, but it had drifted away from the original hunter's broader anti-supernatural role by only looking for vampire/werewolf players plus witch mobs. `WitchHunterEntity` now uses one source-backed target predicate that keeps Coven Witch targeting and also hunts undead entity-tag mobs, the original vanilla demonic family (`Ghast`, `Blaze`, `Magma Cube`, `Wither`), the port's `DemonEntity`, vanilla witches, vampires/werewolves, and players carrying `Voodoo Poppet` or `Vampiric Poppet`.
+The port already targeted Coven Witches, but it had drifted away from the original hunter's broader anti-supernatural role by only looking for vampire/werewolf players plus witch mobs. `WitchHunterEntity` now uses one source-backed target predicate that keeps Coven Witch targeting and also hunts undead entity-tag mobs, the original vanilla demonic family (`Ghast`, `Blaze`, `Magma Cube`, `Wither`), the port's `DemonEntity`, vanilla witches, vampires/werewolves, players carrying `Voodoo Poppet` or `Vampiric Poppet`, and a remembered player target assigned by the black-magic spawn path.
+
+The first practical delayed black-magic pressure loop is back too: successful taglock curse rites, `Curse of Corrupt Poppet`, `Hell on Earth`, Voodoo Poppet use, and Vampiric Poppet redirection now have the old 10% chance to mark the caster. After the old 2-minute delay, the player tick handler checks on the old 100-tick cadence with the old 1% chance, then spawns up to two Witch Hunters near the caster and points them at that specific player.
 
 Remaining gap:
-- The exact old delayed "black magic performed" hunter-spawn pressure is still not restored here; this pass only fixes local aggro target selection. In-game verification should spawn a Witch Hunter near a Coven Witch, a zombie/skeleton, a demon/blaze-style target, and a player carrying a Voodoo/Vampiric Poppet.
+- The pressure trigger is currently session-state in `WitcheryPlayerData` rather than the original persistent infusion NBT key, and the old custom `theycome` sound is approximated with a raid horn cue. In-game verification should spawn a Witch Hunter near a Coven Witch, a zombie/skeleton, a demon/blaze-style target, and a player carrying a Voodoo/Vampiric Poppet, then separately perform a taglock curse or offensive poppet action and wait past the delayed spawn window.
 
 ### 2. GhostModel mouth protrusion - Fixed
 

@@ -3,7 +3,9 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,8 +32,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Witch Hunter — a hostile NPC that tracks and attacks vampires, werewolves, and vanilla witches.
@@ -38,9 +43,17 @@ import javax.annotation.Nullable;
  * Skin type (0-2 → witchhunter1-3.png) assigned at spawn.
  */
 public class WitchHunterEntity extends Monster implements RangedAttackMob {
+    private static final double HUNTER_NOTICE_CHANCE = 0.1D;
+    private static final long HUNTER_DELAY_TICKS = 20L * 60L * 2L;
+    private static final double HUNTER_TRIGGER_CHANCE = 0.01D;
+    private static final int HUNTER_SPAWN_ROLL_PERIOD = 100;
+    private static final int HUNTER_SPAWN_TRIES = 3;
+    private static final int HUNTER_MAX_SPAWNS = 2;
 
     private static final EntityDataAccessor<Integer> HUNTER_TYPE =
             SynchedEntityData.defineId(WitchHunterEntity.class, EntityDataSerializers.INT);
+    @Nullable
+    private UUID targetPlayerUuid;
 
     public WitchHunterEntity(EntityType<? extends WitchHunterEntity> type, Level level) {
         super(type, level);
@@ -96,6 +109,9 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
 
     private boolean isWitchyPlayer(LivingEntity entity) {
         if (!(entity instanceof ServerPlayer sp)) return false;
+        if (targetPlayerUuid != null && targetPlayerUuid.equals(sp.getUUID())) {
+            return true;
+        }
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
         return data.isVampire()
                 || data.isWerewolf()
@@ -119,6 +135,85 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
                 return true;
             }
         }
+        return false;
+    }
+
+    public void setTargetPlayer(@Nullable ServerPlayer player) {
+        this.targetPlayerUuid = player == null ? null : player.getUUID();
+        if (player != null) {
+            this.setTarget(player);
+        }
+    }
+
+    public static void blackMagicPerformed(ServerPlayer player) {
+        if (player.level().isClientSide()) {
+            return;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getWitchHunterTriggerGameTime() != Long.MIN_VALUE) {
+            return;
+        }
+        if (player.level().random.nextDouble() < HUNTER_NOTICE_CHANCE) {
+            data.setWitchHunterTriggerGameTime(player.level().getGameTime());
+        }
+    }
+
+    public static void tickBlackMagicHunterPressure(ServerPlayer player) {
+        if (player.tickCount % HUNTER_SPAWN_ROLL_PERIOD != 1) {
+            return;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        long triggerTime = data.getWitchHunterTriggerGameTime();
+        if (triggerTime == Long.MIN_VALUE || player.level().getGameTime() < triggerTime + HUNTER_DELAY_TICKS) {
+            return;
+        }
+        if (player.level().random.nextDouble() >= HUNTER_TRIGGER_CHANCE) {
+            return;
+        }
+
+        data.clearWitchHunterTrigger();
+        int spawned = 0;
+        for (int attempt = 0; attempt < HUNTER_SPAWN_TRIES && spawned < HUNTER_MAX_SPAWNS; attempt++) {
+            if (spawnHunterNear(player)) {
+                spawned++;
+            }
+        }
+        if (spawned > 0) {
+            player.level().playSound(null, player.blockPosition(), SoundEvents.RAID_HORN.value(),
+                    SoundSource.HOSTILE, 0.45F, 1.35F);
+        }
+    }
+
+    private static boolean spawnHunterNear(ServerPlayer player) {
+        ServerLevel level = (ServerLevel) player.level();
+        WitchHunterEntity hunter = WitcheryEntities.WITCH_HUNTER.get().create(level, EntitySpawnReason.TRIGGERED);
+        if (hunter == null) {
+            return false;
+        }
+
+        for (int attempt = 0; attempt < 8; attempt++) {
+            double angle = level.random.nextDouble() * Math.PI * 2.0D;
+            double radius = 3.0D + level.random.nextInt(6);
+            int x = (int) Math.floor(player.getX() + Math.cos(angle) * radius);
+            int z = (int) Math.floor(player.getZ() + Math.sin(angle) * radius);
+            BlockPos spawnPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    new BlockPos(x, player.blockPosition().getY(), z));
+            if (!level.getWorldBorder().isWithinBounds(spawnPos)) {
+                continue;
+            }
+            hunter.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            if (!level.noCollision(hunter)) {
+                continue;
+            }
+            hunter.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.TRIGGERED, null);
+            hunter.setPersistenceRequired();
+            hunter.setTargetPlayer(player);
+            level.addFreshEntity(hunter);
+            return true;
+        }
+
+        hunter.discard();
         return false;
     }
 
@@ -146,6 +241,25 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
                                         @Nullable SpawnGroupData spawnGroupData) {
         this.entityData.set(HUNTER_TYPE, this.random.nextInt(3));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (targetPlayerUuid != null) {
+            tag.putString("HunterTargetUUID", targetPlayerUuid.toString());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        String target = tag.getStringOr("HunterTargetUUID", "");
+        try {
+            targetPlayerUuid = target.isEmpty() ? null : UUID.fromString(target);
+        } catch (IllegalArgumentException ignored) {
+            targetPlayerUuid = null;
+        }
     }
 
     // ── Sounds ────────────────────────────────────────────────────────────────

@@ -10,6 +10,7 @@ import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
+import com.emoniph.witchery.entity.WitchHunterEntity;
 import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
@@ -4454,6 +4455,7 @@ public class RitualExecutor {
         int destroyed = PoppetEvents.destroyBoundPoppets(target.get(), WitcheryItems.VOODOO_PROTECTION_POPPET.get(), 1000, 10);
         success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
         sp.displayClientMessage(Component.translatable("witchery.ritual.corrupt_poppet.success", destroyed), false);
+        WitchHunterEntity.blackMagicPerformed(sp);
         WitcheryMod.LOGGER.info("Curse of Corrupt Poppet destroyed {} voodoo protection poppet(s) for {}", destroyed, target.get().getName().getString());
         return true;
     }
@@ -6280,6 +6282,7 @@ public class RitualExecutor {
         target.displayClientMessage(Component.translatable(successKey + ".target"), false);
         success(caster, level, center, successKey + ".caster",
                 SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        WitchHunterEntity.blackMagicPerformed(sp);
         return true;
     }
 
@@ -6322,6 +6325,7 @@ public class RitualExecutor {
         target.displayClientMessage(Component.translatable(successKey + ".target"), false);
         success(caster, level, center, successKey + ".caster",
                 SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        WitchHunterEntity.blackMagicPerformed(sp);
         return true;
     }
 
@@ -6628,6 +6632,7 @@ public class RitualExecutor {
         consumeHellOnEarthOfferings(offerings.get());
         success(caster, level, center, "witchery.curse.hell_on_earth.caster",
                 SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+        WitchHunterEntity.blackMagicPerformed(sp);
         return true;
     }
 

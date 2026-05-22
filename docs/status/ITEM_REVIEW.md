@@ -259,7 +259,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M12 | `banshee` | `/witchery spawn banshee` | | Still have error on mouth/face
 | M13 | `spectre` | `/witchery spawn spectre` | | Looks ok.
 | M14 | `poltergeist` | `/witchery spawn poltergeist` | | Wrong mapping, have holes
-| M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Coven Witch targeting was already present; this pass also restores the broader old target family for undead mobs, demonic mobs, vanilla witches, vampires/werewolves, and players carrying Voodoo/Vampiric Poppets. Needs in-game aggro verification.
+| M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Coven Witch targeting was already present; this pass also restores the broader old target family for undead mobs, demonic mobs, vanilla witches, vampires/werewolves, players carrying Voodoo/Vampiric Poppets, and black-magic caster targets. Successful curse rites and offensive poppets can now seed delayed hunter spawns. Needs in-game aggro/spawn-pressure verification.
 | M16 | `treefyd` | `/witchery spawn treefyd` | | Does not show. Egg makes something invisible on ground that i can destroy
 | M17 | `parasytic_louse` | `/witchery spawn parasytic_louse` | |
 | M18 | `demon` | `/witchery spawn demon` | | Looks good, but wings are wrong angle. Imp wings are correct.

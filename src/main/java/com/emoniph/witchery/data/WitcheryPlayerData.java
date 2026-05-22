@@ -138,6 +138,7 @@ public class WitcheryPlayerData {
     private int tormentPortalCooldown = 0;
     private boolean demonicNightmare = false;
     private long lastNightmareKillGameTime = Long.MIN_VALUE;
+    private long witchHunterTriggerGameTime = Long.MIN_VALUE;
 
     public WitcheryPlayerData() {}
 
@@ -346,6 +347,9 @@ public class WitcheryPlayerData {
     public boolean isNightmare() { return !sw.isDream; }
     public long getLastNightmareKillGameTime() { return lastNightmareKillGameTime; }
     public void setLastNightmareKillGameTime(long t) { this.lastNightmareKillGameTime = t; }
+    public long getWitchHunterTriggerGameTime() { return witchHunterTriggerGameTime; }
+    public void setWitchHunterTriggerGameTime(long t) { this.witchHunterTriggerGameTime = t; }
+    public void clearWitchHunterTrigger() { this.witchHunterTriggerGameTime = Long.MIN_VALUE; }
 
     public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
         this.vampire = other.vampire;
@@ -364,6 +368,7 @@ public class WitcheryPlayerData {
         this.creaturePowerCharges = other.creaturePowerCharges;
         this.wolfMastery = other.wolfMastery;
         this.soaringTicks = other.soaringTicks;
+        this.witchHunterTriggerGameTime = other.witchHunterTriggerGameTime;
         if (keepOnDeath) {
             this.bloodLevel = other.bloodLevel;
         }

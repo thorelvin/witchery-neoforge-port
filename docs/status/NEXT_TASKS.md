@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post Witch Hunter target parity + broom ridden sync + current item/block parity sweep)
+Last reconciled: 2026-05-22 (post Witch Hunter black-magic pressure + target parity + broom ridden sync)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -163,6 +163,12 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 ---
 
 ## Completed this session ✅
+
+### Witch Hunter black-magic pressure (2026-05-22)
+
+- Successful taglock curses, `Curse of Corrupt Poppet`, `Hell on Earth`, Voodoo Poppet use, and Vampiric Poppet redirection now call the restored `WitchHunterEntity.blackMagicPerformed` hook. The hook follows the original 10% notice chance, 2-minute delay, 100-tick check cadence, and 1% spawn roll in first practical form, spawning up to two hunters near the caster and remembering that caster as their target. `./gradlew.bat compileJava processResources` passes. Remaining fidelity gap: the pressure timer is session-state rather than the old persistent infusion NBT key, and the custom `theycome` sound is still approximated.
+
+---
 
 ### Witch Hunter target parity (2026-05-22)
 

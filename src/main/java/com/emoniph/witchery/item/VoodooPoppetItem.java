@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.entity.WitchHunterEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -49,6 +50,9 @@ public class VoodooPoppetItem extends PoppetItem {
         // Apply voodoo effects
         target.addEffect(new MobEffectInstance(MobEffects.POISON,   200, 1)); // 10s Poison II
         target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 0)); // 15s Weakness
+        if (user instanceof ServerPlayer serverPlayer) {
+            WitchHunterEntity.blackMagicPerformed(serverPlayer);
+        }
 
         user.displayClientMessage(Component.translatable("witchery.poppet.voodoo.success", getBoundName(stack)), false);
 
