@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:blaze_powder"},
-    {"id": "minecraft:ender_pearl"},
-    {"id": "minecraft:glowstone_dust"},
-    {"id": "minecraft:nether_wart"},
-    {"id": "minecraft:ghast_tear"},
-    {"id": "minecraft:sugar"}
+    {"id": "witchery:fanciful_thread"},
+    {"id": "witchery:artichoke"},
+    {"id": "witchery:mandrake_root"},
+    {"id": "witchery:spanish_moss"},
+    {"id": "witchery:glint_weed"},
+    {"id": "witchery:bat_wool"}
   ],
   "result": {"id": "witchery:brew_of_flowing_spirit", "count": 3},
   "power": 0.0,
