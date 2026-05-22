@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.blocks.GrassperBlock;
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +13,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -38,7 +41,8 @@ import java.util.List;
 /**
  * Mutating Sprig - a controlled mutation tool for a few specific block changes.
  * This is intentionally bounded for now: the core block transformations are live,
- * while the wider advanced mutation-structure family remains follow-up work.
+ * while the remaining advanced mutation-structure family beyond the restored
+ * chest/chest-plant/familiar bridges remains follow-up work.
  */
 public class MutatingSprigItem extends Item {
 
@@ -76,6 +80,26 @@ public class MutatingSprigItem extends Item {
             return InteractionResult.CONSUME;
         }
         if (tryCreateCritterSnare(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateOwls(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateToads(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -236,6 +260,60 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
+    private static boolean tryCreateOwls(Level level, BlockPos pos, BlockState state) {
+        if (!(level instanceof ServerLevel serverLevel)
+                || !state.is(Blocks.COBWEB)
+                || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
+            return false;
+        }
+        if (countAdjacentCritterSnares(level, pos, 1) < 2
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.MUTANDIS_EXTREMIS.get().getDefaultInstance()) < 3
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.ATTUNED_STONE_CHARGED.get().getDefaultInstance()) < 1) {
+            return false;
+        }
+
+        Mob wolf = findNearbyCreature(level, pos, EntityType.WOLF);
+        if (wolf == null) {
+            return false;
+        }
+
+        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 1, WitcheryEntities.OWL.get()) <= 0) {
+            return false;
+        }
+
+        level.removeBlock(pos, false);
+        clearDiagonalGrasspers(level, pos);
+        wolf.discard();
+        return true;
+    }
+
+    private static boolean tryCreateToads(Level level, BlockPos pos, BlockState state) {
+        if (!(level instanceof ServerLevel serverLevel)
+                || !state.is(Blocks.COBWEB)
+                || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
+            return false;
+        }
+        if (countAdjacentCritterSnares(level, pos, 3) < 2
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.MUTANDIS_EXTREMIS.get().getDefaultInstance()) < 3
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.ATTUNED_STONE_CHARGED.get().getDefaultInstance()) < 1) {
+            return false;
+        }
+
+        Mob ocelot = findNearbyCreature(level, pos, EntityType.OCELOT);
+        if (ocelot == null) {
+            return false;
+        }
+
+        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 3, WitcheryEntities.TOAD.get()) <= 0) {
+            return false;
+        }
+
+        level.removeBlock(pos, false);
+        clearDiagonalGrasspers(level, pos);
+        ocelot.discard();
+        return true;
+    }
+
     private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state) {
         if (!state.is(WitcheryBlocks.LEECH_CHEST.get())
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
@@ -319,6 +397,17 @@ public class MutatingSprigItem extends Item {
                 .orElse(null);
     }
 
+    private static Mob findNearbyCreature(Level level, BlockPos pos, EntityType<?> entityType) {
+        return level.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(1.0, 1.0, 1.0),
+                        mob -> mob.isAlive() && !mob.isRemoved() && mob.getType() == entityType)
+                .stream()
+                .min(Comparator.comparingDouble(mob -> mob.distanceToSqr(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5)))
+                .orElse(null);
+    }
+
     private static ItemEntity findDroppedAlderSapling(Level level, BlockPos pos, List<ItemEntity> excluded) {
         return level.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(0.35, 0.25, 0.35), itemEntity ->
                         itemEntity.isAlive()
@@ -369,6 +458,51 @@ public class MutatingSprigItem extends Item {
             }
         }
         return count;
+    }
+
+    private static int countAdjacentCritterSnares(Level level, BlockPos pos, int caughtType) {
+        int count = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockState adjacentState = level.getBlockState(pos.relative(direction));
+            if (adjacentState.is(WitcheryBlocks.CRITTER_SNARE.get())
+                    && adjacentState.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
+                    && adjacentState.getValue(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT) == caughtType) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int spawnFamiliarsFromAdjacentSnares(ServerLevel level, BlockPos pos, int caughtType,
+                                                        EntityType<? extends Mob> familiarType) {
+        int spawned = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos snarePos = pos.relative(direction);
+            BlockState snareState = level.getBlockState(snarePos);
+            if (!snareState.is(WitcheryBlocks.CRITTER_SNARE.get())
+                    || !snareState.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
+                    || snareState.getValue(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT) != caughtType) {
+                continue;
+            }
+
+            Mob familiar = familiarType.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            if (familiar == null) {
+                continue;
+            }
+
+            level.removeBlock(snarePos, false);
+            familiar.snapTo(snarePos.getX() + 0.5, snarePos.getY() + 0.05, snarePos.getZ() + 0.5,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            familiar.finalizeSpawn(level, level.getCurrentDifficultyAt(snarePos),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            familiar.setPersistenceRequired();
+            if (familiar instanceof com.emoniph.witchery.entity.familiar.FamiliarEntity familiarEntity) {
+                familiarEntity.setOrderedToSit(false);
+            }
+            level.addFreshEntity(familiar);
+            spawned++;
+        }
+        return spawned;
     }
 
     private static void clearHorizontalMoss(Level level, BlockPos pos) {
