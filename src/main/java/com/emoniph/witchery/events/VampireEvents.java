@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -108,7 +109,7 @@ public class VampireEvents {
     }
 
     private static void bite(ServerPlayer vampire, LivingEntity target, WitcheryPlayerData data) {
-        int gained = bloodValue(target);
+        int gained = bloodValue(vampire, target);
         target.hurt(vampire.damageSources().playerAttack(vampire), 2f);
         data.addBlood(gained);
         PacketDistributor.sendToPlayer(vampire, SyncPlayerDataPayload.from(vampire, data));
@@ -120,9 +121,18 @@ public class VampireEvents {
     }
 
     /** Blood gained from biting different entity types. */
-    private static int bloodValue(LivingEntity entity) {
-        if (entity instanceof Monster) return 5;   // undead/hostile have thin blood
-        if (entity instanceof Animal)  return 25;  // animals are a good feed
-        return 15;
+    private static int bloodValue(ServerPlayer vampire, LivingEntity entity) {
+        int base;
+        if (entity instanceof Monster) {
+            base = 5;   // undead/hostile have thin blood
+        } else if (entity instanceof Animal) {
+            base = 25;  // animals are a good feed
+        } else {
+            base = 15;
+        }
+        if (!VampireClothingUtil.isDrinkBoostActive(vampire)) {
+            return base;
+        }
+        return (base * 3 + 1) / 2;
     }
 }
