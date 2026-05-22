@@ -41,6 +41,11 @@
     },
     {
       "type": "patchouli:text",
+      "title": "Flying Monkey",
+      "text": "The older Flying Monkey working is back on the real structure too. Suspend a $(item)Cobweb$() over a water source, grow fully mature $(item)Cocoa Pods$() on each of its four sides, and set four diagonal $(item)Grasspers$() so two hold $(item)Mutandis Extremis$(), one holds a $(item)Charged Attuned Stone$(), and one holds a $(item)Poppy$().$(br2)Lure a $(thing)Wolf$() and an $(thing)Owl$() into the web, then touch the cobweb with the sprig. The shortcut cast is gone again; the proper mutation now leaves behind a wild $(item)Flying Monkey$() that still needs taming."
+    },
+    {
+      "type": "patchouli:text",
       "title": "Parasytic Louse",
       "text": "The crueler little route is back as well. Fill a central $(item)Critter Snare$() with a $(thing)Silverfish$(), grow at least two $(item)Vines$() on its four sides, and keep water below at least one of those side positions. The four diagonal $(item)Grasspers$() must together hold two $(item)Mutandis$(), one $(item)Charged Attuned Stone$(), and one $(item)Tongue of Dog$().$(br2)Use the sprig on the silverfish snare and it will twist into a living $(item)Parasytic Louse$(), which you can later pick back up into item form by handling it directly."
     },

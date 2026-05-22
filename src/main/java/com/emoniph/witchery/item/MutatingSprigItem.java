@@ -27,6 +27,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CocoaBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -80,6 +81,16 @@ public class MutatingSprigItem extends Item {
             return InteractionResult.CONSUME;
         }
         if (tryCreateCritterSnare(level, pos, state)) {
+            spawnEffects(level, pos);
+            if (ctx.getPlayer() != null) {
+                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
+                        ? EquipmentSlot.MAINHAND
+                        : EquipmentSlot.OFFHAND;
+                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (tryCreateFlyingMonkey(level, pos, state)) {
             spawnEffects(level, pos);
             if (ctx.getPlayer() != null) {
                 EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
@@ -267,6 +278,43 @@ public class MutatingSprigItem extends Item {
         }
         zombie.discard();
         level.setBlock(pos, WitcheryBlocks.CRITTER_SNARE.get().defaultBlockState(), 3);
+        return true;
+    }
+
+    private static boolean tryCreateFlyingMonkey(Level level, BlockPos pos, BlockState state) {
+        if (!(level instanceof ServerLevel serverLevel)
+                || !state.is(Blocks.COBWEB)
+                || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)
+                || countHorizontalMatureCocoa(level, pos) < 4) {
+            return false;
+        }
+        if (countDiagonalGrasspersWith(level, pos, WitcheryItems.MUTANDIS_EXTREMIS.get().getDefaultInstance()) < 2
+                || countDiagonalGrasspersWith(level, pos, WitcheryItems.ATTUNED_STONE_CHARGED.get().getDefaultInstance()) < 1
+                || countDiagonalGrasspersWith(level, pos, Items.POPPY.getDefaultInstance()) < 1) {
+            return false;
+        }
+
+        Mob wolf = findNearbyCreature(level, pos, EntityType.WOLF);
+        Mob owl = findNearbyCreature(level, pos, WitcheryEntities.OWL.get());
+        if (wolf == null || owl == null) {
+            return false;
+        }
+
+        var monkey = WitcheryEntities.FLYING_MONKEY.get().create(serverLevel, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (monkey == null) {
+            return false;
+        }
+
+        level.removeBlock(pos, false);
+        clearDiagonalGrasspers(level, pos);
+        wolf.discard();
+        owl.discard();
+        monkey.snapTo(pos.getX() + 0.5D, pos.getY() + 0.001D, pos.getZ() + 0.5D,
+                level.random.nextFloat() * 360.0F, 0.0F);
+        monkey.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos),
+                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+        monkey.setPersistenceRequired();
+        serverLevel.addFreshEntity(monkey);
         return true;
     }
 
@@ -517,6 +565,19 @@ public class MutatingSprigItem extends Item {
         int count = 0;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             if (level.getBlockState(pos.relative(direction)).is(block)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int countHorizontalMatureCocoa(Level level, BlockPos pos) {
+        int count = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockState state = level.getBlockState(pos.relative(direction));
+            if (state.is(Blocks.COCOA)
+                    && state.hasProperty(CocoaBlock.AGE)
+                    && state.getValue(CocoaBlock.AGE) >= 2) {
                 count++;
             }
         }
