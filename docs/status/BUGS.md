@@ -929,6 +929,17 @@ These two familiar-adjacent kettle recipes are now closer to source:
 Remaining gap:
 - Final in-game verification is still open for both corrected kettle recipes, especially their feel alongside the current raven and toad familiar implementations.
 
+### 71. Several core brews still used flattened placeholder kettle mixes - Fixed / verify
+
+The next early/mid-game brew batch is now closer to source:
+- `Brew of Sleeping` no longer uses the old wheat/sugar/spider-eye placeholder set and now once again asks for `Purified Milk`, `cookie`, `Brew of Love`, `Whiff of Magic`, `Icy Needle`, and `Artichoke`, which better fits the Spirit World progression the Primer already points players toward.
+- `Brew of Ink` no longer relies on the old sugar/wheat/pumpkin filler chain and now once again asks for black dye, `quicklime`, `Oil of Vitriol`, `slime_ball`, `Belladonna`, and `Rowan Berries`.
+- `Brew of Ice` no longer uses the placeholder snowball/ice/sugar/wheat/pumpkin/apple mix and now once again asks for `Icy Needle`, `snowball`, `Artichoke`, `glistering_melon_slice`, `red_mushroom`, and `Odour of Purity`.
+- `Brew of Cursed Leaping` no longer uses the old rotten-flesh/sugar/wheat/pumpkin placeholder set and now once again asks for `bone`, `apple`, `Brew of Sprouting`, `Belladonna`, `feather`, and `cod`.
+
+Remaining gap:
+- Final in-game verification is still open for this corrected brew batch, especially the feel of the restored Spirit World and curse-side ingredient bridges in ordinary survival play.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed

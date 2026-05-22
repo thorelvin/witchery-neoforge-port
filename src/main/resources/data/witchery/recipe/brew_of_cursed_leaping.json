@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:rotten_flesh"},
-    {"id": "minecraft:sugar"},
-    {"id": "minecraft:wheat"},
-    {"id": "minecraft:pumpkin_seeds"},
+    {"id": "minecraft:bone"},
     {"id": "minecraft:apple"},
-    {"id": "minecraft:fermented_spider_eye"}
+    {"id": "witchery:brew_of_sprouting"},
+    {"id": "witchery:belladonna"},
+    {"id": "minecraft:feather"},
+    {"id": "minecraft:cod"}
   ],
   "result": {"id": "witchery:brew_of_cursed_leaping", "count": 3},
   "power": 1000.0,

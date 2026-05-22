@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:wheat"},
-    {"id": "minecraft:sugar"},
-    {"id": "minecraft:spider_eye"},
-    {"id": "minecraft:fermented_spider_eye"},
-    {"id": "minecraft:poppy"},
-    {"id": "minecraft:blue_dye"}
+    {"id": "witchery:purified_milk"},
+    {"id": "minecraft:cookie"},
+    {"id": "witchery:brew_of_love"},
+    {"id": "witchery:whiff_of_magic"},
+    {"id": "witchery:icy_needle"},
+    {"id": "witchery:artichoke"}
   ],
   "result": {"id": "witchery:brew_of_sleeping", "count": 3},
   "power": 0.0,

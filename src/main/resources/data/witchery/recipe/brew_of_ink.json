@@ -1,12 +1,12 @@
 {
   "type": "witchery:kettle_brewing",
   "ingredients": [
-    {"id": "minecraft:ink_sac"},
-    {"id": "minecraft:sugar"},
-    {"id": "minecraft:wheat"},
-    {"id": "minecraft:pumpkin_seeds"},
-    {"id": "minecraft:apple"},
-    {"id": "minecraft:fermented_spider_eye"}
+    {"id": "minecraft:black_dye"},
+    {"id": "witchery:quicklime"},
+    {"id": "witchery:oil_of_vitriol"},
+    {"id": "minecraft:slime_ball"},
+    {"id": "witchery:belladonna"},
+    {"id": "witchery:rowan_berries"}
   ],
   "result": {"id": "witchery:brew_of_ink", "count": 3},
   "power": 1000.0,
