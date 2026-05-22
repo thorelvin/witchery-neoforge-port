@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.item.EarmuffsItem;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,10 +23,18 @@ import java.util.UUID;
 
 /**
  * Banshee — flying undead horror that screams near dying players.
- * Wails loudly when it notices a player below half health.
+ * Now restores a first practical scream-damage loop with Earmuffs protection.
  */
 public class BansheeEntity extends Monster {
+    private static final int SCREAM_START_INTERVAL_TICKS = 100;
+    private static final int SCREAM_REPEAT_INTERVAL_TICKS = 20;
+    private static final int SCREAM_SOUND_INTERVAL_TICKS = 60;
+    private static final double SCREAM_RADIUS = 6.0;
+    private static final float MIN_SCREAM_DAMAGE = 1.0F;
+    private static final float SCREAM_DAMAGE_RATIO = 0.1F;
+
     private UUID ownerUuid;
+    private boolean screaming;
 
     public BansheeEntity(EntityType<? extends BansheeEntity> type, Level level) {
         super(type, level);
@@ -76,14 +85,44 @@ public class BansheeEntity extends Monster {
         if (!level().isClientSide() && getTarget() != null && isOwner(getTarget())) {
             setTarget(null);
         }
-        // Wail when near a low-health player
-        if (!level().isClientSide() && tickCount % 80 == 0) {
-            level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(16))
-                   .stream()
-                   .filter(p -> p.getHealth() < p.getMaxHealth() * 0.5f)
-                   .findFirst()
-                   .ifPresent(p -> level().playSound(null, blockPosition(),
-                           SoundEvents.WARDEN_SONIC_BOOM, net.minecraft.sounds.SoundSource.HOSTILE, 0.8f, 1.4f));
+
+        if (level().isClientSide()) {
+            return;
+        }
+
+        int screamInterval = screaming ? SCREAM_REPEAT_INTERVAL_TICKS : SCREAM_START_INTERVAL_TICKS;
+        if (tickCount % screamInterval != 0) {
+            return;
+        }
+
+        boolean startedScreaming = false;
+        boolean foundVictim = false;
+        for (Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(SCREAM_RADIUS),
+                LivingEntity::isAlive)) {
+            if (isOwner(player) || distanceToSqr(player) > SCREAM_RADIUS * SCREAM_RADIUS) {
+                continue;
+            }
+
+            foundVictim = true;
+            if (!screaming) {
+                screaming = true;
+                startedScreaming = true;
+            }
+
+            if (!EarmuffsItem.isWorn(player)) {
+                float damage = Math.max(player.getMaxHealth() * SCREAM_DAMAGE_RATIO, MIN_SCREAM_DAMAGE);
+                player.hurt(player.damageSources().magic(), damage);
+            }
+        }
+
+        if (!foundVictim) {
+            screaming = false;
+            return;
+        }
+
+        if (startedScreaming || tickCount % SCREAM_SOUND_INTERVAL_TICKS == 0) {
+            level().playSound(null, blockPosition(), SoundEvents.GHAST_SCREAM,
+                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 1.15f);
         }
     }
 
