@@ -29,6 +29,10 @@ This file tracks the staged migration of Witchery item textures from mixed legac
   - attuned / charged ritual stones
   - waystones / bound waystones
 
+### Locked Runtime Choices
+
+- Koboldite Dust, Nugget, Ingot, and Pickaxe should keep the user-approved live-backup sprites from `docs/art/item-backups/2026-05-22-live-before-old-assets-restore`, not the older restored koboldite assets, unless a future pass explicitly redraws that family.
+
 ### Batch Order
 
 1. Occult materials and stones

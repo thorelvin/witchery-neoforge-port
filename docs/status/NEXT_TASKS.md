@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post exact wiki placeholder icon pass)
+Last reconciled: 2026-05-22 (post koboldite live-icon restore)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -173,6 +173,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Decompiled asset pass restored distinct item models/textures for 107 more placeholders, including the Resurrected brew aliases, books, contracts, bolts, fume ingredients, several tools, and companion override models for the placeholder crossbow/spear visuals. Current count: 154 distinct placeholder icons/models, 91 still on the shared placeholder icon.
 - Wiki/existing-icon pass restored 46 more confident placeholder icons/models, including glass goblets, Gulg's Gurdle, Mog's Quiver, Horn of the Hunt, Player Compass, Blooded Waystone, vampire garments, odd-porkchop aliases, and generic brew bottle silhouettes. Current count: 200 distinct placeholder icons/models, 45 still on the shared placeholder icon.
 - Exact wiki-icon pass restored 27 more placeholder icons/models, including traps, heads, ice/snow block-family items, Sun Collector, Staff of Duplication, Twisting Band, silvered hunter gear, and Witch Hunter Dawn gear. Current count: 227 distinct placeholder icons/models, 18 still on the shared placeholder icon.
+- Koboldite art correction restored the user-approved live-backup icons for `Koboldite Pickaxe`, `Koboldite Dust`, `Koboldite Nugget`, and `Koboldite Ingot` from `docs/art/item-backups/2026-05-22-live-before-old-assets-restore`; keep these instead of the older restored koboldite sprites.
 
 ---
 

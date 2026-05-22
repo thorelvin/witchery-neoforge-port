@@ -2,7 +2,7 @@
 
 Legend: Done / Partial / Not started / Deferred
 
-Last reconciled: 2026-05-22 (exact wiki placeholder icon pass)
+Last reconciled: 2026-05-22 (koboldite live-icon restore)
 Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`PORTING_PLAN.md` snapshots.
 
 ---
@@ -154,7 +154,7 @@ Deferred Custom Brew-side placeholders still registered as items: Foulness, Foam
 | Wicker Bundle / Wickerman | Partial | Plain and Bloodied Wicker Bundles now use rotated-pillar placement, original 20/20 flammability, block-backed inventory models, self drops, and the Resurrected bloodied textures. Demonic Blood can right-click plain wicker to convert up to five nearby blocks to bloodied wicker like old Witchery, and flint-and-steel on a valid old Witchery bloodied wickerman now checks the full documented 20-bundle shape, can ignite from any bloodied bundle in the structure, burns the matching blocks, and summons a persistent Horned Huntsman boss with first-pass AI, old random melee damage, original ranged damage scaling, old iron-golem step/throw cues, drops, boss bar, spawn egg, and renderer. `/witchery spawn wickerman` now places a summon-valid bloodied wickerman five blocks in front of the player, oriented from the player's facing and using a more hay-man-like mixed pillar-axis pose for quick QA/setup. Needs in-game verification for the exact Huntsman model pose/scale, arrow knockback, wolf behavior, and wickerman structure offsets. |
 | Witch hut / abandoned shack | Done | 7x7 hut; Coven Witch; loot chest |
 | Apothecary village house | Done | 9x8x6 shop; Coven Witch; full interior |
-| Hobgoblin Hut | Done | 5x5x5 oak hut; 1-2 hobgoblin residents; koboldite loot chest |
+| Hobgoblin Hut | Done | 5x5x5 oak hut; 1-2 hobgoblin residents; koboldite loot chest; Koboldite Dust/Nugget/Ingot/Pickaxe now intentionally use the user-approved live-backup icons instead of the older restored sprites |
 | Village additions | Not started | Bookshop, guards, walls deferred |
 | Torment maze | Partial | Legacy 31x31 DFS generator restored with old origin, invisible Force wall/ceiling blocks, Bedrock floor, rare mycelium, portal chamber, and 3 refilling chest rooms per level. The Torment exit now uses a thin axis-based portal plane instead of a placeholder full cube, and the obsolete random `torment_chambers` structure-set path is removed so fresh/deleted Torment chunks now verify the maze generator alone; `/witchery verify torment` now checks the full footprint/chambers/chests/atmosphere data server-side without missing the right chest room, but final in-game verification is still open |
 | Torment boss loop | Done | Full Flame Imp -> Scroll -> ritual -> LoT -> shared random Torment level -> fixed phase-2 maze spawn -> return flow |
