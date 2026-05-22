@@ -157,14 +157,14 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 113 | `witchery:brew_of_flowing_spirit` | |
 | 114 | `witchery:brew_of_wasting` | |
 | 115 | `witchery:brew_of_erosion` | |
-| 116 | `witchery:brew_of_foulness` | |
+| 116 | `witchery:brew_of_foulness` | `Deferred - custom brew-side placeholder only` | The false direct kettle recipe is gone again after source comparison; this item remains registered for the later Custom Brew sprint instead of claiming source-backed survival acquisition now. |
 | 117 | `witchery:brew_of_infection` | |
 | 118 | `witchery:brew_of_love` | |
 | 119 | `witchery:brew_of_the_grotesque` | |
 | 120 | `witchery:brew_of_revealing` | |
-| 121 | `witchery:brew_of_poison` | |
+| 121 | `witchery:brew_of_poison` | `Deferred - custom brew-side placeholder only` | The false direct kettle recipe is gone again after source comparison; the scraped wiki and broader Custom Brew notes point to this as a cauldron/custom-brew effect family rather than a base 1.7.2 kettle brew. |
 | 122 | `witchery:brew_of_ice` | Displays as `Brew of Frost` like original Witchery |
-| 123 | `witchery:brew_of_foaming` | |
+| 123 | `witchery:brew_of_foaming` | `Deferred - custom brew-side placeholder only` | The false direct kettle recipe is gone again after source comparison; this item remains registered for the later Custom Brew sprint instead of claiming source-backed survival acquisition now. |
 
 ---
 
