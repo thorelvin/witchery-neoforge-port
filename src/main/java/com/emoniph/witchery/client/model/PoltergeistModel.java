@@ -45,18 +45,18 @@ public class PoltergeistModel extends EntityModel<LivingEntityRenderState> {
         PartDefinition root = mesh.getRoot();
 
         root.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-4, -8, -3, 8, 8, 6),
+                CubeListBuilder.create().mirror().texOffs(0, 0).addBox(-4, -8, -3, 8, 8, 6),
                 PartPose.offset(0, 0, 0));
         root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(16, 16).addBox(-4, 0, -1, 8, 11, 2),
+                CubeListBuilder.create().mirror().texOffs(16, 16).addBox(-4, 0, -1, 8, 11, 2),
                 PartPose.offset(0, 0, 0));
 
         // Duplicate arm pairs — both at same position, animated at half/full amplitude
         root.addOrReplaceChild("right_arm",
-                CubeListBuilder.create().texOffs(40, 0).addBox(-1, -2, -1, 2, 18, 2),
+                CubeListBuilder.create().mirror().texOffs(40, 0).addBox(-1, -2, -1, 2, 18, 2),
                 PartPose.offset(-5, 2, 0));
         root.addOrReplaceChild("right_arm_2",
-                CubeListBuilder.create().texOffs(40, 0).addBox(-1, -2, -1, 2, 18, 2),
+                CubeListBuilder.create().mirror().texOffs(40, 0).addBox(-1, -2, -1, 2, 18, 2),
                 PartPose.offset(-5, 2, 0));
         root.addOrReplaceChild("left_arm",
                 CubeListBuilder.create().texOffs(40, 0).mirror().addBox(-1, -2, -1, 2, 18, 2),
@@ -67,7 +67,7 @@ public class PoltergeistModel extends EntityModel<LivingEntityRenderState> {
 
         // Legs — bottom at y=11+13=24 (floor reference)
         root.addOrReplaceChild("right_leg",
-                CubeListBuilder.create().texOffs(0, 16).addBox(-1, 0, -1, 2, 13, 2),
+                CubeListBuilder.create().mirror().texOffs(0, 16).addBox(-1, 0, -1, 2, 13, 2),
                 PartPose.offset(-2, 11, 0));
         root.addOrReplaceChild("left_leg",
                 CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-1, 0, -1, 2, 13, 2),

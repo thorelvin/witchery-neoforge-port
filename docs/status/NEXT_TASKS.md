@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (Treefyd old visual parity polish)
+Last reconciled: 2026-05-22 (Poltergeist mirror-UV parity polish)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -159,6 +159,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Base alchemy chain** - smelt `clay_jar_soft` into `clay_jar`, then retest the oven/distillery loop; confirm `odour_of_purity`, `oil_of_vitriol`, and the other early intermediates now show in the Witchery creative tab for fast QA
 
 - **Treefyd model** - `/witchery spawn treefyd` and verify the restored old 1.7 zero-plane petals, tongue, and crossed leaves now render visibly with the original 64x32 texture
+- **Poltergeist model** - `/witchery spawn poltergeist` and verify the restored old all-part mirror UV flags close the reported wrong-mapping/holes issue
 
 - **Demon model** — `/witchery spawn demon` and verify the source-static zero-depth wing pose now matches the Imp-like correct wing presentation
 - **Death model** - `/witchery spawn death` and verify the scythe now sits against the hand after the original runtime pivot coordinate correction
@@ -185,6 +186,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Death scythe attachment polish corrected the ported runtime pivot from the swapped `x=0, z=-0.8` values back to the original 1.7 `x=-0.8, z=0` pose, so the scythe should sit sideways at Death's hand instead of drifting forward. Remaining work is in-game angle/contact verification.
 - Demon wing source-pose polish restored the wings to zero-depth source planes and removed the non-source idle z-flap so the demon now keeps the same static decompiled wing angle family as the correctly presented Imp. Remaining work is in-game wing-angle verification.
 - Treefyd old visual parity polish kept the user-directed old version rather than the Resurrected variant: the active texture hash matches the original 1.7 64x32 asset, and the model now restores the old zero-width/depth petal, tongue, and crossed leaf planes plus original UV offsets. Remaining work is in-game visibility verification.
+- Poltergeist mirror-UV parity polish kept the original 1.7 `poltergeist.png` asset and restored the old model's all-part `mirror=true` UV setup instead of mirroring only the left-side limbs. Remaining work is in-game wrong-mapping/holes verification.
 
 ---
 

@@ -1,4 +1,4 @@
-Current visual follow-ups: Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
+Current visual follow-ups: Poltergeist old mirror-UV parity, Treefyd old 1.7 zero-plane model parity, Death scythe attachment, and Demon source-wing pose were polished 2026-05-22; all need in-game visual verification.
 
 ~~Where is mutandis item in tab?~~ ✅ Fixed 2026-05-18
 
@@ -284,7 +284,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | M11 | `mandrake_mob` | `/witchery spawn mandrake` | Still texture error, have holes. ✅ Ground fix applied 2026-05-22 |
 | M12 | `banshee` | `/witchery spawn banshee` | | Still have error on mouth/face
 | M13 | `spectre` | `/witchery spawn spectre` | | Looks ok.
-| M14 | `poltergeist` | `/witchery spawn poltergeist` | | Wrong mapping, have holes
+| M14 | `poltergeist` | `/witchery spawn poltergeist` | | Old 1.7 texture hash already matched; model now restores the source `mirror=true` UV flag on every part instead of only left-side limbs, which should close the reported wrong-mapping/holes issue. Needs in-game verification.
 | M15 | `witch_hunter` | `/witchery spawn witch_hunter` | | Coven Witch targeting was already present; this pass also restores the broader old target family for undead mobs, demonic mobs, vanilla witches, vampires/werewolves, players carrying Voodoo/Vampiric Poppets, and black-magic caster targets. Successful curse rites and offensive poppets can now seed delayed hunter spawns. Needs in-game aggro/spawn-pressure verification.
 | M16 | `treefyd` | `/witchery spawn treefyd` | | Old 1.7 visual path restored: the active texture matches the original 64x32 `textures/entities/treefyd.png`, and the model now uses the original zero-width/depth petal, tongue, and crossed leaf planes instead of widened port boxes. Needs in-game verification that the reported invisible spawn is visible now.
 | M17 | `parasytic_louse` | `/witchery spawn parasytic_louse` | |
