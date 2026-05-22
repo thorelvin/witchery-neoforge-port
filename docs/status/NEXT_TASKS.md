@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-22 (post wiki/existing placeholder icon pass)
+Last reconciled: 2026-05-22 (post exact wiki placeholder icon pass)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -30,7 +30,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | "Invisible" — may be alpha issue | Small |
 | `rowan_door` | Facing issue when placed? Not tested | Small |
 | `leaping_lily` | Needs real texture (currently snowbell placeholder) | Small |
-| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 200 entries now have distinct source/wiki-backed item models or clear alias models after the local, decompiled, and wiki-scrape icon passes, while 45 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
+| Legacy placeholder items | 245 source/wiki/decompiled item IDs are now registered and visible as inert creative-tab placeholders: the original 131 missing visible IDs plus 114 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. 227 entries now have distinct source/wiki-backed item models or clear alias models after the local, decompiled, and wiki-scrape icon passes, while 18 still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
@@ -172,6 +172,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Follow-up exact-registry pass added 114 additional 1.12 Resurrected item IDs from `WitcheryGeneralItems`, `WitcheryBrewItems`, `WitcheryBookItems`, `WitcheryBoltItems`, `WitcheryContractItems`, `WitcheryEquipmentItems`, `WitcheryFumeItems`, and `WitcheryIngredientItems` as inert placeholders with shared item models and `(Placeholder)` translations. A `javap` audit now reports zero exact item-init registry strings missing from the port.
 - Decompiled asset pass restored distinct item models/textures for 107 more placeholders, including the Resurrected brew aliases, books, contracts, bolts, fume ingredients, several tools, and companion override models for the placeholder crossbow/spear visuals. Current count: 154 distinct placeholder icons/models, 91 still on the shared placeholder icon.
 - Wiki/existing-icon pass restored 46 more confident placeholder icons/models, including glass goblets, Gulg's Gurdle, Mog's Quiver, Horn of the Hunt, Player Compass, Blooded Waystone, vampire garments, odd-porkchop aliases, and generic brew bottle silhouettes. Current count: 200 distinct placeholder icons/models, 45 still on the shared placeholder icon.
+- Exact wiki-icon pass restored 27 more placeholder icons/models, including traps, heads, ice/snow block-family items, Sun Collector, Staff of Duplication, Twisting Band, silvered hunter gear, and Witch Hunter Dawn gear. Current count: 227 distinct placeholder icons/models, 18 still on the shared placeholder icon.
 
 ---
 
