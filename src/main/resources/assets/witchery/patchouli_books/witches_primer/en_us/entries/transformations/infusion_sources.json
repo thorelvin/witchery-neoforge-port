@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "The four lasting infusions do not begin in the circle. They begin in the kettle.$(br2)Each source item below uses Redstone Soup as a base, asks a nearby altar for $(bold)4000 power$(/), and prepares the essence needed for one branch of permanent transformation."
+      "text": "The four lasting infusions do not begin in the circle. They begin in the kettle.$(br2)Each source item below uses Redstone Soup as a base, asks a nearby altar for $(bold)4000 power$(/), and prepares the essence needed for one branch of permanent transformation.$(br2)Like the older hidden registry routes, the Otherwhere and Infernal brews also accept their splash-potion twins if that is what you have on hand."
     },
     {
       "type": "patchouli:spotlight",

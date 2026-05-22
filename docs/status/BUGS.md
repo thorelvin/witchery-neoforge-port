@@ -1012,6 +1012,13 @@ Direct 1.7.2 comparison showed the port only had the later "divide one base into
 Remaining gap:
 - Final in-game verification is still open for the restored first-base progression, especially how it feels alongside the existing medium-circle infused-brew rites for Soaring and the Grave.
 
+### 81. Two hidden infusion-source splash variants were still missing - Fixed / verify
+
+Direct comparison with the old 1.7.2 kettle registry showed the port still only accepted the normal-potion forms for two source brews that originally had hidden splash-potion twins. `Spirit of Otherwhere` now once again accepts the splash `long_swiftness` variant alongside the normal potion, and `Infernal Animus` now once again accepts the splash `strong_harming` variant alongside the normal potion, which brings the live kettle roster back up to the full old 39-recipe shape instead of silently dropping those alternate survival routes.
+
+Remaining gap:
+- Final in-game verification is still open for the restored splash-potion variants, especially whether they feel sensible in JEI and ordinary infusion progression despite originally being hidden from the old in-book recipe list.
+
 ---
 
 ### 8. Torment red pulse / overlay decision - Closed
