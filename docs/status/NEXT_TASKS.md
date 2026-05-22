@@ -1,7 +1,15 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Blood-stained Wool vampire acquisition slice)
+Last reconciled: 2026-05-23 (Vampire clothing lethal-fire set bonus slice)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
+
+---
+
+## Current plan
+
+- Verify the promoted Vampire clothing lethal-fire save in-game against sunlight/fire/lava damage.
+- Next highest-value vampire equipment work is drink-speed and mesmerise hook parity or exact Resurrected alias remaps.
+- Keep the remaining 230 placeholder items inert until each family gets an explicit promotion or alias decision.
 
 ---
 
@@ -109,7 +117,7 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Missing rites in Chapter 11** - first-pass Primer coverage is now in for the whole current missing-rite batch, including `Rite of Moving Earth`; the main remaining guidebook work is now completeness/polish rather than missing rite basics.
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
-- **Equipment/completeness follow-up** - `Beartrap` / `Wolftrap` usage coverage, the explicit `Wicker Man` pattern/layout, and first-pass Vampire clothing recipe/armor/acquisition coverage are now in; remaining high-value equipment polish is Vampire clothing set bonuses plus exact alias/remap decisions.
+- **Equipment/completeness follow-up** - `Beartrap` / `Wolftrap` usage coverage, the explicit `Wicker Man` pattern/layout, first-pass Vampire clothing recipe/armor/acquisition coverage, and the first lethal-fire clothing set-bonus hook are now in; remaining high-value equipment polish is Vampire clothing drink-speed/mesmerise bonuses plus exact alias/remap decisions.
 - **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 230 remaining inert placeholder items, including 113 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, vampire exact aliases/bonus hooks, hobgoblin rewards, custom-brew derivatives, block-like items, or exact-alias remaps.
 
 ---
@@ -215,6 +223,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Wicker Man Primer layout coverage added a new Witches' Primer entry for Wicker Bundles, Bloodied Wicker Bundles, the exact seven-layer 20-block bloodied silhouette checked by the live matcher, and flint-and-steel Huntsman ignition. Remaining follow-up is in-game verification of the exact structure offsets/model pose rather than the pattern being hidden.
 - Vampire clothing wearable recipe slice promoted `woven_cruor` and the primary `vampire_*` clothing family (`top_hat`, `dress_coat`, `dress_jacket`, `trousers`, `skirted_trousers`, `oxford_boots`, `helmet`, `chain_coat`, `chain_coat_ladies`) from inert placeholders into real wearable armor items with source/wiki recipes and Primer coverage. The remaining follow-up at that point was the old vampire-only Bone Needle -> Blood-stained Wool path, exact Resurrected alias decisions, in-game armor QA, and the old light/medium set bonuses.
 - Blood-stained Wool vampire acquisition slice promoted `blood_stained_wool` from the inert placeholder roster into a real wool-like block item, wired Bone Needle use on placed White Wool for vampire players with the restored 125-blood cost, and updated the Primer path so Woven Cruor is now survival-connected. Because old vampire level progression is not represented in the port yet, this first practical pass gates by vampire state plus blood cost; remaining follow-up is exact level-gate parity, exact Resurrected alias decisions, in-game armor QA, and old light/medium set bonuses.
+- Vampire clothing lethal-fire set bonus slice added a promoted-piece counter and restored the first practical source-backed fire-protection hook for vampire players: lethal fire damage can be reduced to leave the vampire at 1 health, with a 25% basic save from 3 light pieces or 2 medium pieces and a 75% extended save from all 4 light pieces. The Primer now describes the live thresholds; remaining follow-up is drink speed, mesmerise duration, exact Resurrected alias decisions, and in-game armor/fire QA.
 
 ---
 
