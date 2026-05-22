@@ -32,6 +32,18 @@ public class WitcheryBlocks {
         Optional.of(ResourceKey.create(Registries.CONFIGURED_FEATURE,
             Identifier.fromNamespaceAndPath("witchery", "rowan_tree"))),
         Optional.empty());
+    private static final TreeGrower ALDER_TREE = new TreeGrower(
+        "alder",
+        Optional.empty(),
+        Optional.of(ResourceKey.create(Registries.CONFIGURED_FEATURE,
+            Identifier.fromNamespaceAndPath("witchery", "alder_tree"))),
+        Optional.empty());
+    private static final TreeGrower HAWTHORN_TREE = new TreeGrower(
+        "hawthorn",
+        Optional.empty(),
+        Optional.of(ResourceKey.create(Registries.CONFIGURED_FEATURE,
+            Identifier.fromNamespaceAndPath("witchery", "hawthorn_tree"))),
+        Optional.empty());
 
     // Wood & Rowan family
     public static final DeferredBlock<Block> ROWAN_PLANKS = BLOCKS.registerSimpleBlock("rowan_planks",
@@ -72,6 +84,22 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
     public static final DeferredBlock<SaplingBlock> ROWAN_SAPLING = BLOCKS.registerBlock("rowan_sapling",
             props -> new SaplingBlock(ROWAN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<RotatedPillarBlock> ALDER_LOG = BLOCKS.registerBlock("alder_log",
+            RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+    public static final DeferredBlock<RowanLeavesBlock> ALDER_LEAVES = BLOCKS.registerBlock("alder_leaves",
+            RowanLeavesBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
+    public static final DeferredBlock<SaplingBlock> ALDER_SAPLING = BLOCKS.registerBlock("alder_sapling",
+            props -> new SaplingBlock(ALDER_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<RotatedPillarBlock> HAWTHORN_LOG = BLOCKS.registerBlock("hawthorn_log",
+            RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+    public static final DeferredBlock<RowanLeavesBlock> HAWTHORN_LEAVES = BLOCKS.registerBlock("hawthorn_leaves",
+            RowanLeavesBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
+    public static final DeferredBlock<SaplingBlock> HAWTHORN_SAPLING = BLOCKS.registerBlock("hawthorn_sapling",
+            props -> new SaplingBlock(HAWTHORN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
 
     // Crops

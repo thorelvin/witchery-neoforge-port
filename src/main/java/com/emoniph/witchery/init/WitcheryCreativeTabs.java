@@ -22,6 +22,10 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.ROWAN_WOOD.get());
                         output.accept(WitcheryItems.ROWAN_LEAVES.get());
                         output.accept(WitcheryItems.ROWAN_SAPLING.get());
+                        output.accept(WitcheryItems.ALDER_LOG.get());
+                        output.accept(WitcheryItems.ALDER_SAPLING.get());
+                        output.accept(WitcheryItems.HAWTHORN_LOG.get());
+                        output.accept(WitcheryItems.HAWTHORN_SAPLING.get());
                         output.accept(WitcheryItems.BELLADONNA_SEEDS.get());
                         output.accept(WitcheryItems.MANDRAKE_SEEDS.get());
                         output.accept(WitcheryItems.ARTICHOKE_SEEDS.get());
@@ -130,8 +134,6 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.ATTUNED_STONE_CHARGED.get());
                         output.accept(WitcheryItems.CLAY_JAR_SOFT.get());
                         output.accept(WitcheryItems.CLAY_JAR.get());
-                        output.accept(WitcheryItems.ALDER_SAPLING.get());
-                        output.accept(WitcheryItems.HAWTHORN_SAPLING.get());
                         output.accept(WitcheryItems.MUTANDIS.get());
                         output.accept(WitcheryItems.MUTANDIS_EXTREMIS.get());
                         output.accept(WitcheryItems.TREEFYD_SEEDS.get());

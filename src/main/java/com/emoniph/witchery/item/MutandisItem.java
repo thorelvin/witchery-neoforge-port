@@ -121,8 +121,8 @@ public class MutandisItem extends Item {
 
         // Witchery plants + saplings
         pool.add(MutationOutcome.block(WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState()));
-        pool.add(MutationOutcome.item(WitcheryItems.ALDER_SAPLING.get()));
-        pool.add(MutationOutcome.item(WitcheryItems.HAWTHORN_SAPLING.get()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.ALDER_SAPLING.get().defaultBlockState()));
+        pool.add(MutationOutcome.block(WitcheryBlocks.HAWTHORN_SAPLING.get().defaultBlockState()));
         pool.add(MutationOutcome.block(WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState()));
         pool.add(MutationOutcome.block(WitcheryBlocks.EMBER_MOSS.get().defaultBlockState()));
         pool.add(MutationOutcome.block(WitcheryBlocks.GLINT_WEED.get().defaultBlockState()));

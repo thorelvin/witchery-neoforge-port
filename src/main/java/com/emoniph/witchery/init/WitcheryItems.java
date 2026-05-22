@@ -62,6 +62,10 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_WOOD = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_WOOD);
     public static final DeferredItem<BlockItem> ROWAN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_LEAVES);
     public static final DeferredItem<BlockItem> ROWAN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SAPLING);
+    public static final DeferredItem<BlockItem> ALDER_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_LOG);
+    public static final DeferredItem<BlockItem> ALDER_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_SAPLING);
+    public static final DeferredItem<BlockItem> HAWTHORN_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_LOG);
+    public static final DeferredItem<BlockItem> HAWTHORN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_SAPLING);
     public static final DeferredItem<BlockItem> WISPY_COTTON     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WISPY_COTTON);
     public static final DeferredItem<BlockItem> DISTURBED_COTTON = ITEMS.register("disturbed_cotton",
             id -> new com.emoniph.witchery.item.DisturbedCottonItem(WitcheryBlocks.DISTURBED_COTTON.get(), itemProps(id)));
@@ -323,8 +327,6 @@ public class WitcheryItems {
     public static final DeferredItem<Item> DENSE_WEB          = ITEMS.registerSimpleItem("dense_web");
     public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.register("demonic_blood", id -> new DemonicBloodItem(itemProps(id)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
-    public static final DeferredItem<Item> ALDER_SAPLING      = ITEMS.registerSimpleItem("alder_sapling");
-    public static final DeferredItem<Item> HAWTHORN_SAPLING   = ITEMS.registerSimpleItem("hawthorn_sapling");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
     public static final DeferredItem<Item> KOBOLDITE_NUGGET   = ITEMS.registerSimpleItem("koboldite_nugget");

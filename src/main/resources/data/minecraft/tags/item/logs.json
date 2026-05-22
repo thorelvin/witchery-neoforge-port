@@ -1,1 +1,9 @@
-{ "values": ["witchery:rowan_log", "witchery:rowan_wood"] }
+{
+  "replace": false,
+  "values": [
+    "witchery:rowan_log",
+    "witchery:rowan_wood",
+    "witchery:alder_log",
+    "witchery:hawthorn_log"
+  ]
+}

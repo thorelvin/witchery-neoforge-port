@@ -131,8 +131,8 @@ The medium `Demon Heart -> Creatures of the Night` and large `bone -> Curse of t
 
 Current state:
 - `clay_jar_soft -> clay_jar` now has the missing furnace smelting recipe again.
-- The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the current `alder_sapling` / `hawthorn_sapling` ingredient items.
-- `alder_sapling` and `hawthorn_sapling` are no longer creative-only placeholders, because normal `Mutandis` can now surface them again as ingredient outcomes, which unblocks the current Brew of Sprouting / oven chain in survival. The broader placeable-tree/worldgen half still remains future work, so they are intentionally still item-form stand-ins rather than full sapling blocks.
+- The Witchery creative tab now exposes the omitted base-chain items for quicker QA: `breath_of_goddess`, `whiff_of_magic`, `foul_fume`, `quicklime`, `gypsum`, `odour_of_purity`, `oil_of_vitriol`, `reek_of_misfortune`, `golden_thread`, both clay jars, and the restored `alder_sapling` / `hawthorn_sapling` sapling blocks.
+- `alder_sapling` and `hawthorn_sapling` are no longer creative-only placeholders: normal `Mutandis` now surfaces them again, they are back as placeable sapling blocks, and that unblocks the current Brew of Sprouting / oven / Forestation chain in survival.
 
 ### 2. GhostModel mouth protrusion - Fixed
 
@@ -817,7 +817,7 @@ The next missing-feature pass is now closer to original Witchery:
 - It no longer fires from `brew_of_sprouting` alone: the port now also expects the original mixed sapling offering set plus a `Charged Attuned Stone` alongside the brew before the staged rite will queue.
 
 Remaining gap:
-- The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, and the Witchery-sapling half currently uses the port's existing `rowan_sapling` / `alder_sapling` / `hawthorn_sapling` item forms rather than full old metadata-bearing block saplings, so this restores the rite's world-shaping job and its missing support-offering gate without claiming exact 1.7.10 block-for-block growth parity.
+- The exact old plant palette and fake-player bonemeal edge behavior are still approximated through modern block growth helpers, so this restores the rite's world-shaping job and its missing support-offering gate without claiming exact 1.7.10 block-for-block growth parity.
 
 ### 61. Small otherwhere waystone transposition was doing the wrong job - Fixed / verify
 
@@ -1021,10 +1021,24 @@ Remaining gap:
 
 ### 82. Witchery saplings still missed the shared sapling tags - Fixed / verify
 
-The port had already restored `rowan_sapling`, plus the ingredient-side `alder_sapling` and `hawthorn_sapling`, but they were not actually inside the shared Minecraft sapling tags. That meant several live systems still quietly treated them as second-class ingredients: `Wicker Bundle` could not honestly accept them, sapling-led rite dispatch and climate focus logic would skip them, and the oven still needed a one-off Rowan exception. The shared item-tag bridge is now back in place, `rowan_sapling` also now sits in the block sapling tag, and the oven no longer needs its special-case Rowan fallback.
+The port had already restored `rowan_sapling`, plus the first pass of `alder_sapling` and `hawthorn_sapling`, but they were not actually inside the shared Minecraft sapling tags. That meant several live systems still quietly treated them as second-class ingredients: `Wicker Bundle` could not honestly accept them, sapling-led rite dispatch and climate focus logic would skip them, and the oven still needed a one-off Rowan exception. The shared item-tag bridge is now back in place, all three Witchery saplings now sit in the block sapling tag too, and the oven no longer needs its special-case Rowan fallback.
 
 Remaining gap:
-- Alder and Hawthorn still remain item-form sapling ingredients rather than full placeable tree families, so this fixes the progression/tag bridge without overclaiming the broader tree/worldgen half yet.
+- None in this slice; the sapling/tag bridge is now fully live for Rowan, Alder, and Hawthorn.
+
+### 83. Alder and Hawthorn still stopped at item-form saplings - Fixed / verify
+
+Direct 1.7.2 comparison showed the old Witchery wood family really did include Alder and Hawthorn as proper sapling/log/leaves blocks, not just ingredient items. The port had only carried their item-side progression, which left a quiet but important parity hole: `Mutandis` could hand you those saplings, but you could not plant them, `Rite of the Forest` could not honestly accept them because it checks for a real `SaplingBlock`, and altar/world logic still treated them as half-restored content.
+
+Current state:
+- `alder_sapling` and `hawthorn_sapling` are back as real `SaplingBlock`-backed Witchery blocks instead of dead-end simple items.
+- `Mutandis` now returns those two as real sapling block outcomes instead of dropping inert item stand-ins.
+- `Rite of the Forest` can now truly accept Rowan, Alder, and Hawthorn as Witchery saplings because all three live inside the shared block/item sapling tags and the Alder/Hawthorn saplings now satisfy the rite's real `BlockItem` + `SaplingBlock` gate.
+- Alder and Hawthorn now also have their own Witchery log/leaves/sapling block registrations again, plus modern tree grower data so ordinary planting and bonemeal growth work in practical form.
+- Altar scan logic once again recognizes Alder/Hawthorn logs, leaves, and saplings as Witchery flora instead of ignoring them or downgrading them into generic vanilla categories.
+
+Remaining gap:
+- The exact old large-tree silhouettes and metadata-era grower quirks are still approximated through modern configured features, so this closes the dead-end sapling bug without claiming perfect 1.7.2 tree-shape parity yet.
 
 ---
 

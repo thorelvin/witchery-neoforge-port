@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "stage=0": { "model": "witchery:block/hawthorn_sapling" },
+    "stage=1": { "model": "witchery:block/hawthorn_sapling" }
+  }
+}

@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "witchery:rowan_sapling"
+    "witchery:rowan_sapling",
+    "witchery:alder_sapling",
+    "witchery:hawthorn_sapling"
   ]
 }

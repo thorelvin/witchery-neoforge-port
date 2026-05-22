@@ -174,7 +174,10 @@ public class AltarBlockEntity extends BlockEntity {
         if (state.is(Blocks.BROWN_MUSHROOM_BLOCK)) return Cat.BROWN_MUSHROOM_BLOCK;
         if (state.is(Blocks.RED_MUSHROOM_BLOCK)) return Cat.RED_MUSHROOM_BLOCK;
 
-        if (state.is(WitcheryBlocks.ROWAN_LOG.get()) || state.is(WitcheryBlocks.ROWAN_WOOD.get())) return Cat.WITCHERY_LOG;
+        if (state.is(WitcheryBlocks.ROWAN_LOG.get()) || state.is(WitcheryBlocks.ROWAN_WOOD.get())
+                || state.is(WitcheryBlocks.ALDER_LOG.get()) || state.is(WitcheryBlocks.HAWTHORN_LOG.get())) {
+            return Cat.WITCHERY_LOG;
+        }
         if (state.is(WitcheryBlocks.SPANISH_MOSS.get())) return Cat.SPANISH_MOSS;
         if (state.is(WitcheryBlocks.WISPY_COTTON.get()) || state.is(WitcheryBlocks.DISTURBED_COTTON.get())) return Cat.WISPY_COTTON;
 
@@ -183,8 +186,11 @@ public class AltarBlockEntity extends BlockEntity {
         if (state.is(Blocks.POTATOES)) return Cat.POTATO;
         if (state.is(Blocks.MELON)) return Cat.MELON;
         if (state.is(Blocks.PUMPKIN)) return Cat.PUMPKIN;
+        if (state.is(WitcheryBlocks.ROWAN_SAPLING.get()) || state.is(WitcheryBlocks.ALDER_SAPLING.get())
+                || state.is(WitcheryBlocks.HAWTHORN_SAPLING.get())) {
+            return Cat.WITCHERY_SAPLING;
+        }
         if (state.is(BlockTags.SAPLINGS)) return Cat.VANILLA_SAPLING;
-        if (state.is(WitcheryBlocks.ROWAN_SAPLING.get())) return Cat.WITCHERY_SAPLING;
         if (state.is(Blocks.DANDELION)) return Cat.DANDELION;
         if (state.is(Blocks.POPPY) || state.is(Blocks.BLUE_ORCHID) || state.is(Blocks.ALLIUM)
                 || state.is(Blocks.AZURE_BLUET) || state.is(Blocks.RED_TULIP) || state.is(Blocks.ORANGE_TULIP)
@@ -193,7 +199,10 @@ public class AltarBlockEntity extends BlockEntity {
             return Cat.FLOWER;
         }
 
-        if (state.is(WitcheryBlocks.ROWAN_LEAVES.get())) return Cat.WITCHERY_LEAVES;
+        if (state.is(WitcheryBlocks.ROWAN_LEAVES.get()) || state.is(WitcheryBlocks.ALDER_LEAVES.get())
+                || state.is(WitcheryBlocks.HAWTHORN_LEAVES.get())) {
+            return Cat.WITCHERY_LEAVES;
+        }
         if (state.is(WitcheryBlocks.BELLADONNA.get())) return Cat.BELLADONNA;
         if (state.is(WitcheryBlocks.ARTICHOKE.get())) return Cat.ARTICHOKE;
         if (state.is(WitcheryBlocks.EMBER_MOSS.get())) return Cat.EMBER_MOSS;
