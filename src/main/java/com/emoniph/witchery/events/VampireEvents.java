@@ -72,7 +72,7 @@ public class VampireEvents {
         WitcheryPlayerData data = WitcheryAttachments.get(vampire);
         if (!data.isVampire()) return;
 
-        if (vampire.isShiftKeyDown() && target instanceof Villager) {
+        if (vampire.isShiftKeyDown() && canMesmerise(target)) {
             event.setCanceled(true);
             mesmerise(vampire, target, data);
             return;
@@ -165,6 +165,10 @@ public class VampireEvents {
         return slowness != null
                 && slowness.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER
                 && slowness.getDuration() > 20;
+    }
+
+    private static boolean canMesmerise(LivingEntity target) {
+        return target instanceof Villager || target instanceof Player;
     }
 
     private static void playMesmeriseFailure(ServerPlayer vampire) {

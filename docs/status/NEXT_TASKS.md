@@ -1,14 +1,14 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Vampire clothing mesmerise slice)
+Last reconciled: 2026-05-23 (Vampire clothing player mesmerise slice)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
 
 ## Current plan
 
-- Verify the promoted Vampire clothing lethal-fire save, drink boost, villager mesmerise, set-bonus tooltips, and exact alias armor pieces in-game against sunlight/fire/lava damage and feeding.
-- Next highest-value vampire equipment work is armor model polish, full old ability-selection/timing/paralysis parity, player/guard mesmerise parity, or old level-gate refinement.
+- Verify the promoted Vampire clothing lethal-fire save, drink boost, villager/player mesmerise, set-bonus tooltips, and exact alias armor pieces in-game against sunlight/fire/lava damage, feeding, and player-target use.
+- Next highest-value vampire equipment work is armor model polish, full old ability-selection/timing/paralysis parity, Village Guard mesmerise parity, or old level-gate refinement.
 - Keep the remaining 221 placeholder items inert until each family gets an explicit promotion or alias decision.
 
 ---
@@ -227,7 +227,8 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Vampire exact clothing alias promotion slice moved `vampire_veil_hat`, `vampire_coat`, `vampire_corset`, `vampire_chestplate`, `vampire_skirt`, `vampire_leggings`, `vampire_shoes`, `vampire_heels`, and `vampire_boots` out of the inert placeholder roster into real wearable armor items, wired them into the creative tab and set-bonus counter, restored the source recipes that exist in Resurrected, and updated translations away from `(Placeholder)`.
 - Vampire clothing tooltip parity slice replaced the promoted vampire armor registrations with a dedicated item class that shows source-style set-bonus tooltip lines: light garments list faster drinking, fire resistance, mesmerise boost, and extended fire resistance thresholds, while medium garments list their 2-piece fire-resistance threshold.
 - Vampire clothing drink-boost slice wired the existing two-light-piece set-bonus check into the current simplified vampire bite path, making bites draw 50% more blood when the boost is active, and updated the Primer/status docs so the remaining Vampire clothing behavior gap is now the mesmerise bonus plus deeper old ability timing.
-- Vampire clothing mesmerise slice added a first practical sneak-right-click villager mesmerise for vampires: it spends 50 blood, applies a short paralysis-style slowness/weakness trance for 5 seconds, and uses the three-light-piece clothing set bonus to extend that duration to 8 seconds like the source's +3s bonus. Full old selected-power UI, custom paralysis effect, player targets, and village guard behavior remain follow-up.
+- Vampire clothing mesmerise slice added a first practical sneak-right-click villager mesmerise for vampires: it spends 50 blood, applies a short paralysis-style slowness/weakness trance for 5 seconds, and uses the three-light-piece clothing set bonus to extend that duration to 8 seconds like the source's +3s bonus.
+- Vampire clothing player mesmerise slice widened that practical mesmerise hook to players too, matching another source-valid target family while keeping ordinary player biting deferred. Full old selected-power UI, custom paralysis effect, and Village Guard behavior remain follow-up.
 
 ---
 
