@@ -17,9 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
 import java.util.Optional;
-import net.minecraft.nbt.CompoundTag;
 
 /**
  * Waystone item — blank until bound by the Rite of Binding.
@@ -100,7 +98,7 @@ public class WaystoneItem extends Item {
     // ── Static helpers ────────────────────────────────────────────────────────
 
     public static boolean isBound(ItemStack stack) {
-        return getTag(stack).contains(TAG_X);
+        return hasCompleteBinding(getTag(stack));
     }
 
     public static void bindTo(ItemStack stack, BlockPos pos, ResourceKey<Level> dim) {
@@ -114,16 +112,24 @@ public class WaystoneItem extends Item {
 
     public static Optional<BlockPos> getBoundPos(ItemStack stack) {
         var tag = getTag(stack);
-        if (!tag.contains(TAG_X)) return Optional.empty();
+        if (!hasCompleteBinding(tag)) return Optional.empty();
         return Optional.of(new BlockPos(tag.getIntOr(TAG_X, 0), tag.getIntOr(TAG_Y, 0), tag.getIntOr(TAG_Z, 0)));
     }
 
     public static Optional<ResourceKey<Level>> getBoundDim(ItemStack stack) {
         var tag = getTag(stack);
-        if (!tag.contains(TAG_DIM)) return Optional.empty();
-        return Optional.of(ResourceKey.create(
-                net.minecraft.core.registries.Registries.DIMENSION,
-                Identifier.parse(tag.getStringOr(TAG_DIM, ""))));
+        if (!hasCompleteBinding(tag)) return Optional.empty();
+        try {
+            return Optional.of(ResourceKey.create(
+                    net.minecraft.core.registries.Registries.DIMENSION,
+                    Identifier.parse(tag.getStringOr(TAG_DIM, ""))));
+        } catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    private static boolean hasCompleteBinding(net.minecraft.nbt.CompoundTag tag) {
+        return tag.contains(TAG_X) && tag.contains(TAG_Y) && tag.contains(TAG_Z) && tag.contains(TAG_DIM);
     }
 
     private static net.minecraft.nbt.CompoundTag getTag(ItemStack stack) {
