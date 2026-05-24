@@ -5,6 +5,16 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Glass Goblet induction bridge (2026-05-24)
+
+- `glass_goblet`, `full_glass_goblet`, and `glass_goblet_full` are now real items instead of legacy placeholders.
+- Restored the Resurrected Glass Goblet recipe from three Glass Bottles and one Glass.
+- Vampire players can spend 125 blood with an empty goblet to create a named Full Glass Goblet.
+- Non-vampire players can drink that filled goblet to become vampires with the current port's practical starting blood.
+- The old chicken-over-skull Elle/Lilith ritual, level-9 master gate, villager conversion, and Blood Power semantics remain follow-up work.
+
+---
+
 ### Special Bolt crafting (2026-05-24)
 
 - `bone_bolt`, `nullifying_bolt`, and `splitting_bolt` are now real items instead of legacy placeholders.

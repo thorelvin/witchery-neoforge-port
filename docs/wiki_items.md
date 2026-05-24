@@ -292,16 +292,16 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Not stackable.
 
 ## Glass Goblet (full)
-- **Obtain:** Obtained by butchering a chicken with a boline over a ritual skull, or filled by a level 9 vampire using their own blood.
-- **Use:** Used to start the vampire transformation process and to turn villagers into vampires.
+- **Obtain:** In the NeoForge port, a vampire with at least 125 blood can use an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
+- **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current port's starting blood.
 - **Stats:** N/A
-- **Notes:** Not stackable.
+- **Notes:** Not stackable. The old chicken-over-skull Elle/Lilith ritual, level-9 master gate, and villager conversion behavior are still follow-up work.
 
 ## Glass Goblet
-- **Obtain:** Crafted using an unspecified recipe.
-- **Use:** Used in the vampire transformation process and to collect blood for turning villagers into vampires.
+- **Obtain:** Craft from three Glass Bottles and one Glass using the Resurrected goblet recipe shape.
+- **Use:** Used in the vampire transformation process; in the current port a vampire can spend 125 blood to fill it.
 - **Stats:** N/A
-- **Notes:** Not stackable. Can be filled to create a full Glass Goblet.
+- **Notes:** Not stackable. Can be filled to create a Full Glass Goblet.
 
 ## Golden Chalk
 - **Obtain:** Crafted at a Witch's Cauldron near an Altar with at least 3000 power.

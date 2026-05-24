@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B B",
+    " B ",
+    " G "
+  ],
+  "key": {
+    "B": "minecraft:glass_bottle",
+    "G": "minecraft:glass"
+  },
+  "result": {
+    "id": "witchery:glass_goblet"
+  }
+}

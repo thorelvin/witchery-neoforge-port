@@ -447,6 +447,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HUNTER_BOOTS_SILVERED      = ITEMS.register("hunter_boots_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> DENSE_WEB          = ITEMS.registerSimpleItem("dense_web");
     public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.register("demonic_blood", id -> new DemonicBloodItem(itemProps(id)));
+    public static final DeferredItem<Item> GLASS_GOBLET       = ITEMS.register("glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), false));
+    public static final DeferredItem<Item> GLASS_GOBLET_FULL  = ITEMS.register("glass_goblet_full", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
+    public static final DeferredItem<Item> FULL_GLASS_GOBLET  = ITEMS.register("full_glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
@@ -545,8 +548,6 @@ public class WitcheryItems {
             "dandelion_of_webs",
             "duplication_grenade",
             "filtered_fume_funnel",
-            "glass_goblet",
-            "glass_goblet_full",
             "gulgs_girdle",
             "hellhound_head",
             "horn_of_the_hunt",
@@ -595,7 +596,6 @@ public class WitcheryItems {
             "combustion_brew",
             "endless_water_brew",
             "hunts_horn",
-            "full_glass_goblet",
             "light_ghost",
             "world_soul",
             "otherwhere_spirit",
