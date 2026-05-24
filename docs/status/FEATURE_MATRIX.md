@@ -15,7 +15,7 @@ Rows marked Done below can still mean "current implementation slice done" rather
 - Transformations are Partial: vampire/werewolf player-state foundations exist, but old vampire 10-level progression, Glass Goblet/Elle/Lilith, Blood Crucible/Blood Power, Zombie Respect, and Wolf Altar 10-level lycanthropy progression remain open. Sun Collector block + Charged Quartz Sphere + Sun Grenade are now implemented.
 - Machines need exactness passes: Spinning Wheel, Distillery, and Brazier sided automation now have first restored passes but need hopper QA; Witches' Oven smelting/byproducts/funnels, Kettle bottle automation/bonus rolls, and Silver Vat stored smelt byproducts remain open.
 - Villages/entities/structures remain broad backlog: Bookshop, Guard Tower/Town Keep/Town Wall, Village Guard, Stone/Coven Circle, Straw Man, Baba Yaga, Leonard/Lost Souls, Gulg/Mog, vampire/werewolf mobs, were-villagers, Minedrake, illusions, and summoned undead.
-- Poppets/taglocks/scrying need survival-access and edge-behavior passes: taglock+poppet recipes, two-taglock Vampiric Poppet, Poppet Shelf Compass, Crystal Ball prediction/scrying, Player Compass, and bound/blooded Waystone identity.
+- Poppets/taglocks/scrying need survival-access and edge-behavior passes: taglock+poppet recipes, two-taglock Vampiric Poppet, Poppet Shelf Compass, Crystal Ball prediction/scrying, Player Compass, bound/blooded Waystone identity, and standalone item exactness passes while the larger registry/resource worktree remains active.
 
 ---
 

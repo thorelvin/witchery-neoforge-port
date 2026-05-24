@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 
 /**
@@ -11,7 +12,7 @@ import net.minecraft.world.item.context.UseOnContext;
 public class ArthanaItem extends Item {
 
     public ArthanaItem(Properties props) {
-        super(props);
+        super(props.rarity(Rarity.UNCOMMON));
     }
 
     @Override
