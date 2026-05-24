@@ -30,6 +30,9 @@ import java.util.Random;
 public class RefillingChestBlockEntity extends ChestBlockEntity {
 
     private static final long REFILL_TICKS = 72000L;
+    private static final String LIFE_TICKS_TAG = "WITCLifeTicks";
+    private static final String RESURRECTED_LIFE_TICKS_TAG = "WitcheryLifeTicks";
+    private static final String LEGACY_COOLDOWN_TAG = "RefillCooldown";
     public static final Identifier LOOT_TABLE =
             Identifier.fromNamespaceAndPath("minecraft", "chests/simple_dungeon");
 
@@ -113,12 +116,15 @@ public class RefillingChestBlockEntity extends ChestBlockEntity {
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putLong("WITCLifeTicks", lifeTicks);
+        tag.putLong(LIFE_TICKS_TAG, lifeTicks);
     }
 
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        lifeTicks = tag.getLongOr("WITCLifeTicks", (long) tag.getIntOr("RefillCooldown", 0));
+        lifeTicks = tag.getLongOr(
+                LIFE_TICKS_TAG,
+                tag.getLongOr(RESURRECTED_LIFE_TICKS_TAG, (long) tag.getIntOr(LEGACY_COOLDOWN_TAG, 0))
+        );
     }
 }
