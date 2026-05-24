@@ -182,15 +182,18 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
-            startBlockEntityPose(poseStack);
+            poseStack.pushPose();
+            poseStack.translate(0.5, 0.5, 0.5);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
             poseStack.translate(-0.5, 0, -0.5);
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
-            finishPose(poseStack);
+            poseStack.popPose();
         }
 
         @Override
         public void getExtents(Consumer<Vector3fc> consumer) {
-            unitBlockExtents(consumer);
+            consumer.accept(new Vector3f(0.0f, 0.0f, 0.0f));
+            consumer.accept(new Vector3f(1.0f, 0.5f, 1.0f));
         }
     }
 
