@@ -94,7 +94,7 @@ public final class BarkBeltEvents {
     }
 
     private static boolean isWoodenWeapon(ItemStack stack) {
-        return stack.is(Items.WOODEN_SWORD) || stack.is(WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.get("stake").get());
+        return stack.is(Items.WOODEN_SWORD) || stack.is(WitcheryItems.STAKE.get());
     }
 
     private static void dropSpentBark(ServerPlayer player, int cost) {

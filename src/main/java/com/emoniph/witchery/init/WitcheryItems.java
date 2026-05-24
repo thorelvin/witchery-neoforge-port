@@ -435,6 +435,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> SILVER_INGOT        = ITEMS.registerSimpleItem("silver_ingot");
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
+    public static final DeferredItem<Item> STAKE               = ITEMS.register("stake", id -> new com.emoniph.witchery.item.StakeItem(itemProps(id)));
     public static final DeferredItem<BlockItem> SILVER_VAT     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SILVER_VAT);
     public static final DeferredItem<Item> HUNTER_HELMET_SILVERED     = ITEMS.register("hunter_helmet_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> HUNTER_CHESTPLATE_SILVERED = ITEMS.register("hunter_chestplate_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
@@ -674,7 +675,6 @@ public class WitcheryItems {
             "pentacle",
             "silver_deposits",
             "torn_page",
-            "stake",
             "golden_heart"
     );
 

@@ -625,6 +625,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** Durability: 33.
 - **Notes:** The sword degrades its enchantability down to iron levels.
 
+## Stake
+- **Obtain:** Craft a Stick surrounded by Garlic, matching the Resurrected recipe.
+- **Use:** In the NeoForge port, right-clicking a sleeping vampire player with a Stake consumes one Stake and kills the vampire.
+- **Notes:** Also counts as wooden damage for Bark Belt bypass behavior.
+
 ## Silver Vat
 - **Obtain:** Crafted using a recipe involving various ingredients.
 - **Use:** Placed next to a furnace smelting Gold Ore to collect Silver Deposits. Right-click to collect the silver cubes.

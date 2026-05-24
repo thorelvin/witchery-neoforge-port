@@ -8,6 +8,7 @@
     { "type": "patchouli:text", "title": "witchery.book.entry.vampirism.abilities.title", "text": "witchery.book.entry.vampirism.abilities" },
     { "type": "patchouli:text", "title": "witchery.book.entry.vampirism.weaknesses.title", "text": "witchery.book.entry.vampirism.weaknesses" },
     { "type": "patchouli:spotlight", "item": "witchery:vampire_top_hat", "title": "witchery.book.entry.vampirism.clothing.title", "text": "witchery.book.entry.vampirism.clothing" },
-    { "type": "patchouli:spotlight", "item": "witchery:vampire_chain_coat", "title": "witchery.book.entry.vampirism.medium.title", "text": "witchery.book.entry.vampirism.medium" }
+    { "type": "patchouli:spotlight", "item": "witchery:vampire_chain_coat", "title": "witchery.book.entry.vampirism.medium.title", "text": "witchery.book.entry.vampirism.medium" },
+    { "type": "patchouli:spotlight", "item": "witchery:stake", "title": "witchery.book.entry.vampirism.stake.title", "text": "witchery.book.entry.vampirism.stake" }
   ]
 }

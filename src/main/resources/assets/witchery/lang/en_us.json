@@ -91,6 +91,8 @@
   "witchery.book.entry.vampirism.clothing": "Woven Cruor is back as the base cloth for the vampire wardrobe. As a vampire with at least 125 blood, use a Bone Needle on placed White Wool to make Blood-stained Wool, then smelt it into Woven Cruor. Tailor the light set from there: Top Hat or Veil Hat; Dress Coat, Waist Coat, Dress Jacket, or Corset; Trousers, Skirted Trousers, or Skirt; Oxford Boots, Shoes, or Heels.$(br2)Two light pieces now make the current bite draw more blood. Sneak-right-click a villager or player with an empty hand to mesmerise them, spending 50 blood; three light pieces extend that trance. Three light pieces also give a chance to survive otherwise lethal fire damage, and all four pieces make that protection much stronger.",
   "witchery.book.entry.vampirism.medium.title": "Reinforced Garb",
   "witchery.book.entry.vampirism.medium": "The medium set upgrades light clothing with iron: Vampire Helmet from a Top Hat or Veil Hat; Chain Coat from a Dress Coat; Chain Coat (Ladies) from a Dress Jacket; and the exact Resurrected Chestplate from a Waist Coat or Corset. Vampire Leggings and Boots are wearable too, though their old acquisition path still needs a deeper pass.$(br2)Wearing two promoted medium pieces now gives the basic lethal-fire survival chance. Remaining gaps are in-game armor QA, armor model polish, and full old vampire ability timing.",
+  "witchery.book.entry.vampirism.stake.title": "Stake",
+  "witchery.book.entry.vampirism.stake": "A Stake is simple and final. Craft one from a Stick surrounded by Garlic, then use it on a sleeping vampire player to destroy them and consume the Stake.$(br2)This is the first restored staking path. Future vampire work still needs the old level progression, Glass Goblet chain, and broader quest loop.",
   "witchery.vampire.mesmerise.success": "Your gaze stills %s for %s seconds.",
   "witchery.vampire.mesmerise.not_enough_blood": "Mesmerising requires %s blood.",
   "witchery.vampire.mesmerise.already": "%s is already mesmerised.",
@@ -1142,7 +1144,7 @@
   "item.witchery.silver_deposits": "Silver Deposits (Placeholder)",
   "item.witchery.torn_page": "Torn Page (Placeholder)",
   "item.witchery.woven_cruor": "Woven Cruor",
-  "item.witchery.stake": "Stake (Placeholder)",
+  "item.witchery.stake": "Stake",
   "item.witchery.golden_heart": "Golden Heart (Placeholder)"
 
 }

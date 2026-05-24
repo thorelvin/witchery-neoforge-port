@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Wooden Stake counterplay (2026-05-24)
+
+- `stake` is now a real item instead of a legacy placeholder.
+- Restored the Resurrected recipe shape: one Stick surrounded by Garlic.
+- Right-clicking a sleeping vampire player with a Stake consumes one Stake and applies lethal staking damage.
+- Bark Belt wooden-damage bypass now checks the real Stake item.
+
+---
+
 ### Silver counterplay tag pass (2026-05-24)
 
 - Silver damage now recognizes held `silver_sword` as well as `silver_ingot`.
