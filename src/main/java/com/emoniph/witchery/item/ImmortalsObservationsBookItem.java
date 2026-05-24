@@ -1,15 +1,25 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ImmortalsObservationsBookItem extends Item {
@@ -17,9 +27,20 @@ public class ImmortalsObservationsBookItem extends Item {
     public static final int MAX_LEVEL = 9;
     public static final int BASE_VISIBLE_PAGES = 6;
     public static final int TOTAL_PAGES = 16;
+    private static final String PAGE_KEY_PREFIX = "item.witchery.immortals_observations_book.page_";
 
     public ImmortalsObservationsBookItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenObservationsBookPayload(getVisiblePages(stack)));
+            player.awardStat(Stats.ITEM_USED.get(this));
+        }
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
@@ -54,5 +75,14 @@ public class ImmortalsObservationsBookItem extends Item {
         int level = getResearchLevel(stack);
         int bonusPage = level >= 8 ? 1 : 0;
         return Math.min(TOTAL_PAGES, BASE_VISIBLE_PAGES + level + bonusPage);
+    }
+
+    public static List<Component> createReadablePages(int visiblePages) {
+        int clampedPages = Math.max(1, Math.min(TOTAL_PAGES, visiblePages));
+        List<Component> pages = new ArrayList<>(clampedPages);
+        for (int i = 1; i <= clampedPages; i++) {
+            pages.add(Component.translatable(PAGE_KEY_PREFIX + i));
+        }
+        return pages;
     }
 }

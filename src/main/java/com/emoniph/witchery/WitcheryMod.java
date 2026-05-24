@@ -17,6 +17,7 @@ import com.emoniph.witchery.init.WitcheryRecipeSerializers;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.HowlPayload;
+import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
@@ -72,6 +73,10 @@ public class WitcheryMod {
                         SyncPlayerDataPayload.TYPE,
                         SyncPlayerDataPayload.STREAM_CODEC,
                         WitcheryClient::handleSyncPlayerData)
+                .playToClient(
+                        OpenObservationsBookPayload.TYPE,
+                        OpenObservationsBookPayload.STREAM_CODEC,
+                        WitcheryClient::handleOpenObservationsBook)
                 .playToServer(
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,

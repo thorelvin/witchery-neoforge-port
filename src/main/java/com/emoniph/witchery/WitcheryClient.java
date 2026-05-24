@@ -16,8 +16,11 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
+import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
+import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.Identifier;
@@ -197,5 +200,10 @@ public class WitcheryClient {
             data.setInSpiritWorld(payload.inSpiritWorld());
             data.setManifestedGhost(payload.manifestedGhost());
         });
+    }
+
+    public static void handleOpenObservationsBook(OpenObservationsBookPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> Minecraft.getInstance().setScreen(new BookViewScreen(
+                new BookViewScreen.BookAccess(ImmortalsObservationsBookItem.createReadablePages(payload.visiblePages())))));
     }
 }
