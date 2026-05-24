@@ -107,7 +107,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 78 | `witchery:vampiric_poppet` | |
 | 79 | `witchery:brew_bag` | |
 | 80 | `witchery:diviner` | |
-| 81 | `witchery:circle_talisman` | |
+| 81 | `witchery:circle_talisman` | `Done - store/deploy inventory reset parity restored` | Stored talismans deploy circles, then behave like old Witchery inventory flow: a single stored talisman resets to blank, while a stacked stored talisman decrements and returns one blank talisman to inventory or drops it if full. |
 | 82 | `witchery:witch_hand` | |
 | 83 | `witchery:fanciful_thread` | |
 | 84 | `witchery:redstone_soup` | `Done - source-backed kettle base only` | The false direct distillery shortcut is gone again; Redstone Soup now stays on its original kettle progression as the base for infusions and related alchemy chains. |

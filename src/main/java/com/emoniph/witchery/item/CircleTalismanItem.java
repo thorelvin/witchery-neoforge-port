@@ -101,8 +101,23 @@ public class CircleTalismanItem extends Item {
         level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.9f);
         if (player != null)
             player.displayClientMessage(Component.translatable("witchery.talisman.deployed"), false);
-        if (player != null && !player.isCreative()) stack.shrink(1);
+        resetAfterDeployment(stack, player);
         return InteractionResult.SUCCESS;
+    }
+
+    private void resetAfterDeployment(ItemStack stack, Player player) {
+        if (player == null || player.isCreative()) {
+            return;
+        }
+        if (stack.getCount() > 1) {
+            ItemStack blankTalisman = new ItemStack(this);
+            stack.shrink(1);
+            if (!player.getInventory().add(blankTalisman)) {
+                player.drop(blankTalisman, false);
+            }
+        } else {
+            setCircleData(stack, 0);
+        }
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
