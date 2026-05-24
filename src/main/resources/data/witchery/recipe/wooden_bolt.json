@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "WWW",
+    "FFF"
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "W": "minecraft:stick",
+    "F": "minecraft:feather"
+  },
+  "result": {
+    "id": "witchery:wooden_bolt",
+    "count": 9
+  }
+}

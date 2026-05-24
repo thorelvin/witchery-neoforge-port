@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Wooden/Silver Bolt crafting (2026-05-24)
+
+- `wooden_bolt` is now a real item instead of a legacy placeholder.
+- Restored the old/Resurrected 9-output Wooden Bolt recipe from String, Sticks, and Feathers.
+- Restored the Resurrected 6-output Silver Bolt recipe from Wooden Bolts and Silver Ingot.
+- Hand Bow/Crossbow Pistol loading and Silver Bolt projectile behavior remain follow-up work.
+
+---
+
 ### Wooden Stake counterplay (2026-05-24)
 
 - `stake` is now a real item instead of a legacy placeholder.

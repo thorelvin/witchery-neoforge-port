@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "BBB",
+    "BBB"
+  ],
+  "key": {
+    "S": "witchery:silver_ingot",
+    "B": "witchery:wooden_bolt"
+  },
+  "result": {
+    "id": "witchery:silver_bolt",
+    "count": 6
+  }
+}

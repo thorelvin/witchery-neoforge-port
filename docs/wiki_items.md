@@ -614,10 +614,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Only a Boline can safely harvest these without damaging them.
 
 ## Silver Bolt (Witchery)
-- **Obtain:** Craft using unknown recipe, requires silver ingots.
+- **Obtain:** In the NeoForge port, craft 6 Silver Bolts from 6 Wooden Bolts and 1 Silver Ingot using the Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Pistol Crossbow. Deals six damage and bypasses werewolf's natural resistance to attacks while dealing double damage.
 - **Stats:** Damage: 6.
-- **Notes:** None specified.
+- **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
 
 ## Silver Sword (Witchery)
 - **Obtain:** Craft using unknown recipe, requires silver ingots.

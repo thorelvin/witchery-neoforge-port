@@ -170,6 +170,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BUCKET_SPIRIT.get());
                         output.accept(WitcheryItems.HAND_BOW.get());
                         output.accept(WitcheryItems.HUNTSMAN_SPEAR.get());
+                        output.accept(WitcheryItems.WOODEN_BOLT.get());
+                        output.accept(WitcheryItems.SILVER_BOLT.get());
                         output.accept(WitcheryItems.STAKE.get());
                         output.accept(WitcheryItems.WITCHES_HAT.get());
                         output.accept(WitcheryItems.WITCHES_ROBE.get());
