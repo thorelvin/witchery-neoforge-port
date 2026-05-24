@@ -1,6 +1,6 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-24 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented; VampiricPoppetItem two-taglock fix; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected)
+Last reconciled: 2026-05-24 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented; VampiricPoppetItem two-taglock fix; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -31,7 +31,7 @@ The former standalone scan findings have been condensed here so the main plan ca
 
 | Family | Next bounded tasks |
 |---|---|
-| Vampire counterplay and quest chain | ✅ Garlic/garland done. ✅ Sun Collector block (6000-tick sunlight charge), Charged Quartz Sphere item, Sun Grenade throwable done. Next: Glass Goblet blood capture, Observations/Torn Page/Bookshop loot, Lilith/Elle chain, Blood Crucible block/BE, and Blood Power charges. |
+| Vampire counterplay and quest chain | ✅ Garlic/garland grass-seed, recipe, block, facing/click-through shape, vampire repulsion, and break-cancel punishment done. ✅ Sun Collector block (6000-tick sunlight charge), Charged Quartz Sphere item, Sun Grenade throwable done. Next: Glass Goblet blood capture, Observations/Torn Page/Bookshop loot, Lilith/Elle chain, Blood Crucible block/BE, and Blood Power charges. |
 | Transformation counterplay | Tie Wooden Stake, garlic, Sun Grenade, Hunter Dawn armor, Weaken Vampires brews, Silver Sword/Bolt, Silvered Hunter armor, Wolfsbane, Moon Charm, and Wolftrap into explicit vampire/werewolf QA rows. |
 | Poppets and taglocks | ✅ Taglock+poppet recipes done. ✅ Empty Taglock Kit detection fixed. ✅ Two-taglock Vampiric Poppet + PoppetEvents redirect bug fixed. ✅ Voodoo throw/needle/lava/drowning done. ✅ WitchHunter poppet disruption done. Remaining: verify Poppet Shelf Compass (already registered), verify mob-taglock poppet binding works end-to-end in-game. |
 | Scrying and waystones | Crystal Ball now has nearby-player subject selection for ordinary predictions, source-style `LastUsedTime` recharge with the old strict `elapsed > 100` gate for the normal prediction path, a first bound-Waystone scry hook using the old same-dimension/150-block focus constraint, and the old 1200-tick held-use lifecycle with 20-tick refresh feedback. Waystone scrying follows the old item route by consuming altar power without applying the normal ball recharge gate, Waystone helpers now only treat stacks as bound when all coordinate and dimension data is present, and newly bound Waystones now cap at 1 and stamp the old uncommon rarity while blank Waystones keep their 16-stack common-item behavior. Remaining: old PredictionManager outcomes, real remote camera packet/view, Taglock scrying, Player Compass binding/tracking, online/same-dimension target rules, and a canonical blank/bound/blooded Waystone identity decision. |

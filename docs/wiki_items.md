@@ -286,8 +286,8 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Must be placed above or to the right/left of the Witches Oven. The top-placed Fume Funnel only increases speed, not success rates.
 
 ## Garlic Garland
-- **Obtain:** Crafted using an unspecified recipe.
-- **Use:** Decorative block that wards against vampires and burns player vampires who break or pick it up.
+- **Obtain:** Crafted from 5 garlic bulbs and 3 string.
+- **Use:** Decorative, click-through hanging block that repels vampires and burns/cancels non-creative vampire-player break attempts.
 - **Stats:** N/A
 - **Notes:** Not stackable.
 

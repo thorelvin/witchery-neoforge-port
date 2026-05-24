@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
@@ -83,7 +84,22 @@ public class VampireEvents {
         bite(vampire, target, data);
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
+    // Garlic counterplay
+
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.isCreative()) return;
+        if (!player.level().getBlockState(event.getPos()).is(WitcheryBlocks.GARLIC_GARLAND.get())) return;
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (!data.isVampire()) return;
+
+        player.igniteForSeconds(1.0f);
+        event.setCanceled(true);
+    }
+
+    // Private helpers
 
     private static void drainBlood(ServerPlayer player, WitcheryPlayerData data) {
         data.addBlood(-1);

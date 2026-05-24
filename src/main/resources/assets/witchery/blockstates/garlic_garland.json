@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "witchery:block/garlic_garland" }
+    "facing=north": { "model": "witchery:block/garlic_garland" },
+    "facing=east": { "model": "witchery:block/garlic_garland", "y": 90 },
+    "facing=south": { "model": "witchery:block/garlic_garland", "y": 180 },
+    "facing=west": { "model": "witchery:block/garlic_garland", "y": 270 }
   }
 }

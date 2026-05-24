@@ -158,9 +158,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be placed on the ground or attached to walls. Does not require power.
 
 ## Garlic Garland
-- **Obtain:** Crafted using garlic bulbs.
-- **Function:** Provides a protective aura against undead creatures.
-- **Notes:** Can be hung from ceilings or placed on walls. Lasts for a limited time before needing replacement.
+- **Obtain:** Crafted from 5 garlic bulbs and 3 string.
+- **Function:** Repels vampire players and entity types tagged `witchery:vampires`.
+- **Notes:** Places as a facing-aware, click-through hanging garland; non-creative vampire players are set on fire and stopped when they try to break it.
 
 ## Glass Goblet
 - **Obtain:** Crafted using glass and a variety of ingredients depending on the type.
