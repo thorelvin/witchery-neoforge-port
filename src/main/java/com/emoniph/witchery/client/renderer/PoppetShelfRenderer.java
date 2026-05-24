@@ -96,7 +96,7 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
             }
 
             ItemStackRenderState renderState = new ItemStackRenderState();
-            itemModelResolver.updateForTopItem(renderState, stack, ItemDisplayContext.GROUND, level, owner, 0);
+            itemModelResolver.updateForTopItem(renderState, stack.copyWithCount(1), ItemDisplayContext.GROUND, level, owner, 0);
             state.slotRenderStates[slot] = renderState;
             state.slotRotations[slot] = (float) Math.floorMod(be.getBlockPos().hashCode() * 31 + slot * 47, 360);
         }
@@ -110,6 +110,7 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
         ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
         ps.translate(-0.5, 0, -0.5);
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        ps.popPose();
 
         for (int slot = 0; slot < state.slotRenderStates.length; slot++) {
             ItemStackRenderState renderState = state.slotRenderStates[slot];
@@ -123,14 +124,12 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
             float z = 0.25f + row * 0.25f;
 
             ps.pushPose();
-            ps.translate(x, -0.15f, z);
+            ps.translate(x, 0.6f, z);
             ps.scale(0.5f, 0.5f, 0.5f);
             ps.mulPose(Axis.YP.rotationDegrees(state.slotRotations[slot]));
             renderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             ps.popPose();
         }
-
-        ps.popPose();
     }
 
     private static void clearSlots(State state) {
