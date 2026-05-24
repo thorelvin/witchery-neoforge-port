@@ -8,6 +8,8 @@ Source priority used: latest `PORTING_NOTES.md` over older `FEATURE_MATRIX.md`/`
 
 Latest item-tab note: the live Witchery creative tab is now category-sorted for QA usability, preserving all previous explicit entries while adding the Silver Vat to the machine section; legacy placeholders remain visible together near the end as inert TODO markers.
 
+Latest machine note: Fume Filter can now be used directly on a placed unfiltered Fume Funnel to upgrade it into the filtered block in-world, preserving facing and consuming one filter outside creative, while the shaped filtered-funnel recipe remains available.
+
 ---
 
 ## Parity Scan Corrections
