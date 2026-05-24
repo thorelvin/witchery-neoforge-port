@@ -5,6 +5,14 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Silver counterplay tag pass (2026-05-24)
+
+- Silver damage now recognizes held `silver_sword` as well as `silver_ingot`.
+- Silver damage now reaches non-player entity types tagged `witchery:vampires`, matching the same vampire-family tag used by Garlic Garland and Sun Grenades.
+- Witch Hunters now consider entity types tagged `witchery:vampires` valid supernatural targets.
+
+---
+
 ### Demonic Contract promotion (2026-05-24)
 
 - **5 Flame Imp contract subtypes** promoted from LEGACY_PLACEHOLDER_ITEMS to real `DemonicContractItem` registrations: `contract_blaze` (Living Flame), `contract_resist_fire` (Fiery Tolerance), `contract_evaporate` (Evaporation), `contract_fiery_touch` (Fiery Touch), `contract_smelting` (Melting Touch).

@@ -4,6 +4,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -104,6 +105,7 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
         }
         return entity instanceof Witch
                 || entity instanceof CovenWitchEntity
+                || entity.getType().is(WitcheryEntityTags.VAMPIRES)
                 || entity.getType().is(EntityTypeTags.UNDEAD)
                 || isDemonic(entity);
     }

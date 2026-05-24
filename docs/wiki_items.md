@@ -621,7 +621,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Silver Sword (Witchery)
 - **Obtain:** Craft using unknown recipe, requires silver ingots.
-- **Use:** Primarily used as a weapon against werewolves because it can bypass their damage resistance and deals double damage to them.
+- **Use:** Primarily used as a weapon against werewolves because it can bypass their damage resistance and deals double damage to them. In the NeoForge port, a held Silver Sword now counts as silver damage against werewolf/vampire players and entity types tagged `witchery:vampires`.
 - **Stats:** Durability: 33.
 - **Notes:** The sword degrades its enchantability down to iron levels.
 

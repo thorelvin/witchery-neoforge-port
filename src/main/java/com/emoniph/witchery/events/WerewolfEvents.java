@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
@@ -25,7 +26,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * Wolf form buffs apply whenever the player is cursed (isWerewolf=true), not just at full moon.
  * The visual (wolfman model) also always shows — both are consistent.
  * Wolfsbane in inventory suppresses buffs and applies Weakness II.
- * Silver ingot/weapons deal bonus damage to werewolves and vampires.
+ * Silver ingots/weapons deal bonus damage to werewolves and vampires.
  */
 @EventBusSubscriber
 public class WerewolfEvents {
@@ -90,14 +91,24 @@ public class WerewolfEvents {
     @SubscribeEvent
     public static void onSilverDamage(LivingDamageEvent.Pre event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
-        ItemStack weapon = attacker.getMainHandItem();
-        if (!weapon.is(WitcheryItems.SILVER_INGOT.get())) return;
+        if (!isSilverHeld(attacker.getMainHandItem())) return;
 
-        if (!(event.getEntity() instanceof ServerPlayer target)) return;
-        WitcheryPlayerData data = WitcheryAttachments.get(target);
-        if (data.isWerewolf() || data.isVampire()) {
+        if (isWerewolfOrVampire(event.getEntity())) {
             event.setNewDamage(event.getNewDamage() + 2f);
         }
+    }
+
+    private static boolean isSilverHeld(ItemStack stack) {
+        return stack.is(WitcheryItems.SILVER_INGOT.get())
+                || stack.is(WitcheryItems.SILVER_SWORD.get());
+    }
+
+    private static boolean isWerewolfOrVampire(LivingEntity entity) {
+        if (entity instanceof ServerPlayer target) {
+            WitcheryPlayerData data = WitcheryAttachments.get(target);
+            return data.isWerewolf() || data.isVampire();
+        }
+        return entity.getType().is(WitcheryEntityTags.VAMPIRES);
     }
 
     private static void applyWolfForm(ServerPlayer player, WitcheryPlayerData data) {
