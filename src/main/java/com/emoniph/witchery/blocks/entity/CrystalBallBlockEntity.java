@@ -63,8 +63,14 @@ public class CrystalBallBlockEntity extends BlockEntity {
         cooldown = COOLDOWN_TICKS;
         setChanged();
 
+        Player subject = findPredictionSubject(player, sl);
+        if (subject != player) {
+            player.displayClientMessage(Component.literal("The crystal ball turns its vision toward "
+                    + subject.getName().getString() + ".").withStyle(ChatFormatting.DARK_PURPLE), false);
+        }
+
         // Generate and send prediction
-        String prediction = getPrediction(player, sl);
+        String prediction = getPrediction(subject, sl);
         player.displayClientMessage(Component.literal("§5§o" + prediction), false);
         sl.sendParticles(ParticleTypes.EXPLOSION,
                 worldPosition.getX() + 0.5,
@@ -151,6 +157,23 @@ public class CrystalBallBlockEntity extends BlockEntity {
             }
         }
         return Optional.empty();
+    }
+
+    private Player findPredictionSubject(Player caster, ServerLevel level) {
+        AABB bounds = new AABB(
+                worldPosition.getX() - 4.5, worldPosition.getY() - 1.5, worldPosition.getZ() - 4.5,
+                worldPosition.getX() + 5.5, worldPosition.getY() + 2.5, worldPosition.getZ() + 5.5);
+        Player subject = caster;
+        double closest = Double.MAX_VALUE;
+        for (Player nearbyPlayer : level.getEntitiesOfClass(Player.class, bounds, nearby -> nearby != caster)) {
+            double distance = nearbyPlayer.distanceToSqr(
+                    worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            if (distance < closest) {
+                subject = nearbyPlayer;
+                closest = distance;
+            }
+        }
+        return subject;
     }
 
     private String getPrediction(Player player, ServerLevel level) {
