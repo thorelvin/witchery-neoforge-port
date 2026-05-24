@@ -17,6 +17,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import net.minecraft.core.BlockPos;
@@ -249,6 +250,7 @@ public class WitcheryPlayerEvents {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
 
         var killed = event.getEntity();
+        GlassGobletItem.tryFillChickenBloodFromRitual(level, player, killed);
         CreaturePowerType power = null;
         if (killed instanceof Zombie) power = CreaturePowerType.SPEED;
         else if (killed instanceof Spider) power = CreaturePowerType.JUMP;
