@@ -1,11 +1,6 @@
 {
-  "parent": "witchery:block/chalice",
-  "gui_light": "front",
-  "display": {
-    "gui": {
-      "rotation": [22, 225, 0],
-      "translation": [0, -0.75, 0],
-      "scale": [0.46, 0.46, 0.46]
-    }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/ingredient.chalice"
   }
 }

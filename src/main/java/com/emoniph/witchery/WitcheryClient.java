@@ -98,6 +98,8 @@ public class WitcheryClient {
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chalice_filled"),
+                ChaliceFilledProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "poppet_shelf_compass_signal"),
                 PoppetShelfCompassAngleProperty.MAP_CODEC);
     }

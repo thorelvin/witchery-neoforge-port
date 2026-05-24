@@ -59,7 +59,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `coffin` | ✅ Item now 3D box using coffin_head.png UV regions; verify in-game angles | Medium |
 | `alluring_skull` | Dedicated skull-head renderer path is restored; final scale/lighting verification only | Low |
 | `demon_heart` | Retest custom model no-cull face fill in-world | Low |
-| `chalice` | Retest Redstone Soup right-click filling, filled drop/re-place persistence, altar bonus, and final GUI/world pose | Low |
+| `chalice` | Retest 2D empty/filled inventory sprites, Redstone Soup right-click filling, filled drop/re-place persistence, altar bonus, and final world pose | Low |
 | `dream_catcher` | Clicked-face wall placement and centered GUI item renderer are restored; needs in-game verification only | Low |
 | `kettle` | Side-post and ceiling-hung model/support paths restored; verify filled/hanging world-state visuals in-game | Low |
 | `poppet_shelf` | ✅ Items now visible; verify in-game positioning | Low |

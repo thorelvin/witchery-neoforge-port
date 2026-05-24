@@ -40,7 +40,7 @@ import java.util.List;
 public class ChaliceBlock extends BaseEntityBlock {
 
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
-    private static final String FILLED_TAG = "Filled";
+    public static final String FILLED_TAG = "Filled";
     private static final VoxelShape SHAPE = box(4.8, 0.0, 5.92, 10.08, 7.36, 11.12);
 
     public static final MapCodec<ChaliceBlock> CODEC = simpleCodec(ChaliceBlock::new);
