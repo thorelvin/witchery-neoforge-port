@@ -133,6 +133,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BAT_WOOL.get());
                         output.accept(WitcheryItems.CONCENTRATED_BAT_BALL.get());
                         output.accept(WitcheryItems.WOOD_ASH.get());
+                        output.accept(WitcheryItems.SILVER_DEPOSITS.get());
                         output.accept(WitcheryItems.ROWAN_BERRIES.get());
                         output.accept(WitcheryItems.BELLADONNA.get());
                         output.accept(WitcheryItems.MANDRAKE_ROOT.get());

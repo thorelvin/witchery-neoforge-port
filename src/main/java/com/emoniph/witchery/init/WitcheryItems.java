@@ -435,6 +435,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WOLFSBANE_FLOWER   = ITEMS.registerSimpleItem("wolfsbane_flower");
     public static final DeferredItem<Item> WOLFSBANE_SEEDS    = ITEMS.register("wolfsbane_seeds", id -> new BlockItem(WitcheryBlocks.WOLFSBANE_CROP.get(), itemProps(id)));
     public static final DeferredItem<Item> SILVER_INGOT        = ITEMS.registerSimpleItem("silver_ingot");
+    public static final DeferredItem<Item> SILVER_DEPOSITS     = ITEMS.registerSimpleItem("silver_deposits");
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
     public static final DeferredItem<Item> WOODEN_BOLT         = ITEMS.registerSimpleItem("wooden_bolt");
@@ -679,7 +680,6 @@ public class WitcheryItems {
             "fanciful_thinking_charm",
             "subdued_village_spirit",
             "pentacle",
-            "silver_deposits",
             "golden_heart"
     );
 

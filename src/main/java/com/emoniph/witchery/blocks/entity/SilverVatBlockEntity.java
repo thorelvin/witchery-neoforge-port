@@ -4,27 +4,36 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
-public class SilverVatBlockEntity extends BlockEntity {
+public class SilverVatBlockEntity extends BlockEntity implements Container {
 
-    private static final int MAX_STORED = 64;
-    private static final float SILVER_CHANCE = 0.25f;
-    private static final int TICK_INTERVAL = 40;
+    private static final int SLOT = 0;
+    private static final int SLOT_COUNT = 1;
+    private static final int STACK_LIMIT = 64;
+    private static final int SILVER_CHANCE_ONE_IN = 5;
+    private static final int TICK_INTERVAL = 10;
+    private static final Direction[] HORIZONTAL_DIRECTIONS = {
+            Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
+    };
 
-    private int storedSilver = 0;
+    private final int[] lastStackSizes = new int[Direction.values().length];
+    private ItemStack stored = ItemStack.EMPTY;
 
     public SilverVatBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.SILVER_VAT.get(), pos, state);
@@ -32,42 +41,151 @@ public class SilverVatBlockEntity extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SilverVatBlockEntity be) {
         if (level.getGameTime() % TICK_INTERVAL != 0) return;
-        if (be.storedSilver >= MAX_STORED) return;
+        be.checkAdjacentGoldOutputs(level, pos);
+    }
 
-        for (Direction dir : Direction.values()) {
+    public void checkAdjacentGoldOutputs(Level level, BlockPos pos) {
+        for (Direction dir : HORIZONTAL_DIRECTIONS) {
             BlockPos neighbor = pos.relative(dir);
-            if (!(level.getBlockEntity(neighbor) instanceof AbstractFurnaceBlockEntity furnace)) continue;
-
-            ItemStack inputSlot = furnace.getItem(0);
-            if (!isGoldOre(inputSlot)) continue;
-
-            BlockState neighborState = level.getBlockState(neighbor);
-            if (!neighborState.hasProperty(AbstractFurnaceBlock.LIT)
-                    || !neighborState.getValue(AbstractFurnaceBlock.LIT)) continue;
-
-            if (level.random.nextFloat() < SILVER_CHANCE) {
-                be.storedSilver = Math.min(be.storedSilver + 1, MAX_STORED);
-                be.setChanged();
+            Direction sideFacingVat = dir.getOpposite();
+            if (level.getBlockEntity(neighbor) instanceof WorldlyContainer inventory) {
+                checkWorldlyInventory(level, inventory, sideFacingVat);
             }
         }
     }
 
-    private static boolean isGoldOre(ItemStack stack) {
-        return stack.is(Items.GOLD_ORE)
-                || stack.is(Items.DEEPSLATE_GOLD_ORE)
-                || stack.is(Items.NETHER_GOLD_ORE)
-                || stack.is(Items.RAW_GOLD);
+    private void checkWorldlyInventory(Level level, WorldlyContainer inventory, Direction sideFacingVat) {
+        ItemStack goldIngot = new ItemStack(Items.GOLD_INGOT);
+        int sideIndex = sideFacingVat.ordinal();
+
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            if (!stack.is(Items.GOLD_INGOT)) {
+                continue;
+            }
+            if (!inventory.canTakeItemThroughFace(slot, goldIngot, sideFacingVat)
+                    || inventory.canPlaceItemThroughFace(slot, goldIngot, sideFacingVat)) {
+                continue;
+            }
+
+            int current = stack.getCount();
+            if (current > lastStackSizes[sideIndex]
+                    && hasRoomForSilverDeposit()
+                    && level.random.nextInt(SILVER_CHANCE_ONE_IN) == 0) {
+                addSilverDeposit(level);
+            }
+            lastStackSizes[sideIndex] = current;
+            return;
+        }
+
+        lastStackSizes[sideIndex] = 0;
     }
 
-    public int collectSilver() {
-        int amount = storedSilver;
-        storedSilver = 0;
+    private boolean hasRoomForSilverDeposit() {
+        return stored.isEmpty()
+                || (stored.is(WitcheryItems.SILVER_DEPOSITS.get())
+                && stored.getCount() < Math.min(stored.getMaxStackSize(), STACK_LIMIT));
+    }
+
+    private void addSilverDeposit(Level level) {
+        if (stored.isEmpty()) {
+            stored = new ItemStack(WitcheryItems.SILVER_DEPOSITS.get());
+        } else {
+            stored.grow(1);
+        }
+        sync(level);
+    }
+
+    public ItemStack takeStored() {
+        ItemStack result = stored;
+        stored = ItemStack.EMPTY;
+        sync(level);
+        return result;
+    }
+
+    public ItemStack getStored() {
+        return stored;
+    }
+
+    private void sync(@Nullable Level level) {
         setChanged();
-        return amount;
+        if (level != null && !level.isClientSide()) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+            level.updateNeighbourForOutputSignal(worldPosition, state.getBlock());
+        }
     }
 
-    public int getStoredSilver() {
-        return storedSilver;
+    @Override
+    public int getContainerSize() {
+        return SLOT_COUNT;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return stored.isEmpty();
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return slot == SLOT ? stored : ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        if (slot != SLOT || amount <= 0 || stored.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = stored.split(amount);
+        if (stored.isEmpty()) {
+            stored = ItemStack.EMPTY;
+        }
+        sync(level);
+        return result;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        if (slot != SLOT || stored.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = stored;
+        stored = ItemStack.EMPTY;
+        setChanged();
+        return result;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        if (slot != SLOT) {
+            return;
+        }
+        stored = stack.copy();
+        if (!stored.isEmpty() && stored.getCount() > getMaxStackSize()) {
+            stored.setCount(getMaxStackSize());
+        }
+        sync(level);
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public void clearContent() {
+        stored = ItemStack.EMPTY;
+        sync(level);
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return STACK_LIMIT;
     }
 
     @Nullable
@@ -77,14 +195,31 @@ public class SilverVatBlockEntity extends BlockEntity {
     }
 
     @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putInt("StoredSilver", storedSilver);
+        if (!stored.isEmpty()) {
+            tag.store("Item", ItemStack.CODEC, stored);
+        }
+        for (int i = 0; i < lastStackSizes.length; i++) {
+            tag.putInt("LastStackSize" + i, lastStackSizes[i]);
+        }
     }
 
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        storedSilver = tag.getIntOr("StoredSilver", 0);
+        stored = tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        int legacyStoredSilver = tag.getIntOr("StoredSilver", 0);
+        if (stored.isEmpty() && legacyStoredSilver > 0) {
+            stored = new ItemStack(WitcheryItems.SILVER_DEPOSITS.get(), Math.min(legacyStoredSilver, STACK_LIMIT));
+        }
+        for (int i = 0; i < lastStackSizes.length; i++) {
+            lastStackSizes[i] = tag.getIntOr("LastStackSize" + i, 0);
+        }
     }
 }
