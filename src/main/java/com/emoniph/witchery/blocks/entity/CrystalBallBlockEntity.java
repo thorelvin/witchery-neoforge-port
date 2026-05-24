@@ -29,7 +29,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
     private static final int ALTAR_RADIUS   = 16;
     private static final double WAYSTONE_SCRY_MAX_DISTANCE_SQR = 22500.0D; // original 150-block same-dimension limit
 
-    private int cooldown = 0;
+    private long lastUsedTime = 0L;
 
     /** Animated glow intensity, updated client-side from age. */
     public float glowPhase = 0f;
@@ -41,7 +41,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
     // ── Tick ──────────────────────────────────────────────────────────────────
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CrystalBallBlockEntity be) {
-        if (be.cooldown > 0) be.cooldown--;
+        // Cooldown is source-style absolute game time, so no server tick countdown is needed.
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, CrystalBallBlockEntity be) {
@@ -60,8 +60,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
             return false;
         }
 
-        cooldown = COOLDOWN_TICKS;
-        setChanged();
+        markUsed(sl);
 
         Player subject = findPredictionSubject(player, sl);
         if (subject != player) {
@@ -123,7 +122,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
     }
 
     private boolean tryCheckReady(Player player, ServerLevel level) {
-        if (cooldown > 0) {
+        if (getCooldown(level) > 0) {
             fail(player, level, Component.translatable("witchery.crystal_ball.cooldown"));
             return false;
         }
@@ -158,6 +157,11 @@ public class CrystalBallBlockEntity extends BlockEntity {
             }
         }
         return Optional.empty();
+    }
+
+    private void markUsed(ServerLevel level) {
+        lastUsedTime = level.getGameTime();
+        setChanged();
     }
 
     private Player findPredictionSubject(Player caster, ServerLevel level) {
@@ -207,20 +211,25 @@ public class CrystalBallBlockEntity extends BlockEntity {
         };
     }
 
-    public boolean isReady() { return cooldown == 0; }
-    public int getCooldown()  { return cooldown; }
+    public boolean isReady() { return level == null || getCooldown(level) == 0; }
+    public int getCooldown()  { return level == null ? 0 : getCooldown(level); }
+
+    private int getCooldown(Level level) {
+        long elapsed = level.getGameTime() - lastUsedTime;
+        return (int) Math.max(0L, COOLDOWN_TICKS - elapsed);
+    }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
 
     @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putInt("Cooldown", cooldown);
+        tag.putLong("LastUsedTime", lastUsedTime);
     }
 
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        cooldown = tag.getIntOr("Cooldown", 0);
+        lastUsedTime = tag.getLongOr("LastUsedTime", 0L);
     }
 }
