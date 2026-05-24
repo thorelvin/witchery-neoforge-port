@@ -22,6 +22,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -45,7 +46,12 @@ public class SeerStoneItem extends Item {
     private static final double COVEN_CALL_RADIUS_Y = 16.0;
 
     public SeerStoneItem(Properties props) {
-        super(props);
+        super(props.rarity(Rarity.UNCOMMON));
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return true;
     }
 
     @Override
