@@ -1,0 +1,67 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "book_1",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book"
+        }
+      ]
+    },
+    {
+      "name": "book_2",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book"
+        }
+      ]
+    },
+    {
+      "name": "torn_page_1",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "witchery:torn_page"
+        }
+      ]
+    },
+    {
+      "name": "torn_page_2",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "witchery:torn_page",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "name": "torn_page_3",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "witchery:torn_page",
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "name": "immortals_observations_book",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "witchery:immortals_observations_book"
+        }
+      ]
+    }
+  ]
+}

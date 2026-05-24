@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Observations book access (2026-05-24)
+
+- `immortals_observations_book` and `torn_page` are now real item registrations instead of legacy placeholders.
+- Restored the Resurrected shaped recipe for Observations of an Immortal from Nether Wart, Nether Star, Book, and Garlic.
+- Added a source-derived Bookshop chest loot table seed that provides Books, Torn Pages, and the Observations book for the future Bookshop structure path.
+- The custom Torn Page update recipe, readable book UI/page state, and Bookshop structure placement remain follow-up work.
+
+---
+
 ### Glass Goblet induction bridge (2026-05-24)
 
 - `glass_goblet`, `full_glass_goblet`, and `glass_goblet_full` are now real items instead of legacy placeholders.

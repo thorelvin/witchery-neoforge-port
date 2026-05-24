@@ -954,7 +954,8 @@
   "item.witchery.collecting_fumes_book": "Witchcraft: Collecting Fumes (Placeholder)",
   "item.witchery.conjuration_and_fetishes_book": "Witchcraft: Conjuration and Fetishes (Placeholder)",
   "item.witchery.extended_biomes_book": "Book of Biomes (Extended Edition) (Placeholder)",
-  "item.witchery.immortals_observations_book": "Immortal's Observations (Placeholder)",
+  "item.witchery.immortals_observations_book": "Observations of an Immortal",
+  "item.witchery.immortals_observations_book.tip": "A doomed scholar's account of discourse with the undead",
   "item.witchery.symbology_book": "Witchcraft: Symbology (Placeholder)",
   "item.witchery.witches_brews_book": "Witches' Brews Book (Placeholder)",
   "item.witchery.cane_sword": "Cane Sword (Placeholder)",
@@ -1146,7 +1147,7 @@
   "item.witchery.subdued_village_spirit": "Subdued Village Spirit (Placeholder)",
   "item.witchery.pentacle": "Pentacle (Placeholder)",
   "item.witchery.silver_deposits": "Silver Deposits (Placeholder)",
-  "item.witchery.torn_page": "Torn Page (Placeholder)",
+  "item.witchery.torn_page": "Torn Page",
   "item.witchery.woven_cruor": "Woven Cruor",
   "item.witchery.stake": "Stake",
   "item.witchery.golden_heart": "Golden Heart (Placeholder)"

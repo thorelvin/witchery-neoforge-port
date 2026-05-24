@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NSN",
+    "NBN",
+    "NGN"
+  ],
+  "key": {
+    "B": "minecraft:book",
+    "G": "witchery:garlic",
+    "N": "minecraft:nether_wart",
+    "S": "minecraft:nether_star"
+  },
+  "result": {
+    "id": "witchery:immortals_observations_book"
+  }
+}

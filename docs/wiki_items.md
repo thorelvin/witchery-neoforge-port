@@ -303,6 +303,18 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** N/A
 - **Notes:** Not stackable. Can be filled to create a Full Glass Goblet.
 
+## Observations of an Immortal
+- **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.
+- **Use:** Source vampire-progression book. In the current port it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.
+- **Stats:** Not stackable.
+- **Notes:** Bookshop chest loot data now includes this book for the future Bookshop structure path.
+
+## Torn Page
+- **Obtain:** Source-derived Bookshop chest loot data includes three Torn Page pools.
+- **Use:** Intended to update Observations of an Immortal in the original vampire book loop.
+- **Stats:** Stackable (64)
+- **Notes:** The custom update recipe and readable book UI are still follow-up work.
+
 ## Golden Chalk
 - **Obtain:** Crafted at a Witch's Cauldron near an Altar with at least 3000 power.
 - **Use:** Used to draw the center golden glyph in Circle Rituals.

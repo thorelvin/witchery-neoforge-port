@@ -450,6 +450,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> GLASS_GOBLET       = ITEMS.register("glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), false));
     public static final DeferredItem<Item> GLASS_GOBLET_FULL  = ITEMS.register("glass_goblet_full", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
     public static final DeferredItem<Item> FULL_GLASS_GOBLET  = ITEMS.register("full_glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
+    public static final DeferredItem<Item> TORN_PAGE          = ITEMS.registerSimpleItem("torn_page");
+    public static final DeferredItem<Item> IMMORTALS_OBSERVATIONS_BOOK = ITEMS.register("immortals_observations_book",
+            id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
@@ -534,7 +537,6 @@ public class WitcheryItems {
             "collecting_fumes_book",
             "conjuration_and_fetishes_book",
             "extended_biomes_book",
-            "immortals_observations_book",
             "symbology_book",
             "witches_brews_book",
             "cane_sword",
@@ -674,7 +676,6 @@ public class WitcheryItems {
             "subdued_village_spirit",
             "pentacle",
             "silver_deposits",
-            "torn_page",
             "golden_heart"
     );
 
