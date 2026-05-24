@@ -4,6 +4,7 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,7 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -31,10 +34,18 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-public class BrazierBlockEntity extends BlockEntity {
+public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer {
 
     // Slots: 0-2 = ingredients, 3 = burning marker
-    private final NonNullList<ItemStack> slots = NonNullList.withSize(4, ItemStack.EMPTY);
+    public static final int SLOT_INGREDIENT_1 = 0;
+    public static final int SLOT_INGREDIENT_2 = 1;
+    public static final int SLOT_INGREDIENT_3 = 2;
+    public static final int SLOT_BURNING_MARKER = 3;
+    public static final int SLOT_COUNT = 4;
+
+    private static final int[] AUTOMATION_SLOTS = {SLOT_INGREDIENT_1, SLOT_INGREDIENT_2, SLOT_INGREDIENT_3};
+
+    private final NonNullList<ItemStack> slots = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 
     private static final int   ALTAR_RADIUS    = 16;
     private static final float POWER_PER_TICK  = 1.0f;
@@ -188,10 +199,11 @@ public class BrazierBlockEntity extends BlockEntity {
 
     // ── State queries ─────────────────────────────────────────────────────────
 
-    public boolean isBurning() { return !slots.get(3).isEmpty(); }
+    public boolean isBurning() { return !slots.get(SLOT_BURNING_MARKER).isEmpty(); }
 
+    @Override
     public boolean isEmpty() {
-        for (int i = 0; i < 3; i++) if (!slots.get(i).isEmpty()) return false;
+        for (int i = 0; i < SLOT_BURNING_MARKER; i++) if (!slots.get(i).isEmpty()) return false;
         return true;
     }
 
@@ -201,7 +213,7 @@ public class BrazierBlockEntity extends BlockEntity {
     // ── Player interaction helpers ────────────────────────────────────────────
 
     public boolean addIngredient(ItemStack stack) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < SLOT_BURNING_MARKER; i++) {
             if (slots.get(i).isEmpty()) {
                 slots.set(i, new ItemStack(stack.getItem(), 1));
                 setChanged();
@@ -213,20 +225,20 @@ public class BrazierBlockEntity extends BlockEntity {
 
     public void begin() {
         if (!isEmpty()) {
-            slots.set(3, new ItemStack(Items.CHARCOAL));
+            slots.set(SLOT_BURNING_MARKER, new ItemStack(Items.CHARCOAL));
             setChanged();
         }
     }
 
     public void reset() {
-        for (int i = 0; i < 4; i++) slots.set(i, ItemStack.EMPTY);
+        clearContent();
         cookTime = 0;
         setChanged();
     }
 
     public NonNullList<ItemStack> getDrops() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        for (int i = 0; i < 3; i++) if (!slots.get(i).isEmpty()) drops.add(slots.get(i));
+        for (int i = 0; i < SLOT_BURNING_MARKER; i++) if (!slots.get(i).isEmpty()) drops.add(slots.get(i));
         return drops;
     }
 
@@ -350,5 +362,65 @@ public class BrazierBlockEntity extends BlockEntity {
         ContainerHelper.loadAllItems(tag, slots);
         cookTime   = tag.getIntOr("CookTime", 0);
         powerLevel = tag.getIntOr("PowerLevel", 0);
+    }
+
+    @Override
+    public int getContainerSize() {
+        return SLOT_COUNT;
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return slots.get(slot);
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        setChanged();
+        return ContainerHelper.removeItem(slots, slot, amount);
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        return ContainerHelper.takeItem(slots, slot);
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        slots.set(slot, stack);
+        setChanged();
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
+    public void clearContent() {
+        slots.clear();
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return slot >= SLOT_INGREDIENT_1
+                && slot <= SLOT_INGREDIENT_3
+                && stack.getCount() == 1
+                && slots.get(slot).isEmpty();
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return AUTOMATION_SLOTS;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+        return canPlaceItem(index, itemStack);
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        return false;
     }
 }
