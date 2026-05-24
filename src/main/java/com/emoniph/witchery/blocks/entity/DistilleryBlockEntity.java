@@ -8,6 +8,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.DistilleryMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -17,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class DistilleryBlockEntity extends BlockEntity implements Container, MenuProvider {
+public class DistilleryBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider {
 
     public static final int SLOT_INPUT_1 = 0;
     public static final int SLOT_INPUT_2 = 1;
@@ -41,6 +43,12 @@ public class DistilleryBlockEntity extends BlockEntity implements Container, Men
     public static final int SLOT_OUTPUT_3 = 5;
     public static final int SLOT_OUTPUT_4 = 6;
     public static final int SLOT_COUNT = 7;
+
+    private static final int[] SLOTS_TOP_AND_BOTTOM = {SLOT_INPUT_1, SLOT_INPUT_2, SLOT_JARS};
+    private static final int[] SLOTS_SIDES = {
+            SLOT_INPUT_1, SLOT_INPUT_2, SLOT_JARS,
+            SLOT_OUTPUT_1, SLOT_OUTPUT_2, SLOT_OUTPUT_3, SLOT_OUTPUT_4
+    };
 
     private static final int DEFAULT_COOK_TIME = 800;
     private static final int ALTAR_RADIUS = 16;
@@ -302,6 +310,30 @@ public class DistilleryBlockEntity extends BlockEntity implements Container, Men
             return stack.is(WitcheryItems.CLAY_JAR.get());
         }
         return !stack.is(WitcheryItems.CLAY_JAR.get());
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return side.getAxis().isVertical() ? SLOTS_TOP_AND_BOTTOM : SLOTS_SIDES;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+        return canPlaceItem(index, itemStack) && (direction == null || slotExposedToFace(index, direction));
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        return direction.getAxis().isHorizontal() && index >= SLOT_OUTPUT_1 && index <= SLOT_OUTPUT_4;
+    }
+
+    private static boolean slotExposedToFace(int index, Direction direction) {
+        for (int slot : direction.getAxis().isVertical() ? SLOTS_TOP_AND_BOTTOM : SLOTS_SIDES) {
+            if (slot == index) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getBurnProgress() {
