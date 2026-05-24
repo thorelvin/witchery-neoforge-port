@@ -4,7 +4,7 @@ Current visual follow-ups: Flying Monkey source model/render parity, Ent old mod
 
 # Witchery Tab — Item Review
 
-Items appear in creative tab order. Add comments in the `Notes` column.
+Rows started from the old creative-tab order. The live Witchery creative tab is now category-sorted in `WitcheryCreativeTabs` (guide, wood/trees, plants, machines, ritual/world blocks, tools, poppets/scrying, ingredients, vampire/werewolf, weapons/armor, brews/infusions, dreams/demons/contracts, legacy placeholders, spawn eggs). Add comments in the `Notes` column.
 
 ---
 

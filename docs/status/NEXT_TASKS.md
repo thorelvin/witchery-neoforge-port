@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: keep Glass Goblet vampire quest routes wired through source validation gates without consuming ritual items until the missing Elle/vampire entity handoffs exist, while preserving source transformation exclusions that the current data model can enforce.
+- Current bounded focus: creative-tab usability pass is in place; the tab is grouped by functional category, keeps all previous explicit entries, adds the Silver Vat to the machine section, and still exposes inert legacy placeholders as TODO markers.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
