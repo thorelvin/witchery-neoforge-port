@@ -1,10 +1,16 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.DreamWeaveType;
 import com.emoniph.witchery.blocks.entity.DreamCatcherBlockEntity;
+import com.emoniph.witchery.init.WitcheryBlocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 /** Right-click on a Dream Catcher block to insert this weave. */
 public class DreamWeaveItem extends Item {
@@ -19,12 +25,39 @@ public class DreamWeaveItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        if (ctx.getLevel().isClientSide()) return InteractionResult.SUCCESS;
-        if (!(ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof DreamCatcherBlockEntity be))
+        Level level = ctx.getLevel();
+        if (level.getBlockEntity(ctx.getClickedPos()) instanceof DreamCatcherBlockEntity be) {
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
+            be.setWeave(weaveType);
+            if (ctx.getPlayer() != null && !ctx.getPlayer().isCreative())
+                ctx.getItemInHand().shrink(1);
+            return InteractionResult.SUCCESS_SERVER;
+        }
+
+        Direction face = ctx.getClickedFace();
+        if (!face.getAxis().isHorizontal()) {
             return InteractionResult.PASS;
-        be.setWeave(weaveType);
+        }
+
+        BlockPos placePos = ctx.getClickedPos().relative(face);
+        BlockState placedState = WitcheryBlocks.DREAM_CATCHER.get()
+                .defaultBlockState()
+                .setValue(DreamCatcherBlock.FACING, face);
+        if (!level.getBlockState(placePos).canBeReplaced() || !placedState.canSurvive(level, placePos)) {
+            return InteractionResult.FAIL;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!level.setBlock(placePos, placedState, 3)) {
+            return InteractionResult.FAIL;
+        }
+        if (level.getBlockEntity(placePos) instanceof DreamCatcherBlockEntity be) {
+            be.setWeave(weaveType);
+        }
         if (ctx.getPlayer() != null && !ctx.getPlayer().isCreative())
             ctx.getItemInHand().shrink(1);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS_SERVER;
     }
 }
