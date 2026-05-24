@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "DGD",
+    "DDD"
+  ],
+  "key": {
+    "D": "witchery:silver_deposits",
+    "G": "minecraft:golden_sword"
+  },
+  "result": {
+    "id": "witchery:silver_sword"
+  }
+}

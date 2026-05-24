@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DWD",
+    "W#W",
+    "DSD"
+  ],
+  "key": {
+    "#": "witchery:hunter_boots",
+    "D": "witchery:silver_deposits",
+    "S": "minecraft:string",
+    "W": "witchery:wolfsbane_flower"
+  },
+  "result": {
+    "id": "witchery:hunter_boots_silvered"
+  }
+}
