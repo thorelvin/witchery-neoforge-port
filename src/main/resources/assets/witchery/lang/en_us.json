@@ -988,6 +988,7 @@
   "item.witchery.extended_biomes_book": "Book of Biomes (Extended Edition) (Placeholder)",
   "item.witchery.immortals_observations_book": "Observations of an Immortal",
   "item.witchery.immortals_observations_book.tip": "A doomed scholar's account of discourse with the undead",
+  "item.witchery.immortals_observations_book.pages": "Pages revealed: %s/%s",
   "item.witchery.symbology_book": "Witchcraft: Symbology (Placeholder)",
   "item.witchery.witches_brews_book": "Witches' Brews Book (Placeholder)",
   "item.witchery.cane_sword": "Cane Sword (Placeholder)",

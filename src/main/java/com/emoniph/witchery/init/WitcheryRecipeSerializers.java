@@ -14,6 +14,7 @@ import com.emoniph.witchery.crafting.DistilleryRecipeSerializer;
 import com.emoniph.witchery.crafting.RowanKeyringRecipe;
 import com.emoniph.witchery.crafting.SpinningRecipe;
 import com.emoniph.witchery.crafting.SpinningRecipeSerializer;
+import com.emoniph.witchery.crafting.UpdateImmortalsObservationsBookRecipe;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 
 import net.minecraft.core.registries.Registries;
@@ -61,4 +62,8 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<PlayerCompassBindingRecipe>> PLAYER_COMPASS_BINDING =
             RECIPE_SERIALIZERS.register("player_compass_binding",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(PlayerCompassBindingRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<UpdateImmortalsObservationsBookRecipe>> UPDATE_IMMORTALS_OBSERVATIONS_BOOK =
+            RECIPE_SERIALIZERS.register("update_immortals_observations_book",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(UpdateImmortalsObservationsBookRecipe::new));
 }
