@@ -57,9 +57,17 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ROWAN_LEAVES.get(),
                 WitcheryItems.ROWAN_SAPLING.get(),
                 WitcheryItems.ALDER_LOG.get(),
+                WitcheryItems.ALDER_PLANKS.get(),
+                WitcheryItems.ALDER_STAIRS.get(),
+                WitcheryItems.ALDER_SLAB.get(),
+                WitcheryItems.ALDER_DOOR.get(),
                 WitcheryItems.ALDER_LEAVES.get(),
                 WitcheryItems.ALDER_SAPLING.get(),
                 WitcheryItems.HAWTHORN_LOG.get(),
+                WitcheryItems.HAWTHORN_PLANKS.get(),
+                WitcheryItems.HAWTHORN_STAIRS.get(),
+                WitcheryItems.HAWTHORN_SLAB.get(),
+                WitcheryItems.HAWTHORN_DOOR.get(),
                 WitcheryItems.HAWTHORN_LEAVES.get(),
                 WitcheryItems.HAWTHORN_SAPLING.get());
     }
@@ -322,8 +330,6 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "alder_door", "alder_planks", "alder_stairs", "alder_slab", "alder_boat",
-                "hawthorn_door", "hawthorn_planks", "hawthorn_stairs", "hawthorn_slab", "hawthorn_boat",
                 "ice_slab", "ice_stairs", "ice_stockade", "perpetual_ice",
                 "snow_pressure_plate", "snow_slab", "snow_stairs");
         addLegacy(output, accepted,

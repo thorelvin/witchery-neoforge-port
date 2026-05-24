@@ -76,9 +76,17 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_LEAVES);
     public static final DeferredItem<BlockItem> ROWAN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SAPLING);
     public static final DeferredItem<BlockItem> ALDER_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_LOG);
+    public static final DeferredItem<BlockItem> ALDER_PLANKS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_PLANKS);
+    public static final DeferredItem<BlockItem> ALDER_STAIRS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_STAIRS);
+    public static final DeferredItem<BlockItem> ALDER_SLAB = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_SLAB);
+    public static final DeferredItem<Item> ALDER_DOOR = ITEMS.register("alder_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.ALDER_DOOR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ALDER_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_LEAVES);
     public static final DeferredItem<BlockItem> ALDER_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALDER_SAPLING);
     public static final DeferredItem<BlockItem> HAWTHORN_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_LOG);
+    public static final DeferredItem<BlockItem> HAWTHORN_PLANKS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_PLANKS);
+    public static final DeferredItem<BlockItem> HAWTHORN_STAIRS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_STAIRS);
+    public static final DeferredItem<BlockItem> HAWTHORN_SLAB = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_SLAB);
+    public static final DeferredItem<Item> HAWTHORN_DOOR = ITEMS.register("hawthorn_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.HAWTHORN_DOOR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> HAWTHORN_LEAVES = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_LEAVES);
     public static final DeferredItem<BlockItem> HAWTHORN_SAPLING = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HAWTHORN_SAPLING);
     public static final DeferredItem<BlockItem> WISPY_COTTON     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WISPY_COTTON);
@@ -507,10 +515,6 @@ public class WitcheryItems {
             "devils_tongue_charm",
             "bucket_hollow_tears",
             "hollow_tears",
-            "alder_door",
-            "alder_planks",
-            "alder_stairs",
-            "alder_slab",
             "infernal_blood",
             "odd_porkchop_raw",
             "odd_porkchop_cooked",
@@ -534,12 +538,6 @@ public class WitcheryItems {
             "contract_ownership",
             "contract_torment",
             "silver_dust",
-            "alder_boat",
-            "hawthorn_boat",
-            "hawthorn_door",
-            "hawthorn_planks",
-            "hawthorn_stairs",
-            "hawthorn_slab",
             "biome_note",
             "blooded_waystone",
             "bound_waystone",

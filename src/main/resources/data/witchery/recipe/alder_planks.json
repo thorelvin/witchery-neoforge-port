@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#witchery:alder_logs"
+  ],
+  "result": {
+    "id": "witchery:alder_planks",
+    "count": 4
+  }
+}

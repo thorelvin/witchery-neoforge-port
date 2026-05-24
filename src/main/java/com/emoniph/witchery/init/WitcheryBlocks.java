@@ -90,6 +90,18 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> ALDER_LOG = BLOCKS.registerBlock("alder_log",
             RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+    public static final DeferredBlock<Block> ALDER_PLANKS = BLOCKS.registerSimpleBlock("alder_planks",
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
+    public static final DeferredBlock<WitcheryWoodStairBlock> ALDER_STAIRS = BLOCKS.registerBlock("alder_stairs",
+            props -> new WitcheryWoodStairBlock(ALDER_PLANKS.get().defaultBlockState(),
+                    props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<WitcheryWoodSlabBlock> ALDER_SLAB = BLOCKS.registerBlock("alder_slab",
+            props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<DoorBlock> ALDER_DOOR = BLOCKS.registerBlock("alder_door",
+            props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> ALDER_LEAVES = BLOCKS.registerBlock("alder_leaves",
             RowanLeavesBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
@@ -98,6 +110,18 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> HAWTHORN_LOG = BLOCKS.registerBlock("hawthorn_log",
             RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+    public static final DeferredBlock<Block> HAWTHORN_PLANKS = BLOCKS.registerSimpleBlock("hawthorn_planks",
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
+    public static final DeferredBlock<WitcheryWoodStairBlock> HAWTHORN_STAIRS = BLOCKS.registerBlock("hawthorn_stairs",
+            props -> new WitcheryWoodStairBlock(HAWTHORN_PLANKS.get().defaultBlockState(),
+                    props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<WitcheryWoodSlabBlock> HAWTHORN_SLAB = BLOCKS.registerBlock("hawthorn_slab",
+            props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<DoorBlock> HAWTHORN_DOOR = BLOCKS.registerBlock("hawthorn_door",
+            props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> HAWTHORN_LEAVES = BLOCKS.registerBlock("hawthorn_leaves",
             RowanLeavesBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());

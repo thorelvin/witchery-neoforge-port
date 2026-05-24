@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": "witchery:alder_planks"
+  },
+  "result": {
+    "id": "witchery:alder_slab",
+    "count": 6
+  }
+}
