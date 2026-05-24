@@ -124,11 +124,38 @@ public class KettleBrewingRecipe implements Recipe<KettleRecipeInput> {
 
     public ItemStack createExtractedResult(@Nullable Player player) {
         ItemStack extracted = result.copyWithCount(1);
-        if (player != null && hatBonus > 0 && player.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCHES_HAT.get())) {
-            extracted.grow(hatBonus);
-        }
-        if (player != null && FamiliarHelper.hasActiveToadFamiliar(player) && player.getRandom().nextFloat() < 0.05F) {
-            extracted.grow(1);
+        if (player != null && hatBonus > 0) {
+            double bonusChance = 0.0;
+            double babaBonusChance = 0.0;
+
+            ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
+            if (head.is(WitcheryItems.WITCHES_HAT.get())) {
+                bonusChance += 0.35;
+            } else if (head.is(WitcheryItems.BABAS_HAT.get())) {
+                bonusChance += 0.25;
+                babaBonusChance += 0.25;
+            }
+
+            ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
+            if (!extracted.is(WitcheryItems.BREW_OF_RAISING.get()) && chest.is(WitcheryItems.WITCHES_ROBE.get())) {
+                bonusChance += 0.35;
+            } else if (extracted.is(WitcheryItems.BREW_OF_RAISING.get()) && chest.is(WitcheryItems.NECROMANCER_ROBES.get())) {
+                bonusChance += 0.35;
+            }
+
+            if (FamiliarHelper.hasActiveToadFamiliar(player)) {
+                bonusChance += 0.05;
+                if (head.is(WitcheryItems.BABAS_HAT.get())) {
+                    babaBonusChance += 0.05;
+                }
+            }
+
+            if (bonusChance > 0.0 && player.getRandom().nextDouble() <= bonusChance) {
+                extracted.grow(hatBonus);
+            }
+            if (babaBonusChance > 0.0 && player.getRandom().nextDouble() <= babaBonusChance) {
+                extracted.grow(hatBonus);
+            }
         }
         return extracted;
     }

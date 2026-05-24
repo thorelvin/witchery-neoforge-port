@@ -4,12 +4,17 @@ import com.emoniph.witchery.crafting.KettleBrewingRecipe;
 import com.emoniph.witchery.crafting.KettleRecipeInput;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,10 +27,12 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-public class KettleBlockEntity extends BlockEntity {
+public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     private static final int INGREDIENT_SLOTS = 6;
     public static final int RESULT_SLOT = 6;
     public static final int BOTTLE_SLOT = 7;
+    private static final int SLOT_COUNT = 8;
+    private static final int[] AUTOMATION_SLOTS = {0, 1, 2, 3, 4, 5, RESULT_SLOT, BOTTLE_SLOT};
 
     private final ItemStack[] items = new ItemStack[8];
     private int waterLevel = 0; // 0=empty, 1-3 levels
@@ -78,11 +85,21 @@ public class KettleBlockEntity extends BlockEntity {
 
     // ── Inventory helpers ─────────────────────────────────────────────────────
 
-    public ItemStack getItem(int slot) { return items[slot]; }
+    @Override
+    public ItemStack getItem(int slot) {
+        return isValidSlot(slot) ? items[slot] : ItemStack.EMPTY;
+    }
 
+    @Override
     public void setItem(int slot, ItemStack stack) {
+        if (!isValidSlot(slot)) {
+            return;
+        }
         items[slot] = stack == null ? ItemStack.EMPTY : stack;
-        setChanged();
+        if (!items[slot].isEmpty() && items[slot].getCount() > getMaxStackSize()) {
+            items[slot].setCount(getMaxStackSize());
+        }
+        sync();
     }
 
     public boolean addIngredient(ItemStack stack) {
@@ -227,7 +244,7 @@ public class KettleBlockEntity extends BlockEntity {
 
     // ── Brew extraction ───────────────────────────────────────────────────────
 
-    public ItemStack extractBrew(@Nullable net.minecraft.world.entity.player.Player player) {
+    public ItemStack extractBrew(@Nullable Player player) {
         if (!isReady()) return ItemStack.EMPTY;
         KettleBrewingRecipe recipe = findRecipeForResult();
         if (recipe == null || !recipe.isBrewableBy(player)) return ItemStack.EMPTY;
@@ -235,8 +252,13 @@ public class KettleBlockEntity extends BlockEntity {
         ItemStack result = getItem(RESULT_SLOT);
         ItemStack brew = recipe.createExtractedResult(player);
         result.shrink(1);
-        items[RESULT_SLOT] = result.isEmpty() ? ItemStack.EMPTY : result;
-        sync();
+        if (result.isEmpty()) {
+            items[RESULT_SLOT] = ItemStack.EMPTY;
+            reset(true);
+        } else {
+            items[RESULT_SLOT] = result;
+            sync();
+        }
         return brew;
     }
 
@@ -291,5 +313,133 @@ public class KettleBlockEntity extends BlockEntity {
     public int bottleCount() {
         ItemStack bottles = getItem(BOTTLE_SLOT);
         return bottles.isEmpty() ? 0 : bottles.getCount();
+    }
+
+    @Override
+    public int getContainerSize() {
+        return SLOT_COUNT;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack item : items) {
+            if (!item.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        if (!isValidSlot(slot) || amount <= 0 || items[slot].isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        if (slot == RESULT_SLOT) {
+            int extractionCount = Math.min(amount, items[slot].getCount());
+            if (!canExtractStoredResult(extractionCount)) {
+                return ItemStack.EMPTY;
+            }
+            ItemStack extracted = items[slot].split(extractionCount);
+            consumeStoredBottles(extracted.getCount());
+            if (items[slot].isEmpty()) {
+                items[slot] = ItemStack.EMPTY;
+                reset(true);
+            } else {
+                sync();
+            }
+            return extracted;
+        }
+
+        ItemStack extracted = items[slot].split(amount);
+        if (items[slot].isEmpty()) {
+            items[slot] = ItemStack.EMPTY;
+        }
+        sync();
+        return extracted;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        if (!isValidSlot(slot) || items[slot].isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = items[slot];
+        items[slot] = ItemStack.EMPTY;
+        return result;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        if (!isValidSlot(slot) || stack.isEmpty()) {
+            return false;
+        }
+        ItemStack current = getItem(slot);
+        if (slot == RESULT_SLOT) {
+            return false;
+        }
+        if (slot == BOTTLE_SLOT) {
+            return stack.is(Items.GLASS_BOTTLE)
+                    && (current.isEmpty() || current.is(Items.GLASS_BOTTLE))
+                    && current.getCount() + stack.getCount() <= getMaxStackSize();
+        }
+        return slot < INGREDIENT_SLOTS
+                && !stack.is(Items.GLASS_BOTTLE)
+                && getItem(RESULT_SLOT).isEmpty()
+                && isFilled()
+                && (current.isEmpty() || ItemStack.isSameItemSameComponents(current, stack))
+                && current.getCount() + stack.getCount() <= getMaxStackSize();
+    }
+
+    @Override
+    public void clearContent() {
+        for (int i = 0; i < items.length; i++) {
+            items[i] = ItemStack.EMPTY;
+        }
+        sync();
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return AUTOMATION_SLOTS;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+        return canPlaceItem(index, itemStack);
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        return index == RESULT_SLOT && canExtractStoredResult(stack.isEmpty() ? 1 : stack.getCount());
+    }
+
+    private boolean canExtractStoredResult(int amount) {
+        if (amount <= 0 || !isFilled() || !isReady() || bottleCount() < amount) {
+            return false;
+        }
+        KettleBrewingRecipe recipe = findRecipeForResult();
+        return recipe != null && recipe.isBrewableBy(null);
+    }
+
+    private void consumeStoredBottles(int amount) {
+        ItemStack bottles = getItem(BOTTLE_SLOT);
+        if (bottles.isEmpty()) {
+            return;
+        }
+        bottles.shrink(amount);
+        if (bottles.isEmpty()) {
+            items[BOTTLE_SLOT] = ItemStack.EMPTY;
+        }
+    }
+
+    private static boolean isValidSlot(int slot) {
+        return slot >= 0 && slot < SLOT_COUNT;
     }
 }
