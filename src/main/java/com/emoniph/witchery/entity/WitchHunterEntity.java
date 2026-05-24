@@ -74,8 +74,8 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.25)
                 .add(Attributes.ATTACK_DAMAGE, 3.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0);
     }
@@ -264,7 +264,7 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
 
     // ── Sounds ────────────────────────────────────────────────────────────────
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.PILLAGER_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.PILLAGER_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.PILLAGER_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return null; }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.VILLAGER_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.VILLAGER_DEATH; }
 }
