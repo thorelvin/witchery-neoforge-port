@@ -45,6 +45,10 @@ public class VampireEvents {
     private static final int MESMERISE_BASE_DURATION = 5 * 20;
     private static final int MESMERISE_BOOST_DURATION = 3 * 20;
     private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
+    private static final int VILLAGER_MAX_BLOOD = 500;
+    private static final int VILLAGER_BLOOD_DRAIN = 50;
+    private static final int VILLAGER_LOW_BLOOD = 250;
+    private static final String VILLAGER_BLOOD_TAG = "witchery_villager_blood";
 
     // ── Tick ─────────────────────────────────────────────────────────────────
 
@@ -136,8 +140,13 @@ public class VampireEvents {
     }
 
     private static void bite(ServerPlayer vampire, LivingEntity target, WitcheryPlayerData data) {
-        int gained = bloodValue(vampire, target);
-        target.hurt(vampire.damageSources().playerAttack(vampire), 2f);
+        int gained = drainBloodFromTarget(vampire, target);
+        if (gained <= 0) {
+            vampire.displayClientMessage(Component.translatable("witchery.vampire.bite.dry",
+                    target.getName()), true);
+            playMesmeriseFailure(vampire);
+            return;
+        }
         data.addBlood(gained);
         PacketDistributor.sendToPlayer(vampire, SyncPlayerDataPayload.from(vampire, data));
 
@@ -145,6 +154,41 @@ public class VampireEvents {
                 SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.6f, 0.5f);
         vampire.displayClientMessage(Component.translatable("witchery.vampire.bite.success",
                 target.getName(), gained, data.getBloodLevel()), false);
+    }
+
+    private static int drainBloodFromTarget(ServerPlayer vampire, LivingEntity target) {
+        if (target instanceof Villager villager) {
+            return drainVillagerBlood(vampire, villager);
+        }
+
+        int gained = bloodValue(vampire, target);
+        target.hurt(vampire.damageSources().playerAttack(vampire), 2f);
+        return gained;
+    }
+
+    private static int drainVillagerBlood(ServerPlayer vampire, Villager villager) {
+        int desired = VILLAGER_BLOOD_DRAIN;
+        if (VampireClothingUtil.isDrinkBoostActive(vampire)) {
+            desired = (desired * 3 + 1) / 2;
+        }
+
+        boolean knockedOut = villager.isSleeping() || isMesmerised(villager);
+        if (!knockedOut) {
+            desired = (int) Math.ceil(desired * 0.66F);
+        }
+
+        var tag = villager.getPersistentData();
+        int stored = tag.getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
+        int taken = Math.min(Math.max(stored, 0), desired);
+        int remaining = Math.max(0, stored - taken);
+        tag.putInt(VILLAGER_BLOOD_TAG, remaining);
+
+        if (remaining < VILLAGER_LOW_BLOOD) {
+            villager.hurt(vampire.damageSources().playerAttack(vampire), 1.3F);
+        } else if (!knockedOut) {
+            villager.hurt(vampire.damageSources().playerAttack(vampire), 0.1F);
+        }
+        return taken;
     }
 
     private static void mesmerise(ServerPlayer vampire, LivingEntity target, WitcheryPlayerData data) {

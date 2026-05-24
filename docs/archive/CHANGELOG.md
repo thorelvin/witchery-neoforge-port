@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Villager blood draining (2026-05-24)
+
+- Vampire bites on villagers now use a persisted 500-blood store, matching the source `VillagerExtendedData` model.
+- Awake villagers yield the source reduced drain, while sleeping or mesmerised villagers yield the full drain.
+- Low-blood villagers take extra harm below the source 250-blood threshold, and fully drained villagers show a dry-bite message instead of refilling the vampire.
+- Exact old vampire quest counters, guard reactions, villager conversion, and level-gated progression are still follow-up work.
+
+---
+
 ### Warm and Lilith blood consumables (2026-05-24)
 
 - `warm_blood` and `liliths_blood` are now real edible items instead of legacy placeholders.

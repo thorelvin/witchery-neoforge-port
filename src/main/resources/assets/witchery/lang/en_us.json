@@ -530,6 +530,7 @@
   "witchery.ritual.storm.portable_support": "The portable storm rite needs gunpowder, wood ash, and a charged attuned stone.",
   "witchery.ritual.storm.no_power": "A nearby altar lacks the power to call the storm.",
   "witchery.vampire.bite.success": "You drain %s for %s blood. (%s/500)",
+  "witchery.vampire.bite.dry": "%s has no blood left to take.",
   "witchery.werewolf.transformed": "The full moon calls â€” you feel the beast take hold!",
   "witchery.werewolf.wolfsbane": "The wolfsbane burns â€” the beast retreats.",
   "entity.witchery.coven_witch": "Coven Witch",

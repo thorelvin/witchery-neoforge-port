@@ -315,6 +315,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** Stackable (16), rare.
 - **Notes:** The old 10-level vampire progression and Lilith level-up gates are still follow-up work.
 
+## Vampire Feeding
+- **Obtain:** Be a vampire in the current NeoForge port and empty-hand interact with a living target.
+- **Use:** Living targets restore vampire blood; villagers now track a persisted 500-blood store. Awake villagers yield a reduced drain, while sleeping or mesmerised villagers yield the full drain and can be depleted.
+- **Stats:** Villager blood cap 500; low-blood harm begins below 250 stored blood.
+- **Notes:** The old level quest counters, guard reactions, villager conversion, and full 10-level progression are still follow-up work.
+
 ## Observations of an Immortal
 - **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.
 - **Use:** Source vampire-progression book. In the current port it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.
