@@ -1,6 +1,7 @@
 {
   "textures": {
     "0": "witchery:item/huntsmans_spear",
+    "missing": "witchery:item/huntsmans_spear",
     "particle": "witchery:item/huntsmans_spear"
   },
   "elements": [

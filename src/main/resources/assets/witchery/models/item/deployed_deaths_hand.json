@@ -2,6 +2,7 @@
   "textures": {
     "1": "witchery:item/deaths_hand_scythe",
     "2": "witchery:item/deaths_holding_hand",
+    "missing": "witchery:item/deaths_hand_scythe",
     "particle": "witchery:item/deaths_holding_hand"
   },
   "elements": [
