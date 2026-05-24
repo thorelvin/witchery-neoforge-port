@@ -169,6 +169,10 @@ public class GlassGobletItem extends Item {
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (!data.isVampire()) {
+            if (data.isWerewolf()) {
+                fail(player, "rite.witchery.wolf_curse.hybridsnotallow");
+                return stack;
+            }
             data.setVampire(true);
             if (data.getBloodLevel() == 0) {
                 data.setBloodLevel(STARTING_VAMPIRE_BLOOD);
