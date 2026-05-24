@@ -45,7 +45,6 @@ public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, 
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(-90));
         for (var part : model.bodyParts()) {
             collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }
