@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.item.WaystoneItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -10,6 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +27,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
     private static final int COOLDOWN_TICKS = 100;  // 5 s between uses
     private static final int POWER_COST     = 500;
     private static final int ALTAR_RADIUS   = 16;
+    private static final double WAYSTONE_SCRY_MAX_DISTANCE_SQR = 22500.0D; // original 150-block same-dimension limit
 
     private int cooldown = 0;
 
@@ -52,22 +56,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
      */
     public boolean tryActivate(Player player, Level level) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (cooldown > 0) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.cooldown"), false);
-            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
-            return false;
-        }
-
-        // Find nearest altar within ALTAR_RADIUS
-        Optional<AltarBlockEntity> altar = findAltar(sl);
-        if (altar.isEmpty()) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.no_power"), false);
-            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
-            return false;
-        }
-        if (!altar.get().consumePower(POWER_COST)) {
-            player.displayClientMessage(Component.translatable("witchery.crystal_ball.insufficient_power"), false);
-            sl.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
+        if (!tryConsumePower(player, sl)) {
             return false;
         }
 
@@ -84,6 +73,72 @@ public class CrystalBallBlockEntity extends BlockEntity {
                 16, 0.2, 0.2, 0.2, 0.0);
         sl.playSound(null, worldPosition, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.75f, 1.0f);
         return true;
+    }
+
+    /**
+     * First practical restoration of the old bound-waystone crystal-ball hook:
+     * same-dimension waystones within 150 blocks can be scryed through the ball.
+     */
+    public boolean tryScryWaystone(Player player, Level level, ItemStack waystone) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!tryConsumePower(player, sl)) {
+            return false;
+        }
+
+        Optional<BlockPos> targetPos = WaystoneItem.getBoundPos(waystone);
+        Optional<net.minecraft.resources.ResourceKey<Level>> targetDim = WaystoneItem.getBoundDim(waystone);
+        if (targetPos.isEmpty() || targetDim.isEmpty()) {
+            fail(player, sl, Component.translatable("witchery.ritual.transposition.no_waystone"));
+            return false;
+        }
+
+        BlockPos pos = targetPos.get();
+        if (!targetDim.get().equals(level.dimension())
+                || player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > WAYSTONE_SCRY_MAX_DISTANCE_SQR) {
+            fail(player, sl, Component.literal("The crystal ball cannot focus on that waystone from here.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return false;
+        }
+
+        cooldown = COOLDOWN_TICKS;
+        setChanged();
+        player.displayClientMessage(Component.literal("The crystal ball fixes on the waystone at "
+                + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        sl.sendParticles(ParticleTypes.PORTAL,
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + 0.8,
+                worldPosition.getZ() + 0.5,
+                32, 0.25, 0.35, 0.25, 0.2);
+        sl.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5,
+                pos.getY() + 1.0,
+                pos.getZ() + 0.5,
+                16, 0.4, 0.5, 0.4, 0.05);
+        sl.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.9f, 1.2f);
+        return true;
+    }
+
+    private boolean tryConsumePower(Player player, ServerLevel level) {
+        if (cooldown > 0) {
+            fail(player, level, Component.translatable("witchery.crystal_ball.cooldown"));
+            return false;
+        }
+
+        Optional<AltarBlockEntity> altar = findAltar(level);
+        if (altar.isEmpty()) {
+            fail(player, level, Component.translatable("witchery.crystal_ball.no_power"));
+            return false;
+        }
+        if (!altar.get().consumePower(POWER_COST)) {
+            fail(player, level, Component.translatable("witchery.crystal_ball.insufficient_power"));
+            return false;
+        }
+        return true;
+    }
+
+    private static void fail(Player player, ServerLevel level, Component message) {
+        player.displayClientMessage(message, false);
+        level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
     }
 
     private Optional<AltarBlockEntity> findAltar(ServerLevel level) {
