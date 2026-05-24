@@ -13,6 +13,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
@@ -113,6 +114,7 @@ public class WaystoneItem extends Item {
             tag.putInt(TAG_Z, pos.getZ());
             tag.putString(TAG_DIM, dim.identifier().toString());
         });
+        stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
     }
 
     public static Optional<BlockPos> getBoundPos(ItemStack stack) {
