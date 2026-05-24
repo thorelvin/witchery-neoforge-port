@@ -44,7 +44,7 @@ public class EntEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 200.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.15)
+                .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.ATTACK_DAMAGE, 8.0)
                 .add(Attributes.FOLLOW_RANGE, 12.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
@@ -90,7 +90,7 @@ public class EntEntity extends Monster {
         if (attacker instanceof LivingEntity living && living.getMainHandItem().getItem() instanceof AxeItem) {
             amount *= 3.0F;
         }
-        return super.hurtServer(level, source, Math.min(amount, 15.0F));
+        return super.hurtServer(level, source, amount);
     }
 
     public int getAttackTimer() {
