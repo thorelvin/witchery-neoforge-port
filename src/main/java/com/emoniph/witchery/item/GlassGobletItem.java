@@ -178,6 +178,11 @@ public class GlassGobletItem extends Item {
                 data.setBloodLevel(STARTING_VAMPIRE_BLOOD);
             }
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
+            level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5F,
+                    0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
+            level.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + player.getBbHeight() * 0.5D,
+                    player.getZ(), 18, player.getBbWidth() * 0.4D, player.getBbHeight() * 0.45D,
+                    player.getBbWidth() * 0.4D, 0.02D);
             player.displayClientMessage(Component.translatable("witchery.vampire.goblet.transformed")
                     .withStyle(ChatFormatting.DARK_RED), false);
         }
