@@ -86,8 +86,8 @@ All spec gaps are closed:
 ### 2. Mirror World dimension - implemented, needs fresh-world QA/reconciliation
 
 Original: `hasNoSky=true`, permanent dark, dark blue fog `(0, 0.03, 0.1)`, no rain/lightning.
-Current repo truth has the portal-room loop landed: Mirror block, Mirror Wall, room chunk generator, room SavedData, entry/exit teleport, Reflection guardian, and owner-skin renderer.
-- **QA:** test in a fresh world or delete `run/client/saves/<world>/dimensions/witchery/mirror_world/` before judging room generation.
+Current repo truth has the portal-room loop landed: Mirror block, source 3D mirror visuals, animated source Mirror Wall visuals, Mirror/Mirror Wall item definitions, room chunk generator, room SavedData, entry/exit teleport, Reflection guardian, and owner-skin renderer.
+- **QA:** test in a fresh world or delete `run/client/saves/<world>/dimensions/witchery/mirror_world/` before judging room generation; also place/break/drop Mirror and Mirror Wall to verify inventory and dropped-stack models no longer fall back to magenta/black.
 - **Follow-up:** survival/ritual ingress wording, Duplication Grenade mirror charging, Reflection behavior polish, and stale-chunk/player-skin edge cases.
 
 ---

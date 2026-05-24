@@ -1,8 +1,12 @@
 {
   "multipart": [
-    { "when": { "facing": "north" }, "apply": { "model": "witchery:block/mirror_north" } },
-    { "when": { "facing": "south" }, "apply": { "model": "witchery:block/mirror_north", "y": 180 } },
-    { "when": { "facing": "west" },  "apply": { "model": "witchery:block/mirror_north", "y": 90 } },
-    { "when": { "facing": "east" },  "apply": { "model": "witchery:block/mirror_north", "y": 270 } }
+    { "when": { "facing": "north", "part": "foot" }, "apply": { "model": "witchery:block/bottom_mirror" } },
+    { "when": { "facing": "south", "part": "foot" }, "apply": { "model": "witchery:block/bottom_mirror", "y": 180 } },
+    { "when": { "facing": "west", "part": "foot" },  "apply": { "model": "witchery:block/bottom_mirror", "y": 90 } },
+    { "when": { "facing": "east", "part": "foot" },  "apply": { "model": "witchery:block/bottom_mirror", "y": 270 } },
+    { "when": { "facing": "north", "part": "head" }, "apply": { "model": "witchery:block/top_mirror" } },
+    { "when": { "facing": "south", "part": "head" }, "apply": { "model": "witchery:block/top_mirror", "y": 180 } },
+    { "when": { "facing": "west", "part": "head" },  "apply": { "model": "witchery:block/top_mirror", "y": 90 } },
+    { "when": { "facing": "east", "part": "head" },  "apply": { "model": "witchery:block/top_mirror", "y": 270 } }
   ]
 }
