@@ -25,6 +25,8 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -54,6 +56,34 @@ public class GlassGobletItem extends Item {
     @Override
     public InteractionResult use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
         return ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        ItemStack stack = context.getItemInHand();
+        BlockPos skullPos = context.getClickedPos();
+        if (!full || !hasChickenBlood(stack) || !context.getLevel().getBlockState(skullPos).is(Blocks.SKELETON_SKULL)) {
+            return super.useOn(context);
+        }
+        if (!(context.getLevel() instanceof ServerLevel level)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        ServerPlayer player = context.getPlayer() instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (canStartChickenBloodRite(level, skullPos)) {
+            if (player != null) {
+                player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.elle_pending")
+                        .withStyle(ChatFormatting.DARK_RED), true);
+            }
+            level.playSound(null, skullPos, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.BLOCKS, 0.5F, 0.6F);
+        } else {
+            if (player != null) {
+                player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.something_wrong")
+                        .withStyle(ChatFormatting.RED), true);
+            }
+            level.playSound(null, skullPos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5F, 0.5F);
+        }
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
@@ -167,6 +197,18 @@ public class GlassGobletItem extends Item {
             }
         }
         return -1;
+    }
+
+    private static boolean canStartChickenBloodRite(ServerLevel level, BlockPos skullPos) {
+        return level.dimension().equals(Level.OVERWORLD)
+                && isCreaturesOfNightRitual(level, skullPos)
+                && isNight(level)
+                && level.canSeeSky(skullPos.above());
+    }
+
+    private static boolean isNight(ServerLevel level) {
+        long time = level.getDayTime() % 24000L;
+        return time >= 13000L && time <= 23000L;
     }
 
     private static boolean isCreaturesOfNightRitual(ServerLevel level, BlockPos skullPos) {

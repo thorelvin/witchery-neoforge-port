@@ -1,6 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-24 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes and local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
+Latest local delta: Chicken-blood Full Glass Goblets now intercept use on Skeleton Skulls, validate the old overworld/night/sky Creatures of the Night rite, and leave the goblet/skull intact with pending feedback until the Elle entity/quest handoff exists.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -9,6 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
+- Current bounded focus: keep the Glass Goblet chicken-blood route wired toward the Elle/Lilith chain without consuming ritual items until Elle exists.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
