@@ -303,6 +303,18 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** N/A
 - **Notes:** Not stackable. Can be filled to create a Full Glass Goblet.
 
+## Warm Blood
+- **Obtain:** Vampire quest/loot source pending; exposed as a real item for QA.
+- **Use:** Vampires drink it to refill blood to the current 500 cap. Non-vampires are poisoned for 120 ticks.
+- **Stats:** Stackable (16)
+- **Notes:** Matches the Resurrected consumable role in practical form; exact acquisition remains tied to the later vampire quest pass.
+
+## Lilith's Blood
+- **Obtain:** Lilith quest source pending; exposed as a real rare item for QA.
+- **Use:** In the current port, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
+- **Stats:** Stackable (16), rare.
+- **Notes:** The old 10-level vampire progression and Lilith level-up gates are still follow-up work.
+
 ## Observations of an Immortal
 - **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.
 - **Use:** Source vampire-progression book. In the current port it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.

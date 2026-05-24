@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Warm and Lilith blood consumables (2026-05-24)
+
+- `warm_blood` and `liliths_blood` are now real edible items instead of legacy placeholders.
+- Warm Blood follows the source consumable behavior in practical form: vampires refill blood to the current cap, while non-vampires receive 120 ticks of poison.
+- Lilith's Blood is rare and now starts vampirism for non-vampires with the current practical starting blood, or refills existing vampires.
+- Exact old 10-level vampire progression, Lilith quest acquisition, and level-up gates remain follow-up work.
+
+---
+
 ### Observations book access (2026-05-24)
 
 - `immortals_observations_book` and `torn_page` are now real item registrations instead of legacy placeholders.

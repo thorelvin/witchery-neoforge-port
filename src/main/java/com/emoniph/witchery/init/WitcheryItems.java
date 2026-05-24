@@ -453,6 +453,12 @@ public class WitcheryItems {
     public static final DeferredItem<Item> TORN_PAGE          = ITEMS.registerSimpleItem("torn_page");
     public static final DeferredItem<Item> IMMORTALS_OBSERVATIONS_BOOK = ITEMS.register("immortals_observations_book",
             id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item> WARM_BLOOD = ITEMS.register("warm_blood",
+            id -> new com.emoniph.witchery.item.VampireBloodItem(com.emoniph.witchery.item.VampireBloodItem.Kind.WARM,
+                    itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> LILITHS_BLOOD = ITEMS.register("liliths_blood",
+            id -> new com.emoniph.witchery.item.VampireBloodItem(com.emoniph.witchery.item.VampireBloodItem.Kind.LILITH,
+                    itemProps(id).stacksTo(16).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
@@ -578,8 +584,6 @@ public class WitcheryItems {
             "wolf_head",
             "wolfsbane",
             "brew_of_endless_water",
-            "warm_blood",
-            "liliths_blood",
             "leonards_urn",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.

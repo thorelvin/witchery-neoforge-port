@@ -156,6 +156,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.GLASS_GOBLET.get());
                         output.accept(WitcheryItems.TORN_PAGE.get());
                         output.accept(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get());
+                        output.accept(WitcheryItems.WARM_BLOOD.get());
+                        output.accept(WitcheryItems.LILITHS_BLOOD.get());
                         output.accept(WitcheryItems.MUTANDIS.get());
                         output.accept(WitcheryItems.MUTANDIS_EXTREMIS.get());
                         output.accept(WitcheryItems.TREEFYD_SEEDS.get());
