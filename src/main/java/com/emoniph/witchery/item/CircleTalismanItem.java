@@ -56,6 +56,17 @@ public class CircleTalismanItem extends Item {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntOr("circle_data", 0);
     }
 
+    @Override
+    public Component getName(ItemStack stack) {
+        int data = getCircleData(stack);
+        if (data == 0) {
+            return super.getName(stack);
+        }
+        return Component.literal("")
+                .append(super.getName(stack))
+                .append(Component.literal(" (" + describeCircleData(data) + ")"));
+    }
+
     // ── Item use ──────────────────────────────────────────────────────────────
 
     @Override
@@ -217,6 +228,34 @@ public class CircleTalismanItem extends Item {
             case 3 -> WitcheryBlocks.CIRCLE_INFERNAL.get();
             case 4 -> WitcheryBlocks.CIRCLE.get();
             default -> null;
+        };
+    }
+
+    private static String describeCircleData(int data) {
+        StringBuilder result = new StringBuilder();
+        appendRing(result, "Small", data & 7);
+        appendRing(result, "Medium", (data >> 3) & 7);
+        appendRing(result, "Large", (data >> 6) & 7);
+        return result.toString();
+    }
+
+    private static void appendRing(StringBuilder result, String size, int variant) {
+        if (variant == 0) {
+            return;
+        }
+        if (!result.isEmpty()) {
+            result.append(", ");
+        }
+        result.append(size).append(' ').append(chalkName(variant));
+    }
+
+    private static String chalkName(int variant) {
+        return switch (variant) {
+            case 1 -> "Ritual";
+            case 2 -> "Otherwhere";
+            case 3 -> "Infernal";
+            case 4 -> "Golden";
+            default -> "Unknown";
         };
     }
 
