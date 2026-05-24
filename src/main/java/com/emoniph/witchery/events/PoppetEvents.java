@@ -22,6 +22,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -68,7 +69,8 @@ public class PoppetEvents {
         UUID victimUUID = VampiricPoppetItem.getVictimUUID(location.stack()).orElse(null);
         if (victimUUID == null) return;
 
-        ServerPlayer victim = ((ServerLevel) player.level()).getServer().getPlayerList().getPlayer(victimUUID);
+        LivingEntity victim = PoppetItem.findLivingEntity(((ServerLevel) player.level()).getServer(), victimUUID)
+                .orElse(null);
         if (victim == null || victim == player) return;
 
         float redirectedDamage = event.getNewDamage();
@@ -77,8 +79,10 @@ public class PoppetEvents {
         event.setNewDamage(0.0F);
         WitchHunterEntity.blackMagicPerformed(player);
 
-        victim.displayClientMessage(Component.translatable("witchery.poppet.vampiric.target_hurt",
-                player.getName()), false);
+        if (victim instanceof ServerPlayer victimPlayer) {
+            victimPlayer.displayClientMessage(Component.translatable("witchery.poppet.vampiric.target_hurt",
+                    player.getName()), false);
+        }
         player.displayClientMessage(Component.translatable("witchery.poppet.vampiric.activated"), false);
     }
 
@@ -197,15 +201,18 @@ public class PoppetEvents {
         Optional<UUID> targetUUID = PoppetItem.getBoundUUID(location.stack());
         if (targetUUID.isEmpty()) return;
 
-        ServerPlayer target = ((ServerLevel) player.level()).getServer().getPlayerList().getPlayer(targetUUID.get());
+        LivingEntity target = PoppetItem.findLivingEntity(((ServerLevel) player.level()).getServer(), targetUUID.get())
+                .orElse(null);
         if (target == null || target == player) return;
 
         player.level().playSound(null, player.blockPosition(),
                 SoundEvents.SKELETON_HURT, SoundSource.PLAYERS, 0.4F, 0.5F);
 
         target.hurt(player.damageSources().magic(), event.getNewDamage());
-        target.displayClientMessage(Component.translatable("witchery.poppet.sympathetic.target_hurt",
-                player.getName()), false);
+        if (target instanceof ServerPlayer targetPlayer) {
+            targetPlayer.displayClientMessage(Component.translatable("witchery.poppet.sympathetic.target_hurt",
+                    player.getName()), false);
+        }
 
         int charges = getSympathyCharges(location.stack());
         if (charges <= 1) {

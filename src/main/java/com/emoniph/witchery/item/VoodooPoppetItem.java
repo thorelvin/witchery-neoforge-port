@@ -151,7 +151,6 @@ public class VoodooPoppetItem extends PoppetItem {
             return ((ServerLevel) level).getServer().getPlayerList().getPlayer(uuid);
         }
 
-        Entity entity = ((ServerLevel) level).getEntity(uuid);
-        return entity instanceof LivingEntity living ? living : null;
+        return PoppetItem.findLivingEntity(((ServerLevel) level).getServer(), uuid).orElse(null);
     }
 }

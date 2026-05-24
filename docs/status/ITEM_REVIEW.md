@@ -94,8 +94,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 65 | `witchery:boline` | |
 | 66 | `witchery:chalk` | `Partial - placed glyph block path corrected` | Ritual chalk now places a thin floor glyph again instead of a cube block: `circle_glyph` uses the flat cutout/carpet model path and the chalk-circle blocks now share a dedicated low-profile block shape. Needs in-game verification for final outline/selection feel.
 | 67 | `witchery:mystic_branch` | `Partial - altar placement/enhancement bonus restored` | Can now be placed on altar again and correctly grants the enhancement bonus in the altar scan. In-hand creature-power use still works, and the old rare, single-stack, enchantment-glint presentation is restored.
-| 68 | `witchery:taglock_kit` | `Partial - stealth failure flow, bed, Blood Rose, and Leech Chest extraction restored` | Now splits stacked kits correctly when filling one, can pull stored samples from Blood Rose and Leech Chest again, once more lets you sleep in a bed and then draw that stored player sample back out of the bed with an empty kit during the same server session, and once again makes direct-player taglock theft fail and alert the target unless you approach more carefully. The deeper bed persistence audit still remains follow-up work.
-| 69 | `witchery:poppet` | |
+| 68 | `witchery:taglock_kit` | `Partial - stealth failure, storage extraction, and poppet binding restored` | Now splits stacked kits correctly when filling one, can pull stored samples from Blood Rose and Leech Chest again, once more lets you sleep in a bed and then draw that stored player sample back out of the bed with an empty kit during the same server session, and once again makes direct-player taglock theft fail and alert the target unless you approach more carefully. Filled kits can now also craft-bind player or creature signatures onto poppets like the source custom recipe. The deeper bed persistence audit still remains follow-up work.
+| 69 | `witchery:poppet` | `Partial - source-style taglock binding recipe restored` | A filled Taglock Kit plus a Poppet-family item now returns a one-count poppet carrying the taglock UUID/name/entity-type data, matching the old custom recipe bridge. Needs in-game crafting-table QA for player and mob taglocks. |
 | 70 | `witchery:death_protection_poppet` | |
 | 71 | `witchery:earth_protection_poppet` | |
 | 72 | `witchery:water_protection_poppet` | |
@@ -103,8 +103,8 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | 74 | `witchery:hunger_protection_poppet` | |
 | 75 | `witchery:voodoo_protection_poppet` | |
 | 76 | `witchery:poppet_protection_poppet` | |
-| 77 | `witchery:voodoo_poppet` | |
-| 78 | `witchery:vampiric_poppet` | |
+| 77 | `witchery:voodoo_poppet` | `Partial - mob taglock crafting/lookup restored` | Can now be bound from filled player or creature Taglock Kits through the source-style custom recipe, and mob-bound use resolves the living target across loaded server levels for throw/needle/lava/drowning behavior. Needs in-game villager/mob QA. |
+| 78 | `witchery:vampiric_poppet` | `Partial - two-taglock crafting and mob victim lookup restored` | Two filled Taglock Kits plus a Vampiric Poppet now copy source/victim signatures in crafting order, and a partially source-bound Vampiric Poppet can accept one more filled kit for the victim. Redirect now resolves living mob victims across loaded server levels. Needs in-game villager-victim QA. |
 | 79 | `witchery:brew_bag` | |
 | 80 | `witchery:diviner` | |
 | 81 | `witchery:circle_talisman` | `Done - store/deploy inventory reset parity restored` | Stored talisman names now show captured ring makeup like the old damage-based item name. They deploy circles from either an existing center circle or a valid floor support like old Witchery, then follow the old inventory flow: a single stored talisman resets to blank, while a stacked stored talisman decrements and returns one blank talisman to inventory or drops it if full. The old uncommon rarity is restored too. |

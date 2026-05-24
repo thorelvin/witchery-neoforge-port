@@ -2,7 +2,9 @@ package com.emoniph.witchery.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +28,7 @@ public class VampiricPoppetItem extends PoppetItem {
 
     private static final String TAG_VICTIM_UUID = "victim_uuid";
     private static final String TAG_VICTIM_NAME = "victim_name";
+    private static final String TAG_VICTIM_ENTITY_TYPE = "victim_entity_type";
 
     public VampiricPoppetItem(Properties props) { super(props); }
 
@@ -87,9 +90,32 @@ public class VampiricPoppetItem extends PoppetItem {
     }
 
     public static void bindVictim(ItemStack stack, LivingEntity entity) {
+        Identifier typeId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.putString(TAG_VICTIM_UUID, entity.getStringUUID());
             tag.putString(TAG_VICTIM_NAME, entity.getDisplayName().getString());
+            if (entity instanceof Player) {
+                tag.remove(TAG_VICTIM_ENTITY_TYPE);
+            } else {
+                tag.putString(TAG_VICTIM_ENTITY_TYPE, typeId.toString());
+            }
+        });
+    }
+
+    public static void bindVictimFromTaglock(ItemStack stack, ItemStack taglock) {
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty()) {
+            return;
+        }
+        Optional<Identifier> typeId = TaglockKitItem.getBoundEntityTypeId(taglock);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(TAG_VICTIM_UUID, uuid.get().toString());
+            tag.putString(TAG_VICTIM_NAME, TaglockKitItem.getBoundName(taglock));
+            if (typeId.isPresent()) {
+                tag.putString(TAG_VICTIM_ENTITY_TYPE, typeId.get().toString());
+            } else {
+                tag.remove(TAG_VICTIM_ENTITY_TYPE);
+            }
         });
     }
 }

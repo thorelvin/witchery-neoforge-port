@@ -3,10 +3,14 @@ package com.emoniph.witchery.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -109,12 +113,43 @@ public class PoppetItem extends Item {
         });
     }
 
+    public static void bindFromTaglock(ItemStack stack, ItemStack taglock) {
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty()) {
+            return;
+        }
+        Optional<Identifier> typeId = TaglockKitItem.getBoundEntityTypeId(taglock);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(TAG_UUID, uuid.get().toString());
+            tag.putString(TAG_NAME, TaglockKitItem.getBoundName(taglock));
+            if (typeId.isPresent()) {
+                tag.putString(TAG_ENTITY_TYPE, typeId.get().toString());
+            } else {
+                tag.remove(TAG_ENTITY_TYPE);
+            }
+        });
+    }
+
     public static Optional<EntityType<?>> getBoundEntityType(ItemStack stack) {
         String typeStr = getTag(stack).getStringOr(TAG_ENTITY_TYPE, "");
         if (typeStr.isEmpty()) return Optional.empty();
         try {
             return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(typeStr));
         } catch (IllegalArgumentException e) { return Optional.empty(); }
+    }
+
+    public static Optional<LivingEntity> findLivingEntity(MinecraftServer server, UUID uuid) {
+        ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+        if (player != null) {
+            return Optional.of(player);
+        }
+        for (ServerLevel level : server.getAllLevels()) {
+            Entity entity = level.getEntity(uuid);
+            if (entity instanceof LivingEntity living) {
+                return Optional.of(living);
+            }
+        }
+        return Optional.empty();
     }
 
     protected static CompoundTag getTag(ItemStack stack) {
