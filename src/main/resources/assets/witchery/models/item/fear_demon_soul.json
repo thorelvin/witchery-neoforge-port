@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "witchery:item/ingredient.brew_soul_fear"
+    "layer0": "witchery:item/ingredient.brew_soul_fear",
+    "layer1": "minecraft:item/potion"
   }
 }
