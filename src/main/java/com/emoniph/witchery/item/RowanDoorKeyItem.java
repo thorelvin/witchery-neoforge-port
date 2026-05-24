@@ -14,20 +14,22 @@ import java.util.UUID;
 
 /** Bound to a specific Rowan Wood Door by UUID. Right-click the matching door to unlock it. */
 public class RowanDoorKeyItem extends Item {
+    private static final String TAG_DOOR_UUID_MOST = "DoorUUIDMost";
+    private static final String TAG_DOOR_UUID_LEAST = "DoorUUIDLeast";
 
     public RowanDoorKeyItem(Properties props) { super(props); }
 
     public static void bindKey(ItemStack stack, UUID uuid) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            tag.putLong("DoorUUIDMost",  uuid.getMostSignificantBits());
-            tag.putLong("DoorUUIDLeast", uuid.getLeastSignificantBits());
+            tag.putLong(TAG_DOOR_UUID_MOST,  uuid.getMostSignificantBits());
+            tag.putLong(TAG_DOOR_UUID_LEAST, uuid.getLeastSignificantBits());
         });
     }
 
     public static Optional<UUID> getKeyUUID(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (!tag.getInt("DoorUUIDMost").isPresent()) return Optional.empty();
-        return Optional.of(new UUID(tag.getLongOr("DoorUUIDMost", 0L), tag.getLongOr("DoorUUIDLeast", 0L)));
+        if (!tag.contains(TAG_DOOR_UUID_MOST) || !tag.contains(TAG_DOOR_UUID_LEAST)) return Optional.empty();
+        return Optional.of(new UUID(tag.getLongOr(TAG_DOOR_UUID_MOST, 0L), tag.getLongOr(TAG_DOOR_UUID_LEAST, 0L)));
     }
 
     public static boolean isBound(ItemStack stack) {
