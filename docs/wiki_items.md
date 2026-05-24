@@ -692,7 +692,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be expanded.
 
 ## Sun Collector
-- **Obtain:** Crafted from glass, quartz, and a Quartz Sphere.
+- **Obtain:** Crafted from 2 gold ingots, a repeater, a daylight detector, and 2 iron ingots.
 - **Use:** Stores one Quartz Sphere and charges it into a Charged Quartz Sphere after 6000 clear daytime ticks with sky access.
 - **Stats:** N/A
 - **Notes:** Empty-hand use retrieves the stored sphere or charged sphere; breaking the block drops its stored item.

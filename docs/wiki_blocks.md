@@ -438,9 +438,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires a flat surface for placement. Can be broken by players with the appropriate tools.
 
 ## Sun Collector
-- **Obtain:** Crafted from glass, quartz, and a Quartz Sphere.
+- **Obtain:** Crafted from 2 gold ingots, a repeater, a daylight detector, and 2 iron ingots.
 - **Function:** Charges an inserted Quartz Sphere into a Charged Quartz Sphere after 6000 clear daytime ticks with sky access.
-- **Notes:** Empty-hand use retrieves the stored item; breaking the block drops any stored sphere.
+- **Notes:** Uses the source compact footprint and original hardness; empty-hand use retrieves the stored item, and breaking the block drops any stored sphere.
 
 ## Sun Grenade
 - **Obtain:** Crafted from a Charged Quartz Sphere.

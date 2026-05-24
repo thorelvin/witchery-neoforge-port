@@ -232,7 +232,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 3600000.0F).lightLevel(s -> 12).noOcclusion().noCollision().noLootTable());
     public static final DeferredBlock<com.emoniph.witchery.blocks.SunCollectorBlock> SUN_COLLECTOR = BLOCKS.registerBlock("sun_collector",
             com.emoniph.witchery.blocks.SunCollectorBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).sound(SoundType.GLASS).strength(2.5f).lightLevel(s -> 4).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).sound(SoundType.GLASS).strength(3.5f).lightLevel(s -> 4).noOcclusion());
 
     // Chalk circle marks
     public static final DeferredBlock<ChalkCircleBlock> CIRCLE = BLOCKS.registerBlock("circle",

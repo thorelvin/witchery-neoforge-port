@@ -1,14 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "GQG",
-    "QSQ",
-    "GQG"
+    "G G",
+    " R ",
+    "IDI"
   ],
   "key": {
-    "G": "minecraft:glass",
-    "Q": "minecraft:quartz",
-    "S": "witchery:quartz_sphere"
+    "G": "minecraft:gold_ingot",
+    "R": "minecraft:repeater",
+    "I": "minecraft:iron_ingot",
+    "D": "minecraft:daylight_detector"
   },
   "result": {
     "id": "witchery:sun_collector",
