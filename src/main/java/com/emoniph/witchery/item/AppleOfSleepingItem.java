@@ -12,7 +12,7 @@ public class AppleOfSleepingItem extends Item {
 
     public AppleOfSleepingItem(Properties properties) {
         super(properties.food(new FoodProperties.Builder()
-                .nutrition(2).saturationModifier(0.1f).build()));
+                .nutrition(3).saturationModifier(3.0f).alwaysEdible().build()));
     }
 
     @Override

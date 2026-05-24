@@ -156,7 +156,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | # | Item ID | Notes |
 |---|---|---|
 | 111 | `witchery:brew_of_raising` | |
-| 112 | `witchery:brew_of_sleeping` | |
+| 112 | `witchery:brew_of_sleeping` | `Partial - source Spirit World entry guard restored` | Brew and Apple of Sleeping now share the old Overworld-only/not-already-ghosting entry guard through `SpiritWorldHelper.enter()`, avoiding recursive inventory stripping or return-position rewrites from the wrong dimension. Apple of Sleeping also matches the old always-edible 3-food/3.0-saturation profile. |
 | 113 | `witchery:brew_of_flowing_spirit` | |
 | 114 | `witchery:brew_of_wasting` | |
 | 115 | `witchery:brew_of_erosion` | |

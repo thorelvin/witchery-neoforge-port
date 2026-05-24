@@ -93,7 +93,7 @@ Custom brew plant-target brews now obtainable: Foulness, Foaming, Poison (see Cu
 | Feature | Status | Notes |
 |---|---:|---|
 | Spirit World dimension | Done | Overworld-like noise/topography |
-| Spirit World entry | Done | Brew/Apple of Sleeping -> `SpiritWorldHelper.enter()` |
+| Spirit World entry | Done | Brew/Apple of Sleeping -> `SpiritWorldHelper.enter()`; entry now keeps the old Overworld-only/not-already-ghosting guard so sleeping items cannot recursively strip/retarget players from the wrong dimension, and Apple of Sleeping again uses the old always-edible 3-food/3.0-saturation profile |
 | Spirit World exit | Done | Icy Needle, death, `/witchery exit`; Icy Needle now consumes on non-creative use and pricks the user outside Spirit/Ghost states like the old item |
 | Spirit inventory rules | Done | Inventory saved/restored; Icy Needle + Mutandis transfer |
 | Dream/nightmare roll | Done | Player data; nightmare spawns Nightmare entities |

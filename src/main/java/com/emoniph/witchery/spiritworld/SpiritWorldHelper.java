@@ -70,10 +70,16 @@ public final class SpiritWorldHelper {
     // ── Entry ────────────────────────────────────────────────────────────────
 
     public static void enter(ServerPlayer player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (!player.level().dimension().equals(Level.OVERWORLD)
+                || data.isInSpiritWorld()
+                || data.isManifestedGhost()) {
+            return;
+        }
+
         ServerLevel sw = ((net.minecraft.server.level.ServerLevel) player.level()).getServer().getLevel(WitcheryDimensions.SPIRIT_WORLD);
         if (sw == null) return;
 
-        WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.clearManifestationState();
         data.setReturnPos(player.blockPosition(), player.level().dimension());
 
