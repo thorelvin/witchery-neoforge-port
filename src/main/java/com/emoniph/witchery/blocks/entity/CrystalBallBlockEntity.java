@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -32,6 +31,26 @@ public class CrystalBallBlockEntity extends BlockEntity {
     private static final int POWER_COST     = 500;
     private static final int ALTAR_RADIUS   = 16;
     private static final double WAYSTONE_SCRY_MAX_DISTANCE_SQR = 22500.0D; // original 150-block same-dimension limit
+    private static final PredictionReading[] PREDICTION_ROSTER = {
+            new PredictionReading("witchery.prediction.zombie", 13),
+            new PredictionReading("witchery.prediction.arrowhit", 13),
+            new PredictionReading("witchery.prediction.ent", 3),
+            new PredictionReading("witchery.prediction.fall", 13),
+            new PredictionReading("witchery.prediction.iron", 8),
+            new PredictionReading("witchery.prediction.diamond", 3),
+            new PredictionReading("witchery.prediction.emerald", 3),
+            new PredictionReading("witchery.prediction.treasure", 2),
+            new PredictionReading("witchery.prediction.love", 2),
+            new PredictionReading("witchery.prediction.bababad", 2),
+            new PredictionReading("witchery.prediction.babagood", 2),
+            new PredictionReading("witchery.prediction.friend", 3),
+            new PredictionReading("witchery.prediction.rescued", 13),
+            new PredictionReading("witchery.prediction.rescued", 13),
+            new PredictionReading("witchery.prediction.wet", 13),
+            new PredictionReading("witchery.prediction.tothenether", 3),
+            new PredictionReading("witchery.prediction.coal", 13)
+    };
+    private static final int PREDICTION_TOTAL_WEIGHT = totalPredictionWeight();
 
     private long lastUsedTime = 0L;
 
@@ -72,9 +91,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
                     + subject.getName().getString() + ".").withStyle(ChatFormatting.DARK_PURPLE), false);
         }
 
-        // Generate and send prediction
-        String prediction = getPrediction(subject, sl);
-        player.displayClientMessage(Component.literal("§5§o" + prediction), false);
+        player.displayClientMessage(getPrediction(subject, sl), false);
         sl.sendParticles(ParticleTypes.EXPLOSION,
                 worldPosition.getX() + 0.5,
                 worldPosition.getY() + 0.2,
@@ -236,35 +253,32 @@ public class CrystalBallBlockEntity extends BlockEntity {
         return subject;
     }
 
-    private String getPrediction(Player player, ServerLevel level) {
-        long time = level.getDayTime() % 24000;
-        boolean isDay  = time < 12300;
-        boolean isRain = level.isRaining();
-
-        // Check for nearby threats
-        long threats = level.getEntitiesOfClass(Monster.class,
-                new AABB(player.blockPosition()).inflate(20)).size();
-
-        // Deterministic but varied — cycle through categories based on use count
-        int seed = (int)(level.getGameTime() / COOLDOWN_TICKS) % 12;
-        return switch (seed) {
-            case 0  -> isDay  ? "The sun grows weary. Darkness gathers strength."
-                              : "Before dawn's light the old spirits stir.";
-            case 1  -> isRain ? "The rain carries whispers from the beyond."
-                              : "Dry skies hide no secrets from those who seek.";
-            case 2  -> threats > 3 ? "Danger walks the shadows near you. Be wary."
-                                   : "The immediate dark holds no great menace.";
-            case 3  -> "The veil between worlds grows thin where you stand.";
-            case 4  -> "Power flows through the earth beneath your feet.";
-            case 5  -> "An old one watches. You have been noticed.";
-            case 6  -> "Not all who wander in darkness are lost — some are hunting.";
-            case 7  -> "The moon remembers what the sun forgets.";
-            case 8  -> "A convergence of energies approaches. Prepare your circle.";
-            case 9  -> "The spirits speak of a soul in torment, seeking release.";
-            case 10 -> "Fortune favours the witch who works by moonlight.";
-            default -> "The crystal ball swirls and reveals... nothing of consequence.";
-        };
+    private Component getPrediction(Player player, ServerLevel level) {
+        PredictionReading reading = choosePrediction(level);
+        return Component.translatable(reading.translationKey(), player.getName().getString())
+                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC);
     }
+
+    private static PredictionReading choosePrediction(ServerLevel level) {
+        int roll = level.random.nextInt(PREDICTION_TOTAL_WEIGHT);
+        for (PredictionReading reading : PREDICTION_ROSTER) {
+            roll -= reading.weight();
+            if (roll < 0) {
+                return reading;
+            }
+        }
+        return PREDICTION_ROSTER[PREDICTION_ROSTER.length - 1];
+    }
+
+    private static int totalPredictionWeight() {
+        int total = 0;
+        for (PredictionReading reading : PREDICTION_ROSTER) {
+            total += reading.weight();
+        }
+        return total;
+    }
+
+    private record PredictionReading(String translationKey, int weight) {}
 
     public boolean isReady() { return level == null || getCooldown(level) == 0; }
     public int getCooldown()  { return level == null ? 0 : getCooldown(level); }
