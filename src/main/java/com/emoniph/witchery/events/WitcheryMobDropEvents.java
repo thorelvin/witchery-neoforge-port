@@ -1,6 +1,9 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
+import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -11,6 +14,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Witch;
@@ -94,6 +99,9 @@ public class WitcheryMobDropEvents {
     }
 
     private static boolean shouldDropTornPage(LivingEntity entity, float roll) {
+        if (isAlwaysTornPageTarget(entity)) {
+            return true;
+        }
         if (entity.getType() == EntityType.ENDERMAN || entity.getType() == EntityType.ZOMBIFIED_PIGLIN) {
             return roll < 0.09f;
         }
@@ -101,6 +109,14 @@ public class WitcheryMobDropEvents {
             return roll < 0.10f;
         }
         return entity.getType().is(EntityTypeTags.UNDEAD) && roll < 0.02f;
+    }
+
+    private static boolean isAlwaysTornPageTarget(LivingEntity entity) {
+        return entity instanceof EnderDragon
+                || entity instanceof WitherBoss
+                || entity instanceof DeathEntity
+                || entity instanceof LordOfTormentEntity
+                || entity instanceof ReflectionEntity;
     }
 
     private static boolean hasDrop(LivingDropsEvent event, Item item) {
