@@ -285,7 +285,7 @@ Merged parity-scan TODO notes for promoted groups and remaining placeholders:
 | Exact Resurrected equipment aliases | `witchery:witches_robes`, `witchery:icy_slippers`, `witchery:hunter_hat`, `witchery:hunter_coat`, `witchery:silvered_hunter_hat`, `witchery:silvered_hunter_coat`, `witchery:silvered_hunter_leggings`, `witchery:silvered_hunter_boots`, `witchery:dawn_hunter_hat`, `witchery:dawn_hunter_coat`, `witchery:dawn_hunter_leggings`, `witchery:dawn_hunter_boots`, `witchery:gulgs_grudle` |
 | Exact Resurrected fume and ingredient aliases | `witchery:odd_porkchop`, `witchery:cooked_odd_porkchop`, `witchery:fanciful_thinking_charm`, `witchery:subdued_village_spirit`, `witchery:pentacle`, `witchery:golden_heart` |
 
-Visual note: the Resurrected brew alias models that still referenced legacy `items/potion_bottle_splash` or `items/potion_bottle_drinkable` now use modern `minecraft:item/splash_potion` or `minecraft:item/potion` bottle layers, covering the Vines/Webs/Thorns through Sleeping brew alias set plus the four demon-soul brew aliases.
+Visual note: the Resurrected brew alias models that still referenced legacy `items/potion_bottle_splash` or `items/potion_bottle_drinkable` now use modern `minecraft:item/splash_potion` or `minecraft:item/potion` bottle layers, covering the Vines/Webs/Thorns through Sleeping brew alias set. The four demon-soul alias items use their complete source `ingredient.brew_soul_*` sprites directly so the GUI no longer falls back to magenta/black.
 
 ---
 
