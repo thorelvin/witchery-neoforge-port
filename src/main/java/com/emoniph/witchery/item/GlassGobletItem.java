@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
@@ -16,8 +17,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,9 +39,12 @@ import java.util.function.Consumer;
 public class GlassGobletItem extends Item {
     private static final int FILL_BLOOD_COST = 125;
     private static final int STARTING_VAMPIRE_BLOOD = 250;
+    private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
+    private static final int VILLAGER_MAX_BLOOD = 500;
     private static final String TAG_BLOOD_NAME = "witchery_blood_name";
     private static final String TAG_BLOOD_UUID = "witchery_blood_uuid";
     private static final String TAG_CHICKEN_BLOOD = "witchery_chicken_blood";
+    private static final String VILLAGER_BLOOD_TAG = "witchery_villager_blood";
     private static final int[] RITUAL_STRING_OFFSETS = {
             0, -3, 1, -3, 2, -3, 2, -2, 3, -2, 3, -1, 3, 0, 3, 1, 3, 2, 2, 2,
             2, 3, 1, 3, 0, 3, -1, 3, -2, 3, -2, 2, -3, 2, -3, 1, -3, 0
@@ -83,6 +90,18 @@ public class GlassGobletItem extends Item {
             }
             level.playSound(null, skullPos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5F, 0.5F);
         }
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity target, InteractionHand hand) {
+        if (!full || hasChickenBlood(stack) || !(target instanceof Villager villager)) {
+            return super.interactLivingEntity(stack, user, target, hand);
+        }
+        if (!(user instanceof ServerPlayer player) || !(user.level() instanceof ServerLevel level)) {
+            return InteractionResult.SUCCESS;
+        }
+        tryUseOnVillagerForConversion(stack, level, player, villager);
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -197,6 +216,56 @@ public class GlassGobletItem extends Item {
             }
         }
         return -1;
+    }
+
+    private static void tryUseOnVillagerForConversion(ItemStack stack, ServerLevel level, ServerPlayer player, Villager villager) {
+        if (!hasBloodOwner(stack)) {
+            fail(player, "item.witchery.glass_goblet.failed");
+            return;
+        }
+        if (!isMesmerised(villager)) {
+            fail(player, "item.witchery.glass_goblet.victim_not_transfixed");
+            return;
+        }
+        if (getVillagerBlood(villager) > 0) {
+            fail(player, "item.witchery.glass_goblet.victim_has_blood");
+            return;
+        }
+        if (!isCoffinNear(level, villager.blockPosition())) {
+            fail(player, "item.witchery.glass_goblet.needs_coffin");
+            return;
+        }
+
+        player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.villager_pending",
+                villager.getDisplayName()).withStyle(ChatFormatting.DARK_RED), true);
+        level.playSound(null, villager.blockPosition(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.5F,
+                0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
+        level.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+                villager.getX(),
+                villager.getY() + villager.getBbHeight() * 0.85D,
+                villager.getZ(),
+                8, villager.getBbWidth() * 0.35D, villager.getBbHeight() * 0.15D,
+                villager.getBbWidth() * 0.35D, 0.02D);
+    }
+
+    private static boolean isMesmerised(LivingEntity target) {
+        MobEffectInstance slowness = target.getEffect(MobEffects.SLOWNESS);
+        return slowness != null
+                && slowness.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER
+                && slowness.getDuration() > 20;
+    }
+
+    private static int getVillagerBlood(Villager villager) {
+        return villager.getPersistentData().getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
+    }
+
+    private static boolean isCoffinNear(ServerLevel level, BlockPos center) {
+        for (BlockPos scan : BlockPos.betweenClosed(center.offset(-4, -4, -4), center.offset(4, 4, 4))) {
+            if (level.getBlockState(scan).is(WitcheryBlocks.COFFIN.get())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean canStartChickenBloodRite(ServerLevel level, BlockPos skullPos) {
