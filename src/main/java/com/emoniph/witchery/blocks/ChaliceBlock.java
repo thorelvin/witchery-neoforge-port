@@ -132,6 +132,16 @@ public class ChaliceBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
+                              @Nullable BlockEntity blockEntity, ItemStack tool) {
+        player.awardStat(Stats.BLOCK_MINED.get(this));
+        player.causeFoodExhaustion(0.005F);
+        if (!level.isClientSide() && !player.getAbilities().instabuild) {
+            Block.popResource(level, pos, createStackForState(state));
+        }
+    }
+
+    @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
 
     @Override

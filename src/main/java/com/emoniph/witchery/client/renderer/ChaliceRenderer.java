@@ -5,7 +5,6 @@ import com.emoniph.witchery.blocks.entity.ChaliceBlockEntity;
 import com.emoniph.witchery.client.model.ChaliceModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import org.joml.Matrix4f;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -20,13 +19,6 @@ import org.jspecify.annotations.Nullable;
 
 public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, ChaliceRenderer.State> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/chalice.png");
-    private static final Identifier LIQUID_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/water_still.png");
-    private static final float LIQUID_HALF_WIDTH = 1.35f / 16.0f;
-    private static final float LIQUID_HALF_DEPTH = 2.35f / 16.0f;
-    private static final float LIQUID_SURFACE_Y = 10.1f / 16.0f;
-    private static final float SOUP_RED = 0.965f;
-    private static final float SOUP_GREEN = 0.027f;
-    private static final float SOUP_BLUE = 0.251f;
     private final ChaliceModel model;
 
     public static class State extends BlockEntityRenderState {
@@ -54,43 +46,12 @@ public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, 
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
         ps.mulPose(Axis.YP.rotationDegrees(-90));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        if (state.filled) {
-            renderRedstoneSoupSurface(ps, collector, state.lightCoords);
+        for (var part : model.bodyParts()) {
+            collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }
-        ps.popPose();
-    }
-
-    private void renderRedstoneSoupSurface(PoseStack ps, SubmitNodeCollector collector, int light) {
-        ps.pushPose();
-        ps.translate(0.0, LIQUID_SURFACE_Y, 0.0);
-        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(LIQUID_TEXTURE), (pose, vc) -> {
-            Matrix4f m = pose.pose();
-            vc.addVertex(m, -LIQUID_HALF_WIDTH, 0, -LIQUID_HALF_DEPTH)
-                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
-                    .setUv(0.0f, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            vc.addVertex(m, -LIQUID_HALF_WIDTH, 0, LIQUID_HALF_DEPTH)
-                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
-                    .setUv(0.0f, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            vc.addVertex(m, LIQUID_HALF_WIDTH, 0, LIQUID_HALF_DEPTH)
-                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
-                    .setUv(1.0f, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            vc.addVertex(m, LIQUID_HALF_WIDTH, 0, -LIQUID_HALF_DEPTH)
-                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
-                    .setUv(1.0f, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-        });
+        if (state.filled) {
+            collector.submitModelPart(model.liquid(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        }
         ps.popPose();
     }
 }
