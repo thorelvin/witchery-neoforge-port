@@ -37,6 +37,11 @@ public class WaystoneItem extends Item {
     public WaystoneItem(Properties props) { super(props); }
 
     @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return isBound(stack) ? 1 : stack.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
+    }
+
+    @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return isBound(stack) ? SCRY_USE_DURATION : super.getUseDuration(stack, entity);
     }
