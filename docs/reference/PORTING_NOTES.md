@@ -18,7 +18,7 @@ Current target:
 
 ### 2026-05-24 parity-scan correction
 
-Some early milestones below are historical implementation slices, not current full-parity claims. In particular, M22 Vampirism should be read as the current boolean/blood/sun/bite foundation; the old Creatures of the Night Glass Goblet -> Elle -> Lilith chain, 10 vampire levels, Sun Collector/Grenade progression, Blood Crucible/Blood Power, Resist Sun, Zombie Respect, and old cure/quest-book loops remain backlog. M14/M15/M11 machine notes are likewise historical foundations; Spinning Wheel recipe exactness, Distillery/Kettle/Oven sided automation, Witches' Oven allowlist/byproducts/funnels, and Silver Vat smelt-byproduct storage remain open parity work. The merged action list now lives in `docs/status/NEXT_TASKS.md`.
+Some early milestones below are historical implementation slices, not current full-parity claims. In particular, M22 Vampirism should be read as the current boolean/blood/sun/bite foundation; the old Creatures of the Night Glass Goblet -> Elle -> Lilith chain, 10 vampire levels, Sun Collector/Grenade progression, Blood Crucible/Blood Power, Resist Sun, Zombie Respect, and old cure/quest-book loops remain backlog. M14/M15/M11 machine notes are likewise historical foundations; Spinning Wheel recipe/automation exactness now has its first restored pass but still needs hopper QA, while Distillery/Kettle/Oven sided automation, Witches' Oven allowlist/byproducts/funnels, and Silver Vat smelt-byproduct storage remain open parity work. The merged action list now lives in `docs/status/NEXT_TASKS.md`.
 
 - [x] **M1** — NeoForge project shell (mod loads, logger, registries skeleton)
 - [x] **M2** — Registries and creative tab (all blocks/items registered, lang, textures)

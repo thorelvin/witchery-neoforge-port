@@ -6,6 +6,7 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.SpinningWheelMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -15,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SpinningWheelBlockEntity extends BlockEntity implements Container, MenuProvider {
+public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider {
 
     public static final int SLOT_FIBRE = 0;
     public static final int SLOT_MODIFIER_1 = 1;
@@ -38,6 +40,10 @@ public class SpinningWheelBlockEntity extends BlockEntity implements Container, 
     public static final int SLOT_MODIFIER_2 = 3;
     public static final int SLOT_MODIFIER_3 = 4;
     public static final int SLOT_COUNT = 5;
+
+    private static final int[] SLOTS_TOP = {SLOT_FIBRE};
+    private static final int[] SLOTS_BOTTOM = {SLOT_MODIFIER_3, SLOT_MODIFIER_1, SLOT_MODIFIER_2};
+    private static final int[] SLOTS_SIDES = {SLOT_MODIFIER_2, SLOT_OUTPUT, SLOT_MODIFIER_3, SLOT_MODIFIER_1};
 
     private static final int DEFAULT_SPIN_TIME = 300;
     private static final int ALTAR_RADIUS = 16;
@@ -289,6 +295,33 @@ public class SpinningWheelBlockEntity extends BlockEntity implements Container, 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return slot != SLOT_OUTPUT;
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        if (side == Direction.DOWN) {
+            return SLOTS_BOTTOM;
+        }
+        return side == Direction.UP ? SLOTS_TOP : SLOTS_SIDES;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+        return canPlaceItem(index, itemStack) && (direction == null || slotExposedToFace(index, direction));
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        return direction.getAxis().isHorizontal() && index == SLOT_OUTPUT;
+    }
+
+    private static boolean slotExposedToFace(int index, Direction direction) {
+        for (int slot : direction == Direction.DOWN ? SLOTS_BOTTOM : direction == Direction.UP ? SLOTS_TOP : SLOTS_SIDES) {
+            if (slot == index) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getSpinProgress() {
