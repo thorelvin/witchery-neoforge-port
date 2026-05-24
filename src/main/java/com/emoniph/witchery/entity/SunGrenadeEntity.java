@@ -3,14 +3,17 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryEntityTags;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 
@@ -46,9 +49,9 @@ public class SunGrenadeEntity extends ThrowableProjectile {
     }
 
     private void explode(ServerLevel level) {
-        // Sunburst particles
         level.sendParticles(ParticleTypes.EXPLOSION, getX(), getY(), getZ(), 4, 0.4, 0.4, 0.4, 0.0);
-        level.sendParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 32, BLAST_RADIUS * 0.5, BLAST_RADIUS * 0.5, BLAST_RADIUS * 0.5, 0.1);
+        level.sendParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 32,
+                BLAST_RADIUS * 0.5, BLAST_RADIUS * 0.5, BLAST_RADIUS * 0.5, 0.1);
 
         AABB box = new AABB(getX() - BLAST_RADIUS, getY() - BLAST_RADIUS, getZ() - BLAST_RADIUS,
                 getX() + BLAST_RADIUS, getY() + BLAST_RADIUS, getZ() + BLAST_RADIUS);
@@ -60,6 +63,8 @@ public class SunGrenadeEntity extends ThrowableProjectile {
             entity.hurt(level.damageSources().inFire(), VAMPIRE_DAMAGE);
             entity.igniteForSeconds(5.0f);
         }
+
+        Block.popResource(level, blockPosition(), new ItemStack(WitcheryItems.QUARTZ_SPHERE.get()));
     }
 
     private static boolean isVampire(LivingEntity entity) {
@@ -67,7 +72,6 @@ public class SunGrenadeEntity extends ThrowableProjectile {
             WitcheryPlayerData data = WitcheryAttachments.get(sp);
             return data.isVampire();
         }
-        // Non-player vampires would be tagged via entity type — future extension
-        return false;
+        return entity.getType().is(WitcheryEntityTags.VAMPIRES);
     }
 }

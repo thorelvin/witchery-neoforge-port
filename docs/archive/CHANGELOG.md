@@ -64,6 +64,7 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 ### Garlic and garlic garland promotion (2026-05-24)
 
 - `garlic` and `garlic_garland` promoted from placeholder to real block items. `GarlicCropBlock` (6 age stages), `GarlicGarlandBlock` with facing-aware click-through placement, source-style vampire repulsion, and non-creative vampire break fire/cancel.
+- Sun Grenade follow-up: throwable grenades now hit non-player entity types tagged `witchery:vampires`, return a Quartz Sphere when sunlight releases, and use a one Charged Quartz Sphere -> one Sun Grenade recipe to preserve the source-style sphere loop.
 - `wolfsbane_seeds` promoted: `WolfsbaneCropBlock` (8 age stages), drops `wolfsbane_flower` at max age. Added to grass-seed drop pool.
 - Poppet and Taglock Kit crafting recipes added: `poppet.json`, `taglock_kit.json`, and all 8 poppet upgrade recipes.
 - Placeholder count: 207 → 204.

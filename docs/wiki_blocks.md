@@ -438,14 +438,14 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires a flat surface for placement. Can be broken by players with the appropriate tools.
 
 ## Sun Collector
-- **Obtain:** Crafted using glass panes, wood planks, and specific Witchery items.
-- **Function:** Collects sunlight and stores it in a nearby cauldron, which can then be used to brew potions or other magical concoctions.
-- **Notes:** Must be placed facing the sky. Requires a clear view of the sun.
+- **Obtain:** Crafted from glass, quartz, and a Quartz Sphere.
+- **Function:** Charges an inserted Quartz Sphere into a Charged Quartz Sphere after 6000 clear daytime ticks with sky access.
+- **Notes:** Empty-hand use retrieves the stored item; breaking the block drops any stored sphere.
 
 ## Sun Grenade
-- **Obtain:** Crafted using specific Witchery items and gunpowder.
-- **Function:** Throws a grenade that explodes, dealing fire damage to nearby entities and setting them on fire.
-- **Notes:** Consumes one use per throw. Can be used in survival mode.
+- **Obtain:** Crafted from a Charged Quartz Sphere.
+- **Function:** Throws a sunlight grenade that damages and ignites vampire players and entity types tagged `witchery:vampires`.
+- **Notes:** Returns a Quartz Sphere when it releases its sunlight.
 
 ## Taglock Kit
 - **Obtain:** Not specified in the provided text.

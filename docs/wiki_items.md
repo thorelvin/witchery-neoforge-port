@@ -692,16 +692,16 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be expanded.
 
 ## Sun Collector
-- **Obtain:** Crafting recipe not provided.
-- **Use:** Used to create Sun Grenades. Needs to be next to a Daylight Sensor and a Quartz Sphere for sunlight collection, taking a full day to charge.
+- **Obtain:** Crafted from glass, quartz, and a Quartz Sphere.
+- **Use:** Stores one Quartz Sphere and charges it into a Charged Quartz Sphere after 6000 clear daytime ticks with sky access.
 - **Stats:** N/A
-- **Notes:** No known crafting uses.
+- **Notes:** Empty-hand use retrieves the stored sphere or charged sphere; breaking the block drops its stored item.
 
 ## Sun Grenade
-- **Obtain:** Created by placing a quartz sphere inside a Sun Collector next to a Daylight Sensor. Takes about 15 minutes to charge.
-- **Use:** Throws to create a sphere of sunlight, burning vampires on contact.
+- **Obtain:** Crafted from one Charged Quartz Sphere.
+- **Use:** Throws to release sunlight, burning vampire players and entity types tagged `witchery:vampires`.
 - **Stats:** N/A
-- **Notes:** No known crafting uses.
+- **Notes:** Returns a Quartz Sphere when the sunlight releases.
 
 ## Taglock Kit
 - **Obtain:** Crafting recipe not provided; can be obtained from Blood Poppy or Leech Chest.
