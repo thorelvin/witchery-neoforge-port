@@ -2,7 +2,7 @@
   "type": "witchery:oven",
   "ingredient": "minecraft:jungle_sapling",
   "result": {
-    "id": "witchery:exhale_of_horned_one",
+    "id": "witchery:foul_fume",
     "count": 1
   },
   "experience": 0.35,

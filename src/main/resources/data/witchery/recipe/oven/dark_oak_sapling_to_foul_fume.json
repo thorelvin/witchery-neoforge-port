@@ -1,8 +1,8 @@
 {
   "type": "witchery:oven",
-  "ingredient": "minecraft:acacia_sapling",
+  "ingredient": "minecraft:dark_oak_sapling",
   "result": {
-    "id": "witchery:reek_of_misfortune",
+    "id": "witchery:foul_fume",
     "count": 1
   },
   "experience": 0.35,
