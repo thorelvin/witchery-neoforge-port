@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/glass",
+    "mirror": "minecraft:block/glass"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 12],
+      "to": [16, 16, 16],
+      "faces": {
+        "down":  { "texture": "#mirror", "uv": [0, 0, 16, 4] },
+        "up":    { "texture": "#mirror", "uv": [0, 0, 16, 4] },
+        "north": { "texture": "#mirror", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#mirror", "uv": [0, 0, 16, 16] },
+        "west":  { "texture": "#mirror", "uv": [12, 0, 16, 16] },
+        "east":  { "texture": "#mirror", "uv": [0, 0, 4, 16] }
+      }
+    }
+  ]
+}

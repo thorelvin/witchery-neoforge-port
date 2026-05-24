@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "yay",
+    "yay",
+    "axa"
+  ],
+  "key": {
+    "y": "minecraft:gold_ingot",
+    "a": "minecraft:iron_ingot",
+    "x": "witchery:tear_of_goddess"
+  },
+  "result": {
+    "id": "witchery:water_diviner",
+    "count": 1
+  }
+}

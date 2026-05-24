@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "L L",
+    "LLL",
+    "LLL"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather"
+  },
+  "result": {
+    "id": "witchery:hunter_chestplate",
+    "count": 1
+  }
+}

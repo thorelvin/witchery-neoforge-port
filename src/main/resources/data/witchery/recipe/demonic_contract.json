@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PRP",
+    "PPS"
+  ],
+  "key": {
+    "P": "minecraft:paper",
+    "R": "minecraft:porkchop",
+    "S": "minecraft:string"
+  },
+  "result": {
+    "id": "witchery:demonic_contract",
+    "count": 1
+  }
+}

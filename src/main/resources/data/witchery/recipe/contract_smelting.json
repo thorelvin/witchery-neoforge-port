@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:demonic_contract",
+    "minecraft:lava_bucket"
+  ],
+  "result": {
+    "id": "witchery:contract_smelting",
+    "count": 1
+  }
+}

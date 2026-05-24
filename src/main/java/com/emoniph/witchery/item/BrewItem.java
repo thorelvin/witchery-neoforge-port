@@ -47,5 +47,5 @@ public abstract class BrewItem extends Item {
         return net.minecraft.world.item.ItemUtils.startUsingInstantly(level, player, hand);
     }
 
-    protected abstract void applyEffect(Player player, Level level);
+    protected void applyEffect(Player player, Level level) { }
 }

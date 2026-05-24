@@ -1,0 +1,11 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:poppy_of_ink"},
+    {"id": "witchery:foul_fume"},
+    {"id": "minecraft:blaze_powder"}
+  ],
+  "result": {"id": "witchery:brew_of_foulness_gas", "count": 2, "components": {"witchery:brew_power": 2}},
+  "power": 400.0,
+  "color": 2695971
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:wispy_cotton",
+    "minecraft:cactus"
+  ],
+  "result": {
+    "id": "witchery:shrub_of_thorns",
+    "count": 1
+  }
+}

@@ -10,12 +10,13 @@ import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.WitchesOvenMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -178,7 +179,10 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
         if (ovenRecipe.isPresent()) {
             return ovenRecipe.get().value().getResultItem().copy();
         }
-        return getVanillaSmeltingResult(level, input);
+        if (input.has(DataComponents.FOOD)) {
+            return getVanillaSmeltingResult(level, input);
+        }
+        return ItemStack.EMPTY;
     }
 
     private void tryCreateByproduct(Level level, ItemStack input) {
@@ -213,7 +217,7 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
             return ovenRecipe.get().value().getResultItem().copy();
         }
 
-        if (BuiltInRegistries.ITEM.getKey(input.getItem()).getPath().equals("nether_wart")) {
+        if (input.is(Items.NETHER_WART) || input.has(DataComponents.FOOD) || input.is(ItemTags.LOGS)) {
             return new ItemStack(WitcheryItems.FOUL_FUME.get());
         }
 
@@ -236,7 +240,7 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
         return input.is(ItemTags.SAPLINGS);
     }
 
-    private int getFumeFunnels() {
+    private int getAllFumeFunnels() {
         int funnels = 0;
         for (BlockPos checkPos : new BlockPos[]{
                 worldPosition.above(),
@@ -251,12 +255,26 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
         return Math.min(funnels, 3);
     }
 
+    private int getSideFumeFunnels() {
+        int funnels = 0;
+        for (BlockPos checkPos : new BlockPos[]{
+                worldPosition.north(),
+                worldPosition.south(),
+                worldPosition.east(),
+                worldPosition.west()}) {
+            if (level != null && level.getBlockEntity(checkPos) instanceof FumeFunnelBlockEntity) {
+                funnels++;
+            }
+        }
+        return Math.min(funnels, 3);
+    }
+
     private double getFumeFunnelsChance(Level level) {
-        return getFumeFunnels() * FUNNEL_CHANCE;
+        return getSideFumeFunnels() * FUNNEL_CHANCE;
     }
 
     private int getCookTime() {
-        return Math.max(120, 180 - 20 * getFumeFunnels());
+        return Math.max(120, 180 - 20 * getAllFumeFunnels());
     }
 
     @Override

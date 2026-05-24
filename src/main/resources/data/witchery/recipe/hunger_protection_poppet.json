@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "MPM",
+    " R "
+  ],
+  "key": {
+    "R": "minecraft:rotten_flesh",
+    "M": "minecraft:glistering_melon_slice",
+    "P": "witchery:poppet"
+  },
+  "result": {
+    "id": "witchery:hunger_protection_poppet",
+    "count": 1
+  }
+}

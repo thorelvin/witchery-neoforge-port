@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LSL",
+    "L#L",
+    "LLL"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "S": "witchery:golden_thread",
+    "#": "witchery:necro_stone"
+  },
+  "result": {
+    "id": "witchery:necromancer_robes",
+    "count": 1
+  }
+}

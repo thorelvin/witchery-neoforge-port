@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:demonic_contract",
+    "minecraft:blaze_rod",
+    "witchery:ember_moss"
+  ],
+  "result": {
+    "id": "witchery:contract_fiery_touch",
+    "count": 1
+  }
+}

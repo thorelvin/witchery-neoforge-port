@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "BPM",
+    " E "
+  ],
+  "key": {
+    "F": "minecraft:fermented_spider_eye",
+    "B": "witchery:belladonna",
+    "P": "witchery:poppet",
+    "M": "witchery:mandrake_root",
+    "E": "witchery:exhale_of_horned_one"
+  },
+  "result": {
+    "id": "witchery:voodoo_poppet",
+    "count": 1
+  }
+}

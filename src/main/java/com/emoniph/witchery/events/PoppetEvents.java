@@ -26,12 +26,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import com.emoniph.witchery.item.VampiricPoppetItem;
+import com.emoniph.witchery.item.VoodooPoppetItem;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.ArrayList;
@@ -56,23 +59,25 @@ public class PoppetEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (event.getNewDamage() <= 0) return;
 
+        // Poppet must be source-bound to this player AND have a victim bound
         PoppetLocation location = findFirstBoundPoppet(player,
-                stack -> stack.is(WitcheryItems.VAMPIRIC_POPPET.get()));
+                stack -> stack.is(WitcheryItems.VAMPIRIC_POPPET.get())
+                        && VampiricPoppetItem.getVictimUUID(stack).isPresent());
         if (location == null) return;
 
-        Optional<UUID> boundUUID = PoppetItem.getBoundUUID(location.stack());
-        if (boundUUID.isEmpty()) return;
+        UUID victimUUID = VampiricPoppetItem.getVictimUUID(location.stack()).orElse(null);
+        if (victimUUID == null) return;
 
-        ServerPlayer target = ((ServerLevel) player.level()).getServer().getPlayerList().getPlayer(boundUUID.get());
-        if (target == null || target == player) return;
+        ServerPlayer victim = ((ServerLevel) player.level()).getServer().getPlayerList().getPlayer(victimUUID);
+        if (victim == null || victim == player) return;
 
         float redirectedDamage = event.getNewDamage();
-        target.hurt(event.getSource(), redirectedDamage);
+        victim.hurt(event.getSource(), redirectedDamage);
         damagePoppet(location, VAMPIRIC_POPPET_DAMAGE);
         event.setNewDamage(0.0F);
         WitchHunterEntity.blackMagicPerformed(player);
 
-        target.displayClientMessage(Component.translatable("witchery.poppet.vampiric.target_hurt",
+        victim.displayClientMessage(Component.translatable("witchery.poppet.vampiric.target_hurt",
                 player.getName()), false);
         player.displayClientMessage(Component.translatable("witchery.poppet.vampiric.activated"), false);
     }
@@ -223,6 +228,47 @@ public class PoppetEvents {
                 tag -> tag.putInt("sympathy_charges", charges));
     }
 
+    /**
+     * When a Witch Hunter damages a player, 30% chance to disrupt one bound protective poppet.
+     * Replicates the original Nullifying Bolt counterplay.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onWitchHunterPoppetDisrupt(LivingDamageEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(event.getSource().getDirectEntity() instanceof WitchHunterEntity)) return;
+        if (player.level().random.nextFloat() >= 0.3f) return;
+
+        // Try to destroy one bound protection poppet from inventory first, then shelves
+        UUID playerUUID = player.getUUID();
+        Inventory inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack.getItem() instanceof ProtectionPoppetItem
+                    && PoppetItem.isBound(stack)
+                    && PoppetItem.getBoundUUID(stack).map(playerUUID::equals).orElse(false)) {
+                inv.setItem(i, ItemStack.EMPTY);
+                player.displayClientMessage(Component.translatable("witchery.witch_hunter.poppet_disrupted")
+                        .withStyle(ChatFormatting.RED), false);
+                return;
+            }
+        }
+        for (PoppetShelfBlockEntity shelf : PoppetShelfBlockEntity.getActiveShelves(
+                ((ServerLevel) player.level()).getServer())) {
+            for (int i = 0; i < shelf.getContainerSize(); i++) {
+                ItemStack stack = shelf.getItem(i);
+                if (stack.getItem() instanceof ProtectionPoppetItem
+                        && PoppetItem.isBound(stack)
+                        && PoppetItem.getBoundUUID(stack).map(playerUUID::equals).orElse(false)) {
+                    shelf.removeItem(i, 1);
+                    shelf.setChanged();
+                    player.displayClientMessage(Component.translatable("witchery.witch_hunter.poppet_disrupted")
+                            .withStyle(ChatFormatting.RED), false);
+                    return;
+                }
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerDeathTrack(LivingDeathEvent event) {
         if (event.isCanceled()) return;
@@ -276,6 +322,18 @@ public class PoppetEvents {
                         SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS,
                         0.5F, 0.4F / (player.getRandom().nextFloat() * 0.4F + 0.8F));
                 break;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTickVoodoo(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty() && stack.is(WitcheryItems.VOODOO_POPPET.get())) {
+                VoodooPoppetItem.tickUnderwaterEffect(player, stack);
             }
         }
     }

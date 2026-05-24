@@ -1,0 +1,12 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:dandelion_of_thorns"},
+    {"id": "minecraft:spider_eye"},
+    {"id": "witchery:belladonna"},
+    {"id": "minecraft:blaze_powder"}
+  ],
+  "result": {"id": "witchery:brew_of_poison_gas", "count": 3, "components": {"witchery:brew_power": 3}},
+  "power": 480.0,
+  "color": 3407872
+}

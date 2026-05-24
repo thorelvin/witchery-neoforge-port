@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/ingredient.brew_wasting",
+    "layer1": "minecraft:item/lingering_potion"
+  }
+}

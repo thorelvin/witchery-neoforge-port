@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "IPI",
+    " A "
+  ],
+  "key": {
+    "A": "witchery:artichoke",
+    "I": "minecraft:ink_sac",
+    "P": "witchery:poppet"
+  },
+  "result": {
+    "id": "witchery:water_protection_poppet",
+    "count": 1
+  }
+}

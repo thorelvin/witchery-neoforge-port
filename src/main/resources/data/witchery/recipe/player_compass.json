@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:compass",
+    "witchery:taglock_kit"
+  ],
+  "result": {
+    "id": "witchery:player_compass",
+    "count": 1
+  }
+}

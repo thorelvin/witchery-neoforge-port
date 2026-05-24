@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "GSG",
+    "GGG"
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "G": "witchery:garlic"
+  },
+  "result": {
+    "id": "witchery:garlic_garland",
+    "count": 1
+  }
+}

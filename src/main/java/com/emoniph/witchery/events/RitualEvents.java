@@ -16,6 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.Comparator;
@@ -96,6 +97,13 @@ public class RitualEvents {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             RitualExecutor.tickActiveRituals(serverLevel);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            RitualExecutor.cancelAllWithRefund(level);
         }
     }
 }

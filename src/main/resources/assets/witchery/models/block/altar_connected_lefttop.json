@@ -1,7 +1,7 @@
 {
   "texture_size": [96, 96],
   "textures": {
-    "1": "minecraft:block/red_wool",
+    "1": "witchery:block/altar",
     "3": "witchery:block/altar",
     "particle": "witchery:block/altar"
   },

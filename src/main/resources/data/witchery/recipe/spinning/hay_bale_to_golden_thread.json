@@ -1,0 +1,16 @@
+{
+  "type": "witchery:spinning",
+  "fibre": {
+    "id": "minecraft:hay_block"
+  },
+  "modifiers": [
+    {
+      "id": "minecraft:gold_ingot"
+    }
+  ],
+  "result": {
+    "id": "witchery:golden_thread",
+    "count": 4
+  },
+  "cookingtime": 400
+}

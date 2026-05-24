@@ -52,6 +52,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
     public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new ArtichokeSeedItem(itemProps(id)));
     public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
+    public static final DeferredItem<Item>      GARLIC         = ITEMS.register("garlic",         id -> new BlockItem(WitcheryBlocks.GARLIC_CROP.get(), itemProps(id)));
+    public static final DeferredItem<BlockItem> GARLIC_GARLAND = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GARLIC_GARLAND);
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────
     public static final DeferredItem<Item> FANCIFUL_THREAD     = ITEMS.registerSimpleItem("fanciful_thread");
@@ -139,6 +141,16 @@ public class WitcheryItems {
     // ── Flame Imp items ────────────────────────────────────────────────────────
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> DEMONIC_CONTRACT =
             ITEMS.register("demonic_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_BLAZE =
+            ITEMS.register("contract_blaze", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_RESIST_FIRE =
+            ITEMS.register("contract_resist_fire", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_EVAPORATE =
+            ITEMS.register("contract_evaporate", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_FIERY_TOUCH =
+            ITEMS.register("contract_fiery_touch", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_SMELTING =
+            ITEMS.register("contract_smelting", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
 
     // ── Lord of Torment drops ──────────────────────────────────────────────────
     public static final DeferredItem<Item> SOUL_OF_TORMENT  = ITEMS.registerSimpleItem("soul_of_torment");
@@ -147,6 +159,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ALLURING_SKULL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALLURING_SKULL);
     public static final DeferredItem<BlockItem> DEMON_HEART = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DEMON_HEART);
     public static final DeferredItem<BlockItem> COFFIN               = ITEMS.registerSimpleBlockItem(WitcheryBlocks.COFFIN);
+    public static final DeferredItem<BlockItem> MIRROR_WALL          = ITEMS.registerSimpleBlockItem(WitcheryBlocks.MIRROR_WALL);
+    public static final DeferredItem<BlockItem> MIRROR               = ITEMS.register("mirror", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.MIRROR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ROWAN_PLANKS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_PLANKS);
     public static final DeferredItem<BlockItem> BLOOD_STAINED_WOOL   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_STAINED_WOOL);
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
@@ -203,6 +217,8 @@ public class WitcheryItems {
     // ── End poppets ────────────────────────────────────────────────────────────
     public static final DeferredItem<Item> BREW_BAG = ITEMS.registerSimpleItem("brew_bag");
     public static final DeferredItem<Item> DIVINER = ITEMS.registerSimpleItem("diviner");
+    public static final DeferredItem<Item> WATER_DIVINER = ITEMS.register("water_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.WATER, itemProps(id).durability(50)));
+    public static final DeferredItem<Item> LAVA_DIVINER = ITEMS.register("lava_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.LAVA, itemProps(id).durability(50)));
     public static final DeferredItem<Item> CIRCLE_TALISMAN = ITEMS.register("circle_talisman", id -> new com.emoniph.witchery.item.CircleTalismanItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> WITCH_HAND = ITEMS.registerSimpleItem("witch_hand");
     public static final DeferredItem<Item> WORMWOOD_SEEDS = ITEMS.register("wormwood_seeds", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
@@ -218,9 +234,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.registerSimpleItem("huntsman_spear");
 
     // Armour
-    public static final DeferredItem<Item> WITCHES_HAT = ITEMS.registerSimpleItem("witches_hat");
-    public static final DeferredItem<Item> WITCHES_ROBE = ITEMS.registerSimpleItem("witches_robe");
-    public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.registerSimpleItem("witches_shoes");
+    public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> WITCHES_ROBE  = ITEMS.register("witches_robe",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.register("witches_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", id ->
             new EarmuffsItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
                     net.minecraft.world.item.equipment.ArmorType.HELMET)));
@@ -285,14 +301,14 @@ public class WitcheryItems {
     public static final DeferredItem<Item> VAMPIRE_BOOTS = ITEMS.register("vampire_boots", id ->
             vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.IRON,
                     net.minecraft.world.item.equipment.ArmorType.BOOTS, VampireClothingItem.SetType.MEDIUM));
-    public static final DeferredItem<Item> HUNTER_HELMET = ITEMS.registerSimpleItem("hunter_helmet");
-    public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.registerSimpleItem("hunter_chestplate");
-    public static final DeferredItem<Item> HUNTER_LEGGINGS = ITEMS.registerSimpleItem("hunter_leggings");
-    public static final DeferredItem<Item> HUNTER_BOOTS = ITEMS.registerSimpleItem("hunter_boots");
-    public static final DeferredItem<Item> DEATHS_HOOD = ITEMS.registerSimpleItem("deaths_hood");
-    public static final DeferredItem<Item> DEATHS_ROBE = ITEMS.registerSimpleItem("deaths_robe");
-    public static final DeferredItem<Item> DEATHS_SHOES = ITEMS.registerSimpleItem("deaths_shoes");
-    public static final DeferredItem<Item> DEATHS_HAND = ITEMS.registerSimpleItem("deaths_hand");
+    public static final DeferredItem<Item> HUNTER_HELMET     = ITEMS.register("hunter_helmet",     id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.register("hunter_chestplate", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> HUNTER_LEGGINGS   = ITEMS.register("hunter_leggings",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
+    public static final DeferredItem<Item> HUNTER_BOOTS      = ITEMS.register("hunter_boots",      id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> DEATHS_HOOD  = ITEMS.register("deaths_hood",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> DEATHS_ROBE  = ITEMS.register("deaths_robe",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> DEATHS_SHOES = ITEMS.register("deaths_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> DEATHS_HAND  = ITEMS.registerSimpleItem("deaths_hand");
 
     // Brew items — all now have implemented effects
     public static final DeferredItem<Item> BREW_OF_RAISING        = ITEMS.register("brew_of_raising", id -> new BrewOfRaisingItem(itemProps(id)));
@@ -307,6 +323,16 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_REVEALING      = ITEMS.register("brew_of_revealing", id -> new BrewOfRevealingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_POISON         = ITEMS.register("brew_of_poison", id -> new BrewOfPoisonItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FOAMING        = ITEMS.register("brew_of_foaming", id -> new BrewOfFoamingItem(itemProps(id)));
+
+    // ── Custom brews — splash (thrown) dispersal tier ─────────────────────────
+    public static final DeferredItem<Item> BREW_OF_FOULNESS_SPLASH = ITEMS.register("brew_of_foulness_splash", id -> new ThrownBrewItem(itemProps(id), BrewType.FOULNESS, false));
+    public static final DeferredItem<Item> BREW_OF_FOAMING_SPLASH  = ITEMS.register("brew_of_foaming_splash",  id -> new ThrownBrewItem(itemProps(id), BrewType.FOAMING,  false));
+    public static final DeferredItem<Item> BREW_OF_POISON_SPLASH   = ITEMS.register("brew_of_poison_splash",   id -> new ThrownBrewItem(itemProps(id), BrewType.POISON,   false));
+
+    // ── Custom brews — gas (lingering) dispersal tier ─────────────────────────
+    public static final DeferredItem<Item> BREW_OF_FOULNESS_GAS    = ITEMS.register("brew_of_foulness_gas",    id -> new ThrownBrewItem(itemProps(id), BrewType.FOULNESS, true));
+    public static final DeferredItem<Item> BREW_OF_FOAMING_GAS     = ITEMS.register("brew_of_foaming_gas",     id -> new ThrownBrewItem(itemProps(id), BrewType.FOAMING,  true));
+    public static final DeferredItem<Item> BREW_OF_POISON_GAS      = ITEMS.register("brew_of_poison_gas",      id -> new ThrownBrewItem(itemProps(id), BrewType.POISON,   true));
 
     // ── Brews — implemented ───────────────────────────────────────────────────
     public static final DeferredItem<Item> BREW_OF_VINES          = ITEMS.register("brew_of_vines", id -> new com.emoniph.witchery.item.BrewOfVinesItem(itemProps(id)));
@@ -386,7 +412,13 @@ public class WitcheryItems {
                 }
             });
     public static final DeferredItem<Item> NECRO_STONE        = ITEMS.registerSimpleItem("necro_stone");
-    public static final DeferredItem<Item> QUARTZ_SPHERE      = ITEMS.registerSimpleItem("quartz_sphere");
+    public static final DeferredItem<Item> QUARTZ_SPHERE          = ITEMS.registerSimpleItem("quartz_sphere");
+    public static final DeferredItem<Item> CHARGED_QUARTZ_SPHERE  = ITEMS.register("charged_quartz_sphere",
+            id -> new Item(itemProps(id)) {
+                @Override
+                public boolean isFoil(ItemStack stack) { return true; }
+            });
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SUN_COLLECTOR = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SUN_COLLECTOR);
     public static final DeferredItem<Item> SEER_STONE         = ITEMS.register("seer_stone",
             id -> new com.emoniph.witchery.item.SeerStoneItem(itemProps(id).stacksTo(1)) {
                 @Override
@@ -399,6 +431,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> CLAY_JAR_SOFT      = ITEMS.registerSimpleItem("clay_jar_soft");
     public static final DeferredItem<Item> ROCK               = ITEMS.registerSimpleItem("rock");
     public static final DeferredItem<Item> WOLFSBANE_FLOWER   = ITEMS.registerSimpleItem("wolfsbane_flower");
+    public static final DeferredItem<Item> WOLFSBANE_SEEDS    = ITEMS.register("wolfsbane_seeds", id -> new BlockItem(WitcheryBlocks.WOLFSBANE_CROP.get(), itemProps(id)));
     public static final DeferredItem<Item> SILVER_INGOT        = ITEMS.registerSimpleItem("silver_ingot");
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
@@ -429,16 +462,28 @@ public class WitcheryItems {
     public static final DeferredItem<Item> APPLE_OF_SLEEPING  = ITEMS.register("apple_of_sleeping", id -> new com.emoniph.witchery.item.AppleOfSleepingItem(itemProps(id)));
     public static final DeferredItem<Item> TREEFYD_SEEDS      = ITEMS.register("treefyd_seeds", id -> new com.emoniph.witchery.item.TreefydSeedsItem(itemProps(id)));
 
+    // Witch Hunter Dawn armor set (silvered iron-tier hunter endgame set)
+    public static final DeferredItem<Item> WITCH_HUNTER_DAWN_HAT      = ITEMS.register("witch_hunter_dawn_hat",      id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> WITCH_HUNTER_DAWN_COAT     = ITEMS.register("witch_hunter_dawn_coat",     id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> WITCH_HUNTER_DAWN_TROUSERS = ITEMS.register("witch_hunter_dawn_trousers", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
+    public static final DeferredItem<Item> WITCH_HUNTER_DAWN_BOOTS    = ITEMS.register("witch_hunter_dawn_boots",    id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+
+    // Witches outfit / special armors — wearable
+    public static final DeferredItem<Item> BABAS_HAT        = ITEMS.register("babas_hat",        id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> NECROMANCER_ROBES = ITEMS.register("necromancer_robes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> ICE_SLIPPERS     = ITEMS.register("ice_slippers",     id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> RUBY_SLIPPERS    = ITEMS.register("ruby_slippers",    id -> new com.emoniph.witchery.item.RubySlippersItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> SEEPING_SHOES    = ITEMS.register("seeping_shoes",    id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+
+    public static final DeferredItem<Item> PLAYER_COMPASS = ITEMS.register("player_compass",
+            id -> new com.emoniph.witchery.item.PlayerCompassItem(itemProps(id)));
+
+    public static final DeferredItem<Item> SUN_GRENADE = ITEMS.register("sun_grenade",
+            id -> new com.emoniph.witchery.item.SunGrenadeItem(itemProps(id).stacksTo(16)));
+
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
-            "babas_hat",
-            "necromancer_robes",
-            "ice_slippers",
-            "ruby_slippers",
-            "seeping_shoes",
             "devils_tongue_charm",
-            "water_diviner",
-            "lava_diviner",
             "bucket_hollow_tears",
             "hollow_tears",
             "alder_door",
@@ -466,13 +511,6 @@ public class WitcheryItems {
             "brew_of_soul_anguish",
             "brew_of_soul_fear",
             "brew_of_soul_torment",
-            "contract_ownership",
-            "contract_torment",
-            "contract_blaze",
-            "contract_resist_fire",
-            "contract_evaporate",
-            "contract_fiery_touch",
-            "contract_smelting",
             "silver_dust",
             "alder_boat",
             "hawthorn_boat",
@@ -503,8 +541,6 @@ public class WitcheryItems {
             "dandelion_of_webs",
             "duplication_grenade",
             "filtered_fume_funnel",
-            "garlic",
-            "garlic_garland",
             "glass_goblet",
             "glass_goblet_full",
             "gulgs_girdle",
@@ -517,7 +553,6 @@ public class WitcheryItems {
             "moon_charm",
             "nullifying_bolt",
             "perpetual_ice",
-            "player_compass",
             "poppy_of_ink",
             "poppy_of_sprouting",
             "poppy_of_thorns",
@@ -532,18 +567,11 @@ public class WitcheryItems {
             "snow_slab",
             "snow_stairs",
             "staff_of_duplication",
-            "sun_collector",
-            "sun_grenade",
             "twisting_band",
             "universal_antidote",
-            "witch_hunter_dawn_boots",
-            "witch_hunter_dawn_coat",
-            "witch_hunter_dawn_hat",
-            "witch_hunter_dawn_trousers",
             "wolf_head",
             "wooden_bolt",
             "wolfsbane",
-            "wolfsbane_seeds",
             "brew_of_endless_water",
             "warm_blood",
             "liliths_blood",
@@ -607,12 +635,6 @@ public class WitcheryItems {
             "herbology_book",
             "biomes_book",
             "splitting_bolt",
-            "torment_contract",
-            "living_flame_contract",
-            "fiery_tolerance_contract",
-            "evaporation_contract",
-            "fiery_touch_contract",
-            "melting_touch_contract",
             "witches_robes",
             "icy_slippers",
             "hunter_hat",
@@ -748,4 +770,10 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> BINKY_SPAWN_EGG =
             ITEMS.register("binky_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.BINKY.get())));
+
+    // ── Mirror World entities ─────────────────────────────────────────────────
+    // Reflection: silver shell (mirror surface), deep mirror-blue spots
+    public static final DeferredItem<SpawnEggItem> REFLECTION_SPAWN_EGG =
+            ITEMS.register("reflection_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.REFLECTION.get())));
 }

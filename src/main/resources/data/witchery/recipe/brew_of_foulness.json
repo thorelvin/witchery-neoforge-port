@@ -1,0 +1,11 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:poppy_of_ink"},
+    {"id": "witchery:foul_fume"},
+    {"id": "witchery:belladonna"}
+  ],
+  "result": {"id": "witchery:brew_of_foulness", "count": 3, "components": {"witchery:brew_power": 3}},
+  "power": 600.0,
+  "color": 4025118
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:poppy",
+    "minecraft:ink_sac"
+  ],
+  "result": {
+    "id": "witchery:poppy_of_ink",
+    "count": 1
+  }
+}

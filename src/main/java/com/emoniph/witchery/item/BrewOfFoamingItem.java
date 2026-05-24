@@ -1,32 +1,41 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.init.WitcheryDataComponents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
-/**
- * Brew of Foaming — covers the ground around the drinker with cobwebs (foam),
- * trapping mobs and slowing movement in a 4-block radius.
- */
+/** Brew of Foaming — covers the ground in cobwebs around the drinker. */
 public class BrewOfFoamingItem extends BrewItem {
 
     public BrewOfFoamingItem(Properties properties) { super(properties); }
 
     @Override
-    protected void applyEffect(Player player, Level level) {
-        BlockPos center = player.blockPosition();
-        for (int dx = -4; dx <= 4; dx++) {
-            for (int dz = -4; dz <= 4; dz++) {
-                if (dx * dx + dz * dz > 20) continue; // rough circle
-                BlockPos floor = center.offset(dx, 0, dz);
-                BlockState above = level.getBlockState(floor);
-                // Only place on air; don't overwrite solid blocks
-                if (above.isAir()) {
-                    level.setBlockAndUpdate(floor, Blocks.COBWEB.defaultBlockState());
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+        if (!level.isClientSide() && entity instanceof Player player) {
+            int tier     = stack.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
+            int radius   = 1 + tier;              // tier1=2, tier3=4, tier5=6
+            int radiusSq = radius * (radius + 1); // tier1=6, tier3=20, tier5=42
+            BlockPos center = player.blockPosition();
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx * dx + dz * dz > radiusSq) continue;
+                    BlockPos floor = center.offset(dx, 0, dz);
+                    if (level.getBlockState(floor).isAir()) {
+                        level.setBlockAndUpdate(floor, Blocks.COBWEB.defaultBlockState());
+                    }
                 }
             }
         }
+        stack.shrink(1);
+        if (entity instanceof Player player && !player.isCreative()) {
+            ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
+            if (!player.getInventory().add(bottle)) player.drop(bottle, false);
+        }
+        return stack;
     }
 }

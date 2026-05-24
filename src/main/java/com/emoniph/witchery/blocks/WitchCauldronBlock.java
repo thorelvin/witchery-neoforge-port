@@ -171,6 +171,16 @@ public class WitchCauldronBlock extends Block {
             return extremisResult;
         }
 
+        InteractionResult mutandisResult = tryBrewMutandis(stack, state, level, pos, player);
+        if (mutandisResult.consumesAction()) {
+            return mutandisResult;
+        }
+
+        InteractionResult mutandisExtremisResult = tryBrewMutandisExtremis(stack, state, level, pos, player);
+        if (mutandisExtremisResult.consumesAction()) {
+            return mutandisExtremisResult;
+        }
+
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
@@ -452,4 +462,81 @@ public class WitchCauldronBlock extends Block {
     }
 
     private record ChalkUpgradeMatch(Item result, int powerCost, List<ItemEntity> offerings, String successKey) {}
+
+    // Mandrake Root + Exhale of the Horned One (trigger) + Egg → 6×Mutandis
+    private InteractionResult tryBrewMutandis(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        Optional<ItemEntity> mandrake = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
+        Optional<ItemEntity> egg = findCauldronOffering(level, pos, Items.EGG);
+        if (mandrake.isEmpty() || egg.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.mutandis.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        for (ItemEntity offering : List.of(mandrake.get(), egg.get())) {
+            ItemStack offeringStack = offering.getItem();
+            offeringStack.shrink(1);
+            if (offeringStack.isEmpty()) {
+                offering.discard();
+            } else {
+                offering.setItem(offeringStack);
+            }
+        }
+        lowerFillLevel(state, level, pos);
+
+        ItemEntity resultEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, new ItemStack(WitcheryItems.MUTANDIS.get(), 6));
+        resultEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(resultEntity);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.1F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 1.0F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.mutandis.success"), false);
+        return InteractionResult.CONSUME;
+    }
+
+    // Nether Wart + Mutandis (trigger) → Mutandis Extremis
+    private InteractionResult tryBrewMutandisExtremis(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!stack.is(WitcheryItems.MUTANDIS.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        Optional<ItemEntity> wart = findCauldronOffering(level, pos, Items.NETHER_WART);
+        if (wart.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.mutandis_extremis.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        ItemStack wartStack = wart.get().getItem();
+        wartStack.shrink(1);
+        if (wartStack.isEmpty()) {
+            wart.get().discard();
+        } else {
+            wart.get().setItem(wartStack);
+        }
+        lowerFillLevel(state, level, pos);
+
+        ItemEntity resultEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, new ItemStack(WitcheryItems.MUTANDIS_EXTREMIS.get()));
+        resultEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(resultEntity);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.95F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 1.15F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.mutandis_extremis.success"), false);
+        return InteractionResult.CONSUME;
+    }
 }

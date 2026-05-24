@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:demonic_contract",
+    "minecraft:blaze_rod",
+    "witchery:hint_of_rebirth"
+  ],
+  "result": {
+    "id": "witchery:contract_blaze",
+    "count": 1
+  }
+}

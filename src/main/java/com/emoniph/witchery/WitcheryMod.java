@@ -2,6 +2,7 @@ package com.emoniph.witchery;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryChunkGenerators;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
@@ -42,6 +43,7 @@ public class WitcheryMod {
         WitcheryRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         WitcheryFeatures.FEATURES.register(modEventBus);
         WitcheryAttachments.ATTACHMENT_TYPES.register(modEventBus);
+        WitcheryDataComponents.DATA_COMPONENTS.register(modEventBus);
         WitcheryMenuTypes.MENU_TYPES.register(modEventBus);
         WitcheryEntities.ENTITY_TYPES.register(modEventBus);
         WitcherySoundEvents.SOUND_EVENTS.register(modEventBus);

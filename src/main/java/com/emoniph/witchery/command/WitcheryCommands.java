@@ -85,6 +85,7 @@ import java.util.List;
  * /witchery spawn <entity>          — spawn entity 2 blocks ahead
  * /witchery dream                   — enter the Spirit World dimension
  * /witchery mirror                  — enter the Mirror World dimension
+ * /witchery reflection              — summon a Reflection linked to you as owner
  * /witchery torment                 — enter the Torment dimension
  * /witchery exit                    — return to previous dimension
  * /witchery give primer             — give the Witches' Primer guidebook
@@ -293,7 +294,11 @@ public class WitcheryCommands {
                         .then(Commands.literal("binky")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.BINKY.get())))
                         .then(Commands.literal("lord_of_torment").executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LORD_OF_TORMENT.get())))
                         .then(Commands.literal("flame_imp")      .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.FLAME_IMP.get())))
-                        .then(Commands.literal("death")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.DEATH.get()))))
+                        .then(Commands.literal("death")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.DEATH.get())))
+                        .then(Commands.literal("reflection")     .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.REFLECTION.get()))))
+
+                .then(Commands.literal("reflection")
+                        .executes(ctx -> summonReflection(ctx.getSource())))
         );
     }
 
@@ -623,6 +628,21 @@ public class WitcheryCommands {
     }
 
     // ── Spawn helper ──────────────────────────────────────────────────────────
+
+    /** Summon a Reflection linked to the command executor as its owner. */
+    private static int summonReflection(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel sl)) return 0;
+        com.emoniph.witchery.entity.ReflectionEntity reflection =
+                new com.emoniph.witchery.entity.ReflectionEntity(WitcheryEntities.REFLECTION.get(), sl);
+        var pos = player.blockPosition().relative(player.getDirection(), 2);
+        reflection.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0f, 0f);
+        reflection.setOwner(player);
+        sl.addFreshEntity(reflection);
+        src.sendSuccess(() -> Component.literal("Summoned your Reflection."), false);
+        return 1;
+    }
 
     private static <T extends Mob> int spawnEntity(CommandSourceStack src, EntityType<T> type)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {

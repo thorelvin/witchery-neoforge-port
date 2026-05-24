@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    "SLS",
+    "LGL"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "S": "witchery:golden_thread",
+    "G": "minecraft:gold_ingot"
+  },
+  "result": {
+    "id": "witchery:witches_hat",
+    "count": 1
+  }
+}

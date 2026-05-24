@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:poppy",
+    "minecraft:cobweb"
+  ],
+  "result": {
+    "id": "witchery:poppy_of_webs",
+    "count": 1
+  }
+}

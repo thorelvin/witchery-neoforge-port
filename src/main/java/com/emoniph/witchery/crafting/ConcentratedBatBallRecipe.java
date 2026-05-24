@@ -27,10 +27,16 @@ public class ConcentratedBatBallRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        if (input.width() != 3 || input.height() != 3) {
-            return false;
-        }
+        return matchesPattern(input);
+    }
 
+    @Override
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        return matchesPattern(input) ? new ItemStack(WitcheryItems.CONCENTRATED_BAT_BALL.get()) : ItemStack.EMPTY;
+    }
+
+    private static boolean matchesPattern(CraftingInput input) {
+        if (input.width() != 3 || input.height() != 3) return false;
         return isSlimeBall(input, 0, 0)
                 && isBatSnare(input, 1, 0)
                 && isSlimeBall(input, 2, 0)
@@ -40,11 +46,6 @@ public class ConcentratedBatBallRecipe extends CustomRecipe {
                 && isSlimeBall(input, 0, 2)
                 && isBatSnare(input, 1, 2)
                 && isSlimeBall(input, 2, 2);
-    }
-
-    @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return matches(input, null) ? new ItemStack(WitcheryItems.CONCENTRATED_BAT_BALL.get()) : ItemStack.EMPTY;
     }
 
     public boolean canCraftInDimensions(int width, int height) {

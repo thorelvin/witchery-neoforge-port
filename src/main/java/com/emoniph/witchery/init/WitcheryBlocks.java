@@ -120,6 +120,11 @@ public class WitcheryBlocks {
     public static final DeferredBlock<CottonBlock>      COTTON_CROP     = BLOCKS.registerBlock("cotton",      CottonBlock::new,      () -> cropProps());
     public static final DeferredBlock<SnowbellBlock>    SNOWBELL        = BLOCKS.registerBlock("snowbell",    SnowbellBlock::new,    () -> cropProps());
     public static final DeferredBlock<WormwoodBlock>    WORMWOOD_PLANT  = BLOCKS.registerBlock("wormwood",    WormwoodBlock::new,    () -> cropProps());
+    public static final DeferredBlock<GarlicCropBlock>    GARLIC_CROP     = BLOCKS.registerBlock("garlic_crop",    GarlicCropBlock::new,    () -> cropProps());
+    public static final DeferredBlock<WolfsbaneCropBlock> WOLFSBANE_CROP  = BLOCKS.registerBlock("wolfsbane_crop", WolfsbaneCropBlock::new, () -> cropProps());
+    public static final DeferredBlock<GarlicGarlandBlock> GARLIC_GARLAND = BLOCKS.registerBlock("garlic_garland",
+            GarlicGarlandBlock::new, () -> BlockBehaviour.Properties.of().sound(net.minecraft.world.level.block.SoundType.GRASS)
+                    .noOcclusion().strength(0.2f));
 
     // Spirit World plants
     public static final DeferredBlock<CottonBlock> WISPY_COTTON = BLOCKS.registerBlock("wispy_cotton",
@@ -208,6 +213,16 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = BLOCKS.registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f));
     public static final DeferredBlock<CoffinBlock>      COFFIN         = BLOCKS.registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f).noOcclusion());
 
+    // Mirror World
+    public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorWallBlock> MIRROR_WALL = BLOCKS.registerBlock("mirror_wall",
+            com.emoniph.witchery.blocks.MirrorWallBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
+                    .strength(-1.0F, 3_600_000.0F).noLootTable().lightLevel(s -> 4));
+    public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorBlock> MIRROR = BLOCKS.registerBlock("mirror",
+            com.emoniph.witchery.blocks.MirrorBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
+                    .strength(1.5f, 6.0f).noOcclusion().lightLevel(s -> 8));
+
     // Portals / Dimensional
     public static final DeferredBlock<SpiritPortalBlock> SPIRIT_PORTAL = BLOCKS.registerBlock("spirit_portal", SpiritPortalBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 10).noOcclusion().noCollision().noLootTable());
@@ -215,6 +230,9 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
     public static final DeferredBlock<TormentPortalBlock> TORMENT_PORTAL = BLOCKS.registerBlock("torment_portal", TormentPortalBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 3600000.0F).lightLevel(s -> 12).noOcclusion().noCollision().noLootTable());
+    public static final DeferredBlock<com.emoniph.witchery.blocks.SunCollectorBlock> SUN_COLLECTOR = BLOCKS.registerBlock("sun_collector",
+            com.emoniph.witchery.blocks.SunCollectorBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).sound(SoundType.GLASS).strength(2.5f).lightLevel(s -> 4).noOcclusion());
 
     // Chalk circle marks
     public static final DeferredBlock<ChalkCircleBlock> CIRCLE = BLOCKS.registerBlock("circle",

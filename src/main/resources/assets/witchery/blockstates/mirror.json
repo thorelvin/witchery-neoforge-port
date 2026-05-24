@@ -1,0 +1,8 @@
+{
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "witchery:block/mirror_north" } },
+    { "when": { "facing": "south" }, "apply": { "model": "witchery:block/mirror_north", "y": 180 } },
+    { "when": { "facing": "west" },  "apply": { "model": "witchery:block/mirror_north", "y": 90 } },
+    { "when": { "facing": "east" },  "apply": { "model": "witchery:block/mirror_north", "y": 270 } }
+  ]
+}

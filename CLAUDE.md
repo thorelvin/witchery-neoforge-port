@@ -155,6 +155,36 @@ Do not claim success unless the command was actually run. If not run, say so.
 - `ModelPart` divides by 16 internally; do not add old `scale(0.0625)`.
 - Dimension biome `features` arrays must contain the correct generation-step sub-array structure.
 
+## Art pipeline
+
+`tools/img_to_asset.py` converts high-res AI-generated concept sheets into
+32x32 and 16x16 Minecraft item textures (RGBA PNG, 1-px transparent border).
+
+Key flags:
+- `--grid 3x2` or `--grid auto` — split concept sheet into cells
+- `--names name1,name2,...` — cell names left-to-right, top-to-bottom
+- `--bg rembg` — AI background removal (best for parchment/textured BGs)
+- `--save-manifest` — write a `_manifest.json` after the run for future batches
+- `--skip` — don't reprocess already-exported files
+
+Outputs go to `{out}/32x32/name.png` and `{out}/16x16/name.png` by default.
+A `_preview_*.png` contact sheet is generated automatically for review.
+
+Typical call:
+```
+python tools/img_to_asset.py sheet.png --grid 4x3 --bg rembg \
+  --names "item_a,item_b,..." -o src/main/resources/.../textures/item \
+  --save-manifest
+```
+
+Batch re-run:
+```
+python tools/img_to_asset.py --manifest docs/art/concepts/_manifest.json --skip
+```
+
+**`--grid auto` note:** works well for high-contrast items; falls back gracefully
+for warm-toned/low-contrast items but may need an explicit grid in those cases.
+
 ## Response format
 
 When editing files directly:

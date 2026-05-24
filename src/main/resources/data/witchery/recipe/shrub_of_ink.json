@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:wispy_cotton",
+    "minecraft:ink_sac"
+  ],
+  "result": {
+    "id": "witchery:shrub_of_ink",
+    "count": 1
+  }
+}

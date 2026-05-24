@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:poppy",
+    "minecraft:bone_meal"
+  ],
+  "result": {
+    "id": "witchery:poppy_of_sprouting",
+    "count": 1
+  }
+}

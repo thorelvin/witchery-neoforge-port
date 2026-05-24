@@ -1,32 +1,34 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.item.EarmuffsItem;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
  * Mandrake mob — tiny screaming creature that emerges from harvesting mandrake at night.
- * Keeps nearby players nauseated until it is killed, much closer to source.
+ * Chases players and sickens them on contact, matching the old source behavior.
  */
 public class MandrakeEntity extends Monster {
-    private static final int SCREAM_INTERVAL_TICKS = 10;
-    private static final int SCREAM_DURATION_TICKS = 40;
+    private static final int CONTACT_NAUSEA_TICKS = 300;
     private static final int SCREAM_AMPLIFIER = 1;
-    private static final double SCREAM_RADIUS = 8.0;
 
     public MandrakeEntity(EntityType<? extends MandrakeEntity> type, Level level) {
         super(type, level);
+        this.xpReward = 0;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -40,26 +42,22 @@ public class MandrakeEntity extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2, false));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Player.class, 8f, 1.5, 1.5));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (level().isClientSide() || tickCount % SCREAM_INTERVAL_TICKS != 0) {
-            return;
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (target instanceof Player player && !level.isClientSide() && !EarmuffsItem.isWorn(player)
+                && !player.hasEffect(MobEffects.NAUSEA)) {
+            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, CONTACT_NAUSEA_TICKS, SCREAM_AMPLIFIER, false, true));
         }
-
-        for (Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(SCREAM_RADIUS),
-                LivingEntity::isAlive)) {
-            if (EarmuffsItem.isWorn(player)) {
-                continue;
-            }
-            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, SCREAM_DURATION_TICKS, SCREAM_AMPLIFIER, false, true));
-        }
+        setLastHurtMob(target);
+        return true;
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.GHAST_SCREAM; }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GFG",
+    "EPE",
+    "GDG"
+  ],
+  "key": {
+    "G": "minecraft:gold_nugget",
+    "F": "witchery:toe_of_frog",
+    "E": "witchery:ender_dew",
+    "P": "witchery:poppet",
+    "D": "witchery:drop_of_luck"
+  },
+  "result": {
+    "id": "witchery:poppet_protection_poppet",
+    "count": 1
+  }
+}

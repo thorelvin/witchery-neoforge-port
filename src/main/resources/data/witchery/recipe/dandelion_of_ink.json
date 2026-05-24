@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:dandelion",
+    "minecraft:ink_sac"
+  ],
+  "result": {
+    "id": "witchery:dandelion_of_ink",
+    "count": 1
+  }
+}

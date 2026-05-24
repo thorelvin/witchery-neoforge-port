@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:dandelion",
+    "minecraft:bone_meal"
+  ],
+  "result": {
+    "id": "witchery:dandelion_of_sprouting",
+    "count": 1
+  }
+}

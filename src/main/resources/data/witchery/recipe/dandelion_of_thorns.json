@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:dandelion",
+    "minecraft:cactus"
+  ],
+  "result": {
+    "id": "witchery:dandelion_of_thorns",
+    "count": 1
+  }
+}

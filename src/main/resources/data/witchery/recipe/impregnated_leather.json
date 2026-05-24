@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WLW",
+    "LDL",
+    "WLW"
+  ],
+  "key": {
+    "W": "witchery:whiff_of_magic",
+    "L": "minecraft:leather",
+    "D": "witchery:diamond_vapour"
+  },
+  "result": {
+    "id": "witchery:impregnated_leather",
+    "count": 4
+  }
+}

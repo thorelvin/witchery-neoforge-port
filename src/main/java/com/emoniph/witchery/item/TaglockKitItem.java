@@ -209,7 +209,7 @@ public class TaglockKitItem extends Item {
     }
 
     public static boolean isPlayerTaglock(ItemStack stack) {
-        return getBoundEntityTypeId(stack).isEmpty();
+        return isFilled(stack) && getBoundEntityTypeId(stack).isEmpty();
     }
 
     public static Optional<Identifier> getBoundEntityTypeId(ItemStack stack) {

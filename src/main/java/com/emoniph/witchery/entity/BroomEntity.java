@@ -4,6 +4,8 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -229,9 +231,19 @@ public class BroomEntity extends Mob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!level().isClientSide() && !hasPassenger(player)) {
-            player.startRiding(this, true, true);
-            return InteractionResult.SUCCESS;
+        if (!level().isClientSide()) {
+            if (player.isShiftKeyDown() && !hasPassenger(player)) {
+                ItemStack broomItem = new ItemStack(isEnchanted()
+                        ? WitcheryItems.ENCHANTED_BROOM.get()
+                        : WitcheryItems.BROOM.get());
+                player.addItem(broomItem);
+                this.discard();
+                return InteractionResult.SUCCESS;
+            }
+            if (!hasPassenger(player)) {
+                player.startRiding(this, true, true);
+                return InteractionResult.SUCCESS;
+            }
         }
         return InteractionResult.PASS;
     }

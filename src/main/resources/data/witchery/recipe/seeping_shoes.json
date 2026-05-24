@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LSL",
+    "HRH",
+    "MMM"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "S": "witchery:golden_thread",
+    "H": "witchery:witch_hand",
+    "R": "witchery:redstone_soup",
+    "M": "minecraft:clay_ball"
+  },
+  "result": {
+    "id": "witchery:seeping_shoes",
+    "count": 1
+  }
+}

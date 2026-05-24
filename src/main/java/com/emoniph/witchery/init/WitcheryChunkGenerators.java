@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.world.MirrorWorldChunkGenerator;
 import com.emoniph.witchery.world.TormentChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.Registries;
@@ -15,4 +16,7 @@ public class WitcheryChunkGenerators {
 
     public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<TormentChunkGenerator>> TORMENT_MAZE =
             CHUNK_GENERATORS.register("torment_maze", () -> TormentChunkGenerator.CODEC);
+
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<MirrorWorldChunkGenerator>> MIRROR_WORLD =
+            CHUNK_GENERATORS.register("mirror_world", () -> MirrorWorldChunkGenerator.CODEC);
 }

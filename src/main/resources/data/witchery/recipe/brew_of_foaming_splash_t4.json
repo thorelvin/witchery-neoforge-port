@@ -1,0 +1,13 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:shrub_of_webs"},
+    {"id": "witchery:foul_fume"},
+    {"id": "witchery:dense_web"},
+    {"id": "witchery:gypsum"},
+    {"id": "minecraft:gunpowder"}
+  ],
+  "result": {"id": "witchery:brew_of_foaming_splash", "count": 4, "components": {"witchery:brew_power": 4}},
+  "power": 400.0,
+  "color": 13421772
+}

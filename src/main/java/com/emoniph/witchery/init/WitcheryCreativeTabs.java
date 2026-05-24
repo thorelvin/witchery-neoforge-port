@@ -34,6 +34,10 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.COTTON.get());
                         output.accept(WitcheryItems.WORMWOOD_SEEDS.get());
                         output.accept(WitcheryItems.SNOWBELL_SEEDS.get());
+                        output.accept(WitcheryItems.GARLIC.get());
+                        output.accept(WitcheryItems.GARLIC_GARLAND.get());
+                        output.accept(WitcheryItems.WOLFSBANE_SEEDS.get());
+                        output.accept(WitcheryItems.WOLFSBANE_FLOWER.get());
                         output.accept(WitcheryItems.BLOOD_ROSE.get());
                         output.accept(WitcheryItems.EMBER_MOSS.get());
                         output.accept(WitcheryItems.GLINT_WEED.get());
@@ -63,12 +67,19 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.WEAVE_NIGHTMARES.get());
                         output.accept(WitcheryItems.WEAVE_INTENSITY.get());
                         output.accept(WitcheryItems.DEMONIC_CONTRACT.get());
+                        output.accept(WitcheryItems.CONTRACT_BLAZE.get());
+                        output.accept(WitcheryItems.CONTRACT_RESIST_FIRE.get());
+                        output.accept(WitcheryItems.CONTRACT_EVAPORATE.get());
+                        output.accept(WitcheryItems.CONTRACT_FIERY_TOUCH.get());
+                        output.accept(WitcheryItems.CONTRACT_SMELTING.get());
                         output.accept(WitcheryItems.ICY_NEEDLE.get());
                         output.accept(WitcheryItems.SOUL_OF_TORMENT.get());
                         output.accept(WitcheryItems.TORMENT_SCROLL.get());
                         output.accept(WitcheryItems.ALLURING_SKULL.get());
                         output.accept(WitcheryItems.DEMON_HEART.get());
                         output.accept(WitcheryItems.COFFIN.get());
+                        output.accept(WitcheryItems.MIRROR_WALL.get());
+                        output.accept(WitcheryItems.MIRROR.get());
                         output.accept(WitcheryItems.ROWAN_PLANKS.get());
                         output.accept(WitcheryItems.BLOOD_STAINED_WOOL.get());
                         output.accept(WitcheryItems.ROWAN_STAIRS.get());
@@ -109,6 +120,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.POPPET_PROTECTION_POPPET.get());
                         output.accept(WitcheryItems.VOODOO_POPPET.get());
                         output.accept(WitcheryItems.VAMPIRIC_POPPET.get());
+                        output.accept(WitcheryItems.PLAYER_COMPASS.get());
+                        output.accept(WitcheryItems.SUN_GRENADE.get());
                         output.accept(WitcheryItems.BREW_BAG.get());
                         output.accept(WitcheryItems.DIVINER.get());
                         output.accept(WitcheryItems.CIRCLE_TALISMAN.get());
@@ -147,6 +160,8 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.SPECTRAL_STONE.get());
                         output.accept(WitcheryItems.NECRO_STONE.get());
                         output.accept(WitcheryItems.QUARTZ_SPHERE.get());
+                        output.accept(WitcheryItems.CHARGED_QUARTZ_SPHERE.get());
+                        output.accept(WitcheryItems.SUN_COLLECTOR.get());
                         output.accept(WitcheryItems.SEER_STONE.get());
                         output.accept(WitcheryItems.POPPET_SHELF_COMPASS.get());
                         output.accept(WitcheryItems.POLYNESIA_CHARM.get());
@@ -204,6 +219,13 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BREW_OF_POISON.get());
                         output.accept(WitcheryItems.BREW_OF_ICE.get());
                         output.accept(WitcheryItems.BREW_OF_FOAMING.get());
+                        // Custom brew dispersal variants
+                        output.accept(WitcheryItems.BREW_OF_FOULNESS_SPLASH.get());
+                        output.accept(WitcheryItems.BREW_OF_FOULNESS_GAS.get());
+                        output.accept(WitcheryItems.BREW_OF_FOAMING_SPLASH.get());
+                        output.accept(WitcheryItems.BREW_OF_FOAMING_GAS.get());
+                        output.accept(WitcheryItems.BREW_OF_POISON_SPLASH.get());
+                        output.accept(WitcheryItems.BREW_OF_POISON_GAS.get());
                         // Infusion brew bases (M19)
                         output.accept(WitcheryItems.GHOST_OF_THE_LIGHT.get());
                         output.accept(WitcheryItems.SOUL_OF_THE_WORLD.get());
@@ -241,6 +263,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.HOBGOBLIN_SPAWN_EGG.get());
                         output.accept(WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get());
                         output.accept(WitcheryItems.BINKY_SPAWN_EGG.get());
+                        output.accept(WitcheryItems.REFLECTION_SPAWN_EGG.get());
                     })
                     .build());
 }

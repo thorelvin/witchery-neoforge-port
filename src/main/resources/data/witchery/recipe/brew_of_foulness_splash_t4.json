@@ -1,0 +1,13 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:poppy_of_ink"},
+    {"id": "witchery:foul_fume"},
+    {"id": "witchery:belladonna"},
+    {"id": "witchery:reek_of_misfortune"},
+    {"id": "minecraft:gunpowder"}
+  ],
+  "result": {"id": "witchery:brew_of_foulness_splash", "count": 4, "components": {"witchery:brew_power": 4}},
+  "power": 800.0,
+  "color": 4025118
+}

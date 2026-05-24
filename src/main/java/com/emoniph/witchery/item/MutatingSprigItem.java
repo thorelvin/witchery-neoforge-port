@@ -54,131 +54,33 @@ public class MutatingSprigItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         BlockPos pos = ctx.getClickedPos();
         BlockState state = level.getBlockState(pos);
-        if (tryCreateGrasspers(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateLeechChest(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateCritterSnare(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateFlyingMonkey(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateOwls(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateToads(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateParasyticLouse(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateBloodRoses(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateWildBramble(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateVoidBramble(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (tryCreateWormwood(level, pos, state)) {
-            spawnEffects(level, pos);
-            if (ctx.getPlayer() != null) {
-                EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                        ? EquipmentSlot.MAINHAND
-                        : EquipmentSlot.OFFHAND;
-                ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
-            }
-            return InteractionResult.CONSUME;
-        }
-        if (!tryMutate(level, pos, state)) {
-            return InteractionResult.PASS;
-        }
 
-        spawnEffects(level, pos);
+        if (tryCreateGrasspers(level, pos, state)
+                || tryCreateLeechChest(level, pos, state)
+                || tryCreateCritterSnare(level, pos, state)
+                || tryCreateFlyingMonkey(level, pos, state)
+                || tryCreateOwls(level, pos, state)
+                || tryCreateToads(level, pos, state)
+                || tryCreateParasyticLouse(level, pos, state)
+                || tryCreateBloodRoses(level, pos, state)
+                || tryCreateWildBramble(level, pos, state)
+                || tryCreateVoidBramble(level, pos, state)
+                || tryCreateWormwood(level, pos, state)
+                || tryMutate(level, pos, state)) {
+            return finishUse(ctx, pos);
+        }
+        return InteractionResult.PASS;
+    }
+
+    private static InteractionResult finishUse(UseOnContext ctx, BlockPos pos) {
+        spawnEffects(ctx.getLevel(), pos);
         if (ctx.getPlayer() != null) {
             EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
-                    ? EquipmentSlot.MAINHAND
-                    : EquipmentSlot.OFFHAND;
+                    ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
             ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
         }
         return InteractionResult.CONSUME;
@@ -430,7 +332,7 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
-        clearHorizontalMoss(level, pos);
+        clearHorizontalRing(level, pos);
         clearDiagonalGrasspers(level, pos);
         transformVerticalColumn(level, pos, Blocks.CACTUS, WitcheryBlocks.BRAMBLE.get(), 5);
         return true;
@@ -444,7 +346,7 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
-        clearHorizontalMoss(level, pos);
+        clearHorizontalRing(level, pos);
         clearDiagonalGrasspers(level, pos);
         transformVerticalColumn(level, pos, Blocks.SUGAR_CANE, WitcheryBlocks.VOID_BRAMBLE.get(), 16);
         return true;
@@ -470,7 +372,7 @@ public class MutatingSprigItem extends Item {
             }
         }
 
-        clearHorizontalMoss(level, pos);
+        clearHorizontalRing(level, pos);
         level.setBlock(pos, WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), 3);
         return true;
     }
@@ -626,7 +528,7 @@ public class MutatingSprigItem extends Item {
         return spawned;
     }
 
-    private static void clearHorizontalMoss(Level level, BlockPos pos) {
+    private static void clearHorizontalRing(Level level, BlockPos pos) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             level.removeBlock(pos.relative(direction), false);
         }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "L L",
+    "L L"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather"
+  },
+  "result": {
+    "id": "witchery:hunter_boots",
+    "count": 1
+  }
+}

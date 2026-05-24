@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SLS",
+    "L L",
+    "SLS"
+  ],
+  "key": {
+    "S": "witchery:silver_ingot",
+    "L": "witchery:hunter_leggings"
+  },
+  "result": {
+    "id": "witchery:witch_hunter_dawn_trousers",
+    "count": 1
+  }
+}

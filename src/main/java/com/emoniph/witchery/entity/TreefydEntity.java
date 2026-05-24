@@ -42,7 +42,8 @@ import java.util.UUID;
 
 /** Treefyd - wooden golem summoned by ritual. Guards the caster's base. */
 public class TreefydEntity extends Monster {
-    private final WaterAvoidingRandomStrollGoal wanderGoal = new SentinelAwareWanderGoal(this, 0.7);
+    // wanderGoal is NOT a field initializer — field inits run after super(), but registerGoals()
+    // is called from inside super(). A null goal crashes GoalSelector.addGoal via hashCode().
     @Nullable
     private UUID ownerUuid;
     private boolean sentinel;
@@ -66,7 +67,7 @@ public class TreefydEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(4, wanderGoal);
+        this.goalSelector.addGoal(4, new SentinelAwareWanderGoal(this, 0.7));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));

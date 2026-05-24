@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " a ",
+    " x ",
+    "a a"
+  ],
+  "key": {
+    "a": "minecraft:blaze_rod",
+    "x": "witchery:water_diviner"
+  },
+  "result": {
+    "id": "witchery:lava_diviner",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GQG",
+    "QSQ",
+    "GQG"
+  ],
+  "key": {
+    "G": "minecraft:glass",
+    "Q": "minecraft:quartz",
+    "S": "witchery:quartz_sphere"
+  },
+  "result": {
+    "id": "witchery:sun_collector",
+    "count": 1
+  }
+}

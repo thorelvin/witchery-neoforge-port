@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:demonic_contract",
+    "minecraft:blaze_powder"
+  ],
+  "result": {
+    "id": "witchery:contract_resist_fire",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LGD",
+    "GPG",
+    " G "
+  ],
+  "key": {
+    "L": "witchery:drop_of_luck",
+    "G": "minecraft:gold_nugget",
+    "D": "witchery:diamond_vapour",
+    "P": "witchery:poppet"
+  },
+  "result": {
+    "id": "witchery:death_protection_poppet",
+    "count": 1
+  }
+}

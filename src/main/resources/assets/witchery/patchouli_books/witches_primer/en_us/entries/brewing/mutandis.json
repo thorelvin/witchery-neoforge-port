@@ -7,12 +7,17 @@
     {
       "type": "patchouli:spotlight",
       "item": "witchery:mutandis",
-      "text": "Mutandis is the old hedge-breaking powder, scattered over living growth to force a plant into some stranger relation. It is one of the first real ways a witch steps outside ordinary farming and begins coaxing hidden flora into the world.$(br2)In the original craft this was not brewed in the cauldron. It was compounded by hand, and Rewoven now follows that source-backed path again."
+      "text": "Mutandis is the old hedge-breaking powder, scattered over living growth to force a plant into some stranger relation. It is one of the first real ways a witch steps outside ordinary farming and begins coaxing hidden flora into the world.$(br2)It can be compounded by hand from common ingredients, or brewed in the $(item)Witch's Cauldron$() through the older original path."
     },
     {
       "type": "patchouli:crafting",
       "recipe": "witchery:mutandis",
-      "text": "Compound eight portions from $(item)Wood Ash$(), $(item)Hint of Rebirth$(), a $(item)Mandrake Root$(), an $(item)Egg$(), $(item)Bone Meal$(), and $(item)Green Dye$(). The modern port had drifted off this old recipe for a while; it is back on the original layout now."
+      "text": "Compound eight portions from $(item)Wood Ash$(), $(item)Hint of Rebirth$(), a $(item)Mandrake Root$(), an $(item)Egg$(), $(item)Bone Meal$(), and $(item)Green Dye$(). This is the modern layout used by Witchery Resurrected."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Cauldron Path",
+      "text": "The original 1.7.10 Witch's Cauldron path is also available. Fill and heat the $(item)Witch's Cauldron$(), drop a $(item)Mandrake Root$() and an $(item)Egg$() into the water, then right-click with $(item)Exhale of the Horned One$() to produce six portions of Mutandis.$(br2)Similarly, drop $(item)Nether Wart$() into the cauldron and right-click with Mutandis itself to condense one $(item)Mutandis Extremis$(). Both paths are available."
     },
     {
       "type": "patchouli:text",
@@ -22,7 +27,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "witchery:mutandis_extremis",
-      "text": "Mutandis Extremis is the harsher refinement: surround a $(item)Nether Wart$() with eight ordinary Mutandis to create eight portions. This keeps the original Witchery recipe chain instead of leaving Extremis as a silent creative-only item."
+      "text": "Mutandis Extremis is the harsher refinement: surround a $(item)Nether Wart$() with eight ordinary Mutandis to create eight portions. Or use the cauldron path described above."
     },
     {
       "type": "patchouli:text",

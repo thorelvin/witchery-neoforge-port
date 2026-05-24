@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:item/sun_collector"
-  }
+  "parent": "witchery:block/sun_collector"
 }

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LPL",
+    "GLG",
+    "LBL"
+  ],
+  "key": {
+    "L": "minecraft:lily_pad",
+    "P": "minecraft:potion",
+    "G": "minecraft:glowstone_dust",
+    "B": "witchery:breath_of_goddess"
+  },
+  "result": {
+    "id": "witchery:leaping_lily",
+    "count": 1
+  }
+}

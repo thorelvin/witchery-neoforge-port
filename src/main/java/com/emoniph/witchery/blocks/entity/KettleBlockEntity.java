@@ -166,27 +166,23 @@ public class KettleBlockEntity extends BlockEntity {
         List<net.minecraft.world.item.crafting.RecipeHolder<KettleBrewingRecipe>> allRecipes =
                 new java.util.ArrayList<>(((net.minecraft.server.level.ServerLevel) world).recipeAccess().recipeMap().byType(WitcheryRecipeTypes.KETTLE_BREWING.get()));
 
-        if (allFilled()) {
-            // Attempt full match
+        if (someFilled()) {
+            // Attempt full match first — fires as soon as all required ingredients are present
             KettleBrewingRecipe match = allRecipes.stream()
                     .filter(h -> h.value().matches(input, world))
                     .map(net.minecraft.world.item.crafting.RecipeHolder::value)
                     .findFirst().orElse(null);
 
-            if (match == null) {
-                setRuined();
-            } else {
+            if (match != null) {
                 color = match.getColor();
                 float requiredPower = match.getPower();
                 if (requiredPower == 0f) {
                     isPowered = true;
                 } else {
-                    // Find a nearby altar with enough power
                     AltarBlockEntity altar = findNearbyAltar(world, pos, 8);
                     isPowered = altar != null && altar.getPower() >= (int) requiredPower;
                 }
                 if (isPowered) {
-                    // Consume altar power if required
                     if (requiredPower > 0f) {
                         AltarBlockEntity altar = findNearbyAltar(world, pos, 8);
                         if (altar != null) altar.consumePower((int) requiredPower);
@@ -199,20 +195,20 @@ public class KettleBlockEntity extends BlockEntity {
                     world.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP,
                             SoundSource.BLOCKS, 0.5f, 0.9f + world.random.nextFloat() * 0.2f);
                 }
-            }
-        } else if (someFilled()) {
-            // Partial match — just update colour preview, no ruining yet
-            KettleBrewingRecipe partial = allRecipes.stream()
-                    .filter(h -> h.value().matchesPartial(input, world))
-                    .map(net.minecraft.world.item.crafting.RecipeHolder::value)
-                    .findFirst().orElse(null);
-
-            if (partial == null) {
-                // Only ruin if there's clearly a wrong ingredient (nothing partially matches)
-                setRuined();
             } else {
-                int newColor = partial.getColor();
-                if (newColor != color) { color = newColor; sync(); }
+                // No full match: check for partial match (at least one ingredient recognised)
+                KettleBrewingRecipe partial = allRecipes.stream()
+                        .filter(h -> h.value().matchesPartial(input, world))
+                        .map(net.minecraft.world.item.crafting.RecipeHolder::value)
+                        .findFirst().orElse(null);
+
+                if (partial == null) {
+                    // Nothing recognises these ingredients → ruin immediately
+                    setRuined();
+                } else {
+                    int newColor = partial.getColor();
+                    if (newColor != color) { color = newColor; sync(); }
+                }
             }
         }
     }

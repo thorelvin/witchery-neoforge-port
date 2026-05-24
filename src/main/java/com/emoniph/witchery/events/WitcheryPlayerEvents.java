@@ -16,6 +16,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import net.minecraft.core.BlockPos;
@@ -27,17 +28,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
@@ -192,6 +200,8 @@ public class WitcheryPlayerEvents {
 
         if (player.tickCount % 20 != 0) return;
 
+        tickDeathsHoodEffect(player);
+
         ServerLevel level = (ServerLevel) player.level();
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         InfusionType infusion = data.getInfusionType();
@@ -313,6 +323,30 @@ public class WitcheryPlayerEvents {
                         java.util.Set.of(), 0f, 0f, false);
                 player.displayClientMessage(Component.literal("§5The Lord of Torment falls. You are returned home."), false);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerChat(ServerChatEvent event) {
+        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
+        if (com.emoniph.witchery.item.RubySlippersItem.tryActivate(player, event.getRawText())) {
+            event.setCanceled(true);
+        }
+    }
+
+    private static void tickDeathsHoodEffect(ServerPlayer player) {
+        if (!player.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DEATHS_HOOD.get())) return;
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookEnd = eyePos.add(player.getLookAngle().scale(16.0));
+        AABB searchBox = player.getBoundingBox().expandTowards(player.getLookAngle().scale(16.0)).inflate(1.0);
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
+                player, eyePos, lookEnd, searchBox,
+                e -> e instanceof LivingEntity && e != player,
+                16.0 * 16.0);
+        if (entityHit == null || !(entityHit.getEntity() instanceof LivingEntity victim)) return;
+        if (!victim.hasLineOfSight(player)) return;
+        if (!victim.hasEffect(MobEffects.SLOWNESS)) {
+            victim.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 2));
         }
     }
 

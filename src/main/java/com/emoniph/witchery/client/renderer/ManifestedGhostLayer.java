@@ -4,6 +4,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -38,8 +39,10 @@ public class ManifestedGhostLayer extends RenderLayer<AvatarRenderState, PlayerM
 
         poseStack.pushPose();
         poseStack.scale(1.01f, 1.01f, 1.01f);
+        // Full-bright so the ghost is visible in darkness; translucent renders the
+        // overlay with the ghost texture alpha
         collector.submitModelPart(this.getParentModel().root(), poseStack,
-                RenderTypes.entityTranslucent(TEXTURE), light, OverlayTexture.NO_OVERLAY, null);
+                RenderTypes.entityTranslucent(TEXTURE), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, null);
         poseStack.popPose();
     }
 }

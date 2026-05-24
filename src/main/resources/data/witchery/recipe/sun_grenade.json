@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "GQG",
+    " G "
+  ],
+  "key": {
+    "G": "minecraft:gold_nugget",
+    "Q": "witchery:charged_quartz_sphere"
+  },
+  "result": {
+    "id": "witchery:sun_grenade",
+    "count": 2
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DRF",
+    "BPM",
+    "FND"
+  ],
+  "key": {
+    "D": "minecraft:dandelion",
+    "R": "minecraft:red_mushroom",
+    "F": "minecraft:poppy",
+    "B": "witchery:belladonna",
+    "P": "witchery:poppet",
+    "M": "witchery:mandrake_root",
+    "N": "minecraft:brown_mushroom"
+  },
+  "result": {
+    "id": "witchery:voodoo_protection_poppet",
+    "count": 1
+  }
+}

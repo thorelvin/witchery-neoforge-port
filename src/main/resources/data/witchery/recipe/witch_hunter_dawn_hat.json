@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SLS",
+    "LHL",
+    "SLS"
+  ],
+  "key": {
+    "S": "witchery:silver_ingot",
+    "L": "witchery:impregnated_leather",
+    "H": "witchery:hunter_helmet"
+  },
+  "result": {
+    "id": "witchery:witch_hunter_dawn_hat",
+    "count": 1
+  }
+}

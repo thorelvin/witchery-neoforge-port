@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "FPF",
+    " D "
+  ],
+  "key": {
+    "C": "minecraft:clay_ball",
+    "F": "minecraft:feather",
+    "P": "witchery:poppet",
+    "D": "minecraft:dirt"
+  },
+  "result": {
+    "id": "witchery:earth_protection_poppet",
+    "count": 1
+  }
+}

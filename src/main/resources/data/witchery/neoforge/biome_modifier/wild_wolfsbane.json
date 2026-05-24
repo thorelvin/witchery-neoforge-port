@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_taiga",
+  "features": "witchery:wild_wolfsbane",
+  "step": "vegetal_decoration"
+}

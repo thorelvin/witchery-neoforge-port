@@ -151,9 +151,14 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.FLAME_IMP.get(),       FlameImpRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SOULFIRE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.THROWN_BREW.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.SUN_GRENADE.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.HOBGOBLIN.get(),       HobgoblinRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.CORPSE.get(),          CorpseRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.REFLECTION.get(),      ReflectionRenderer::new);
     }
 
     // ── Network handlers (client-side only) ───────────────────────────────────

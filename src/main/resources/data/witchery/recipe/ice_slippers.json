@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LSL",
+    "LHL",
+    "DOD"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "S": "witchery:golden_thread",
+    "H": "witchery:frozen_heart",
+    "D": "witchery:diamond_vapour",
+    "O": "witchery:odour_of_purity"
+  },
+  "result": {
+    "id": "witchery:ice_slippers",
+    "count": 1
+  }
+}

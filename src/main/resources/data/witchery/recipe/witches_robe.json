@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LSL",
+    "LCL",
+    "LLL"
+  ],
+  "key": {
+    "L": "witchery:impregnated_leather",
+    "S": "witchery:golden_thread",
+    "C": "witchery:creeper_heart"
+  },
+  "result": {
+    "id": "witchery:witches_robe",
+    "count": 1
+  }
+}

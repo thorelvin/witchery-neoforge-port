@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "WPW",
+    " E "
+  ],
+  "key": {
+    "D": "witchery:diamond_vapour",
+    "W": "witchery:bat_wool",
+    "P": "witchery:poppet",
+    "E": "witchery:exhale_of_horned_one"
+  },
+  "result": {
+    "id": "witchery:vampiric_poppet",
+    "count": 1
+  }
+}

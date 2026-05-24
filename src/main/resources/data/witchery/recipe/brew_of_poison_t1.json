@@ -1,0 +1,9 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:dandelion_of_thorns"}
+  ],
+  "result": {"id": "witchery:brew_of_poison", "count": 1, "components": {"witchery:brew_power": 1}},
+  "power": 160.0,
+  "color": 5148465
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:cake",
+    "witchery:odour_of_purity",
+    "witchery:odour_of_purity",
+    "witchery:clay_jar",
+    "witchery:clay_jar"
+  ],
+  "result": {
+    "id": "witchery:purified_milk",
+    "count": 3
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:shrub_of_webs"},
+    {"id": "witchery:foul_fume"}
+  ],
+  "result": {"id": "witchery:brew_of_foaming", "count": 2, "components": {"witchery:brew_power": 2}},
+  "power": 200.0,
+  "color": 13421772
+}

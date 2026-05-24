@@ -70,4 +70,16 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("refilling_chest", () -> new BlockEntityType<>(
                     com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity::new,
                     Set.of(WitcheryBlocks.REFILLING_CHEST.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.MirrorBlockEntity>> MIRROR =
+            BLOCK_ENTITIES.register("mirror", () -> new BlockEntityType<>(
+                    com.emoniph.witchery.blocks.entity.MirrorBlockEntity::new,
+                    Set.of(WitcheryBlocks.MIRROR.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.SunCollectorBlockEntity>> SUN_COLLECTOR =
+            BLOCK_ENTITIES.register("sun_collector", () -> new BlockEntityType<>(
+                    com.emoniph.witchery.blocks.entity.SunCollectorBlockEntity::new,
+                    Set.of(WitcheryBlocks.SUN_COLLECTOR.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.SilverVatBlockEntity>> SILVER_VAT =
+            BLOCK_ENTITIES.register("silver_vat", () -> new BlockEntityType<>(
+                    com.emoniph.witchery.blocks.entity.SilverVatBlockEntity::new,
+                    Set.of(WitcheryBlocks.SILVER_VAT.get())));
 }

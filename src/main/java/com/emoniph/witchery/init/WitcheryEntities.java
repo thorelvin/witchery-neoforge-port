@@ -154,6 +154,18 @@ public class WitcheryEntities {
                             .sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "soulfire"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.ThrownBrewEntity>> THROWN_BREW =
+            ENTITY_TYPES.register("thrown_brew", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.ThrownBrewEntity>of(com.emoniph.witchery.entity.ThrownBrewEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "thrown_brew"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.SunGrenadeEntity>> SUN_GRENADE =
+            ENTITY_TYPES.register("sun_grenade", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.SunGrenadeEntity>of(com.emoniph.witchery.entity.SunGrenadeEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "sun_grenade"))));
+
     // ── Flying Monkey (M10) ───────────────────────────────────────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.FlyingMonkeyEntity>> FLYING_MONKEY =
@@ -185,6 +197,14 @@ public class WitcheryEntities {
                     EntityType.Builder.<com.emoniph.witchery.entity.CorpseEntity>of(com.emoniph.witchery.entity.CorpseEntity::new, MobCategory.MISC)
                             .sized(0.6F, 0.2F).clientTrackingRange(10).noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "corpse"))));
+
+    // ── Mirror World ──────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.ReflectionEntity>> REFLECTION =
+            ENTITY_TYPES.register("reflection", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.ReflectionEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(12)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "reflection"))));
 
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
@@ -245,5 +265,6 @@ public class WitcheryEntities {
         event.put(HOBGOBLIN.get(),        com.emoniph.witchery.entity.HobgoblinEntity.createAttributes().build());
         event.put(FLYING_MONKEY.get(),    com.emoniph.witchery.entity.FlyingMonkeyEntity.createAttributes().build());
         event.put(CORPSE.get(),           com.emoniph.witchery.entity.CorpseEntity.createAttributes().build());
+        event.put(REFLECTION.get(),       com.emoniph.witchery.entity.ReflectionEntity.createAttributes().build());
     }
 }

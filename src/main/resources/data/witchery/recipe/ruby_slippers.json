@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "TST",
+    "ABA"
+  ],
+  "key": {
+    "A": "witchery:attuned_stone",
+    "B": "witchery:infernal_blood",
+    "T": "witchery:golden_thread",
+    "S": "witchery:seeping_shoes"
+  },
+  "result": {
+    "id": "witchery:ruby_slippers",
+    "count": 1
+  }
+}

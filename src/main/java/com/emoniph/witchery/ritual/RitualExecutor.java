@@ -245,6 +245,14 @@ public class RitualExecutor {
                 return ActivationResult.MATCHED_FAILED;
             }
 
+            // Circle Magic does not work in the Spirit World; only Rite of Manifestation (spectral_dust) is permitted
+            if (level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                    && !ingredient.is(WitcheryItems.SPECTRAL_DUST.get())) {
+                level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.rite.wrongdimension"), false);
+                return ActivationResult.MATCHED_FAILED;
+            }
+
             if (isGlyphicTransformationChalk(ingredient)) {
                 return matchedResult(riteOfGlyphicTransformation(player, level, floorCenter, ingredient));
             }
@@ -6688,5 +6696,21 @@ public class RitualExecutor {
             level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
                     x, center.getY() + 0.5, z, 1, 0, 0.1, 0, 0.05);
         }
+    }
+
+    /**
+     * Called on server stop. Cancels all active rituals for this dimension and
+     * drops their sacrificed ingredients back into the world so they survive
+     * the final world save. Without this, long-running staged rituals would
+     * silently lose consumed resources across server restarts.
+     */
+    public static void cancelAllWithRefund(ServerLevel level) {
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.remove(level.dimension());
+        if (rituals != null) {
+            for (ActiveRitual ritual : rituals) {
+                refundRitualIngredient(level, ritual);
+            }
+        }
+        CLIMATE_CHANGE_PLANS.remove(level.dimension());
     }
 }

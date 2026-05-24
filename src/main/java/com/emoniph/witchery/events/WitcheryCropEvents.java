@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class WitcheryCropEvents {
     private static final int GRASS_SEED_CHANCE = 8;
-    private static final int TOTAL_GRASS_SEED_WEIGHT = 14;
+    private static final int TOTAL_GRASS_SEED_WEIGHT = 16;
 
     @SubscribeEvent
     public static void onBreakGrass(BlockEvent.BreakEvent event) {
@@ -60,6 +60,12 @@ public class WitcheryCropEvents {
         if (roll < 12) {
             return new ItemStack(WitcheryItems.MANDRAKE_SEEDS.get());
         }
-        return new ItemStack(WitcheryItems.SNOWBELL_SEEDS.get());
+        if (roll < 14) {
+            return new ItemStack(WitcheryItems.SNOWBELL_SEEDS.get());
+        }
+        if (roll < 15) {
+            return new ItemStack(WitcheryItems.WOLFSBANE_SEEDS.get());
+        }
+        return new ItemStack(WitcheryItems.GARLIC.get());
     }
 }

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "witchery:bone_needle"
+  ],
+  "result": {
+    "id": "witchery:taglock_kit",
+    "count": 1
+  }
+}

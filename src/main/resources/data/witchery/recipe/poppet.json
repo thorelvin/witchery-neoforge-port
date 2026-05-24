@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WSW",
+    "NST",
+    "W W"
+  ],
+  "key": {
+    "W": { "tag": "minecraft:wool" },
+    "S": "witchery:spanish_moss",
+    "N": "witchery:bone_needle",
+    "T": "minecraft:string"
+  },
+  "result": {
+    "id": "witchery:poppet",
+    "count": 1
+  }
+}
