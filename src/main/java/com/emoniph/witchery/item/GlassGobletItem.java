@@ -120,7 +120,7 @@ public class GlassGobletItem extends Item {
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return ItemUseAnimation.DRINK;
+        return full ? ItemUseAnimation.DRINK : ItemUseAnimation.BLOCK;
     }
 
     @Override
