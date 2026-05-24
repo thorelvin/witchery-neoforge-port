@@ -531,6 +531,8 @@ public class WitcheryItems {
             "brew_of_soul_anguish",
             "brew_of_soul_fear",
             "brew_of_soul_torment",
+            "contract_ownership",
+            "contract_torment",
             "silver_dust",
             "alder_boat",
             "hawthorn_boat",
