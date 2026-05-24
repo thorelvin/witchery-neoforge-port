@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.item.PoppetItem;
+import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -10,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -118,6 +122,57 @@ public class CrystalBallBlockEntity extends BlockEntity {
                 pos.getZ() + 0.5,
                 16, 0.4, 0.5, 0.4, 0.05);
         sl.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.9f, 1.2f);
+        return true;
+    }
+
+    /**
+     * Restores the old filled Taglock Kit + Crystal Ball route in practical form.
+     * The item-use path consumes altar power and starts the taglock's held scry cycle
+     * without applying the normal prediction recharge gate, matching the source hook.
+     */
+    public boolean tryScryTaglock(Player player, Level level, ItemStack taglock) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!TaglockKitItem.isFilled(taglock)) {
+            fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_unbound"));
+            return false;
+        }
+        if (!tryConsumePower(player, sl)) {
+            return false;
+        }
+
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty()) {
+            fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_missing",
+                    TaglockKitItem.getBoundName(taglock)));
+            return false;
+        }
+
+        Optional<LivingEntity> target = PoppetItem.findLivingEntity(sl.getServer(), uuid.get());
+        if (target.isEmpty() || !target.get().isAlive()) {
+            fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_missing",
+                    TaglockKitItem.getBoundName(taglock)));
+            return false;
+        }
+        LivingEntity living = target.get();
+        if (!living.level().dimension().equals(level.dimension())) {
+            fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_other_dimension",
+                    living.getDisplayName()));
+            return false;
+        }
+
+        player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_scry",
+                living.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        sl.sendParticles(ParticleTypes.PORTAL,
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + 0.8,
+                worldPosition.getZ() + 0.5,
+                32, 0.25, 0.35, 0.25, 0.2);
+        sl.sendParticles(ParticleTypes.WITCH,
+                living.getX(),
+                living.getY() + living.getBbHeight() * 0.5,
+                living.getZ(),
+                16, 0.4, 0.5, 0.4, 0.05);
+        sl.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.9f, 1.1f);
         return true;
     }
 

@@ -9,10 +9,14 @@ import com.emoniph.witchery.entity.TreefydEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -45,8 +49,76 @@ public class TaglockKitItem extends Item {
     private static final double PLAYER_TAGLOCK_BASE_FAIL_CHANCE = 0.2;
     private static final double PLAYER_TAGLOCK_NOT_CROUCHING_PENALTY = 0.2;
     private static final double PLAYER_TAGLOCK_NOT_BEHIND_PENALTY = 0.4;
+    private static final int SCRY_USE_DURATION = 1200;
+    private static final int SCRY_FEEDBACK_INTERVAL = 20;
 
     public TaglockKitItem(Properties props) { super(props); }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return isFilled(stack) ? SCRY_USE_DURATION : super.getUseDuration(stack, entity);
+    }
+
+    @Override
+    public void onUseTick(net.minecraft.world.level.Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+        if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)
+                || !(entity instanceof Player player) || !isFilled(stack)) {
+            return;
+        }
+
+        int elapsedTicks = getUseDuration(stack, entity) - remainingUseDuration;
+        if (elapsedTicks % SCRY_FEEDBACK_INTERVAL != 0) {
+            return;
+        }
+
+        Optional<UUID> uuid = getUUID(stack);
+        if (uuid.isEmpty()) {
+            player.stopUsingItem();
+            return;
+        }
+
+        Optional<LivingEntity> target = PoppetItem.findLivingEntity(serverLevel.getServer(), uuid.get());
+        if (target.isEmpty() || !target.get().isAlive()) {
+            if (elapsedTicks == 0) {
+                player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_missing",
+                        getBoundName(stack)).withStyle(ChatFormatting.DARK_PURPLE), false);
+            }
+            player.stopUsingItem();
+            return;
+        }
+
+        LivingEntity living = target.get();
+        if (!living.level().dimension().equals(level.dimension())) {
+            if (elapsedTicks == 0) {
+                player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_other_dimension",
+                        living.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE), false);
+            }
+            player.stopUsingItem();
+            return;
+        }
+
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                living.getX(),
+                living.getY() + living.getBbHeight() * 0.5,
+                living.getZ(),
+                6, 0.35, 0.4, 0.35, 0.02);
+        if (elapsedTicks == 0) {
+            serverLevel.playSound(null, living.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.PLAYERS, 0.4f, 1.35f);
+        }
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, net.minecraft.world.level.Level level, LivingEntity entity, int timeCharged) {
+        if (!level.isClientSide() && entity instanceof Player player && isFilled(stack)) {
+            int elapsedTicks = getUseDuration(stack, entity) - timeCharged;
+            if (elapsedTicks > 0) {
+                player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_fades")
+                        .withStyle(ChatFormatting.DARK_PURPLE), true);
+            }
+        }
+        return true;
+    }
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity target, InteractionHand hand) {

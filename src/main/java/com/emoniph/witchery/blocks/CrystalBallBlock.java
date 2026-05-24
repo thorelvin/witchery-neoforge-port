@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.CrystalBallBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -87,14 +88,19 @@ public class CrystalBallBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(stack.getItem() instanceof WaystoneItem) || !WaystoneItem.isBound(stack)) {
+        boolean boundWaystone = stack.getItem() instanceof WaystoneItem && WaystoneItem.isBound(stack);
+        boolean taglockKit = stack.getItem() instanceof TaglockKitItem;
+        if (!boundWaystone && !taglockKit) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         if (level.getBlockEntity(pos) instanceof CrystalBallBlockEntity be) {
-            if (be.tryScryWaystone(player, level, stack)) {
+            boolean started = boundWaystone
+                    ? be.tryScryWaystone(player, level, stack)
+                    : be.tryScryTaglock(player, level, stack);
+            if (started) {
                 player.startUsingItem(hand);
             }
         }
