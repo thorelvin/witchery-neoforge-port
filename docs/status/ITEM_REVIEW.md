@@ -285,6 +285,8 @@ Merged parity-scan TODO notes for promoted groups and remaining placeholders:
 | Exact Resurrected equipment aliases | `witchery:witches_robes`, `witchery:icy_slippers`, `witchery:hunter_hat`, `witchery:hunter_coat`, `witchery:silvered_hunter_hat`, `witchery:silvered_hunter_coat`, `witchery:silvered_hunter_leggings`, `witchery:silvered_hunter_boots`, `witchery:dawn_hunter_hat`, `witchery:dawn_hunter_coat`, `witchery:dawn_hunter_leggings`, `witchery:dawn_hunter_boots`, `witchery:gulgs_grudle` |
 | Exact Resurrected fume and ingredient aliases | `witchery:soft_clay_jar`, `witchery:diamond_vapor`, `witchery:vitriol_oil`, `witchery:horned_one_exhale`, `witchery:goddess_breath`, `witchery:goddess_tear`, `witchery:rebirth_hint`, `witchery:magic_whiff`, `witchery:misfortune_reek`, `witchery:purity_odor`, `witchery:luck_drop`, `witchery:charged_attuned_stone`, `witchery:belladonna_flower`, `witchery:snowbell_flower`, `witchery:dog_tongue`, `witchery:odd_porkchop`, `witchery:cooked_odd_porkchop`, `witchery:necromantic_stone`, `witchery:artichoke_globe`, `witchery:frogs_toe`, `witchery:sleeping_apple`, `witchery:fanciful_thinking_charm`, `witchery:subdued_village_spirit`, `witchery:pentacle`, `witchery:golden_heart` |
 
+Visual note: the Resurrected brew alias models that still referenced legacy `items/potion_bottle_splash` or `items/potion_bottle_drinkable` now use modern `minecraft:item/splash_potion` or `minecraft:item/potion` bottle layers, covering the Vines/Webs/Thorns through Sleeping brew alias set plus the four demon-soul brew aliases.
+
 ---
 
 ## Mob Review
