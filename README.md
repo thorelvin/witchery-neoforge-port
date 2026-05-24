@@ -35,9 +35,10 @@ Substantial restored or in-progress systems include:
 
 Important remaining work includes:
 
-- `221` legacy placeholder items are still intentionally inert TODO markers, even though their IDs/models are now visible and tracked.
-- Some systems marked "Done" in status docs still need in-game verification, especially visual models, trap behavior, Torment/Mirror World fresh-dimension checks, and armor/equipment feel.
-- Custom Brew parity is still an evolving area: dispersal tiers and scaling exist in the active work, but deeper original modifier behavior should remain under review.
+- `195` legacy placeholder items are still intentionally inert TODO markers, even though their IDs/models are now visible and tracked.
+- Some systems marked "Done" in status docs are implementation slices rather than full old-Witchery parity, especially transformations, machines, custom brews, Torment/Mirror World fresh-dimension checks, and armor/equipment feel.
+- Custom Brew parity is still an evolving area: Foulness/Foaming/Poison tier scaling exists, but original dynamic cauldron action composition, generic brew containers, and moving brew dispersals remain open.
+- The latest parity-scan backlog is merged into [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md), with status corrections reflected in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs careful QA around room generation, reflection behavior, stale generated chunks, and player-skin/equipment behavior.
 - Village additions such as bookshops, guards, and walls remain deferred.
 - Ritual execution is powerful but still carries old-queue/refund/edge-case parity risk.

@@ -16,6 +16,10 @@ Current target:
 
 ## Completed milestones
 
+### 2026-05-24 parity-scan correction
+
+Some early milestones below are historical implementation slices, not current full-parity claims. In particular, M22 Vampirism should be read as the current boolean/blood/sun/bite foundation; the old Creatures of the Night Glass Goblet -> Elle -> Lilith chain, 10 vampire levels, Sun Collector/Grenade progression, Blood Crucible/Blood Power, Resist Sun, Zombie Respect, and old cure/quest-book loops remain backlog. M14/M15/M11 machine notes are likewise historical foundations; Spinning Wheel recipe exactness, Distillery/Kettle/Oven sided automation, Witches' Oven allowlist/byproducts/funnels, and Silver Vat smelt-byproduct storage remain open parity work. The merged action list now lives in `docs/status/NEXT_TASKS.md`.
+
 - [x] **M1** — NeoForge project shell (mod loads, logger, registries skeleton)
 - [x] **M2** — Registries and creative tab (all blocks/items registered, lang, textures)
 - [x] **M2b** — All simple block JSON models and item models (flat icons)
@@ -98,6 +102,7 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 - All of the above apply to **both** string-literal keys and constant-variable keys. The regex-based fix script only patches string literals — find constant usages manually (e.g. `tag.getString(TAG_NAME)` → `tag.getStringOr(TAG_NAME, "")`).
 - `TagParser.parseTag(String)` → `TagParser.parseCompoundFully(String)` (throws `CommandSyntaxException`).
 - `ListTag.getString(int)` → `ListTag.getStringOr(int, "")`.
+- `CompoundTag.getLong(String)` → returns `Optional<Long>`. Use `.orElse(0L)` or store as string. The `putLong/getLong` roundtrip requires `cd.getLong("key").orElse(0L)` on read.
 
 **ValueInput / ValueOutput (block entity NBT)**
 - `ValueOutput.putUUID` and `ValueInput.getUUID/hasUUID` **do not exist** in this API. Store UUIDs as strings: `tag.putString("key", uuid.toString())` / `UUID.fromString(tag.getStringOr("key", ""))`.
@@ -114,7 +119,7 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 - `Level.isDay()` / `isNight()` removed. Use `getDayTime() % 24000 < 12000` (day) or `>= 12000` (night).
 - `Level.getMoonPhase()` removed. Use `(getDayTime() / 24000L) % 8L == 0` for full moon.
 - `ServerLevel.getMoonBrightness()` → `getMoonBrightness(BlockPos)`. Or use the moon-phase calculation above.
-- `LevelHeightAccessor.getMinBuildHeight()` → `getMinY()`.
+- `LevelHeightAccessor.getMinBuildHeight()` → `getMinY()`. `getMaxBuildHeight()` → `getMaxY()`. Both old names are absent from bytecode entirely.
 
 **Recipe system**
 - `RecipeManager.getAllRecipesFor(RecipeType)` removed. Use `level.recipeAccess().recipeMap().byType(type)` returns `Collection<RecipeHolder<T>>`.
@@ -146,6 +151,25 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 - `ChunkGenerator.applyCarvers` no longer has a `GenerationStep` 7th parameter. Signature is now `(WorldGenRegion, long, RandomState, BiomeManager, StructureManager, ChunkAccess)`.
 - `fillFromNoise(Blender, RandomState, StructureManager, ChunkAccess) → CompletableFuture<ChunkAccess>` is now abstract and must be implemented (return `CompletableFuture.completedFuture(chunk)` for flat/maze generators).
 - `NoiseColumn` moved to `net.minecraft.world.level.NoiseColumn` (was `world.level.chunk.NoiseColumn`).
+
+**SavedData (level-persistent data)**
+- `SavedData.Factory<T>` is **gone**. The new pattern uses `SavedDataType<T extends SavedData>`:
+  ```java
+  public static final Codec<MyData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+      Codec.INT.fieldOf("key").forGetter(d -> d.field)
+  ).apply(inst, MyData::fromCodec));
+  public static final SavedDataType<MyData> TYPE = new SavedDataType<>(
+      "save_id", MyData::new, CODEC, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
+  // Retrieve: overworld.getDataStorage().computeIfAbsent(TYPE)
+  ```
+- `SavedData` only has `setDirty()` / `isDirty()`. No `save()`/`load()` — serialization is driven by the Codec in `SavedDataType`.
+
+**Entity position / rotation**
+- `Entity.moveTo(double, double, double, float, float)` does **not** exist in bytecode. The correct methods are:
+  - `snapTo(double, double, double)` — position only
+  - `snapTo(double, double, double, float, float)` — position + yaw + pitch  ← **use this**
+  - `snapTo(BlockPos, float, float)`, `snapTo(Vec3)`, `snapTo(Vec3, float, float)`
+- Do NOT call `moveTo(double,double,double,float,float)` or `moveTo(double,double,double)` — neither exists in the compiled class.
 
 **Entity renderers (simple)**
 - All `MobRenderer` subclasses must implement `createRenderState()`. If using `LivingEntityRenderState`, override: `public LivingEntityRenderState createRenderState() { return new LivingEntityRenderState(); }`.
@@ -448,3 +472,54 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 - `getParentModel().setAllVisible(false)` hides player body; called each frame with one-frame delay before effect takes hold
 - Werewolf buffs now always apply when `isWerewolf()=true` — removed full-moon gate to match the always-on visual
 - `WitcheryClientEvents` (game bus, `Dist.CLIENT`) resets `setAllVisible(true)` on respawn/dimension change for non-werewolf players
+
+### 2026-05-23 — PlayerSkin API and humanoid NPC renderer (NeoForge 21.11.42)
+
+**PlayerSkin package moved**
+- In 21.11.42 `PlayerSkin` is at `net.minecraft.world.entity.player.PlayerSkin`, NOT `net.minecraft.client.resources.PlayerSkin` (the old 21.1.x location). Imports from the client package will fail to resolve.
+
+**PlayerSkin texture accessor changed**
+- Old (21.1.x): `PlayerSkin.texture()` → `ResourceLocation`
+- New (21.11.42): `PlayerSkin.body()` → `ClientAsset$Texture`; then `.texturePath()` → `Identifier`
+- Do NOT call `.texture()` — it does not exist in the compiled 21.11.42 jar.
+
+**SkinManager lookup changed**
+- Old: `SkinManager.lookupInsecure(GameProfile)` — does not exist in 21.11.42
+- New: `SkinManager.createLookup(GameProfile, boolean)` → `Supplier<PlayerSkin>`; call `.get()` then `.body().texturePath()`
+- The boolean controls whether to allow insecure (non-HTTPS) lookups; pass `false` for the cached/default behavior.
+
+**Full skin resolution pattern for an NPC that mirrors a player's skin:**
+```java
+private static Identifier resolveSkin(ReflectionEntity entity) {
+    UUID ownerUUID = entity.getOwnerUUID();
+    if (ownerUUID == null) return DefaultPlayerSkin.getDefaultTexture();
+    Minecraft mc = Minecraft.getInstance();
+    if (mc.level != null) {
+        Player player = mc.level.getPlayerByUUID(ownerUUID);
+        if (player instanceof AbstractClientPlayer acp) {
+            return acp.getSkin().body().texturePath();
+        }
+    }
+    String name = entity.getOwnerName();
+    GameProfile profile = new GameProfile(ownerUUID, name.isEmpty() ? null : name);
+    return mc.getSkinManager().createLookup(profile, false).get().body().texturePath();
+}
+```
+
+**HumanoidMobRenderer for humanoid NPCs**
+- Use `HumanoidMobRenderer<T extends Mob, S extends HumanoidRenderState, M extends HumanoidModel<S>>` as the base class for any NPC that should render with standard humanoid animation and accept a player skin texture.
+- Use `MobRenderer` + `LivingEntityRenderState` only for non-humanoid mobs; it will not correctly animate arms/legs for player-skin UV layouts.
+
+**ModelLayers.PLAYER for player-skin-compatible models**
+- `ctx.bakeLayer(ModelLayers.PLAYER)` produces a `ModelPart` built to the exact 64×64 player skin UV layout.
+- Using any other model (e.g. `WitchHunterModel`, `ZombieModel`) with a player skin texture will produce UV mismatches and visible head/body artifacts even if the mesh geometry looks roughly correct.
+
+**Verifying compiled API with javap**
+- When unsure which API variant is live in the current NeoForge jar, run:
+  `javap -cp ./build/moddev/artifacts/neoforge-21.11.42-merged.jar net.minecraft.client.resources.SkinManager`
+- Use `neoforge-21.11.42-merged.jar`, not `neoforge-21.1.229.jar` — method signatures differ between these two jars.
+
+**Stale dimension chunks are not regenerated**
+- If a custom chunk generator changes its structure (e.g. Mirror World room layout), previously generated and saved chunks will NOT be regenerated on the next launch. Old saved chunk data is loaded from disk as-is.
+- To force regeneration: delete `run/saves/<world>/dimensions/<modid>/<dimension>/` before launching, then trigger any block/BE state that was tied to the old chunk (e.g. break and replace the mirror block to clear its room assignment).
+- This applies to all custom dimensions (Mirror World, Torment, Spirit World). Always delete the dimension folder and reset relevant block entities when testing chunk-structure changes.

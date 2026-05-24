@@ -28,7 +28,12 @@ bin/
 
 ### VS Code ###
 .vscode/
+
+### Claude / local agent notes ###
 .claude/
+CLAUDE.md
+CLAUDE.local.md
+CLAUDE.*.md
 
 ### Mac OS ###
 .DS_Store

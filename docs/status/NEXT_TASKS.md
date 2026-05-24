@@ -1,17 +1,45 @@
 # Next Tasks — Witchery NeoForge Port
 
-Last reconciled: 2026-05-23 (Vampire clothing player mesmerise slice)
+Last reconciled: 2026-05-24 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented; VampiricPoppetItem two-taglock fix; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added)
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
 
 ## Current plan
 
-- Verify the promoted Vampire clothing lethal-fire save, drink boost, villager/player mesmerise, set-bonus tooltips, and exact alias armor pieces in-game against sunlight/fire/lava damage, feeding, and player-target use.
-- Next highest-value vampire equipment work is armor model polish, full old ability-selection/timing/paralysis parity, Village Guard mesmerise parity, or old level-gate refinement.
-- Keep the remaining 221 placeholder items inert until each family gets an explicit promotion or alias decision.
+- Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
+- Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
+- Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
+
+## Parity scan backlog merged 2026-05-24
+
+The former standalone scan findings have been condensed here so the main plan carries the current repo truth. This section is now the actionable backlog.
+
+### Status corrections to carry forward
+
+| Area | Current truth | Follow-up |
+|---|---|---|
+| Custom Brew system | Partial. Foulness/Foaming/Poison tier/dispersal slice is real, but old dynamic cauldron action composition is not. | Add composed brew action registry, generic brew bottle/bucket/bag support, moving gas/liquid brew behavior, Endless Water/Combustion, and the missing old action roster. |
+| Vampirism | Partial. Current boolean vampire state, blood drain, sunlight, bite, mesmerise, coffin sleep, and clothing hooks are useful slices, not the old 10-level chain. | Add level storage/caps, Glass Goblet -> Elle/Lilith acquisition, Observations/Torn Page loop, cure rite, Sun Collector/Grenade, Blood Crucible/Blood Power, Resist Sun, Zombie Respect, and warm/Lilith blood semantics. |
+| Lycanthropy | Partial. Current werewolf render/buffs/mastery/silver hooks are not the old Wolf Altar questline. | Add 10-level Wolf Altar quests, Moon Charm/form selection, Horn of the Hunt/Huntsman step, Wolfsbane/silver tuning, and full-moon Wolftrap sheep curse-spread behavior. |
+| Machines | Partial despite several "Done" rows. Blocks, GUIs, and recipe slices exist, but exact automation/source behavior still has gaps. | Prioritize Spinning Wheel recipe exactness, Witches' Oven allowlist/byproducts/funnels, Kettle bottle automation/bonus rolls, Distillery sided automation, and Silver Vat stored byproduct behavior. |
+| Mirror World and Torment | Implemented/verify. Mirror World portal/room loop and Torment maze are live, but dimension chunks and stale docs can mislead QA. | Use fresh/deleted dimension folders for QA; reconcile Torment chamber scaffolding and Refilling Chest loot/break behavior with repo truth. |
+
+### High-value implementation backlog from the scan
+
+| Family | Next bounded tasks |
+|---|---|
+| Vampire counterplay and quest chain | ✅ Garlic/garland done. ✅ Sun Collector block (6000-tick sunlight charge), Charged Quartz Sphere item, Sun Grenade throwable done. Next: Glass Goblet blood capture, Observations/Torn Page/Bookshop loot, Lilith/Elle chain, Blood Crucible block/BE, and Blood Power charges. |
+| Transformation counterplay | Tie Wooden Stake, garlic, Sun Grenade, Hunter Dawn armor, Weaken Vampires brews, Silver Sword/Bolt, Silvered Hunter armor, Wolfsbane, Moon Charm, and Wolftrap into explicit vampire/werewolf QA rows. |
+| Poppets and taglocks | ✅ Taglock+poppet recipes done. ✅ Empty Taglock Kit detection fixed. ✅ Two-taglock Vampiric Poppet + PoppetEvents redirect bug fixed. ✅ Voodoo throw/needle/lava/drowning done. ✅ WitchHunter poppet disruption done. Remaining: verify Poppet Shelf Compass (already registered), verify mob-taglock poppet binding works end-to-end in-game. |
+| Scrying and waystones | Split Crystal Ball block/cooldown from real prediction fulfillment; add Taglock/Waystone scrying camera modes, Player Compass binding/tracking, and a canonical blank/bound/blooded Waystone identity decision. |
+| Infusion, coven, and familiars | Keep infusion charge/rite foundation, but add Witches Hand active ability families, Mystic Branch symbol magic, infernal enthrall/sacrifice creature powers, coven recruitment/quest roster, Seer Stone own-coven support, and missing familiar edge behaviors. |
+| Hobgoblins and patrons | Split merchant/hut foundation from old labor/village behavior; add real mining/gathering/breeding/raid behavior, Koboldite Pickaxe miner bonuses, bound Patron worship, Gulg/Mog bosses, and Gulg/Mog reward gear mechanics. |
+| Villages, structures, and entities | Expand "Village additions" into Bookshop, Guard Tower/Town Keep, Town Wall, Village Guard, mayor/cot/vampire feeding support, Stone/Coven Circle, and Straw Man. Add missing boss/NPC rows for Baba Yaga, Leonard/Lost Souls, Gulg/Mog, vampire/werewolf/were-villager mobs, Minedrake, summoned undead, and illusion mobs. |
+| Machine exactness | Spinning Wheel: Hay Bale golden thread route, 8-string web route, sided automation. Oven/Funnel: reject ore smelting, restore food/wood Foul Fume, top funnel speed-only, filtered funnel block. Kettle/Distillery: sided automation, bottle/jar rules, altar-source decisions. Silver Vat: real stored Silver Deposits/Dust byproduct BE. |
+| Torment/chest polish | Decide whether Refilling Chest intentionally uses vanilla simple-dungeon loot or the custom `witchery:chests/torment` table, then align docs/code. Decide whether unbreakable/no-drop is intentional anti-cheese polish or should return to old high-resistance chest behavior. |
 
 ## Priority order for next session
 
@@ -38,52 +66,82 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
 | `leaping_lily` | Custom lily visuals restored; needs in-game verification only | Low |
-| Legacy placeholder items | 221 source/wiki/decompiled item IDs remain registered and visible as inert creative-tab placeholders after `Biting Belt`, `Bark Belt`, `Beartrap`, `Wolftrap`, `Blood-stained Wool`, `Woven Cruor`, the primary Vampire clothing set, and the exact Resurrected Vampire clothing aliases were promoted: the remaining original 117 missing visible IDs plus 104 exact 1.12 Resurrected registry aliases that need remap/TODO decisions. All 221 remaining placeholders point at non-shared source/wiki-backed item models or clear alias models; none still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
+| Legacy placeholder items | 195 source/wiki/decompiled item IDs remain registered and visible as inert creative-tab placeholders after the belts/traps/vampire clothing/contracts/wearables/diviners/garlic/dawn-gear/custom-brew promotions. All remaining placeholders point at non-shared source/wiki-backed item models or clear alias models; none still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 
 ---
 
-### 1. Spirit World — remaining spec gaps (medium, ~2 hr)
+### 1. Spirit World — ✅ Complete (2026-05-23)
 
-Items from spec not yet implemented:
-
-| Gap | Spec ref | Status | Notes |
-|---|---|---|---|
-| **Health/hunger save-restore** | §8 | ✅ Done | Saved in `SpiritWorldState` sub-codec; restored on exit |
-| **Demonic Nightmare events** | §13 | ✅ Done | Every 100t: 50% SmallFireball, 65% LargeFireball, 75% demon spawn (if <10 hostiles, <2 demons) |
-| **Corpse entity** | §9 | ✅ Done | `witchery:corpse` (MISC mob, sleeping pose, visible humanoid sleeping-body renderer) spawns on SW entry, removed on exit, killing it forces player back; UUID tracked in `SpiritWorldState` |
-| **Flowing Spirit entity effects** | §21 | Partial | Regen/weakness, disturbed-cotton cleansing, Nightmare defense suppression, and `Charm of Disrupted Dreams` armor-strip protection are back; remaining work is in-game feel verification rather than missing item coverage |
-| **Spirit Portal activation** | §22 | ✅ Done | Snow-frame portal now opens again from a Flowing Spirit source in the Spirit World and is used by the restored manifestation loop |
-| **Rite of Manifestation ghost** | §23 | Partial | The rite now grants 2.5 min + 25s per coven witch of manifestation time again, Spirit Portal can spend that time to manifest the player into the Overworld, timed return and Icy Needle recall are back, and manifested players now have a first-pass translucent ghost layer; remaining work is in-game feel/style polish |
+All spec gaps are closed:
+- Vegetation worldgen connected: grass, tall grass, mushrooms, dead bush, oak trees, wispy cotton, and disturbed cotton are now placed in the Spirit World biome via the VEGETAL_DECORATION step (the placed features existed but the biome features arrays were empty)
+- Ghost layer upgraded to `LightTexture.FULL_BRIGHT` so manifested players glow in darkness
+- Circle Magic is now blocked in the Spirit World; only Rite of Manifestation (spectral_dust on otherwhere circle) is permitted — matches original Witchery spec
+- All other §1-§23 spec items were already done (see FEATURE_MATRIX.md)
 
 ---
 
-### 2. Mirror World dimension (large, ~4–6 hr)
+### 2. Mirror World dimension - implemented, needs fresh-world QA/reconciliation
 
 Original: `hasNoSky=true`, permanent dark, dark blue fog `(0, 0.03, 0.1)`, no rain/lightning.
-Reflected overworld terrain with hostile player-clone inhabitants.
-- **Dimension type:** `effects: the_end`, `fixed_time: 18000`, `has_skylight: false`, `ambient_light: 0.1`
-- **Biome:** fog ~`RGB(0, 8, 26)`, sky very dark
-- **Entry:** Mirror block ritual
-- **Current foundation:** dimension key/data now exists, `/witchery mirror` can enter it for QA, landing uses the player's current X/Z with a safe surface scan, the client now forces the dark-blue fog tone, and server tick enforcement now keeps the realm clear of rain and thunder
-- **Next real steps:** mirrored terrain rules, ingress block/ritual, and hostile player-clone inhabitants
+Current repo truth has the portal-room loop landed: Mirror block, Mirror Wall, room chunk generator, room SavedData, entry/exit teleport, Reflection guardian, and owner-skin renderer.
+- **QA:** test in a fresh world or delete `run/client/saves/<world>/dimensions/witchery/mirror_world/` before judging room generation.
+- **Follow-up:** survival/ritual ingress wording, Duplication Grenade mirror charging, Reflection behavior polish, and stale-chunk/player-skin edge cases.
 
 ---
 
-### 3. Custom Brew system (very large, separate sprint)
+### 3. Custom Brew system - partial
 
-5-tier capacity/dispersal; unlocks high-level brew effects.
-**Approach:** capacity + dispersal tiers first (liquid/splash/gas), skip modifier/power scaling v1.
+The Foulness/Foaming/Poison tier slice is implemented across liquid/splash/gas variants with `witchery:brew_power`, thrown brew sync, and scalable effects. That is useful progress, but not the old full custom brew system.
+
+Open parity:
+- Dynamic cauldron action composition and serializers/effects.
+- Generic brew bottle, splash, lingering, bucket/fluid, Brew Bag, Endless Water, and Combustion containers.
+- Moving gas/liquid brew block or a documented modern replacement.
+- Many old action effects such as tree growth, blight, transpose, undead/insect/demon bane, drain magic, steal buffs, and summon Leonard.
 
 ---
 
-### 4a. Debug command: add `spectral` to `/witchery familiar` suggestions — Done
+### 4a. Witchery against villagers — goal
+
+**Goal:** make villagers meaningful targets across all Witchery systems — taglocks, poppets, vampire feeding, ritual sacrifice, and werewolf infection.
+
+This goal is not about one file; it is a cross-cutting vertical slice. Track each sub-task below and tick it off when done.
+
+#### Sub-tasks
+
+| Sub-task | Status | Notes |
+|---|---|---|
+| Taglock Kit on villagers | Needs verify | `interactLivingEntity` in TaglockKitItem uses `LivingEntity` path for mobs; should already bind villager UUID + entity type. Test: right-click villager with empty kit; verify kit shows villager name/UUID. |
+| Voodoo Poppet bound to villager | Needs verify | `VoodooPoppetItem.resolveBoundEntity` calls `ServerLevel.getEntity(UUID)` for mob-bound poppets. Test: bind poppet to villager, use throw/needle/lava, verify villager takes effect. |
+| VampiricPoppetItem — villager as victim | Needs verify | `interactLivingEntity` accepts any LivingEntity as victim target; villagers are LivingEntity. Test: bind source to self, bind victim to villager, take damage, verify villager receives redirect. |
+| Vampiric blood feeding from villagers | Not started | Vampires currently bite only players. Add sneak-right-click on Villager: spend 25 blood to mesmerise 5 s then drain 25–50 blood at mesmerise end. Gate by vampire state and ≥ 25 blood cost. Uses existing mesmerise lang key. |
+| Ritual sacrifice — villager offering | Needs verify | Hell on Earth, Wither summoning, and Demon summoning already specify `VillagerEntity` sacrifice. Test each rite with a caged villager on-site. |
+| Curse rite targeting villager via taglock | Needs verify | `Curse Creature` resolves taglock UUID via `ServerLevel.getEntity`. Test: fill taglock from villager, place it in medium infernal circle, verify villager receives Wither/Slowness/Weakness. |
+| Blight villager zombification | Needs verify | Blight rite's expand loop zombifies villagers. Test: cast medium infernal Blight near a village, verify villagers turn to zombie villagers as the annulus grows. |
+| Werewolf infection of villagers | Not started | When a werewolf player kills a villager on a full moon, small chance (10%) to convert them into a Were-Villager hostile mob (zombie villager skin + wolf head overlay as a placeholder). Blocked on Were-Villager entity/renderer — track as separate entity task if scope grows. |
+| Player Compass — scry to named villager | Deferred | Player Compass only binds to players currently. Villager support would need a non-player name resolution path. Defer unless requested. |
+
+#### Why this matters
+
+Vanilla villages are a rich social target that the original Witchery treated as a living ecosystem: vampires fed from villagers, witches cursed them, werewolves infected them, and ritual casters sacrificed them. Making the current port respect that ecosystem makes the open-world feel of Witchery land properly — players can run a coven near a village and use it both as a resource and a risk.
+
+#### Suggested implementation order
+
+1. Verify the three "needs verify" rows first (no code, just QA) — they may already work.
+2. Implement vampiric blood feeding from villagers (small, contained change to vampire bite handler).
+3. Implement werewolf villager infection (full moon kill → zombie villager placeholder) as a small `LivingDeathEvent` hook.
+4. Were-Villager mob is a separate larger entity task; add it to the entities backlog if requested.
+
+---
+
+### 4b. Debug command: add `spectral` to `/witchery familiar` suggestions — Done
 
 `"spectral"` added to `FAMILIAR_TYPES` suggestions. `setFamiliar` handler now accepts `owl`, `cat`, `toad`, and `spectral` — stores the type via `setFamiliarType`, then calls `FamiliarHelper.restoreBoundFamiliar` to spawn the entity near the player. `"none"` still clears. Unknown types get an error message listing valid options.
 
 ---
 
-### 4b. Small code quality items (deferred — after parity complete)
+### 4c. Small code quality items (deferred — after parity complete)
 
 These are individually small but accumulate maintenance debt. **Do not action until all major parity work (Mirror World, Custom Brew, Spirit World gaps) is stable** — they carry non-zero risk of altering observable behavior mid-sprint.
 
@@ -94,7 +152,7 @@ These are individually small but accumulate maintenance debt. **Do not action un
 
 ---
 
-### 4c. RitualExecutor decomposition (deferred — after parity complete)
+### 4d. RitualExecutor decomposition (deferred — after parity complete)
 
 **Do not start until Mirror World, Custom Brew, and all open ritual-parity bugs are closed.** Trigger-order changes in this file can silently break which rite fires; doing it mid-parity-sprint is high risk.
 
@@ -118,7 +176,7 @@ High-value player-discovery gaps to close in the in-game guide:
 - **Treefyd seed bridge** - closed. `Treefyd Seeds` are now restored as a real crafted item, can once more be planted on grass to raise an owned Treefyd, and now have a dedicated Primer page instead of being left implied.
 - **Tool/familiar identity gaps** - `Mystic Branch`, `Necromantic Stone`, `Treefyd Seeds`, and `Spectral Familiar` now all have truthful Primer coverage for their current port roles; next guidebook value is more in equipment/completeness than in blocked progression identity pages.
 - **Equipment/completeness follow-up** - `Beartrap` / `Wolftrap` usage coverage, the explicit `Wicker Man` pattern/layout, first-pass Vampire clothing recipe/armor/acquisition coverage, the exact Resurrected Vampire clothing alias family, first drink-boost, mesmerise, and lethal-fire clothing set-bonus hooks, and source-style set-bonus tooltip lines are now in; remaining high-value equipment polish is armor model/level-gate polish plus full old ability-selection/paralysis parity.
-- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 221 remaining inert placeholder items, including 104 exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: wearables/charms, bolts/contracts, hobgoblin rewards, custom-brew derivatives, block-like items, or exact-alias remaps.
+- **Legacy placeholder follow-up** - `ITEM_REVIEW.md` now has a grouped TODO roster for the 195 remaining inert placeholder items, including exact 1.12 Resurrected alias IDs that no longer silently disappear. Highest-value follow-up is to pick one family at a time: charms, bolts, hobgoblin rewards, custom-brew containers, block-like items, or exact-alias remaps.
 
 ---
 
@@ -189,6 +247,41 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 
 ## Completed this session ✅
 
+### Sun Collector chain + VampiricPoppet fixes (2026-05-24)
+
+- **SunCollectorBlock + SunCollectorBlockEntity** promoted from legacy placeholder: BaseEntityBlock with server-ticking charge loop. Right-click with Quartz Sphere inserts it; empty right-click retrieves; drops stored item on break. Charges during daytime (sky access, no rain, dayTime < 13000) at 1 tick/game-tick; after 6000 ticks in sunlight outputs Charged Quartz Sphere.
+- **charged_quartz_sphere** new item (foil enchant glow). Item model/assets added.
+- **Sun Grenade recipe** updated: 4 gold nuggets + 1 Charged Quartz Sphere → 2 grenades. Full chain: Quartz Sphere → Sun Collector (6000 daylight ticks) → Charged Quartz Sphere → Sun Grenade.
+- **Sun Collector recipe** added: Quartz Sphere center + glass + quartz surround.
+- **VampiricPoppetItem** fully rewritten with two-taglock semantics (source = witch protected, victim = damage absorber). `PoppetEvents.onVampiricRedirect` was broken — `matchesBound` found poppets where TAG_UUID == damaged player, then looked up that same UUID and bailed because target==player. Fixed: now finds poppets where TAG_UUID == damaged player (source match), then redirects to TAG_VICTIM_UUID.
+- **PlayerCompassItem** promoted: right-click player → attuned; right-click air → shows 8-point compass direction + block distance. Offline/other-dimension messages. Shapeless recipe: compass + taglock_kit.
+- **WitchHunter poppet disruption** added to PoppetEvents: 30% chance on WitchHunterEntity hit to destroy a bound ProtectionPoppetItem from inventory or shelf.
+- Placeholder count: 195 → 192.
+- BUILD SUCCESSFUL.
+
+---
+
+### Demonic Contract promotion (2026-05-24)
+
+- **5 Flame Imp contract subtypes** promoted from LEGACY_PLACEHOLDER_ITEMS to real `DemonicContractItem` registrations: `contract_blaze` (Living Flame), `contract_resist_fire` (Fiery Tolerance), `contract_evaporate` (Evaporation), `contract_fiery_touch` (Fiery Touch), `contract_smelting` (Melting Touch).
+- **2 legacy alias names** removed from LEGACY_PLACEHOLDER_ITEMS without new registrations: `contract_ownership` (maps to existing `demonic_contract`) and `contract_torment` (maps to existing `torment_scroll`).
+- **5 shapeless recipe JSONs** created: `contract_blaze.json` (demonic_contract + blaze_rod + hint_of_rebirth), `contract_resist_fire.json` (demonic_contract + blaze_powder), `contract_evaporate.json` (demonic_contract + blaze_rod + magma_cream), `contract_fiery_touch.json` (demonic_contract + blaze_rod + ember_moss), `contract_smelting.json` (demonic_contract + lava_bucket). Source: decompiled WitcheryRecipes.java cross-referenced with wiki (fandom field name decode: field_151065_br=blaze_powder, field_151072_bj=blaze_rod, field_151064_bs=magma_cream, field_151129_at=lava_bucket).
+- **Lang names** updated: `(Placeholder)` suffix removed; items now show as "Living Flame", "Fiery Tolerance", "Evaporation", "Fiery Touch", "Melting Touch". `contract_ownership`/`contract_torment` lang keys also removed.
+- **Creative tab** updated: 5 new contract items appear after `demonic_contract`.
+- Placeholder count: 214 → 207 (7 removed from LEGACY_PLACEHOLDER_ITEMS).
+
+### Armor promotion + mechanics slice (2026-05-24)
+
+- **Hunter armor** promoted from plain Item to wearable LEATHER-tier armor (HELMET/CHESTPLATE/LEGGINGS/BOOTS). Recipes (all Impregnated Leather) added. Fixes `isWearingWitchHunterArmor` in RitualExecutor which requires `getItemBySlot` to work.
+- **Witch outfit** promoted: `witches_hat`, `witches_robe`, `witches_shoes` are now wearable LEATHER-tier. Recipes added (Impregnated Leather + Golden Thread + Creeper Heart/Gold Ingot/Frozen Heart set).
+- **Deaths outfit** promoted: `deaths_hood`, `deaths_robe`, `deaths_shoes` are now wearable DIAMOND-tier. Matches original IRON-material with DIAMOND protection intent.
+- **Deaths Hood tick effect** added: every 20 ticks on server, if player wears Deaths Hood, raytrace entities up to 16 blocks; if hit LivingEntity without Slowness, apply Slowness III for 3 seconds. Wired into `WitcheryPlayerEvents.onPlayerTick`.
+- **Diviner items** implemented: `DivinerItem` class (bow-animation hold-to-use, scans downward one block per tick, signals ENCHANTED_HIT particles on find or SMOKE on bedrock). `water_diviner` and `lava_diviner` promoted from LEGACY_PLACEHOLDER_ITEMS to real items. Recipes added.
+- **Wearable outfit promotion** (5 items): `babas_hat` (LEATHER helmet), `necromancer_robes` (LEATHER chestplate), `ice_slippers` (LEATHER boots), `seeping_shoes` (LEATHER boots), `ruby_slippers` (LEATHER boots). Removed from LEGACY_PLACEHOLDER_ITEMS.
+- **Ruby Slippers mechanic**: `RubySlippersItem` class. Player types "there's no place like home" in chat while wearing Ruby Slippers → teleports to respawn position (or world spawn fallback). 30-minute cooldown tracked per UUID. Chat hook in `WitcheryPlayerEvents.onServerChat`. Witch outfit `(Placeholder)` lang suffix removed for all seven promoted items.
+- **Recipes added**: `necromancer_robes.json` (Impregnated Leather + Golden Thread + Necro Stone), `ice_slippers.json` (same pattern as original ICY_SLIPPERS), `seeping_shoes.json` (Impregnated Leather + Golden Thread + Witch Hand + Redstone Soup + Clay Ball), `ruby_slippers.json` (Seeping Shoes + Attuned Stone + Golden Thread + Infernal Blood), `water_diviner.json` (Gold Ingot + Iron Ingot + Tear of Goddess), `lava_diviner.json` (Water Diviner + Blaze Rod). `babas_hat` is drop-only (Baba Yaga drop).
+- Placeholder count: 221 → 214 (7 items promoted).
+
 ### Legacy placeholder item registry sweep (2026-05-22)
 
 - Added `WitcheryItems.LEGACY_PLACEHOLDER_ITEMS` with 123 inert source/wiki item IDs that were not registered yet, exposed them in the Witchery creative tab, gave them a shared placeholder item model, and added explicit `(Placeholder)` language keys. `ITEM_REVIEW.md` now tracks the roster as TODO groups rather than hidden missing items. `spectral_familiar_spawn_egg` is also now visible in the creative tab.
@@ -196,7 +289,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Decompiled asset pass restored distinct item models/textures for 107 more placeholders, including the Resurrected brew aliases, books, contracts, bolts, fume ingredients, several tools, and companion override models for the placeholder crossbow/spear visuals. Current count: 154 distinct placeholder icons/models, 91 still on the shared placeholder icon.
 - Wiki/existing-icon pass restored 46 more confident placeholder icons/models, including glass goblets, Gulg's Gurdle, Mog's Quiver, Horn of the Hunt, Player Compass, Blooded Waystone, vampire garments, odd-porkchop aliases, and generic brew bottle silhouettes. Current count: 200 distinct placeholder icons/models, 45 still on the shared placeholder icon.
 - Exact wiki-icon pass restored 27 more placeholder icons/models, including traps, heads, ice/snow block-family items, Sun Collector, Staff of Duplication, Twisting Band, silvered hunter gear, and Witch Hunter Dawn gear. Current count: 227 distinct placeholder icons/models, 18 still on the shared placeholder icon.
-- Final shared-placeholder model pass wired the last 18 placeholder item definitions away from `legacy_placeholder`. The 12 custom-brew plant target items plus `Biome Note` now use local FTB wiki scrape PNGs, while `Leonard's Urn`, `Lilith's Blood`, `Meaty Stew`, `Trapped Plant`, and `Warm Blood` use clear source-backed alias models until their real mechanics/art are implemented. That pass gave all then-remaining 243 placeholders non-shared item models; after the later `biting_belt`, `bark_belt`, `beartrap`, `wolftrap`, `blood_stained_wool`, `woven_cruor`, primary Vampire clothing, and exact Resurrected Vampire clothing alias promotions, 221 inert placeholder items remain and zero still use the shared placeholder icon.
+- Final shared-placeholder model pass wired the last 18 placeholder item definitions away from `legacy_placeholder`. The 12 custom-brew plant target items plus `Biome Note` now use local FTB wiki scrape PNGs, while `Leonard's Urn`, `Lilith's Blood`, `Meaty Stew`, `Trapped Plant`, and `Warm Blood` use clear source-backed alias models until their real mechanics/art are implemented. That pass gave all then-remaining 243 placeholders non-shared item models; after later promotions through the parity-scan merge, 195 inert placeholder items remain and zero still use the shared placeholder icon.
 - Koboldite art correction restored the user-approved live-backup icons for `Koboldite Pickaxe`, `Koboldite Dust`, `Koboldite Nugget`, and `Koboldite Ingot` from `docs/art/item-backups/2026-05-22-live-before-old-assets-restore`; keep these instead of the older restored koboldite sprites.
 - Glowglobe render polish switched the placed block model from cutout to translucent so the original low-alpha `glow_globe` sprite can render as a soft spirit light again instead of behaving like a masked plant cross. The remaining task is in-game visibility verification.
 - Kettle ceiling-hung pass added a `hanging` blockstate, restored the compact decompiled `hanging_kettle` model/texture path when a solid block supports the kettle from above, and kept the existing side-post support behavior for between-post setups. Remaining work is in-game verification of the two visual/support variants.
@@ -229,6 +322,15 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - Vampire clothing drink-boost slice wired the existing two-light-piece set-bonus check into the current simplified vampire bite path, making bites draw 50% more blood when the boost is active, and updated the Primer/status docs so the remaining Vampire clothing behavior gap is now the mesmerise bonus plus deeper old ability timing.
 - Vampire clothing mesmerise slice added a first practical sneak-right-click villager mesmerise for vampires: it spends 50 blood, applies a short paralysis-style slowness/weakness trance for 5 seconds, and uses the three-light-piece clothing set bonus to extend that duration to 8 seconds like the source's +3s bonus.
 - Vampire clothing player mesmerise slice widened that practical mesmerise hook to players too, matching another source-valid target family while keeping ordinary player biting deferred. Full old selected-power UI, custom paralysis effect, and Village Guard behavior remain follow-up.
+
+---
+
+### Garlic and garlic garland promotion (2026-05-24)
+
+- Demonic Contract subtypes `contract_blaze`, `contract_resist_fire`, `contract_evaporate`, `contract_fiery_touch`, and `contract_smelting` promoted from inert placeholder to real `DemonicContractItem` instances with shapeless recipes from Demonic Contract plus the source-confirmed ingredients (blaze_rod, blaze_powder, magma_cream, lava_bucket, ember_moss, hint_of_rebirth). `contract_ownership` and `contract_torment` aliases removed from placeholder roster. Placeholder count 214→207 for this pass.
+- `garlic` and `garlic_garland` promoted from inert placeholder to real block items. `GarlicCropBlock` extends `CropBlock` with 6 age stages (AGE_5), drops 1 base + 0–2 bonus garlic at full growth. `GarlicGarlandBlock` is a decorative block with custom `SHAPE` and `entityInside` that deals 4 fire damage per second to vampire players who walk into it. Garland recipe corrected to 5 garlic + 3 string (S_S/GSG/GGG) per fandom wiki. Blockstates, models, loot tables, recipe, lang, and creative tab entries all added. Placeholder count 207→205.
+- `wolfsbane_seeds` promoted from inert placeholder to real `BlockItem` for `WolfsbaneCropBlock` (8 age stages, AGE_7, drops `wolfsbane_flower` at max age plus 0–2 bonus seeds). Stage textures 0–7 copied from WitcheryResurrected. Blockstates, 8 block models, loot table, lang, and creative tab entry added. Wolfsbane seeds also added to the grass-seed drop pool in `WitcheryCropEvents` (3/17 weight). Placeholder count 205→204.
+- Poppet and Taglock Kit crafting recipes added: `poppet.json` (4 wool + 2 spanish moss + bone needle + string), `taglock_kit.json` (shapeless glass bottle + bone needle), and all 8 poppet upgrade recipes (death/earth/water/fire/hunger/voodoo/poppet protection plus voodoo and vampiric poppets) sourced from fandom wiki.
 
 ---
 
