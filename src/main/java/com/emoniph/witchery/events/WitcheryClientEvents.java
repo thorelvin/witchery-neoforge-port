@@ -7,7 +7,6 @@ import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -21,8 +20,13 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @EventBusSubscriber(modid = WitcheryMod.MODID, value = Dist.CLIENT)
 public class WitcheryClientEvents {
+
+    private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
@@ -45,16 +49,22 @@ public class WitcheryClientEvents {
 
     @SubscribeEvent
     public static void onRenderWerewolfPlayerPre(RenderPlayerEvent.Pre<?> event) {
-        if (isWerewolfRenderState(event.getRenderState())) {
-            event.getRenderer().getModel().setAllVisible(false);
+        AvatarRenderState state = event.getRenderState();
+        if (isWerewolfRenderState(state)) {
+            WEREWOLF_VISIBILITY_OVERRIDES.put(state.id,
+                    new PlayerVisibilityState(state.isInvisible, state.isInvisibleToPlayer));
+            state.isInvisible = true;
+            state.isInvisibleToPlayer = true;
         }
     }
 
     @SubscribeEvent
     public static void onRenderWerewolfPlayerPost(RenderPlayerEvent.Post<?> event) {
         AvatarRenderState state = event.getRenderState();
-        if (isWerewolfRenderState(state)) {
-            restorePlayerModelVisibility(event.getRenderer().getModel(), state);
+        PlayerVisibilityState original = WEREWOLF_VISIBILITY_OVERRIDES.remove(state.id);
+        if (original != null) {
+            state.isInvisible = original.invisible();
+            state.isInvisibleToPlayer = original.invisibleToPlayer();
         }
     }
 
@@ -62,23 +72,6 @@ public class WitcheryClientEvents {
         Minecraft mc = Minecraft.getInstance();
         Entity entity = mc.level != null ? mc.level.getEntity(state.id) : null;
         return entity instanceof Player player && WitcheryAttachments.get(player).isWerewolf();
-    }
-
-    private static void restorePlayerModelVisibility(PlayerModel model, AvatarRenderState state) {
-        if (state.isSpectator) {
-            model.setAllVisible(false);
-            model.head.visible = true;
-            model.hat.visible = true;
-            return;
-        }
-
-        model.setAllVisible(true);
-        model.hat.visible = state.showHat;
-        model.jacket.visible = state.showJacket;
-        model.leftPants.visible = state.showLeftPants;
-        model.rightPants.visible = state.showRightPants;
-        model.leftSleeve.visible = state.showLeftSleeve;
-        model.rightSleeve.visible = state.showRightSleeve;
     }
 
     private static void tryHowl(Player player, InteractionHand hand) {
@@ -116,4 +109,6 @@ public class WitcheryClientEvents {
         event.setGreen(g);
         event.setBlue(b);
     }
+
+    private record PlayerVisibilityState(boolean invisible, boolean invisibleToPlayer) {}
 }

@@ -43,6 +43,7 @@ public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
         ps.pushPose();
         ps.scale(1.1f, 1.1f, 1.1f);
+        model.setupAnim(state);
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), light, OverlayTexture.NO_OVERLAY, null);
         ps.popPose();
     }
