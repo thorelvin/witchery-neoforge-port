@@ -1,6 +1,7 @@
 {
   "textures": {
     "0": "witchery:item/cane_sword",
+    "missing": "witchery:item/cane_sword",
     "particle": "witchery:item/cane_sword"
   },
   "elements": [
