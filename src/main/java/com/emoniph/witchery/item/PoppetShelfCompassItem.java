@@ -78,6 +78,10 @@ public class PoppetShelfCompassItem extends Item {
                 : Optional.of(new ShelfSignal(nearest.getBlockPos(), nearestDistSq, signalBand(nearestDistSq)));
     }
 
+    public static float signalStrength(double distanceSq) {
+        return signalBand(distanceSq) / 5.0F;
+    }
+
     private static int signalBand(double distanceSq) {
         if (distanceSq < 64.0) {
             return 5;

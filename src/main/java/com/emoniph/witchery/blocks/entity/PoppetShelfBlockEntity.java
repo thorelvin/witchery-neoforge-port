@@ -84,14 +84,14 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
     @Override
     public void setLevel(net.minecraft.world.level.Level level) {
         super.setLevel(level);
-        registerIfServerShelf();
+        registerIfActiveShelf();
         updateChunkForceState();
     }
 
     @Override
     public void clearRemoved() {
         super.clearRemoved();
-        registerIfServerShelf();
+        registerIfActiveShelf();
         updateChunkForceState();
     }
 
@@ -142,7 +142,18 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
         return result;
     }
 
-    private void registerIfServerShelf() {
+    public static List<PoppetShelfBlockEntity> getActiveShelves(net.minecraft.world.level.Level level) {
+        List<PoppetShelfBlockEntity> result = new ArrayList<>();
+        ACTIVE_SHELVES.removeIf(PoppetShelfBlockEntity::isInactiveShelf);
+        for (PoppetShelfBlockEntity shelf : ACTIVE_SHELVES) {
+            if (shelf.level == level) {
+                result.add(shelf);
+            }
+        }
+        return result;
+    }
+
+    private void registerIfActiveShelf() {
         if (!isInactiveShelf(this)) {
             ACTIVE_SHELVES.add(this);
         }
@@ -186,6 +197,6 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
     }
 
     private static boolean isInactiveShelf(PoppetShelfBlockEntity shelf) {
-        return shelf == null || shelf.isRemoved() || shelf.level == null || shelf.level.isClientSide();
+        return shelf == null || shelf.isRemoved() || shelf.level == null;
     }
 }

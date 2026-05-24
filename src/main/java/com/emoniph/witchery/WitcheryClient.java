@@ -3,6 +3,7 @@ package com.emoniph.witchery;
 import com.emoniph.witchery.client.model.*;
 import com.emoniph.witchery.client.model.NightmareModel;
 import com.emoniph.witchery.client.model.SpiritModel;
+import com.emoniph.witchery.client.model.PoppetShelfCompassAngleProperty;
 import com.emoniph.witchery.client.renderer.*;
 import com.emoniph.witchery.client.renderer.NightmareRenderer;
 import com.emoniph.witchery.client.renderer.SpiritRenderer;
@@ -19,12 +20,14 @@ import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
@@ -89,6 +92,11 @@ public class WitcheryClient {
         event.register(WitcheryMenuTypes.WITCHES_OVEN.get(),    WitchesOvenScreen::new);
         event.register(WitcheryMenuTypes.SPINNING_WHEEL.get(), SpinningWheelScreen::new);
         event.register(WitcheryMenuTypes.DISTILLERY.get(),     DistilleryScreen::new);
+    }
+
+    public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "poppet_shelf_compass_signal"),
+                PoppetShelfCompassAngleProperty.MAP_CODEC);
     }
 
     public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {

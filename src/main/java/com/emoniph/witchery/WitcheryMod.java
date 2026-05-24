@@ -55,6 +55,7 @@ public class WitcheryMod {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            modEventBus.addListener(WitcheryClient::registerRangeSelectItemModelProperties);
             modEventBus.addListener(WitcheryClient::registerLayerDefinitions);
             modEventBus.addListener(WitcheryClient::registerScreens);
             modEventBus.addListener(WitcheryClient::onAddLayers);
