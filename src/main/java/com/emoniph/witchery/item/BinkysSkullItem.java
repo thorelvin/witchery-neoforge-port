@@ -4,6 +4,7 @@ import com.emoniph.witchery.entity.BinkyEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -54,6 +55,7 @@ public class BinkysSkullItem extends Item {
         binky.setOwner(player);
         binky.setTamed(true);
         binky.setTemper(100);
+        binky.setCustomName(Component.translatable("entity.witchery.binky"));
         binky.setPersistenceRequired();
         serverLevel.addFreshEntity(binky);
         player.awardStat(Stats.ITEM_USED.get(context.getItemInHand().getItem()));
