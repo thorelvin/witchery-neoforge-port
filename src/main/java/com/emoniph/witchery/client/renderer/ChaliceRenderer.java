@@ -20,10 +20,13 @@ import org.jspecify.annotations.Nullable;
 
 public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, ChaliceRenderer.State> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/chalice.png");
-    private static final Identifier WATER_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/water_still.png");
+    private static final Identifier LIQUID_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/water_still.png");
     private static final float LIQUID_HALF_WIDTH = 1.35f / 16.0f;
     private static final float LIQUID_HALF_DEPTH = 2.35f / 16.0f;
     private static final float LIQUID_SURFACE_Y = 10.1f / 16.0f;
+    private static final float SOUP_RED = 0.965f;
+    private static final float SOUP_GREEN = 0.027f;
+    private static final float SOUP_BLUE = 0.251f;
     private final ChaliceModel model;
 
     public static class State extends BlockEntityRenderState {
@@ -53,36 +56,36 @@ public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, 
         ps.mulPose(Axis.YP.rotationDegrees(-90));
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         if (state.filled) {
-            renderWaterSurface(ps, collector, state.lightCoords);
+            renderRedstoneSoupSurface(ps, collector, state.lightCoords);
         }
         ps.popPose();
     }
 
-    private void renderWaterSurface(PoseStack ps, SubmitNodeCollector collector, int light) {
+    private void renderRedstoneSoupSurface(PoseStack ps, SubmitNodeCollector collector, int light) {
         ps.pushPose();
         ps.translate(0.0, LIQUID_SURFACE_Y, 0.0);
-        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(WATER_TEXTURE), (pose, vc) -> {
+        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(LIQUID_TEXTURE), (pose, vc) -> {
             Matrix4f m = pose.pose();
             vc.addVertex(m, -LIQUID_HALF_WIDTH, 0, -LIQUID_HALF_DEPTH)
-                    .setColor(0.247f, 0.463f, 0.894f, 0.9f)
+                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
                     .setUv(0.0f, 0.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light)
                     .setNormal(0, 1, 0);
             vc.addVertex(m, -LIQUID_HALF_WIDTH, 0, LIQUID_HALF_DEPTH)
-                    .setColor(0.247f, 0.463f, 0.894f, 0.9f)
+                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
                     .setUv(0.0f, 1.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light)
                     .setNormal(0, 1, 0);
             vc.addVertex(m, LIQUID_HALF_WIDTH, 0, LIQUID_HALF_DEPTH)
-                    .setColor(0.247f, 0.463f, 0.894f, 0.9f)
+                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
                     .setUv(1.0f, 1.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light)
                     .setNormal(0, 1, 0);
             vc.addVertex(m, LIQUID_HALF_WIDTH, 0, -LIQUID_HALF_DEPTH)
-                    .setColor(0.247f, 0.463f, 0.894f, 0.9f)
+                    .setColor(SOUP_RED, SOUP_GREEN, SOUP_BLUE, 0.9f)
                     .setUv(1.0f, 0.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light)
