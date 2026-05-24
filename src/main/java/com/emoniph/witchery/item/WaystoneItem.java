@@ -6,6 +6,11 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -23,12 +28,60 @@ import net.minecraft.nbt.CompoundTag;
  */
 public class WaystoneItem extends Item {
 
+    private static final int SCRY_USE_DURATION = 1200;
+    private static final int SCRY_FEEDBACK_INTERVAL = 20;
+
     private static final String TAG_X   = "wx";
     private static final String TAG_Y   = "wy";
     private static final String TAG_Z   = "wz";
     private static final String TAG_DIM = "wdim";
 
     public WaystoneItem(Properties props) { super(props); }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return isBound(stack) ? SCRY_USE_DURATION : super.getUseDuration(stack, entity);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+        if (level.isClientSide() || !(entity instanceof net.minecraft.world.entity.player.Player player) || !isBound(stack)) {
+            return;
+        }
+
+        int elapsedTicks = getUseDuration(stack, entity) - remainingUseDuration;
+        if (elapsedTicks % SCRY_FEEDBACK_INTERVAL != 0) {
+            return;
+        }
+
+        Optional<BlockPos> targetPos = getBoundPos(stack);
+        Optional<ResourceKey<Level>> targetDim = getBoundDim(stack);
+        if (targetPos.isEmpty() || targetDim.isEmpty() || !targetDim.get().equals(level.dimension())) {
+            player.stopUsingItem();
+            return;
+        }
+
+        ServerLevel serverLevel = (ServerLevel) level;
+        BlockPos pos = targetPos.get();
+        serverLevel.sendParticles(ParticleTypes.PORTAL,
+                pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                6, 0.35, 0.4, 0.35, 0.05);
+        if (elapsedTicks == 0) {
+            serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.4f, 1.4f);
+        }
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
+        if (!level.isClientSide() && entity instanceof net.minecraft.world.entity.player.Player player && isBound(stack)) {
+            int elapsedTicks = getUseDuration(stack, entity) - timeCharged;
+            if (elapsedTicks > 0) {
+                player.displayClientMessage(Component.literal("The waystone vision fades.")
+                        .withStyle(ChatFormatting.DARK_PURPLE), true);
+            }
+        }
+        return true;
+    }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, net.minecraft.world.item.component.TooltipDisplay _display, java.util.function.Consumer<net.minecraft.network.chat.Component> tooltip, TooltipFlag flag) {

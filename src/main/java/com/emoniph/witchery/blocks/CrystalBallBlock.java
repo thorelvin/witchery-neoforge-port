@@ -94,7 +94,9 @@ public class CrystalBallBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
         if (level.getBlockEntity(pos) instanceof CrystalBallBlockEntity be) {
-            be.tryScryWaystone(player, level, stack);
+            if (be.tryScryWaystone(player, level, stack)) {
+                player.startUsingItem(hand);
+            }
         }
         return InteractionResult.CONSUME;
     }
