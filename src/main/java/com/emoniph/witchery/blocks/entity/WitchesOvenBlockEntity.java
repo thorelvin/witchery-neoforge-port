@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.FumeFunnelBlock;
 import com.emoniph.witchery.blocks.WitchesOvenBlock;
 import com.emoniph.witchery.crafting.OvenRecipe;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
@@ -9,6 +10,7 @@ import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.WitchesOvenMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -49,6 +51,7 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
 
     private static final double BASE_BYPRODUCT_CHANCE = 0.3D;
     private static final double FUNNEL_CHANCE = 0.25D;
+    private static final double FILTERED_FUNNEL_CHANCE = 0.3D;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     private int burnTime = 0;
@@ -241,36 +244,45 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
     }
 
     private int getAllFumeFunnels() {
-        int funnels = 0;
-        for (BlockPos checkPos : new BlockPos[]{
-                worldPosition.above(),
-                worldPosition.north(),
-                worldPosition.south(),
-                worldPosition.east(),
-                worldPosition.west()}) {
-            if (level != null && level.getBlockEntity(checkPos) instanceof FumeFunnelBlockEntity) {
-                funnels++;
-            }
+        int funnels = countFumeFunnels(getSideFumeFunnelPositions());
+        if (isFumeFunnel(worldPosition.above())) {
+            funnels++;
         }
         return Math.min(funnels, 3);
     }
 
-    private int getSideFumeFunnels() {
+    private int countFumeFunnels(BlockPos[] positions) {
         int funnels = 0;
-        for (BlockPos checkPos : new BlockPos[]{
-                worldPosition.north(),
-                worldPosition.south(),
-                worldPosition.east(),
-                worldPosition.west()}) {
-            if (level != null && level.getBlockEntity(checkPos) instanceof FumeFunnelBlockEntity) {
+        for (BlockPos checkPos : positions) {
+            if (isFumeFunnel(checkPos)) {
                 funnels++;
             }
         }
-        return Math.min(funnels, 3);
+        return funnels;
     }
 
     private double getFumeFunnelsChance(Level level) {
-        return getSideFumeFunnels() * FUNNEL_CHANCE;
+        double chance = 0.0D;
+        for (BlockPos checkPos : getSideFumeFunnelPositions()) {
+            BlockState state = level.getBlockState(checkPos);
+            if (state.getBlock() instanceof FumeFunnelBlock funnel) {
+                chance += funnel.isFiltered() ? FILTERED_FUNNEL_CHANCE : FUNNEL_CHANCE;
+            }
+        }
+        return chance;
+    }
+
+    private BlockPos[] getSideFumeFunnelPositions() {
+        Direction facing = getBlockState().getValue(WitchesOvenBlock.FACING);
+        return switch (facing) {
+            case NORTH, SOUTH -> new BlockPos[]{worldPosition.east(), worldPosition.west()};
+            case EAST, WEST -> new BlockPos[]{worldPosition.north(), worldPosition.south()};
+            default -> new BlockPos[0];
+        };
+    }
+
+    private boolean isFumeFunnel(BlockPos checkPos) {
+        return level != null && level.getBlockState(checkPos).getBlock() instanceof FumeFunnelBlock;
     }
 
     private int getCookTime() {

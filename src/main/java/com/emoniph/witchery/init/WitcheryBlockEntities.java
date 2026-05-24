@@ -34,7 +34,8 @@ public class WitcheryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DreamCatcherBlockEntity>> DREAM_CATCHER =
             BLOCK_ENTITIES.register("dream_catcher", () -> new BlockEntityType<>(DreamCatcherBlockEntity::new, Set.of(WitcheryBlocks.DREAM_CATCHER.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FumeFunnelBlockEntity>> FUME_FUNNEL =
-            BLOCK_ENTITIES.register("fume_funnel", () -> new BlockEntityType<>(FumeFunnelBlockEntity::new, Set.of(WitcheryBlocks.FUME_FUNNEL.get())));
+            BLOCK_ENTITIES.register("fume_funnel", () -> new BlockEntityType<>(FumeFunnelBlockEntity::new,
+                    Set.of(WitcheryBlocks.FUME_FUNNEL.get(), WitcheryBlocks.FILTERED_FUME_FUNNEL.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpinningWheelBlockEntity>> SPINNING_WHEEL =
             BLOCK_ENTITIES.register("spinning_wheel", () -> new BlockEntityType<>(SpinningWheelBlockEntity::new, Set.of(WitcheryBlocks.SPINNING_WHEEL.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LeechChestBlockEntity>> LEECH_CHEST =

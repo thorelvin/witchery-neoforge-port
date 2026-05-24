@@ -99,6 +99,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> WITCHES_OVEN = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WITCHES_OVEN);
     public static final DeferredItem<BlockItem> ALTAR = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALTAR);
     public static final DeferredItem<BlockItem> FUME_FUNNEL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FUME_FUNNEL);
+    public static final DeferredItem<BlockItem> FILTERED_FUME_FUNNEL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FILTERED_FUME_FUNNEL);
     public static final DeferredItem<BlockItem> BRAZIER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BRAZIER);
     public static final DeferredItem<BlockItem> POPPET_SHELF = ITEMS.registerSimpleBlockItem(WitcheryBlocks.POPPET_SHELF);
     public static final DeferredItem<BlockItem> LEECH_CHEST = ITEMS.registerSimpleBlockItem(WitcheryBlocks.LEECH_CHEST);
@@ -378,6 +379,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ENT_TWIG           = ITEMS.registerSimpleItem("ent_twig");
     public static final DeferredItem<Item> FOCUSED_WILL       = ITEMS.registerSimpleItem("focused_will");
     public static final DeferredItem<Item> FOUL_FUME          = ITEMS.registerSimpleItem("foul_fume");
+    public static final DeferredItem<Item> FUME_FILTER        = ITEMS.registerSimpleItem("fume_filter");
     public static final DeferredItem<Item> FROZEN_HEART       = ITEMS.registerSimpleItem("frozen_heart");
     public static final DeferredItem<Item> GOLDEN_THREAD      = ITEMS.registerSimpleItem("golden_thread");
     public static final DeferredItem<Item> GRAVEYARD_DUST     = ITEMS.registerSimpleItem("graveyard_dust");
@@ -507,7 +509,6 @@ public class WitcheryItems {
             "alder_planks",
             "alder_stairs",
             "alder_slab",
-            "fume_filter",
             "infernal_blood",
             "odd_porkchop_raw",
             "odd_porkchop_cooked",
@@ -555,7 +556,6 @@ public class WitcheryItems {
             "dandelion_of_thorns",
             "dandelion_of_webs",
             "duplication_grenade",
-            "filtered_fume_funnel",
             "gulgs_girdle",
             "hellhound_head",
             "horn_of_the_hunt",

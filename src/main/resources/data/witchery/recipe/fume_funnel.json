@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ELE",
+    "EGE",
+    "BIB"
+  ],
+  "key": {
+    "B": "minecraft:iron_block",
+    "E": "minecraft:bucket",
+    "G": "minecraft:glowstone",
+    "I": "minecraft:iron_bars",
+    "L": "minecraft:lava_bucket"
+  },
+  "result": {
+    "id": "witchery:fume_funnel",
+    "count": 1
+  }
+}

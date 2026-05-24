@@ -53,6 +53,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.WITCHES_OVEN.get());
                         output.accept(WitcheryItems.ALTAR.get());
                         output.accept(WitcheryItems.FUME_FUNNEL.get());
+                        output.accept(WitcheryItems.FILTERED_FUME_FUNNEL.get());
                         output.accept(WitcheryItems.BRAZIER.get());
                         output.accept(WitcheryItems.POPPET_SHELF.get());
                         output.accept(WitcheryItems.LEECH_CHEST.get());
@@ -143,6 +144,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.BREATH_OF_GODDESS.get());
                         output.accept(WitcheryItems.WHIFF_OF_MAGIC.get());
                         output.accept(WitcheryItems.FOUL_FUME.get());
+                        output.accept(WitcheryItems.FUME_FILTER.get());
                         output.accept(WitcheryItems.QUICKLIME.get());
                         output.accept(WitcheryItems.GYPSUM.get());
                         output.accept(WitcheryItems.ODOUR_OF_PURITY.get());

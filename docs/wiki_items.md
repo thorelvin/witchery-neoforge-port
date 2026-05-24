@@ -268,22 +268,22 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Hard to break without a golden axe or removing the dirt.
 
 ## Filtered Fume Funnel
-- **Obtain:** Crafted using fume funnel and fume filter.
-- **Use:** Upgrades Witches Oven, increasing speed by 10% and success rate of fume byproduct by 30%.
+- **Obtain:** Craft from a Fume Funnel and Fume Filter.
+- **Use:** Side-mounted Filtered Fume Funnels improve Witches' Oven fume byproduct odds with the old default 0.30 side-funnel chance. Like normal funnels, top placement speeds cooking only.
 - **Stats:** None
-- **Notes:** Can stack up to three per oven.
+- **Notes:** Real block item in the NeoForge port; final in-game placement/render QA is still pending.
 
 ## Fume Filter
-- **Obtain:** Crafted using paper and charcoal.
+- **Obtain:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
 - **Use:** Used to upgrade fume funnels into filtered fume funnels.
 - **Stats:** Stackable (64)
-- **Notes:** No known crafting uses.
+- **Notes:** The source Resurrected recipe uses the charged-attuned-stone role; the NeoForge port uses its live `attuned_stone_charged` item ID.
 
 ## Fume Funnel
-- **Obtain:** Crafted using an unspecified recipe.
-- **Use:** Upgrades the Witches Oven, increasing its speed by 10% and fume byproduct success rate by 25%. Can be stacked up to three per oven.
+- **Obtain:** Craft from Buckets, a Lava Bucket, Glowstone, Iron Bars, and Iron Blocks using the source shape.
+- **Use:** Upgrades the Witches Oven. Top placement speeds cooking; side placement improves fume byproduct success by 0.25.
 - **Stats:** N/A
-- **Notes:** Must be placed above or to the right/left of the Witches Oven. The top-placed Fume Funnel only increases speed, not success rates.
+- **Notes:** Must be placed above or to the source-side positions of the Witches Oven. Up to three funnels count for speed.
 
 ## Garlic Garland
 - **Obtain:** Crafted from 5 garlic bulbs and 3 string.

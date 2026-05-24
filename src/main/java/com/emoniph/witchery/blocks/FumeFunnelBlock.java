@@ -25,11 +25,22 @@ import org.jetbrains.annotations.Nullable;
 public class FumeFunnelBlock extends BaseEntityBlock {
     public static final MapCodec<FumeFunnelBlock> CODEC = simpleCodec(FumeFunnelBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private final boolean filtered;
+
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public FumeFunnelBlock(BlockBehaviour.Properties p) {
+        this(p, false);
+    }
+
+    public FumeFunnelBlock(BlockBehaviour.Properties p, boolean filtered) {
         super(p);
+        this.filtered = filtered;
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    public boolean isFiltered() {
+        return filtered;
     }
 
     @Override

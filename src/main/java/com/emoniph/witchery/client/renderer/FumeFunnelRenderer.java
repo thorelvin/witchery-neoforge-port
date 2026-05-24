@@ -25,6 +25,7 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
         public boolean renderLeftConnection;
         public boolean renderRightConnection;
         public boolean renderChimney;
+        public boolean filtered;
     }
 
     public FumeFunnelRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -44,6 +45,8 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
         state.renderLeftConnection = false;
         state.renderRightConnection = false;
         state.renderChimney = false;
+        state.filtered = be.getBlockState().getBlock() instanceof com.emoniph.witchery.blocks.FumeFunnelBlock funnel
+                && funnel.isFiltered();
 
         if (be.getLevel() == null) {
             return;
@@ -89,6 +92,9 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
         }
         if (state.renderRightConnection) {
             submitParts(ps, collector, state, model.rightConnectionParts());
+        }
+        if (state.filtered && state.renderWideBody) {
+            submitParts(ps, collector, state, model.filterParts());
         }
         if (state.renderChimney) {
             submitParts(ps, collector, state, model.chimneyParts());

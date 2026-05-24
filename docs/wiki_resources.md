@@ -188,9 +188,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No additional information available.
 
 ## Fume Filter
-- **Source:** Recipe not specified in provided text.
-- **Uses:** Creates Filtered Fume Funnel.
-- **Notes:** No additional information available.
+- **Source:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
+- **Uses:** Upgrades a Fume Funnel into a Filtered Fume Funnel.
+- **Notes:** Restored as a real item in the NeoForge port; the recipe uses the port's live Charged Attuned Stone item ID.
 
 ## Glint Weed
 - **Source:** Not specified in provided text.

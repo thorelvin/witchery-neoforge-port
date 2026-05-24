@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "IAI",
+    "GGG"
+  ],
+  "key": {
+    "A": "witchery:attuned_stone_charged",
+    "G": "minecraft:glass",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "witchery:fume_filter",
+    "count": 1
+  }
+}

@@ -5,6 +5,15 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Filtered fume funnel promotion (2026-05-24)
+
+- `fume_filter` is now a real item and `filtered_fume_funnel` is now a real Fume Funnel-family block item instead of placeholders.
+- Restored source-shaped Fume Funnel, Fume Filter, and Filtered Fume Funnel recipes, adapting the filter recipe to the port's live `attuned_stone_charged` ID.
+- Witches' Oven funnel checks now follow the source top/side split: top funnels speed cooking, side funnels affect byproduct chance, and filtered side funnels use the old default 0.30 chance instead of the normal 0.25.
+- In-game placement/render QA and any deeper exact oven byproduct-roster pass remain follow-up work.
+
+---
+
 ### Villager blood draining (2026-05-24)
 
 - Vampire bites on villagers now use a persisted 500-blood store, matching the source `VillagerExtendedData` model.

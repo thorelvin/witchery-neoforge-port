@@ -143,19 +143,19 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires enchanted coal to recharge its mana.
 
 ## Filtered Fume Funnel
-- **Obtain:** Craft using a funnel, charcoal, and glass bottle.
-- **Function:** Collects fumes from the Distillery or other sources.
-- **Notes:** Must be placed next to a source of fumes. Can be emptied by right-clicking with an empty bucket.
+- **Obtain:** Craft from a Fume Funnel and Fume Filter.
+- **Function:** Improves Witches' Oven fume byproduct chance when placed on a valid side position.
+- **Notes:** Top placement still speeds cooking only; side placement uses the old default filtered 0.30 byproduct chance.
 
 ## Fume Filter
-- **Obtain:** Crafted using a combination of charcoal, coal, and sulfur.
-- **Function:** Filters out harmful fumes from the air, improving air quality in its vicinity.
-- **Notes:** Can be placed on the ground or attached to walls. Does not require power.
+- **Obtain:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
+- **Function:** Upgrades a Fume Funnel into a Filtered Fume Funnel.
+- **Notes:** It is an item, not a placeable block.
 
 ## Fume Funnel
-- **Obtain:** Crafted using a combination of charcoal, coal, and sulfur.
-- **Function:** Collects harmful fumes from the air, allowing them to be safely disposed of.
-- **Notes:** Can be placed on the ground or attached to walls. Does not require power.
+- **Obtain:** Craft from Buckets, a Lava Bucket, Glowstone, Iron Bars, and Iron Blocks.
+- **Function:** Improves Witches' Oven operation: top placement speeds cooking, side placement improves byproduct chance.
+- **Notes:** Right-clicking a linked funnel opens the Witches' Oven.
 
 ## Garlic Garland
 - **Obtain:** Crafted from 5 garlic bulbs and 3 string.
