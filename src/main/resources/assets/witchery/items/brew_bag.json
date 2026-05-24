@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/brew_bag"
+    "model": "witchery:item/brew_bag",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 5057301
+      }
+    ]
   }
 }
