@@ -20,6 +20,11 @@ public class IcyNeedleItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (!player.isCreative()) {
+                stack.shrink(1);
+            }
+
             if (sp.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
                 SpiritWorldHelper.exit(sp);
                 return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
@@ -28,6 +33,7 @@ public class IcyNeedleItem extends Item {
                 SpiritWorldHelper.returnGhostPlayerToSpiritWorld(sp);
                 return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
             }
+            sp.hurt(sp.damageSources().playerAttack(sp), 1.0F);
         }
         return net.minecraft.world.InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
     }
