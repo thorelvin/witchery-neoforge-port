@@ -1,6 +1,6 @@
 {
   "name": "Rite of Prior Incarnation",
-  "icon": "witchery:charged_attuned_stone",
+  "icon": "witchery:attuned_stone_charged",
   "category": "witchery:circle_magic",
   "sortnum": 11,
   "pages": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:spotlight",
-      "item": "witchery:charged_attuned_stone",
+      "item": "witchery:attuned_stone_charged",
       "text": "Work it on a small infernal circle with a $(item)Necromantic Stone$(), $(item)Tongue of Dog$(), $(item)Bone$(), $(item)Spectral Dust$(), and a $(item)Charged Attuned Stone$(). The necromantic stone is kept, while the charged stone returns as a plain attuned one.$(br2)The rite only works if you stand in the same world as the death and cast it within $(bold)16 blocks$(/) of the place you fell."
     },
     {
