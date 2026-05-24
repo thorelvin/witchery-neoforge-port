@@ -10,6 +10,8 @@ Latest item-tab note: the live Witchery creative tab is now category-sorted for 
 
 Latest machine note: Fume Filter can now be used directly on a placed unfiltered Fume Funnel to upgrade it into the filtered block in-world, preserving facing and consuming one filter outside creative, while the shaped filtered-funnel recipe remains available.
 
+Latest presentation note: Sun Collector now renders from the old daylightcollector cross-plane block art in-world and uses a flat generated inventory sprite, replacing the previous cube/item-atlas model that showed as magenta/black when placed.
+
 ---
 
 ## Parity Scan Corrections

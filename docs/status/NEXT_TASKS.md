@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: Fume Filter usability pass is in place; right-clicking a placed unfiltered Fume Funnel with a Fume Filter now upgrades it into the filtered block in-world, preserving facing and consuming one filter outside creative.
+- Current bounded focus: Sun Collector presentation pass is in place; the placed block now uses the old cross-plane daylightcollector art from the block atlas instead of a missing cube texture, and the inventory item is a flat generated sprite instead of a 3D block.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---

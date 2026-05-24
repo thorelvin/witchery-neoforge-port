@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "render_type": "minecraft:cutout",
+  "parent": "minecraft:block/cross",
   "textures": {
-    "all": "witchery:item/sun_collector"
+    "cross": "witchery:block/daylightcollector"
   }
 }
