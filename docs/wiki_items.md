@@ -82,10 +82,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Real-world implement used in herbalism and Wicca.
 
 ## Bone Bolt
-- **Obtain:** Crafting recipe not provided.
+- **Obtain:** In the NeoForge port, craft 12 Bone Bolts from Wooden Bolts, Bone, and a Ghast Tear using the Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Crossbow Pistol. Deals six damage, fifty percent more to demons or undead.
 - **Stats:** Damage: 6 (7.5 vs demons/undead)
-- **Notes:** N/A
+- **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
 
 ## Book of Biomes (Extended Edition)
 - **Obtain:** Crafting recipe not provided.
@@ -468,10 +468,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Must be used during night.
 
 ## Nullifying Bolt
-- **Obtain:** Crafted using unknown recipe.
+- **Obtain:** In the NeoForge port, craft 3 Nullifying Bolts from Null Catalyst, 2 Belladonna, and 3 Bone Bolts.
 - **Use:** Used by Witch Hunter Pistol Crossbow. Deals 6 damage, ignores Bark Belt and Baba Yaga's thorns protection. Drains a third of the victim's infusion power when fired by someone in full Witch Hunter armor.
 - **Stats:** Damage 6
-- **Notes:** Costs some infusion power from the wielder to shoot.
+- **Notes:** Projectile/crossbow behavior is still a follow-up; the old shot cost and power-drain behavior are not implemented yet.
 
 ## Otherwhere Chalk
 - **Obtain:** Crafted using unknown recipe.
@@ -667,10 +667,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Originates from the fairytale "Rumpelstiltskin".
 
 ## Splitting Bolt
-- **Obtain:** Crafted using a recipe involving various ingredients.
+- **Obtain:** In the NeoForge port, craft 1 Splitting Bolt from 3 Wooden Bolts, String, and a Feather.
 - **Use:** Used by the Witch Hunter Pistol Crossbow. Splits into three wooden bolts midflight, dealing half damage each.
 - **Stats:** Deals 9 total damage (3 per bolt)
-- **Notes:** Weakness to Bark Belt and Baba Yaga's thorns.
+- **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
 
 ## Staff of Duplication
 - **Obtain:** Not detailed in the provided text.
@@ -961,7 +961,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No known crafting uses.
 
 ## Wooden Bolt
-- **Obtain:** Crafted using specific ingredients.
+- **Obtain:** In the NeoForge port, craft 9 Wooden Bolts from String, Sticks, and Feathers using the old/Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Crossbow Pistol. Weakness to Bark Belt and Baba Yaga's thorns, deals six damage.
 - **Stats:** Stackable (64)
-- **Notes:** Optional for packs with Silver Ingots.
+- **Notes:** Projectile/crossbow behavior is still a follow-up; this item now feeds the Silver, Bone, and Splitting Bolt recipe chains.

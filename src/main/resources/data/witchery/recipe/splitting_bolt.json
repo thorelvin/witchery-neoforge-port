@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "BBB",
+    " F "
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "B": "witchery:wooden_bolt",
+    "F": "minecraft:feather"
+  },
+  "result": {
+    "id": "witchery:splitting_bolt",
+    "count": 1
+  }
+}

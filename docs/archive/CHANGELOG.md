@@ -5,6 +5,16 @@ Current session history lives in NEXT_TASKS.md. Newest entries at the top.
 
 ---
 
+### Special Bolt crafting (2026-05-24)
+
+- `bone_bolt`, `nullifying_bolt`, and `splitting_bolt` are now real items instead of legacy placeholders.
+- Restored the Resurrected 12-output Bone Bolt recipe from Wooden Bolts, Bone, and Ghast Tear.
+- Restored the Nullifying Bolt recipe from Null Catalyst, Belladonna, and Bone Bolts, using the port's live `belladonna` item.
+- Restored the Splitting Bolt recipe from Wooden Bolts, String, and Feather.
+- Hand Bow/Crossbow Pistol loading and all special projectile behavior remain follow-up work.
+
+---
+
 ### Wooden/Silver Bolt crafting (2026-05-24)
 
 - `wooden_bolt` is now a real item instead of a legacy placeholder.

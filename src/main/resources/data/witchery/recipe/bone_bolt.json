@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "ATA",
+    "ABA"
+  ],
+  "key": {
+    "A": "witchery:wooden_bolt",
+    "B": "minecraft:bone",
+    "T": "minecraft:ghast_tear"
+  },
+  "result": {
+    "id": "witchery:bone_bolt",
+    "count": 12
+  }
+}

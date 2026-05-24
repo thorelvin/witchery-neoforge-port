@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "witchery:null_catalyst",
+    "witchery:belladonna",
+    "witchery:belladonna",
+    "witchery:bone_bolt",
+    "witchery:bone_bolt",
+    "witchery:bone_bolt"
+  ],
+  "result": {
+    "id": "witchery:nullifying_bolt",
+    "count": 3
+  }
+}

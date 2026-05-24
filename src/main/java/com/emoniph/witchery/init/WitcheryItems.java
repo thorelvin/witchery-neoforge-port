@@ -436,6 +436,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
     public static final DeferredItem<Item> WOODEN_BOLT         = ITEMS.registerSimpleItem("wooden_bolt");
+    public static final DeferredItem<Item> BONE_BOLT           = ITEMS.registerSimpleItem("bone_bolt");
+    public static final DeferredItem<Item> NULLIFYING_BOLT     = ITEMS.registerSimpleItem("nullifying_bolt");
+    public static final DeferredItem<Item> SPLITTING_BOLT      = ITEMS.registerSimpleItem("splitting_bolt");
     public static final DeferredItem<Item> STAKE               = ITEMS.register("stake", id -> new com.emoniph.witchery.item.StakeItem(itemProps(id)));
     public static final DeferredItem<BlockItem> SILVER_VAT     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SILVER_VAT);
     public static final DeferredItem<Item> HUNTER_HELMET_SILVERED     = ITEMS.register("hunter_helmet_silvered", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)));
@@ -523,7 +526,6 @@ public class WitcheryItems {
             "biome_note",
             "blooded_waystone",
             "bound_waystone",
-            "bone_bolt",
             "book_biomes_extended",
             "brews_and_infusions_book",
             "collecting_fumes_book",
@@ -553,7 +555,6 @@ public class WitcheryItems {
             "ice_stockade",
             "mogs_quiver",
             "moon_charm",
-            "nullifying_bolt",
             "perpetual_ice",
             "poppy_of_ink",
             "poppy_of_sprouting",
@@ -635,7 +636,6 @@ public class WitcheryItems {
             "circle_magic_book",
             "herbology_book",
             "biomes_book",
-            "splitting_bolt",
             "witches_robes",
             "icy_slippers",
             "hunter_hat",
