@@ -1,9 +1,13 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.ChaliceBlock;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -60,6 +64,7 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.REFILLING_CHEST.get());
                         output.accept(WitcheryItems.CANDELABRA.get());
                         output.accept(WitcheryItems.CHALICE.get());
+                        output.accept(filledChaliceStack());
                         output.accept(WitcheryItems.CRYSTAL_BALL.get());
                         output.accept(WitcheryItems.DREAM_CATCHER.get());
                         output.accept(WitcheryItems.WEAVE_FLEET_FOOT.get());
@@ -280,4 +285,10 @@ public class WitcheryCreativeTabs {
                         output.accept(WitcheryItems.REFLECTION_SPAWN_EGG.get());
                     })
                     .build());
+
+    private static ItemStack filledChaliceStack() {
+        ItemStack stack = WitcheryItems.CHALICE.get().getDefaultInstance();
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean(ChaliceBlock.FILLED_TAG, true));
+        return stack;
+    }
 }
