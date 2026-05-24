@@ -1,8 +1,10 @@
 package com.emoniph.witchery.entity;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 /** Spectre — fast flying undead that passes through walls. Fire-immune. */
 public class SpectreEntity extends Monster {
+    private static final float MELEE_HEALTH_FRACTION = 0.15F;
     private UUID ownerUuid;
 
     public SpectreEntity(EntityType<? extends SpectreEntity> type, Level level) {
@@ -45,7 +48,8 @@ public class SpectreEntity extends Monster {
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.FLYING_SPEED, 0.4)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)
-                .add(Attributes.FOLLOW_RANGE, 24.0);
+                .add(Attributes.ARMOR, 2.0)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -56,6 +60,17 @@ public class SpectreEntity extends Monster {
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        float damage = (float) getAttributeValue(Attributes.ATTACK_DAMAGE);
+        if (target instanceof LivingEntity living) {
+            damage = Math.max(living.getMaxHealth() * MELEE_HEALTH_FRACTION, 1.0F);
+        }
+        target.hurt(damageSources().magic(), damage);
+        setLastHurtMob(target);
+        return true;
     }
 
     public void setOwner(Player player) {
