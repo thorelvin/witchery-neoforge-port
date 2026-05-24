@@ -61,15 +61,17 @@ public class CircleTalismanItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
-        BlockPos pos = ctx.getClickedPos();
+        BlockPos clickedPos = ctx.getClickedPos();
         Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();
 
         if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!level.getBlockState(pos).is(WitcheryBlocks.CIRCLE.get())) return InteractionResult.PASS;
 
         int data = getCircleData(stack);
         if (data == 0) {
+            BlockPos pos = existingCenter(level, clickedPos);
+            if (pos == null) return InteractionResult.PASS;
+
             // Store mode: scan rings around the clicked center and pack into talisman
             int[] variants = RitualCircleDetector.detectAllVariants(level, pos);
             int packed = (variants[2] << 6) | (variants[1] << 3) | variants[0];
@@ -83,6 +85,12 @@ public class CircleTalismanItem extends Item {
             if (player != null)
                 player.displayClientMessage(Component.translatable("witchery.talisman.stored"), false);
             return InteractionResult.SUCCESS;
+        }
+
+        BlockPos pos = deploymentCenter(level, clickedPos);
+        if (pos == null) {
+            playFail(level, clickedPos, player);
+            return InteractionResult.FAIL;
         }
 
         int small  = data & 7;
@@ -103,6 +111,24 @@ public class CircleTalismanItem extends Item {
             player.displayClientMessage(Component.translatable("witchery.talisman.deployed"), false);
         resetAfterDeployment(stack, player);
         return InteractionResult.SUCCESS;
+    }
+
+    private BlockPos existingCenter(Level level, BlockPos clickedPos) {
+        if (level.getBlockState(clickedPos).is(WitcheryBlocks.CIRCLE.get())) {
+            return clickedPos;
+        }
+        BlockPos above = clickedPos.above();
+        return level.getBlockState(above).is(WitcheryBlocks.CIRCLE.get()) ? above : null;
+    }
+
+    private BlockPos deploymentCenter(Level level, BlockPos clickedPos) {
+        if (level.getBlockState(clickedPos).is(WitcheryBlocks.CIRCLE.get())) {
+            return clickedPos;
+        }
+        BlockPos above = clickedPos.above();
+        BlockState state = level.getBlockState(above);
+        BlockState centerState = WitcheryBlocks.CIRCLE.get().defaultBlockState();
+        return (state.isAir() || state.canBeReplaced()) && centerState.canSurvive(level, above) ? above : null;
     }
 
     private void resetAfterDeployment(ItemStack stack, Player player) {
