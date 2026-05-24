@@ -56,7 +56,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
      */
     public boolean tryActivate(Player player, Level level) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!tryConsumePower(player, sl)) {
+        if (!tryCheckReady(player, sl) || !tryConsumePower(player, sl)) {
             return false;
         }
 
@@ -106,8 +106,6 @@ public class CrystalBallBlockEntity extends BlockEntity {
             return false;
         }
 
-        cooldown = COOLDOWN_TICKS;
-        setChanged();
         player.displayClientMessage(Component.literal("The crystal ball fixes on the waystone at "
                 + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
         sl.sendParticles(ParticleTypes.PORTAL,
@@ -124,12 +122,15 @@ public class CrystalBallBlockEntity extends BlockEntity {
         return true;
     }
 
-    private boolean tryConsumePower(Player player, ServerLevel level) {
+    private boolean tryCheckReady(Player player, ServerLevel level) {
         if (cooldown > 0) {
             fail(player, level, Component.translatable("witchery.crystal_ball.cooldown"));
             return false;
         }
+        return true;
+    }
 
+    private boolean tryConsumePower(Player player, ServerLevel level) {
         Optional<AltarBlockEntity> altar = findAltar(level);
         if (altar.isEmpty()) {
             fail(player, level, Component.translatable("witchery.crystal_ball.no_power"));
