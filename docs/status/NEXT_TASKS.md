@@ -54,7 +54,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `altar` | Should be 2×3 multiblock; item graphic wrong (just a square); top should be red | Large |
 | `distillery` | Retest machine GUI after explicit source-region blit fix | Low |
 | `spinning_wheel` | Retest machine GUI after explicit source-region blit fix | Low |
-| `witches_oven` | Retest machine GUI after explicit source-region blit fix | Low |
+| `witches_oven` | Retest machine GUI after explicit source-region blit fix, and confirm placed ovens now face the player after the custom-renderer yaw fix | Low |
 | `crystal_ball` | ✅ Now purple stained-glass orb on polished-blackstone stand | Small |
 | `coffin` | ✅ Item now 3D box using coffin_head.png UV regions; verify in-game angles | Medium |
 | `alluring_skull` | Dedicated skull-head renderer path is restored; final scale/lighting verification only | Low |

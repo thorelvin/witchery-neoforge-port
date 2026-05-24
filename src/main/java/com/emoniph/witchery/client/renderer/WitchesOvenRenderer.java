@@ -35,7 +35,7 @@ public class WitchesOvenRenderer implements BlockEntityRenderer<WitchesOvenBlock
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         var facing = be.getBlockState().getValue(com.emoniph.witchery.blocks.WitchesOvenBlock.FACING);
-        state.yaw = facing.toYRot();
+        state.yaw = facing.getOpposite().toYRot();
     }
 
     @Override
