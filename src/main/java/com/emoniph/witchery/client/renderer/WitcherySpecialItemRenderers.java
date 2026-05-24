@@ -183,11 +183,7 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
-            if (displayContext == ItemDisplayContext.GUI) {
-                poseStack.translate(-0.5, -0.18, -0.5);
-            } else {
-                poseStack.translate(-0.5, 0, -0.5);
-            }
+            poseStack.translate(-0.5, 0, -0.5);
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
         }
@@ -382,9 +378,6 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             startBlockEntityPose(poseStack);
-            if (displayContext == ItemDisplayContext.GUI) {
-                poseStack.translate(0.0, -0.12, 0.0);
-            }
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
@@ -417,7 +410,7 @@ public final class WitcherySpecialItemRenderers {
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
             poseStack.pushPose();
-            poseStack.translate(0.5, displayContext == ItemDisplayContext.GUI ? 0.38 : 0.5, 0.5);
+            poseStack.translate(0.5, 0.5, 0.5);
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(-0.5, -0.5, -0.5);
             collector.submitModelPart(bottom, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
