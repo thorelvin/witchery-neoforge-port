@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +19,12 @@ import net.minecraft.world.InteractionResult;
  */
 public class MysticBranchItem extends Item {
 
-    public MysticBranchItem(Properties props) { super(props); }
+    public MysticBranchItem(Properties props) { super(props.stacksTo(1).rarity(Rarity.RARE)); }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return true;
+    }
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
