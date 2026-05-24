@@ -89,7 +89,7 @@ Items appear in creative tab order. Add comments in the `Notes` column.
 | # | Item ID | Notes |
 |---|---|---|
 | 62 | `witchery:broom` | `Partial - control model rewritten closer to 1.7.10; snap-back fix applied` | Forward acceleration, pitch lift, no forced hover-drop, mounted fall cancellation, and controlled-client vehicle sync are restored so the broom should no longer pull back toward its spawn point while flying. Needs in-game verification.
-| 63 | `witchery:enchanted_broom` | `Partial - shares the updated broom flight path and snap-back fix` | Needs in-game verification.
+| 63 | `witchery:enchanted_broom` | `Partial - source enchanted spawn flag restored` | Shares the updated broom flight path and snap-back fix, now glints like the old enchanted sub-item, and newly spawned broom entities are marked enchanted so the existing enchanted-speed cap bonus can actually apply. Needs in-game verification.
 | 64 | `witchery:arthana` | `Partial - altar placement plus first special-drop bridge restored` | Now places cleanly on altar, updates bonuses immediately, restores the old altar range boost, keeps the old uncommon rarity, and once again drives a first practical special-drop pass for Bat Wool, Tongue of Dog, Toe of Frog, Owlet's Wing, and Creeper Heart acquisition when used as the killing weapon. Full old combat/drop edge-case parity still needs follow-up. |
 | 65 | `witchery:boline` | |
 | 66 | `witchery:chalk` | `Partial - placed glyph block path corrected` | Ritual chalk now places a thin floor glyph again instead of a cube block: `circle_glyph` uses the flat cutout/carpet model path and the chalk-circle blocks now share a dedicated low-profile block shape. Needs in-game verification for final outline/selection feel.

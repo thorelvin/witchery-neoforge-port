@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.BroomEntity;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 
@@ -21,6 +22,11 @@ public class BroomItem extends Item {
 
     public BroomItem(Properties props) {
         super(props);
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return stack.is(WitcheryItems.ENCHANTED_BROOM.get()) || super.isFoil(stack);
     }
 
     @Override
@@ -47,12 +53,13 @@ public class BroomItem extends Item {
                 player.getX() + look.x * 1.5,
                 player.getY() + 0.5,
                 player.getZ() + look.z * 1.5);
+        ItemStack stack = player.getItemInHand(hand);
+        broom.setEnchanted(stack.is(WitcheryItems.ENCHANTED_BROOM.get()));
         broom.setYRot(player.getYRot());
         sl.addFreshEntity(broom);
         player.startRiding(broom, true, true);
 
         // Consume the item (one broom per use in survival)
-        ItemStack stack = player.getItemInHand(hand);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
