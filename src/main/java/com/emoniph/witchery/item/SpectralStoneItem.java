@@ -68,6 +68,11 @@ public class SpectralStoneItem extends Item {
     }
 
     @Override
+    public boolean isFoil(ItemStack stack) {
+        return true;
+    }
+
+    @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         return ItemUtils.startUsingInstantly(level, player, hand);
     }
