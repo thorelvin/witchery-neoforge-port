@@ -1008,7 +1008,7 @@
   "witchery.player_compass.other_dimension": "%s walks in another realm.",
   "witchery.player_compass.locate": "%s is %d blocks to the %s.",
   "witchery.player_compass.tooltip.bound": "Tracking: %s",
-  "witchery.player_compass.tooltip.unbound": "Right-click a player to attune.",
+  "witchery.player_compass.tooltip.unbound": "Right-click a player or craft with a filled player Taglock Kit to attune.",
   "item.witchery.poppy_of_ink": "Poppy of Ink",
   "item.witchery.poppy_of_sprouting": "Poppy of Sprouting",
   "item.witchery.poppy_of_thorns": "Poppy of Thorns",

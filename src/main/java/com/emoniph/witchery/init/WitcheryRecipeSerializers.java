@@ -8,6 +8,7 @@ import com.emoniph.witchery.crafting.OvenRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
 import com.emoniph.witchery.crafting.BitingBeltPotionRecipe;
 import com.emoniph.witchery.crafting.ParasyticLousePotionRecipe;
+import com.emoniph.witchery.crafting.PlayerCompassBindingRecipe;
 import com.emoniph.witchery.crafting.PoppetTaglockBindingRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipeSerializer;
 import com.emoniph.witchery.crafting.RowanKeyringRecipe;
@@ -56,4 +57,8 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<PoppetTaglockBindingRecipe>> POPPET_TAGLOCK_BINDING =
             RECIPE_SERIALIZERS.register("poppet_taglock_binding",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(PoppetTaglockBindingRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<PlayerCompassBindingRecipe>> PLAYER_COMPASS_BINDING =
+            RECIPE_SERIALIZERS.register("player_compass_binding",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(PlayerCompassBindingRecipe::new));
 }

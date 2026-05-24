@@ -111,10 +111,23 @@ public class PlayerCompassItem extends Item {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    public static boolean bindFromTaglock(ItemStack stack, ItemStack taglock) {
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty() || !TaglockKitItem.isPlayerTaglock(taglock)) {
+            return false;
+        }
+        bind(stack, uuid.get(), TaglockKitItem.getBoundName(taglock));
+        return true;
+    }
+
     private static void bind(ItemStack stack, Player player) {
+        bind(stack, player.getUUID(), player.getName().getString());
+    }
+
+    private static void bind(ItemStack stack, UUID uuid, String name) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            tag.putString(TAG_UUID, player.getStringUUID());
-            tag.putString(TAG_NAME, player.getName().getString());
+            tag.putString(TAG_UUID, uuid.toString());
+            tag.putString(TAG_NAME, name);
         });
     }
 
