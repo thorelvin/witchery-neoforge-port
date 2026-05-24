@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GDG",
+    "D#D",
+    "GCG"
+  ],
+  "key": {
+    "#": "minecraft:clock",
+    "C": "witchery:null_catalyst",
+    "D": "minecraft:diamond",
+    "G": "minecraft:gold_ingot"
+  },
+  "result": {
+    "id": "witchery:poppet_shelf_compass",
+    "count": 1
+  }
+}

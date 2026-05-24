@@ -225,7 +225,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WORMWOOD_SEEDS = ITEMS.register("wormwood_seeds", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
     public static final DeferredItem<Item> MUTATOR = ITEMS.register("mutator", id -> new MutatingSprigItem(itemProps(id).durability(16)));
     public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));
-    public static final DeferredItem<Item> POPPET_SHELF_COMPASS = ITEMS.registerSimpleItem("poppet_shelf_compass");
+    public static final DeferredItem<Item> POPPET_SHELF_COMPASS = ITEMS.register("poppet_shelf_compass",
+            id -> new PoppetShelfCompassItem(itemProps(id)));
     public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.registerSimpleItem("polynesia_charm");
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
     public static final DeferredItem<Item> PARASYTIC_LOUSE = ITEMS.register("parasytic_louse", id -> new ParasyticLouseItem(itemProps(id)));
