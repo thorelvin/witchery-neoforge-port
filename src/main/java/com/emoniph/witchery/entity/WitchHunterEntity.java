@@ -232,6 +232,11 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
         this.level().addFreshEntity(projectile);
     }
 
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return super.hurtServer(level, source, Math.min(amount, 9.0F));
+    }
+
     // ── Spawn init ────────────────────────────────────────────────────────────
 
     @Override
