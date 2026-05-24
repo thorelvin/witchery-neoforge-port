@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: Sun Collector presentation pass is in place; the placed block now uses the old cross-plane daylightcollector art from the block atlas instead of a missing cube texture, and the inventory item is a flat generated sprite instead of a 3D block.
+- Current bounded focus: Leaping Lily presentation rollback is in place; the block and item now use the old vanilla lily-pad texture/display model with Witchery tinting instead of the custom full-square texture path.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
@@ -67,7 +67,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `grassper` | Stash/item display path restored; verify held-item cup pose in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
-| `leaping_lily` | Custom lily visuals restored; needs in-game verification only | Low |
+| `leaping_lily` | Old lily-pad texture/display model restored with Witchery tinting; needs in-game verification only | Low |
 | Legacy placeholder items | 151 source/wiki/decompiled item IDs remain registered and visible as inert creative-tab placeholders after the belts/traps/vampire clothing/contracts/wearables/diviners/garlic/dawn-gear/custom-brew/stake/bolt/glass-goblet/observations-book/blood-consumable/fume-filter/silver-deposits promotions plus duplicate Resurrected alias cleanup for items that already have canonical port IDs. All remaining placeholders point at non-shared source/wiki-backed item models or clear alias models; none still use the shared placeholder model. Implement mechanics/recipes or alias-remaps one family at a time | Varies |
 | Items 62–153 | Tools & Items, Armour, Brews, Infusion, Spawn Eggs — untested | Varies |
 

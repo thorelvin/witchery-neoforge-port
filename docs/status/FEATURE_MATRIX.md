@@ -12,6 +12,8 @@ Latest machine note: Fume Filter can now be used directly on a placed unfiltered
 
 Latest presentation note: Sun Collector now renders from the old daylightcollector cross-plane block art in-world and uses a flat generated inventory sprite, replacing the previous cube/item-atlas model that showed as magenta/black when placed.
 
+Latest plant note: Leaping Lily now uses the old vanilla lily-pad texture/display model with Witchery block/item tinting, replacing the custom texture path that rendered as a full square in-world.
+
 ---
 
 ## Parity Scan Corrections

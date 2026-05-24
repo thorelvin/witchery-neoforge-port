@@ -59,6 +59,7 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerRangeSelectItemModelProperties);
             modEventBus.addListener(WitcheryClient::registerLayerDefinitions);
             modEventBus.addListener(WitcheryClient::registerScreens);
+            modEventBus.addListener(WitcheryClient::registerBlockColors);
             modEventBus.addListener(WitcheryClient::onAddLayers);
             modEventBus.addListener(WitcheryClient::registerRenderers);
             modEventBus.addListener(WitcheryClient::registerSpecialModelRenderers);
