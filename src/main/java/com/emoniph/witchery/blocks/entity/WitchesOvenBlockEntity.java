@@ -22,6 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -40,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class WitchesOvenBlockEntity extends BlockEntity implements Container, MenuProvider {
+public class WitchesOvenBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider {
 
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_FUEL = 1;
@@ -48,6 +49,9 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
     public static final int SLOT_BYPRODUCT = 3;
     public static final int SLOT_JARS = 4;
     public static final int SLOT_COUNT = 5;
+    private static final int[] SLOTS_TOP = {SLOT_INPUT, SLOT_JARS};
+    private static final int[] SLOTS_BOTTOM = {SLOT_JARS, SLOT_FUEL};
+    private static final int[] SLOTS_SIDES = {SLOT_BYPRODUCT, SLOT_COOKED, SLOT_JARS, SLOT_FUEL};
 
     private static final double BASE_BYPRODUCT_CHANCE = 0.3D;
     private static final double FUNNEL_CHANCE = 0.25D;
@@ -100,9 +104,11 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
             be.burnTime = be.items.get(SLOT_FUEL).getBurnTime(WitcheryRecipeTypes.OVEN.get(), level.fuelValues());
             if (be.burnTime > 0) {
                 be.maxBurnTime = be.burnTime;
-                be.items.get(SLOT_FUEL).shrink(1);
-                if (be.items.get(SLOT_FUEL).isEmpty()) {
-                    be.items.set(SLOT_FUEL, ItemStack.EMPTY);
+                ItemStack fuel = be.items.get(SLOT_FUEL);
+                ItemStack remainder = fuel.is(Items.LAVA_BUCKET) ? new ItemStack(Items.BUCKET) : ItemStack.EMPTY;
+                fuel.shrink(1);
+                if (fuel.isEmpty()) {
+                    be.items.set(SLOT_FUEL, remainder);
                 }
             }
         }
@@ -347,9 +353,44 @@ public class WitchesOvenBlockEntity extends BlockEntity implements Container, Me
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         if (slot == SLOT_COOKED || slot == SLOT_BYPRODUCT) return false;
-        if (slot == SLOT_FUEL) return stack.getBurnTime(WitcheryRecipeTypes.OVEN.get(), level.fuelValues()) > 0;
+        if (slot == SLOT_FUEL) {
+            return level != null && stack.getBurnTime(WitcheryRecipeTypes.OVEN.get(), level.fuelValues()) > 0;
+        }
         if (slot == SLOT_JARS) return stack.is(WitcheryItems.CLAY_JAR.get());
-        return true;
+        return slot == SLOT_INPUT && !stack.is(WitcheryItems.CLAY_JAR.get());
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        if (side == Direction.DOWN) {
+            return SLOTS_BOTTOM;
+        }
+        return side == Direction.UP ? SLOTS_TOP : SLOTS_SIDES;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+        return canPlaceItem(index, itemStack) && (direction == null || slotExposedToFace(index, direction));
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        if (direction == Direction.UP) {
+            return false;
+        }
+        if (direction == Direction.DOWN) {
+            return index == SLOT_FUEL && stack.is(Items.BUCKET);
+        }
+        return index == SLOT_COOKED || index == SLOT_BYPRODUCT;
+    }
+
+    private static boolean slotExposedToFace(int index, Direction direction) {
+        for (int slot : direction == Direction.DOWN ? SLOTS_BOTTOM : direction == Direction.UP ? SLOTS_TOP : SLOTS_SIDES) {
+            if (slot == index) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable
