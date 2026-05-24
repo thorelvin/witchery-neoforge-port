@@ -216,7 +216,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
 
     private int getCooldown(Level level) {
         long elapsed = level.getGameTime() - lastUsedTime;
-        return (int) Math.max(0L, COOLDOWN_TICKS - elapsed);
+        return (int) Math.max(0L, COOLDOWN_TICKS + 1L - elapsed);
     }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
