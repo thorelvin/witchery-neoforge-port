@@ -6,6 +6,8 @@ import com.emoniph.witchery.client.model.GrassperModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.core.Direction;
+import net.minecraft.client.GraphicsPreset;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -31,6 +33,7 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         public ItemStackRenderState itemRenderState = new ItemStackRenderState();
         public float rotation = 0f;
         public float blockRotation = 0f;
+        public boolean spinHeldItem = false;
     }
 
     public GrassperRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -60,8 +63,11 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         } else {
             state.itemRenderState = new ItemStackRenderState();
         }
-        state.rotation = beLevel == null ? (float) (be.getBlockPos().hashCode() % 360)
-                : ((beLevel.getGameTime() + partialTick) * 4.0f) % 360.0f;
+        GraphicsPreset graphicsPreset = Minecraft.getInstance().options.graphicsPreset().get();
+        state.spinHeldItem = graphicsPreset == GraphicsPreset.FANCY || graphicsPreset == GraphicsPreset.FABULOUS;
+        state.rotation = state.spinHeldItem && beLevel != null
+                ? ((beLevel.getGameTime() + partialTick) * 2.5f) % 360.0f
+                : 0.0f;
         Direction facing = be.getBlockState().hasProperty(GrassperBlock.FACING)
                 ? be.getBlockState().getValue(GrassperBlock.FACING)
                 : Direction.NORTH;
@@ -81,10 +87,12 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
 
         if (!state.itemRenderState.isEmpty()) {
             ps.pushPose();
-            // Old Grassper rendered its held item separately, slightly off-center in the petal cup.
-            ps.translate(0.65, 0.45, 0.65);
-            ps.mulPose(Axis.YP.rotationDegrees(state.rotation * 0.5f));
-            ps.scale(1.5f, 1.5f, 1.5f);
+            ps.translate(0.0f, 0.6f, 0.0f);
+            ps.scale(0.75f, 0.75f, 0.75f);
+            ps.translate(0.65f, -0.15f, 0.65f);
+            if (state.spinHeldItem) {
+                ps.mulPose(Axis.YP.rotationDegrees(state.rotation));
+            }
             state.itemRenderState.submit(ps, collector, state.lightCoords,
                     net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
             ps.popPose();

@@ -1,7 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-25 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes/local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; Poppet Shelf/Leech Chest/Refilling Chest GUI item heights normalized to the old neutral item baseline; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
-Latest local delta: Poppet Shelf, Leech Chest, and Refilling Chest item GUI heights now use the old neutral builtin/entity-style Y baseline, matching the aligned special block items, while keeping the corrected chest front-facing yaw. Manual in-game slot-height verification remains the next visual QA check.
+Latest local delta: Grassper held-item rendering now follows the decompiled source transform order with the old 0.75 scale and cup offset, and only spins on Fancy/Fabulous graphics presets instead of constantly rotating. Manual in-game held-item stability verification remains the next visual QA check.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: Leaping Lily presentation rollback is in place; the block and item now use the old vanilla lily-pad texture/display model with Witchery tinting instead of the custom full-square texture path.
+- Current bounded focus: Grassper held-item pose has been tightened against the decompiled 1.7/Resurrected renderer; verify offered items sit stably in the petal cup in-game.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
@@ -64,7 +64,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `kettle` | Side-post and ceiling-hung model/support paths restored; verify filled/hanging world-state visuals in-game | Low |
 | `poppet_shelf` | ✅ Items now visible and neutral GUI height restored alongside Leech/Refilling Chest; verify in-game positioning | Low |
 | `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
-| `grassper` | Stash/item display path restored; verify held-item cup pose in-game | Low |
+| `grassper` | Source transform order/scale restored for the held item; verify held-item cup pose and Fancy/Fabulous spin in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
 | `leaping_lily` | Old lily-pad texture/display model restored with Witchery tinting; needs in-game verification only | Low |
