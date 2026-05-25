@@ -2,6 +2,8 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -41,7 +43,10 @@ public class PlacedItemBlockEntity extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
 
     @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {

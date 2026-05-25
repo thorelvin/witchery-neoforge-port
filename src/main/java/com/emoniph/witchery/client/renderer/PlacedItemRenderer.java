@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -49,17 +50,19 @@ public class PlacedItemRenderer implements BlockEntityRenderer<PlacedItemBlockEn
         } else {
             state.itemRenderState = new ItemStackRenderState();
         }
-        state.rotation = (float)(be.getBlockPos().hashCode() % 360);
+        state.rotation = (float) Math.floorMod(be.getBlockPos().hashCode(), 360);
     }
 
     @Override
     public void submit(PlacedItemRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.itemRenderState.isEmpty()) return;
         ps.pushPose();
-        ps.translate(0.5, 0.25, 0.5);
+        ps.translate(0.5, 0.05, 0.5);
         ps.mulPose(Axis.YP.rotationDegrees(state.rotation));
+        ps.mulPose(Axis.XP.rotationDegrees(90.0F));
+        ps.translate(0.0, -0.1, 0.0);
         ps.scale(0.5f, 0.5f, 0.5f);
-        state.itemRenderState.submit(ps, collector, state.lightCoords, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
+        state.itemRenderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         ps.popPose();
     }
 }
