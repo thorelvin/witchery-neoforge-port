@@ -11,7 +11,8 @@ Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA che
 3. Reintroduce rite preconditions from 1.7.10 consistently: coven size, time-of-day, weather, dimension, and obstructed-circle checks.
 4. Break the `RitualExecutor` monolith into data-driven dispatch helpers so parity fixes stop piling into one file.
 5. Restore broom behavior closer to the original entity: placement, mounting, acceleration, pitch-based lift, glide, and fall handling.
-6. Fix mandrake harvest rules so mature crops only spawn a mandrake under the original difficulty and time-based chances, instead of always doing both.
+6. Finish mandrake parity around the now-restored harvest loop.
+   Crop-side summon-vs-drop behavior and the awakened mob's root-plus-seed death drops are back closer to source; the remaining value is in-game loot/audio feel verification and any later custom scream work rather than another harvest-logic rewrite.
 7. Replace the current cotton placeholder behavior with mechanics that match the Dream World plant flow more closely.
 8. Audit Dream Catcher and Dream World nightmare chance rules against the old block scan and sleep-threshold behavior.
 9. Restore special plant/block mechanics that are still plain blocks in the port: blood rose, bramble, void bramble, grassper, glowglobe, and critter snare. Spanish Moss is no longer plain behavior-wise, Wild Bramble has its old toughness back, Void Bramble now has its owner/unbreakable column-removal plus 32-block ritual-null-source behavior back, and Critter Snare now catches/releases the old small critter set again; remaining plant work is mostly in-game verification and smaller edge-case cleanup.
