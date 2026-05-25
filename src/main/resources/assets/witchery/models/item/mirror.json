@@ -1,3 +1,6 @@
 {
-  "parent": "witchery:block/bottom_mirror"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/mirror"
+  }
 }
