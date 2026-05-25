@@ -80,6 +80,8 @@ public class BroomEntity extends Mob {
 
     @Override
     public void tick() {
+        super.tick();
+
         Entity passenger = getFirstPassenger();
         if (passenger instanceof LivingEntity rider) {
             updateRiderBuffFlags(rider);
@@ -90,7 +92,6 @@ public class BroomEntity extends Mob {
             handleUnriddenMovement();
         }
 
-        super.tick(); // entity state updates (hurt flash, passengers, etc.) — aiStep() is now a no-op
         move(MoverType.SELF, getDeltaMovement());
         setDeltaMovement(getDeltaMovement().scale(0.99));
         alignToMotion();
