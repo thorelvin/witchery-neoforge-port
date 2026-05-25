@@ -1,17 +1,7 @@
 {
-  "render_type": "minecraft:cutout",
+  "parent": "witchery:block/beartrap",
   "textures": {
     "particle": "witchery:block/wolftrap",
     "trap": "witchery:block/wolftrap"
-  },
-  "elements": [
-    {
-      "from": [3.2, 0.1, 3.2],
-      "to": [12.8, 1.6, 12.8],
-      "faces": {
-        "up": { "uv": [0, 0, 16, 16], "texture": "#trap" },
-        "down": { "uv": [0, 16, 16, 0], "texture": "#trap" }
-      }
-    }
-  ]
+  }
 }
