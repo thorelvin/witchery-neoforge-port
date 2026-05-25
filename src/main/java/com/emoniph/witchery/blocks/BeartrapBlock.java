@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.mojang.serialization.MapCodec;
@@ -16,10 +17,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -31,7 +36,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BeartrapBlock extends Block {
+public class BeartrapBlock extends BaseEntityBlock {
     public static final MapCodec<BeartrapBlock> CODEC = simpleCodec(BeartrapBlock::new);
     public static final BooleanProperty CLOSED = BooleanProperty.create("closed");
     public static final BooleanProperty ARMED = BooleanProperty.create("armed");
@@ -57,8 +62,19 @@ public class BeartrapBlock extends Block {
     }
 
     @Override
-    protected MapCodec<? extends Block> codec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new BeartrapBlockEntity(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -75,7 +91,14 @@ public class BeartrapBlock extends Block {
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
-                            net.minecraft.world.item.ItemStack stack) {
+                            ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide()
+                && placer instanceof Player player
+                && level.getBlockEntity(pos) instanceof BeartrapBlockEntity trap) {
+            trap.setOwner(player);
+            level.sendBlockUpdated(pos, state, state, 3);
+        }
         if (!level.isClientSide() && !state.getValue(CLOSED)) {
             level.scheduleTick(pos, this, ARM_DELAY_TICKS);
         }

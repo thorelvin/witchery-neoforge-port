@@ -59,6 +59,9 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("barrier", () -> new BlockEntityType<>(BarrierBlockEntity::new, Set.of(WitcheryBlocks.BARRIER.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrassperBlockEntity>> GRASSPER =
             BLOCK_ENTITIES.register("grassper", () -> new BlockEntityType<>(GrassperBlockEntity::new, Set.of(WitcheryBlocks.GRASSPER.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BeartrapBlockEntity>> BEARTRAP =
+            BLOCK_ENTITIES.register("beartrap", () -> new BlockEntityType<>(BeartrapBlockEntity::new,
+                    Set.of(WitcheryBlocks.BEARTRAP.get(), WitcheryBlocks.WOLFTRAP.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodRoseBlockEntity>> BLOOD_ROSE =
             BLOCK_ENTITIES.register("blood_rose", () -> new BlockEntityType<>(BloodRoseBlockEntity::new, Set.of(WitcheryBlocks.BLOOD_ROSE.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VoidBrambleBlockEntity>> VOID_BRAMBLE =
