@@ -298,4 +298,8 @@ public class WitcheryBlocks {
     public static final DeferredBlock<FlowingSpiritBlock> FLOWING_SPIRIT = BLOCKS.registerBlock("flowing_spirit",
             FlowingSpiritBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());
+    public static final DeferredBlock<HollowTearsBlock> HOLLOW_TEARS = BLOCKS.registerBlock("hollow_tears",
+            HollowTearsBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)
+                    .strength(100.0F).noOcclusion().noCollision().noLootTable());
 }

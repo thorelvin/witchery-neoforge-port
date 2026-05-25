@@ -101,6 +101,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> LEAPING_LILY = ITEMS.registerSimpleBlockItem(WitcheryBlocks.LEAPING_LILY);
     public static final DeferredItem<BlockItem> GRASSPER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GRASSPER);
     public static final DeferredItem<BlockItem> GLOWGLOBE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GLOWGLOBE);
+    public static final DeferredItem<BlockItem> HOLLOW_TEARS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HOLLOW_TEARS);
     public static final DeferredItem<BlockItem> KETTLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.KETTLE);
     public static final DeferredItem<BlockItem> DISTILLERY = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DISTILLERY);
     public static final DeferredItem<BlockItem> SPINNING_WHEEL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SPINNING_WHEEL);
@@ -361,7 +362,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_SOLID_DIRT     = ITEMS.register("brew_of_solid_dirt", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Dirt(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_SAND     = ITEMS.register("brew_of_solid_sand", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sand(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_SANDSTONE = ITEMS.register("brew_of_solid_sandstone", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sandstone(itemProps(id)));
-    public static final DeferredItem<Item> BREW_OF_SOLID_EROSION  = ITEMS.register("brew_of_solid_erosion", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
+    public static final DeferredItem<Item> BREW_OF_SOLID_EROSION  = ITEMS.register("brew_of_solid_erosion", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Erosion(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOARING        = ITEMS.register("brew_of_soaring", id -> new com.emoniph.witchery.item.BrewOfSoaringItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_GRAVE          = ITEMS.register("brew_of_grave", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SUBSTITUTION   = ITEMS.register("brew_of_substitution", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
@@ -514,7 +515,6 @@ public class WitcheryItems {
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "devils_tongue_charm",
             "bucket_hollow_tears",
-            "hollow_tears",
             "infernal_blood",
             "odd_porkchop_raw",
             "odd_porkchop_cooked",

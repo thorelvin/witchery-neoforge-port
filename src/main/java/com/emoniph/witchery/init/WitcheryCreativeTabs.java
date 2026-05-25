@@ -99,6 +99,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.LEAPING_LILY.get(),
                 WitcheryItems.GRASSPER.get(),
                 WitcheryItems.GLOWGLOBE.get(),
+                WitcheryItems.HOLLOW_TEARS.get(),
                 WitcheryItems.MUTANDIS.get(),
                 WitcheryItems.MUTANDIS_EXTREMIS.get(),
                 WitcheryItems.MUTATOR.get(),
@@ -334,7 +335,7 @@ public class WitcheryCreativeTabs {
                 "snow_pressure_plate", "snow_slab", "snow_stairs");
         addLegacy(output, accepted,
                 "devils_tongue_charm", "moon_charm", "twisting_band",
-                "bucket_hollow_tears", "hollow_tears", "blooded_waystone", "bound_waystone");
+                "bucket_hollow_tears", "blooded_waystone", "bound_waystone");
         addLegacy(output, accepted,
                 "infernal_blood", "odd_porkchop_raw", "odd_porkchop_cooked", "odd_porkchop", "cooked_odd_porkchop",
                 "nullified_leather", "silver_dust", "biome_note", "cooked_sheep_liver", "sheep_liver",
