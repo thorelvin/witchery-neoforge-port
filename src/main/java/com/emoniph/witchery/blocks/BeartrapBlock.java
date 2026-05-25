@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,8 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -70,6 +73,15 @@ public class BeartrapBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BeartrapBlockEntity(pos, state);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+                                                                            BlockEntityType<T> type) {
+        if (level.isClientSide()) {
+            return null;
+        }
+        return createTickerHelper(type, WitcheryBlockEntities.BEARTRAP.get(), BeartrapBlockEntity::serverTick);
     }
 
     @Override
@@ -173,5 +185,9 @@ public class BeartrapBlock extends BaseEntityBlock {
     private boolean canTrap(LivingEntity living) {
         return !silvered
                 || living instanceof Player player && WitcheryAttachments.get(player).isWerewolf();
+    }
+
+    public boolean isSilvered() {
+        return silvered;
     }
 }
