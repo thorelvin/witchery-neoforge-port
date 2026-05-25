@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class BroomRenderer extends MobRenderer<BroomEntity, BroomRenderer.BroomRenderState, BroomModel> {
 
@@ -23,6 +25,11 @@ public class BroomRenderer extends MobRenderer<BroomEntity, BroomRenderer.BroomR
     public void extractRenderState(BroomEntity entity, BroomRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
         state.enchanted = entity.isEnchanted();
+        Entity passenger = entity.getFirstPassenger();
+        if (passenger instanceof LivingEntity rider) {
+            state.bodyRot = rider.getYRot(partialTick);
+            state.yRot = 0.0F;
+        }
         if (state.enchanted) {
             state.lightCoords = LightTexture.FULL_BRIGHT;
         }
