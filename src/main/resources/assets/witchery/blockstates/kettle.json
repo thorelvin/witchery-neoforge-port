@@ -4,9 +4,9 @@
     "facing=east,hanging=false": { "model": "witchery:block/kettle", "y": 90, "uvlock": true },
     "facing=south,hanging=false": { "model": "witchery:block/kettle", "y": 180, "uvlock": true },
     "facing=west,hanging=false": { "model": "witchery:block/kettle", "y": 270, "uvlock": true },
-    "facing=north,hanging=true": { "model": "witchery:block/hanging_kettle" },
-    "facing=east,hanging=true": { "model": "witchery:block/hanging_kettle", "y": 90, "uvlock": true },
-    "facing=south,hanging=true": { "model": "witchery:block/hanging_kettle", "y": 180, "uvlock": true },
-    "facing=west,hanging=true": { "model": "witchery:block/hanging_kettle", "y": 270, "uvlock": true }
+    "facing=north,hanging=true": { "model": "witchery:block/kettle" },
+    "facing=east,hanging=true": { "model": "witchery:block/kettle", "y": 90, "uvlock": true },
+    "facing=south,hanging=true": { "model": "witchery:block/kettle", "y": 180, "uvlock": true },
+    "facing=west,hanging=true": { "model": "witchery:block/kettle", "y": 270, "uvlock": true }
   }
 }
