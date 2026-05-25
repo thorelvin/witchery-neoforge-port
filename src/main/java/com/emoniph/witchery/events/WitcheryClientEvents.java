@@ -1,20 +1,26 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.BeartrapBlock;
+import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
 import com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.HowlPayload;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
@@ -46,6 +52,20 @@ public class WitcheryClientEvents {
         if (mc.player == null || !EarmuffsItem.isWorn(mc.player)) return;
         if ("entity.ghast.scream".equals(event.getName()) || "entity.banshee.scream".equals(event.getName())) {
             event.setSound(null);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onExtractBlockOutlineRenderState(ExtractBlockOutlineRenderStateEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+        BlockPos pos = event.getBlockPos();
+        BlockState state = event.getBlockState();
+        if (!state.is(WitcheryBlocks.BEARTRAP.get()) || !state.getValue(BeartrapBlock.CLOSED)) return;
+        if (event.getLevel().getBlockEntity(pos) instanceof BeartrapBlockEntity trap
+                && trap.hasOwner()
+                && !trap.isOwner(mc.player)) {
+            event.setCanceled(true);
         }
     }
 
