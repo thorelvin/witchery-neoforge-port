@@ -95,12 +95,13 @@ public class BeartrapBlock extends Block {
                 || state.getValue(CLOSED)
                 || !state.getValue(ARMED)
                 || !(entity instanceof LivingEntity living)
-                || entity instanceof Player player && player.isCreative()
                 || !canTrap(living)) {
             return;
         }
 
-        living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 2, true, true));
+        if (!isCreativePlayer(living)) {
+            living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 2, true, true));
+        }
         living.hurt(level.damageSources().generic(), 4.0F);
         level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_MANTRAP.get(),
                 SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
@@ -140,6 +141,10 @@ public class BeartrapBlock extends Block {
 
     private static float soundPitch(RandomSource random) {
         return 0.4F / (random.nextFloat() * 0.4F + 0.8F);
+    }
+
+    private static boolean isCreativePlayer(LivingEntity living) {
+        return living instanceof Player player && player.isCreative();
     }
 
     private boolean canTrap(LivingEntity living) {
