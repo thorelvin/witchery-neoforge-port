@@ -11,12 +11,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -34,6 +40,7 @@ public class WerewolfEvents {
     private static final int EFFECT_INTERVAL = 100; // ticks between effect refresh
     private static final int EFFECT_DURATION = 140;
     private static final int SYNC_INTERVAL   = 200;
+    private static final float VILLAGER_INFECTION_CHANCE = 0.10F;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -98,6 +105,21 @@ public class WerewolfEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void onWerewolfVillagerDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Villager villager)) return;
+        if (!(villager.level() instanceof ServerLevel level)) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        if (!WitcheryAttachments.get(player).isWerewolf()) return;
+        if (!isFullMoonNight(level)) return;
+        if (level.random.nextFloat() >= VILLAGER_INFECTION_CHANCE) return;
+
+        if (spawnWereVillagerPlaceholder(level, villager, player)) {
+            event.setCanceled(true);
+            villager.discard();
+        }
+    }
+
     private static boolean isSilverHeld(ItemStack stack) {
         return stack.is(WitcheryItems.SILVER_INGOT.get())
                 || stack.is(WitcheryItems.SILVER_SWORD.get());
@@ -109,6 +131,29 @@ public class WerewolfEvents {
             return data.isWerewolf() || data.isVampire();
         }
         return entity.getType().is(WitcheryEntityTags.VAMPIRES);
+    }
+
+    private static boolean spawnWereVillagerPlaceholder(ServerLevel level, Villager villager, ServerPlayer target) {
+        ZombieVillager zombie = EntityType.ZOMBIE_VILLAGER.create(level, EntitySpawnReason.TRIGGERED);
+        if (zombie == null) {
+            return false;
+        }
+
+        VillagerData villagerData = villager.getVillagerData();
+        zombie.setVillagerData(villagerData);
+        zombie.setPos(villager.getX(), villager.getY(), villager.getZ());
+        zombie.setYRot(villager.getYRot());
+        zombie.setXRot(villager.getXRot());
+        zombie.setBaby(villager.isBaby());
+        zombie.setPersistenceRequired();
+        zombie.setTarget(target);
+        zombie.getPersistentData().putBoolean("witchery_were_villager_placeholder", true);
+        if (villager.hasCustomName()) {
+            zombie.setCustomName(villager.getCustomName());
+        }
+        level.addFreshEntity(zombie);
+        level.levelEvent(null, 1016, zombie.blockPosition(), 0);
+        return true;
     }
 
     private static void applyWolfForm(ServerPlayer player, WitcheryPlayerData data) {
@@ -129,5 +174,10 @@ public class WerewolfEvents {
     /** Phase 0 = full moon in vanilla's 8-phase moon cycle. */
     private static boolean isFullMoon(ServerLevel level) {
         return (level.getDayTime() / 24000L) % 8L == 0;
+    }
+
+    private static boolean isFullMoonNight(ServerLevel level) {
+        long dayTime = level.getDayTime() % 24000L;
+        return isFullMoon(level) && dayTime > 13000L && dayTime < 23000L;
     }
 }

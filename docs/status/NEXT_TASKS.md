@@ -1,7 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-25 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes/local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; Poppet Shelf special item pose corrected to the source low half-block baseline; Mirror front/back model UVs corrected for placed and item views; Leech Chest/Refilling Chest GUI item heights normalized to the old neutral item baseline; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
-Latest local delta: Status docs reconciled against code truth after the Beartrap/Wolftrap model pass. The deferred small-code-quality list no longer repeats already-fixed `ConcentratedBatBallRecipe`, `TaglockKitItem.isPlayerTaglock`, or `MutatingSprigItem` cleanup items; only the still-real registry ID helper remains there.
+Latest local delta: Werewolf player kills on full-moon nights now have the documented first practical villager infection slice: a 10% conversion roll cancels the villager death, spawns a marked zombie-villager placeholder with the old villager data, targets the werewolf, and leaves the real Were-Villager entity/renderer as the larger follow-up.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: Pull from the high-priority user QA queue first; the latest slice restored Beartrap/Wolftrap source-shaped 3D block/item visuals. Remaining high-value choices stay clustered around in-game broom verification, fresh Spirit World vegetation/spawn QA using `/witchery verify spiritworld`, exact fog-distance polish only if a concrete source-backed hook appears, and remaining placed-model texture blockers.
+- Current bounded focus: Pull from the high-priority user QA queue first; the latest slice added the full-moon werewolf villager infection placeholder. Remaining high-value choices stay clustered around in-game broom verification, fresh Spirit World vegetation/spawn QA using `/witchery verify spiritworld`, exact fog-distance polish only if a concrete source-backed hook appears, and remaining placed-model texture blockers.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
 
@@ -157,7 +157,7 @@ This goal is not about one file; it is a cross-cutting vertical slice. Track eac
 | Ritual sacrifice — villager offering | Needs verify | Hell on Earth, Wither summoning, and Demon summoning already specify `VillagerEntity` sacrifice. Test each rite with a caged villager on-site. |
 | Curse rite targeting villager via taglock | Needs verify | `Curse Creature` resolves taglock UUID via `ServerLevel.getEntity`. Test: fill taglock from villager, place it in medium infernal circle, verify villager receives Wither/Slowness/Weakness. |
 | Blight villager zombification | Needs verify | Blight rite's expand loop zombifies villagers. Test: cast medium infernal Blight near a village, verify villagers turn to zombie villagers as the annulus grows. |
-| Werewolf infection of villagers | Not started | When a werewolf player kills a villager on a full moon, small chance (10%) to convert them into a Were-Villager hostile mob (zombie villager skin + wolf head overlay as a placeholder). Blocked on Were-Villager entity/renderer — track as separate entity task if scope grows. |
+| Werewolf infection of villagers | Patched - placeholder | Full-moon-night villager deaths caused by a werewolf player now roll 10% to cancel the death and spawn a marked zombie-villager placeholder with the original villager data, baby/name state, persistence, and the werewolf as its target. Decompiled Resurrected uses a true `EntityWereVillager`/`EntityWerewolf` conversion path for the final behavior; that entity/renderer remains a separate larger task. |
 | Player Compass — scry to named villager | Deferred | Player Compass only binds to players currently. Villager support would need a non-player name resolution path. Defer unless requested. |
 
 #### Why this matters
@@ -168,7 +168,7 @@ Vanilla villages are a rich social target that the original Witchery treated as 
 
 1. Verify the three "needs verify" rows first (no code, just QA) — they may already work.
 2. Retest vampiric villager feeding now that persisted source-style drain is live.
-3. Implement werewolf villager infection (full moon kill → zombie villager placeholder) as a small `LivingDeathEvent` hook.
+3. Retest werewolf villager infection in-game on a full-moon night now that the small `LivingDeathEvent` hook is live.
 4. Were-Villager mob is a separate larger entity task; add it to the entities backlog if requested.
 
 ---
