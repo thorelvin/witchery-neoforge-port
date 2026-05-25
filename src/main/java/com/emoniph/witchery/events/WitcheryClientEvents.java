@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -8,13 +9,13 @@ import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -28,8 +29,6 @@ import java.util.Map;
 public class WitcheryClientEvents {
 
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
-    private static final float SPIRIT_DREAM_ANGLE = 1.0F;
-    private static final float SPIRIT_NIGHTMARE_ANGLE = 0.5F;
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
@@ -48,6 +47,25 @@ public class WitcheryClientEvents {
         if ("entity.ghast.scream".equals(event.getName()) || "entity.banshee.scream".equals(event.getName())) {
             event.setSound(null);
         }
+    }
+
+    @SubscribeEvent
+    public static void onExtractLevelRenderState(ExtractLevelRenderStateEvent event) {
+        if (!event.getLevel().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
+
+        var renderState = event.getRenderState();
+        renderState.customCloudsRenderer = SpiritWorldSpecialEffects.NO_CLOUDS;
+
+        var sky = renderState.skyRenderState;
+        sky.skyColor = SpiritWorldSpecialEffects.currentSpiritRgb();
+        sky.sunriseAndSunsetColor = 0;
+        sky.starBrightness = 0.0F;
+
+        float sourceAngle = SpiritWorldSpecialEffects.currentSunAngleRadians();
+        sky.sunAngle = sourceAngle;
+        sky.moonAngle = sourceAngle;
+        sky.starAngle = sourceAngle;
+        sky.shouldRenderDarkDisc = event.getCamera().position().y < 0.0D;
     }
 
     @SubscribeEvent
@@ -100,25 +118,10 @@ public class WitcheryClientEvents {
         WitcheryPlayerData data = WitcheryAttachments.get(mc.player);
         if (!data.isInSpiritWorld()) return;
 
-        float r, g, b;
-        if (data.isDemonicNightmare()) {
-            r = 1.0f; g = 0.0f; b = 0.0f;
-        } else if (data.isNightmare()) {
-            r = 0.0f; g = 1.0f; b = 0.0f;
-        } else {
-            r = 0.8f; g = 0.2f; b = 0.6f;
-        }
-        float angle = sourceSpiritColorFactor(data.isNightmare() ? SPIRIT_NIGHTMARE_ANGLE : SPIRIT_DREAM_ANGLE);
-        r *= angle * 0.94F + 0.06F;
-        g *= angle * 0.94F + 0.06F;
-        b *= angle * 0.91F + 0.09F;
-        event.setRed(r);
-        event.setGreen(g);
-        event.setBlue(b);
-    }
-
-    private static float sourceSpiritColorFactor(float celestialAngle) {
-        return Mth.clamp(Mth.cos(celestialAngle * Mth.TWO_PI) * 2.0F + 0.5F, 0.0F, 1.0F);
+        SpiritWorldSpecialEffects.SpiritColor color = SpiritWorldSpecialEffects.currentSpiritColor();
+        event.setRed(color.red());
+        event.setGreen(color.green());
+        event.setBlue(color.blue());
     }
 
     private record PlayerVisibilityState(boolean invisible, boolean invisibleToPlayer) {}
