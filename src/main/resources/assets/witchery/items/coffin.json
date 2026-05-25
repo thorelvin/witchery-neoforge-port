@@ -1,9 +1,6 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "witchery:item/coffin",
-    "model": {
-      "type": "witchery:coffin"
-    }
+    "type": "minecraft:model",
+    "model": "witchery:item/coffin"
   }
 }
