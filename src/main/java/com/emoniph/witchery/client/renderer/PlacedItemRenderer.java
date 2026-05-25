@@ -1,5 +1,6 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -12,8 +13,10 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -50,18 +53,32 @@ public class PlacedItemRenderer implements BlockEntityRenderer<PlacedItemBlockEn
         } else {
             state.itemRenderState = new ItemStackRenderState();
         }
-        state.rotation = (float) Math.floorMod(be.getBlockPos().hashCode(), 360);
+        state.rotation = sourceRotation(be.getBlockState());
     }
 
     @Override
     public void submit(PlacedItemRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.itemRenderState.isEmpty()) return;
         ps.pushPose();
-        ps.translate(0.5, 0.05, 0.5);
+        ps.translate(0.5, 0.12, 0.5);
         ps.mulPose(Axis.YP.rotationDegrees(state.rotation));
         ps.mulPose(Axis.XP.rotationDegrees(-90.0F));
         ps.translate(0.0, -0.1, 0.0);
+        ps.scale(0.5f, 0.5f, 0.5f);
         state.itemRenderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         ps.popPose();
+    }
+
+    private static float sourceRotation(BlockState state) {
+        Direction facing = state.hasProperty(PlacedItemBlock.FACING)
+                ? state.getValue(PlacedItemBlock.FACING)
+                : Direction.SOUTH;
+        return switch (facing) {
+            case SOUTH -> 0.0F;
+            case WEST -> 270.0F;
+            case NORTH -> 180.0F;
+            case EAST -> 90.0F;
+            default -> 0.0F;
+        };
     }
 }

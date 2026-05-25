@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
+import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +28,9 @@ final class AltarPlacedItemSupport {
         if (!level.getBlockState(above).isAir()) return InteractionResult.PASS;
 
         if (!level.isClientSide()) {
-            level.setBlock(above, WitcheryBlocks.PLACED_ITEM.get().defaultBlockState(), 3);
+            Direction facing = ctx.getPlayer() != null ? ctx.getPlayer().getDirection() : Direction.SOUTH;
+            level.setBlock(above, WitcheryBlocks.PLACED_ITEM.get().defaultBlockState()
+                    .setValue(PlacedItemBlock.FACING, facing), 3);
             if (level.getBlockEntity(above) instanceof PlacedItemBlockEntity be) {
                 ItemStack toPlace = ctx.getItemInHand().copyWithCount(1);
                 be.setStack(toPlace);
