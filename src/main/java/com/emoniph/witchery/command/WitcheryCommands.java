@@ -14,6 +14,7 @@ import com.emoniph.witchery.blocks.WitchesOvenBlock;
 import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -709,20 +710,47 @@ public class WitcheryCommands {
 
     // ── New debug handlers ────────────────────────────────────────────────────
 
-    /** Toggle dream/nightmare mode. Works in Spirit World to switch modes; outside SW pre-sets for next entry. */
+    /** Toggle dream/nightmare mode, using the normal Spirit World entry path outside the dimension. */
     private static int toggleNightmare(CommandSourceStack src, boolean nightmare)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         WitcheryPlayerData d = WitcheryAttachments.get(p);
+        if (!d.isInSpiritWorld()) {
+            if (!p.level().dimension().equals(Level.OVERWORLD)) {
+                src.sendFailure(Component.literal("Nightmare debug entry can only start from the Overworld or while already in the Spirit World."));
+                return 0;
+            }
+            SpiritWorldHelper.enter(p, nightmare ? 1.0 : 0.0);
+            src.sendSuccess(() -> Component.literal("Entered a forced Spirit World " + (nightmare ? "nightmare" : "dream") + "."), false);
+            return 1;
+        }
+
         d.setSpiritWorldIsDream(!nightmare);
+        d.setDemonicNightmare(false);
         sync(p, d);
         String mode = nightmare ? "nightmare" : "dream";
         src.sendSuccess(() -> Component.literal("Spirit World mode set to " + mode + "."), false);
-        if (d.isInSpiritWorld()) {
-            // Apply fog change immediately by syncing dimension state
-            src.sendSuccess(() -> Component.literal("Fog updated — may need relog to see colour change."), false);
+        if (p.level() instanceof ServerLevel spiritWorld
+                && spiritWorld.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            if (nightmare) {
+                d.setLastNightmareKillGameTime(Long.MIN_VALUE);
+                SpiritWorldHelper.tickNightmareRespawn(p, spiritWorld, d);
+                sync(p, d);
+                src.sendSuccess(() -> Component.literal("Nightmare pressure forced; a victim-bound Nightmare should now be present if one was not already nearby."), false);
+            } else {
+                int removed = removeVictimNightmares(p, spiritWorld);
+                src.sendSuccess(() -> Component.literal("Peaceful dream restored; removed " + removed + " bound Nightmare(s)."), false);
+            }
         }
         return 1;
+    }
+
+    private static int removeVictimNightmares(ServerPlayer player, ServerLevel level) {
+        var nightmares = level.getEntitiesOfClass(NightmareEntity.class,
+                player.getBoundingBox().inflate(64.0),
+                nightmare -> nightmare.matchesVictim(player));
+        nightmares.forEach(NightmareEntity::discard);
+        return nightmares.size();
     }
 
     /** Set werewolf transformation level (0.0 = none, 1.0 = full moon). */
