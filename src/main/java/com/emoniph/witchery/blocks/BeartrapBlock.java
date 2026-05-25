@@ -5,6 +5,7 @@ import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -103,6 +104,11 @@ public class BeartrapBlock extends Block {
         living.hurt(level.damageSources().generic(), 4.0F);
         level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_MANTRAP.get(),
                 SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(DustParticleOptions.REDSTONE,
+                    pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D,
+                    20, 0.25D, 0.5D, 0.25D, 0.0D);
+        }
         level.setBlock(pos, state.setValue(CLOSED, true).setValue(ARMED, false), 3);
     }
 
