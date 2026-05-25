@@ -55,7 +55,7 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
         if (TaglockKitItem.isFilled(stack)) {
             player.displayClientMessage(Component.translatable("witchery.taglock_kit.already_full",
                     TaglockKitItem.getBoundName(stack)).withStyle(ChatFormatting.RED), false);
-            return InteractionResult.SUCCESS;
+            return openDoorAfterTaglock(state, level, pos, player, hit);
         }
 
         if (!(level.getBlockEntity(lowerPos(pos, state)) instanceof HawthornDoorBlockEntity door)) {
@@ -67,24 +67,24 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
             bindSinglePlayerTaglock(player, stack, result.player());
             player.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_hawthorn_door",
                     result.player().name()).withStyle(ChatFormatting.GREEN), false);
-            return InteractionResult.SUCCESS;
+            return openDoorAfterTaglock(state, level, pos, player, hit);
         }
         if (result.onlyOwnTaglock()) {
             player.displayClientMessage(Component.translatable("witchery.taglock_kit.only_own_taglock")
                     .withStyle(ChatFormatting.RED), false);
-            return InteractionResult.SUCCESS;
+            return openDoorAfterTaglock(state, level, pos, player, hit);
         }
         if (!result.missingPlayers().isEmpty()) {
             player.displayClientMessage(Component.translatable("witchery.taglock_kit.player_not_logged_in",
                     String.join(", ", result.missingPlayers())).withStyle(ChatFormatting.RED), false);
-            return InteractionResult.SUCCESS;
+            return openDoorAfterTaglock(state, level, pos, player, hit);
         }
 
         level.playSound(null, pos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS,
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         player.displayClientMessage(Component.translatable("witchery.taglock_kit.no_hawthorn_door_sample")
                 .withStyle(ChatFormatting.RED), false);
-        return InteractionResult.SUCCESS;
+        return openDoorAfterTaglock(state, level, pos, player, hit);
     }
 
     @Override
@@ -99,6 +99,11 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
 
     private static BlockPos lowerPos(BlockPos pos, BlockState state) {
         return state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+    }
+
+    private InteractionResult openDoorAfterTaglock(BlockState state, Level level, BlockPos pos,
+                                                   Player player, BlockHitResult hit) {
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     private static void bindSinglePlayerTaglock(Player user, ItemStack sourceStack,
