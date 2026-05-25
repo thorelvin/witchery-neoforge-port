@@ -86,21 +86,35 @@ public class BroomEntity extends Mob {
         Entity passenger = getFirstPassenger();
         LivingEntity rider = passenger instanceof LivingEntity living ? living : null;
         if (rider != null) {
-            updateRiderBuffFlags(rider);
-            handleRiddenMovement(rider);
+            if (isLocallyControlledBroom()) {
+                updateRiderBuffFlags(rider);
+                handleRiddenMovement(rider);
+                move(MoverType.SELF, getDeltaMovement());
+                setDeltaMovement(getDeltaMovement().scale(0.99));
+            } else {
+                setDeltaMovement(Vec3.ZERO);
+            }
+            alignToRider(rider);
         } else {
             riderHasOwlFamiliar = false;
             riderHasSoaringBrew = false;
-            handleUnriddenMovement();
+            if (isLocallyControlledBroom()) {
+                handleUnriddenMovement();
+                move(MoverType.SELF, getDeltaMovement());
+                setDeltaMovement(getDeltaMovement().scale(0.99));
+                alignToMotion();
+            } else {
+                setDeltaMovement(Vec3.ZERO);
+            }
         }
+    }
 
-        move(MoverType.SELF, getDeltaMovement());
-        setDeltaMovement(getDeltaMovement().scale(0.99));
-        if (rider != null) {
-            alignToRider(rider);
-        } else {
-            alignToMotion();
+    private boolean isLocallyControlledBroom() {
+        LivingEntity controller = getControllingPassenger();
+        if (controller instanceof Player player) {
+            return player.isLocalPlayer();
         }
+        return !level().isClientSide();
     }
 
     private void handleRiddenMovement(LivingEntity rider) {
