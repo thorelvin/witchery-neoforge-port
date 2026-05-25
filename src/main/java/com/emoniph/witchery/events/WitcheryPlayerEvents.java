@@ -286,8 +286,8 @@ public class WitcheryPlayerEvents {
         }
         altar.consumePower(50);
         syncToClient(player);
-        player.displayClientMessage(Component.literal(
-                "§5Absorbed " + power.displayName() + " power! Charges: " + data.getCreaturePowerCharges()), false);
+        player.displayClientMessage(Component.translatable("witchery.creature_power.absorbed",
+                power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
     }
 
     @SubscribeEvent
@@ -321,7 +321,8 @@ public class WitcheryPlayerEvents {
                             java.util.Set.of(), player.getYRot(), player.getXRot(), false);
                     data.clearReturnPos();
                     syncToClient(player);
-                    player.displayClientMessage(Component.literal("§5The Lord of Torment falls. You are returned home."), false);
+                    player.displayClientMessage(Component.translatable("witchery.lord_of_torment.defeated")
+                            .withStyle(ChatFormatting.DARK_PURPLE), false);
                     continue;
                 }
             }
@@ -331,7 +332,8 @@ public class WitcheryPlayerEvents {
                 BlockPos spawn = new BlockPos(0, 64, 0);
                 player.teleportTo(overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5,
                         java.util.Set.of(), 0f, 0f, false);
-                player.displayClientMessage(Component.literal("§5The Lord of Torment falls. You are returned home."), false);
+                player.displayClientMessage(Component.translatable("witchery.lord_of_torment.defeated")
+                        .withStyle(ChatFormatting.DARK_PURPLE), false);
             }
         }
     }

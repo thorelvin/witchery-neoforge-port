@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -76,8 +77,8 @@ public class CorpseEntity extends Mob {
 
         boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.isAlive() && owner != null) {
-            owner.displayClientMessage(
-                    Component.literal("§4Your sleeping body was destroyed! You are torn back..."), false);
+            owner.displayClientMessage(Component.translatable("witchery.spirit_world.body_destroyed")
+                    .withStyle(ChatFormatting.DARK_RED), false);
             com.emoniph.witchery.spiritworld.SpiritWorldHelper.exit(owner);
         }
         return hurt;

@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -40,18 +41,20 @@ public class MysticBranchItem extends Item {
         CreaturePowerType power = CreaturePowerType.fromString(powerName);
 
         if (power == null || data.getCreaturePowerCharges() <= 0) {
-            player.displayClientMessage(Component.literal("§7No creature power stored. Sacrifice a mob near an altar."), false);
+            player.displayClientMessage(Component.translatable("witchery.creature_power.none")
+                    .withStyle(ChatFormatting.GRAY), false);
             return net.minecraft.world.InteractionResult.FAIL;
         }
 
         if (!data.spendCreaturePowerCharge()) {
-            player.displayClientMessage(Component.literal("§7No charges remaining."), false);
+            player.displayClientMessage(Component.translatable("witchery.creature_power.no_charges")
+                    .withStyle(ChatFormatting.GRAY), false);
             return net.minecraft.world.InteractionResult.FAIL;
         }
 
         power.activate(player);
-        player.displayClientMessage(Component.literal(
-                "§5" + power.displayName() + " power activated! Charges remaining: " + data.getCreaturePowerCharges()), false);
+        player.displayClientMessage(Component.translatable("witchery.creature_power.activated",
+                power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
 
         return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(hand));
     }

@@ -26,6 +26,7 @@ import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Holder;
@@ -4439,7 +4440,8 @@ public class RitualExecutor {
         }
 
         if (PoppetEvents.damageBoundPoppet(target.get(), WitcheryItems.POPPET_PROTECTION_POPPET.get(), 1000)) {
-            target.get().displayClientMessage(Component.translatable("witchery.poppet.shield.activated"), false);
+            target.get().displayClientMessage(Component.translatable("witchery.poppet.shield.activated")
+                    .withStyle(ChatFormatting.GOLD), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             strikeCurseBacklashLightning(sp);
             success(sp, level, center, null, SoundEvents.ENDER_DRAGON_GROWL, 0.8f, 2, 32);
