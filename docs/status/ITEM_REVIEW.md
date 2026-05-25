@@ -166,7 +166,7 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 
 | # | Item ID | Notes |
 |---|---|---|
-| 111 | `witchery:brew_of_raising` | |
+| 111 | `witchery:brew_of_raising` | `Partial - source grave raising restored in practical item form` | Top-face block use raises one guaranteed undead plus the old extra-spawn odds, uses source zombie/skeleton/zombified-piglin weights, clears spawn columns without drops, stamps old enslaver metadata plus a UUID tag, and returns a Glass Bottle. Drinking remains a centered fallback until source-style thrown brew transport and full infernal ownership AI are rebuilt. Needs in-game terrain/spawn/bottle QA. |
 | 112 | `witchery:brew_of_sleeping` | `Partial - source Spirit World entry guard restored` | Brew and Apple of Sleeping now share the old Overworld-only/not-already-ghosting entry guard through `SpiritWorldHelper.enter()`, avoiding recursive inventory stripping or return-position rewrites from the wrong dimension. Apple of Sleeping also matches the old always-edible 3-food/3.0-saturation profile. |
 | 113 | `witchery:brew_of_flowing_spirit` | |
 | 114 | `witchery:brew_of_wasting` | `Partial - source falloff and plant decay restored` | Drinking now uses the old practical 4-block falloff burst: players above 10 hunger lose 10 food and receive Hunger + Weakness, non-player living targets receive Wither + Weakness, and nearby leaves/saplings/flowers/crops/vines/grass decay without drops while chalk circles are protected. Needs in-game entity/block QA and source-style thrown transport later. |
