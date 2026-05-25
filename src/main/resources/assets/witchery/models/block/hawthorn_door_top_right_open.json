@@ -1,1 +1,1 @@
-{"parent":"minecraft:block/door_top_right_open","textures":{"bottom":"witchery:block/planks_hawthorn","top":"witchery:block/planks_hawthorn"}}
+{"parent":"minecraft:block/door_top_right_open","textures":{"bottom":"witchery:block/hawthorn_door_lower","top":"witchery:block/hawthorn_door_upper"}}

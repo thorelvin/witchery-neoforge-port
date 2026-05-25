@@ -1,1 +1,1 @@
-{"parent":"minecraft:block/door_bottom_left_open","textures":{"bottom":"witchery:block/planks_alder","top":"witchery:block/planks_alder"}}
+{"parent":"minecraft:block/door_bottom_left_open","textures":{"bottom":"witchery:block/alder_door_lower","top":"witchery:block/alder_door_upper"}}
