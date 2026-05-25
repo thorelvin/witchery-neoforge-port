@@ -45,6 +45,9 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
 
     @Override protected NonNullList<ItemStack> getItems() { return items; }
     @Override protected void setItems(NonNullList<ItemStack> newItems) {
+        for (int i = 0; i < items.size(); i++) {
+            items.set(i, ItemStack.EMPTY);
+        }
         for (int i = 0; i < Math.min(newItems.size(), items.size()); i++) items.set(i, newItems.get(i));
     }
 
@@ -65,7 +68,11 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(items, slot); }
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack result = ContainerHelper.takeItem(items, slot);
+        if (!result.isEmpty()) setChanged();
+        return result;
+    }
 
     @Override
     public void setItem(int slot, ItemStack stack) {
@@ -123,6 +130,9 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
+        for (int i = 0; i < items.size(); i++) {
+            items.set(i, ItemStack.EMPTY);
+        }
         ContainerHelper.loadAllItems(tag, items);
     }
 

@@ -4,6 +4,8 @@ import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.GraphicsPreset;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -26,6 +28,9 @@ import org.jspecify.annotations.Nullable;
 public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlockEntity, PoppetShelfRenderer.State> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
             "witchery", "textures/block/poppet_shelf.png");
+    private static final float FIRST_SLOT_CENTER = 0.25f;
+    private static final float SLOT_SPACING = 0.25f;
+    private static final float SLOT_Y = 0.6f;
 
     private final PoppetShelfModel model;
     private final ItemModelResolver itemModelResolver;
@@ -68,6 +73,9 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
                 ? be.getBlockState().getValue(com.emoniph.witchery.blocks.PoppetShelfBlock.FACING)
                 : Direction.NORTH;
         state.yaw = facing.getOpposite().toYRot();
+        GraphicsPreset graphicsPreset = Minecraft.getInstance().options.graphicsPreset().get();
+        boolean spinStoredItems = graphicsPreset == GraphicsPreset.FANCY || graphicsPreset == GraphicsPreset.FABULOUS;
+        float sourceSpin = spinStoredItems ? ((level.getGameTime() + partialTick) * 0.05f) % 360.0f : 0.0f;
 
         Vec3 bePos = Vec3.atCenterOf(be.getBlockPos());
         ItemOwner owner = new ItemOwner() {
@@ -98,7 +106,7 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
             ItemStackRenderState renderState = new ItemStackRenderState();
             itemModelResolver.updateForTopItem(renderState, stack.copyWithCount(1), ItemDisplayContext.GROUND, level, owner, 0);
             state.slotRenderStates[slot] = renderState;
-            state.slotRotations[slot] = (float) Math.floorMod(be.getBlockPos().hashCode() * 31 + slot * 47, 360);
+            state.slotRotations[slot] = sourceSpin;
         }
     }
 
@@ -120,11 +128,14 @@ public class PoppetShelfRenderer implements BlockEntityRenderer<PoppetShelfBlock
 
             int row = slot / 3;
             int col = slot % 3;
-            float x = 0.25f + col * 0.25f;
-            float z = 0.25f + row * 0.25f;
+            float x = FIRST_SLOT_CENTER + col * SLOT_SPACING;
+            float z = FIRST_SLOT_CENTER + row * SLOT_SPACING;
 
             ps.pushPose();
-            ps.translate(x, 0.6f, z);
+            ps.translate(0.5, 0.0, 0.5);
+            ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+            ps.translate(-0.5, 0.0, -0.5);
+            ps.translate(x, SLOT_Y, z);
             ps.scale(0.5f, 0.5f, 0.5f);
             ps.mulPose(Axis.YP.rotationDegrees(state.slotRotations[slot]));
             ps.mulPose(Axis.XP.rotationDegrees(-90.0F));
