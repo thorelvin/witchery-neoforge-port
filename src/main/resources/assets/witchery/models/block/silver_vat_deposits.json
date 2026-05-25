@@ -1,0 +1,113 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "witchery:block/silver_deposits",
+    "deposit": "witchery:block/silver_deposits"
+  },
+  "elements": [
+    {
+      "name": "deposit_1",
+      "from": [5.8, 2.3, 3.8],
+      "to": [6.9, 3.4, 4.9],
+      "faces": {
+        "north": {"uv": [0, 0, 3, 3], "texture": "#deposit"},
+        "east": {"uv": [0, 0, 3, 3], "texture": "#deposit"},
+        "south": {"uv": [0, 0, 3, 3], "texture": "#deposit"},
+        "west": {"uv": [0, 0, 3, 3], "texture": "#deposit"},
+        "up": {"uv": [0, 0, 3, 3], "texture": "#deposit"},
+        "down": {"uv": [0, 0, 3, 3], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_2",
+      "from": [9.4, 2.0, 4.5],
+      "to": [11.6, 3.1, 5.5],
+      "faces": {
+        "north": {"uv": [3, 0, 7, 2], "texture": "#deposit"},
+        "east": {"uv": [3, 0, 5, 2], "texture": "#deposit"},
+        "south": {"uv": [3, 0, 7, 2], "texture": "#deposit"},
+        "west": {"uv": [3, 0, 5, 2], "texture": "#deposit"},
+        "up": {"uv": [3, 0, 7, 2], "texture": "#deposit"},
+        "down": {"uv": [3, 0, 7, 2], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_3",
+      "from": [3.9, 2.1, 10.1],
+      "to": [5.0, 3.2, 12.2],
+      "faces": {
+        "north": {"uv": [0, 3, 2, 7], "texture": "#deposit"},
+        "east": {"uv": [0, 3, 4, 7], "texture": "#deposit"},
+        "south": {"uv": [0, 3, 2, 7], "texture": "#deposit"},
+        "west": {"uv": [0, 3, 4, 7], "texture": "#deposit"},
+        "up": {"uv": [0, 3, 2, 7], "texture": "#deposit"},
+        "down": {"uv": [0, 3, 2, 7], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_4",
+      "from": [6.9, 1.8, 7.8],
+      "to": [8.0, 2.9, 8.9],
+      "faces": {
+        "north": {"uv": [4, 4, 7, 7], "texture": "#deposit"},
+        "east": {"uv": [4, 4, 7, 7], "texture": "#deposit"},
+        "south": {"uv": [4, 4, 7, 7], "texture": "#deposit"},
+        "west": {"uv": [4, 4, 7, 7], "texture": "#deposit"},
+        "up": {"uv": [4, 4, 7, 7], "texture": "#deposit"},
+        "down": {"uv": [4, 4, 7, 7], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_5",
+      "from": [9.6, 2.0, 7.6],
+      "to": [10.8, 3.1, 8.8],
+      "faces": {
+        "north": {"uv": [8, 3, 11, 6], "texture": "#deposit"},
+        "east": {"uv": [8, 3, 11, 6], "texture": "#deposit"},
+        "south": {"uv": [8, 3, 11, 6], "texture": "#deposit"},
+        "west": {"uv": [8, 3, 11, 6], "texture": "#deposit"},
+        "up": {"uv": [8, 3, 11, 6], "texture": "#deposit"},
+        "down": {"uv": [8, 3, 11, 6], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_6",
+      "from": [3.3, 2.1, 6.4],
+      "to": [5.5, 3.2, 7.4],
+      "faces": {
+        "north": {"uv": [9, 7, 13, 9], "texture": "#deposit"},
+        "east": {"uv": [9, 7, 11, 9], "texture": "#deposit"},
+        "south": {"uv": [9, 7, 13, 9], "texture": "#deposit"},
+        "west": {"uv": [9, 7, 11, 9], "texture": "#deposit"},
+        "up": {"uv": [9, 7, 13, 9], "texture": "#deposit"},
+        "down": {"uv": [9, 7, 13, 9], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_7",
+      "from": [7.5, 2.0, 10.1],
+      "to": [8.6, 3.1, 11.2],
+      "faces": {
+        "north": {"uv": [12, 2, 15, 5], "texture": "#deposit"},
+        "east": {"uv": [12, 2, 15, 5], "texture": "#deposit"},
+        "south": {"uv": [12, 2, 15, 5], "texture": "#deposit"},
+        "west": {"uv": [12, 2, 15, 5], "texture": "#deposit"},
+        "up": {"uv": [12, 2, 15, 5], "texture": "#deposit"},
+        "down": {"uv": [12, 2, 15, 5], "texture": "#deposit"}
+      }
+    },
+    {
+      "name": "deposit_8",
+      "from": [6.8, 2.0, 7.0],
+      "to": [7.9, 3.1, 8.1],
+      "faces": {
+        "north": {"uv": [12, 9, 15, 12], "texture": "#deposit"},
+        "east": {"uv": [12, 9, 15, 12], "texture": "#deposit"},
+        "south": {"uv": [12, 9, 15, 12], "texture": "#deposit"},
+        "west": {"uv": [12, 9, 15, 12], "texture": "#deposit"},
+        "up": {"uv": [12, 9, 15, 12], "texture": "#deposit"},
+        "down": {"uv": [12, 9, 15, 12], "texture": "#deposit"}
+      }
+    }
+  ]
+}

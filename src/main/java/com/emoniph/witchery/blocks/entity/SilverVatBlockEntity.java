@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.SilverVatBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
@@ -41,6 +42,7 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SilverVatBlockEntity be) {
         if (level.getGameTime() % TICK_INTERVAL != 0) return;
+        be.syncVisualState(level);
         be.checkAdjacentGoldOutputs(level, pos);
     }
 
@@ -110,10 +112,25 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
     private void sync(@Nullable Level level) {
         setChanged();
         if (level != null && !level.isClientSide()) {
-            BlockState state = getBlockState();
+            BlockState state = syncVisualState(level);
             level.sendBlockUpdated(worldPosition, state, state, 3);
             level.updateNeighbourForOutputSignal(worldPosition, state.getBlock());
         }
+    }
+
+    private BlockState syncVisualState(Level level) {
+        BlockState state = getBlockState();
+        if (!state.hasProperty(SilverVatBlock.HAS_DEPOSITS)) {
+            return state;
+        }
+
+        boolean hasDeposits = !stored.isEmpty();
+        if (state.getValue(SilverVatBlock.HAS_DEPOSITS) != hasDeposits) {
+            BlockState updated = state.setValue(SilverVatBlock.HAS_DEPOSITS, hasDeposits);
+            level.setBlock(worldPosition, updated, 3);
+            return updated;
+        }
+        return state;
     }
 
     @Override

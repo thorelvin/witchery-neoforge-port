@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,15 +29,22 @@ import org.jetbrains.annotations.Nullable;
 public class SilverVatBlock extends BaseEntityBlock {
 
     public static final MapCodec<SilverVatBlock> CODEC = simpleCodec(SilverVatBlock::new);
+    public static final BooleanProperty HAS_DEPOSITS = BooleanProperty.create("has_deposits");
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 10.25, 16.0);
 
     public SilverVatBlock(BlockBehaviour.Properties props) {
         super(props);
+        registerDefaultState(this.stateDefinition.any().setValue(HAS_DEPOSITS, false));
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(HAS_DEPOSITS);
     }
 
     @Nullable

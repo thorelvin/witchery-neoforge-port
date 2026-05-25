@@ -1,7 +1,17 @@
 {
-  "variants": {
-    "": {
-      "model": "witchery:block/silver_vat"
+  "multipart": [
+    {
+      "apply": {
+        "model": "witchery:block/silver_vat"
+      }
+    },
+    {
+      "when": {
+        "has_deposits": "true"
+      },
+      "apply": {
+        "model": "witchery:block/silver_vat_deposits"
+      }
     }
-  }
+  ]
 }
