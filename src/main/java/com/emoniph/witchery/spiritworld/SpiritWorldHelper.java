@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -109,7 +110,7 @@ public final class SpiritWorldHelper {
 
         saveAndStripInventory(player, data);
 
-        double[] pos = findSpiritWorldEntry(sw, player.blockPosition());
+        double[] pos = prepareSpiritWorldEntry(sw, player);
         player.teleportTo(sw, pos[0], (double)(pos[1]), pos[2], java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
 
         if (!nightmare.isNightmare) {
@@ -387,17 +388,26 @@ public final class SpiritWorldHelper {
 
     // ── Position ─────────────────────────────────────────────────────────────
 
-    private static double[] findSpiritWorldEntry(ServerLevel sw, BlockPos playerPos) {
-        sw.getChunk(playerPos.getX() >> 4, playerPos.getZ() >> 4, ChunkStatus.FULL, true);
-        for (int y = 200; y >= -60; y--) {
-            BlockPos pos = new BlockPos(playerPos.getX(), y, playerPos.getZ());
-            if (!sw.getBlockState(pos).isAir()
-                    && sw.getBlockState(pos.above()).isAir()
-                    && sw.getBlockState(pos.above().above()).isAir()) {
-                return new double[]{ playerPos.getX() + 0.5, y + 1, playerPos.getZ() + 0.5 };
+    private static double[] prepareSpiritWorldEntry(ServerLevel sw, ServerPlayer player) {
+        double x = player.getX();
+        double y = player.getY();
+        double z = player.getZ();
+        BlockPos anchor = BlockPos.containing(x, y, z);
+        sw.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
+        clearCopiedBed(sw, anchor);
+        return new double[]{ x, y, z };
+    }
+
+    private static void clearCopiedBed(ServerLevel level, BlockPos anchor) {
+        List<BlockPos> copiedBedParts = new ArrayList<>();
+        for (BlockPos pos : BlockPos.betweenClosed(anchor.offset(-1, -1, -1), anchor.offset(1, 1, 1))) {
+            if (level.getBlockState(pos).getBlock() instanceof BedBlock) {
+                copiedBedParts.add(pos.immutable());
             }
         }
-        return new double[]{ playerPos.getX() + 0.5, 65, playerPos.getZ() + 0.5 };
+        for (BlockPos pos : copiedBedParts) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
     }
 
     private static BlockPos findSafeStandingPos(ServerLevel level, BlockPos anchor) {
