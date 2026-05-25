@@ -102,7 +102,7 @@ public class BeartrapBlock extends Block {
         if (!isCreativePlayer(living)) {
             living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 2, true, true));
         }
-        living.hurt(level.damageSources().generic(), 4.0F);
+        living.hurt(level.damageSources().fellOutOfWorld(), 4.0F);
         level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_MANTRAP.get(),
                 SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
         if (level instanceof ServerLevel serverLevel) {
