@@ -1,21 +1,9 @@
 {
-  "texture_size": [32, 32],
+  "render_type": "minecraft:translucent",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "mirror": "witchery:block/mirror",
-    "particle": "witchery:block/mirror"
-  },
-  "elements": [
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "north": { "uv": [1.5, 0.5, 6.5, 6.5], "texture": "#mirror" },
-        "east": { "uv": [1.5, 0.5, 6.5, 6.5], "texture": "#mirror" },
-        "south": { "uv": [1.5, 6.5, 6.5, 12.5], "texture": "#mirror" },
-        "west": { "uv": [1.5, 6.5, 6.5, 12.5], "texture": "#mirror" },
-        "up": { "uv": [1.5, 1.5, 6.5, 6.5], "texture": "#mirror" },
-        "down": { "uv": [1.5, 6.5, 6.5, 11.5], "texture": "#mirror" }
-      }
-    }
-  ]
+    "end": "witchery:block/brew_still",
+    "side": "witchery:block/brew_flow",
+    "particle": "witchery:block/brew_flow"
+  }
 }
