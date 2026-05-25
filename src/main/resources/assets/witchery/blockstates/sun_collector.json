@@ -1,5 +1,20 @@
 {
   "variants": {
-    "": { "model": "witchery:block/sun_collector" }
+    "power=0": { "model": "witchery:block/sun_collector" },
+    "power=1": { "model": "witchery:block/sun_collector" },
+    "power=2": { "model": "witchery:block/sun_collector" },
+    "power=3": { "model": "witchery:block/sun_collector" },
+    "power=4": { "model": "witchery:block/sun_collector" },
+    "power=5": { "model": "witchery:block/sun_collector" },
+    "power=6": { "model": "witchery:block/sun_collector" },
+    "power=7": { "model": "witchery:block/sun_collector" },
+    "power=8": { "model": "witchery:block/sun_collector" },
+    "power=9": { "model": "witchery:block/sun_collector" },
+    "power=10": { "model": "witchery:block/sun_collector" },
+    "power=11": { "model": "witchery:block/sun_collector" },
+    "power=12": { "model": "witchery:block/sun_collector" },
+    "power=13": { "model": "witchery:block/sun_collector" },
+    "power=14": { "model": "witchery:block/sun_collector" },
+    "power=15": { "model": "witchery:block/sun_collector" }
   }
 }

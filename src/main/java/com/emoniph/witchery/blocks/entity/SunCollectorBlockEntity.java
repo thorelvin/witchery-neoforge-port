@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.SunCollectorBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
@@ -39,7 +40,7 @@ public class SunCollectorBlockEntity extends BlockEntity {
         stack.shrink(1);
         chargeProgress = 0;
         setChanged();
-        syncToClient(level);
+        setPresentationPower(level, 1);
     }
 
     public ItemStack retrieveStored(Level level) {
@@ -47,8 +48,23 @@ public class SunCollectorBlockEntity extends BlockEntity {
         stored = ItemStack.EMPTY;
         chargeProgress = 0;
         setChanged();
-        syncToClient(level);
+        setPresentationPower(level, 0);
         return result;
+    }
+
+    private void setPresentationPower(Level level, int power) {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        BlockState state = getBlockState();
+        if (!state.hasProperty(SunCollectorBlock.POWER)) {
+            syncToClient(level);
+            return;
+        }
+        int clamped = Math.max(0, Math.min(15, power));
+        if (state.getValue(SunCollectorBlock.POWER) != clamped) {
+            level.setBlock(worldPosition, state.setValue(SunCollectorBlock.POWER, clamped), 3);
+        }
     }
 
     private void syncToClient(Level level) {
@@ -59,8 +75,19 @@ public class SunCollectorBlockEntity extends BlockEntity {
     public static void serverTick(Level levelRaw, BlockPos pos, BlockState state,
                                   SunCollectorBlockEntity be) {
         if (!(levelRaw instanceof ServerLevel level)) return;
-        if (be.stored.isEmpty()) return;
-        if (!be.stored.is(WitcheryItems.QUARTZ_SPHERE.get())) return;
+        if (be.stored.isEmpty()) {
+            be.setPresentationPower(level, 0);
+            return;
+        }
+        if (be.stored.is(WitcheryItems.CHARGED_QUARTZ_SPHERE.get())) {
+            be.setPresentationPower(level, 15);
+            return;
+        }
+        if (!be.stored.is(WitcheryItems.QUARTZ_SPHERE.get())) {
+            be.setPresentationPower(level, 1);
+            return;
+        }
+        be.setPresentationPower(level, 1);
 
         long dayTime = level.getDayTime() % 24000L;
         boolean isDaytime = dayTime >= 0 && dayTime < 13000;
@@ -73,7 +100,7 @@ public class SunCollectorBlockEntity extends BlockEntity {
             be.stored = WitcheryItems.CHARGED_QUARTZ_SPHERE.get().getDefaultInstance();
             be.chargeProgress = 0;
             be.setChanged();
-            be.syncToClient(level);
+            be.setPresentationPower(level, 15);
         }
     }
 

@@ -20,6 +20,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -28,12 +30,21 @@ import org.jetbrains.annotations.Nullable;
 public class SunCollectorBlock extends BaseEntityBlock {
 
     public static final MapCodec<SunCollectorBlock> CODEC = simpleCodec(SunCollectorBlock::new);
+    public static final IntegerProperty POWER = IntegerProperty.create("power", 0, 15);
     private static final VoxelShape SHAPE = Block.box(3.2, 0.0, 3.2, 12.8, 12.8, 12.8);
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    public SunCollectorBlock(BlockBehaviour.Properties p) { super(p); }
+    public SunCollectorBlock(BlockBehaviour.Properties p) {
+        super(p);
+        registerDefaultState(stateDefinition.any().setValue(POWER, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(POWER);
+    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

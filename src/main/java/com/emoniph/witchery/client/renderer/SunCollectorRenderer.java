@@ -1,6 +1,8 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.blocks.SunCollectorBlock;
 import com.emoniph.witchery.blocks.entity.SunCollectorBlockEntity;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -42,6 +44,14 @@ public class SunCollectorRenderer implements BlockEntityRenderer<SunCollectorBlo
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
 
         ItemStack stack = be.getStored();
+        if (stack.isEmpty() && be.getBlockState().hasProperty(SunCollectorBlock.POWER)) {
+            int power = be.getBlockState().getValue(SunCollectorBlock.POWER);
+            if (power >= 15) {
+                stack = WitcheryItems.CHARGED_QUARTZ_SPHERE.get().getDefaultInstance();
+            } else if (power > 0) {
+                stack = WitcheryItems.QUARTZ_SPHERE.get().getDefaultInstance();
+            }
+        }
         Level level = be.getLevel();
         if (stack.isEmpty() || level == null) {
             state.itemRenderState = new ItemStackRenderState();
