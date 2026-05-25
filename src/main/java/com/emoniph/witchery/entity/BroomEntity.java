@@ -83,9 +83,7 @@ public class BroomEntity extends Mob {
         Entity passenger = getFirstPassenger();
         if (passenger instanceof LivingEntity rider) {
             updateRiderBuffFlags(rider);
-            if (level().isClientSide()) {
-                handleRiddenMovement(rider);
-            }
+            handleRiddenMovement(rider);
         } else {
             riderHasOwlFamiliar = false;
             riderHasSoaringBrew = false;
@@ -93,11 +91,9 @@ public class BroomEntity extends Mob {
         }
 
         super.tick(); // entity state updates (hurt flash, passengers, etc.) — aiStep() is now a no-op
-        if (!(passenger instanceof LivingEntity) || level().isClientSide()) {
-            move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().scale(0.99));
-            alignToMotion();
-        }
+        move(MoverType.SELF, getDeltaMovement());
+        setDeltaMovement(getDeltaMovement().scale(0.99));
+        alignToMotion();
     }
 
     private void handleRiddenMovement(LivingEntity rider) {
