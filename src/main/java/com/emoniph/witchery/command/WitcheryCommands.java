@@ -231,7 +231,9 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("verify")
                         .then(Commands.literal("torment")
-                                .executes(ctx -> verifyTorment(ctx.getSource()))))
+                                .executes(ctx -> verifyTorment(ctx.getSource())))
+                        .then(Commands.literal("spiritworld")
+                                .executes(ctx -> verifySpiritWorld(ctx.getSource()))))
 
                 .then(Commands.literal("give")
                         .then(Commands.literal("primer")
@@ -811,6 +813,32 @@ public class WitcheryCommands {
         return 0;
     }
 
+    /** Server-side Spirit World data audit for fresh/deleted dimension chunks. */
+    private static int verifySpiritWorld(CommandSourceStack src) {
+        ServerLevel spiritWorld = src.getServer().getLevel(WitcheryDimensions.SPIRIT_WORLD);
+        if (spiritWorld == null) {
+            src.sendFailure(Component.literal("Spirit World dimension is not loaded."));
+            return 0;
+        }
+
+        java.util.List<String> failures = new java.util.ArrayList<>();
+        verifySpiritWorldDimensionSettings(spiritWorld, failures);
+        verifySpiritWorldBiomeData(spiritWorld, failures);
+
+        if (failures.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "Spirit World verification passed: fixed biome, source baseline animals, native Spirit spawns, and vegetation/cotton feature wiring are loaded."),
+                    false);
+            return 1;
+        }
+
+        src.sendFailure(Component.literal("Spirit World verification failed with " + failures.size() + " mismatch(es)."));
+        for (String failure : failures) {
+            src.sendFailure(Component.literal(" - " + failure));
+        }
+        return 0;
+    }
+
     private static void loadTormentFootprintChunks(ServerLevel torment) {
         int minChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MIN_X, 16);
         int maxChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MAX_X, 16);
@@ -859,6 +887,125 @@ public class WitcheryCommands {
                 }
             }
         }
+    }
+
+    private static void verifySpiritWorldDimensionSettings(ServerLevel spiritWorld, java.util.List<String> failures) {
+        var type = spiritWorld.dimensionType();
+        if (!type.hasSkyLight()) {
+            failures.add("Spirit World dimension type lost skylight.");
+        }
+        if (type.hasCeiling()) {
+            failures.add("Spirit World dimension type unexpectedly has a ceiling.");
+        }
+        if (Math.abs(type.ambientLight()) > 0.0001F) {
+            failures.add("Spirit World ambient light should be 0.0 but was " + type.ambientLight() + ".");
+        }
+
+        JsonObject dimensionTypeJson = readWitcheryDataJson(spiritWorld, "dimension_type/spirit_world.json", "Spirit World", failures);
+        if (dimensionTypeJson != null) {
+            if (!dimensionTypeJson.has("effects") || !"minecraft:overworld".equals(dimensionTypeJson.get("effects").getAsString())) {
+                failures.add("Spirit World dimension type JSON effects should stay minecraft:overworld.");
+            }
+            if (!dimensionTypeJson.has("ambient_light") || Math.abs(dimensionTypeJson.get("ambient_light").getAsFloat()) > 0.0001F) {
+                failures.add("Spirit World dimension type JSON ambient_light should stay 0.0.");
+            }
+            if (!dimensionTypeJson.has("has_skylight") || !dimensionTypeJson.get("has_skylight").getAsBoolean()) {
+                failures.add("Spirit World dimension type JSON should keep has_skylight true.");
+            }
+            if (!dimensionTypeJson.has("has_ceiling") || dimensionTypeJson.get("has_ceiling").getAsBoolean()) {
+                failures.add("Spirit World dimension type JSON should keep has_ceiling false.");
+            }
+        }
+
+        JsonObject dimensionJson = readWitcheryDataJson(spiritWorld, "dimension/spirit_world.json", "Spirit World", failures);
+        if (dimensionJson != null) {
+            JsonObject generatorJson = dimensionJson.getAsJsonObject("generator");
+            if (generatorJson == null) {
+                failures.add("Spirit World dimension JSON is missing its generator object.");
+            } else {
+                if (!generatorJson.has("settings") || !"minecraft:overworld".equals(generatorJson.get("settings").getAsString())) {
+                    failures.add("Spirit World generator should keep minecraft:overworld noise settings.");
+                }
+                JsonObject biomeSourceJson = generatorJson.getAsJsonObject("biome_source");
+                if (biomeSourceJson == null) {
+                    failures.add("Spirit World generator is missing its fixed biome source.");
+                } else if (!biomeSourceJson.has("biome") || !"witchery:spirit_world".equals(biomeSourceJson.get("biome").getAsString())) {
+                    failures.add("Spirit World generator should use the fixed witchery:spirit_world biome.");
+                }
+            }
+        }
+    }
+
+    private static void verifySpiritWorldBiomeData(ServerLevel spiritWorld, java.util.List<String> failures) {
+        JsonObject biomeJson = readWitcheryDataJson(spiritWorld, "worldgen/biome/spirit_world.json", "Spirit World", failures);
+        if (biomeJson == null) {
+            return;
+        }
+
+        JsonObject effectsJson = biomeJson.getAsJsonObject("effects");
+        if (effectsJson == null) {
+            failures.add("Spirit World biome JSON is missing its effects object.");
+        } else {
+            verifyJsonInt(effectsJson, "fog_color", 13382553, "Spirit World biome fog_color", failures);
+            verifyJsonInt(effectsJson, "sky_color", 13382553, "Spirit World biome sky_color", failures);
+            verifyJsonInt(effectsJson, "grass_color", 9027656, "Spirit World biome grass_color", failures);
+            verifyJsonInt(effectsJson, "foliage_color", 8371292, "Spirit World biome foliage_color", failures);
+        }
+
+        verifyBiomeSpawner(biomeJson, "creature", "minecraft:sheep", failures);
+        verifyBiomeSpawner(biomeJson, "creature", "minecraft:pig", failures);
+        verifyBiomeSpawner(biomeJson, "creature", "minecraft:chicken", failures);
+        verifyBiomeSpawner(biomeJson, "creature", "minecraft:cow", failures);
+        verifyBiomeSpawner(biomeJson, "ambient", "witchery:spirit", failures);
+
+        verifyBiomeFeature(biomeJson, "witchery:spirit_grass", failures);
+        verifyBiomeFeature(biomeJson, "witchery:spirit_tall_grass", failures);
+        verifyBiomeFeature(biomeJson, "witchery:spirit_mushrooms", failures);
+        verifyBiomeFeature(biomeJson, "witchery:spirit_dead_bush", failures);
+        verifyBiomeFeature(biomeJson, "witchery:spirit_tree", failures);
+        verifyBiomeFeature(biomeJson, "witchery:wispy_cotton", failures);
+        verifyBiomeFeature(biomeJson, "witchery:disturbed_cotton", failures);
+    }
+
+    private static void verifyJsonInt(JsonObject json, String key, int expected, String label, java.util.List<String> failures) {
+        if (!json.has(key) || json.get(key).getAsInt() != expected) {
+            failures.add(label + " should stay " + expected + ".");
+        }
+    }
+
+    private static void verifyBiomeSpawner(JsonObject biomeJson, String category, String type, java.util.List<String> failures) {
+        JsonObject spawnersJson = biomeJson.getAsJsonObject("spawners");
+        if (spawnersJson == null || !spawnersJson.has(category)) {
+            failures.add("Spirit World biome is missing " + category + " spawners.");
+            return;
+        }
+        for (var element : spawnersJson.getAsJsonArray(category)) {
+            if (element.isJsonObject()) {
+                JsonObject entry = element.getAsJsonObject();
+                if (entry.has("type") && type.equals(entry.get("type").getAsString())) {
+                    return;
+                }
+            }
+        }
+        failures.add("Spirit World biome is missing " + type + " in the " + category + " spawn bucket.");
+    }
+
+    private static void verifyBiomeFeature(JsonObject biomeJson, String feature, java.util.List<String> failures) {
+        if (!biomeJson.has("features")) {
+            failures.add("Spirit World biome is missing its feature step list.");
+            return;
+        }
+        for (var stepElement : biomeJson.getAsJsonArray("features")) {
+            if (!stepElement.isJsonArray()) {
+                continue;
+            }
+            for (var featureElement : stepElement.getAsJsonArray()) {
+                if (featureElement.isJsonPrimitive() && feature.equals(featureElement.getAsString())) {
+                    return;
+                }
+            }
+        }
+        failures.add("Spirit World biome is missing placed feature " + feature + ".");
     }
 
     private static void verifyTormentLevel(ServerLevel torment, int level, java.util.List<String> failures) {
@@ -987,17 +1134,21 @@ public class WitcheryCommands {
     }
 
     private static JsonObject readTormentDataJson(ServerLevel torment, String path, java.util.List<String> failures) {
+        return readWitcheryDataJson(torment, path, "Torment", failures);
+    }
+
+    private static JsonObject readWitcheryDataJson(ServerLevel level, String path, String label, java.util.List<String> failures) {
         var resourceId = Identifier.fromNamespaceAndPath("witchery", path);
-        var resource = torment.getServer().getResourceManager().getResource(resourceId).orElse(null);
+        var resource = level.getServer().getResourceManager().getResource(resourceId).orElse(null);
         if (resource == null) {
-            failures.add("Missing Torment data resource " + resourceId + ".");
+            failures.add("Missing " + label + " data resource " + resourceId + ".");
             return null;
         }
 
         try (var reader = resource.openAsReader()) {
             return JsonParser.parseReader(reader).getAsJsonObject();
         } catch (IOException | IllegalStateException ex) {
-            failures.add("Could not read Torment data resource " + resourceId + ": " + ex.getMessage());
+            failures.add("Could not read " + label + " data resource " + resourceId + ": " + ex.getMessage());
             return null;
         }
     }
