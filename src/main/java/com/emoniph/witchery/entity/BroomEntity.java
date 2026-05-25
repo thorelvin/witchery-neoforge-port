@@ -284,6 +284,16 @@ public class BroomEntity extends Mob {
             double offsetY = getBbHeight() + 0.1;
             Vec3 pos = new Vec3(getX(), getY() + offsetY, getZ());
             moveFunc.accept(passenger, pos.x, pos.y, pos.z);
+            if (passenger instanceof LivingEntity rider) {
+                alignToRider(rider);
+            }
+        }
+    }
+
+    @Override
+    public void onPassengerTurned(Entity passenger) {
+        if (hasPassenger(passenger) && passenger instanceof LivingEntity rider) {
+            alignToRider(rider);
         }
     }
 
