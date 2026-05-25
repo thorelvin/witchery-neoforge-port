@@ -119,8 +119,8 @@ public class WitcheryBlocks {
     public static final DeferredBlock<WitcheryWoodSlabBlock> HAWTHORN_SLAB = BLOCKS.registerBlock("hawthorn_slab",
             props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
             BlockBehaviour.Properties.of());
-    public static final DeferredBlock<DoorBlock> HAWTHORN_DOOR = BLOCKS.registerBlock("hawthorn_door",
-            props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+    public static final DeferredBlock<HawthornDoorBlock> HAWTHORN_DOOR = BLOCKS.registerBlock("hawthorn_door",
+            props -> new HawthornDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> HAWTHORN_LEAVES = BLOCKS.registerBlock("hawthorn_leaves",
             RowanLeavesBlock::new,

@@ -44,6 +44,8 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("coffin", () -> new BlockEntityType<>(CoffinBlockEntity::new, Set.of(WitcheryBlocks.COFFIN.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RowanDoorBlockEntity>> ROWAN_DOOR =
             BLOCK_ENTITIES.register("rowan_door", () -> new BlockEntityType<>(RowanDoorBlockEntity::new, Set.of(WitcheryBlocks.ROWAN_DOOR.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HawthornDoorBlockEntity>> HAWTHORN_DOOR =
+            BLOCK_ENTITIES.register("hawthorn_door", () -> new BlockEntityType<>(HawthornDoorBlockEntity::new, Set.of(WitcheryBlocks.HAWTHORN_DOOR.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FetishBlockEntity>> FETISH =
             BLOCK_ENTITIES.register("fetish", () -> new BlockEntityType<>(FetishBlockEntity::new,
                     Set.of(WitcheryBlocks.FETISH_SCARECROW.get(),

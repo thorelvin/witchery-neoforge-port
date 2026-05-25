@@ -333,6 +333,8 @@
   "witchery.taglock_kit.no_blood_rose_sample": "This Blood Rose does not hold a fresh sample.",
   "witchery.taglock_kit.collected_leech_chest": "Collected taglock from the Leech Chest: %s.",
   "witchery.taglock_kit.no_leech_chest_sample": "This Leech Chest does not hold a usable taglock.",
+  "witchery.taglock_kit.collected_hawthorn_door": "Collected taglock from the Hawthorn Door: %s.",
+  "witchery.taglock_kit.no_hawthorn_door_sample": "This Hawthorn Door does not hold a usable taglock.",
   "witchery.taglock_kit.only_own_taglock": "Only your own stored taglock is available here.",
   "witchery.taglock_kit.player_not_logged_in": "These stored players are not logged in: %s.",
   "witchery.treefyd.ignore_player_added": "Treefyd now ignores %s.",
