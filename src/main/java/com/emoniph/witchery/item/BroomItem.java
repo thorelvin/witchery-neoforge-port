@@ -55,7 +55,7 @@ public class BroomItem extends Item {
                 player.getZ() + look.z * 1.5);
         ItemStack stack = player.getItemInHand(hand);
         broom.setEnchanted(stack.is(WitcheryItems.ENCHANTED_BROOM.get()));
-        broom.setYRot(player.getYRot());
+        broom.faceYaw(player.getYRot());
         sl.addFreshEntity(broom);
         player.startRiding(broom, true, true);
 

@@ -84,7 +84,8 @@ public class BroomEntity extends Mob {
         super.tick();
 
         Entity passenger = getFirstPassenger();
-        if (passenger instanceof LivingEntity rider) {
+        LivingEntity rider = passenger instanceof LivingEntity living ? living : null;
+        if (rider != null) {
             updateRiderBuffFlags(rider);
             handleRiddenMovement(rider);
         } else {
@@ -95,15 +96,17 @@ public class BroomEntity extends Mob {
 
         move(MoverType.SELF, getDeltaMovement());
         setDeltaMovement(getDeltaMovement().scale(0.99));
-        alignToMotion();
+        if (rider != null) {
+            alignToRider(rider);
+        } else {
+            alignToMotion();
+        }
     }
 
     private void handleRiddenMovement(LivingEntity rider) {
         double previousHorizontalSpeed = horizontalDistance(getDeltaMovement());
 
-        setYRot(rider.getYRot());
-        yRotO = getYRot();
-        setXRot(0.0F);
+        alignToRider(rider);
 
         Vec3 motion = getDeltaMovement();
         if (rider.zza > 0.0F) {
@@ -217,6 +220,21 @@ public class BroomEntity extends Mob {
             yRotO = yaw;
         }
         setXRot(0.0F);
+    }
+
+    private void alignToRider(LivingEntity rider) {
+        faceYaw(rider.getYRot());
+    }
+
+    public void faceYaw(float yaw) {
+        setYRot(yaw);
+        yRotO = yaw;
+        setYBodyRot(yaw);
+        yBodyRotO = yaw;
+        setYHeadRot(yaw);
+        yHeadRotO = yaw;
+        setXRot(0.0F);
+        xRotO = 0.0F;
     }
 
     private static double horizontalDistance(Vec3 motion) {
