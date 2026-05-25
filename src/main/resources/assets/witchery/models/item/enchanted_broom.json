@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "witchery:item/ingredient.broom_enchanted"
+    "layer0": "witchery:item/ingredient.broom_enchanted",
+    "layer1": "witchery:item/ingredient.broom_overlay"
   }
 }
