@@ -8,6 +8,7 @@ import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,8 @@ import java.util.Map;
 public class WitcheryClientEvents {
 
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
+    private static final float SPIRIT_DREAM_ANGLE = 1.0F;
+    private static final float SPIRIT_NIGHTMARE_ANGLE = 0.5F;
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
@@ -105,9 +108,17 @@ public class WitcheryClientEvents {
         } else {
             r = 0.8f; g = 0.2f; b = 0.6f;
         }
+        float angle = sourceSpiritColorFactor(data.isNightmare() ? SPIRIT_NIGHTMARE_ANGLE : SPIRIT_DREAM_ANGLE);
+        r *= angle * 0.94F + 0.06F;
+        g *= angle * 0.94F + 0.06F;
+        b *= angle * 0.91F + 0.09F;
         event.setRed(r);
         event.setGreen(g);
         event.setBlue(b);
+    }
+
+    private static float sourceSpiritColorFactor(float celestialAngle) {
+        return Mth.clamp(Mth.cos(celestialAngle * Mth.TWO_PI) * 2.0F + 0.5F, 0.0F, 1.0F);
     }
 
     private record PlayerVisibilityState(boolean invisible, boolean invisibleToPlayer) {}
