@@ -99,8 +99,8 @@ public class WitcheryBlocks {
     public static final DeferredBlock<WitcheryWoodSlabBlock> ALDER_SLAB = BLOCKS.registerBlock("alder_slab",
             props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
             BlockBehaviour.Properties.of());
-    public static final DeferredBlock<DoorBlock> ALDER_DOOR = BLOCKS.registerBlock("alder_door",
-            props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+    public static final DeferredBlock<AlderDoorBlock> ALDER_DOOR = BLOCKS.registerBlock("alder_door",
+            props -> new AlderDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> ALDER_LEAVES = BLOCKS.registerBlock("alder_leaves",
             RowanLeavesBlock::new,
