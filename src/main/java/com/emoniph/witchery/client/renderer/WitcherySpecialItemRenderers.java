@@ -46,7 +46,7 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("witches_oven"), WitchesOvenUnbaked.MAP_CODEC);
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
         event.register(id("beartrap"), BeartrapUnbaked.MAP_CODEC);
-        event.register(id("wolftrap"), BeartrapUnbaked.MAP_CODEC);
+        event.register(id("wolftrap"), WolftrapUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
         event.register(id("chalice"), ChaliceUnbaked.MAP_CODEC);
         event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
@@ -342,6 +342,21 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<BeartrapUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record WolftrapUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<WolftrapUnbaked> MAP_CODEC = MapCodec.unit(new WolftrapUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new BeartrapSpecialRenderer(
+                    new BeartrapModel(context.entityModelSet().bakeLayer(BeartrapModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<WolftrapUnbaked> type() {
             return MAP_CODEC;
         }
     }
