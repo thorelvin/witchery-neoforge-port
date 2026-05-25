@@ -1,4 +1,14 @@
 {
+  "block.bear_trap.click": {
+    "sounds": [
+      "witchery:random/click"
+    ]
+  },
+  "block.bear_trap.mantrap": {
+    "sounds": [
+      "witchery:block/bear_trap/mantrap"
+    ]
+  },
   "entity.banshee.scream": {
     "sounds": [
       "witchery:entity/banshee/scream"

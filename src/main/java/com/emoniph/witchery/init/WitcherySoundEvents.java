@@ -12,6 +12,8 @@ public final class WitcherySoundEvents {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(Registries.SOUND_EVENT, WitcheryMod.MODID);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_BEAR_TRAP_CLICK = register("block.bear_trap.click");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_BEAR_TRAP_MANTRAP = register("block.bear_trap.mantrap");
     public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BANSHEE_SCREAM = register("entity.banshee.scream");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_1 = register("entity.raven.idle1");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_2 = register("entity.raven.idle2");

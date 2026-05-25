@@ -1,11 +1,11 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -101,7 +101,8 @@ public class BeartrapBlock extends Block {
 
         living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 2, true, true));
         living.hurt(level.damageSources().generic(), 4.0F);
-        level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
+        level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_MANTRAP.get(),
+                SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
         level.setBlock(pos, state.setValue(CLOSED, true).setValue(ARMED, false), 3);
     }
 
@@ -112,7 +113,8 @@ public class BeartrapBlock extends Block {
             boolean closing = !state.getValue(CLOSED);
             BlockState updated = state.setValue(CLOSED, closing).setValue(ARMED, false);
             level.setBlock(pos, updated, 3);
-            level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
+            level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_CLICK.get(),
+                    SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
             if (!closing) {
                 level.scheduleTick(pos, this, ARM_DELAY_TICKS);
             }
