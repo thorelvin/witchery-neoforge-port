@@ -59,9 +59,8 @@ public class PlacedItemRenderer implements BlockEntityRenderer<PlacedItemBlockEn
         ps.pushPose();
         ps.translate(0.5, 0.05, 0.5);
         ps.mulPose(Axis.YP.rotationDegrees(state.rotation));
-        ps.mulPose(Axis.XP.rotationDegrees(90.0F));
+        ps.mulPose(Axis.XP.rotationDegrees(-90.0F));
         ps.translate(0.0, -0.1, 0.0);
-        ps.scale(0.5f, 0.5f, 0.5f);
         state.itemRenderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         ps.popPose();
     }
