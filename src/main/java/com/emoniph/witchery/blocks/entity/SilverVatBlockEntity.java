@@ -168,7 +168,7 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
         }
         ItemStack result = stored;
         stored = ItemStack.EMPTY;
-        setChanged();
+        sync(level);
         return result;
     }
 
