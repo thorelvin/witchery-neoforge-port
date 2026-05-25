@@ -6,7 +6,7 @@
     "W W"
   ],
   "key": {
-    "W": { "tag": "minecraft:wool" },
+    "W": "#minecraft:wool",
     "S": "witchery:spanish_moss",
     "N": "witchery:bone_needle",
     "T": "minecraft:string"

@@ -3,6 +3,7 @@
     "0": "minecraft:block/cauldron_side",
     "2": "minecraft:block/cauldron_inner",
     "3": "minecraft:block/cauldron_top",
+    "missing": "minecraft:block/cauldron_side",
     "water": "minecraft:block/water_still",
     "particle": "minecraft:block/cauldron_side"
   },
