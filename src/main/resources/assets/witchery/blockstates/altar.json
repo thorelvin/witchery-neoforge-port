@@ -1,18 +1,18 @@
 {
   "variants": {
     "axis=x,part=not_connected": { "model": "witchery:block/altar", "y": 90 },
-    "axis=x,part=back_left": { "model": "witchery:block/altar_connected_lefttop", "y": 90 },
-    "axis=x,part=back_middle": { "model": "witchery:block/altar_connected_middown", "y": 270 },
-    "axis=x,part=back_right": { "model": "witchery:block/altar_connected_leftbot", "y": 270 },
-    "axis=x,part=front_left": { "model": "witchery:block/altar_connected_leftbot", "y": 90 },
-    "axis=x,part=front_middle": { "model": "witchery:block/altar_connected_midtop", "y": 270 },
-    "axis=x,part=front_right": { "model": "witchery:block/altar_connected_lefttop", "y": 270 },
+    "axis=x,part=back_left": { "model": "witchery:block/altar_connected", "y": 90 },
+    "axis=x,part=back_middle": { "model": "witchery:block/altar_connected", "y": 270 },
+    "axis=x,part=back_right": { "model": "witchery:block/altar_connected", "y": 270 },
+    "axis=x,part=front_left": { "model": "witchery:block/altar_connected", "y": 90 },
+    "axis=x,part=front_middle": { "model": "witchery:block/altar_connected", "y": 270 },
+    "axis=x,part=front_right": { "model": "witchery:block/altar_connected", "y": 270 },
     "axis=z,part=not_connected": { "model": "witchery:block/altar" },
-    "axis=z,part=back_left": { "model": "witchery:block/altar_connected_lefttop" },
-    "axis=z,part=back_middle": { "model": "witchery:block/altar_connected_middown", "y": 180 },
-    "axis=z,part=back_right": { "model": "witchery:block/altar_connected_leftbot", "y": 180 },
-    "axis=z,part=front_left": { "model": "witchery:block/altar_connected_leftbot" },
-    "axis=z,part=front_middle": { "model": "witchery:block/altar_connected_midtop", "y": 180 },
-    "axis=z,part=front_right": { "model": "witchery:block/altar_connected_lefttop", "y": 180 }
+    "axis=z,part=back_left": { "model": "witchery:block/altar_connected" },
+    "axis=z,part=back_middle": { "model": "witchery:block/altar_connected", "y": 180 },
+    "axis=z,part=back_right": { "model": "witchery:block/altar_connected", "y": 180 },
+    "axis=z,part=front_left": { "model": "witchery:block/altar_connected" },
+    "axis=z,part=front_middle": { "model": "witchery:block/altar_connected", "y": 180 },
+    "axis=z,part=front_right": { "model": "witchery:block/altar_connected", "y": 180 }
   }
 }

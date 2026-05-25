@@ -1,7 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-25 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes/local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; Poppet Shelf special item pose corrected to the source low half-block baseline; Mirror front/back model UVs corrected for placed and item views; Leech Chest/Refilling Chest GUI item heights normalized to the old neutral item baseline; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
-Latest local delta: Blood-stained Wool now uses the Resurrected block-model texture path with a real 16x16 `textures/block/bloodedwool.png` face derived from the old block render, instead of tiling the rendered item icon over a cube. This should fix the wrapped GUI cube and placed magenta/black block while keeping the Bone Needle -> Blood-stained Wool -> Woven Cruor chain intact. Verify placed, inventory, and dropped-stack visuals in-game.
+Latest local delta: Altar visuals now roll back to the original Witchery cube texture set: `altar.png` is the old 16x16 side face again, the base model uses `altar_top` for both top and bottom, and every connected 2x3 state uses one simple cube model with the original `altar_joined` side plus `altar_joined_top` top. This replaces the Resurrected 96x96 atlas/UV model that wrapped incorrectly. Verify unconnected/connected placed states, inventory, and dropped-stack views in-game.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -10,7 +10,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
-- Current bounded focus: Blood-stained Wool block/item visuals now resolve through a block-face texture; verify placed, inventory, and dropped-stack views, then continue with the next highest-value parity gap.
+- Current bounded focus: Altar block/item visuals now use the original 1.7-style cube model and 16x16 texture set again; verify placed connected-state orientation and item/drop presentation, then continue with the next highest-value parity gap.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 
 ---
@@ -51,7 +51,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 
 | Item | Issue | Effort |
 |---|---|---|
-| `altar` | Should be 2×3 multiblock; item graphic wrong (just a square); top should be red | Large |
+| `altar` | Original 1.7 cube texture/model rollback is in; verify 2x3 connected top/side orientation plus item/drop presentation | Low |
 | `distillery` | Retest machine GUI after explicit source-region blit fix | Low |
 | `spinning_wheel` | Retest machine GUI after explicit source-region blit fix | Low |
 | `witches_oven` | Retest machine GUI after explicit source-region blit fix, and confirm placed ovens now face the player after the custom-renderer yaw fix | Low |
