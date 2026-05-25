@@ -58,6 +58,7 @@ Priority mechanics checklist:
 6. Entities: broom flight, familiar powers, mob AI, renderer-linked gameplay expectations.
 
 Current entity verification note:
+- Sleeping Apple and Brew of Sleeping should be retested against the Spirit World entry roll: use each item in the Overworld while not already spirit-walking or manifested, confirm entry still refuses recursive/wrong-dimension use, confirm Apple starts from the old guaranteed nightmare chance, and confirm Brew starts from the old `0.998` chance that nearby Nightmare-weave Dream Catcher setups can still modify.
 - Broom flight should be retested specifically for the old snap-back symptom: mount via item or `/witchery spawn broom`, fly forward and upward for more than several seconds, and confirm the broom no longer returns toward its placement point while preserving pitch lift and Soaring/Owl speed bonuses.
 - Witch Hunter aggro should be retested after the target-parity pass: spawn a hunter near a Coven Witch, undead mob, Demon/Blaze-style demonic target, a future entity type tagged `witchery:vampires`, and a player carrying a Voodoo or Vampiric Poppet, then confirm it selects valid supernatural targets without attacking ordinary players.
 - Silver damage should be retested against transformed players with both a Silver Ingot and Silver Sword in the attacker's main hand; once vampire mobs land, also verify entity types tagged `witchery:vampires` receive the same bonus.

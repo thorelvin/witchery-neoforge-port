@@ -1,7 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-25 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes/local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; Poppet Shelf special item pose corrected to the source low half-block baseline; Mirror front/back model UVs corrected for placed and item views; Leech Chest/Refilling Chest GUI item heights normalized to the old neutral item baseline; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
-Latest local delta: Brew of the Depths now uses the old five-minute timer path, keeping Water Breathing alive while active and applying/removing Wither based on whether the player is out of water instead of granting Dolphin's Grace and Night Vision.
+Latest local delta: Sleeping Apple and Brew of Sleeping now pass their original item-specific nightmare chances into Spirit World entry again: Apple uses the old guaranteed `1.0` chance, while Brew uses the old `0.998` chance that can still be modified by nearby nightmare-catcher setup.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -265,7 +265,7 @@ A focused source-behavior restore pass across 32 commits:
 - **Item presentations**: Arthana uncommon rarity, Seer Stone enchanted glow, Spectral Stone glint, rare magic item family.
 - **Broom**: enchanted broom spawn flag restored on enchantment rite.
 - **Icy Needle**: original use cost restored.
-- **Sleeping entry guard**: sleep-to-Spirit-World safety check restored.
+- **Sleeping entry guard and chance split**: sleep-to-Spirit-World safety check restored; Sleeping Apple and Brew of Sleeping now seed entry with their old `1.0` vs `0.998` nightmare chances again.
 - **Binky**: summoned name restored on skull right-click.
 - **Dream Weave**: wall placement using clicked face restored.
 - **Rowan Door Key**: UUID lookup fix.

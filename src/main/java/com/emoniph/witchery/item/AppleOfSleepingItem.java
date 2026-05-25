@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class AppleOfSleepingItem extends Item {
+    private static final double NIGHTMARE_CHANCE = 1.0;
 
     public AppleOfSleepingItem(Properties properties) {
         super(properties.food(new FoodProperties.Builder()
@@ -19,7 +20,7 @@ public class AppleOfSleepingItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         ItemStack result = super.finishUsingItem(stack, level, entity);
         if (!level.isClientSide() && entity instanceof ServerPlayer player) {
-            SpiritWorldHelper.enter(player);
+            SpiritWorldHelper.enter(player, NIGHTMARE_CHANCE);
         }
         return result;
     }

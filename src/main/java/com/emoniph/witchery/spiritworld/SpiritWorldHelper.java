@@ -70,6 +70,10 @@ public final class SpiritWorldHelper {
     // ── Entry ────────────────────────────────────────────────────────────────
 
     public static void enter(ServerPlayer player) {
+        enter(player, WitcheryConfig.NIGHTMARE_CHANCE_PERCENT.get() / 100.0);
+    }
+
+    public static void enter(ServerPlayer player, double nightmareChance) {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (!player.level().dimension().equals(Level.OVERWORLD)
                 || data.isInSpiritWorld()
@@ -84,7 +88,7 @@ public final class SpiritWorldHelper {
         data.setReturnPos(player.blockPosition(), player.level().dimension());
 
         // Nightmare chance — block scan around sleeping position
-        NightmareResult nightmare = calculateNightmare(player);
+        NightmareResult nightmare = calculateNightmare(player, nightmareChance);
         data.setSpiritWorldIsDream(!nightmare.isNightmare);
         data.setDemonicNightmare(nightmare.isDemonic);
         data.setInSpiritWorld(true);
@@ -233,8 +237,8 @@ public final class SpiritWorldHelper {
 
     private record NightmareResult(boolean isNightmare, boolean isDemonic) {}
 
-    private static NightmareResult calculateNightmare(ServerPlayer player) {
-        double chance = WitcheryConfig.NIGHTMARE_CHANCE_PERCENT.get() / 100.0;
+    private static NightmareResult calculateNightmare(ServerPlayer player, double baseChance) {
+        double chance = Mth.clamp(baseChance, 0.0, 1.0);
         boolean nightmareCatcherFound = false;
         int flowingSpirits = 0, wispyCottons = 0, demonHearts = 0, fires = 0;
 
