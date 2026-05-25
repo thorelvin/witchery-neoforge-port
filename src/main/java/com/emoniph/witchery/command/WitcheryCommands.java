@@ -11,6 +11,7 @@ import com.emoniph.witchery.blocks.SpinningWheelBlock;
 import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.blocks.WickerBundleBlock;
 import com.emoniph.witchery.blocks.WitchesOvenBlock;
+import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -923,18 +924,29 @@ public class WitcheryCommands {
         verifyStateAt(torment, getTormentLeftChestPos(seed, level),
                 state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
                 "Level " + level + " left chest room lost its Refilling Chest.", failures);
+        verifyRefillingChestBlockEntity(torment, getTormentLeftChestPos(seed, level), level, "left", failures);
         verifyStateAt(torment, getTormentCenterChestPos(level),
                 state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
                 "Level " + level + " center chest room lost its Refilling Chest.", failures);
+        verifyRefillingChestBlockEntity(torment, getTormentCenterChestPos(level), level, "center", failures);
         verifyStateAt(torment, getTormentRightChestPos(seed, level),
                 state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
                 "Level " + level + " right chest room lost its Refilling Chest.", failures);
+        verifyRefillingChestBlockEntity(torment, getTormentRightChestPos(seed, level), level, "right", failures);
 
         if (tormentStoneCount > 0) {
             failures.add("Level " + level + " still contains " + tormentStoneCount + " Torment Stone block(s) inside the legacy maze footprint.");
         }
         if (totalChestCount != 3) {
             failures.add("Level " + level + " should have exactly 3 floor-level Refilling Chests, but found " + totalChestCount + ".");
+        }
+    }
+
+    private static void verifyRefillingChestBlockEntity(ServerLevel level, BlockPos pos, int tormentLevel,
+                                                        String room, java.util.List<String> failures) {
+        if (level.getBlockState(pos).is(WitcheryBlocks.REFILLING_CHEST.get())
+                && !(level.getBlockEntity(pos) instanceof RefillingChestBlockEntity)) {
+            failures.add("Level " + tormentLevel + " " + room + " Refilling Chest is missing its block entity renderer/storage.");
         }
     }
 

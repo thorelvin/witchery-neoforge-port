@@ -1,6 +1,7 @@
 package com.emoniph.witchery.world;
 
 import com.emoniph.witchery.blocks.TormentPortalBlock;
+import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -265,7 +266,10 @@ public class TormentChunkGenerator extends ChunkGenerator {
     }
 
     private static void drawChest(ChunkAccess chunk, int x, int y, int z, BlockState chest) {
-        setBlock(chunk, x, y, z, chest);
+        BlockPos pos = new BlockPos(x, y, z);
+        if (setBlock(chunk, pos, chest)) {
+            chunk.setBlockEntity(new RefillingChestBlockEntity(pos, chest));
+        }
     }
 
     private static void drawWall(ChunkAccess chunk, int x, int y, int z, BlockState wallBlock) {
@@ -305,14 +309,20 @@ public class TormentChunkGenerator extends ChunkGenerator {
         return (int) Math.floorMod(h, 11L) - 5;
     }
 
-    private static void setBlock(ChunkAccess chunk, int wx, int wy, int wz, BlockState state) {
+    private static boolean setBlock(ChunkAccess chunk, int wx, int wy, int wz, BlockState state) {
+        return setBlock(chunk, new BlockPos(wx, wy, wz), state);
+    }
+
+    private static boolean setBlock(ChunkAccess chunk, BlockPos pos, BlockState state) {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
-        if (wy >= 0 && wy < 256
-                && wx >= minX && wx < minX + 16
-                && wz >= minZ && wz < minZ + 16) {
-            chunk.setBlockState(new BlockPos(wx, wy, wz), state, 0);
+        if (pos.getY() >= 0 && pos.getY() < 256
+                && pos.getX() >= minX && pos.getX() < minX + 16
+                && pos.getZ() >= minZ && pos.getZ() < minZ + 16) {
+            chunk.setBlockState(pos, state, 0);
+            return true;
         }
+        return false;
     }
 
     @Override
