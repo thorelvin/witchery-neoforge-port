@@ -20,6 +20,8 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue WEREWOLF_FULL_MOON_ONLY;
     public static final ModConfigSpec.IntValue WEREWOLF_HOWL_COOLDOWN_SECONDS;
 
+    public static final ModConfigSpec.IntValue MANTRAP_OPACITY_PERCENT;
+
     // ── Spirit World ──────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue NIGHTMARE_CHANCE_PERCENT;
     public static final ModConfigSpec.IntValue PLAYERS_SLEEPING_PERCENT_FOR_BUFF;
@@ -53,6 +55,12 @@ public class WitcheryConfig {
         WEREWOLF_HOWL_COOLDOWN_SECONDS = BUILDER
                 .comment("Cooldown in seconds between wolf howls. Default: 60")
                 .defineInRange("howlCooldownSeconds", 60, 5, 600);
+        BUILDER.pop();
+
+        BUILDER.push("traps");
+        MANTRAP_OPACITY_PERCENT = BUILDER
+                .comment("Opacity percent for closed owned Beartraps when viewed by non-owners. Original default: 30")
+                .defineInRange("mantrapOpacityPercent", 30, 10, 100);
         BUILDER.pop();
 
         BUILDER.push("spirit_world");
