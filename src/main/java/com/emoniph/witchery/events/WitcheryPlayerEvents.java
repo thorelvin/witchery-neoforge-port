@@ -213,6 +213,7 @@ public class WitcheryPlayerEvents {
 
         ServerLevel level = (ServerLevel) player.level();
         WitcheryPlayerData data = WitcheryAttachments.get(player);
+        tickDepthsBrew(player, data);
         InfusionType infusion = data.getInfusionType();
 
         if (infusion == InfusionType.LIGHT) {
@@ -365,6 +366,33 @@ public class WitcheryPlayerEvents {
     public static void syncToClient(ServerPlayer player) {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
+    }
+
+    private static void tickDepthsBrew(ServerPlayer player, WitcheryPlayerData data) {
+        if (!data.hasDepthsBuff()) return;
+
+        if (!player.hasEffect(MobEffects.WATER_BREATHING)) {
+            player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 6000, 0));
+        }
+
+        if (player.isInWater()) {
+            if (player.hasEffect(MobEffects.WITHER)) {
+                player.removeEffect(MobEffects.WITHER);
+            }
+        } else if (!player.hasEffect(MobEffects.WITHER)) {
+            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
+        }
+
+        int remaining = data.getDepthsTicks() - 20;
+        data.setDepthsTicks(remaining);
+        if (remaining <= 0) {
+            if (player.hasEffect(MobEffects.WATER_BREATHING)) {
+                player.removeEffect(MobEffects.WATER_BREATHING);
+            }
+            if (player.hasEffect(MobEffects.POISON)) {
+                player.removeEffect(MobEffects.POISON);
+            }
+        }
     }
 
     private static void tickDemonicNightmare(ServerPlayer player, ServerLevel spiritWorld) {

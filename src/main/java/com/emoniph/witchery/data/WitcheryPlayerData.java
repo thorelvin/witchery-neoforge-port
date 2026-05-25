@@ -134,6 +134,7 @@ public class WitcheryPlayerData {
     private int wolfMastery = 0;
     private int howlCooldown = 0;
     private int soaringTicks = 0;
+    private int depthsTicks = 0;
     private boolean ghostWalkerActive = false;
     private int tormentPortalCooldown = 0;
     private boolean demonicNightmare = false;
@@ -337,6 +338,9 @@ public class WitcheryPlayerData {
     public boolean hasSoaringBuff() { return soaringTicks > 0; }
     public void setSoaringTicks(int v) { soaringTicks = Math.max(0, v); }
     public void tickSoaring() { if (soaringTicks > 0) soaringTicks--; }
+    public int getDepthsTicks() { return depthsTicks; }
+    public boolean hasDepthsBuff() { return depthsTicks > 0; }
+    public void setDepthsTicks(int v) { depthsTicks = Math.max(0, v); }
     public boolean isGhostWalkerActive() { return ghostWalkerActive; }
     public void setGhostWalkerActive(boolean v) { ghostWalkerActive = v; }
     public int getTormentPortalCooldown() { return tormentPortalCooldown; }
@@ -368,6 +372,7 @@ public class WitcheryPlayerData {
         this.creaturePowerCharges = other.creaturePowerCharges;
         this.wolfMastery = other.wolfMastery;
         this.soaringTicks = other.soaringTicks;
+        this.depthsTicks = other.depthsTicks;
         this.witchHunterTriggerGameTime = other.witchHunterTriggerGameTime;
         if (keepOnDeath) {
             this.bloodLevel = other.bloodLevel;
