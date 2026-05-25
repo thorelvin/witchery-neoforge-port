@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "witchery:item/blood_stained_wool"
+    "all": "witchery:block/bloodedwool",
+    "particle": "witchery:block/bloodedwool"
   }
 }
