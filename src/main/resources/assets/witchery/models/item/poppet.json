@@ -1,4 +1,4 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "witchery:item/template_flat_poppet",
   "textures": { "layer0": "witchery:item/poppet" }
 }

@@ -1,1 +1,1 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"witchery:item/poppet.protect_armor"}}
+{"parent":"witchery:item/template_flat_poppet","textures":{"layer0":"witchery:item/poppet.protect_armor"}}
