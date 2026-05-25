@@ -47,7 +47,7 @@ public class BeartrapBlock extends BaseEntityBlock {
             "axis", Direction.Axis.class, axis -> axis != Direction.Axis.Y);
 
     private static final int ARM_DELAY_TICKS = 20;
-    private static final VoxelShape SHAPE = box(3.2, 0.1, 3.2, 12.8, 1.6, 12.8);
+    private static final VoxelShape SHAPE = box(3.2, 0.16, 3.2, 12.8, 1.6, 12.8);
 
     private final boolean silvered;
 
