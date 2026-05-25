@@ -1,10 +1,10 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "witchery:belladonna",
-    "witchery:mandrake_root",
-    "witchery:artichoke",
-    "witchery:icy_needle"
+    "witchery:artichoke_seeds",
+    "witchery:mandrake_seeds",
+    "witchery:belladonna_seeds",
+    "witchery:snowbell_seeds"
   ],
   "result": {
     "id": "witchery:anointing_paste",
