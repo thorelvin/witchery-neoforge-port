@@ -1,1 +1,1 @@
-{ "render_type": "minecraft:cutout", "parent": "minecraft:block/cross", "textures": { "cross": "witchery:item/garlic_garland" } }
+{ "render_type": "minecraft:cutout", "parent": "minecraft:block/cross", "textures": { "cross": "witchery:block/garlic_garland" } }
