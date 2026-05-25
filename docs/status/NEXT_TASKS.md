@@ -1,7 +1,7 @@
 # Next Tasks — Witchery NeoForge Port
 
 Last reconciled: 2026-05-25 (parity scan merged; Sun Collector/Charged Quartz Sphere/Sun Grenade chain implemented plus source recipe/shape/hardness and Quartz Sphere return/tagged vampire hits; Silver Sword held-damage plus tagged-vampire silver/hunter hooks restored; Wooden Stake recipe and sleeping-vampire staking restored; Wooden/Silver/Bone/Nullifying/Splitting Bolt source crafting restored; Glass Goblet recipe, first practical vampire blood fill/drink induction, and chicken-blood ritual capture restored; Observations of an Immortal + Torn Page promoted with source recipe, custom update recipe, page-progress tooltip, vanilla readable book screen, source-family player-kill Torn Page drops including the source `isNonBoss=false` branch for current bosses/specials, and Bookshop loot seed; Warm Blood and Lilith's Blood consumable semantics restored in practical form; source-style persisted villager blood draining restored for vampire bites; Fume Filter + Filtered Fume Funnel source recipes/chance restored; Silver Vat stored Silver Deposits byproduct plus source deposit recipe routes/local silver-ingot bridge restored; Kettle bottle automation and source bonus rolls restored; Witches' Oven source sided inventory and sapling fume table restored; Refilling Chest source refill/loot decision reconciled; Poppet Shelf special item pose corrected to the source low half-block baseline; Mirror front/back model UVs corrected for placed and item views; Leech Chest/Refilling Chest GUI item heights normalized to the old neutral item baseline; source-style taglock-to-poppet binding recipe and mob-bound Voodoo/Vampiric resolution restored; VampiricPoppetItem two-taglock fix; Poppet Shelf Compass source recipe, practical loaded-shelf locate, and old six-frame distance icon model restored; Player Compass filled-player-taglock binding route restored; Crystal Ball filled-Taglock-Kit scrying and weighted old prediction reading roster restored in practical form; PlayerCompassItem; WitchHunter poppet disruption; villager witchery goal added; garlic grass-seed parity corrected; Garlic Garland facing/click-through/repulsion and vampire break cancel restored)
-Latest local delta: Brew of Revealing now restores the old reveal action in practical centered form, clearing nearby living entities' Invisibility effect and explicit invisible flag instead of giving the drinker Night Vision and Glowing.
+Latest local delta: User high-priority QA/fix queue added for the next porting passes, covering Anointing Paste, Garlic Garland, original Kettle art, Silver Vat state/model issues, Coffin GUI icon, trap placed models, Poppet Shelf inventory display updates, Dream/Torment/Spirit World flow, Arthana placed/3D regressions, broom presentation/movement, Mirror visuals, Sun Collector Quartz Sphere display, and Scarecrow GUI facing.
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
@@ -12,6 +12,35 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Highest-value parity lane: vampire progression/counterplay, custom-brew action parity, machine automation/exactness, transformation progression, and village/structure/entity gaps.
 - Current bounded focus: Continue custom-brew action parity after the Infection, Love including enslaved zombies, Wasting, Erosion, Raising, Bats, Ink, Hitchcock, Cursed Leaping, Frog's Tongue, Frost, Webs, Thorns, Vines, Sprouting, Substitution, Hollow Tears, Solidifying, The Depths, and Revealing source-behavior slices; next high-value choices are the remaining old brew action registry/projectile transport or the vampire chain.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
+- Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
+
+---
+
+## High-priority user QA/fix queue added 2026-05-25
+
+These are the current top user-reported parity and visual blockers. Treat each row as a bounded candidate task: inspect original 1.7.10 Witchery first, compare the current port, patch the smallest truthful slice, run `.\gradlew.bat compileJava processResources`, update docs, commit, and push after the fifth local commit.
+
+| # | Area | Requested fix / report | Notes |
+|---|---|---|---|
+| 1 | Anointing Paste | Implement Anointing Paste. | Reference: https://ftbwiki.org/Anointing_Paste. Confirm whether the live port only documents it or lacks the actual item/use/recipe path. |
+| 2 | Garlic Garland | Placed Garlic Garland renders as pink/black missing block. | Check blockstate/model/texture registration and any item-vs-block texture path mismatch. |
+| 3 | Kettle | Return Kettle to original Witchery texture and model; do not borrow Resurrected textures for original items. | Compare original 1.7.10 assets/models against the current kettle item/block/special renderer. |
+| 4 | Silver Vat | Placed Silver Vat shows filled, but right-click chat says no deposits are stored; GUI item should be a 3D model. | Reconcile block state/render fill indicator with BE `Silver Deposits` stack and item model presentation. |
+| 5 | Coffin | Change Coffin GUI item to original PNG, not a 3D model. | Reference: https://ftbwiki.org/Coffin plus user-provided flat blue coffin icon. |
+| 6 | Wolftrap / Beartrap | Placed Wolftrap and Beartrap render as pink/black missing blocks. | Check blockstates, placed block models, item models, and texture names for both trap variants. |
+| 7 | Poppet Shelf | Removing poppets from inventory does not clear/update shown poppets; dolls must render centered in each 9x9 slot on the shelf/table top. | Investigate BE inventory sync, renderer state clearing, slot coordinates, scale, and poppet item pose. |
+| 8 | Dream entry position | Dream entry should always place the player at the exact same coordinates as the bed sleep location in the copied world, but with no bed. | Compare current dream teleport/copy logic and bed stripping behavior against original. |
+| 9 | Torment refilling chest | Torment visuals look correct, but Refilling Chest is inside the floor and invisible. | Check structure placement Y offset, chest blockstate/render path, and stale generated dimensions. |
+| 10 | Torment portal | Torment maze level 0 portal returns the player to the Overworld. | Verify source dimension transition rules and current portal target selection. |
+| 11 | Arthana | Arthana got longer after the hole fix; fix 3D item again. It still does not show when placed on altar. | Revisit item texture/model display transforms and placed-item BE sync/render after the previous fixes; verify in-game. |
+| 12 | Spirit World / Nightmare | Check whether animal spawns should exist; plants still do not spawn; atmosphere is wrong, including fog, ambient settings, and horizon color. `/witchery nightmare` does nothing. | Compare original Spirit World biome/dimension effects, spawn lists, vegetation placement, and command behavior. |
+| 13 | Broom movement | Broom flying still pulls the player back to the placed location every ~4 seconds. | Recheck client/server movement authority, vehicle sync, and server correction path. |
+| 14 | Enchanted Broom | Enchanted Broom has no tail in item GUI; placed enchanted broom model should glow in world. | Compare item renderer/model layers and world render glint/glow behavior. |
+| 15 | Mirror Wall | Mirror Wall should look like running silver water. | Compare original Witchery mirror wall texture/material/animation. |
+| 16 | Mirror GUI | Check how Mirror should look in GUI. | Reference: https://ftb.fandom.com/wiki/Mirror_(Witchery). Verify item model, facing, and flat/3D presentation. |
+| 17 | Silver Vat model | Silver Vat looks like a cauldron but should be custom. | Reference: https://ftbwiki.org/Silver_Vat. Check original model/texture and current block/item renderer. |
+| 18 | Sun Collector | Quartz Sphere does not show in the Sun Collector, though it can be placed and picked back up. | Investigate BE sync/render state and inserted sphere model/pose. |
+| 19 | Scarecrow | Scarecrow GUI item faces the wrong way; item should face the player. | Adjust item display transform or special item renderer orientation after checking original/source expectation. |
 
 ---
 
