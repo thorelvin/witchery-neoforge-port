@@ -1,8 +1,8 @@
 {
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "witchery:item/beartrap",
-    "trap": "witchery:item/beartrap"
+    "particle": "witchery:block/beartrap",
+    "trap": "witchery:block/beartrap"
   },
   "elements": [
     {

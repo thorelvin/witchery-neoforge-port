@@ -1,8 +1,8 @@
 {
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "witchery:item/wolftrap",
-    "trap": "witchery:item/wolftrap"
+    "particle": "witchery:block/wolftrap",
+    "trap": "witchery:block/wolftrap"
   },
   "elements": [
     {
