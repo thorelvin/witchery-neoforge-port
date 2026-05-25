@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -34,7 +36,7 @@ public class PlacedItemBlock extends BaseEntityBlock {
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    private static final VoxelShape SHAPE = box(2, 0, 2, 14, 2, 14);
+    private static final VoxelShape SHAPE = box(3.2, 0.0, 3.2, 12.8, 0.8, 12.8);
 
     public PlacedItemBlock(BlockBehaviour.Properties p) {
         super(p);
@@ -48,6 +50,22 @@ public class PlacedItemBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState s, BlockGetter g, BlockPos p, CollisionContext c) { return SHAPE; }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return Block.canSupportCenter(level, pos.below(), Direction.UP);
+    }
+
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
+                                   @Nullable Orientation orientation, boolean movedByPiston) {
+        if (!canSurvive(state, level, pos)) {
+            dropStoredStack(level, pos);
+            level.destroyBlock(pos, false);
+            return;
+        }
+        super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
+    }
 
     @Override
     public RenderShape getRenderShape(BlockState s) { return RenderShape.INVISIBLE; }
@@ -81,12 +99,16 @@ public class PlacedItemBlock extends BaseEntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        dropStoredStack(level, pos);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    private static void dropStoredStack(Level level, BlockPos pos) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be) {
             ItemStack stored = be.getStack();
             if (!stored.isEmpty()) {
                 popResource(level, pos, stored.copy());
             }
         }
-        return super.playerWillDestroy(level, pos, state, player);
     }
 }

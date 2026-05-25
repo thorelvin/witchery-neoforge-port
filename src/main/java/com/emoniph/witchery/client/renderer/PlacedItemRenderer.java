@@ -60,10 +60,9 @@ public class PlacedItemRenderer implements BlockEntityRenderer<PlacedItemBlockEn
     public void submit(PlacedItemRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.itemRenderState.isEmpty()) return;
         ps.pushPose();
-        ps.translate(0.5, 0.03, 0.5);   // just above altar surface (collider base is Y=0)
+        ps.translate(0.5, 0.05, 0.5);
         ps.mulPose(Axis.YP.rotationDegrees(state.rotation));
         ps.mulPose(Axis.XP.rotationDegrees(-90.0F));  // lay flat
-        ps.scale(1.5f, 1.5f, 1.5f);    // 3x previous size to fill collider footprint
         state.itemRenderState.submit(ps, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         ps.popPose();
     }
