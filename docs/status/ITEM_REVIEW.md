@@ -180,6 +180,7 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 | 122 | `witchery:brew_of_ice` | Displays as `Brew of Frost` like original Witchery |
 | 123 | `witchery:brew_of_foaming` | `Partial - custom brew tier slice live` | Now promoted into the Foaming custom-brew family with drinkable/splash/gas variants, tiered recipes, `brew_power` scaling, and thrown-brew sync. The splash/gas variants now have 1.21 item definitions using the existing brew-overlay-on-vanilla-bottle models, closing the magenta/black GUI icon fallback. Full old dynamic custom-brew action parity remains open. |
 | 123a | `witchery:brew_of_bats` | `Partial - source bat burst restored in practical item form` | Direct block/entity use now spawns 10 no-drop bats at the impact point, applies the old short Slowness VI falloff in a 3-block radius, clears mob attack targets, returns a Glass Bottle, and keeps drinking as a centered fallback until source-style thrown transport is rebuilt. Needs in-game impact/bottle/target-drop QA. |
+| 123b | `witchery:brew_of_webs` | `Partial - source compact web burst restored in practical item form` | Direct block/entity use now places the old compact web pattern at the impact point: center, four horizontal neighbors, one above, and one below, without overwriting solids, fluids, or block entities. Drinking remains a centered fallback until source-style thrown transport is rebuilt. Needs in-game impact/bottle/block-replacement QA. |
 
 ---
 
