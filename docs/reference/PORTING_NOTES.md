@@ -519,7 +519,101 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
   `javap -cp ./build/moddev/artifacts/neoforge-21.11.42-merged.jar net.minecraft.client.resources.SkinManager`
 - Use `neoforge-21.11.42-merged.jar`, not `neoforge-21.1.229.jar` — method signatures differ between these two jars.
 
+**Block model JSON: `cauldron_inner` wraps wrong on flat faces**
+- `minecraft:block/cauldron_inner` in 1.21 is a bowl-shaped circular texture (dark centre, lighter rim). Assigning it as a `#shadow` or inner-surface texture on flat rectangular faces produces obvious visual distortion — the circular gradient maps onto a rectangle and looks wrong.
+- **Fix:** Use `iron_block` (or the same seamless tile as the exterior) for any flat inner/shadow face. Ambient occlusion will naturally darken recessed interior faces without a special texture.
+
+**Block model JSON: spout/protrusion UV dimensions must match face physical dimensions**
+- If a box element is 3 units wide in X but its north/south UV spans 4 units (or Z=3 but UV height is 4), the texture appears squished even on seamless tiles — grid lines become rectangular instead of square.
+- **Rule:** UV size = physical face size. For each face:
+  - north / south: UV width = `to.x − from.x`, UV height = `to.y − from.y`
+  - east / west: UV width = `to.z − from.z`, UV height = `to.y − from.y`
+  - up / down: UV width = `to.x − from.x`, UV height = `to.z − from.z`
+- **Silver vat example (2026-05-25):** all four upper spouts had north/south/up/down UVs that were 1 px too wide because the spout caps are X=3 or Z=3 but the UVs used 4-unit ranges copied from the X=4/Z=4 side faces. Fixed by trimming `u2` or `v2` down by 1.
+
 **Stale dimension chunks are not regenerated**
 - If a custom chunk generator changes its structure (e.g. Mirror World room layout), previously generated and saved chunks will NOT be regenerated on the next launch. Old saved chunk data is loaded from disk as-is.
 - To force regeneration: delete `run/saves/<world>/dimensions/<modid>/<dimension>/` before launching, then trigger any block/BE state that was tied to the old chunk (e.g. break and replace the mirror block to clear its room assignment).
 - This applies to all custom dimensions (Mirror World, Torment, Spirit World). Always delete the dimension folder and reset relevant block entities when testing chunk-structure changes.
+
+### 2026-05-25 — Mirror World, block rendering, coffin, placement direction
+
+**Custom dimension height must match chunk generator WALL_Y pattern length**
+- `dimension_type` JSON `"height"` must equal `ChunkGenerator.getGenDepth()` and the length of your Y-axis wall pattern. Mirror World uses a 16-element `WALL_Y` array → height=16, logical_height=16, min_y=0.
+- If `height` is left at the overworld default (384), the chunk generator loops 24 times through the 16-element pattern, stacking 24 rooms vertically. Each room in the stack is rendered as geometry → GPU OOM crash within seconds of entering the dimension.
+- Also set `"has_ceiling": true` so the sky renderer doesn't run, and `"has_skylight": false` to prevent sky-light propagation in a fully enclosed space.
+
+**`chunk.getMaxY()` is INCLUSIVE — use `chunk.getMinY() + chunk.getHeight()` for exclusive loop bounds**
+- `ChunkAccess.getMaxY()` returns the highest valid Y coordinate (inclusive), NOT an exclusive upper bound.
+- For 16-tall Mirror World (minY=0, height=16): `getMaxY()` = 15. A loop `for (y = 0; y < 15; y++)` runs y=0..14, skipping the ceiling at y=15.
+- Always compute the exclusive upper bound as `chunk.getMinY() + chunk.getHeight()` in custom ChunkGenerators:
+  ```java
+  int minY = chunk.getMinY();
+  int maxY = chunk.getMinY() + chunk.getHeight(); // exclusive
+  for (int y = minY; y < maxY; y++) { ... }
+  ```
+
+**Block `render_type` and `.noOcclusion()` must both be managed for solid/transparent blocks**
+- `"render_type": "minecraft:translucent"` (or `"minecraft:cutout"`) in the block model JSON tells the render engine to use the translucency pipeline — neighbors are NOT culled. Remove it to restore default solid (opaque) rendering.
+- `.noOcclusion()` in `BlockBehaviour.Properties` tells the occlusion engine that the block does not fill its full voxel cube → neighbor faces are not culled regardless of translucency. Remove it when a block should be opaque and cull neighbors.
+- Both must be absent for a fully solid, neighbor-culling block. Either one alone can cause light/occlusion artifacts.
+
+**Coffin BESR: always render two passes — exterior texture + inside texture**
+- The original Witchery coffin has two complementary texture sheets per half: `coffin_head.png` / `coffin_head_inside.png` and `coffin_bottom.png` / `coffin_bottom_inside.png`. Each sheet is opaque where the other is transparent (cutout). The exterior sheet draws the lid, sides, and base; the inside sheet fills the transparent interior-face regions the exterior leaves empty.
+- A single-pass render using only the exterior texture leaves interior faces invisible — visible as transparency when the lid is open.
+- Fix: call `collector.submitModelPart(...)` twice per half, once for each texture, both using `RenderTypes.entityCutout(...)`. The textures are 128×128 RGBA PNG.
+- The model `LayerDefinition` declared texture size must match the actual PNG dimensions — a mismatch halves all V coordinates and causes the texture to read the wrong rows.
+
+**`item/generated` display transform: center low-sitting textures with a `gui` translation**
+- If an item's texture artwork sits in the lower portion of its 16×16 PNG frame (blank space at top), the item icon will appear lower than center in the inventory slot.
+- Fix: add a `"display"` → `"gui"` override in `models/item/<name>.json` with a positive Y translation. Units are model-space pixels (1 unit ≈ 1 px in the slot).
+  ```json
+  "display": {
+    "gui": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 4, 0],
+      "scale": [1, 1, 1]
+    }
+  }
+  ```
+- Tune the Y value: `4` centers an icon occupying roughly the bottom half of the frame. Increase for icons sitting even lower, decrease if the result overshoots.
+- No recompile needed — resource-only change; use F3+T in-game to reload and check.
+- **Redstone Soup example (2026-05-25):** artwork sat in the bottom ~8 px of a 16×16 PNG → `translation: [0, 4, 0]` centers it.
+
+**`HorizontalDirectionalBlock`: FACING should be the direction the decorative face looks toward, NOT the wall direction**
+- `BlockPlaceContext.getHorizontalDirection()` returns the direction the player is looking (toward the block being placed).
+- When FACING means "the direction the glass/face looks toward" (i.e. toward the player), use `ctx.getHorizontalDirection()` directly — **do NOT call `.getOpposite()`**.
+- `.getOpposite()` flips FACING to point into the wall, which reverses the collision shape, the entry zone detection, and the blockstate model y-rotation (the glass face ends up behind the block).
+- Rule of thumb: if your block model's "front" face (e.g. south face = Z=14-16 slab) should face the player who placed it, store `ctx.getHorizontalDirection()` as-is.
+
+**Mirror World debug command entry was landing on top of ceiling, not at floor height (2026-05-25)**
+- `/witchery mirror` calls `findSafeEntry` which scanned from y=200 downward. In a 16-block-tall dimension (y=0 to y=15), y=16+ positions are out-of-range and return AIR. The scan found the CEILING block at y=15 as the first solid with two "air" blocks above it (y=16 and y=17 are out of range = air). So the player was placed at y=16, on top of all the mirror blocks.
+- The scan also used the raw overworld X/Z, which in the mirror world can land on a wall block (local x/z 0-3 or 13-15 are solid mirror; only local 4-12 are open).
+- Fix: for Mirror World, skip the scan entirely. Snap to the chunk's guaranteed-open interior centre (`cx*16+8, cz*16+8`) and set Y to `MirrorHelper.ROOM_FLOOR_Y` (the first open block above the floor).
+- Rule: dimension-specific entry logic should use the known geometry constants from the chunk generator, not a generic scan that assumes standard Minecraft height ranges.
+
+**Anointing Paste: use `useOn()` in the item class, not a `RightClickBlock` event handler (2026-05-25)**
+- The first pass used a `@EventBusSubscriber` handler on `PlayerInteractEvent.RightClickBlock`. It worked server-side but had no client-side particle feedback, and forced callers to know about the event class for what is purely an item interaction.
+- Pattern: move the logic to `AnointingPasteItem.useOn(UseOnContext)`. On client side: spawn particles + play sound; on server side: set block + shrink item + award stat. Return `InteractionResult.SUCCESS` client / `CONSUME` server (i.e. `sidedSuccess`-style split).
+- For witch particles: `ParticleTypes.WITCH` with a small upward velocity (`0.0, 0.06, 0.0`) and 24 random positions in a 2×1.5×2 box centered on the cauldron. Only add particles in the `level.isClientSide()` branch.
+- Preserving vanilla water-cauldron level: check `state.is(Blocks.WATER_CAULDRON)` → `state.getValue(LayeredCauldronBlock.LEVEL)`; empty cauldron `Blocks.CAULDRON` → 0; lava/powder-snow cauldrons → PASS.
+- Rule: item interactions that only involve the held item and a specific block belong in `useOn()`, not in an event handler.
+
+**`CoffinModel` spurious `inner_floor` parts caused bottom texture wrapping bug (2026-05-25)**
+- The ported `CoffinModel.java` had extra `inner_floor` children added to both `createHeadLayer()` and `createBottomLayer()` that are NOT present in the original `ModelCoffin.java` from WitcheryResurrected.
+- Both used `texOffs(4, 1)` — the same UV region as the head lid — so they sampled and rendered lid texture pixels on the floor of the coffin interior, causing visible wrong texture wrapping on the bottom exterior.
+- Fix: removed both `base.addOrReplaceChild("inner_floor", ...)` lines. The constructor only accesses `lid`, so no other changes were needed.
+- Rule: when porting a `LayerDefinition`, compare part-by-part against the original `ModelPart` source. Any extra `addOrReplaceChild` not in the original is a port artifact that will corrupt UV sampling.
+
+**`MirrorBlock` VoxelShape naming convention: slab must be on the WALL side (2026-05-25)**
+- A `HorizontalDirectionalBlock` named NORTH means the block is placed against the north wall. The thin slab must occupy the WALL side (low-Z, z=0–4 for NORTH) not the player-facing side (z=12–16).
+- Original port had all four shapes inverted: NORTH was at z=12–16 (player/south side), SOUTH at z=0–4 (north side), WEST at x=12–16 (east side), EAST at x=0–4 (west side).
+- Correct shapes:
+  ```java
+  NORTH = Block.box(0,  0, 0, 16, 16,  4);  // z=0-4   = north/low-Z wall
+  SOUTH = Block.box(0,  0, 12, 16, 16, 16); // z=12-16 = south/high-Z wall
+  WEST  = Block.box(0,  0, 0,  4, 16, 16);  // x=0-4   = west/low-X wall
+  EAST  = Block.box(12, 0, 0, 16, 16, 16);  // x=12-16 = east/high-X wall
+  ```
+- The perception issue of "glass facing wall" for N/S was likely caused by the inverted VoxelShape: with the hitbox on the player side, the player was stopped far from the glass and the glass appeared to be against the wall, even though the blockstate rotation (NORTH: y=180, SOUTH: y=0) was theoretically correct.
+- Blockstate y-rotations (CW when viewed from above): NORTH→y=180, SOUTH→y=0, WEST→y=270, EAST→y=90. These put the model's decorative "north" face toward the player for all four directions.

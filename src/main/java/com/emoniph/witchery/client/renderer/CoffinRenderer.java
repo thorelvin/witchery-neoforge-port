@@ -23,8 +23,12 @@ import org.jspecify.annotations.Nullable;
 public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, CoffinRenderer.CoffinRenderState> {
     private static final Identifier HEAD_TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_head.png");
+    private static final Identifier HEAD_INSIDE_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_head_inside.png");
     private static final Identifier BOTTOM_TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_bottom.png");
+    private static final Identifier BOTTOM_INSIDE_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/coffin_bottom_inside.png");
 
     private final CoffinModel headModel;
     private final CoffinModel bottomModel;
@@ -79,11 +83,18 @@ public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, Co
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(state.facingYaw));
 
+        // Head half: exterior pass, then inside pass. The inside texture fills the transparent
+        // interior-face regions that the exterior texture leaves empty, matching original behaviour)
         collector.submitModelPart(headModel.root(), poseStack, RenderTypes.entityCutout(HEAD_TEXTURE),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        collector.submitModelPart(headModel.root(), poseStack, RenderTypes.entityCutout(HEAD_INSIDE_TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
 
+        // Bottom half: same double-pass.
         poseStack.translate(0.0F, 0.0F, -1.0F);
         collector.submitModelPart(bottomModel.root(), poseStack, RenderTypes.entityCutout(BOTTOM_TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        collector.submitModelPart(bottomModel.root(), poseStack, RenderTypes.entityCutout(BOTTOM_INSIDE_TEXTURE),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         poseStack.popPose();
     }

@@ -552,17 +552,13 @@ public class WitcheryCommands {
         }
 
         if (dim.equals(WitcheryDimensions.MIRROR_WORLD)) {
-            int x = referencePos.getX();
-            int z = referencePos.getZ();
-            for (int y = 200; y >= -60; y--) {
-                var floor = new net.minecraft.core.BlockPos(x, y, z);
-                if (!level.getBlockState(floor).isAir()
-                        && level.getBlockState(floor.above()).isAir()
-                        && level.getBlockState(floor.above().above()).isAir()) {
-                    return new double[]{ x + 0.5, y + 1, z + 0.5 };
-                }
-            }
-            return new double[]{ x + 0.5, 65, z + 0.5 };
+            // Mirror World is only 16 blocks tall (y=0-15). Scanning from y=200 finds the
+            // CEILING (y=15) first because y=16+ are out-of-range air, placing the player
+            // on top of all mirror blocks (y=16). Instead, snap to the chunk's guaranteed-open
+            // interior centre (local 8,8 is always air) and use the known floor height.
+            int cx = referencePos.getX() >> 4;
+            int cz = referencePos.getZ() >> 4;
+            return new double[]{ cx * 16 + 8.5, com.emoniph.witchery.world.MirrorHelper.ROOM_FLOOR_Y, cz * 16 + 8.5 };
         }
 
         return new double[]{ 0.5, 64, 0.5 };

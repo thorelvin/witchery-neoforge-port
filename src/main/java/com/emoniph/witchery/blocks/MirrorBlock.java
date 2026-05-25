@@ -60,17 +60,19 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     public static final EnumProperty<BedPart>  PART        = BlockStateProperties.BED_PART;
     public static final BooleanProperty        UNBREAKABLE = BooleanProperty.create("unbreakable");
 
-    // Thin-slab shapes for each facing direction
-    private static final VoxelShape NORTH = Block.box(0, 0, 12, 16, 16, 16);
-    private static final VoxelShape SOUTH = Block.box(0, 0,  0, 16, 16,  4);
-    private static final VoxelShape WEST  = Block.box(12, 0, 0, 16, 16, 16);
-    private static final VoxelShape EAST  = Block.box(0,  0, 0,  4, 16, 16);
+    // Thin-slab shapes: slab is pressed against the named wall.
+    // NORTH wall = low-Z side (z=0-4), SOUTH wall = high-Z side (z=12-16),
+    // WEST wall  = low-X side (x=0-4), EAST wall  = high-X side (x=12-16).
+    private static final VoxelShape NORTH = Block.box(0,  0, 0, 16, 16,  4);
+    private static final VoxelShape SOUTH = Block.box(0,  0, 12, 16, 16, 16);
+    private static final VoxelShape WEST  = Block.box(0,  0, 0,  4, 16, 16);
+    private static final VoxelShape EAST  = Block.box(12, 0, 0, 16, 16, 16);
 
     // Entry zone shapes (slightly thinner) for walk-through detection
-    private static final VoxelShape NORTH_ENTRY = Block.box(0, 0, 13, 16, 16, 16);
-    private static final VoxelShape SOUTH_ENTRY = Block.box(0, 0,  0, 16, 16,  3);
-    private static final VoxelShape WEST_ENTRY  = Block.box(13, 0, 0, 16, 16, 16);
-    private static final VoxelShape EAST_ENTRY  = Block.box(0,  0, 0,  3, 16, 16);
+    private static final VoxelShape NORTH_ENTRY = Block.box(0,  0, 0, 16, 16,  3);
+    private static final VoxelShape SOUTH_ENTRY = Block.box(0,  0, 13, 16, 16, 16);
+    private static final VoxelShape WEST_ENTRY  = Block.box(0,  0, 0,  3, 16, 16);
+    private static final VoxelShape EAST_ENTRY  = Block.box(13, 0, 0, 16, 16, 16);
 
     public MirrorBlock(BlockBehaviour.Properties props) {
         super(props);
@@ -90,7 +92,7 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        Direction facing = ctx.getHorizontalDirection().getOpposite();
+        Direction facing = ctx.getHorizontalDirection();
         BlockPos pos = ctx.getClickedPos();
         Level level = ctx.getLevel();
         if (pos.getY() < level.getMaxY() - 1

@@ -114,7 +114,18 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> LEECH_CHEST = ITEMS.registerSimpleBlockItem(WitcheryBlocks.LEECH_CHEST);
     public static final DeferredItem<BlockItem> REFILLING_CHEST = ITEMS.registerSimpleBlockItem(WitcheryBlocks.REFILLING_CHEST);
     public static final DeferredItem<BlockItem> CANDELABRA = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CANDELABRA);
-    public static final DeferredItem<BlockItem> CHALICE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CHALICE);
+    public static final DeferredItem<BlockItem> CHALICE = ITEMS.register("chalice", id ->
+        new BlockItem(WitcheryBlocks.CHALICE.get(), itemProps(id)) {
+            @Override
+            public net.minecraft.network.chat.Component getName(ItemStack stack) {
+                net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(
+                    net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+                return tag.getBooleanOr("Filled", false)
+                    ? net.minecraft.network.chat.Component.translatable("block.witchery.chalice.filled")
+                    : super.getName(stack);
+            }
+        });
     public static final DeferredItem<BlockItem> CRYSTAL_BALL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CRYSTAL_BALL);
     public static final DeferredItem<BlockItem> DREAM_CATCHER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DREAM_CATCHER);
 
@@ -487,7 +498,7 @@ public class WitcheryItems {
     public static final DeferredItem<BroomItem> ENCHANTED_BROOM =
             ITEMS.register("enchanted_broom", id -> new BroomItem(itemProps(id).stacksTo(1)));
 
-    public static final DeferredItem<Item> ANOINTING_PASTE    = ITEMS.registerSimpleItem("anointing_paste");
+    public static final DeferredItem<Item> ANOINTING_PASTE    = ITEMS.register("anointing_paste", id -> new com.emoniph.witchery.item.AnointingPasteItem(itemProps(id)));
     public static final DeferredItem<Item> WORMY_APPLE        = ITEMS.registerSimpleItem("wormy_apple");
     public static final DeferredItem<Item> APPLE_OF_SLEEPING  = ITEMS.register("apple_of_sleeping", id -> new com.emoniph.witchery.item.AppleOfSleepingItem(itemProps(id)));
     public static final DeferredItem<Item> TREEFYD_SEEDS      = ITEMS.register("treefyd_seeds", id -> new com.emoniph.witchery.item.TreefydSeedsItem(itemProps(id)));

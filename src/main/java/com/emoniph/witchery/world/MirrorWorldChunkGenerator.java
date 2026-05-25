@@ -69,7 +69,7 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
         int baseX = chunk.getPos().getMinBlockX();
         int baseZ = chunk.getPos().getMinBlockZ();
         int minY = chunk.getMinY();
-        int maxY = chunk.getMaxY();
+        int maxY = chunk.getMinY() + chunk.getHeight(); // exclusive upper bound
 
         for (int lx = 0; lx < 16; lx++) {
             for (int lz = 0; lz < 16; lz++) {
@@ -94,13 +94,13 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
     public void spawnOriginalMobs(WorldGenRegion region) {}
 
     @Override
-    public int getGenDepth() { return 384; }
+    public int getGenDepth() { return 16; }
 
     @Override
-    public int getSeaLevel() { return -63; }
+    public int getSeaLevel() { return 0; }
 
     @Override
-    public int getMinY() { return -64; }
+    public int getMinY() { return 0; }
 
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types heightmapType,
