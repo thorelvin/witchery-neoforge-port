@@ -2,22 +2,11 @@
   "downfall": 0.5,
   "effects": {
     "fog_color": 13382553,
-    "mood_sound": {
-      "block_search_extent": 8,
-      "offset": 2.0,
-      "sound": "minecraft:ambient.soul_sand_valley.mood",
-      "tick_delay": 6000
-    },
     "sky_color": 13127830,
     "water_color": 6584520,
     "water_fog_color": 6584520,
     "grass_color": 9027656,
-    "foliage_color": 8371292,
-    "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
-    "additions_sound": {
-      "sound": "minecraft:ambient.soul_sand_valley.additions",
-      "tick_chance": 0.006
-    }
+    "foliage_color": 8371292
   },
   "has_precipitation": true,
   "temperature": 0.5,
@@ -30,7 +19,8 @@
         "maxCount": 2
       }
     ],
-    "creature": [
+    "creature": [],
+    "ambient": [
       {
         "type": "witchery:spirit",
         "weight": 10,
@@ -38,7 +28,6 @@
         "maxCount": 3
       }
     ],
-    "ambient": [],
     "water_creature": [],
     "water_ambient": [],
     "underground_water_creature": [],

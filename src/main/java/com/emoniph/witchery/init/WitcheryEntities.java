@@ -189,7 +189,7 @@ public class WitcheryEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiritEntity>> SPIRIT =
             ENTITY_TYPES.register("spirit", () ->
-                    EntityType.Builder.of(SpiritEntity::new, MobCategory.CREATURE)
+                    EntityType.Builder.of(SpiritEntity::new, MobCategory.AMBIENT)
                             .sized(0.5F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spirit"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.CorpseEntity>> CORPSE =

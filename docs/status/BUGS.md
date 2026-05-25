@@ -26,4 +26,4 @@ See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
 | Item | Effort |
 |---|---|
-| Spirit World vegetation + Nightmare spawning polish | 1–3 hrs |
+| Spirit World horizon/day-angle atmosphere and fresh-chunk vegetation/spawn QA | 1-2 hrs |
