@@ -20,6 +20,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
@@ -113,6 +115,13 @@ public class WitcheryPlayerEvents {
         BlockPos pos = event.getPos();
         if (pos == null) return;
         BlockState state = event.getLevel().getBlockState(pos);
+        WitcheryPlayerData data = WitcheryAttachments.get(event.getEntity());
+        if (data.isWerewolf()) {
+            event.getEntity().displayClientMessage(Component.translatable("witchery.nosleep.wolf")
+                    .withStyle(ChatFormatting.RED), true);
+            event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);
+            return;
+        }
         if (event.getProblem() == null) {
             if (!(event.getLevel() instanceof ServerLevel level) || !(state.getBlock() instanceof BedBlock)) {
                 return;
@@ -124,7 +133,6 @@ public class WitcheryPlayerEvents {
             return;
         }
         if (!state.is(WitcheryBlocks.COFFIN.get())) return;
-        WitcheryPlayerData data = WitcheryAttachments.get(event.getEntity());
         if (data.isVampire()) {
             event.setProblem(null);
         }
