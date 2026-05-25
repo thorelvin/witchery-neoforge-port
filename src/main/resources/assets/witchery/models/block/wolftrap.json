@@ -1,7 +1,5 @@
 {
-  "parent": "witchery:block/beartrap",
   "textures": {
-    "particle": "witchery:block/wolftrap",
-    "trap": "witchery:block/wolftrap"
+    "particle": "witchery:block/wolftrap"
   }
 }

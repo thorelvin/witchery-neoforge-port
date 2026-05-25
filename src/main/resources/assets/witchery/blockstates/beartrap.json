@@ -2,11 +2,11 @@
   "variants": {
     "armed=false,axis=x,closed=false": { "model": "witchery:block/beartrap" },
     "armed=true,axis=x,closed=false": { "model": "witchery:block/beartrap" },
-    "armed=false,axis=x,closed=true": { "model": "witchery:block/beartrap_closed" },
-    "armed=true,axis=x,closed=true": { "model": "witchery:block/beartrap_closed" },
-    "armed=false,axis=z,closed=false": { "model": "witchery:block/beartrap", "y": 90 },
-    "armed=true,axis=z,closed=false": { "model": "witchery:block/beartrap", "y": 90 },
-    "armed=false,axis=z,closed=true": { "model": "witchery:block/beartrap_closed", "y": 90 },
-    "armed=true,axis=z,closed=true": { "model": "witchery:block/beartrap_closed", "y": 90 }
+    "armed=false,axis=x,closed=true": { "model": "witchery:block/beartrap" },
+    "armed=true,axis=x,closed=true": { "model": "witchery:block/beartrap" },
+    "armed=false,axis=z,closed=false": { "model": "witchery:block/beartrap" },
+    "armed=true,axis=z,closed=false": { "model": "witchery:block/beartrap" },
+    "armed=false,axis=z,closed=true": { "model": "witchery:block/beartrap" },
+    "armed=true,axis=z,closed=true": { "model": "witchery:block/beartrap" }
   }
 }

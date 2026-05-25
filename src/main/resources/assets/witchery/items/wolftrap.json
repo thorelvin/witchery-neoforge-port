@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/wolftrap"
+    "type": "minecraft:special",
+    "base": "witchery:item/wolftrap",
+    "model": {
+      "type": "witchery:wolftrap"
+    }
   }
 }

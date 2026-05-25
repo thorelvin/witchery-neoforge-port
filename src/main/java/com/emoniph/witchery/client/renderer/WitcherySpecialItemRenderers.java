@@ -2,6 +2,7 @@ package com.emoniph.witchery.client.renderer;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.client.model.BrazierModel;
+import com.emoniph.witchery.client.model.BeartrapModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
 import com.emoniph.witchery.client.model.ChaliceModel;
 import com.emoniph.witchery.client.model.CoffinModel;
@@ -44,6 +45,8 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("fume_funnel"), FumeFunnelUnbaked.MAP_CODEC);
         event.register(id("witches_oven"), WitchesOvenUnbaked.MAP_CODEC);
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
+        event.register(id("beartrap"), BeartrapUnbaked.MAP_CODEC);
+        event.register(id("wolftrap"), BeartrapUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
         event.register(id("chalice"), ChaliceUnbaked.MAP_CODEC);
         event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
@@ -305,6 +308,40 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<BrazierUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record BeartrapSpecialRenderer(BeartrapModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("beartrap");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            model.setClosed(false);
+            collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE),
+                    lightCoords, OverlayTexture.NO_OVERLAY, null);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record BeartrapUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<BeartrapUnbaked> MAP_CODEC = MapCodec.unit(new BeartrapUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new BeartrapSpecialRenderer(
+                    new BeartrapModel(context.entityModelSet().bakeLayer(BeartrapModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<BeartrapUnbaked> type() {
             return MAP_CODEC;
         }
     }

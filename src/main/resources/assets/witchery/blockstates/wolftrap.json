@@ -2,11 +2,11 @@
   "variants": {
     "armed=false,axis=x,closed=false": { "model": "witchery:block/wolftrap" },
     "armed=true,axis=x,closed=false": { "model": "witchery:block/wolftrap" },
-    "armed=false,axis=x,closed=true": { "model": "witchery:block/wolftrap_closed" },
-    "armed=true,axis=x,closed=true": { "model": "witchery:block/wolftrap_closed" },
-    "armed=false,axis=z,closed=false": { "model": "witchery:block/wolftrap", "y": 90 },
-    "armed=true,axis=z,closed=false": { "model": "witchery:block/wolftrap", "y": 90 },
-    "armed=false,axis=z,closed=true": { "model": "witchery:block/wolftrap_closed", "y": 90 },
-    "armed=true,axis=z,closed=true": { "model": "witchery:block/wolftrap_closed", "y": 90 }
+    "armed=false,axis=x,closed=true": { "model": "witchery:block/wolftrap" },
+    "armed=true,axis=x,closed=true": { "model": "witchery:block/wolftrap" },
+    "armed=false,axis=z,closed=false": { "model": "witchery:block/wolftrap" },
+    "armed=true,axis=z,closed=false": { "model": "witchery:block/wolftrap" },
+    "armed=false,axis=z,closed=true": { "model": "witchery:block/wolftrap" },
+    "armed=true,axis=z,closed=true": { "model": "witchery:block/wolftrap" }
   }
 }

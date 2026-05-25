@@ -1,5 +1,8 @@
 {
-  "parent": "witchery:block/wolftrap",
+  "parent": "witchery:item/entity_machine_base",
+  "textures": {
+    "layer0": "witchery:block/wolftrap"
+  },
   "display": {
     "gui": {
       "rotation": [30, 45, 0],

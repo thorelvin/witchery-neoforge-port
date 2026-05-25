@@ -48,6 +48,7 @@ public class WitcheryClient {
         Map.entry(WitchesOvenModel.LAYER_LOCATION,    WitchesOvenModel::createBodyLayer),
         Map.entry(DistilleryModel.LAYER_LOCATION,      DistilleryModel::createBodyLayer),
         Map.entry(PoppetShelfModel.LAYER_LOCATION,     PoppetShelfModel::createBodyLayer),
+        Map.entry(BeartrapModel.LAYER_LOCATION,        BeartrapModel::createBodyLayer),
         Map.entry(CandelabraModel.LAYER_LOCATION,      CandelabraModel::createBodyLayer),
         Map.entry(BrazierModel.LAYER_LOCATION,         BrazierModel::createBodyLayer),
         Map.entry(ChaliceModel.LAYER_LOCATION,         ChaliceModel::createBodyLayer),
@@ -144,6 +145,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.COFFIN.get(),          CoffinRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.PLACED_ITEM.get(),     PlacedItemRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.BEARTRAP.get(),        BeartrapRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.DEMON_HEART.get(),     DemonHeartRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.ALLURING_SKULL.get(),  AlluringSkullRenderer::new);

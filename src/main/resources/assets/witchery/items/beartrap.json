@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/beartrap"
+    "type": "minecraft:special",
+    "base": "witchery:item/beartrap",
+    "model": {
+      "type": "witchery:beartrap"
+    }
   }
 }
