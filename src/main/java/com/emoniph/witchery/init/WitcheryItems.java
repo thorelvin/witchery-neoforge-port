@@ -254,6 +254,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BUCKET_SPIRIT = ITEMS.registerSimpleItem("bucket_spirit");
     public static final DeferredItem<Item> HAND_BOW = ITEMS.registerSimpleItem("hand_bow");
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.registerSimpleItem("huntsman_spear");
+    public static final DeferredItem<Item> HUNTSMANS_SPEAR = ITEMS.registerSimpleItem("huntsmans_spear");
 
     // Armour
     public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
@@ -601,7 +602,6 @@ public class WitcheryItems {
             "bound_taglock_kit",
             "meaty_stew",
             "raw_meaty_stew",
-            "huntsmans_spear",
             "crossbow_pistol",
             "deployed_deaths_hand",
             "drawn_cane_sword",

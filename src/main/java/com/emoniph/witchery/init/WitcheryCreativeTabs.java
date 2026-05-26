@@ -255,6 +255,7 @@ public class WitcheryCreativeTabs {
         add(output,
                 WitcheryItems.HAND_BOW.get(),
                 WitcheryItems.HUNTSMAN_SPEAR.get(),
+                WitcheryItems.HUNTSMANS_SPEAR.get(),
                 WitcheryItems.WOODEN_BOLT.get(),
                 WitcheryItems.SILVER_BOLT.get(),
                 WitcheryItems.BONE_BOLT.get(),
@@ -349,7 +350,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting", "cane_sword",
                 "charged_crossbow", "duplication_grenade", "staff_of_duplication", "horn_of_the_hunt",
-                "hellhound_head", "wolf_head", "leonards_urn", "bound_taglock_kit", "huntsmans_spear",
+                "hellhound_head", "wolf_head", "leonards_urn", "bound_taglock_kit",
                 "crossbow_pistol", "deployed_deaths_hand", "drawn_cane_sword", "witches_hand", "hunts_horn");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",

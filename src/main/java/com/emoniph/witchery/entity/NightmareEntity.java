@@ -158,7 +158,9 @@ public class NightmareEntity extends Monster {
         if (!(source.getEntity() instanceof LivingEntity living)) {
             return false;
         }
-        return living.getMainHandItem().is(WitcheryItems.HUNTSMAN_SPEAR.get());
+        ItemStack mainHand = living.getMainHandItem();
+        return mainHand.is(WitcheryItems.HUNTSMAN_SPEAR.get())
+                || mainHand.is(WitcheryItems.HUNTSMANS_SPEAR.get());
     }
 
     private boolean standingInFlowingSpirit() {
