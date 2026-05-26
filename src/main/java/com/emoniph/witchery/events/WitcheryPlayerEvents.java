@@ -58,6 +58,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
@@ -151,6 +152,15 @@ public class WitcheryPlayerEvents {
     public static void onLivingFall(LivingFallEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.getVehicle() instanceof BroomEntity) {
             event.setDistance(0.0F);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
+        if (!(event.getEntity() instanceof Creeper)) return;
+        if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
+        if (player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCHES_ROBE.get())) {
+            event.setNewAboutToBeSetTarget(null);
         }
     }
 
