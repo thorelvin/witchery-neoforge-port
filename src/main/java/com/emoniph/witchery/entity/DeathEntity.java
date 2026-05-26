@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +12,8 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
@@ -21,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -39,6 +43,11 @@ public class DeathEntity extends Monster {
     private static final int TELEPORT_DELAY  = 30;   // ticks before teleport when player out of range
     private static final int STARE_TICKS     = 5;    // ticks a player must look to trigger aggro
     private static final double DETECT_RANGE = 64.0;
+    private static final Identifier ATTACKING_SPEED_BOOST_ID = Identifier.fromNamespaceAndPath("witchery", "death_attacking_speed_boost");
+    private static final AttributeModifier ATTACKING_SPEED_BOOST = new AttributeModifier(
+            ATTACKING_SPEED_BOOST_ID,
+            0.15,
+            AttributeModifier.Operation.ADD_VALUE);
 
     private int teleportTimer  = 0;
     private int stareTimer     = 0;
@@ -62,6 +71,20 @@ public class DeathEntity extends Monster {
     // Death uses no AI goals — all behaviour is tick-driven
     @Override
     protected void registerGoals() {}
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        AttributeInstance movement = getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movement == null) {
+            return;
+        }
+
+        movement.removeModifier(ATTACKING_SPEED_BOOST_ID);
+        if (getTarget() != null) {
+            movement.addTransientModifier(ATTACKING_SPEED_BOOST);
+        }
+    }
 
     // ── Boss bar ──────────────────────────────────────────────────────────────
 

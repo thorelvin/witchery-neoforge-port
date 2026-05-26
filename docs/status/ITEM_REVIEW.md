@@ -353,7 +353,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
 | M21 | `lord_of_torment` | `/witchery spawn lord_of_torment` | | Looks fine
-| M22 | `death` | `/witchery spawn death` | | Death no longer spawns mounted over Binky; scythe attachment pivot now matches the original 1.7 runtime pose coordinates (`x=-0.8`, `y=8.1`, `z=0`) instead of sliding forward from the hand. Baseline source stats/presentation now use 80 XP, 0.3 movement speed, 1 HP/second healing, and the purple 20-notch boss bar. Needs in-game visual verification for final angle/hand contact and boss-bar presentation.
+| M22 | `death` | `/witchery spawn death` | | Death no longer spawns mounted over Binky; scythe attachment pivot now matches the original 1.7 runtime pose coordinates (`x=-0.8`, `y=8.1`, `z=0`) instead of sliding forward from the hand. Baseline source stats/presentation now use 80 XP, 0.3 movement speed, 1 HP/second healing, the purple 20-notch boss bar, and the old attacking movement boost while a target is set. Needs in-game visual verification for final angle/hand contact, boss-bar presentation, and chase feel.
 | M23 | `flame_imp` | `/witchery spawn flame_imp` | | Looks correct and attacks player on egg throw; source right-arm punch/body twist now syncs from vanilla melee swing progress, powered render scale is restored, and needs in-game attack-pose/powered-height verification.
 
 ### Spirit World / Misc
