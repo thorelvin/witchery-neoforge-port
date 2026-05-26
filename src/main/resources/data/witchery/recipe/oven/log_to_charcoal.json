@@ -2,9 +2,8 @@
   "type": "witchery:oven",
   "ingredient": "#minecraft:logs",
   "result": {
-    "id": "witchery:wood_ash",
-    "count": 2
+    "id": "minecraft:charcoal"
   },
-  "experience": 0.35,
+  "experience": 0.15,
   "cookingtime": 200
 }

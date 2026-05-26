@@ -1,9 +1,0 @@
-{
-  "type": "witchery:oven",
-  "ingredient": "minecraft:nether_wart",
-  "result": {
-    "id": "witchery:foul_fume"
-  },
-  "experience": 0.5,
-  "cookingtime": 300
-}
