@@ -111,6 +111,8 @@ public class WitcheryClient {
                 ChaliceFilledProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "poppet_shelf_compass_signal"),
                 PoppetShelfCompassAngleProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "blocking"),
+                HuntsmanSpearBlockingProperty.MAP_CODEC);
     }
 
     public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
