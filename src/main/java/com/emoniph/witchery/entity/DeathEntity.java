@@ -32,8 +32,8 @@ public class DeathEntity extends Monster {
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.witchery.death"),
-            BossEvent.BossBarColor.WHITE,
-            BossEvent.BossBarOverlay.PROGRESS);
+            BossEvent.BossBarColor.PURPLE,
+            BossEvent.BossBarOverlay.NOTCHED_20);
 
     private static final int HEAL_INTERVAL   = 20;   // heal every second
     private static final int TELEPORT_DELAY  = 30;   // ticks before teleport when player out of range
@@ -47,13 +47,13 @@ public class DeathEntity extends Monster {
     public DeathEntity(EntityType<? extends DeathEntity> type, Level level) {
         super(type, level);
         this.setNoGravity(false);
-        this.xpReward = 200;
+        this.xpReward = 80;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH,         1000.0)
-                .add(Attributes.MOVEMENT_SPEED,        0.25)
+                .add(Attributes.MOVEMENT_SPEED,        0.3)
                 .add(Attributes.ATTACK_DAMAGE,          7.0)
                 .add(Attributes.FOLLOW_RANGE,          64.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE,   1.0);
@@ -81,7 +81,7 @@ public class DeathEntity extends Monster {
 
         // Constant healing
         if (tickCount % HEAL_INTERVAL == 0 && getHealth() < getMaxHealth()) {
-            heal(2.0f);
+            heal(1.0f);
         }
 
         // Stare detection: if any player is looking at Death, trigger aggro
