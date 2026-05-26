@@ -3,6 +3,9 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.sounds.SoundEvent;
@@ -11,8 +14,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -45,8 +50,26 @@ import java.util.List;
  */
 public class HobgoblinEntity extends AbstractVillager {
 
+    private static final String TAG_PROFESSION = "Profession";
+    private static final EntityDataAccessor<Integer> PROFESSION_VARIANT =
+            SynchedEntityData.defineId(HobgoblinEntity.class, EntityDataSerializers.INT);
+
     public HobgoblinEntity(EntityType<? extends HobgoblinEntity> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(PROFESSION_VARIANT, 0);
+    }
+
+    public int getProfessionVariant() {
+        return this.entityData.get(PROFESSION_VARIANT);
+    }
+
+    public void setProfessionVariant(int profession) {
+        this.entityData.set(PROFESSION_VARIANT, Math.floorMod(profession, 4));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -170,6 +193,27 @@ public class HobgoblinEntity extends AbstractVillager {
     @Override
     public boolean causeFallDamage(double fallDistance, float multiplier, DamageSource source) {
         return false;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level,
+                                        net.minecraft.world.DifficultyInstance difficulty,
+                                        EntitySpawnReason spawnType,
+                                        @Nullable SpawnGroupData spawnGroupData) {
+        setProfessionVariant(this.random.nextInt(4));
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(TAG_PROFESSION, getProfessionVariant());
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        setProfessionVariant(tag.getIntOr(TAG_PROFESSION, 0));
     }
 
     @Nullable

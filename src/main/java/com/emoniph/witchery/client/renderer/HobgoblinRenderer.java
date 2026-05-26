@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, HobgoblinRenderer.HobgoblinRenderState, HobgoblinModel<HobgoblinRenderer.HobgoblinRenderState>> {
 
     public static class HobgoblinRenderState extends HumanoidRenderState {
-        public int entityId = 0;
+        public int profession = 0;
     }
 
     private static final Identifier[] TEXTURES = {
@@ -29,12 +29,16 @@ public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, Hobg
     @Override
     public void extractRenderState(HobgoblinEntity entity, HobgoblinRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
-        state.entityId = entity.getId();
+        state.profession = entity.getProfessionVariant();
     }
 
     @Override
     public Identifier getTextureLocation(HobgoblinRenderState state) {
-        int idx = (int)(Math.abs(state.entityId) % TEXTURES.length);
-        return TEXTURES[idx];
+        return switch (Math.floorMod(state.profession, TEXTURES.length)) {
+            case 1 -> TEXTURES[0];
+            case 2 -> TEXTURES[3];
+            case 3 -> TEXTURES[2];
+            default -> TEXTURES[1];
+        };
     }
 }

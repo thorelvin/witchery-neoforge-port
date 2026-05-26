@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 
-public class WitchHunterRenderer extends MobRenderer<WitchHunterEntity, LivingEntityRenderState, WitchHunterModel> {
+public class WitchHunterRenderer extends MobRenderer<WitchHunterEntity, WitchHunterRenderer.WitchHunterRenderState, WitchHunterModel> {
 
     private static final Identifier[] SKINS = {
         Identifier.fromNamespaceAndPath("witchery", "textures/entity/witchhunter1.png"),
@@ -19,10 +19,20 @@ public class WitchHunterRenderer extends MobRenderer<WitchHunterEntity, LivingEn
         super(ctx, new WitchHunterModel(ctx.bakeLayer(WitchHunterModel.LAYER_LOCATION)), 0.5F);
     }
 
-    @Override public LivingEntityRenderState createRenderState() { return new LivingEntityRenderState(); }
+    @Override public WitchHunterRenderState createRenderState() { return new WitchHunterRenderState(); }
 
     @Override
-    public Identifier getTextureLocation(net.minecraft.client.renderer.entity.state.LivingEntityRenderState state) {
-        return SKINS[0];
+    public void extractRenderState(WitchHunterEntity entity, WitchHunterRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.hunterType = entity.getHunterType();
+    }
+
+    @Override
+    public Identifier getTextureLocation(WitchHunterRenderState state) {
+        return SKINS[Math.floorMod(state.hunterType, SKINS.length)];
+    }
+
+    public static class WitchHunterRenderState extends LivingEntityRenderState {
+        public int hunterType;
     }
 }

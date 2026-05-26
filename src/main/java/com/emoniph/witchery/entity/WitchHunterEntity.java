@@ -51,6 +51,7 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
     private static final int HUNTER_SPAWN_ROLL_PERIOD = 100;
     private static final int HUNTER_SPAWN_TRIES = 3;
     private static final int HUNTER_MAX_SPAWNS = 2;
+    private static final String TAG_HUNTER_TYPE = "HunterType";
 
     private static final EntityDataAccessor<Integer> HUNTER_TYPE =
             SynchedEntityData.defineId(WitchHunterEntity.class, EntityDataSerializers.INT);
@@ -71,6 +72,10 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
     }
 
     public int getHunterType() { return this.entityData.get(HUNTER_TYPE); }
+
+    public void setHunterType(int hunterType) {
+        this.entityData.set(HUNTER_TYPE, Math.floorMod(hunterType, 3));
+    }
 
     // ── Attributes + goals ────────────────────────────────────────────────────
 
@@ -255,13 +260,14 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
                                         net.minecraft.world.DifficultyInstance difficulty,
                                         EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData spawnGroupData) {
-        this.entityData.set(HUNTER_TYPE, this.random.nextInt(3));
+        setHunterType(this.random.nextInt(3));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
     @Override
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
+        tag.putInt(TAG_HUNTER_TYPE, getHunterType());
         if (targetPlayerUuid != null) {
             tag.putString("HunterTargetUUID", targetPlayerUuid.toString());
         }
@@ -270,6 +276,7 @@ public class WitchHunterEntity extends Monster implements RangedAttackMob {
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
+        setHunterType(tag.getIntOr(TAG_HUNTER_TYPE, 0));
         String target = tag.getStringOr("HunterTargetUUID", "");
         try {
             targetPlayerUuid = target.isEmpty() ? null : UUID.fromString(target);
