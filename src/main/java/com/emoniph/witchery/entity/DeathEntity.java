@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -118,11 +119,14 @@ public class DeathEntity extends Monster {
                              getX() + DETECT_RANGE, getY() + DETECT_RANGE, getZ() + DETECT_RANGE));
             for (Player player : nearby) {
                 if (isPlayerLookingAt(player)) {
+                    if (stareTimer == 0) {
+                        level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1.0f, 1.0f);
+                    }
                     stareTimer++;
                     if (stareTimer >= STARE_TICKS) {
                         isAngered = true;
                         setTarget(player);
-                        playSound(SoundEvents.WITHER_AMBIENT, 1.0f, 0.7f);
                         stareTimer = 0;
                     }
                     break;
