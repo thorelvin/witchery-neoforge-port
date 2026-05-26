@@ -30,6 +30,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class WitcheryMobDropEvents {
+    private static final float SOURCE_RARE_DROP_CHANCE = 0.33f;
+    private static final float SOURCE_ARTHANA_RARE_DROP_CHANCE = 0.5f;
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
@@ -67,17 +69,13 @@ public class WitcheryMobDropEvents {
         }
 
         if (entity instanceof OwlFamiliarEntity
-                && arthana
-                && !hasDrop(event, WitcheryItems.OWLETS_WING.get())
-                && rng.nextFloat() < 0.375f) {
+                && rng.nextFloat() < sourceArthanaChance(arthana)) {
             event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(WitcheryItems.OWLETS_WING.get())));
         }
 
         if (entity instanceof ToadFamiliarEntity
-                && arthana
-                && !hasDrop(event, WitcheryItems.TOE_OF_FROG.get())
-                && rng.nextFloat() < 0.375f) {
+                && rng.nextFloat() < sourceArthanaChance(arthana)) {
             event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(WitcheryItems.TOE_OF_FROG.get())));
         }
@@ -109,6 +107,10 @@ public class WitcheryMobDropEvents {
             return roll < 0.10f;
         }
         return entity.getType().is(EntityTypeTags.UNDEAD) && roll < 0.02f;
+    }
+
+    private static float sourceArthanaChance(boolean arthana) {
+        return arthana ? SOURCE_ARTHANA_RARE_DROP_CHANCE : SOURCE_RARE_DROP_CHANCE;
     }
 
     private static boolean isAlwaysTornPageTarget(LivingEntity entity) {
