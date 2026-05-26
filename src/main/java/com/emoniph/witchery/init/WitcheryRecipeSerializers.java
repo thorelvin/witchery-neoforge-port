@@ -6,6 +6,7 @@ import com.emoniph.witchery.crafting.KettleBrewingRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipeSerializer;
 import com.emoniph.witchery.crafting.OvenRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
+import com.emoniph.witchery.crafting.ImpregnatedLeatherRepairRecipe;
 import com.emoniph.witchery.crafting.BitingBeltPotionRecipe;
 import com.emoniph.witchery.crafting.ParasyticLousePotionRecipe;
 import com.emoniph.witchery.crafting.PlayerCompassBindingRecipe;
@@ -66,4 +67,8 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<UpdateImmortalsObservationsBookRecipe>> UPDATE_IMMORTALS_OBSERVATIONS_BOOK =
             RECIPE_SERIALIZERS.register("update_immortals_observations_book",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(UpdateImmortalsObservationsBookRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<ImpregnatedLeatherRepairRecipe>> IMPREGNATED_LEATHER_REPAIR =
+            RECIPE_SERIALIZERS.register("impregnated_leather_repair",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(ImpregnatedLeatherRepairRecipe::new));
 }
