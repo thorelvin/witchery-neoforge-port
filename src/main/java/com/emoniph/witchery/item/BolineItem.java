@@ -17,6 +17,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.IShearable;
 
 import java.util.List;
@@ -96,5 +98,11 @@ public class BolineItem extends Item {
             return 1.5f;
         }
         return super.getDestroySpeed(stack, state);
+    }
+
+    @Override
+    public boolean canPerformAction(ItemStack stack, ItemAbility itemAbility) {
+        return ItemAbilities.DEFAULT_SHEARS_ACTIONS.contains(itemAbility)
+                || super.canPerformAction(stack, itemAbility);
     }
 }
