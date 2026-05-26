@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -98,7 +99,10 @@ public class DeathEntity extends Monster {
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide()) return;
+        if (level().isClientSide()) {
+            spawnAmbientPortalParticles();
+            return;
+        }
 
         bossEvent.setProgress(getHealth() / getMaxHealth());
 
@@ -151,13 +155,25 @@ public class DeathEntity extends Monster {
         return look.dot(toMe) > 0.98;
     }
 
+    private void spawnAmbientPortalParticles() {
+        for (int i = 0; i < 2; i++) {
+            level().addParticle(ParticleTypes.PORTAL,
+                    getX() + (random.nextDouble() - 0.5) * getBbWidth(),
+                    getY() + random.nextDouble() * getBbHeight() - 0.25,
+                    getZ() + (random.nextDouble() - 0.5) * getBbWidth(),
+                    (random.nextDouble() - 0.5) * 2.0,
+                    -random.nextDouble(),
+                    (random.nextDouble() - 0.5) * 2.0);
+        }
+    }
+
     private void teleportTowardsTarget(LivingEntity target) {
         double tx = target.getX() + (random.nextDouble() - 0.5) * 2;
         double tz = target.getZ() + (random.nextDouble() - 0.5) * 2;
         double ty = target.getY();
         teleportTo(tx, ty, tz);
         if (level() instanceof ServerLevel sl) {
-            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+            sl.sendParticles(ParticleTypes.PORTAL,
                     getX(), getY() + 1.0, getZ(), 20, 0.5, 1.0, 0.5, 0.1);
         }
         playSound(SoundEvents.ENDERMAN_TELEPORT, 0.5f, 1.0f);
