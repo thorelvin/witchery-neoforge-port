@@ -150,9 +150,17 @@ public class DeathEntity extends Monster {
 
     private boolean isPlayerLookingAt(Player player) {
         Vec3 look = player.getLookAngle().normalize();
-        Vec3 toMe = position().subtract(player.getEyePosition()).normalize();
-        // Dot product > 0.98 ≈ within ~11° field of view
-        return look.dot(toMe) > 0.98;
+        Vec3 eye = player.getEyePosition();
+        Vec3 toMe = new Vec3(
+                getX() - eye.x,
+                getBoundingBox().minY + getBbHeight() * 0.5 - eye.y,
+                getZ() - eye.z);
+        double distance = toMe.length();
+        if (distance <= 0.0) {
+            return false;
+        }
+        // Source cone tightens with distance and aims at Death's body center.
+        return look.dot(toMe.normalize()) > 1.0 - 0.025 / distance;
     }
 
     private void spawnAmbientPortalParticles() {
