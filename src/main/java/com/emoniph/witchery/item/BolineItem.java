@@ -45,8 +45,10 @@ public class BolineItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
-        tooltip.accept(Component.translatable("item.witchery.boline.tip")
-                .withStyle(ChatFormatting.GRAY));
+        String tooltipText = Component.translatable("item.witchery.boline.tip").getString();
+        for (String line : tooltipText.split("\\n")) {
+            tooltip.accept(Component.literal(line).withStyle(ChatFormatting.GRAY));
+        }
     }
 
     // ── Shear entities on right-click ────────────────────────────────────────
