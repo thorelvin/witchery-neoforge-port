@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -25,7 +26,7 @@ public class DivinerItem extends Item {
     private final Block blockToDetect;
 
     public DivinerItem(Block blockToDetect, Properties properties) {
-        super(properties);
+        super(properties.rarity(Rarity.UNCOMMON));
         this.blockToDetect = blockToDetect;
     }
 

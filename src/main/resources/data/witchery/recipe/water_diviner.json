@@ -6,8 +6,16 @@
     "axa"
   ],
   "key": {
-    "y": "minecraft:gold_ingot",
-    "a": "minecraft:iron_ingot",
+    "y": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:water"
+        }
+      }
+    },
+    "a": "minecraft:stick",
     "x": "witchery:tear_of_goddess"
   },
   "result": {
