@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -37,6 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -49,6 +52,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     private static final double ARROW_DAMAGE_SCALE = 8.0D;
     private static final double ARROW_DAMAGE_GAUSSIAN = 0.25D;
     private static final double ARROW_DIFFICULTY_BONUS = 0.11D;
+    private static final int SOURCE_BOOK_ENCHANTMENT_LEVEL = 2;
 
     private static final EntityDataAccessor<Boolean> PLAYER_CREATED =
             SynchedEntityData.defineId(HornedHuntsmanEntity.class, EntityDataSerializers.BOOLEAN);
@@ -200,7 +204,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         this.spawnAtLocation(level, new ItemStack(Items.WITHER_SKELETON_SKULL, random.nextInt(3) == 0 ? 3 : 2));
-        this.spawnAtLocation(level, new ItemStack(Items.ENCHANTED_BOOK));
+        this.spawnAtLocation(level, createSourceEnchantedBook(level));
         this.spawnAtLocation(level, new ItemStack(WitcheryItems.DEMONIC_BLOOD.get()));
         if (random.nextInt(4) == 0) {
             this.spawnAtLocation(level, new ItemStack(WitcheryItems.HUNTSMAN_SPEAR.get()));
@@ -251,6 +255,13 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+    }
+
+    private ItemStack createSourceEnchantedBook(ServerLevel level) {
+        var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(EnchantmentTags.ON_RANDOM_LOOT);
+        return EnchantmentHelper.enchantItem(random, new ItemStack(Items.BOOK),
+                SOURCE_BOOK_ENCHANTMENT_LEVEL, level.registryAccess(), java.util.Optional.of(enchantments));
     }
 
     private void summonWolf(LivingEntity target) {
