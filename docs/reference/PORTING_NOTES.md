@@ -9,6 +9,20 @@ Current target:
 
 ---
 
+## 2026-05-26 NeoForge 21.11.42 API surface vs decompiled source
+
+The `ng_execute` Gradle cache contains **decompiled NeoForge sources that may be newer than 21.11.42**. Do not trust those source files as the ground truth for which APIs are available on the compile classpath. Always verify against the actual compiled binary (e.g. `javap -p <class-from-compiledWithNeoForge_*.jar>`).
+
+Known methods that appear in the decompiled ShearsItem source but DO NOT exist in NeoForge 21.11.42's compile classpath:
+- `LivingEntity.getSlotForHand(InteractionHand)` → use `hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND`
+- `InteractionResult.sidedSuccess(boolean)` → use `isClient ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER`
+
+`IShearable.spawnShearedDrop` takes `ServerLevel`, NOT `Level` — cast when you have an `!isClientSide()` guard.
+
+`AbstractGolem` does NOT exist in NeoForge 21.11.42 — use `net.minecraft.world.entity.animal.golem.IronGolem` and `SnowGolem` explicitly.
+
+---
+
 ## Current target
 - Minecraft: 1.21.11
 - NeoForge: 21.11.42

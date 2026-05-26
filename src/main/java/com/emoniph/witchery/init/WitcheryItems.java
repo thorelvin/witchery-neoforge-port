@@ -212,7 +212,9 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.registerSimpleBlockItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON);
     public static final DeferredItem<Item> WAYSTONE = ITEMS.register("waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<BlockItem> WOLF_ALTAR = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WOLF_ALTAR);
-    public static final DeferredItem<Item> BOLINE = ITEMS.registerSimpleItem("boline");
+    public static final DeferredItem<Item> BOLINE = ITEMS.register("boline", id ->
+            new com.emoniph.witchery.item.BolineItem(itemProps(id)
+                    .sword(net.minecraft.world.item.ToolMaterial.IRON, 0.0f, -2.4f)));
     public static final DeferredItem<Item> CHALK = ITEMS.register("chalk", id -> new com.emoniph.witchery.item.ChalkItem(() -> WitcheryBlocks.CIRCLE_GLYPH.get(), itemProps(id).durability(64)));
     public static final DeferredItem<Item> CHALK_GOLDEN = ITEMS.register("chalk_golden", id -> new com.emoniph.witchery.item.ChalkItem(() -> WitcheryBlocks.CIRCLE.get(), itemProps(id).durability(64)));
     public static final DeferredItem<Item> CHALK_OTHERWHERE = ITEMS.register("chalk_otherwhere", id -> new com.emoniph.witchery.item.ChalkItem(() -> WitcheryBlocks.CIRCLE_OTHERWHERE.get(), itemProps(id).durability(64)));
