@@ -251,7 +251,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));
     public static final DeferredItem<Item> POPPET_SHELF_COMPASS = ITEMS.register("poppet_shelf_compass",
             id -> new PoppetShelfCompassItem(itemProps(id)));
-    public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.registerSimpleItem("polynesia_charm");
+    public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.register("polynesia_charm",
+            id -> new PolynesiaCharmItem(itemProps(id)));
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
     public static final DeferredItem<Item> PARASYTIC_LOUSE = ITEMS.register("parasytic_louse", id -> new ParasyticLouseItem(itemProps(id)));
     public static final DeferredItem<Item> LEAPING_LILY_ITEM = ITEMS.registerSimpleItem("leaping_lily_item");
