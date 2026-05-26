@@ -6,6 +6,14 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "items": "witchery:boline"
+              }
+            }
+          ],
           "name": "witchery:blood_rose"
         }
       ]
