@@ -17,7 +17,7 @@
     {
       "type": "patchouli:text",
       "title": "Cauldron Path",
-      "text": "The original 1.7.10 Witch's Cauldron path is also available. Fill and heat the $(item)Witch's Cauldron$(), drop a $(item)Mandrake Root$() and an $(item)Egg$() into the water, then right-click with $(item)Exhale of the Horned One$() to produce six portions of Mutandis.$(br2)Similarly, drop $(item)Nether Wart$() into the cauldron and right-click with Mutandis itself to condense one $(item)Mutandis Extremis$(). Both paths are available."
+      "text": "The original 1.7.10 Witch's Cauldron path is also available. Fill and heat the $(item)Witch's Cauldron$(), drop or right-click a $(item)Mandrake Root$() and an $(item)Egg$() into the water, then right-click with $(item)Exhale of the Horned One$() to produce six portions of Mutandis.$(br2)Similarly, drop $(item)Nether Wart$() into the cauldron and right-click with Mutandis itself to condense one $(item)Mutandis Extremis$(). Both paths are available."
     },
     {
       "type": "patchouli:text",

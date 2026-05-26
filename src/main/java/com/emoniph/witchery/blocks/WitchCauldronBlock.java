@@ -171,6 +171,11 @@ public class WitchCauldronBlock extends Block {
             return extremisResult;
         }
 
+        InteractionResult mutandisOfferingResult = tryOfferMutandisIngredient(stack, state, level, pos, player);
+        if (mutandisOfferingResult.consumesAction()) {
+            return mutandisOfferingResult;
+        }
+
         InteractionResult mutandisResult = tryBrewMutandis(stack, state, level, pos, player);
         if (mutandisResult.consumesAction()) {
             return mutandisResult;
@@ -449,6 +454,30 @@ public class WitchCauldronBlock extends Block {
                 .findFirst();
     }
 
+    private InteractionResult tryOfferMutandisIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if ((!stack.is(WitcheryItems.MANDRAKE_ROOT.get()) && !stack.is(Items.EGG))
+                || state.getValue(LEVEL) <= 0
+                || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        ItemStack offering = stack.copyWithCount(1);
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+
+        ItemEntity offeringEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, offering);
+        offeringEntity.setPickUpDelay(40);
+        offeringEntity.setDeltaMovement(0.0, 0.0, 0.0);
+        level.addFreshEntity(offeringEntity);
+        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.35F, 1.4F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        return InteractionResult.CONSUME;
+    }
+
     @Nullable
     private static AltarBlockEntity findNearbyAltar(Level world, BlockPos center, int radius) {
         for (BlockPos bp : BlockPos.betweenClosed(
@@ -463,7 +492,7 @@ public class WitchCauldronBlock extends Block {
 
     private record ChalkUpgradeMatch(Item result, int powerCost, List<ItemEntity> offerings, String successKey) {}
 
-    // Mandrake Root + Exhale of the Horned One (trigger) + Egg → 6×Mutandis
+    // Mandrake Root + Exhale of the Horned One (trigger) + Egg -> 6x Mutandis
     private InteractionResult tryBrewMutandis(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
         if (!stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
             return InteractionResult.PASS;
