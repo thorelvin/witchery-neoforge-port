@@ -31,6 +31,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.util.Mth;
@@ -157,9 +158,16 @@ public class WitcheryPlayerEvents {
 
     @SubscribeEvent
     public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
-        if (!(event.getEntity() instanceof Creeper)) return;
         if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
-        if (player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCHES_ROBE.get())) {
+
+        if (event.getEntity() instanceof Creeper
+                && player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCHES_ROBE.get())) {
+            event.setNewAboutToBeSetTarget(null);
+            return;
+        }
+
+        if (event.getEntity().getType().is(EntityTypeTags.UNDEAD)
+                && player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.NECROMANCER_ROBES.get())) {
             event.setNewAboutToBeSetTarget(null);
         }
     }
