@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.WitchRenderState;
 import net.minecraft.resources.Identifier;
 
-public class CovenWitchRenderer extends MobRenderer<CovenWitchEntity, WitchRenderState, WitchModel> {
+public class CovenWitchRenderer extends MobRenderer<CovenWitchEntity, CovenWitchRenderer.CovenWitchRenderState, WitchModel> {
 
     private static final Identifier[] SKINS = {
         Identifier.fromNamespaceAndPath("witchery", "textures/entity/covenwitch1.png"),
@@ -22,17 +22,20 @@ public class CovenWitchRenderer extends MobRenderer<CovenWitchEntity, WitchRende
         super(ctx, new WitchModel(ctx.bakeLayer(ModelLayers.WITCH)), 0.5F);
     }
 
-    @Override public WitchRenderState createRenderState() { return new WitchRenderState(); }
+    @Override public CovenWitchRenderState createRenderState() { return new CovenWitchRenderState(); }
 
     @Override
-    public void extractRenderState(CovenWitchEntity entity, WitchRenderState state, float partialTick) {
+    public void extractRenderState(CovenWitchEntity entity, CovenWitchRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
-        state.entityId = entity.getId();
+        state.skin = entity.getSkin();
     }
 
     @Override
-    public Identifier getTextureLocation(net.minecraft.client.renderer.entity.state.WitchRenderState state) {
-        int skin = Math.abs(state.entityId) % SKINS.length;
-        return SKINS[skin];
+    public Identifier getTextureLocation(CovenWitchRenderState state) {
+        return SKINS[Math.floorMod(state.skin, SKINS.length)];
+    }
+
+    public static class CovenWitchRenderState extends WitchRenderState {
+        public int skin;
     }
 }

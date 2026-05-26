@@ -326,7 +326,7 @@ Spawn with `/witchery spawn <id>` or the matching spawn egg. Add visual/behaviou
 
 | # | Entity ID | Spawn cmd | Notes |
 |---|---|---|---|
-| M5 | `coven_witch` | `/witchery spawn coven_witch` | | Some witches ok, some spawn as pink black. Witch Hunters now target Coven Witches; texture variants still need verification.
+| M5 | `coven_witch` | `/witchery spawn coven_witch` | | Source texture hashes match the original assets, and the renderer now uses the synced/saved `Skin` variant instead of a transient entity-id variant. Witch Hunters target Coven Witches. Needs in-game multi-spawn verification that no variants render pink/black.
 | M6 | `hobgoblin` | `/witchery spawn hobgoblin` | | Looks fine, trade works
 | M7 | `raven` | `/witchery spawn raven` | | Separate eye render layer removed and its visible pixels baked into `raven.png` as red eye pixels; airborne pose now spreads wings out and tucks legs closer to the body. Brew of Hitchcock direct hits can now create temporary ravens with a 400-tick lifetime and an explicit victim target. Needs in-game verification for the final flight silhouette and Hitchcock attack behavior.
 | M8 | `binky` | `/witchery spawn binky` | | Mechanics corrected so Binky is now summoned from Binky's Skull, the Skull-spawned entity now receives the old localized Binky custom name, and Binky drops the skull on death; render base now matches vanilla Skeleton Horse instead of the old white-horse placeholder

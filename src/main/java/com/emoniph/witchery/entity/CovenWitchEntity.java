@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
  */
 public class CovenWitchEntity extends AbstractVillager {
 
+    private static final String TAG_SKIN = "Skin";
     private static final EntityDataAccessor<Integer> SKIN =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
@@ -56,6 +57,10 @@ public class CovenWitchEntity extends AbstractVillager {
 
     public int getSkin() {
         return this.entityData.get(SKIN);
+    }
+
+    public void setSkin(int skin) {
+        this.entityData.set(SKIN, Math.floorMod(skin, 5));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -175,6 +180,18 @@ public class CovenWitchEntity extends AbstractVillager {
     }
 
     @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(TAG_SKIN, getSkin());
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        setSkin(tag.getIntOr(TAG_SKIN, 0));
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
         return SoundEvents.WITCH_AMBIENT;
     }
@@ -218,7 +235,7 @@ public class CovenWitchEntity extends AbstractVillager {
                                         net.minecraft.world.DifficultyInstance difficulty,
                                         net.minecraft.world.entity.EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData spawnGroupData) {
-        this.entityData.set(SKIN, this.random.nextInt(5));
+        setSkin(this.random.nextInt(5));
         if (!hasCustomName()) {
             setCustomName(Component.literal(generateWitchName()));
         }
