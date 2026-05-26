@@ -15,6 +15,7 @@ import com.emoniph.witchery.item.BrewOfTheGrotesqueItem;
 import com.emoniph.witchery.item.BrewOfWastingItem;
 import com.emoniph.witchery.item.BroomItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -64,7 +65,8 @@ public class WitcheryItems {
 
     // ── M4 ingredient-only items (not plantable) ───────────────────────────────
     public static final DeferredItem<Item> WOOD_ASH            = ITEMS.registerSimpleItem("wood_ash");
-    public static final DeferredItem<Item> ROWAN_BERRIES       = ITEMS.registerSimpleItem("rowan_berries");
+    public static final DeferredItem<Item> ROWAN_BERRIES       = ITEMS.register("rowan_berries", id -> new Item(itemProps(id)
+            .food(new FoodProperties.Builder().nutrition(1).saturationModifier(6.0F).build())));
     public static final DeferredItem<Item> WORMWOOD            = ITEMS.registerSimpleItem("wormwood");
     public static final DeferredItem<Item> SNOWBELL            = ITEMS.registerSimpleItem("snowbell");
     public static final DeferredItem<Item> EXHALE_OF_HORNED_ONE = ITEMS.registerSimpleItem("exhale_of_horned_one");
