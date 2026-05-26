@@ -8,7 +8,7 @@
   "key": {
     "L": "witchery:impregnated_leather",
     "S": "witchery:golden_thread",
-    "G": "minecraft:gold_ingot"
+    "G": "minecraft:glowstone_dust"
   },
   "result": {
     "id": "witchery:witches_hat",

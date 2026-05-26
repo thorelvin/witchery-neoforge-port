@@ -148,7 +148,7 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 
 | # | Item ID | Notes |
 |---|---|---|
-| 100 | `witchery:witches_hat` | |
+| 100 | `witchery:witches_hat` | `Partial - source recipe ingredient restored` | The shaped recipe now matches original 1.7/Resurrected ingredient intent with Glowstone Dust in the bottom center, Golden Thread in the side stitches, and Impregnated Leather for the body instead of the port's accidental Gold Ingot. Kettle bonus behavior already checks the hat for extra brew rolls; remaining work is exact clothes durability/tooltips/render/repair QA. |
 | 101 | `witchery:witches_robe` | |
 | 102 | `witchery:witches_shoes` | |
 | 102a | `witchery:earmuffs` | `Partial - real protective headwear restored` | Earmuffs now exist again as a leather head-slot item with the original leather + white-wool recipe, block the restored Mandrake nausea scream while worn, suppress the first practical Banshee scream damage pass, and now hush both the ghast-family Mandrake cue and the restored custom Banshee scream client-side. Custom art polish and the broader old sound-muting feel are still follow-up. |
