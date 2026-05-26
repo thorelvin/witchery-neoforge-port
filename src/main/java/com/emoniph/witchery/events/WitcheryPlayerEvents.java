@@ -51,6 +51,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
@@ -242,6 +243,7 @@ public class WitcheryPlayerEvents {
         ServerLevel level = (ServerLevel) player.level();
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         tickDepthsBrew(player, data);
+        tickSeepingShoesEffect(player, level);
         InfusionType infusion = data.getInfusionType();
 
         if (infusion == InfusionType.LIGHT) {
@@ -457,6 +459,37 @@ public class WitcheryPlayerEvents {
             }
             if (player.hasEffect(MobEffects.POISON)) {
                 player.removeEffect(MobEffects.POISON);
+            }
+        }
+    }
+
+    private static void tickSeepingShoesEffect(ServerPlayer player, ServerLevel level) {
+        if (!player.onGround()) return;
+        if (!player.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.SEEPING_SHOES.get())) return;
+
+        boolean removed = false;
+        if (player.hasEffect(MobEffects.POISON)) {
+            player.removeEffect(MobEffects.POISON);
+            removed = true;
+        }
+        if (player.hasEffect(MobEffects.WITHER)) {
+            player.removeEffect(MobEffects.WITHER);
+            removed = true;
+        }
+        if (!removed) return;
+
+        BlockPos center = player.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-3, -1, -3), center.offset(3, 1, 3))) {
+            int dx = pos.getX() - center.getX();
+            int dz = pos.getZ() - center.getZ();
+            if (dx * dx + dz * dz > 9) continue;
+            if (!level.getBlockState(pos.above()).isAir()) continue;
+
+            BlockState state = level.getBlockState(pos);
+            if (state.getBlock() instanceof BonemealableBlock bonemealable
+                    && bonemealable.isValidBonemealTarget(level, pos, state)
+                    && bonemealable.isBonemealSuccess(level, level.random, pos, state)) {
+                bonemealable.performBonemeal(level, level.random, pos, state);
             }
         }
     }
