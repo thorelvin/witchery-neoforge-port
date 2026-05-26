@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/kettle"
+    "type": "minecraft:special",
+    "base": "witchery:item/kettle",
+    "model": {
+      "type": "witchery:kettle"
+    }
   }
 }

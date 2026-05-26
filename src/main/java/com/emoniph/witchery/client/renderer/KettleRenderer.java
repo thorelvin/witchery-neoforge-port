@@ -1,7 +1,10 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.blocks.KettleBlock;
 import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
+import com.emoniph.witchery.client.model.KettleModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -11,78 +14,123 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
 public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, KettleRenderer.KettleRenderState> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/kettle.png");
 
-    private static final Identifier LIQUID_TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/kettle.png");
-
-    private static final float INNER_HW = 0.25f;
-    private static final float KETTLE_BOTTOM_Y = 0.08f;
-    private static final float KETTLE_FULL_Y   = 0.25f;
-    private static final float LIQ_U0 = 0f,    LIQ_U1 = 0.25f;
-    private static final float LIQ_V0 = 0.25f, LIQ_V1 = 0.375f;
+    private final KettleModel model;
 
     public static class KettleRenderState extends BlockEntityRenderState {
         public int waterLevel = 0;
         public int color = 0;
+        public int bottleCount = 0;
+        public int liquidFrame = 0;
+        public float liquidShade = 1.0F;
+        public float yaw = 0.0F;
         public boolean brewing = false;
+        public boolean ruined = false;
+        public boolean renderCrossbar = true;
         public Level level = null;
         public BlockPos bePos = BlockPos.ZERO;
     }
 
-    public KettleRenderer(BlockEntityRendererProvider.Context ctx) {}
+    public KettleRenderer(BlockEntityRendererProvider.Context ctx) {
+        this.model = new KettleModel(ctx.bakeLayer(KettleModel.LAYER_LOCATION));
+    }
 
     @Override
-    public KettleRenderState createRenderState() { return new KettleRenderState(); }
+    public KettleRenderState createRenderState() {
+        return new KettleRenderState();
+    }
 
     @Override
     public void extractRenderState(KettleBlockEntity be, KettleRenderState state, float partialTick,
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
+        BlockState blockState = be.getBlockState();
+        Direction facing = blockState.getValue(KettleBlock.FACING);
+        state.yaw = switch (facing) {
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> 0.0F;
+        };
         state.waterLevel = be.getWaterLevel();
         state.color = be.getColor();
         state.brewing = be.isBrewing();
+        state.ruined = be.isRuined();
+        state.bottleCount = Math.min(2, be.bottleCount());
         state.level = be.getLevel();
         state.bePos = be.getBlockPos();
+        state.liquidFrame = state.level == null ? 0 : (int) ((state.level.getGameTime() / 20L) & 3L);
+        state.renderCrossbar = state.level == null
+                || !state.level.getBlockState(state.bePos.above()).isFaceSturdy(state.level, state.bePos.above(), Direction.DOWN);
+        state.liquidShade = state.brewing ? 0.5F : 1.0F;
     }
 
     @Override
     public void submit(KettleRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (state.waterLevel > 0) {
-            float surfaceY = KETTLE_BOTTOM_Y + (KETTLE_FULL_Y - KETTLE_BOTTOM_Y) * (state.waterLevel / 3f);
-            int liquidColor = (state.color != 0) ? state.color : 0x2050CC;
-            renderLiquidSurface(ps, collector, surfaceY, liquidColor, state.lightCoords);
+        ps.pushPose();
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        ps.translate(0.0F, -1.0F, 0.0F);
+        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+
+        for (var part : model.bodyParts()) {
+            collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }
+        if (state.renderCrossbar) {
+            collector.submitModelPart(model.crossbar(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        }
+        for (var part : model.chainParts()) {
+            collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        }
+        if (state.bottleCount > 0) {
+            collector.submitModelPart(model.bottle1(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+            if (state.bottleCount > 1) {
+                collector.submitModelPart(model.bottle2(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                        state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+            }
+        }
+        if (state.waterLevel > 0) {
+            collector.submitModelPart(model.liquid(state.liquidFrame), ps, RenderTypes.entityTranslucent(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null, liquidColor(state), null);
+        }
+
+        ps.popPose();
 
         if (state.brewing && state.level != null && state.level.isClientSide()) {
             spawnBubbles(state.level, state.bePos);
         }
     }
 
-    private void renderLiquidSurface(PoseStack ps, SubmitNodeCollector collector, float surfaceY, int color, int light) {
-        float r = ((color >> 16) & 0xFF) / 255f;
-        float g = ((color >> 8)  & 0xFF) / 255f;
-        float b = ((color)       & 0xFF) / 255f;
-        float hw = INNER_HW;
-
-        ps.pushPose();
-        ps.translate(0.5, surfaceY, 0.5);
-
-        collector.submitCustomGeometry(ps, RenderTypes.entityTranslucent(LIQUID_TEXTURE), (pose, vc) -> {
-            Matrix4f m = pose.pose();
-            vc.addVertex(m, -hw, 0, -hw).setColor(r, g, b, 0.85f).setUv(LIQ_U0, LIQ_V0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
-            vc.addVertex(m, -hw, 0,  hw).setColor(r, g, b, 0.85f).setUv(LIQ_U0, LIQ_V1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
-            vc.addVertex(m,  hw, 0,  hw).setColor(r, g, b, 0.85f).setUv(LIQ_U1, LIQ_V1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
-            vc.addVertex(m,  hw, 0, -hw).setColor(r, g, b, 0.85f).setUv(LIQ_U1, LIQ_V0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
-        });
-        ps.popPose();
+    private static int liquidColor(KettleRenderState state) {
+        int color = state.color;
+        float shade = state.liquidShade;
+        if (state.ruined) {
+            color = 0x7F5C40;
+            shade = 1.0F;
+        } else if (color == 0) {
+            color = 0x3757C3;
+            shade = 1.0F;
+        }
+        float red = ((color >>> 16) & 0xFF) / 255.0F * shade;
+        float green = ((color >>> 8) & 0xFF) / 255.0F * shade;
+        float blue = (color & 0xFF) / 255.0F * shade;
+        return ARGB.colorFromFloat(1.0F, red, green, blue);
     }
 
     private void spawnBubbles(Level level, BlockPos pos) {
@@ -96,5 +144,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
     }
 
     @Override
-    public boolean shouldRenderOffScreen() { return true; }
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
 }

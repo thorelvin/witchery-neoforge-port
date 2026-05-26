@@ -12,6 +12,7 @@ import com.emoniph.witchery.client.model.FumeFunnelModel;
 import com.emoniph.witchery.client.model.FetishModel;
 import com.emoniph.witchery.client.model.FetishTrentModel;
 import com.emoniph.witchery.client.model.GrassperModel;
+import com.emoniph.witchery.client.model.KettleModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
@@ -39,6 +40,7 @@ public final class WitcherySpecialItemRenderers {
 
     public static void register(RegisterSpecialModelRendererEvent event) {
         event.register(id("distillery"), DistilleryUnbaked.MAP_CODEC);
+        event.register(id("kettle"), KettleUnbaked.MAP_CODEC);
         event.register(id("grassper"), GrassperUnbaked.MAP_CODEC);
         event.register(id("spinning_wheel"), SpinningWheelUnbaked.MAP_CODEC);
         event.register(id("poppet_shelf"), PoppetShelfUnbaked.MAP_CODEC);
@@ -111,6 +113,48 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<DistilleryUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record KettleSpecialRenderer(KettleModel model) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("kettle");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            for (ModelPart part : model.bodyParts()) {
+                collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
+                        lightCoords, OverlayTexture.NO_OVERLAY, null);
+            }
+            collector.submitModelPart(model.crossbar(), poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    lightCoords, OverlayTexture.NO_OVERLAY, null);
+            for (ModelPart part : model.chainParts()) {
+                collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
+                        lightCoords, OverlayTexture.NO_OVERLAY, null);
+            }
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            consumer.accept(new Vector3f(-0.25f, 0.0f, 0.0f));
+            consumer.accept(new Vector3f(1.25f, 1.0f, 1.0f));
+        }
+    }
+
+    public record KettleUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<KettleUnbaked> MAP_CODEC = MapCodec.unit(new KettleUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new KettleSpecialRenderer(new KettleModel(context.entityModelSet().bakeLayer(KettleModel.LAYER_LOCATION)));
+        }
+
+        @Override
+        public MapCodec<KettleUnbaked> type() {
             return MAP_CODEC;
         }
     }
