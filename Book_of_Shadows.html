@@ -1,0 +1,2203 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book of Shadows — Witchery Rewoven</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #cfc5a8;
+  color: #1e1208;
+  font-family: Georgia, 'Book Antiqua', 'Palatino Linotype', Palatino, serif;
+  font-size: 17px;
+  line-height: 1.82;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 4rem;
+}
+
+/* ── Cover ── */
+#cover {
+  text-align: center;
+  padding: 4.5rem 0 3rem;
+  border-bottom: 2px solid #8a5a28;
+  margin-bottom: 3rem;
+}
+#cover .triple-moon { font-size: 3rem; color: #8a3010; margin-bottom: 1rem; letter-spacing: 0.4em; }
+#cover h1 { font-size: 2.9rem; letter-spacing: 0.06em; color: #4a1a08; margin-bottom: 0.5rem; font-weight: normal; }
+#cover .subtitle { font-size: 1.1rem; color: #7a4820; font-style: italic; margin-bottom: 0.4rem; }
+#cover .divider { color: #b88840; font-size: 1rem; letter-spacing: 0.5em; margin: 0.8rem 0; }
+#cover .edition { font-size: 0.8rem; color: #9a6838; letter-spacing: 0.18em; text-transform: uppercase; }
+#cover .version  { font-size: 0.78rem; color: #b8986a; font-style: italic; margin-top: 0.3rem; }
+
+/* ── Table of Contents ── */
+#toc { background: #c2b58c; border: 1px solid #c8a870; border-radius: 3px; padding: 1.6rem 2rem; margin-bottom: 3rem; }
+#toc h2 { color: #5a2008; margin-bottom: 1rem; font-size: 1.15rem; font-weight: bold; letter-spacing: 0.04em; }
+#toc > ol { padding-left: 1.2rem; }
+#toc > ol > li { margin-top: 0.6rem; font-weight: bold; color: #4a2008; font-size: 0.97rem; }
+#toc > ol > li > ol { margin-top: 0.2rem; padding-left: 1.3rem; }
+#toc > ol > li > ol > li { font-weight: normal; color: #6a4020; font-size: 0.845rem; margin-top: 0.12rem; list-style-type: none; }
+#toc > ol > li > ol > li::before { content: "· "; color: #b88840; }
+#toc a { color: inherit; text-decoration: none; }
+#toc a:hover { color: #8a2008; text-decoration: underline; }
+.toc-stage { font-size: 0.68rem; color: #9a7848; font-weight: normal; font-style: italic; margin-left: 0.4rem; }
+
+/* ── Part dividers ── */
+.part-header { text-align: center; margin: 3.5rem 0 2rem; padding: 1.8rem; border-top: 1px solid #c8a870; border-bottom: 1px solid #c8a870; background: #c2b58c; }
+.part-label { font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: #9a7848; }
+.part-header h2 { font-size: 1.8rem; color: #4a1a08; margin-top: 0.4rem; font-weight: normal; }
+.part-desc { font-style: italic; color: #7a5030; margin-top: 0.5rem; font-size: 0.92rem; }
+
+/* ── Chapter headings ── */
+h2.chapter { font-size: 1.5rem; color: #5a2008; margin-top: 2.8rem; margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid #c8a870; font-weight: normal; }
+.ch-meta { font-size: 0.76rem; color: #9a7848; font-weight: normal; font-style: italic; margin-left: 0.6rem; }
+h3 { font-size: 1.1rem; color: #6b2a10; margin-top: 1.6rem; margin-bottom: 0.5rem; font-weight: bold; }
+h4 { font-size: 0.98rem; color: #7a3818; margin-top: 1.2rem; margin-bottom: 0.4rem; font-style: italic; font-weight: normal; }
+
+/* ── Stage badges ── */
+.stage { display: inline-block; font-size: 0.66rem; font-weight: bold; padding: 0.1em 0.5em; border-radius: 2px; vertical-align: middle; margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.stage-early { background: #d8edd0; color: #2a5a20; border: 1px solid #a8c898; }
+.stage-mid   { background: #d0dff0; color: #203870; border: 1px solid #98b0d8; }
+.stage-late  { background: #e8d8f0; color: #481870; border: 1px solid #c0a8d8; }
+.stage-end   { background: #f0d8d0; color: #701808; border: 1px solid #d8a898; }
+
+/* ── Body text ── */
+p { margin-bottom: 0.9rem; }
+
+/* ── Lore pull quote ── */
+.lore-pull { font-style: italic; color: #4a2a58; border-left: 3px solid #9a78b8; padding: 0.6rem 1.2rem; margin: 1.3rem 0 1rem; font-size: 0.95rem; background: #d5cedf; }
+
+/* ── Callouts ── */
+.callout { border-left: 3px solid; padding: 0.7rem 1.1rem; margin: 1.2rem 0; border-radius: 0 3px 3px 0; font-size: 0.91rem; }
+.callout-tip    { border-color: #3a6a2a; background: #cddcc6; }
+.callout-warn   { border-color: #8a2010; background: #d9c8c4; }
+.callout-recipe { border-color: #3a5870; background: #c6d0db; }
+.callout-also   { border-color: #5a7048; background: #cddcc6; font-size: 0.86rem; color: #3a5030; }
+.callout-check  { border-color: #8a7020; background: #d1cab0; }
+
+.callout-tip::before    { content: "Note — "; font-weight: bold; color: #2a5a1a; }
+.callout-warn::before   { content: "Take care — "; font-weight: bold; color: #7a1808; }
+.callout-recipe::before { content: "Recipe — "; font-weight: bold; color: #2a4858; }
+.callout-also::before   { content: "See also — "; font-weight: bold; color: #3a5828; }
+.callout-check::before  { content: "Checklist — "; font-weight: bold; color: #6a5818; }
+
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.87rem; }
+th { background: #c0a870; color: #2a1a08; font-weight: bold; padding: 0.5rem 0.7rem; text-align: left; border-bottom: 2px solid #b8a878; }
+td { padding: 0.4rem 0.7rem; border-bottom: 1px solid #c4b888; vertical-align: top; }
+tr:nth-child(even) td { background: #c8c0a4; }
+.tbl-power { color: #601880; font-weight: bold; }
+.tbl-item  { color: #3a5010; font-family: 'Courier New', monospace; font-size: 0.83em; }
+.tbl-note  { color: #7a5830; font-style: italic; font-size: 0.85em; }
+
+/* ── Lists ── */
+ul, ol { padding-left: 1.6rem; margin-bottom: 0.9rem; }
+li { margin-bottom: 0.3rem; }
+
+/* ── Checklist ── */
+.checklist { list-style: none; padding-left: 0.3rem; }
+.checklist li { padding: 0.22rem 0 0.22rem 1.8rem; position: relative; color: #3a2808; font-size: 0.9rem; }
+.checklist li::before { content: "☐"; position: absolute; left: 0; color: #8a6020; }
+
+/* ── Step list ── */
+.steps { counter-reset: step-counter; list-style: none; padding-left: 0; }
+.steps li { counter-increment: step-counter; padding: 0.4rem 0 0.4rem 2.5rem; position: relative; margin-bottom: 0.4rem; }
+.steps li::before { content: counter(step-counter); position: absolute; left: 0; top: 0.3rem; width: 1.65rem; height: 1.65rem; background: #c0a870; border: 1px solid #b8a878; border-radius: 50%; text-align: center; line-height: 1.55rem; font-size: 0.78rem; color: #4a2808; font-weight: bold; }
+
+/* ── Two-column ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin: 1rem 0; }
+.two-col > div { padding: 0.8rem 1rem; border: 1px solid #c8a870; border-radius: 3px; background: #c8c0a4; }
+.two-col h4 { margin-top: 0; color: #5a2008; }
+
+/* ── Inline code / items ── */
+code { font-family: 'Courier New', Courier, monospace; font-size: 0.84em; background: #c2ba9e; color: #2a4810; padding: 0.1em 0.4em; border-radius: 2px; }
+.item { font-family: 'Courier New', Courier, monospace; font-size: 0.84em; background: #c2ba9e; color: #1a4808; padding: 0.1em 0.4em; border-radius: 2px; }
+
+/* ── HR ── */
+hr { border: none; border-top: 1px solid #c8b888; margin: 2rem 0; }
+
+/* ── Appendix label ── */
+.appendix-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #9a7848; margin-bottom: 0.3rem; margin-top: 2.5rem; }
+
+/* ── Footer ── */
+.page-footer { text-align: center; color: #9a7848; font-size: 0.82rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #c8b888; font-style: italic; }
+
+/* ── Print ── */
+@media print {
+  body { background: white; color: #111; font-size: 11pt; padding: 1.5cm; max-width: none; }
+  #cover h1 { color: #333; }
+  #toc, .part-header, .two-col > div { background: #f9f9f9; }
+  .callout-tip, .callout-warn, .callout-recipe, .callout-also, .callout-check, .lore-pull { background: #f5f5f5; }
+  th { background: #e8e0d0; color: #111; }
+  code, .item { background: #f0f0f0; color: #111; }
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="triple-moon">☽ ✦ ☾</div>
+  <h1>Book of Shadows</h1>
+  <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
+  <p class="divider">· · · ✦ · · ·</p>
+  <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
+  <p class="version">Version 3 — Second Edition — Expanded &amp; Revised</p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div id="toc">
+  <h2>☽ Contents</h2>
+  <ol>
+    <li><a href="#part1">Part I — The Witch's Path</a> <span class="toc-stage">Tutorial</span>
+      <ol>
+        <li><a href="#ch1">Ch 1: The Rowan Tree</a></li>
+        <li><a href="#ch2">Ch 2: The Witches' Oven</a></li>
+        <li><a href="#ch3">Ch 3: The Altar</a></li>
+        <li><a href="#ch4">Ch 4: The Kettle</a></li>
+        <li><a href="#ch5">Ch 5: Circle Magic</a></li>
+        <li><a href="#ch6">Ch 6: Taglocks</a></li>
+        <li><a href="#ch7">Ch 7: Familiars</a></li>
+        <li><a href="#ch_prog">Progression at a Glance</a></li>
+      </ol>
+    </li>
+    <li><a href="#part2">Part II — The Art Deepens</a> <span class="toc-stage">Advanced</span>
+      <ol>
+        <li><a href="#ch8">Ch 8: Altar Mastery</a></li>
+        <li><a href="#ch9">Ch 9: The Full Brewing System</a></li>
+        <li><a href="#ch9b">Ch 9b: Custom Brews — The Witch's Cauldron</a></li>
+        <li><a href="#ch9c">Ch 9c: Essential Crafted Components</a></li>
+        <li><a href="#ch9d">Ch 9d: Special Ingredients Reference</a></li>
+        <li><a href="#ch10">Ch 10: Circle Magic — Chalk Types and Sizes</a></li>
+        <li><a href="#ch11">Ch 11: The Rites — Complete Compendium</a></li>
+        <li><a href="#ch12">Ch 12: Player Infusions — The Four Powers</a></li>
+        <li><a href="#ch12b">Ch 12b: The Mystic Branch</a></li>
+        <li><a href="#ch13">Ch 13: Coven Magic</a></li>
+        <li><a href="#ch14">Ch 14: Poppet Magic</a></li>
+        <li><a href="#ch15">Ch 15: Broom Flight</a></li>
+        <li><a href="#ch16">Ch 16: Vampirism</a></li>
+        <li><a href="#ch17">Ch 17: The Werewolf</a></li>
+        <li><a href="#ch18">Ch 18: Waystones and Teleportation</a></li>
+        <li><a href="#ch19">Ch 19: Curses — The Twelve Afflictions</a></li>
+        <li><a href="#ch20">Ch 20: Other Dimensions</a></li>
+        <li><a href="#ch21">Ch 21: Fetishes and Conjuration</a></li>
+        <li><a href="#ch22">Ch 22: The Hobgoblin Ecosystem</a></li>
+      </ol>
+    </li>
+    <li><a href="#part3">Part III — Strange Wonders</a> <span class="toc-stage">Edge Cases &amp; Secrets</span>
+      <ol>
+        <li><a href="#ch23">Ch 23: The Crystal Ball and Divination</a></li>
+        <li><a href="#ch24">Ch 24: Witch Hunters</a></li>
+        <li><a href="#ch25">Ch 25: The Flying Monkey</a></li>
+        <li><a href="#ch26">Ch 26: Rowan Security — Locks, Keys, Keyrings</a></li>
+        <li><a href="#ch27">Ch 27: Silver — The Hunter's Metal</a></li>
+        <li><a href="#ch28">Ch 28: Dream Weavers and Sleep Magic</a></li>
+        <li><a href="#ch29">Ch 29: Mutation — Growing Owls and Toads</a></li>
+        <li><a href="#ch30">Ch 30: Bosses</a></li>
+        <li><a href="#ch31">Ch 31: The Bestiary</a></li>
+        <li><a href="#ch33">Ch 33: The Craft in Conflict — Multiplayer and PvP</a></li>
+        <li><a href="#ch34">Ch 34: Specialist Gear</a></li>
+        <li><a href="#ch32">Ch 32: Rules Worth Knowing</a></li>
+      </ol>
+    </li>
+    <li><a href="#appendices">Appendices</a>
+      <ol>
+        <li><a href="#appA">A: Altar Power Source Table</a></li>
+        <li><a href="#appB">B: Brew Quick Reference</a></li>
+        <li><a href="#appC">C: Rite Power Requirements</a></li>
+        <li><a href="#appD">D: Item IDs for Commands</a></li>
+        <li><a href="#appE">E: Creature Stats</a></li>
+        <li><a href="#appF">F: In-Game Reference Books</a></li>
+      </ol>
+    </li>
+  </ol>
+</div>
+
+<!-- ═══ PART I ═══ -->
+<div class="part-header" id="part1">
+  <p class="part-label">Part I</p>
+  <h2>The Witch's Path</h2>
+  <p class="part-desc">The craft has no grand ceremony of initiation. You begin when you begin. These chapters cover the practical requirements.</p>
+</div>
+
+<div class="callout callout-check">
+<strong>Before you proceed</strong> — keep this in mind as you work through the first seven chapters:
+<ul class="checklist" style="margin-top:0.6rem;margin-bottom:0;">
+  <li>Gather oak and birch saplings, eggs, Mandrake Root, and the four Anointing Paste seeds</li>
+  <li>Build a Witches' Oven with Clay Jars in the jar slot before attempting the Altar</li>
+  <li>Burn oak saplings for Exhale of the Horned One; burn birch saplings for Breath of the Goddess</li>
+  <li>Craft Anointing Paste, convert a vanilla Cauldron, and make Mutandis</li>
+  <li>Use Mutandis to secure Rowan Saplings if you have not found a Rowan tree naturally</li>
+  <li>Build the Altar (2×3 vertical); wait for the red cloth to appear</li>
+  <li>Surround it with plants — aim for at least 400 power before brewing anything</li>
+  <li>Build a Kettle over fire, within 15 blocks of the altar; test it with one brew</li>
+  <li>Draw your first chalk circle and activate a small rite</li>
+  <li>Craft a Taglock Kit; collect your own taglock from a bed</li>
+  <li>When ready: 8,000 altar power for Familiar binding</li>
+</ul>
+</div>
+
+<!-- CH 1 -->
+<h2 class="chapter" id="ch1">Chapter 1: The Rowan Tree<span class="stage stage-early">Early</span></h2>
+
+<p>The rowan is unremarkable to look at — a compact tree with reddish bark, prone to growing in cold forests and unlikely hillsides. But it carries something the other trees do not: a sympathy with the unseen world that makes it essential to a practising witch. Its wood builds your altar. Its leaves feed it. Without the rowan, your altar does not begin.</p>
+
+<p>They are rare in the wild — roughly one per 120 chunks, mostly in cold and spruce biomes. When you find one, collect a handful of saplings before you take any logs. If you do not find one, do not wander forever: make Mutandis through the Witches' Oven and Witch's Cauldron path, then use it on small plants until Rowan Saplings appear.</p>
+
+<h3>What to Harvest</h3>
+<ul>
+  <li><strong>Rowan Logs</strong> — primary resource; 1 log → 4 planks (shapeless). The altar requires them.</li>
+  <li><strong>Rowan Saplings</strong> — grow a grove. Your long-term altar power depends on the leaves.</li>
+  <li><strong>Rowan Leaves</strong> — break with shears to keep the block intact. +4 power each, cap 50. Better than any vanilla leaf.</li>
+</ul>
+
+<div class="callout callout-tip">A 5×5 canopy of Rowan leaves contributes +200 altar power before you have placed anything else nearby. Plant the grove first, build the altar second, let the leaves grow into position before you power anything demanding.</div>
+
+<h3>Other Plants Worth Gathering Early</h3>
+<table>
+  <tr><th>Plant</th><th>Biome</th><th>Why You Need It</th></tr>
+  <tr><td>Mandrake</td><td>Dark forests, swamps</td><td>Mandrake Root — used for Mutandis, brews, and rites. May awaken and scream on harvest.</td></tr>
+  <tr><td>Belladonna</td><td>Forest, plains</td><td>Flying Ointment for the Enchanted Broom; many brews</td></tr>
+  <tr><td>Snowbell</td><td>Cold, snowy biomes</td><td>Altar power (+4); brew ingredient</td></tr>
+  <tr><td>Wormwood</td><td>Widespread</td><td>Required in nearly all Brazier conjurations</td></tr>
+  <tr><td>Blood Poppy</td><td>Plains, dark forests</td><td>Altar power (+2); alternative taglock source</td></tr>
+  <tr><td>Glint Weed</td><td>Underground caves</td><td>Altar power (+2); light source; brew ingredient</td></tr>
+</table>
+
+<div class="callout callout-warn">Harvesting Mandrake without preparation emits a scream that disorients anyone nearby. Use shears, or make peace with the noise.</div>
+
+<h3>The Ent — A Note on Restraint</h3>
+<p>If you fell too many Rowan, Alder, or Hawthorn trees in a short span, a woodland spirit animates one of the remaining trees to defend them. The result — a 200-HP animated tree called an Ent — is hostile, can fling you into the air, and considers your visit a personal insult. Ents are weak to axes and drop Ent Twigs, which are useful later. Harvest sustainably or be ready for the fight.</p>
+
+<!-- CH 2 -->
+<h2 class="chapter" id="ch2">Chapter 2: The Witches' Oven<span class="stage stage-early">Early</span></h2>
+
+<p>Not everything useful comes from a kettle. Some ingredients must be rendered down first — reduced, transformed, made into something the craft can actually use. The Witches' Oven is where that happens. It smolders saplings into ash, coaxes herbs into fumes, and generally works its patience on raw materials until they are ready.</p>
+
+<p>It must be built before the Altar. The Altar recipe requires two fume ingredients that only the Oven can produce. This is the intended order of things.</p>
+
+<div class="callout callout-recipe">
+  <strong>Witches' Oven:</strong> Iron Bars (top center); Iron Ingot + Iron Ingot + Iron Ingot (middle row); Iron Ingot + Iron Bars + Iron Ingot (bottom row). Three iron ingots short of an anvil, one iron bar more interesting.
+</div>
+
+<p>The Oven functions like a furnace: input slot, fuel slot, output slot. The critical difference is the jar slot. Always keep a Clay Jar there — fume by-products not captured are lost permanently. The Oven will not tell you this is happening.</p>
+
+<div class="callout callout-recipe">
+  <strong>Clay Jar:</strong> Four clay balls in a 2×2 square.
+</div>
+
+<h3>Fume Funnels</h3>
+<p>You can attach up to three Fume Funnels to the Oven's sides. Each one speeds processing and improves fume yield. Filtered Fume Funnels accept only one fume type — useful when you want a specific ingredient in quantity and do not care what else the Oven produces. Three filtered funnels on a dedicated oven is a reasonable late investment.</p>
+
+<h3>The Essentials</h3>
+<table>
+  <tr><th>Input</th><th>Main Output</th><th>Fume By-product</th><th>Base Fume Chance</th></tr>
+  <tr><td>Birch Sapling</td><td>Wood Ash</td><td>Breath of the Goddess</td><td>30%</td></tr>
+  <tr><td>Oak Sapling</td><td>Wood Ash</td><td>Exhale of the Horned One</td><td>30%</td></tr>
+  <tr><td>Various herbs</td><td>Dried herb</td><td>Foul Fume, Whiff of Magic, others</td><td>Varies</td></tr>
+</table>
+
+<div class="callout callout-tip">Run the Oven on birch and oak saplings with a jar installed until you have Breath of the Goddess and Exhale of the Horned One. Also keep the Wood Ash — several rite recipes call for it specifically.</div>
+
+<div class="callout callout-also">If Rowan has not appeared naturally, pause before the Altar: craft Anointing Paste from the four herb seeds, convert a vanilla Cauldron into a Witch's Cauldron, and make Mutandis. That is the reliable route into Rowan, Alder, Hawthorn, and the other hidden plants.</div>
+
+<h3>The Witches' Primer</h3>
+<p>Craft the in-game recipe book early. It covers brews, rites, creatures, and transformations, and it updates as the mod adds content. Recipe: Witch's Hand + Book, shapeless. This document covers what the Primer does not — context, strategy, edge cases, and the things the craft does not announce.</p>
+
+<!-- CH 3 -->
+<h2 class="chapter" id="ch3">Chapter 3: The Altar<span class="stage stage-early">Early</span></h2>
+
+<p>If the rowan is your foundation, the altar is your hearth. It gathers magical energy from the natural world around it — trees, crops, flowers, the particular darkness of certain stones — and stores it as power that your brews and rites can spend. Without it, most of the craft does not function.</p>
+
+<p>The altar is a 2-wide × 3-tall × 1-deep multi-block structure. Place six Altar blocks in a vertical rectangle. The structure activates — red cloth appears across its surface — when the last block is placed. The last block placed is the center of its 14-block scanning range. Choose the spot with care, because moving it later is a significant undertaking.</p>
+
+<div class="callout callout-recipe">
+  <strong>Altar (crafts 3 blocks):</strong><br>
+  Row 1: Breath of the Goddess · Water Bottle · Exhale of the Horned One<br>
+  Row 2: Stone Brick · Rowan Wood · Stone Brick<br>
+  Row 3: Stone Brick · Rowan Wood · Stone Brick<br>
+  Craft the altar. Then decide where it will live, because the objects around it matter.
+</div>
+
+<h3>How Power Works</h3>
+<p>The altar scans a 14-block cube continuously, tallying power from the natural blocks and plants within range. Power recharges toward a maximum over time. Rites and brews spend power the moment they complete. The craft rewards those who tend their spaces.</p>
+
+<p>The principle that matters most: <strong>variety over quantity</strong>. Each block type contributes up to a cap — adding a thousand dirt blocks past the cap of 80 contributes nothing. Spread across many plant and block types to reach the theoretical maximum of roughly 3,980 power. The full table is in <a href="#appA">Appendix A</a>.</p>
+
+<h3>Upgrades</h3>
+<p>Right-click specific items onto the altar surface to apply permanent bonuses. Only one of each type has effect.</p>
+
+<table>
+  <tr><th>Item</th><th>Recharge Bonus</th><th>Max Power Bonus</th><th>Notes</th></tr>
+  <tr><td>Skeleton Skull</td><td>+×1</td><td>+×1</td><td>—</td></tr>
+  <tr><td>Wither Skeleton Skull</td><td>+×2</td><td>+×2</td><td>—</td></tr>
+  <tr><td>Player Head</td><td>+×3</td><td>+×3</td><td>Best skull option</td></tr>
+  <tr><td>Torch</td><td>+×1</td><td>—</td><td>—</td></tr>
+  <tr><td>Candelabra</td><td>+×2</td><td>—</td><td>—</td></tr>
+  <tr><td>Pentacle</td><td><strong>×2 multiplicative</strong></td><td>—</td><td>Doubles the total recharge, not adds to it</td></tr>
+  <tr><td>Chalice (empty)</td><td>—</td><td>+×1</td><td>—</td></tr>
+  <tr><td>Chalice (filled)</td><td>—</td><td>+×2</td><td>Keep it filled</td></tr>
+  <tr><td>Arthana</td><td>—</td><td>—</td><td>+×2 to outward distribution range only</td></tr>
+  <tr><td>Infinity Egg (creative)</td><td>×10 multiplicative</td><td>+×1</td><td>Effectively unlimited</td></tr>
+</table>
+
+<div class="callout callout-tip">The efficient early upgrade path: Player Head, then Filled Chalice, then Pentacle. Base(1) + Head(3) + Chalice(2) = ×6 power cap. Adding the Pentacle: recharge doubles from ×4 to ×8. The Arthana only extends how far the altar pushes power <em>outward</em> to kettles — it does not help you gather power from farther away.</div>
+
+<!-- CH 4 -->
+<h2 class="chapter" id="ch4">Chapter 4: The Kettle<span class="stage stage-early">Early</span></h2>
+
+<p>A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting. Right-click to add reagents one by one, light a fire beneath it, and it draws power from the nearest altar to complete the working. The ingredients determine what emerges.</p>
+
+<div class="callout callout-recipe">
+  <strong>Attuned Stone:</strong> Vertical 3×1 — Whiff of Magic (top) · Diamond (middle) · Lava Bucket (bottom).<br><br>
+  <strong>Kettle:</strong> Row 1: Stick · String · Stick / Row 2: String · Attuned Stone · String / Row 3: — · Cauldron · —<br>
+  Iron and a modicum of patience. That is all a kettle needs.
+</div>
+
+<h3>Brewing</h3>
+<ol class="steps">
+  <li>Place the Kettle above fire. Netherrack flame is permanent; ordinary fire must not go out mid-brew.</li>
+  <li>Right-click with a Water Bucket to fill it.</li>
+  <li>Throw ingredients in one at a time. Order matters for some recipes.</li>
+  <li>Watch the particles — <strong>green swirls:</strong> brewing correctly. <strong>White swirls:</strong> ready to bottle. <strong>Black smoke:</strong> ruined.</li>
+  <li>Right-click with an empty Glass Bottle to collect the finished brew.</li>
+</ol>
+
+<div class="callout callout-warn">If the fire goes out, the brew is ruined. If the altar cannot supply power when you bottle, the result is a useless brown liquid. Black swirling particles — not smoke — mean insufficient power. Wait for the altar to recharge and try again.</div>
+
+<p>The kettle must be within approximately 15 blocks of an active altar to draw power. One altar can supply one kettle per brew. Plan your workspace accordingly.</p>
+
+<h3 id="flying-ointment">Flying Ointment — An Early Milestone</h3>
+<p>The Flying Ointment is the first brew that demands real altar power. You will need it for the <a href="#enchanted-broom">Enchanted Broom</a>, and eventually you will want the <a href="#enchanted-broom">Enchanted Broom</a>. Make it as soon as you have 3,000 power available.</p>
+<div class="callout callout-recipe">
+  <strong>Flying Ointment (needs 3,000 altar power):</strong> Redstone Soup + Feather + Potion of Swiftness (8-min extended version) + Wool of Bat + Diamond + Belladonna Flower → 3× Flying Ointment. The Swiftness potion must be the long-duration variant — the regular version does not work.
+</div>
+<div class="callout callout-tip">Wearing a <a href="#witches-hat">Witch's Hat</a> and Robes while bottling can yield more flasks than the recipe states. The bonus applies throughout the game. Always wear the hat when you intend to bottle in quantity.</div>
+
+<!-- CH 5 -->
+<h2 class="chapter" id="ch5">Chapter 5: Circle Magic<span class="stage stage-early">Early</span></h2>
+
+<p>Before you can perform a rite, you must prepare the ground for it. The circle is not mere tradition — it is the structure that makes the working possible, a closed space where intention and power accumulate until they are ready to be released. A gap in the ring, even a small one, undoes the whole working. Power spills, reagents are wasted, and the rite fails with the special indignity reserved for careless practitioners.</p>
+
+<h3>Chalk Types</h3>
+<p>Use each according to what you actually need, not what is most impressive. There are four types. Three draw the outer ring; one draws the centre activation glyph.</p>
+<div class="two-col">
+  <div>
+    <h4>Ritual Chalk <span class="item">chalk</span></h4>
+    <p>Standard circles. Most rites — familiar binding, waystones, necromancy, protection, fetishes, curses — begin here. If you are unsure which chalk to use, use this one.</p>
+  </div>
+  <div>
+    <h4>Infernal Chalk <span class="item">chalk_infernal</span></h4>
+    <p>Demonic and underworld rites. Summoning Demons, Flame Imps, the Wither. Glows orange-red. Use it because the rite requires it, not for atmosphere.</p>
+  </div>
+</div>
+<div class="two-col">
+  <div>
+    <h4>Otherwhere Chalk <span class="item">chalk_otherwhere</span></h4>
+    <p>Teleportation and End-realm workings. Transposing to waystones, pulling targets, moving ore to surface. Shimmers pale purple.</p>
+  </div>
+  <div>
+    <h4>Golden Chalk <span class="item">chalk_golden</span></h4>
+    <p>Draws the <em>centre activation glyph</em> only — not the outer ring. More demanding rites require a Golden Chalk centre to function; simpler rites work with regular chalk throughout. Crafted via a heated, filled Witch's Cauldron: offer Mandrake Root + Gold Nugget in the bowl, then use Ritual Chalk on the cauldron; costs 2,870 altar power.</p>
+  </div>
+</div>
+<div class="two-col" style="margin-top:-0.6rem;">
+  <div>
+    <h4>Circle Sizes</h4>
+    <p><strong>Small (~5×5):</strong> 0–500 power.<br>
+    <strong>Medium (7×7):</strong> 500–2,000 power.<br>
+    <strong>Large (11×11):</strong> 3,000–8,000 power.<br>
+    <strong>Grand (15×15):</strong> Endgame workings.</p>
+  </div>
+  <div>
+    <h4>Drawing a Circle</h4>
+    <p>The outer ring uses your circle chalk (Ritual/Infernal/Otherwhere). For demanding rites, the centre glyph uses Golden Chalk. Right-click each glyph position in sequence — the ring, then the centre last. The circle activates when the centre glyph fires.</p>
+  </div>
+</div>
+
+<h3>Drawing and Activating</h3>
+<ol class="steps">
+  <li>Equip chalk and right-click a flat surface to draw each glyph around the perimeter in sequence.</li>
+  <li>When the ring closes, you will feel it — the circle is complete.</li>
+  <li>Throw the required ingredients into the center.</li>
+  <li>Step into the center and right-click the center glyph to trigger the rite. For demanding rites, this centre glyph must be drawn with <a href="#ch9c">Golden Chalk</a> rather than regular chalk.</li>
+</ol>
+
+<div id="circle-talisman" class="callout callout-tip">The <a href="#circle-talisman">Circle Talisman</a> stores a drawn circle and redeploys it instantly anywhere. Right-click the center glyph with an empty talisman to store. Right-click any suitable flat surface to redeploy. A genuine convenience when your knees object to drawing the same ring twice. Carry three — one per chalk type, pre-loaded with your most common rites.</div>
+
+<div class="callout callout-tip">Chalk glyphs erase faster with a Broom than anything else. Keep one when setting up several circles in a session.</div>
+
+<h3 id="charging-rite">Your First Rite: Charging an Attuned Stone</h3>
+<p>The <a href="#charging-rite">Rite of Charging</a> stores 2,000 altar power in an Attuned Stone. The stone is not consumed — it reverts to uncharged after use. Carry a charged stone for field casting, away from your base.</p>
+<div class="callout callout-recipe">
+  <strong>Rite of Charging — Attuned Stone (7×7 or 11×11 Ritual, 2,000 power):</strong> Attuned Stone + Glowstone Dust + Redstone Dust + Wood Ash + Quicklime.
+</div>
+
+<!-- CH 6 -->
+<h2 class="chapter" id="ch6">Chapter 6: Taglocks<span class="stage stage-early">Early</span></h2>
+
+<p>A taglock is a thread of sympathy connecting a practitioner to their subject. Without it, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target. It is a simple thing to collect and a dangerous thing to lose control of.</p>
+
+<div class="callout callout-recipe">
+  <strong>Taglock Kit:</strong> Glass Bottle + Bone Needle (shapeless, 2 items). A glass bottle and a pin. Simple enough, and deliberately so — the difficulty is in what you do with it afterward.
+</div>
+
+<h3>Collecting a Taglock</h3>
+<table>
+  <tr><th>Method</th><th>Target</th><th>How</th><th>Notes</th></tr>
+  <tr><td>Bed method (self)</td><td>Yourself</td><td>Sleep in a bed; right-click the bed with the empty kit</td><td>Reliable. Do this.</td></tr>
+  <tr><td>Bed method (other)</td><td>Another player</td><td>Right-click their bed while they sleep</td><td>Requires access to their bed</td></tr>
+  <tr><td>Sneak approach</td><td>Any player</td><td>Sneak behind them; right-click</td><td>Can fail; they are notified on failure</td></tr>
+  <tr><td>Blood Poppy</td><td>Last nearby player who bled</td><td>Right-click a Blood Poppy in blood-stained soil</td><td>Passive; no direct interaction</td></tr>
+  <tr><td>Leech Chest</td><td>Various</td><td>Found in generated structures</td><td>Contents vary</td></tr>
+</table>
+
+<div class="callout callout-warn">A taglock of yours in someone else's hands is a liability. They can curse you, pull you across the world through a rite, or target your poppets. Guard your own sleep accordingly. Witch Hunter Armor reduces — but does not eliminate — several taglock-based attacks. More on this in <a href="#ch24">Chapter 24</a>.</div>
+
+<!-- CH 7 -->
+<h2 class="chapter" id="ch7">Chapter 7: Familiars<span class="stage stage-mid">Mid</span></h2>
+
+<div class="lore-pull">A familiar is not merely a tame animal. It is a companion bound to you through ritual — and it carries part of the working forward with it. You may have one at a time. Choose accordingly.</div>
+
+<p>The binding elevates both animal and witch: the animal gains supernatural resilience; the witch gains passive bonuses, unlocked recipes, and a life-share that is equal parts power and vulnerability. The rite requires a Large (11×11) Ritual circle, 8,000 altar power, and five specific ingredients.</p>
+
+<h3>Ingredients for the Binding</h3>
+<ul>
+  <li><strong>Tear of the Goddess</strong> — <a href="#distillery">Distillery</a>: Breath of the Goddess + Lapis Lazuli</li>
+  <li><strong>Odour of Purity</strong> — <a href="#distillery">Distillery</a>: Diamond + Oil of Vitriol</li>
+  <li><strong>Whiff of Magic</strong> — <a href="#distillery">Distillery</a>: Breath of the Goddess + Lapis Lazuli (same process, different output)</li>
+  <li><strong>Diamond</strong></li>
+  <li><strong>Demonic Blood</strong> — <a href="#distillery">Distillery</a>: Demon Heart + Diamond Vapor</li>
+</ul>
+
+<div class="callout callout-warn">The rite kills the animal if it fails — insufficient power, broken circle, wrong ingredients. Confirm 8,000 power is stable before you begin. Do not attempt on a newly built altar.</div>
+
+<h3>Choosing Your Familiar</h3>
+<div class="two-col">
+  <div>
+    <h4>Cat</h4>
+    <p>The cat is indifferent to most things and hostile to supernatural intrusion. Your curses find stronger purchase, and others' curses find less on you. Enables the Curse of Corrupt Poppet and Brew of Cursed Leaping. Tame an ocelot — approach slowly, do not run.</p>
+  </div>
+  <div>
+    <h4>Owl</h4>
+    <p>The owl reads the air around you. Broom flight improves substantially with one present; they seem to enjoy the height. Brew of Soaring gives +50% speed (vs. +30% without). Enables Brew of Bodega. Source: mutated from a Wolf — see <a href="#ch29">Chapter 29</a>. Can be spent to create a Flying Monkey. This is permanent.</p>
+  </div>
+</div>
+<div class="two-col">
+  <div>
+    <h4>Toad</h4>
+    <p>The toad is unimpressive until you need brews in quantity. +5% chance for an extra flask per kettle batch. Empowers Brew of Thorns, Sprouting, and Vines. Enables Brew of Frog's Tongue. Tame with Rotten Flesh. Source: mutated from an Ocelot — see <a href="#ch29">Chapter 29</a>.</p>
+  </div>
+  <div>
+    <h4>The Life-Link</h4>
+    <p>Damage you take redirects to your familiar at 10% nearby, 1% at distance. If the familiar dies, you die. If you die, it dies. A dead familiar can be resummoned through the Rite of Summoning — the binding persists. Dismissing a familiar by sneak-clicking it removes all bonuses until you resummon it.</p>
+  </div>
+</div>
+
+<div class="callout callout-also">See <a href="#ch29">Chapter 29</a> for how to create Owls and Toads. See <a href="#ch11">Chapter 11</a> (Rite of Summoning) for resurrecting a dead familiar. See <a href="#ch14">Chapter 14</a> for poppets that protect both you and your familiar from dying.</div>
+
+
+<!-- PROGRESSION FLOWCHART -->
+<h2 class="chapter" id="ch_prog">Progression at a Glance<span class="ch-meta">Build this before that</span></h2>
+
+<p>The craft has a natural order. Each stage lists what is required before you can move forward, and what that stage unlocks. Use this as a quick reference when you are unsure what to build next — or to audit a blocked playthrough.</p>
+
+<style>
+.prog-wrap{margin:1.4rem 0 2rem}
+.prog-stage{border:1px solid #9a7848;border-radius:3px;padding:.75rem 1rem;background:#c2b58c}
+.prog-stage-head{display:flex;align-items:baseline;gap:.7rem;margin-bottom:.35rem}
+.prog-num{font-size:.7rem;font-weight:bold;text-transform:uppercase;letter-spacing:.1em;color:#5a3808;white-space:nowrap}
+.prog-title{font-weight:bold;color:#3a1a04;font-size:.98rem}
+.prog-power{font-size:.76rem;color:#7a5030;font-style:italic;margin-left:auto}
+.prog-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 1.1rem;font-size:.865rem}
+.prog-cols h5{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#6a4820;margin-bottom:.2rem;font-weight:bold}
+.prog-cols ul{padding-left:.95rem;margin:0}
+.prog-cols li{margin-bottom:.13rem;color:#2a1004}
+.prog-arrow{text-align:center;font-size:1.1rem;color:#9a7848;line-height:1.5;margin:0;padding:.1rem 0}
+.prog-s0,.prog-s1{border-color:#7a9060;background:#cad4c2}
+.prog-s2,.prog-s3{border-color:#5878a8;background:#c4ccd6}
+.prog-s4,.prog-s5{border-color:#885898;background:#ccc6d8}
+.prog-s6{border-color:#a84028;background:#d4c4c0}
+@media print{.prog-stage{background:#f5f5f5;border-color:#aaa}.prog-cols li,.prog-title,.prog-num,.prog-power,.prog-cols h5{color:#222}}
+</style>
+
+<div class="prog-wrap">
+
+<div class="prog-stage prog-s0">
+  <div class="prog-stage-head"><span class="prog-num">Stage 0</span><span class="prog-title">Entry — No Altar Yet</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>Oak/birch saplings, eggs, Mandrake Root, and paste seeds gathered</li><li>Witches' Oven built + Clay Jar in jar slot</li></ul></div>
+    <div><h5>Produces</h5><ul><li>Exhale of the Horned One (burn oak saplings)</li><li>Breath of the Goddess (burn birch saplings)</li><li>Anointing Paste → Witch's Cauldron → Mutandis</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s0">
+  <div class="prog-stage-head"><span class="prog-num">Stage 1</span><span class="prog-title">Foundation</span><span class="prog-power">Target: 400–1,000 power</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>Rowan Saplings secured by finding a tree or using Mutandis</li><li>Altar built + garden planted</li><li>Attuned Stone crafted</li><li>Kettle over fire within 15 blocks</li><li>Taglock Kit; collect your own taglock</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li>Kettle brewing (test brews, basic utility)</li><li>First chalk circles + small rites</li><li>Rite of Charging → portable power field casting</li><li>Rite of Total Eclipse → on-demand nightfall</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s2">
+  <div class="prog-stage-head"><span class="prog-num">Stage 2</span><span class="prog-title">First Brews &amp; Circles</span><span class="prog-power">Target: 2,000–4,000 power</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>Distillery built (Tear of the Goddess, Odour of Purity)</li><li>3,000+ altar power</li><li>Death Protection Poppet bound to self</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li>Flying Ointment → Rite of Infusion → Enchanted Broom</li><li>Brew of Soaring (unaided flight)</li><li>Medium 7×7 circles: waystones, necromancy, charging</li><li>Poppet shelf protection setup</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s2">
+  <div class="prog-stage-head"><span class="prog-num">Stage 3</span><span class="prog-title">Familiar Binding</span><span class="prog-power">Requires 8,000 power</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>8,000 stable altar power</li><li>Tear of the Goddess + Odour of Purity + Whiff of Magic (Distillery)</li><li>Demonic Blood (summon + kill a Demon via Infernal rite → Demon Heart → Distillery)</li><li>Diamond + tamed Cat / Owl / Toad (Owl/Toad: mutation apparatus first, <a href="#ch29">Ch 29</a>)</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li>Familiar bonuses: brew yield / broom speed / curse control</li><li>Coven Witch recruitment (requires a Familiar)</li><li>Exclusive brews: Cursed Leaping / Frog's Tongue / Bodega</li><li>Player Infusions become meaningfully viable</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s4">
+  <div class="prog-stage-head"><span class="prog-num">Stage 4</span><span class="prog-title">Advanced Systems</span><span class="prog-power">3,000–6,000 power per rite</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>High-power altar: Player Head + Chalice + Pentacle (Hobgoblin trade chain)</li><li>Coven Witch(es) recruited</li><li>Large 11×11 circles</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li>Player Infusions (Light / Overworld / Otherwhere / Infernal)</li><li>Fetishes (Sentinel, Disorientation, Ghost Walking, etc.)</li><li>All 12 curses — targeted by taglock</li><li>Waystone fast-travel network</li><li>Vampirism / Lycanthropy transformations</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s4">
+  <div class="prog-stage-head"><span class="prog-num">Stage 5</span><span class="prog-title">Spirit World &amp; Specialist Gear</span><span class="prog-power">Brew of Flowing Spirit required</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>Brew of Flowing Spirit brewed</li><li>Waystone marking entry point</li><li>Icy Needle in inventory (emergency exit)</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li><a href="#ch20">Spirit World</a> exploration + combat</li><li>Wispy Cotton + Disturbed Cotton harvest</li><li>Fanciful Thread + Tormented Twine → Dream Weavers (all 5 variants)</li><li>Impregnated Leather chain → Witches' Hat + Robes (+35% brew yield each)</li></ul></div>
+  </div>
+</div>
+<div class="prog-arrow">↓</div>
+
+<div class="prog-stage prog-s6">
+  <div class="prog-stage-head"><span class="prog-num">Stage 6</span><span class="prog-title">Endgame</span><span class="prog-power">Full prep required</span></div>
+  <div class="prog-cols">
+    <div><h5>Requirements</h5><ul><li>Full enchanted armor + multiple Death Protection Poppets</li><li>Torment Portal located; pre-loaded exit waystone talisman</li><li>Brews of Absorption + Healing + Soaring stocked</li></ul></div>
+    <div><h5>Unlocks</h5><ul><li>Torment Dimension → Lord of Torment → endgame materials</li><li>Baba Yaga (<a href="#ch23">Crystal Ball</a> trigger) → Baba Yaga's Hat</li><li>Horned Huntsman (Wicker Man) → Spear of the Huntsman</li><li>Custom Brew system (when ported) → 80+ effects, Summon Leonard</li></ul></div>
+  </div>
+</div>
+
+</div><!-- end prog-wrap -->
+
+<div class="callout callout-also">Quick chapter index: Altar <a href="#ch3">Ch 3</a> &amp; <a href="#ch8">8</a> · Brewing <a href="#ch4">Ch 4</a> &amp; <a href="#ch9">9</a> · Circles <a href="#ch5">Ch 5</a> &amp; <a href="#ch10">10</a> · Taglocks <a href="#ch6">Ch 6</a> · Familiars <a href="#ch7">Ch 7</a> · Mutation <a href="#ch29">Ch 29</a> · Infusions <a href="#ch12">Ch 12</a> · Coven <a href="#ch13">Ch 13</a> · Poppets <a href="#ch14">Ch 14</a> · Broom <a href="#ch15">Ch 15</a> · Vampirism <a href="#ch16">Ch 16</a> · Werewolf <a href="#ch17">Ch 17</a> · Waystones <a href="#ch18">Ch 18</a> · Curses <a href="#ch19">Ch 19</a> · Spirit World <a href="#ch20">Ch 20</a> · Fetishes <a href="#ch21">Ch 21</a> · Hobgoblins <a href="#ch22">Ch 22</a> · Custom Brews <a href="#ch9b">Ch 9b</a> · Dream Weavers <a href="#ch28">Ch 28</a> · Bosses <a href="#ch30">Ch 30</a></div>
+
+<!-- ═══ PART II ═══ -->
+<div class="part-header" id="part2">
+  <p class="part-label">Part II</p>
+  <h2>The Art Deepens</h2>
+  <p class="part-desc">A working altar and at least one brew behind you is the assumed starting point for this section.</p>
+</div>
+
+<!-- CH 8 -->
+<h2 class="chapter" id="ch8">Chapter 8: Altar Mastery<span class="stage stage-mid">Mid</span></h2>
+
+<p>A starter altar surrounded by a ring of saplings holds perhaps 300–400 power. That is sufficient for basic brews and small rites. Familiar binding requires 8,000. Fetishes require 6,000. If you intend to work seriously, you need to tend your space more seriously.</p>
+
+<h3>High-Value Block Types</h3>
+<table>
+  <tr><th>Block Type</th><th>Power/Block</th><th>Cap</th><th>Max</th><th>Notes</th></tr>
+  <tr><td>Early vanilla leaves (4 types)</td><td>+3</td><td>100 per type</td><td>+300 each</td><td>Large cap; a tree farm does this naturally</td></tr>
+  <tr><td>Witchery leaves (Rowan etc.)</td><td>+4</td><td>50</td><td>+200</td><td>Best leaf value; grow your grove</td></tr>
+  <tr><td>Tall grass / fern</td><td>+3</td><td>50</td><td>+150</td><td>Bonemeal grass to generate; stop them growing with a glass ceiling</td></tr>
+  <tr><td>Grass blocks</td><td>+2</td><td>80</td><td>+160</td><td>Do not bury them; they revert to dirt</td></tr>
+  <tr><td>Farmland + crops</td><td>+1 land, +4 per crop type</td><td>100 land; 20 each crop</td><td>+100 + up to +80 per type</td><td>Wheat, carrot, potato each count separately</td></tr>
+  <tr><td>Vanilla flowers</td><td>+4</td><td>30</td><td>+120</td><td>Most flowers; sunflowers and double-tall do not count</td></tr>
+  <tr><td>Demon Heart (placed)</td><td>+100</td><td>2</td><td>+200</td><td>Endgame; requires defeating a Demon first</td></tr>
+</table>
+
+<div class="callout callout-tip">The glass ceiling: place glass directly above saplings, mushrooms, and crops to prevent them growing into trees or mature forms. Growth stage does not affect power contribution — a freshly planted wheat crop counts the same as a ready-to-harvest one. Plant the crops; stop them thinking about growing.</div>
+
+<h3>Upgrade Sequence</h3>
+<ol>
+  <li><strong>Player Head</strong> — +×3 to both recharge and max power. The single best upgrade available.</li>
+  <li><strong>Filled Chalice</strong> — +×2 max power. Fill a chalice with water; right-click onto the altar surface.</li>
+  <li><strong>Pentacle</strong> — ×2 multiplicative recharge. Source: <a href="#ch22">Hobgoblin trade chain</a>. Combined with Head: (base 1 + head 3) = ×4 recharge; adding Pentacle doubles it to ×8.</li>
+  <li><strong>Arthana</strong> — extends outward distribution range only. Only relevant if your kettle is placed far from the altar.</li>
+</ol>
+
+<!-- CH 9 -->
+<h2 class="chapter" id="ch9">Chapter 9: The Full Brewing System<span class="stage stage-mid">Mid</span></h2>
+
+<p>The kettle is the starting point, not the end. Witchery's ingredient chain runs through four machines: Witches' Oven produces fumes; the Distillery refines them into essences; the Spinning Wheel makes cloth and thread; the Kettle assembles finished brews. Custom workings use a fifth device — the Witch's Cauldron — covered in <a href="#ch9b">Chapter 9b</a>.</p>
+
+<h3 id="distillery">The Distillery</h3>
+<p>Some essences cannot be coaxed directly from raw materials. They must be drawn out through heat and pressure — concentrated, refined, stripped of everything incidental until only the potent core remains. The Distillery takes two inputs and produces up to four outputs. It needs no altar. It is patient in a way most tools are not.</p>
+
+<div class="callout callout-recipe">
+  <strong>Distillery:</strong> Row 1: Clay Jar · Iron Ingot · Clay Jar / Row 2: Iron Ingot · Iron Ingot · Iron Ingot / Row 3: Gold Ingot · Attuned Stone · Gold Ingot. Iron, glass, and an attuned stone. The distillery is not complicated; what you put inside it, often is.
+</div>
+
+<table>
+  <tr><th>Input 1</th><th>Input 2</th><th>Output 1</th><th>Output 2</th><th>Output 3/4</th></tr>
+  <tr><td>Breath of the Goddess</td><td>Lapis Lazuli</td><td>Tear of the Goddess</td><td>Whiff of Magic</td><td>Foul Fume + Slimeball</td></tr>
+  <tr><td>Diamond</td><td>Oil of Vitriol</td><td>Diamond Vapor ×2</td><td>—</td><td>Odour of Purity</td></tr>
+  <tr><td>Diamond Vapor</td><td>Ghast Tear</td><td>Odour of Purity</td><td>Reek of Misfortune</td><td>Foul Fume + Refined Evil</td></tr>
+  <tr><td>Ender Pearl</td><td>—</td><td>Ender Dew ×6</td><td>—</td><td>Whiff of Magic</td></tr>
+  <tr><td>Demon Heart</td><td>Diamond Vapor</td><td>Demonic Blood ×4</td><td>—</td><td>Refined Evil</td></tr>
+  <tr><td>Demon Heart</td><td>Netherrack</td><td>Soul Sand</td><td>Demonic Blood ×2</td><td>—</td></tr>
+  <tr><td>Blaze Powder</td><td>Gunpowder</td><td>Glowstone Dust ×2</td><td>—</td><td>Reek of Misfortune</td></tr>
+  <tr><td>Foul Fume</td><td>Quicklime</td><td>Gypsum</td><td>Oil of Vitriol</td><td>Slimeball</td></tr>
+  <tr><td>Brew of Flowing Spirit</td><td>Oil of Vitriol</td><td>Focused Will</td><td>Condensed Fear</td><td>Brew of Hollow Tears ×8</td></tr>
+</table>
+
+<h3 id="spinning-wheel">The Spinning Wheel</h3>
+<p>Produces thread, cloth, and Weave items used in Dream Weaver crafting, the Witch's armor, and various brews. Does not require altar power.</p>
+
+<div class="callout callout-recipe">
+  <strong>Spinning Wheel:</strong> Row 1: Item Frame · Item Frame · Wool / Row 2: Item Frame · Item Frame · Stick / Row 3: Oak Planks · Attuned Stone · Oak Planks.
+</div>
+
+<h4>Key Spinning Wheel Recipes</h4>
+<table>
+  <tr><th>Top Slot</th><th>Input 1</th><th>Input 2</th><th>Output</th><th>Notes</th></tr>
+  <tr><td>4× Wispy Cotton</td><td>String</td><td>Odour of Purity</td><td>Fanciful Thread</td><td>Wispy Cotton found in <a href="#ch20">Spirit World</a> only</td></tr>
+  <tr><td>4× Disturbed Cotton</td><td>String</td><td>Reek of Misfortune</td><td>Tormented Twine</td><td>Disturbed Cotton found in <a href="#ch20">Spirit World</a> only</td></tr>
+</table>
+<p>Fanciful Thread is the bright material used in beneficial Dream Weavers. Tormented Twine is the dark material used in Dream Weaver of Nightmares and as a component in all weaver recipes. Both require cotton found only in the <a href="#ch20">Spirit World</a> — you cannot craft either until you have made at least one <a href="#ch20">Spirit World</a> visit.</p>
+
+<h3 id="witches-hat">Witch's Hat and Witch's Robes</h3>
+<p>The two pieces of Witch's armor. Each offers leather-level protection but the real purpose is the brewing bonus. Both become invisible alongside the player — other players see neither hat nor robes while you are invisible, which is a purely visual change that affects only what others see.</p>
+
+<div class="callout callout-recipe">
+  <strong>Impregnated Leather (crafts 4):</strong> 3×3 grid — Whiff of Magic at corners, Leather filling the remaining 5 slots, Diamond Vapor in center. The base material for both pieces.<br><br>
+  <strong>Witches' Hat:</strong> Impregnated Leather (top center); Golden Thread + Impregnated Leather + Golden Thread (middle row); Impregnated Leather + Glowstone Dust + Impregnated Leather (bottom row).<br><br>
+  <strong>Witches' Robes:</strong> Impregnated Leather + Golden Thread + Impregnated Leather (top); Impregnated Leather + Creeper Heart + Impregnated Leather (middle); Impregnated Leather × 3 (bottom).
+</div>
+
+<table>
+  <tr><th>Item</th><th>Brewing Bonus</th><th>Additional Effect</th><th>Repair Material</th></tr>
+  <tr><td>Witches' Hat</td><td>+35% chance of extra brew per batch</td><td>Invisible while player is invisible</td><td>3× Impregnated Leather</td></tr>
+  <tr><td>Witches' Robes</td><td>+35% chance of extra brew per batch</td><td>Invisible while invisible; Creepers will not attack you</td><td>4× Impregnated Leather</td></tr>
+</table>
+
+<div class="callout callout-tip">The bonuses stack. Wearing both Hat and Robes while bottling gives two separate 35% rolls — in practice, roughly a 1-in-2 chance of an extra flask per batch. For mass-production runs this adds up to a meaningful difference in total yield. Always wear both when brewing in quantity.</div>
+
+<h3>Brew Modifiers</h3>
+<p>Some brews serve not as effects but as modifications to whatever is brewed alongside them.</p>
+<table>
+  <tr><th>Modifier Brew</th><th>Effect</th></tr>
+  <tr><td>Brew of Duration Boost</td><td>Extends the duration of the combined brew</td></tr>
+  <tr><td>Brew of Damage Boost</td><td>Increases damage of attack-type brews</td></tr>
+  <tr><td>Brew of Brew Bottling</td><td>Converts a gas-form brew to liquid splash form</td></tr>
+  <tr><td>Brew of Keep Inventory</td><td>When active at death, keeps inventory</td></tr>
+  <tr><td>Brew of Keep Effects</td><td>Preserves active potion effects through death</td></tr>
+  <tr><td>Brew of Brew Gas Immunity</td><td>Grants immunity to gas-form brew clouds</td></tr>
+</table>
+
+<!-- CH 9b -->
+<h2 class="chapter" id="ch9b">Chapter 9b: Custom Brews — The Witch's Cauldron<span class="stage stage-late">Late</span></h2>
+
+<div class="lore-pull">The kettle is for apprentices and the impatient. The cauldron is for those who understand that a potion is not a single note — it is a chord.</div>
+
+<p>Custom Brews are the advanced brewing system. Where the Kettle produces fixed brews from set recipes, the Witch's Cauldron lets you compose entirely custom potions by combining six parameters: Capacity, Power, Duration, Modifier, Dispersal, and Effect. A single custom brew can contain multiple effects simultaneously, with controllable area of effect, lingering duration, and optional ritual casting instead of bottling.</p>
+
+<div class="callout callout-warn"><strong>Port status:</strong> The full original six-parameter Custom Brew composer is not yet complete in Witchery Rewoven. The Witch's Cauldron block and several source cauldron workings are live now, including chalk upgrades, Mutandis, Mutandis Extremis, Drop of Luck, and Mutating Sprig.</div>
+
+<h3>The Witch's Cauldron</h3>
+<p>A separate block from the Kettle. Apply <a href="#anointing-paste">Anointing Paste</a> to a vanilla Cauldron placed in the world — right-click with the paste. It requires a roaring fire underneath (netherrack flame recommended) and up to three buckets of water. In the current port, fill it with buckets or bottles; rain can also raise the water level over time.</p>
+
+<div class="callout callout-recipe">
+  <strong>First thing to make in the Witch's Cauldron:</strong> Mutandis — fill and heat the cauldron, drop or right-click a Mandrake Root and an Egg into the bowl, then right-click the cauldron with Exhale of the Horned One. Exhale is the trigger, not a loose offering. This produces six Mutandis, the foundational mutation ingredient and prerequisite for Mutandis Extremis.
+</div>
+
+<h3>The Six Parameters</h3>
+
+<h4>1. Capacity</h4>
+<p>Each Effect costs capacity equal to its level number. Level 1 costs 1; Level 4 costs 4; Level 8 costs 8. Combine multiple effects if you have sufficient capacity. Add capacity ingredients first.</p>
+<table>
+  <tr><th>Ingredient</th><th>Capacity Added</th></tr>
+  <tr><td>Mandrake Root</td><td>+1</td></tr>
+  <tr><td>Nether Wart</td><td>+2</td></tr>
+  <tr><td>Tear of the Goddess</td><td>+2</td></tr>
+  <tr><td>Diamond Vapor</td><td>+2</td></tr>
+  <tr><td>Diamond</td><td>+2</td></tr>
+  <tr><td>Nether Star</td><td>+4</td></tr>
+  <tr><td>Pentacle</td><td>+6</td></tr>
+</table>
+
+<h4>2. Power</h4>
+<p>Effects start at Level 1. Add power ingredients to raise their potency. Each adds +1.</p>
+<table>
+  <tr><th>Ingredient</th><th>Bonus</th></tr>
+  <tr><td>Glowstone Dust</td><td>+1</td></tr>
+  <tr><td>Blaze Rod</td><td>+1</td></tr>
+  <tr><td>Attuned Stone (Charged)</td><td>+1</td></tr>
+</table>
+
+<h4>3. Duration</h4>
+<p>Multiplies how long timed effects last. Multipliers compound.</p>
+<table>
+  <tr><th>Ingredient</th><th>Duration Multiplier</th></tr>
+  <tr><td>Redstone Dust</td><td>×2</td></tr>
+  <tr><td>Obsidian</td><td>×4</td></tr>
+  <tr><td>Minedrake Bulb</td><td>×6</td></tr>
+</table>
+
+<h4>4. Modifiers</h4>
+<table>
+  <tr><th>Ingredient</th><th>Effect</th></tr>
+  <tr><td>Gold Nugget</td><td>No particles — the brew acts without visible announcement</td></tr>
+  <tr><td>Fermented Spider Eye</td><td>Inverts the next Effect (Heal becomes Harm; Slow becomes Speed)</td></tr>
+  <tr><td>Nether Brick</td><td>Skip block-type effects — applies only to entities</td></tr>
+  <tr><td>Brick</td><td>Skip entity effects — applies only to blocks</td></tr>
+  <tr><td>Colored Wool</td><td>Changes brew color to match the wool</td></tr>
+  <tr><td>Clownfish</td><td>Removes the damage cap on harming-type brews</td></tr>
+</table>
+
+<p><strong>Quaff Speed</strong> — how fast the brew can be drunk:</p>
+<table>
+  <tr><th>Ingredient</th><th>Bonus</th></tr>
+  <tr><td>Rowan Berries</td><td>+1</td></tr>
+  <tr><td>Exhale of the Horned One</td><td>+2</td></tr>
+  <tr><td>Spanish Moss</td><td>+3</td></tr>
+</table>
+
+<h4>5. Dispersal</h4>
+<p>How the effect reaches its target. Add the dispersal ingredient after the effect ingredients.</p>
+<table>
+  <tr><th>Type</th><th>Ingredient</th><th>Description</th></tr>
+  <tr><td>Instant (drink)</td><td>None</td><td>Standard — consume to use</td></tr>
+  <tr><td>Instant (throw)</td><td>Gunpowder or Water Artichoke Globe</td><td>Thrown splash; affects target on impact</td></tr>
+  <tr><td>Gas</td><td>Wool of Bat</td><td>Disperses as a cloud; affects anything passing through</td></tr>
+  <tr><td>Liquid</td><td>Wormwood</td><td>Flows like water; affects entities it contacts</td></tr>
+  <tr><td>Trigger</td><td>Zombie Head</td><td>Applied to a button, pressure plate, lever, or wooden door. The first player to use that trigger receives the effect. A trap, in other words.</td></tr>
+</table>
+
+<p><strong>Extent</strong> (area size) — add before the dispersal ingredient:</p>
+<table>
+  <tr><th>Ingredient</th><th>Level</th></tr>
+  <tr><td>Wood Ash</td><td>L2 — small area</td></tr>
+  <tr><td>Cocoa Beans</td><td>L3 — medium area</td></tr>
+  <tr><td>Wispy Cotton</td><td>L4 — large area</td></tr>
+</table>
+
+<p><strong>Lingering</strong> (area duration) — add before the dispersal ingredient:</p>
+<table>
+  <tr><th>Ingredient</th><th>Level</th></tr>
+  <tr><td>Belladonna Flower</td><td>L2 — brief cloud</td></tr>
+  <tr><td>Lapis Lazuli</td><td>L3 — moderate cloud</td></tr>
+  <tr><td>End Stone</td><td>L4 — long cloud</td></tr>
+</table>
+
+<h4>6. Effect</h4>
+<p>The actual working. Add last, after all other parameters. Multiple effects are possible if capacity covers them.</p>
+
+<table>
+  <tr><th>Level</th><th>Capacity</th><th>Available Effects</th></tr>
+  <tr><td><strong>1</strong></td><td>1</td><td>Combustion, Dissipate Gas, Ender Inhibition, Extinguish Fires, Fell Tree, Fertilize, Grow Flowers, Grow Lily, Harvest, Moonshine, Part Water, Planting, Prune Leaves, Pulverize Rock, Snow Burst &amp; Trail, Swim Speed, Till Land, Tint Skin, Werewolf Lock</td></tr>
+  <tr><td><strong>2</strong></td><td>2</td><td>Air Hike, Attract Arrows, Bat Burst, Brew Gas Immunity, Cactus &amp; Thorned, Damage Boost, Endless Water, Erosion, Fast Movement, Floating, Freeze, Grow Sapling, Harm, Heal, Insect Bane, Invisible, Jump, Level Land, Night Vision, Part Lava, Poison, Poison Weapon, Pull, Push Away, Reflect Arrows, Regeneration, Remove Buffs, Remove Debuffs, Repel Attacker, Resist Fire, Slow Fall, Slow Movement, Sprouting, Undead Bane, Vines &amp; Flammable, Water Breathing, Weakness, Webs</td></tr>
+  <tr><td><strong>4</strong></td><td>4</td><td>Absorb Magic, Absorption, Animal Attraction, Animal Repulsion, Blight, Blindness, Brew Bottling, Disease, Fear, Flames, Frog's Leg, Fullness, Grue's Prey, Harm Werewolves, Health Boost, Insanity, Love, Nightmare, Overheating, Paralysis, Raise Dead, Raise Land, Revealing, Sinking, Stout Belly, Transpose, Transpose Ore, Volatility, Wasting, Weaken Vampires, Wither</td></tr>
+  <tr><td><strong>5</strong></td><td>5</td><td>Blast, Demonbane, Ice Shell, Ice World, Inferno, Poison Toad, Reflect Damage</td></tr>
+  <tr><td><strong>6</strong></td><td>6</td><td>Drain Magic, Duration Boost, Fortune, Ill Fitting, Reincarnate, Resizing, Steal Buffs, Undead's Curse</td></tr>
+  <tr><td><strong>8</strong></td><td>8</td><td>Keep Effects, Keep Inventory, Shifting Seasons, Spread Debuffs</td></tr>
+  <tr><td><strong>12</strong></td><td>12</td><td><strong>Summon Leonard</strong></td></tr>
+</table>
+
+<div class="callout callout-warn">Summon Leonard is Level 12. It requires 12 capacity — two Pentacles, or equivalent combinations. It is the most demanding brew in the system, and the ceiling of what the Cauldron can produce.</div>
+
+<h3>Ritual Casting — Instead of Bottling</h3>
+<p>Rather than bottling the finished brew, you can cast it as a spell directly from the Cauldron. The effect applies to a target location or creature without a bottle being produced. Ritual casting costs approximately 25% more altar power than bottling the same brew. Coven assistance may be required for distant targets.</p>
+<p>Add one of the following after all other ingredients to specify the target:</p>
+<table>
+  <tr><th>Target</th><th>Ingredient(s)</th><th>Requirement</th></tr>
+  <tr><td>Centered on Cauldron</td><td>Tongue of Dog</td><td>Non-drinking dispersal already specified</td></tr>
+  <tr><td>Centered on Location</td><td>Bound Waystone + Tongue of Dog</td><td>Non-drinking dispersal already specified</td></tr>
+  <tr><td>Target Player or Mob</td><td>Bound Taglock Kit</td><td>No dispersal type needed</td></tr>
+</table>
+
+<p>Drawing Ritual or Infernal Chalk rings around the Witch's Cauldron (not standard circles — see the in-game book <em>Witches' Brews</em> for layout) reduces altar power cost. Ritual Chalk provides a moderate reduction with lower side-effect risk. Infernal Chalk provides a greater reduction at increased risk of damage or negative conditions to the caster. Cross-dimensional casting always fails without the Shade of Leonard. You have been told.</p>
+
+<h3>Example Custom Brews</h3>
+<table>
+  <tr><th>Goal</th><th>Key Ingredients</th><th>Total Capacity</th></tr>
+  <tr><td>Covert Heal (no particles)</td><td>Gold Nugget + Heal (L2)</td><td>2</td></tr>
+  <tr><td>Area Poison Gas</td><td>Poison (L2) + Cocoa Beans (Extent L3) + Wool of Bat (Gas)</td><td>2</td></tr>
+  <tr><td>Inverted Heal → Harm splash</td><td>Fermented Spider Eye + Heal (L2) + Gunpowder (throw)</td><td>2</td></tr>
+  <tr><td>Triple utility: Heal + Water Breathing + Night Vision</td><td>Pentacle (cap +6) + three L2 effects</td><td>6 total</td></tr>
+  <tr><td>Lingering Paralysis trap</td><td>Paralysis (L4) + Lapis Lazuli (Lingering L3) + Zombie Head (Trigger)</td><td>4</td></tr>
+  <tr><td>Long Invisible</td><td>Invisible (L2) + Minedrake Bulb (×6 duration)</td><td>2</td></tr>
+</table>
+
+<h3>Ice Blocks — Custom Brew Construction</h3>
+<p>Several specialty blocks are created by applying specific Custom Brews directly to existing blocks or doors. They cannot be crafted in a crafting table. The most useful is the Ice Door.</p>
+
+<table>
+  <tr><th>Block</th><th>How to Make</th><th>Custom Brew Required</th><th>Registered ID</th></tr>
+  <tr><td>Ice Door</td><td>Strike a placed normal Door with a Brew of Ice World (thrown)</td><td>Brew of Ice World — a Custom Brew using the Ice World effect (Level 5), requires 2,000 altar power. Minimum recipe: Mandrake Root + Nether Wart + Tear of the Goddess + Eye of Ender + Gunpowder (throw dispersal)</td><td><code>witchery:ice_door</code></td></tr>
+  <tr><td>Ice Fence</td><td>Strike a placed fence</td><td>Brew of Ice World</td><td><code>witchery:ice_fence</code></td></tr>
+  <tr><td>Ice Fence Gate</td><td>Strike a placed fence gate</td><td>Brew of Ice World</td><td><code>witchery:ice_fence_gate</code></td></tr>
+  <tr><td>Ice Pressure Plate</td><td>Strike a placed pressure plate</td><td>Brew of Ice World</td><td><code>witchery:ice_pressure_plate</code></td></tr>
+</table>
+
+<div class="callout callout-tip">Ice blocks are purely decorative structures unless combined with other witchery mechanics — the Ice Door functions as a door, the Ice Pressure Plate as a pressure plate. Their value is aesthetic and atmospheric. They require the Custom Brew system, which is not yet implemented in the Rewoven port.</div>
+
+<!-- CH 9c -->
+<h2 class="chapter" id="ch9c">Chapter 9c: Essential Crafted Components<span class="stage stage-mid">Mid</span></h2>
+
+<p>Some things the craft takes for granted. You have seen them listed and accepted they must exist somewhere. This chapter explains what they actually are.</p>
+
+<h3 id="boline">Boline</h3>
+<p>A boline is a crescent-shaped ceremonial knife — a real implement used in herbalism and Wicca for centuries. In Witchery it is a multi-purpose tool: it works like shears on plant matter and can harvest things shears cannot (Cobwebs, among others). As a weapon it deals wooden-sword damage with iron-sword durability. It is also required in every Fetish rite and Spectral Stone binding — without a Boline, the spirit craft cannot proceed.</p>
+
+<div class="callout callout-recipe">
+  <strong>Boline:</strong> Left column of a 3×3 crafting grid, top to bottom: Iron Ingot · Bone · Emerald. One of the few Witchery tools using an Emerald; keep a few in stock before attempting fetish work.
+</div>
+
+<div class="callout callout-tip">The Boline's shear-like harvesting makes it useful for collecting Wispy Cotton and Disturbed Cotton in the Spirit World without destroying the plant. It also trims Treefyd wandering behavior: snip an existing Treefyd with a Boline to stop it from roaming too far.</div>
+
+<h3 id="anointing-paste">Anointing Paste</h3>
+<p>Anointing Paste converts a plain vanilla Cauldron into a Witch's Cauldron. Without it, early Mutandis and the later cauldron workings do not exist for you. The recipe requires seed forms of four Witchery plants — collect them while foraging.</p>
+
+<div class="callout callout-recipe">
+  <strong>Anointing Paste (crafts 4):</strong> shapeless — Water Artichoke Seeds + Mandrake Seeds + Belladonna Seeds + Snowbell Seeds. Place a vanilla Cauldron in the world; right-click it with the paste. The Cauldron becomes a Witch's Cauldron permanently.
+</div>
+
+<h3 id="necromantic-stone">Necromantic Stone</h3>
+<p>More than a crafting ingredient: the Necromantic Stone is a control device. Use it to direct undead raised by a Brew of Raising — point it at a mob, player, or block and your undead minions will attack the target or move to that location. It is also the only means of turning an <a href="#alluring-skull">Alluring Skull</a> on and off. The stone is created via the <a href="#ch11">Rite of Necromancy</a> (night only; requires an Attuned Stone as its input).</p>
+
+<p>Once created, handle it with intent. Pointing it at yourself by accident while undead are nearby ends badly.</p>
+
+<h3 id="spectral-familiar">Spectral Familiar</h3>
+<p>The Spectral Familiar is unlike the Cat, Owl, and Toad familiars — it is a helping spirit summoned from the Rite of Summoning (7×7 Ritual, 2,000 power: Drop of Luck + Raw Porkchop + Gold Ingot + Arthana) rather than a bound animal. It treats its summoner as having tamed it and behaves as a passive scout.</p>
+
+<p>Its particular gift: give it Coal, any metal ingot, Lapis Lazuli, a Diamond, or an Emerald and it will consume the material and sniff out the nearest ore of that type. Useful for mining expeditions. The warning: do it too many times and it may simply leave with the material you gave it. It has 40 HP and drops Spectral Dust.</p>
+
+<div class="callout callout-warn">The Spectral Familiar is not the same as a bound Familiar (Cat/Owl/Toad). It is a one-time summoned spirit with no life-link, no passive bonuses to the witch, and no persistent bond. When it wanders off or dies, you summon a new one from scratch via the same rite. It is a utility spirit, not a companion.</div>
+
+<div id="alluring-skull-anchor"></div>
+
+<h3 id="alluring-skull">Alluring Skull</h3>
+<p>The Alluring Skull is a placed block that draws nearby undead toward itself. Place it, right-click with a <a href="#necromantic-stone">Necromantic Stone</a> to activate — all undead in range will move toward the skull. Right-click again with the Stone to deactivate. Break it with the Necromantic Stone to remove it. Useful for corralling raised undead during combat without needing to point the stone constantly.</p>
+
+<div class="callout callout-recipe">
+  <strong>Alluring Skull:</strong> 3×3 grid — Necromantic Stone (top center) · Glowstone Dust + Skeleton Skull + Glowstone Dust (middle row) · Voodoo Poppet (bottom center).
+</div>
+
+<h3 id="demonic-contract">Demonic Contract</h3>
+<p>Demonic Contracts bind agreements between a witch and a <a href="#ch31">Flame Imp</a>. A blank Contract combined with specific materials produces a charged Contract that an Imp can execute — each variant grants a different magical ability to whoever carries it.</p>
+
+<div class="callout callout-recipe">
+  <strong>Demonic Contract (blank):</strong> 3×3 grid — 8× Paper surrounding a Raw Porkchop (center) + String (bottom right). Combine a blank Contract with further materials to charge it.
+</div>
+
+<table>
+  <tr><th>Contract</th><th>Additional Material</th><th>Effect</th></tr>
+  <tr><td>Fiery Touch</td><td>Blaze Rod + Ember Moss</td><td>Imbues tools with fire</td></tr>
+  <tr><td>Melting Touch</td><td>Lava Bucket</td><td>Melts ice and snow on contact</td></tr>
+  <tr><td>Living Flame</td><td>Blaze Rod + Hint of Rebirth</td><td>Flames that restore rather than harm</td></tr>
+  <tr><td>Evaporation</td><td>Blaze Rod + Magma Cream</td><td>Evaporates water in an area</td></tr>
+  <tr><td>Fiery Tolerance</td><td>Blaze Powder</td><td>Grants fire resistance to the bearer</td></tr>
+</table>
+
+<!-- CH 9d -->
+<h2 class="chapter" id="ch9d">Chapter 9d: Special Ingredients Reference<span class="stage stage-mid">Mid</span></h2>
+
+<p>Witchery recipes call for ingredients that appear without explanation: animal drops harvested with specific tools, Oven fumes from unusual saplings, distilled essences from the Spirit World. This chapter is a single-place lookup for all of them — what they are, where they come from, and what primarily uses them.</p>
+
+<table>
+  <tr><th>Ingredient</th><th>Source</th><th>Used In (primary)</th></tr>
+  <tr><td><strong>Tongue of Dog</strong></td><td>Killed from wolves, tamed dogs, hellhounds. Drop rate increased by the <a href="#boline">Arthana</a>.</td><td>Redstone Soup; ritual casting (Tongue of Dog as a cauldron cast trigger); Rite of Manifestation</td></tr>
+  <tr><td><strong>Wool of Bat</strong></td><td>Killed from bats. Drop rate increased by the Arthana.</td><td>Redstone Soup; gas dispersal in Custom Brews; Spirit of Otherwhere brew</td></tr>
+  <tr><td><strong>Spectral Dust</strong></td><td>Dropped by <a href="#spectral-familiar">Spectral Familiars</a>. Rare drop from undead when the Arthana is used.</td><td>Necromantic Stone rite; Spectral Stone rite; Rite of Prior Incarnation; Rite of Manifestation</td></tr>
+  <tr><td><strong>Hint of Rebirth</strong></td><td>Witches' Oven fume — burn a Spruce Sapling; base fume chance is 30% before funnels.</td><td>Rite of Summoning (Familiar); Rite of Fertility; Demonic Contract: Living Flame</td></tr>
+  <tr><td><strong>Drop of Luck</strong></td><td>Witch's Cauldron brew: offer Mandrake Root + Nether Wart + Tear of the Goddess + Refined Evil, then use Mutandis Extremis; costs 6,930 altar power. High-tier crafted item.</td><td>Spectral Familiar summoning rite; Spirit of Otherwhere brew</td></tr>
+  <tr><td><strong>Congealed Spirit</strong></td><td>Kettle brew: Brew of Hollow Tears + 5× Subdued Spirit, 2,000 altar power. Subdued Spirits are dropped by Spirit entities in the <a href="#ch20">Spirit World</a> when killed.</td><td>Spectral Stone (scratch method via Rite of Necromancy)</td></tr>
+  <tr><td><strong>Condensed Fear</strong></td><td><a href="#distillery">Distillery</a>: Brew of Flowing Spirit + Oil of Vitriol → Focused Will + Condensed Fear + Brew of Hollow Tears ×8. Already in the Distillery table (Ch 9).</td><td>Spectral Stone; Brew of Drain Magic</td></tr>
+  <tr><td><strong>Subdued Spirit</strong></td><td>Dropped by Spirit entities in the <a href="#ch20">Spirit World</a> when killed.</td><td>Congealed Spirit (Kettle brew)</td></tr>
+  <tr><td><strong>Frozen Heart</strong></td><td>Crafting table, single column (B): Icy Needle (top) · Creeper Heart (middle) · Ghast Tear (bottom).</td><td>Rite of Icy Expansion; Icy Slippers armor</td></tr>
+  <tr><td><strong>Mellifluous Hunger</strong></td><td>Dropped by <a href="#ch31">Nightmare</a> entities in the <a href="#ch20">Spirit World</a> only. No other source.</td><td>Dream Weaver of Fasting; Biting Belt; Rite of Manifestation</td></tr>
+  <tr><td><strong>Redstone Soup</strong></td><td>Kettle brew: Redstone + Tongue of Dog + Drop of Luck + Belladonna Flower + Wool of Bat + Mandrake Root, 1,000 altar power → 3× Redstone Soup. Drinkable for a quick health boost; fills a Chalice.</td><td>Base ingredient for <em>all four infusion source items</em> (Ghost of the Light / Soul of the World / Spirit of Otherwhere / Infernal Animus). Also used in Mystic Unguent.</td></tr>
+  <tr><td><strong>Wood Ash</strong></td><td>Witches' Oven main output from saplings. Birch can yield Breath of the Goddess, oak can yield Exhale of the Horned One, and spruce can yield Hint of Rebirth as fumes.</td><td>Rite of Charging; Rite of Binding (waystones); Rite of Sky's Wrath; multiple other rites</td></tr>
+  <tr><td><strong>Mystic Unguent</strong></td><td>Kettle brew: Redstone Soup + Potion of Strength (8:00) + Diamond + Rowan Sapling + Creeper Heart + Demonic Blood, 3,000 altar power.</td><td>Rite of Infusion → <a href="#ch12b">Mystic Branch</a></td></tr>
+  <tr><td><strong>Focused Will</strong></td><td><a href="#distillery">Distillery</a>: Brew of Flowing Spirit + Oil of Vitriol (same recipe that yields Condensed Fear).</td><td>Advanced brews and rites</td></tr>
+  <tr><td><strong>Ender Dew</strong></td><td>Distillery: Ender Pearl → Ender Dew ×6 + Whiff of Magic.</td><td>Waystone binding rites; Blooded Waystone</td></tr>
+  <tr><td><strong>Odour of Purity</strong></td><td>Distillery: Diamond + Oil of Vitriol → Diamond Vapor ×2 + Odour of Purity. Also from Diamond Vapor + Ghast Tear.</td><td>Familiar binding; Fanciful Thread (Spinning Wheel)</td></tr>
+  <tr><td><strong>Refined Evil</strong></td><td>Distillery: Diamond Vapor + Ghast Tear → Odour of Purity + Reek of Misfortune + Foul Fume + Refined Evil.</td><td>Demon summoning; Infernal Animus brew; Drop of Luck (Witch's Cauldron)</td></tr>
+</table>
+
+<div class="callout callout-tip">The Arthana placed on your altar does not extend the altar's gathering range — but held in hand while harvesting, it increases drop rates for creature-sourced ingredients like Tongue of Dog and Wool of Bat. Keep one in your hotbar on hunting trips.</div>
+
+<!-- CH 10 -->
+<h2 class="chapter" id="ch10">Chapter 10: Circle Magic — Chalk Types and Sizes<span class="stage stage-mid">Mid</span></h2>
+
+<h3>Circle Drawing Reference</h3>
+<table>
+  <tr><th>Size</th><th>Diameter</th><th>Typical Power</th><th>Common Uses</th></tr>
+  <tr><td>Small (~5×5)</td><td>5 blocks</td><td>0–500</td><td>Basic utility rites, Eclipse, Banishing</td></tr>
+  <tr><td>Medium (7×7)</td><td>7 blocks</td><td>0–2,000</td><td>Waystones, Necromancy, Charging, Protection</td></tr>
+  <tr><td>Large (11×11)</td><td>11 blocks</td><td>3,000–8,000</td><td>Familiar binding, Fetishes, Summoning, Infusions</td></tr>
+  <tr><td>Grand (15×15)</td><td>15 blocks</td><td>0–5,000+</td><td>Shifting Seasons, Ore Transposition, Demon Summoning</td></tr>
+</table>
+
+<div class="callout callout-warn">The in-game Witches' Primer lists three sizes as Small (3×3), Medium (5×5), Large (7×7). The wiki and this document use the outer-footprint dimensions: 7×7, 11×11, 15×15. The Primer appears to describe the inner glyph area; the wiki describes the total floor space. If the in-game book says "small circle", the rite is likely 7×7 in outer footprint.</div>
+<p>The <a href="#circle-talisman">Circle Talisman</a> stores up to three circle patterns — one per chalk type at one size each — in a single item. Right-click the center of a complete circle to store; right-click any suitable surface to redeploy. Keep three pre-loaded: one per chalk type, set to your most commonly cast rites. The time saved becomes noticeable.</p>
+
+<h3>Night-Only Rites</h3>
+<p>The Rite of Necromancy must be cast at night. If you need it during the day, cast the Rite of Total Eclipse first:</p>
+<div class="callout callout-recipe">
+  <strong>Rite of Total Eclipse (7×7 Ritual, 0 power if using Charged Stone):</strong> Stone Axe + Quicklime + Attuned Stone (Charged). Forces immediate nightfall. Also functions with 3,000 altar power and no Charged Stone.
+</div>
+
+<!-- CH 11 -->
+<h2 class="chapter" id="ch11">Chapter 11: The Rites — Complete Compendium<span class="stage stage-mid">Mid</span></h2>
+
+<p>A rite is the intentional manipulation of the world through circle, ingredient, and power. The circle provides the structure; the ingredient names the working; the altar provides the fuel. Some rites require creatures to be present nearby — not for ceremony, but because their presence is part of the mechanism. Experimentation is encouraged. The craft does not document all of its own workings.</p>
+
+<h3>Binding Rites (Ritual Chalk)</h3>
+<table>
+  <tr><th>Rite</th><th>Size</th><th>Power</th><th>Key Ingredients</th><th>Effect</th></tr>
+  <tr><td>Circle Talisman Store (free)</td><td>Any</td><td>0</td><td>Circle Talisman + Glowstone Dust + Attuned Stone (Charged)</td><td>Saves circle to talisman</td></tr>
+  <tr><td>Circle Talisman Store (powered)</td><td>Any</td><td>1,000</td><td>Circle Talisman + Redstone Dust</td><td>Saves circle; uses altar power</td></tr>
+  <tr><td>Waystone Binding</td><td>7×7</td><td>0 or 500</td><td>Waystone + Ender Dew + Wood Ash + (Charged Stone or Glowstone)</td><td>Binds waystone to current coords</td></tr>
+  <tr><td>Blooded Waystone</td><td>7×7</td><td>0 or 500</td><td>Waystone + Ender Dew + Slimeball + Icy Needle + (Charged Stone or Snowball)</td><td>Binds waystone to a nearby entity</td></tr>
+  <tr><td>Familiar Binding</td><td>11×11</td><td>8,000</td><td>Tear + Odour of Purity + Whiff of Magic + Diamond + Demonic Blood + (Cat/Owl/Toad in circle)</td><td>Creates a <a href="#ch7">Familiar</a></td></tr>
+  <tr><td>Spectral Stone (creature)</td><td>11×11</td><td>5,000</td><td>Spectral Stone + Spectral Dust + <a href="#boline">Boline</a> + (<a href="#ch21">Banshee/Spectre/Poltergeist</a>)</td><td>Traps a spectral entity in stone</td></tr>
+  <tr><td>Disorientation Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 2 Poltergeist)</td><td>Confuses nearby intruders</td></tr>
+  <tr><td>Ghost Walking Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 1 Spectre, 1 Banshee)</td><td>Grants wall-passage ability</td></tr>
+  <tr><td>Sentinel Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 3 Spectre)</td><td>Guards area; spirits attack intruders</td></tr>
+  <tr><td>Shrieking Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 2 Banshee)</td><td>Screams and disorients nearby entities</td></tr>
+  <tr><td>Voodoo Protection Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 1 Banshee, 1 Spectre, 1 Poltergeist)</td><td>Area shield against voodoo attacks</td></tr>
+</table>
+
+<h3>Transposition Rites (Otherwhere Chalk)</h3>
+<table>
+  <tr><th>Rite</th><th>Size</th><th>Power</th><th>Key Ingredients</th><th>Effect</th></tr>
+  <tr><td>Teleport to Waystone</td><td>7×7</td><td>0</td><td>Bound Waystone</td><td>Teleports caster to stored coordinates</td></tr>
+  <tr><td>Entity Pull</td><td>11×11</td><td>3,000</td><td>Waystone + Taglock Kit + Ender Dew + Iron Axe</td><td>Pulls tagged entity to caster. 90% blocked by full WH armor — not 100%.</td></tr>
+  <tr><td>Iron Ore Transposition</td><td>15×15</td><td>0</td><td>Ender Pearl + Iron Ingot + Blaze Powder + Diamond Vapor + Attuned Stone (Charged)</td><td>Moves all nearby iron ore to surface</td></tr>
+</table>
+
+<h3>Summoning Rites (Infernal Chalk)</h3>
+<table>
+  <tr><th>Target</th><th>Size</th><th>Power</th><th>Key Ingredients</th><th>Notes</th></tr>
+  <tr><td>Demon</td><td>15×15</td><td>3,000</td><td>Refined Evil + Ender Pearl + Blaze Powder + (Villager or Charged Stone)</td><td>Needs 7×7×4 clear space inside circle</td></tr>
+  <tr><td>Flame Imp</td><td>11×11</td><td>5,000</td><td>Refined Evil + Demonic Blood + Ender Pearl + Attuned Stone</td><td>Requires 1 Coven witch</td></tr>
+  <tr><td>Wither</td><td>15×11</td><td>4,000</td><td>Wither Skeleton Skull + Diamond Vapor + Ender Pearl + (Villager or Charged Stone)</td><td>Summons a Wither you then have to fight</td></tr>
+  <tr><td>Witch (NPC)</td><td>7×7</td><td>2,000</td><td>Exhale of the Horned One + Diamond Vapor + Arthana + Magma Cream + Fermented Spider Eye</td><td>Infernal chalk</td></tr>
+  <tr><td>Dismissed Familiar (resummon)</td><td>11×11</td><td>1,000</td><td>Breath of the Goddess + Hint of Rebirth + Whiff of Magic</td><td>Ritual chalk</td></tr>
+  <tr><td><a href="#spectral-familiar">Spectral Familiar</a></td><td>7×7</td><td>2,000</td><td>Drop of Luck + Raw Porkchop + Gold Ingot + Arthana</td><td>Ritual chalk</td></tr>
+</table>
+
+<h3>Necromancy Rites (Ritual Chalk — Night Only)</h3>
+<table>
+  <tr><th>Rite</th><th>Size</th><th>Power</th><th>Key Ingredients</th></tr>
+  <tr><td>Necromantic Stone</td><td>7×7</td><td>1,000</td><td>Attuned Stone + Bone + Rotten Flesh + Wood Ash + Iron Sword + Spectral Dust</td></tr>
+  <tr><td>Spectral Stone (from scratch)</td><td>7×7</td><td>6,000</td><td>Necromantic Stone + Congealed Spirit + Condensed Fear + Spectral Dust + <a href="#boline">Boline</a></td></tr>
+</table>
+
+<h3>Utility Rites (Ritual Chalk)</h3>
+<table>
+  <tr><th>Rite</th><th>Size</th><th>Power</th><th>Key Ingredients</th><th>Effect</th></tr>
+  <tr><td>Charging — Attuned Stone</td><td>7×7 or 11×11</td><td>2,000</td><td>Attuned Stone + Glowstone + Redstone + Wood Ash + Quicklime</td><td>Charges stone with portable power</td></tr>
+  <tr><td>Charging — Player Infusion</td><td>7×7 or 11×11</td><td>4,000</td><td>Potion of Regeneration + Glowstone + Redstone + Wood Ash + Quicklime</td><td>Recharges an infused player's power pool</td></tr>
+  <tr><td>Total Eclipse</td><td>7×7</td><td>0 (Charged Stone) or 3,000</td><td>Stone Axe + Quicklime + (Charged Stone optional)</td><td>Forces immediate nightfall</td></tr>
+  <tr><td>Protection (small, ongoing)</td><td>7×7</td><td>500 + 24/sec</td><td>Obsidian + Redstone Dust</td><td>Force field; drains altar continuously</td></tr>
+  <tr><td>Protection (large, ongoing)</td><td>11×11</td><td>1,000 + 28/sec</td><td>Obsidian + Glowstone Dust</td><td>Larger field; higher upkeep</td></tr>
+  <tr><td>Banishing</td><td>7×7</td><td>0 (Charged Stone) or 2,000</td><td>Blaze Powder + (Charged Stone optional)</td><td>Returns all demons in circle to their origin</td></tr>
+  <tr><td>Shifting Seasons</td><td>15×15</td><td>Very high</td><td>Full ingredient set + biome foci + Glowstone + 4 Coven witches required</td><td>Changes biome type in area</td></tr>
+</table>
+
+<h3>Environmental and Terrain Rites (Ritual Chalk unless noted)</h3>
+<table>
+  <tr><th>Rite</th><th>Size</th><th>Power</th><th>Chalk</th><th>Key Ingredients</th><th>Effect</th></tr>
+  <tr><td>Rite of the Forest</td><td>11×11</td><td>4,000</td><td>Ritual</td><td>Wicker Bundle + Brew of Sprouting + Ent Twig + Sapling of target tree species</td><td>Grows a forest of the chosen tree species outside the circle. Use with a Bound Waystone to target a specific location. Works with all vanilla and Witchery saplings — useful for seeding a remote Rowan grove or replenishing felled witch-tree areas.</td></tr>
+  <tr><td>Rite of Nature's Power</td><td>11×11</td><td>0</td><td>Ritual</td><td>Alder + Hawthorn + Rowan + Oak + Birch + Spruce Saplings + Brew of Sprouting + Attuned Stone (Charged)</td><td>Forces growth of pumpkins, melons, ember moss, and Witchery trees inside the circle; turns all ground to grass</td></tr>
+  <tr><td>Rite of Broken Earth</td><td>7×7</td><td>0</td><td>Ritual</td><td>Brew of Erosion</td><td>Creates a crevice in the ground outside the circle, toward the gold glyph direction</td></tr>
+  <tr><td>Rite of Moving Earth</td><td>7×7–15×15</td><td>0</td><td>Ritual</td><td>Brew of Sprouting + Cactus + Gunpowder/Redstone/Glowstone (size variant)</td><td>Sends blocks 10 layers underground upward. Larger sizes with Redstone/Glowstone dust variants. Optional Bound Waystone to target a location.</td></tr>
+  <tr><td>Rite of Icy Expansion</td><td>7×7</td><td>0</td><td>Ritual</td><td>Diamond Sword + Frozen Heart + Attuned Stone (Charged); requires 2 Coven witches minimum</td><td>Slowly pushes back liquids in a spherical zone, creating a breathable enclosure underwater. More witches = larger sphere. Creates Perpetual Ice.</td></tr>
+  <tr><td>Rite of Earth's Wrath</td><td>7×7</td><td>0</td><td>Infernal</td><td>Attuned Stone (Charged) + Stone + Magma Cream + Golden Sword</td><td>Calls up lava from underground to form a volcano in the casting circle. Requires a pool of lava underground.</td></tr>
+  <tr><td>Rite of Sky's Wrath</td><td>7×7</td><td>1,000–2,000</td><td>Ritual</td><td>Wooden Sword (inside) or Stone Sword (outside) + Wood Ash; Iron Sword + Attuned Stone (Charged) for free variant; optional Bound Waystone to target a location</td><td>Calls down lightning strikes. Inside variant strikes within the circle; outside variant strikes the facing direction or the waystone location.</td></tr>
+  <tr><td>Rite of Fertility</td><td>7×7</td><td>0 or 3,000</td><td>Ritual</td><td>Bone Meal + Hint of Rebirth + Diamond Vapor + Quicklime + Gypsum + Mutandis Extremis (free) or Mutandis (powered)</td><td>Bonemeal spreads across a wide area. Cures Zombie Villagers. Cures Blindness/Nausea/Poison. With Cat Familiar: also gives Regeneration and Saturation to players in range.</td></tr>
+  <tr><td>Rite of Broiling</td><td>7×7</td><td>0 or 1,000</td><td>Infernal</td><td>Coal + Blaze Rod + Wood Ash + (Attuned Stone Charged for free variant)</td><td>Cooks large quantities of food. Some food may come out slightly burnt.</td></tr>
+</table>
+
+<h3>Control and Defense Rites (Ritual Chalk)</h3>
+<table>
+  <tr><th>Rite</th><th>Chalk</th><th>Size</th><th>Power</th><th>Key Ingredients</th><th>Effect</th></tr>
+  <tr><td>Rite of Sanctity</td><td>Ritual</td><td>7×7</td><td>500 + 16/sec ongoing</td><td>Feather + Redstone Dust</td><td>Creates a barrier preventing hostile mobs from entering the circle area. Drains altar continuously while active. Does not remove mobs already inside.</td></tr>
+  <tr><td>Rite of Imprisonment</td><td>Ritual</td><td>7×7</td><td>500 + 16/sec ongoing</td><td>Slimeball + Redstone Dust</td><td>Prevents mobs inside the circle from leaving. Inverse of Sanctity — use it to contain rather than exclude. Pair the two to create a sealed arena.</td></tr>
+  <tr><td>Rite of Beastial Call</td><td>Otherwhere</td><td>15×15</td><td>6,000</td><td>Milk Bucket + Hay Bale + Apple + Raw Beef + Raw Fish + Brown Mushroom + Carrot + Seeds; requires 3 <a href="#ch13">Coven witches</a></td><td>Draws all animals from a wide surrounding area into the circle. If cast near someone's ranch, this will pull their animals. You have been told.</td></tr>
+  <tr><td>Rite of Prior Incarnation</td><td>Ritual</td><td>7×7</td><td>0</td><td><a href="#necromantic-stone">Necromantic Stone</a> + Tongue of Dog + Spectral Dust + Bone + Attuned Stone (Charged)</td><td>Recalls items lost on death. Must be cast within 16 blocks of the death location to function.</td></tr>
+  <tr><td>Rite of Manifestation</td><td>Otherwhere</td><td>7×7</td><td>5,000</td><td>Spectral Dust + Mellifluous Hunger + Necromantic Stone + Golden Pickaxe + Gunpowder + Arthana; <a href="#ch13">Coven</a> required</td><td>Sends sleeping beings to the overworld as their dream self for 2.5 minutes. +25 seconds per additional Coven witch present.</td></tr>
+  <tr><td>Rite of Glyphic Transformation</td><td>Any</td><td>Any</td><td>1,000</td><td>Target chalk type + Gypsum + Arthana</td><td>Converts all glyphs in a drawn circle from the current chalk type to another without redrawing. For the lazy, rich witch.</td></tr>
+</table>
+
+<h3>Infusion Rites</h3>
+<table>
+  <tr><th>Infusion</th><th>Chalk</th><th>Size</th><th>Power</th><th>Source Item</th></tr>
+  <tr><td>Enchanted Broom</td><td>Ritual</td><td>7×7 or 11×11</td><td>3,000</td><td>Broom + Flying Ointment</td></tr>
+  <tr><td>Infusion of Light</td><td>Ritual</td><td>7×7 or 11×11</td><td>2,000</td><td>Ghost of the Light</td></tr>
+  <tr><td>Infusion of the Overworld</td><td>Ritual</td><td>7×7 or 11×11</td><td>2,000</td><td>Soul of the World</td></tr>
+  <tr><td>Infusion of Otherwhere</td><td>Otherwhere</td><td>7×7 or 11×11</td><td>2,000</td><td>Spirit of Otherwhere</td></tr>
+  <tr><td>Infernal Infusion</td><td>Infernal</td><td>7×7 or 11×11</td><td>2,000</td><td>Infernal Animus</td></tr>
+  <tr><td>Crystal Ball (block)</td><td>Ritual</td><td>11×11</td><td>2,000</td><td>Quartz Sphere + Gold Ingot + Happenstance Oil</td></tr>
+</table>
+
+<!-- CH 12 -->
+<h2 class="chapter" id="ch12">Chapter 12: Player Infusions — The Four Powers<span class="stage stage-late">Late</span></h2>
+
+<div class="lore-pull">You are not merely learning a new trick. You are inviting something fundamental into yourself. It will change how you see the world — and how the world sees you.</div>
+
+<p>Player Infusions permanently alter the witch, granting a suite of active abilities in exchange for an "until death" enchantment state. Only one infusion can be active at a time — applying a second removes the first. Infused abilities require the Witch's Hand to activate. All infusions cause death on application unless a Death Protection Poppet or equivalent magic is active. Plan accordingly.</p>
+
+<div class="callout callout-warn">Carry a <a href="#ch14">Death Protection Poppet</a> bound to yourself before any Player Infusion. The infusion causes death. Without protection, that is a normal death with normal consequences — including, if you have a familiar, its death also.</div>
+
+<h3 id="infusion-brews">Brewing the Source Items</h3>
+<p>Each infusion requires a specific brewed item — the "soul" or "animus" that carries the power of that dimension. All four are Kettle brews that need 4,000 Altar power. All four benefit from the Witch's Hat and Robes yield bonus.</p>
+
+<table>
+  <tr><th>Item</th><th>For Infusion</th><th>Kettle Ingredients (in order)</th></tr>
+  <tr><td><a href="#infusion-brews">Ghost of the Light</a></td><td>Infusion of Light</td><td>Redstone Soup · Potion of Invisibility (8:00) · Potion of Fire Resistance (8:00) · Fire Protection Poppet · Torch · Tongue of Dog</td></tr>
+  <tr><td>Soul of the World</td><td>Infusion of the Overworld</td><td>Redstone Soup · Potion of Regeneration (8:00) · Enchanted Golden Apple · Attuned Stone · Mandrake Root · Rowan Sapling</td></tr>
+  <tr><td>Spirit of Otherwhere</td><td>Infusion of Otherwhere</td><td>Redstone Soup · Potion of Swiftness (8:00) · Eye of Ender × 2 · Drop of Luck · Wool of Bat</td></tr>
+  <tr><td>Infernal Animus</td><td>Infernal Infusion</td><td>Redstone Soup · Potion of Harming II · Demon Heart · Voodoo Poppet · Refined Evil · Blaze Rod</td></tr>
+</table>
+
+<div class="callout callout-tip">All four require the 8-minute (extended) potion variants where potions are listed. The regular duration versions do not work. Infernal Animus consumes a Voodoo Poppet in the brew — craft a spare before starting.</div>
+
+<h3>Infusion of Light</h3>
+<p><strong>Source:</strong> Ghost of the Light &nbsp;·&nbsp; <strong>Chalk:</strong> Ritual &nbsp;·&nbsp; <strong>Power:</strong> 2,000</p>
+<p>Grants control over light — bending it to render yourself invisible, hardening it into barriers.</p>
+<table>
+  <tr><th>Action</th><th>How</th><th>Effect</th></tr>
+  <tr><td>Imprison</td><td>Left-click close entity (Witch's Hand)</td><td>Lifts target; traps them briefly in a light cage</td></tr>
+  <tr><td>Invisibility</td><td>Hold right-click</td><td>Applies Invisibility while held</td></tr>
+  <tr><td>Light Wall</td><td>Hold right-click + Sneak on block face</td><td>Creates a 3×3 solid wall of light at that face</td></tr>
+  <tr><td>Light Prison (targeted)</td><td>Hold right-click + Sneak near entity</td><td>Cages the nearby entity in light</td></tr>
+</table>
+
+<h3>Infusion of the Overworld</h3>
+<p><strong>Source:</strong> Soul of the World &nbsp;·&nbsp; <strong>Chalk:</strong> Ritual &nbsp;·&nbsp; <strong>Power:</strong> 2,000</p>
+<p>Grants control over earth and metal — gravity mastery, terrain manipulation, disarming.</p>
+<table>
+  <tr><th>Action</th><th>How</th><th>Effect</th></tr>
+  <tr><td>Metal Knockback</td><td>Left-click entity in metal armor</td><td>Strong knockback if target wears metal</td></tr>
+  <tr><td>Disarm</td><td>Right-click entity holding metal item</td><td>Removes item from their hand</td></tr>
+  <tr><td>Earth Column</td><td>Right-click ground</td><td>Raises a column of earth upward</td></tr>
+  <tr><td>Block Launch</td><td>Right-click block side (clear space behind)</td><td>Fires the block as a projectile</td></tr>
+  <tr><td>Shockwave</td><td>Hold right-click (charge)</td><td>Knockback + damage wave; hold longer for more</td></tr>
+  <tr><td>Metal Pull</td><td>Hold right-click + Sneak</td><td>Draws dropped metal items to you; pulls ingots from ores</td></tr>
+  <tr><td>Ore Tap</td><td>Right-click metal ore</td><td>Extracts 2 ingots directly — no pickaxe needed</td></tr>
+</table>
+<p><em>Passive: No fall damage. Landing a charged shockwave-fall while sneaking triggers an explosion at the landing point.</em></p>
+
+<h3>Infusion of Otherwhere</h3>
+<p><strong>Source:</strong> Spirit of Otherwhere &nbsp;·&nbsp; <strong>Chalk:</strong> Otherwhere &nbsp;·&nbsp; <strong>Power:</strong> 2,000</p>
+<p>Grants control over teleportation. Works across dimensions.</p>
+<table>
+  <tr><th>Action</th><th>How</th><th>Effect</th></tr>
+  <tr><td>Short Teleport</td><td>Right-click</td><td>Teleports a short distance where you are looking</td></tr>
+  <tr><td>Long Teleport</td><td>Hold right-click</td><td>Teleports a long distance in facing direction</td></tr>
+  <tr><td>Store Recall Point</td><td>Hold right-click + Sneak</td><td>Saves current location as a recall anchor</td></tr>
+  <tr><td>Recall</td><td>Right-click + Sneak</td><td>Teleports to the last saved recall point</td></tr>
+  <tr><td>Target Launch</td><td>Left-click nearby entity</td><td>Teleports you and the target into the air together</td></tr>
+  <tr><td>Target Recall</td><td>Left-click + Sneak near entity</td><td>Teleports you and target to your recall point — ensure the destination chunk is loaded</td></tr>
+</table>
+
+<h3>Infernal Infusion</h3>
+<p><strong>Source:</strong> Infernal Animus &nbsp;·&nbsp; <strong>Chalk:</strong> Infernal &nbsp;·&nbsp; <strong>Power:</strong> 2,000</p>
+<p>Grants dominion over creatures — enthralling them to serve, then sacrificing them for their powers.</p>
+<table>
+  <tr><th>Action</th><th>How</th><th>Effect</th></tr>
+  <tr><td>Command Attack</td><td>Left-click (Witch's Hand)</td><td>All nearby enthralled mobs attack your current target</td></tr>
+  <tr><td>Enthrall</td><td>Left-click + Sneak near mob</td><td>Makes it passive toward you; brings it under command</td></tr>
+  <tr><td>Sacrifice</td><td>Left-click + Sneak on enthralled mob</td><td>Consumes it; grants its creature power</td></tr>
+  <tr><td>Use Power</td><td>Right-click</td><td>Activates last sacrificed creature's ability</td></tr>
+  <tr><td>Direct Move</td><td>Right-click + Sneak on ground</td><td>Commands nearby moveable enthralled mobs to relocate</td></tr>
+</table>
+
+<h4>Creature Sacrifice Powers</h4>
+<table>
+  <tr><th>Creature</th><th>Active Power</th><th>Passive Bonus</th></tr>
+  <tr><td>Bat</td><td>Night Vision</td><td>Flight (jump key); fall immunity (sneak)</td></tr>
+  <tr><td>Blaze</td><td>Shoot 3 fire charges</td><td>Fire Resistance</td></tr>
+  <tr><td>Cat / Dog / Horse</td><td>Speed burst</td><td>Minor Speed</td></tr>
+  <tr><td>Chicken / Cow / Pig / Sheep / Villager</td><td>Heal effect</td><td>—</td></tr>
+  <tr><td>Creeper</td><td>Explode</td><td>Lightning bolts recharge infusion power</td></tr>
+  <tr><td>Enderman</td><td>Teleport</td><td>—</td></tr>
+  <tr><td>Ghast</td><td>Large fire charge barrage</td><td>Fire Resistance</td></tr>
+  <tr><td>Skeleton</td><td>Fire arrows</td><td>Minor underwater breathing</td></tr>
+  <tr><td>Slime / Magma Cube</td><td>Jump boost</td><td>Jump boost + fall immunity</td></tr>
+  <tr><td>Spider / Cave Spider</td><td>Cobweb projectiles</td><td>Wall climbing</td></tr>
+  <tr><td>Squid</td><td>Blind targets (ink burst)</td><td>Faster swimming + underwater breathing</td></tr>
+  <tr><td>Zombie</td><td>Resistance + Damage boost</td><td>—</td></tr>
+  <tr><td>Zombie Pigman</td><td>Stronger Resistance + Damage</td><td>Fire Immunity</td></tr>
+</table>
+
+<!-- CH 12b -->
+<h2 class="chapter" id="ch12b">Chapter 12b: The Mystic Branch<span class="stage stage-late">Late</span></h2>
+
+<p>The Mystic Branch is a wand used by any witch who has successfully applied a Player Infusion. It casts spells by gesture — you hold the use key and wave the Branch in sequences of directional swishes, tracing patterns in the air. The full <a href="#branch-gestures">spell gesture table</a> is below. When the pattern matches a known spell, the name appears; release the key to cast. The Branch can also deflect incoming spells from another Branch user.</p>
+
+<p>Spell power is not as strong as other methods, but the Branch is fast, requires no circle, and works anywhere you are standing.</p>
+
+<div class="callout callout-recipe">
+  <strong>Mystic Branch (Rite of Infusion, 7×7 or 11×11 Ritual, 3,000 power):</strong> Ent Twig + Mystic Unguent in the circle. Requires a Player Infusion to already be active before the Branch is usable.
+</div>
+
+<div class="callout callout-tip">Spell power can be boosted by having Hobgoblins worship a Statue of Hobgoblin Patron — their worship feeds the Branch's power pool. The 25% anger chance still applies. Some spells require Demon souls (Soul of Fear, Soul of Anguish, Soul of Torment) obtained from specific Demons.</div>
+
+<h3 id="branch-gestures">Spell Gestures</h3>
+<p>Each spell is a sequence of directional swishes: Up (U), Down (D), Left (L), Right (R).</p>
+
+<table>
+  <tr><th>Spell</th><th>Gesture Sequence</th><th>Effect</th><th>Requirements</th></tr>
+  <tr><td>Attraho</td><td>U U U R R D L</td><td>Pulls the target toward the caster</td><td>—</td></tr>
+  <tr><td>Disarm</td><td>U U D</td><td>Disarms the target</td><td>—</td></tr>
+  <tr><td>Pushback</td><td>R R L</td><td>Pushes target away</td><td>—</td></tr>
+  <tr><td>Stun</td><td>R R U L U R</td><td>Slows target to a crawl</td><td>—</td></tr>
+  <tr><td>Confundus</td><td>L L U U R</td><td>Causes confusion</td><td>—</td></tr>
+  <tr><td>Shield</td><td>D D D D U U U</td><td>Creates a ground-targeted shield</td><td>—</td></tr>
+  <tr><td>Lumos</td><td>D D D R</td><td>Creates a light source block</td><td>—</td></tr>
+  <tr><td>Nox</td><td>U U R D R U</td><td>Breaks light source blocks</td><td>—</td></tr>
+  <tr><td>Augamenti</td><td>U U R R D</td><td>Creates water</td><td>—</td></tr>
+  <tr><td>Defodio</td><td>U U L D</td><td>Digs a block</td><td>—</td></tr>
+  <tr><td>Accio</td><td>L U R R D</td><td>Grabs nearby item entities</td><td>—</td></tr>
+  <tr><td>Alohomora</td><td>R U R R D</td><td>Opens a door</td><td>—</td></tr>
+  <tr><td>Episkey</td><td>R U L D D R</td><td>Heals at the cost of Hunger</td><td>—</td></tr>
+  <tr><td>Ennervate</td><td>U L U R L U R</td><td>Removes stun effects</td><td>—</td></tr>
+  <tr><td>Incendio</td><td>L U U D D</td><td>Ignites a block</td><td>—</td></tr>
+  <tr><td>Meteolojinx Recanto</td><td>U U U R R D U R R D D</td><td>Stops rain (very expensive)</td><td>—</td></tr>
+  <tr><td>Ignianima</td><td>L L U D D</td><td>Damages target (more caster damage = more dealt)</td><td>Soul of Anguish Demon</td></tr>
+  <tr><td>Carnosa Diem</td><td>R R U D D</td><td>Restores infusion power; damages caster</td><td>Soul of Hunger Demon</td></tr>
+  <tr><td>Morsmordre</td><td>U U L R R</td><td>Summons a dark mark that scares mobs away</td><td>Soul of Fear Demon</td></tr>
+  <tr><td>Torment</td><td>D D L R R</td><td>Sends target to the <a href="#ch20">Torment Dimension</a> (30-min cooldown)</td><td>Soul of Torment Demon</td></tr>
+  <tr><td>(Deflect)</td><td>Left-click</td><td>Deflects incoming Branch effects</td><td>—</td></tr>
+</table>
+
+<!-- CH 13 -->
+<h2 class="chapter" id="ch13">Chapter 13: Coven Magic<span class="stage stage-late">Late</span></h2>
+
+<p>They exist because we exist — and a coven, properly assembled, is more capable than any individual practitioner working alone. Some rites require multiple witches. Some workings are large enough that a single altar cannot supply them unassisted. That is what a coven is for.</p>
+
+<h3>Recruiting a Coven Witch</h3>
+<p>Coven Witches are neutral NPCs found wandering the overworld. They throw potions and are generally unpleasant in a fight, but they are open to joining a coven with any witch of sufficient standing. What they consider sufficient: you must have a Familiar bound. Then right-click one to receive a quest.</p>
+<p>Example quests: kill a specified number of undead; gather materials; bring a Demon Heart; defeat the Witch's summoned "pet" — a 90 HP creature dropped into the world specifically for you to kill. Complete the quest and report back. The Coven Witch joins your coven.</p>
+
+<h3>Using Coven Members</h3>
+<p>Use the Seer Stone to summon coven members. Activating the Heart Glyph in a circle's center with the Seer Stone calls nearby coven witches to assist. They contribute their casting power to rites that list a Coven requirement. They will also participate in combat, throwing Witchery brews at your enemies. Between summons, they conduct their own business — often near your base.</p>
+
+<h3>Rites That Require Coven Members</h3>
+<table>
+  <tr><th>Rite</th><th>Members Needed</th><th>What They Add</th></tr>
+  <tr><td>Rite of Shifting Seasons</td><td>4</td><td>Power and area size — more witches means a larger affected region</td></tr>
+  <tr><td>Rite of Summoning — Flame Imp</td><td>1</td><td>Power contribution toward the 5,000 requirement</td></tr>
+  <tr><td>Various high-power rites</td><td>1–3</td><td>Reduces altar power needed; some rites have coven-only variants</td></tr>
+</table>
+
+<div class="callout callout-tip">The Rite of Shifting Seasons changes the biome type in an area and requires 4 coven witches. It uses a Book of Biomes to specify the target biome — the book lists every biome in the modpack, its group (Forest/Plains/Desert/etc.), and how much Glowstone Dust selects the specific biome within that group.</div>
+
+<!-- CH 14 -->
+<h2 class="chapter" id="ch14">Chapter 14: Poppet Magic<span class="stage stage-mid">Mid</span></h2>
+
+<p>An effigy shaped to resemble a person, bound to them through a taglock, carries a thread of the same sympathy that connects all things. What happens to the effigy has a tendency to happen to its subject. This is the basis of poppet magic, and it works in both directions — which means the craft rewards those who bind poppets to themselves with protection, and punishes those who leave their taglocks unguarded.</p>
+
+<div class="callout callout-recipe">
+  <strong>Base Poppet:</strong> Row 1: Wool · Spanish Moss · Wool / Row 2: Bone Needle · Spanish Moss · String / Row 3: Wool · — · Wool. Bind it by right-clicking with a filled Taglock Kit.
+</div>
+
+<h3>Offensive Poppets</h3>
+<table>
+  <tr><th>Poppet</th><th>What It Does</th></tr>
+  <tr><td>Voodoo Poppet</td><td>Deals damage or applies negative effects to the bound target remotely</td></tr>
+  <tr><td>Vampiric Poppet</td><td>Drains health from the bound target steadily over time</td></tr>
+</table>
+
+<h3>Protective Poppets</h3>
+<p>These are bound to yourself. Carry them in inventory or keep them on a Poppet Shelf.</p>
+<table>
+  <tr><th>Poppet</th><th>Protection</th><th>Notes</th></tr>
+  <tr><td>Death Protection Poppet</td><td>Negates one death entirely; then destroys itself</td><td>Carry one at all times once you have a Familiar</td></tr>
+  <tr><td>Armor Protection Poppet</td><td>Reduces armor durability loss</td><td>—</td></tr>
+  <tr><td>Earth Protection Poppet</td><td>Reduces or negates fall damage</td><td>—</td></tr>
+  <tr><td>Fire Protection Poppet</td><td>Reduces fire and lava damage</td><td>—</td></tr>
+  <tr><td>Water Protection Poppet</td><td>Grants water breathing</td><td>—</td></tr>
+  <tr><td>Hunger Protection Poppet</td><td>Slows hunger drain</td><td>—</td></tr>
+  <tr><td>Tool Protection Poppet</td><td>Reduces tool durability loss</td><td>—</td></tr>
+  <tr><td>Poppet Protection Poppet</td><td>Protects your other poppets from remote destruction</td><td>—</td></tr>
+  <tr><td>Voodoo Protection Poppet</td><td>Blocks incoming curse effects and voodoo attacks directed through your taglock</td><td>Keep this on the shelf once enemies have your taglock</td></tr>
+</table>
+
+<h3 id="poppet-shelf">The Poppet Shelf</h3>
+<p>A poppet kept in a pocket is useful. A poppet on a shelf that activates automatically when needed is more useful still. The <a href="#poppet-shelf">Poppet Shelf</a> holds up to nine poppets. When you take damage or are killed, it scans nearby shelves for poppets bound to you and triggers the appropriate protection. You need not be watching. That is the point. Keep spares. The shelf holds nine.</p>
+
+<div class="callout callout-warn">The full Witch Hunter armor set causes every protection poppet bound to you to fail with 100% certainty. All of them. The shelf will scan, find your poppets, and trigger nothing. If you wear the set as a witch, remove your poppets or accept that they will not help you. More on the Witch Hunter set in <a href="#ch24">Chapter 24</a>.</div>
+
+<!-- CH 15 -->
+<h2 class="chapter" id="ch15">Chapter 15: Broom Flight<span class="stage stage-mid">Mid</span></h2>
+
+<div class="callout callout-recipe">
+  <strong>Broom:</strong> Row 1: — · Stick · — / Row 2: — · Stick · — / Row 3: Hawthorn Sapling · Hawthorn Sapling · Hawthorn Sapling.
+</div>
+
+<h3 id="enchanted-broom">Basic vs. Enchanted Broom</h3>
+<table>
+  <tr><th>Property</th><th>Basic Broom</th><th>Enchanted Broom</th></tr>
+  <tr><td>Speed</td><td>0.18 — roughly 65% of sprint</td><td>0.30 — roughly 110% of sprint</td></tr>
+  <tr><td>With Owl Familiar</td><td>Marginal improvement</td><td>Noticeably smoother turning and control; they enjoy the height</td></tr>
+  <tr><td>Pickup method</td><td>Break or dismount normally</td><td>Must be destroyed to collect as an item</td></tr>
+  <tr><td>Glyph clearing</td><td>Fastest method available</td><td>Fastest method available</td></tr>
+</table>
+
+<p>The Enchanted Broom is made through the Rite of Infusion: 7×7 or 11×11 Ritual circle, 3,000 power. Place a Broom and <a href="#flying-ointment">Flying Ointment</a> in the circle. The rite transforms the nearest Broom within 5 blocks.</p>
+
+<div class="callout callout-warn">Enchanted Brooms cannot be picked up. You must break the broom block to collect it as an item. Do not break it over lava, void, or water. A Death Protection Poppet can save you from an unexpected dismount at altitude, but it is better not to test that.</div>
+
+<h3 id="brew-of-soaring">Brew of Soaring</h3>
+<p>Drink the <span class="item">brew_of_soaring</span> for 120 minutes of unaided flight. +30% speed base; +50% with an Owl Familiar. Works entirely without a broom — combine them for the fastest overland travel in the mod.</p>
+
+<!-- CH 16 -->
+<h2 class="chapter" id="ch16">Chapter 16: Vampirism<span class="stage stage-late">Late</span></h2>
+
+<p>There are those who choose this path, and those who have it chosen for them. Either way, the nature of vampirism is not subtle: you are sustained by blood, strengthened by it, and diminished without it. Your blood level determines your power. A vampire at full blood is formidable. A vampire running dry is considerably less so.</p>
+
+<h3>Abilities</h3>
+<p>Vampires access abilities by scrolling below slot 1 on the hotbar.</p>
+<table>
+  <tr><th>Ability</th><th>Blood Cost</th><th>Effect</th></tr>
+  <tr><td>Bite</td><td>None</td><td>Drain blood from a target. Passively shows their blood level when close. Draining more than half damages them.</td></tr>
+  <tr><td>Night Vision</td><td>None (toggle)</td><td>Permanent night vision while active. Free to maintain.</td></tr>
+  <tr><td>Speed</td><td>Blood</td><td>Burst of speed and jump height. Scales with vampirism level.</td></tr>
+  <tr><td>Bat Form</td><td>Blood</td><td>Transforms into 3 bats; can fly and pass through 1×1 gaps. Useful for infiltration. No world interaction while transformed.</td></tr>
+</table>
+
+<p>The craft rewards progression. Vampirism advances through levels as you feed. Higher levels make Speed more powerful and expand your feeding options. There is no going back, not easily.</p>
+
+<ul>
+  <li>Sunlight burns — direct daylight is a persistent danger. Night Vision helps you see what you are running from.</li>
+  <li><a href="#ch27">Silver</a> wounds heal slowly and hurt more than ordinary damage.</li>
+  <li><a href="#ch24">Witch Hunters</a> consider you a professional priority. They carry silver.</li>
+  <li>Blood drains constantly. Feed regularly or suffer accordingly.</li>
+</ul>
+
+<h3 id="coffin">The Coffin</h3>
+<p>A vampire does not sleep in a bed. The sun makes ordinary beds inadvisable, and there is a certain indignity to them regardless. The coffin is better: sealed against daylight, appropriate to the condition, and functional. Any player can use it, but for vampires it resolves the daylight problem with characteristic directness.</p>
+
+<div class="callout callout-recipe">
+  <strong>Coffin:</strong> Row 1: Planks · Planks · Planks / Row 2: Logs · Bed · Logs / Row 3: Logs · Logs · Logs. Any log and plank type works — oak is not required. The bed is consumed.
+</div>
+
+<p>Shift-right-click to open the lid. Right-click to enter and sleep. The coffin sleeps through the day and wakes you at nightfall — solving the vampire's core survival problem without any potions or planning required. Taglock Kits can still be gathered from a coffin, the same as a bed. Guard your coffin accordingly.</p>
+
+<h3 id="vampire-armor">Vampire Armory</h3>
+<p>Vampire armor is not purchased or found — it is crafted by upgrading fashionable civilian pieces with iron. The process works in two steps: first craft the Dress/Top Hat base items, then reinforce them with Iron Ingots. The result is armor that sits somewhere between leather and chain in protection, styled appropriately for the condition.</p>
+
+<table>
+  <tr><th>Armor Piece</th><th>Slot</th><th>How to Craft</th><th>Base Required</th></tr>
+  <tr><td>Vampire Helmet</td><td>Head</td><td>4 Iron Ingots surrounding a Vampire Top Hat (cross pattern)</td><td>Vampire Top Hat</td></tr>
+  <tr><td>Vampire Chain Coat</td><td>Chest</td><td>4 Iron Ingots surrounding a Vampire Dress Coat (cross pattern)</td><td>Vampire Dress Coat</td></tr>
+  <tr><td>Vampire Chain Coat (Ladies)</td><td>Chest</td><td>4 Iron Ingots surrounding a Vampire Dress Jacket (Ladies)</td><td>Vampire Dress Jacket (Ladies)</td></tr>
+  <tr><td>Vampire Trousers</td><td>Legs</td><td>—</td><td>Vampire-specific legs variant</td></tr>
+  <tr><td>Vampire Skirted Trousers</td><td>Legs</td><td>—</td><td>Ladies variant</td></tr>
+  <tr><td>Vampire Oxford Boots</td><td>Feet</td><td>—</td><td>Vampire-specific boots</td></tr>
+  <tr><td>Vampire Top Hat</td><td>Head (base)</td><td>Base dress item; worn as-is or upgraded to Helmet</td><td>—</td></tr>
+  <tr><td>Vampire Dress Coat</td><td>Chest (base)</td><td>Base dress item; worn as-is or upgraded to Chain Coat</td><td>—</td></tr>
+</table>
+
+<div class="callout callout-tip">The base Dress items (Top Hat, Dress Coat) are purely cosmetic. The reinforced Chain/Helmet variants provide actual armor protection. Wear the reinforced versions for combat; the dress items are for atmosphere.</div>
+
+<!-- CH 17 -->
+<h2 class="chapter" id="ch17">Chapter 17: The Werewolf<span class="stage stage-late">Late</span></h2>
+
+<p>The moon calls and the blood answers. The werewolf is powerful and difficult to control in equal measure. At low mastery, the wolf form attacks everything nearby including allies. At mastery 3, you choose your targets. The path between is the point.</p>
+
+<h3 id="wolf-mastery">Wolf Mastery (0–3)</h3>
+<p>Increase mastery by right-clicking the Wolf Altar block while in wolf form. Each visit grants Strength III + Speed II and advances mastery one step. Mastery 3 is not subtle. Approach it with preparation.</p>
+<ul>
+  <li><strong>Mastery 0:</strong> The wolf attacks anything nearby, including you</li>
+  <li><strong>Mastery 1–2:</strong> Partial control; reduced aggression</li>
+  <li><strong>Mastery 3:</strong> Full control; choose your targets</li>
+</ul>
+
+<h3>Howling</h3>
+<p>The howl keybind triggers a wolf howl. Nearby wild wolves respond and assist. The howl has a cooldown that ticks down in real time. Do not spam it.</p>
+
+<h3>Silver Vulnerability</h3>
+<p>Silver deals substantially increased damage to werewolves — both player-form and mob-type. A <a href="#silver-sword">Silver Sword</a> can two-shot a weakened werewolf that would take six hits from iron. Witch Hunters are equipped accordingly. See <a href="#ch27">Chapter 27</a> for silver crafting.</p>
+
+<!-- CH 18 -->
+<h2 class="chapter" id="ch18">Chapter 18: Waystones and Teleportation<span class="stage stage-mid">Mid</span></h2>
+
+<p>Waystones form a fast-travel network. A bound waystone holds specific coordinates; the Rite of Transposition uses it to take you there instantly, across any distance in the same dimension.</p>
+
+<h3 id="waystone-types">The Three Types</h3>
+<table>
+  <tr><th>Type</th><th>Holds</th><th>Created By</th><th>Used In</th></tr>
+  <tr><td>Unbound Waystone</td><td>Nothing</td><td>Crafted</td><td>Binding rites</td></tr>
+  <tr><td>Bound Waystone</td><td>Specific coordinates</td><td>Rite of Binding</td><td>Location teleportation</td></tr>
+  <tr><td>Blooded Waystone</td><td>A specific player or mob</td><td>Rite of Binding (blooded variant)</td><td>Pulling a target via Transposition</td></tr>
+</table>
+
+<h3>Binding and Using</h3>
+<p>Stand at the destination. Cast Rite of Binding (7×7 Ritual, 500 power): Waystone + Ender Dew + Wood Ash + Charged Stone. To teleport: cast Rite of Transposition (7×7 Otherwhere, 0 power) with the Bound Waystone in the circle. Instant. Keep a talisman pre-loaded with this rite for same-turn deployment.</p>
+
+<h3>Pulling a Target</h3>
+<p>Requires a filled taglock of the target. Rite of Transposition — Entity Pull (11×11 Otherwhere, 3,000 power): Waystone + Taglock + Ender Dew + Iron Axe. The tagged entity appears at the caster's location. Full Witch Hunter armor gives 90% resistance. Not 100%. Repeated casts will eventually land.</p>
+
+<div class="callout callout-tip">Give a tamed <a href="#ch25">Flying Monkey</a> a Bound Waystone and it will fly you to the stored coordinates without any rite, circle, or altar. An alternative form of travel that does not require preparation. See <a href="#ch25">Chapter 25</a>.</div>
+
+<!-- CH 19 -->
+<h2 class="chapter" id="ch19">Chapter 19: Curses — The Twelve Afflictions<span class="stage stage-late">Late</span></h2>
+
+<p>A curse requires the target's taglock and sufficient altar power. It works at any distance, across the dimension, without warning. A Cat Familiar makes your curses harder to resist and easier for you to remove from others. <a href="#ch14">Voodoo Protection</a> counters the effects; the Rite of Remove Curse removes them.</p>
+
+<table>
+  <tr><th>Curse</th><th>Effect</th><th>Notes</th></tr>
+  <tr><td>Blindness</td><td>Persistent Blindness effect</td><td>—</td></tr>
+  <tr><td>Blight</td><td>Wither-like health degradation</td><td>Stacks with other curses</td></tr>
+  <tr><td>Misfortune</td><td>Reduced luck; affected drop rates and random outcomes</td><td>90% blocked by full WH armor</td></tr>
+  <tr><td>Overheating</td><td>Periodic fire, bypassing fire resistance</td><td>—</td></tr>
+  <tr><td>Sinking</td><td>Removes swimming; target sinks and drowns</td><td>—</td></tr>
+  <tr><td>Insanity</td><td>Distorted vision and hearing; hallucinations</td><td>—</td></tr>
+  <tr><td>Raining Toads</td><td>Toads fall from the sky around the target periodically</td><td>Arguably the most annoying</td></tr>
+  <tr><td>Waking Nightmare</td><td>Nightmare entities spawn and harass the target</td><td>90% blocked by full WH armor</td></tr>
+  <tr><td>Corrupt Poppet</td><td>Destroys a poppet in the target's possession</td><td><a href="#ch7">Cat Familiar</a> required to cast this one</td></tr>
+  <tr><td>Hell on Earth</td><td>Converts ground around target into Nether terrain</td><td>—</td></tr>
+  <tr><td>Creatures of Night</td><td>Hostile mobs constantly spawn around and target the victim</td><td>—</td></tr>
+  <tr><td>Curse of the Wolf</td><td>Forces temporary werewolf transformation on the target</td><td>—</td></tr>
+</table>
+
+<h3>Countering Curses</h3>
+<ul>
+  <li><strong><a href="#ch11">Rite of Remove Curse</a></strong> — removes a specific curse from yourself or (with their taglock) from another person</li>
+  <li><strong>Voodoo Protection Poppet</strong> — persistent passive shield against incoming curse effects</li>
+  <li><strong>Cat Familiar (the victim's own)</strong> — their curses land harder on you; your curses land less firmly on them</li>
+  <li><strong>Full Witch Hunter Armor</strong> — 90% resistance to Waking Nightmare and Misfortune; 25% on general magical damage</li>
+</ul>
+
+<!-- CH 20 -->
+<h2 class="chapter" id="ch20">Chapter 20: Other Dimensions<span class="stage stage-late">Late</span></h2>
+
+<h3>The Spirit World</h3>
+<p>The world you walk in is not the only world that exists. The <a href="#ch20">Spirit World</a> lies beside it, separated by a boundary that thins around places of power and at the edges of sleep. To enter it, drink a <a href="#ch20">Brew of Flowing Spirit</a> near an altar. You will leave your body behind. It will wait for you. Try to come back before something finds it.</p>
+
+<p>The <a href="#ch20">Spirit World</a> has a pink-magenta fog (RGB 204, 51, 153) and 50% ambient light — dim but not fully dark. Your physical body (the Corpse entity) remains at the entry point. Your health and hunger are saved and restored on exit. Natural inhabitants: Spirits, Spectres, Banshees, Poltergeists, Nightmares. Demonic Nightmare events can trigger — waves of hostile spectral entities.</p>
+
+<div class="callout callout-warn">Know where your Corpse is before you explore. If it despawns, you are stranded. Mark the entry point with a waystone before drinking.</div>
+
+<h3>The Torment Dimension</h3>
+<p>A hostile dungeon-dimension. Six levels deep, DFS-maze layout of Torment Stone corridors. Enter through a Torment Portal found in the overworld. The dimension is designed as a gauntlet. The Lord of Torment waits at the bottom — see <a href="#ch30">Chapter 30</a> for preparation.</p>
+
+<table>
+  <tr><th>Feature</th><th>Description</th></tr>
+  <tr><td>Torment Stone</td><td>Extremely blast-resistant — tunnelling out is not an option</td></tr>
+  <tr><td>Force Blocks</td><td>Barriers at level transitions; require specific items to pass</td></tr>
+  <tr><td>Refill Chests</td><td>Rare loot caches placed periodically to allow recovery</td></tr>
+  <tr><td>Flame Imps</td><td>Fast fire entities; spawn throughout all levels in numbers</td></tr>
+  <tr><td>Lord of Torment</td><td>Boss at the deepest level — see <a href="#ch30">Chapter 30</a></td></tr>
+</table>
+
+<div class="callout callout-warn">Do not enter <a href="#ch20">Torment</a> without a confirmed exit plan. The TormentHelper system manages entry and exit, but there is no automatic rescue if you are unprepared. Bring a pre-loaded transposition talisman pointing to a waystone you placed before you went in.</div>
+
+<h3>The Mirror World</h3>
+<p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light. The Mirror World contains Demons, reflected structures, and serves as the setting for mirror magic and identity-based rituals. Entry and exit are tied to specific rites.</p>
+
+<!-- CH 21 -->
+<h2 class="chapter" id="ch21">Chapter 21: Fetishes and Conjuration<span class="stage stage-late">Late</span></h2>
+
+<p>A spirit bound to a physical object becomes something useful. The scarecrow that watches with intent, the effigy that senses intrusion, the ladder that extends a boundary — each is a different vessel for the same principle. The Brazier is the machine that conjures the spirits required for this work.</p>
+
+<p>Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. Load up to three ingredients by right-clicking, ignite with a fire charge or flint and steel, then step back and let it burn. Most brazier workings draw power from a nearby altar. Patience is required — and occasionally a safe distance.</p>
+
+<div class="callout callout-recipe">
+  <strong>Brazier:</strong> Row 1: Iron Ingot · Necromantic Stone · Iron Ingot / Row 2: — · Stick · — / Row 3: Stick · Stick · Stick. The brazier does not need to be complicated. What burns inside it, often is.
+</div>
+
+<h3>Spectral Entities</h3>
+<table>
+  <tr><th>Entity</th><th>Behavior</th><th>Used In</th></tr>
+  <tr><td>Spirit</td><td>Neutral; key component in every fetish rite</td><td>All fetish bindings — 3 required per fetish (see <a href="#ch31">Bestiary</a>)</td></tr>
+  <tr><td>Spectre</td><td>Hostile; can phase through certain blocks</td><td>Sentinel and Ghost Walking fetishes</td></tr>
+  <tr><td>Banshee</td><td>Hostile; AoE screaming attack</td><td>Shrieking and Ghost Walking fetishes</td></tr>
+  <tr><td>Poltergeist</td><td>Mischievous; throws items; disrupts inventories</td><td>Disorientation fetish</td></tr>
+</table>
+
+<h3>Fetish Types</h3>
+<p>All fetish rites: 11×11 Ritual circle, 6,000 altar power. The host object can be any of: Trent Effigy, Scarecrow, or Witch's Ladder.</p>
+<table>
+  <tr><th>Fetish</th><th>Spirit Combination</th><th>Effect When Placed</th></tr>
+  <tr><td>Disorientation Fetish</td><td>3 Spirit + 2 Poltergeist</td><td>Confuses and disorients nearby intruders</td></tr>
+  <tr><td>Ghost Walking Fetish</td><td>3 Spirit + 1 Spectre + 1 Banshee</td><td>Allows the owner to pass through certain blocks</td></tr>
+  <tr><td>Sentinel Fetish</td><td>3 Spirit + 3 Spectre</td><td>Guards the area; spirits inside attack intruders</td></tr>
+  <tr><td>Shrieking Fetish</td><td>3 Spirit + 2 Banshee</td><td>Emits a shriek that disorients approaching enemies</td></tr>
+  <tr><td>Voodoo Protection Fetish</td><td>3 Spirit + 1 Banshee + 1 Spectre + 1 Poltergeist</td><td>Area-wide shield against voodoo poppet attacks</td></tr>
+</table>
+
+<h3 id="fetish-hosts">Fetish Host Objects</h3>
+
+<p>Three placeable block types serve as fetish hosts — the physical vessel into which spirits are bound. All three are functionally identical as binding targets; the difference is purely aesthetic and in what materials they require.</p>
+
+<table>
+  <tr><th>Object</th><th>Recipe</th><th>Aesthetic</th></tr>
+  <tr><td><strong>Trent Effigy</strong></td><td>3×3 grid — Oak Wood × 4 (corners) · Jack o'Lantern (top center) · Tormented Twine × 2 (middle left/right) · Rowan Wood (middle center) · Oak Wood × 2 (bottom corners). Dyeable eye and mouth.</td><td>Wooden tree-spirit effigy</td></tr>
+  <tr><td><strong>Scarecrow</strong></td><td>3×3 grid — Wool × 4 (corners) · Jack o'Lantern (top center) · Stick × 2 (middle left/right) · Tormented Twine (middle center) · Stick (bottom center). Robe color changed with dye.</td><td>Classic field scarecrow</td></tr>
+  <tr><td><strong>Witch's Ladder</strong></td><td>3×3 grid — Feather × 6 (all four sides + top/bottom sides) · String (top center) · Fanciful Thread (middle center) · String (bottom center). Dye has no effect.</td><td>Hanging knotted rope-and-feather ladder</td></tr>
+</table>
+
+<h4>Fetish Activation Modes</h4>
+<p>Once bound with a fetish rite, the object can be set to different trigger modes. Toggle between modes by right-clicking the fetish with a <a href="#boline">Boline</a>. Modes available:</p>
+<ul>
+  <li><strong>Deactivated</strong> — the fetish does nothing</li>
+  <li><strong>Activate if an unknown player is nearby</strong> — triggers for anyone whose taglock is not bound to the fetish</li>
+  <li><strong>Activate if a known player is nearby</strong> — triggers only for players whose taglock is bound</li>
+  <li><strong>Activate if a known creature is nearby</strong> — mob-targeted variant</li>
+  <li><strong>Activate when some known creatures are nearby</strong></li>
+  <li><strong>Activate when all known creatures are nearby</strong></li>
+  <li><strong>Activate when all known creatures are not nearby</strong> — inverted detection</li>
+</ul>
+<p>To make a being "known" to the fetish: right-click it with a filled <a href="#ch6">Taglock Kit</a> of that entity. To clear all known taglocks: right-click with a Water Bucket.</p>
+
+<div class="callout callout-tip">The most useful home-defense setup: Sentinel Fetish in "Activate if an unknown player is nearby" mode. It guards your base against any player whose taglock you haven't registered, without attacking your own coven. Register your coven members' taglocks to whitelist them.</div>
+
+<!-- CH 22 -->
+<h2 class="chapter" id="ch22">Chapter 22: The Hobgoblin Ecosystem<span class="stage stage-mid">Mid</span></h2>
+
+<p>Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron. They live in woodland huts, they trade in koboldite — a curious metal found only through their commerce — and they can be led around with appropriate items, which they find irresistible. The Statue of Hobgoblin Patron is a fine decoration, but right-clicking it has consequences. You have been told.</p>
+
+<h3>Finding Them</h3>
+<p>Hobgoblin Huts generate in forest biomes — 5×5×5 oak plank structures with a minimum 32-block spacing and 1–2 residents each. The loot chest inside contains Koboldite Dust. This is worth finding before you start the trade chain.</p>
+
+<h3>Five Trades, Each Unlocked in Sequence</h3>
+<ol>
+  <li>Coal → Koboldite Dust</li>
+  <li>Koboldite Dust + Gold Nugget → Koboldite Nugget</li>
+  <li>Koboldite Nuggets → Koboldite Ingot</li>
+  <li>Koboldite Ingot → Koboldite Pickaxe</li>
+  <li>Koboldite Ingot → Koboldite Pentacle</li>
+</ol>
+<p>The Pentacle at trade 5 is the altar's ×2 multiplicative recharge upgrade — the primary reason to work through this chain. Work upward. The koboldite at the end is genuinely useful.</p>
+
+<h3>Koboldite Dust from Mining</h3>
+<p>Beyond trading: a 15% chance for Koboldite Dust when a Hobgoblin mines any block. Build a mining area near your hobgoblins and let them work. It is slow, but it is renewable.</p>
+
+<h3>The Patron Statue — A Final Warning</h3>
+<p>The Statue collects worship from hobgoblins within 16 blocks. Each worship event has a 25% chance of angering nearby hobgoblins named Gulg or Mog into attacking the player. There is no reliable prevention. Build the statue behind barriers, or simply do not build it at all if you would prefer not to fight goblins.</p>
+
+
+<!-- ═══ PART III ═══ -->
+<div class="part-header" id="part3">
+  <p class="part-label">Part III</p>
+  <h2>Strange Wonders</h2>
+  <p class="part-desc">Edge cases, unusual mechanics, bosses, the bestiary, and the corners of the craft that do not announce themselves.</p>
+</div>
+
+<!-- CH 23 -->
+<h2 class="chapter" id="ch23">Chapter 23: The Crystal Ball and Divination<span class="stage stage-late">Late</span></h2>
+
+<p>The crystal ball does not tell you what you want to hear. It tells you what it perceives — which is oblique, contextual, and occasionally alarming. Right-click it without a held item, near an altar holding at least 500 power, and it will offer a reading. Whether that reading is a limitation or a mercy is a matter of interpretation.</p>
+
+<div class="callout callout-recipe">
+  <strong>Crystal Ball (Rite of Infusion, 11×11 Ritual, 2,000 power):</strong> Quartz Sphere + Gold Ingot + Happenstance Oil. The ball knows more than you do. This is fine.
+</div>
+
+<h3>Remote Viewing</h3>
+<p>Hold a filled Taglock Kit and right-click the Crystal Ball to see through that player's eyes in real time. Range: 100–150 blocks. Hold a Bound Waystone instead to see a bird's-eye view of the waystone's stored location. Using it with your own taglock shows an expanding aerial view around yourself.</p>
+
+<h3>Predictions and Their Consequences</h3>
+<p>Using the Crystal Ball near an active altar without a taglock generates a prediction — a random event that will happen to a nearby player. The prediction is not flavor: it causes the event. Some notable ones:</p>
+<ul>
+  <li>"Will chance upon the undead" — undead mobs in the area</li>
+  <li>"Will encounter a walking tree" — an Ent spawns</li>
+  <li>"Will be inundated with iron" — the Iron Ore Transposition result</li>
+  <li><strong>"Has sparked the interest of the crone (and her sisters)"</strong> — Baba Yaga arrives</li>
+  <li><strong>"Has angered the crone (and her sisters)"</strong> — a hostile Baba Yaga arrives</li>
+  <li>"Will take a trip to the Nether" — a Demon transposes you</li>
+</ul>
+<div class="callout callout-warn">You cannot predict whether Baba Yaga will be triggered. You can be ready. Keep Death Protection Poppets active when using the <a href="#ch23">Crystal Ball</a> seriously. See <a href="#ch30">Chapter 30</a> for fighting her.</div>
+
+<h3>The Seer Stone</h3>
+<p>A smaller portable divination item — alternate output of a Quartz Sphere in the Rite of Infusion. Its main use: summoning <a href="#ch13">Coven Witch</a> members by activating the Heart Glyph in a circle's center. Also used in miscellaneous prophetic and detection workings.</p>
+
+<!-- CH 24 -->
+<h2 class="chapter" id="ch24">Chapter 24: Witch Hunters<span class="stage stage-mid">Mid</span></h2>
+
+<p>They exist because we exist. Witch Hunters are organised, motivated, and unpleasant to encounter — they track vampires and werewolves as a profession and take their work seriously. They attack at range with a crossbow loaded with silver bolts, and close to melee when necessary. Silver does additional damage to transformed individuals. Their righteousness does not survive them. They drop silver bolts and occasionally carry a <a href="#silver-sword">Silver Sword</a>.</p>
+
+<h3>The Full Witch Hunter Armor Set</h3>
+<p>Crafted from Nullified Leather. Leather-level protection; iron-level durability; dyeable; enchantable. The set is worn by Witch Hunter NPCs — it is also available to you, but wearing it has a significant cost.</p>
+
+<div class="callout callout-recipe">
+  <strong>Witch Hunter Coat (example):</strong> Fill the 3×3 crafting grid with 7 Nullified Leather in the coat pattern. Repeat the appropriate pattern for each piece.
+</div>
+
+<table>
+  <tr><th>Full Set Bonus</th><th>Value</th></tr>
+  <tr><td>General magical damage resistance</td><td>25% chance to quell</td></tr>
+  <tr><td>Voodoo Poppet effect resistance</td><td>25% chance to negate</td></tr>
+  <tr><td>Curse of Waking Nightmare resistance</td><td>90% chance to block</td></tr>
+  <tr><td>Curse of Misfortune resistance</td><td>90% chance to block</td></tr>
+  <tr><td>Rite of Transposition (pull) resistance</td><td>90% chance to resist — not immunity</td></tr>
+  <tr><td>Vampiric Poppet nullification</td><td>100% block</td></tr>
+  <tr><td class="tbl-note">Your own protection poppets</td><td class="tbl-note">100% failure rate — every poppet bound to you stops working</td></tr>
+  <tr><td>Nullifying Bolt effectiveness</td><td>Only functions while wearing the full set</td></tr>
+</table>
+
+<div class="callout callout-warn">The Witch Hunter set trades your poppet protection for magical damage resistance. For most witches, this is a bad trade. Only wear it if you are being aggressively cursed and have no active poppets — or are specifically trying to resist a pulling rite.</div>
+
+<h3>Witch Hunter Dawn Variant</h3>
+<p>A rarer variant with improved base defense. The Dawn Hat, Dawn Coat, Dawn Trousers, and Dawn Boots maintain the same full-set bonus properties at better protection values. Finding the full Dawn set is a meaningful mid-game upgrade for a witch-hunter-oriented playstyle.</p>
+
+<!-- CH 25 -->
+<h2 class="chapter" id="ch25">Chapter 25: The Flying Monkey<span class="stage stage-mid">Mid</span></h2>
+
+<div class="lore-pull">There are witches who keep cats. There are witches who keep owls. And then there are witches who keep flying monkeys, and they tend to have a different kind of reputation.</div>
+
+<h3>Creation — and What It Costs</h3>
+<p>To create a Flying Monkey, you need your Owl Familiar, a tamed Wolf, and Mutandis Extremis. Right-click the Wolf with the Mutandis Extremis while the Owl Familiar is within approximately 5 blocks. Both the Wolf and the Owl are consumed. A Flying Monkey appears.</p>
+
+<div class="callout callout-warn">This destroys your Owl Familiar. The Rite of Summoning cannot resummon a familiar that was transformed — only ones that died. You lose all Owl Familiar bonuses immediately and permanently. Do this only if you have decided to trade the owl for the monkey.</div>
+
+<h3>Properties</h3>
+<ul>
+  <li>Tameable with Raw Beef or Raw Porkchop (ocelot-style — approach slowly, do not run)</li>
+  <li>Dyeable in any of the 16 Minecraft dye colors</li>
+  <li>Four skin variants; assigned at creation</li>
+  <li>Flies and hovers near its owner when tamed</li>
+</ul>
+
+<h3>Waystone Courier</h3>
+<p>Give a tamed <a href="#ch25">Flying Monkey</a> a Bound Waystone — right-click with the waystone. It will fly toward the stored coordinates, carrying you with it. A form of fast travel that requires no circle, no chalk, no altar power. Simply a well-aimed monkey.</p>
+
+<!-- CH 26 -->
+<h2 class="chapter" id="ch26">Chapter 26: Rowan Security<span class="stage stage-mid">Mid</span></h2>
+
+<p>The Rowan security system locks doors to a specific UUID — only the exact key, or a keyring containing it, can open the door. It is the most secure storage solution in the mod.</p>
+
+<p>When a Rowan Door is placed, the game automatically generates a Rowan Door Key with a unique UUID and gives it to the placing player. No other player can open that door without the matching key or keyring.</p>
+
+<h3>Rowan Keyring</h3>
+<p>Combine two or more Rowan Door Keys in a crafting grid (shapeless) to create a Keyring. The Keyring holds all their UUIDs and counts as a match for any door whose key it contains. One inventory slot; access to every door you have ever keyed into it.</p>
+
+<div class="callout callout-tip">For a coven base: assign each door a key, then distribute keyrings with all base door keys to every member. When a new door goes up, mint one new key and add copies to everyone's rings — or pass the keyring and let them do it themselves.</div>
+
+<!-- CH 27 -->
+<h2 class="chapter" id="ch27">Chapter 27: Silver — The Hunter's Metal<span class="stage stage-mid">Mid</span></h2>
+
+<p>Silver does not exist as ore. It must be precipitated from gold through the <a href="#silver-vat">Silver Vat</a> process. This makes it genuinely limited. Plan accordingly.</p>
+
+<h3 id="silver-vat">The Silver Vat</h3>
+<div class="callout callout-recipe">
+  <strong>Silver Vat:</strong> 4 Iron Ingots (corners of 3×3) + Furnace (center) + Water Bucket.
+</div>
+<p>Place the Silver Vat adjacent to an active Furnace smelting Gold Ore. Right-click the Vat to begin monitoring. Each gold ore smelted has a 25% chance to yield 1 Silver Ingot in the Vat. On average: four gold ore per silver ingot. Run multiple adjacent furnaces, or use Fortune pickaxes for more ore per vein before smelting.</p>
+
+<h3 id="silver-sword">Silver Sword</h3>
+<div class="callout callout-recipe">
+  <strong>Silver Sword:</strong> 8 Silver Ingots filling the 8 surrounding slots of a 3×3 grid, Golden Sword in the center.
+</div>
+<p>Deals substantially increased damage to werewolves and vampires. Witch Hunters carry these as standard melee weapons. The damage bonus is significant — plan for it if you are transformed.</p>
+
+<h3>Silvered Witch Hunter Armor</h3>
+<p>Each standard Witch Hunter armor piece can be silvered by combining it with 2–3 Silver Ingots in the crafting grid. The silvered variants maintain the same stats while adding silver's anti-supernatural property. Silvered armor still retains all full-set bonus properties of the base Witch Hunter set — including the poppet failure clause. That remains.</p>
+
+<!-- CH 28 -->
+<h2 class="chapter" id="ch28">Chapter 28: Dream Weavers and Sleep Magic<span class="stage stage-mid">Mid</span></h2>
+
+<p>Sleep magic operates while a player is in the sleep state. Dream Weavers are decorative wall hangings placed near a bed that sift and sieve dreams — leaving behind either the beneficial or the harmful kind, depending on which variant you hang. They are only useful when placed on a wall adjacent to the bed being slept in.</p>
+
+<p>Crafting them requires materials found only in the <a href="#ch20">Spirit World</a>. You cannot make a Dream Weaver until you have visited that place at least once and gathered its cotton. That is the intended progression: visit the Spirit World, gather materials, return with something to show for it.</p>
+
+<h3>Spirit World Materials</h3>
+<table>
+  <tr><th>Item</th><th>Found In</th><th>Processed Into</th><th>Used For</th></tr>
+  <tr><td>Wispy Cotton</td><td>Spirit World plant</td><td>Fanciful Thread (<a href="#spinning-wheel">Spinning Wheel</a>: 4× Wispy Cotton + String + Odour of Purity)</td><td>Beneficial Dream Weavers</td></tr>
+  <tr><td>Disturbed Cotton</td><td>Spirit World plant</td><td>Tormented Twine (<a href="#spinning-wheel">Spinning Wheel</a>: 4× Disturbed Cotton + String + Reek of Misfortune)</td><td>Dream Weaver of Nightmares; component in all weavers</td></tr>
+</table>
+
+<h3>Dream Weaver Variants</h3>
+<p>All five variants are crafted in a 3×3 grid with an Item Frame in the center slot, Diamond Vapor top center, and Feathers in the two corner positions of the top and bottom rows. The distinguishing ingredients are the thread type and the potions used.</p>
+
+<table>
+  <tr><th>Variant</th><th>Normal Effect (on wake)</th><th>Near Nightmares Weaver</th><th>Key Ingredients</th></tr>
+  <tr><td>Dream Weaver of Fleet Foot</td><td>Speed boost</td><td>Slowness instead</td><td>Fanciful Thread + Splash Potion of Swiftness + Splash Potion of Slowness</td></tr>
+  <tr><td>Dream Weaver of Iron Arm</td><td>Strength boost</td><td>Weakness instead</td><td>Fanciful Thread + Splash Potion of Strength + Splash Potion of Weakness</td></tr>
+  <tr><td>Dream Weaver of Fasting</td><td>Saturation boost</td><td>Hunger instead</td><td>Fanciful Thread + Splash Potion of Healing II + Mellifluous Hunger</td></tr>
+  <tr><td>Dream Weaver of Intensity</td><td>Night Vision boost; amplifies all other nearby weavers</td><td>Blindness instead</td><td>Fanciful Thread + Brew of Flowing Spirit + Brew of Sleeping</td></tr>
+  <tr><td>Dream Weaver of Nightmares</td><td>Weakness on wake; corrupts all other weavers to give penalties</td><td>Blindness instead of Weakness (stacked)</td><td>Tormented Twine (all thread slots) + Splash Potion of Poison + Splash Potion of Night Vision</td></tr>
+</table>
+
+<div class="callout callout-tip">The Dream Weaver of Intensity amplifies every other weaver placed near the same bed. Pair it with Fleet Foot and Iron Arm for compounding morning buffs. The order in which they are placed does not matter — Intensity reads whatever else is near and amplifies it.</div>
+
+<div class="callout callout-warn">A single Dream Weaver of Nightmares near a bed corrupts every other weaver present, flipping their bonuses into penalties. Two Nightmares Weavers near the same bed compound to give Blindness instead of Weakness. Used offensively near another player's bed, this is a low-effort persistent annoyance that is difficult to detect without actively checking nearby walls.</div>
+
+<h3>The Nightmares Weaver and Brew of Sleeping</h3>
+<p>The Dream Weaver of Nightmares also reduces the probability of entering the Spirit World during Nightmare events by 50% when a Brew of Sleeping is used nearby. This is a double-edged tool: placed near your own bed it somewhat protects against unwanted <a href="#ch20">Spirit World</a> entry; placed near someone else's bed it degrades their other weavers while making their sleep experience miserable.</p>
+
+<h3>Apple of Sleeping</h3>
+<p>Forces the consumer into a sleep state immediately regardless of time of day. Uses: processing taglocks outside normal sleep cycles, triggering Dream Weaver effects mid-day, or as a targeted incapacitating item used on other players. Any Dream Weavers near the bed where they land apply normally.</p>
+
+<h3>Brew of Nightmare</h3>
+<p>Thrown in an area, triggers Nightmare entity spawns directly without requiring sleep. A well-placed protective <a href="#ch28">Dream Weaver</a> counters it; without one, the target deals with Nightmares regardless of whether they are awake or asleep.</p>
+
+<!-- CH 29 -->
+<h2 class="chapter" id="ch29">Chapter 29: Mutation — Growing Owls and Toads<span class="stage stage-mid">Mid</span></h2>
+
+<p>Owls and Toads do not spawn naturally. Both must be created through the mutation system — a spatial multi-block apparatus using <a href="#critter-snare">Critter Snares</a>, <a href="#grassper">Grasspers</a>, and Mutandis Extremis. The apparatus layout is the same for both; only the source animal and snare contents differ.</p>
+
+<h3>Mutation Apparatus Components</h3>
+<p>The mutation apparatus requires three items that are themselves created through mutation. Build them in this order before attempting to create an Owl or Toad.</p>
+
+<h4 id="mutating-sprig">Mutating Sprig</h4>
+<p>The trigger item. Used on the apparatus cobweb to start a mutation. It also converts Dirt to Mycelium (or Mycelium to Dirt) when left-clicked, and converts submerged Dirt to Clay. Durability is limited — it breaks after a few uses.</p>
+<div class="callout callout-recipe">
+  <strong>Mutating Sprig (Witch's Cauldron, 3,080 altar power):</strong> offer Nether Wart + Ent Twig, then use Mutandis Extremis on the heated, filled cauldron → Mutating Sprig.
+</div>
+
+<h4 id="critter-snare">Critter Snare</h4>
+<p>A trap that captures and holds a single small mob. Used in the mutation apparatus to hold the source creatures (Bats for Owls, Slimes for Toads). The captured mob stays inside even if you pick up the snare. Sneak-right-click to release the mob without breaking it.</p>
+<div class="callout callout-recipe">
+  <strong>Critter Snare (mutation):</strong> Place a Cobweb above a Water source block. Surround it North/South/East/West with Alder Saplings. Lure a Zombie into the cobweb. Use a <a href="#mutating-sprig">Mutating Sprig</a> on the cobweb. Each attempt produces Critter Snares at the sapling positions. The Zombie is consumed.
+</div>
+
+<h4 id="grassper">Grassper</h4>
+<p>A grasping plant that holds an item. Used in the mutation apparatus to hold material components (Mutandis Extremis, Attuned Stone Charged). Right-click a Grassper to insert an item; right-click again to take it back. Also counts as an altar power source (+2 per block, cap 10).</p>
+<div class="callout callout-recipe">
+  <strong>Grassper (mutation):</strong> Place a Chest above a Water source block. Surround it North/South/East/West with Tall Grass. Use a <a href="#mutating-sprig">Mutating Sprig</a> on the Chest. The Chest and Grass are consumed; Grasspers appear at the grass positions.
+</div>
+
+<div class="callout callout-tip">Both Critter Snares and Grasspers require the Mutating Sprig to create, and the Sprig itself now uses a live Witch's Cauldron route. Make the sprig first, then use it for the mutation apparatus rather than relying on command-only placeholders.</div>
+
+<h3>The Apparatus</h3>
+<ol class="steps">
+  <li>Place a <strong>Cobweb</strong> directly on top of a <strong>Water source block</strong>.</li>
+  <li>In the four <strong>cardinal directions</strong> (N/S/E/W): place <strong>Critter Snares</strong>. Fill 2–4 of them with the target creature. The number of filled snares equals the number of animals produced.</li>
+  <li>In the four <strong>diagonal directions</strong> (NW/SW/SE/NE): place <strong>Grasspers</strong>. Three hold 3× Mutandis Extremis each. The North-East Grassper holds an <strong>Attuned Stone (Charged)</strong> instead.</li>
+  <li>Lure the source animal onto the cobweb.</li>
+  <li>Use a <strong>Mutating Sprig</strong> on the cobweb to trigger.</li>
+</ol>
+
+<div class="two-col">
+  <div>
+    <h4>Creating Owls</h4>
+    <p><strong>Source animal:</strong> Tamed Wolf<br>
+    <strong>Snare contents:</strong> Bats<br>
+    Wolf and Bats are consumed. Owls produced = bat-filled snares used. Breed Wolves first — each attempt consumes one.</p>
+  </div>
+  <div>
+    <h4>Creating Toads</h4>
+    <p><strong>Source animal:</strong> Ocelot (need not be tamed)<br>
+    <strong>Snare contents:</strong> Slimes<br>
+    Ocelot and Slimes are consumed. Toads produced = slime-filled snares used. Herd Ocelots; taming is not required.</p>
+  </div>
+</div>
+
+<div class="callout callout-tip">Fill up to 4 Critter Snares per run to produce multiple animals in one mutation. More efficient than running the apparatus repeatedly.</div>
+
+<h3>Mutandis vs. Mutandis Extremis</h3>
+<table>
+  <tr><th>Item</th><th>Use</th><th>Required For</th></tr>
+  <tr><td><span class="item">mutandis</span></td><td>Transforms vanilla plants into Witchery variants when applied; use to generate Witchery flora in any biome</td><td>Generating Belladonna, Snowbell, Blood Poppy, etc. in a biome that lacks them</td></tr>
+  <tr><td><span class="item">mutandis_extremis</span></td><td>Advanced mutation; used in the creature apparatus</td><td>Creating Owls, Toads, and Flying Monkeys</td></tr>
+</table>
+
+<!-- CH 30 -->
+<h2 class="chapter" id="ch30">Chapter 30: Bosses<span class="stage stage-end">Endgame</span></h2>
+
+<h3>Baba Yaga</h3>
+<div class="lore-pull">Do not look too eagerly into the glass. The crone looks back.</div>
+
+<p>Baba Yaga is a boss witch summoned as a consequence of using the <a href="#ch23">Crystal Ball</a>. She arrives riding in a large mortar and attacks by throwing a variety of potions — including Witchery brews. She has innate Thorns that reflect melee damage back to the attacker.</p>
+
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Spawn trigger</td><td>Crystal Ball prediction: "has sparked/angered the interest of the crone"</td></tr>
+  <tr><td>Primary attack</td><td>Potion barrage from her mortar</td></tr>
+  <tr><td>Passive defense</td><td>Innate Thorns — all melee reflects</td></tr>
+  <tr><td>Thorns counter</td><td>Wooden weapons and Nullifying Bolts bypass the Thorns effect</td></tr>
+  <tr><td>Variants</td><td>Arrives alone, with one sister, or as a full trio. Trio indicated by Crystal Ball mentioning "sisters."</td></tr>
+  <tr><td>Disposition</td><td>Neutral or hostile depending on which prediction fired</td></tr>
+  <tr><td>Drop</td><td>Baba Yaga's Hat</td></tr>
+</table>
+
+<div class="callout callout-tip">Use a wooden weapon or Nullifying Bolts — both bypass Thorns entirely. Stock brew-counters before the fight (Brew Gas Immunity, Absorption, high-armor enchants). If she arrives as a trio, prioritize one at a time.</div>
+
+<h3>The Horned Huntsman</h3>
+<div class="lore-pull">He comes when blood has been spilled on sacred wood. He comes when the wolf has grown arrogant. He does not come to talk.</div>
+
+<p>A powerful boss that can be summoned two ways, producing either a 400 HP or 200 HP variant. Up to 20 melee and ranged damage. Periodically summons wolves with Resistance to assist him. Can teleport short distances. Weak to axes and the Spear of the Huntsman.</p>
+
+<h4>Summoning Method 1: The Wicker Man</h4>
+<p>Build a Wicker Man from Bloodied Wicker Bundle blocks — exact pattern and facing direction both matter. Ignite with fire (lighter, lightning, fire charge, lava, or <a href="#ch12b">Mystic Branch</a> Incendio effect). The Huntsman emerges from the burning structure.</p>
+<p><strong>Materials:</strong> 20 Bloodied Wicker Bundle = 20 Wicker Bundle + 4 Demonic Blood. Wicker Bundle: fill a 3×3 crafting grid with any Saplings. Bloodied Wicker Bundle: 5 Wicker Bundle + 1 Demonic Blood → 5 Bloodied Wicker Bundle.</p>
+
+<h4>Summoning Method 2: The Wolf Mastery Path</h4>
+<p>Reach <a href="#wolf-mastery">Wolf Mastery level 5</a> while under the Curse of the Wolf, then use the Horn of the Hunt. This produces the 400 HP variant and is the harder path to the harder fight.</p>
+
+<p><strong>Drops:</strong> Enchanted books, Wither Skulls, Spear of the Huntsman, Demonic Blood.</p>
+
+<h3>The Lord of Torment</h3>
+<div class="lore-pull">He does not guard the maze. He is the maze. And he has been waiting longer than you have been alive.</div>
+
+<p>Found at the deepest level of the Torment Dimension. Required for several endgame crafting paths. The fight demands full preparation.</p>
+
+<p><strong>Minimum preparation:</strong></p>
+<ul>
+  <li>At least one Death Protection Poppet bound to yourself — two is better</li>
+  <li>Full enchanted armor (Protection IV + Unbreaking III recommended)</li>
+  <li>Silver Sword for any vampire or werewolf mechanics</li>
+  <li>Brews of Absorption and Healing stocked</li>
+  <li><a href="#brew-of-soaring">Brew of Soaring</a> for mobility in the corridors</li>
+  <li>A pre-loaded Transposition talisman pointing back to a waystone outside the dimension</li>
+</ul>
+
+<p>Specific drops are left undocumented here — that discovery belongs to the craft. The Witches' Primer has the full drop tables when you are ready for them.</p>
+
+<!-- CH 31 -->
+<h2 class="chapter" id="ch31">Chapter 31: The Bestiary<span class="stage stage-mid">Mid</span></h2>
+
+<p>All 24 entities added by Witchery Rewoven. Entity IDs use the <code>witchery:</code> namespace.</p>
+
+<h3>Familiars and Companions</h3>
+<table>
+  <tr><th>Entity</th><th>HP</th><th>Created By</th><th>Notes</th></tr>
+  <tr><td>Familiar Cat <code>familiar_cat</code></td><td>50 (as familiar)</td><td>Rite of Binding — tamed ocelot</td><td>Life-linked. Curse enhancement and resistance. 5 armor.</td></tr>
+  <tr><td>Owl <code>owl</code></td><td>5 wild; 50 familiar</td><td>Mutation — Wolf + Bats</td><td>Tame with Raw Beef/Porkchop. Dyeable. Will use brews given to it.</td></tr>
+  <tr><td>Toad <code>toad</code></td><td>5 wild; 50 familiar</td><td>Mutation — Ocelot + Slimes</td><td>Tame with Rotten Flesh. Dyeable. Rare drop: Toe of Frog.</td></tr>
+  <tr><td>Flying Monkey <code>flying_monkey</code></td><td>Moderate</td><td>Wolf + Owl Familiar + Mutandis Extremis</td><td>Tame with Raw Beef/Porkchop. Dyeable. 4 skin variants. Waystone courier.</td></tr>
+</table>
+
+<h3>Spectral Beings</h3>
+<table>
+  <tr><th>Entity</th><th>HP</th><th>Spawns</th><th>Behavior</th></tr>
+  <tr><td>Spirit <code>spirit</code></td><td>20</td><td>Spirit World; Brazier</td><td>Neutral. Required in all fetish bindings — 3 per fetish. Always drops 1 Subdued Spirit.</td></tr>
+  <tr><td>Spectre <code>spectre</code></td><td>Moderate</td><td>Spirit World; Brazier</td><td>Hostile. Can pass through certain blocks.</td></tr>
+  <tr><td>Banshee <code>banshee</code></td><td>Moderate</td><td>Spirit World; Brazier</td><td>Hostile. AoE screaming attack.</td></tr>
+  <tr><td>Poltergeist <code>poltergeist</code></td><td>Low</td><td>Spirit World; Brazier</td><td>Hostile. Throws items; disrupts inventories.</td></tr>
+  <tr><td>Corpse <code>corpse</code></td><td>—</td><td><a href="#ch20">Spirit World</a> entry point</td><td>Your physical body while in the Spirit World. Return to it to exit.</td></tr>
+</table>
+
+<h3>Wild Creatures</h3>
+<table>
+  <tr><th>Entity</th><th>HP</th><th>Hostility</th><th>Notable</th></tr>
+  <tr><td>Coven Witch <code>coven_witch</code></td><td>30</td><td>Neutral (hostile if attacked)</td><td>Recruitable. See <a href="#ch13">Ch 13</a>. Throws Witchery potions. Drops Witch's Hand.</td></tr>
+  <tr><td>Witch Hunter <code>witch_hunter</code></td><td>Moderate</td><td>Hostile to witches</td><td>Crossbow + <a href="#silver-sword">silver bolts</a>. See <a href="#ch24">Ch 24</a>. Drops armor pieces.</td></tr>
+  <tr><td>Mandrake Mob <code>mandrake_mob</code></td><td>Low</td><td>Hostile</td><td>Animated Mandrake root. Screams to disorient.</td></tr>
+  <tr><td>Treefyd <code>treefyd</code></td><td>50 base; upgradeable</td><td>Hostile to non-whitelist</td><td>Grown from Treefyd Seeds. Creeper Heart → 100 HP / 4 dmg. Demon Heart → 150 HP / 8 dmg. <a href="#boline">Boline</a> adjusts roaming behavior. Drops Roses.</td></tr>
+  <tr><td>Ent <code>ent</code></td><td>200</td><td>Hostile (deforestation)</td><td>Summoned by felling too many witch trees. Weak to axes. Drops Ent Twig + saplings.</td></tr>
+  <tr><td>Flame Imp <code>flame_imp</code></td><td>Low</td><td>Hostile</td><td>Fast fire entity. Inhabits <a href="#ch20">Torment Dimension</a>; summonable via Infernal rite.</td></tr>
+  <tr><td>Hobgoblin <code>hobgoblin</code></td><td>20</td><td>Neutral / hostile to villagers</td><td>5-trade sequence. 15% Koboldite Dust drop from mining. Lives in forest huts.</td></tr>
+</table>
+
+<h3>Bosses</h3>
+<table>
+  <tr><th>Entity</th><th>HP</th><th>How to Meet</th><th>Key Drops</th></tr>
+  <tr><td>Baba Yaga</td><td>Unknown</td><td>Crystal Ball prediction</td><td>Baba Yaga's Hat</td></tr>
+  <tr><td>Horned Huntsman <code>horned_huntsman</code></td><td>200 or 400</td><td>Wicker Man or <a href="#wolf-mastery">Wolf Mastery 5</a> + Horn</td><td>Enchanted Books, Wither Skulls, Spear of Huntsman, Demonic Blood</td></tr>
+  <tr><td>Lord of Torment <code>lord_of_torment</code></td><td>Very High</td><td>Bottom of Torment Dimension</td><td>Endgame materials</td></tr>
+  <tr><td>Death <code>death</code></td><td>High</td><td>Special conditions</td><td>—</td></tr>
+  <tr><td>Binky <code>binky</code></td><td>High</td><td>Special conditions</td><td>Binky's Skull</td></tr>
+</table>
+
+<h3>Other Entities</h3>
+<table>
+  <tr><th>Entity</th><th>Notes</th></tr>
+  <tr><td>Demon <code>demon</code></td><td>Summoned via Infernal circles. Drops Demon Heart (+100 altar power; cap 2). Demonic Blood source.</td></tr>
+  <tr><td>Nightmare <code>nightmare</code></td><td>100 HP, 4 damage. Teleports to sleeping players; strips a random armor slot on hit. Spawned by Curse of Waking Nightmare or Brew of Nightmare. Blocked by protective <a href="#ch28">Dream Weaver</a>s. Drops Mellifluous Hunger in the Spirit World only.</td></tr>
+  <tr><td>Broom <code>broom</code></td><td>The rideable broom entity. Not a combat entity.</td></tr>
+  <tr><td>Soulfire <code>soulfire</code></td><td>Spectral fire entity; ambient hazard in Spirit World.</td></tr>
+</table>
+
+<!-- CH 33 — PVP -->
+<h2 class="chapter" id="ch33">Chapter 33: The Craft in Conflict — Multiplayer and PvP<span class="stage stage-late">Late</span></h2>
+
+<p>Witchcraft in a multiplayer world is not merely a progression system — it is an adversarial toolkit. This chapter covers the craft as a weapon and a defense: how to pursue another player through taglock and rite, and how to make yourself as difficult a target as possible.</p>
+
+<h3>The Attacker's Toolkit</h3>
+
+<h4>Step 1 — Acquire the Taglock</h4>
+<p>Nothing works without the taglock. Prioritize collection before anything else.</p>
+<ul>
+  <li><strong>Bed method</strong> — the most reliable. If you have physical access to their bed, right-click it while they sleep. Silent; they receive no notification.</li>
+  <li><strong>Sneak approach</strong> — sneak behind them and right-click. Can fail; failed attempts send a notification. Get it right the first time.</li>
+  <li><strong>Blood Poppy</strong> — plant a Blood Poppy near a location they frequent. After they take damage nearby, right-click the poppy. Passive; they never know.</li>
+  <li><strong>Leech Chest</strong> — found in generated structures. Contents vary; occasionally pre-filled.</li>
+</ul>
+
+<h4>Step 2 — Destroy Their Defenses First</h4>
+<p>A well-prepared witch will have a Voodoo Protection Poppet on a Poppet Shelf. Apply the Curse of Corrupt Poppet before all other offensive rites — this destroys a poppet in their possession. Target the protection poppets; leave the offensive ones for later. This requires a Cat Familiar.</p>
+<p>If they have multiple poppets on a shelf, the Curse of Corrupt Poppet destroys one at a time. Apply it repeatedly. They have a finite shelf; you can outlast it.</p>
+
+<h4>Step 3 — Choose Your Curse</h4>
+<table>
+  <tr><th>Curse</th><th>Best Used When</th></tr>
+  <tr><td>Creatures of Night</td><td>Target is in a built base — fills it with hostile mobs, making their space uninhabitable</td></tr>
+  <tr><td>Hell on Earth</td><td>Target is building or farming — converts their terrain and destroys crops</td></tr>
+  <tr><td>Waking Nightmare</td><td>Target is trying to sleep or rest — Nightmares interrupt and harass</td></tr>
+  <tr><td>Sinking</td><td>Target lives near water or travels over ocean — lethal if caught in the open</td></tr>
+  <tr><td>Overheating</td><td>Persistent damage that bypasses fire resistance; difficult to counter</td></tr>
+  <tr><td>Insanity</td><td>General harassment; impairs perception and navigation</td></tr>
+  <tr><td>Raining Toads</td><td>Low lethality but persistent annoyance; good as a secondary alongside a more serious curse</td></tr>
+  <tr><td>Curse of the Wolf</td><td>Target is a vampire or in a confined base — forced werewolf transformation disrupts everything</td></tr>
+</table>
+
+<h4>The Pull Rite — Forced Extraction</h4>
+<p>Once you have their taglock, the Rite of Transposition (Entity Pull) yanks them to your location regardless of where they are. Set up a prepared kill zone first — summon a Sentinel Fetish or have allies waiting — then pull and let the environment do the work. The 90% Witch Hunter armor resist means you need to cast this multiple times on a well-equipped target, but each cast is cheap relative to what it accomplishes if it lands.</p>
+
+<h4>Coven Coordination</h4>
+<p>Two or more witches attacking the same target are significantly more effective than one. Divide roles: one witch handles the Pull rite; one curses; one has the Sentinel Fetish deployed. The target's attention is split and their counters are finite. Coven witches can assist directly in the kill zone.</p>
+
+<h3>The Defender's Toolkit</h3>
+
+<h4>Taglock Security — Your First Priority</h4>
+<ul>
+  <li>Never sleep near strangers; use a coffin in a locked room if possible</li>
+  <li>Keep your bed in a Rowan-door-locked room with a keyring held only by you</li>
+  <li>A Voodoo Protection Poppet on a Poppet Shelf, bound to yourself, counters most curse effects passively — keep it stocked</li>
+  <li>A Poppet Protection Poppet blocks remote destruction of your other poppets</li>
+</ul>
+
+<h4>Countering the Pull Rite</h4>
+<p>The Entity Pull cannot be fully blocked — only resisted. Full Witch Hunter armor gives 90% resistance. That means roughly 1 in 10 casts will land regardless of armor. Countermeasures:</p>
+<ul>
+  <li>Wear full Witch Hunter armor when you know an enemy has your taglock — accept the poppet failure and survive the pulls</li>
+  <li>Spend your taglock — if you suspect someone has it, change beds and collect a fresh taglock of yourself, which does not invalidate the old one but gives you a fresh one to use in your own protective rites</li>
+  <li>Stay deep underground or in the Torment Dimension — Transposition pulls work dimensionally but you have more warning time if you hear the rite activating</li>
+</ul>
+
+<h4>Countering Curses</h4>
+<p>The Rite of Remove Curse clears one curse per cast. Against a persistent attacker who keeps reapplying: maintain a <a href="#ch14">Voodoo Protection Poppet</a> and have allies cast the Rite of Removal on you repeatedly — or outlast their altar power. A Cat Familiar does not prevent incoming curses but makes them easier to remove and harder to land in the first place.</p>
+
+<h4>Base Defense — Fetishes and Weavers Used Offensively</h4>
+<p>Fetishes placed around your base perimeter are your first physical deterrent. A Sentinel Fetish attacks intruders without requiring you to be present. A Disorientation Fetish makes navigation inside your base confusing for anyone who enters without authorization. A Shrieking Fetish adds noise and panic. Place them on walls, in corridors, and at choke points.</p>
+<p>A Dream Weaver of Nightmares placed near a sleeping area in your base that an attacker might exploit does not protect you — but it corrupts any beneficial Dream Weavers they might have planted there during a prior visit. Check your walls occasionally.</p>
+
+<h4>The Nuclear Option — Demons at Home</h4>
+<p>A Sentinel Fetish is reliable defense. A summoned Demon bound to a prepared room is less reliable and significantly more dangerous to everyone including you. If you choose to summon Demons for base defense, ensure the binding is tight and the clear space requirement (7×7×4 inside the circle) is architecturally contained. A Demon that breaks containment does not distinguish allies from enemies. That said: it is an option, and experienced attackers will hesitate.</p>
+
+<div class="callout callout-also">Taglock collection: <a href="#ch6">Ch 6</a> · Curses: <a href="#ch19">Ch 19</a> · Poppet defense: <a href="#ch14">Ch 14</a> · Waystones and Pull rite: <a href="#ch18">Ch 18</a> · Fetishes: <a href="#ch21">Ch 21</a> · Witch Hunter armor: <a href="#ch24">Ch 24</a> · Coven: <a href="#ch13">Ch 13</a> · Familiars (Cat for curse control): <a href="#ch7">Ch 7</a></div>
+
+<!-- CH 34 -->
+<h2 class="chapter" id="ch34">Chapter 34: Specialist Gear<span class="stage stage-mid">Mid</span></h2>
+
+<p>Items that don't fit neatly into other categories — two belt-slot armors, and a trap.</p>
+
+<h3 id="biting-belt">Biting Belt</h3>
+<p>The <a href="#biting-belt">Biting Belt</a> is a legs-slot armor piece made from Impregnated Leather that carries the natural abilities of a Parasytic Louse. It can be loaded with up to two potions: when the wearer is attacked, healing and buff-type potions apply to the wearer, while harm and debuff-type potions apply to the attacker. It is, in other words, a retaliatory potion rig built into your clothing.</p>
+
+<div class="callout callout-recipe">
+  <strong>Biting Belt:</strong> Row 1: Parasytic Louse · Impregnated Leather · Mellifluous Hunger / Row 2: Impregnated Leather · Golden Thread · Impregnated Leather / Row 3: Impregnated Leather · — · Impregnated Leather. After crafting, combine with potions to load them.
+</div>
+
+<p>The belt is dyeable, invisible while the wearer is invisible (to other players but not mobs), and repairable with 4× Impregnated Leather. Leather-level armor, iron-level durability.</p>
+
+<h3 id="bark-belt">Bark Belt</h3>
+<p>The Bark Belt is a legs-slot armor piece that grows a natural bark shield when the wearer stands on grass or mycelium. This bark appears as stick icons on the armor bar and absorbs hits — being struck while bark is present costs only 1–2 bark points and negates all damage, unless the attacker uses wooden weapons. Everything except wood is blocked by bark. The tooltip says it all: <em>So this is how an Ent feels.</em></p>
+
+<div class="callout callout-recipe">
+  <strong>Bark Belt:</strong> Row 1: Brew of Flowing Spirit · Emerald · Brew of Flowing Spirit / Row 2: Ent Twig · <a href="#biting-belt">Biting Belt</a> · Ent Twig / Row 3: Brew of Flowing Spirit · Creeper Heart · Brew of Flowing Spirit. Requires a <a href="#biting-belt">Biting Belt</a> as its base.
+</div>
+
+<p>The bark grows two sticks per eligible armor/clothing piece worn — Witch's Hat, Witch's Robes, and other Impregnated Leather items each add two. If you wear incompatible armor (iron, chainmail) alongside the Belt, bark does not grow over those pieces. Maximum bark accumulates faster when you are standing still on grass. Plan your fights accordingly — the Belt rewards defenders who hold ground.</p>
+
+<div class="callout callout-warn">Wooden weapons bypass bark protection entirely. A well-equipped attacker who knows you wear the Bark Belt will carry a wooden sword. The same applies to Baba Yaga's Thorns — always check what your enemy is swinging before relying on bark.</div>
+
+<h3 id="beartrap">Beartrap</h3>
+<p>A placeable <a href="#beartrap">trap</a> that captures and holds in place most mobs. Place it on the ground — any mob that walks over it is caught and cannot move until the trap is broken or the mob escapes. Useful for holding live creatures for taglock collection, keeping summoned entities in place while you prepare a circle, or slowing down a pursuing Witch Hunter.</p>
+
+<div class="callout callout-recipe">
+  <strong>Beartrap:</strong> Row 1: Iron Ingot × 3 / Row 2: Shears · Heavy Weighted Pressure Plate · Shears / Row 3: Iron Ingot × 3.
+</div>
+
+<!-- CH 32 -->
+<h2 class="chapter" id="ch32">Chapter 32: Rules Worth Knowing<span class="stage stage-end">Endgame</span></h2>
+
+<h3>Blocks That Do Not Power the Altar</h3>
+<p>The following do not contribute, despite reasonable expectation that they should:</p>
+<ul>
+  <li>Double Tall Grass, Large Fern — the 2-block-high variants</li>
+  <li>Lilac, Peony, Rosebush, Sunflower — double-tall decorative flowers</li>
+  <li>Minedrake, Wolfsbane, Wormwood — Witchery plant blocks</li>
+</ul>
+
+<h3>Crop Growth Stage Is Irrelevant</h3>
+<p>Crops contribute +4 power whether planted 5 seconds ago or fully mature. You do not need to harvest or maintain them. Plant them; put a glass ceiling above to prevent growth; move on.</p>
+
+<h3>The Pentacle Multiplier Is Multiplicative</h3>
+<p>Adding the Pentacle does not add ×2 to your recharge. It doubles the <em>total accumulated recharge</em> from all other sources. Base(1) + Player Head(3) = ×4 recharge. Adding Pentacle: ×8. Add the skull upgrades first, then the Pentacle.</p>
+
+<h3>The Arthana Extends Outward Distribution Only</h3>
+<p>Many practitioners place the Arthana expecting to draw power from farther away. This does not happen. The Arthana only extends the range at which the altar can <em>push</em> power outward to kettles. It does not affect gathering range. Only use it if your kettle placement genuinely exceeds the base distribution distance.</p>
+
+<h3>The Witch Hunter Set Breaks Your Own Poppets</h3>
+<p>Wearing all four Witch Hunter pieces causes every protection poppet bound to you to fail with 100% certainty. The shelf scans for your poppets and triggers nothing. If you wear the set, remove your poppets or accept the trade. The set is genuinely useful against curse attacks. It is not compatible with poppet-based protection.</p>
+
+<h3>Silver Is 25% Average, Not Guaranteed</h3>
+<p>Four gold ore per silver ingot on average. Run multiple furnaces adjacent to one Silver Vat, or use Fortune III on ore before smelting. Both accelerate the production rate. Neither makes it fast. Plan ahead.</p>
+
+<h3>JEI Does Not Show Circle Magic</h3>
+<p>The JEI plugin covers Kettle, Oven, Distillery, Spinning Wheel, and Brazier recipes. Circle Magic rites are intentionally excluded — they are meant to be discovered through the Witches' Primer or documentation like this. If you cannot find a recipe in JEI, it is almost certainly a circle rite.</p>
+
+<h3>The Attuned Stone (Charged) Is Returned After Use</h3>
+<p>When used in a rite as a power substitute, the Charged Stone is not consumed — it reverts to an uncharged Attuned Stone and returns to your inventory. Charge it at base; carry it to the field; use it; recharge it next visit. This makes the Rite of Charging one of the most practical investments in the early game.</p>
+
+<h3>Demon Heart Treefyd Upgrades Are Permanent</h3>
+<p>Using a Creeper Heart on a Treefyd permanently raises it to 100 HP and 4 damage. Using a Demon Heart raises it to 150 HP and 8 damage. These upgrades do not stack and cannot be reversed. Use a Demon Heart for the maximum result. A Demon Heart Treefyd is a credible guard with the health of a mid-tier boss.</p>
+
+<h3>Taglock Failure Notifies the Target</h3>
+<p>If you attempt to covertly taglock another player by sneak-approaching them and fail, they receive a chat notification. Repeated failures tell them exactly what you are trying to do. Get it right the first time, or use the bed method instead.</p>
+
+<h3>The Flying Monkey Cannot Be Resummoned</h3>
+<p>The Rite of Summoning works on Familiars that died. A Flying Monkey was never bound as a Familiar — it was created through mutation. If it dies, it is gone. Creating a new one requires a new Owl Familiar sacrifice. This is worth knowing before you take it into <a href="#ch20">Torment</a>.</p>
+
+
+<!-- ═══ APPENDICES ═══ -->
+<div class="part-header" id="appendices">
+  <p class="part-label">Appendices</p>
+  <h2>Reference Material</h2>
+  <p class="part-desc">Tables and numbers. Source: ftbwiki.org altar article and registered mod data.</p>
+</div>
+
+<p class="appendix-label" id="appA">Appendix A</p>
+<h2 class="chapter">Full Altar Power Source Table</h2>
+<p>Equivalent groups share a single cap — mixing two equivalent blocks splits the cap between them. Theoretical maximum (excluding Infinity Egg): approximately 3,980 power from 1,510 carefully placed blocks.</p>
+<table>
+  <tr><th>Block</th><th>Power/Block</th><th>Cap</th><th>Max</th><th>Equivalent Group</th></tr>
+  <tr><td>Dirt / Podzol</td><td>+1</td><td>80</td><td>+80</td><td>Dirt + podzol share the 80-block cap</td></tr>
+  <tr><td>Farmland</td><td>+1</td><td>100</td><td>+100</td><td>—</td></tr>
+  <tr><td>Mycelium</td><td>+1</td><td>80</td><td>+80</td><td>—</td></tr>
+  <tr><td>Water</td><td>+1</td><td>50</td><td>+50</td><td>Source + flowing water share the cap</td></tr>
+  <tr><td>Grass Block</td><td>+2</td><td>80</td><td>+160</td><td>—</td></tr>
+  <tr><td>Early Vanilla Wood (logs)</td><td>+2</td><td>50</td><td>+100</td><td>Birch, jungle, oak, spruce wood — shared cap</td></tr>
+  <tr><td>Later Vanilla Wood (logs)</td><td>+2</td><td>50</td><td>+100</td><td>Acacia, dark oak wood — shared cap</td></tr>
+  <tr><td>Vines</td><td>+2</td><td>50</td><td>+100</td><td>—</td></tr>
+  <tr><td>Blood Poppy</td><td>+2</td><td>10</td><td>+20</td><td>—</td></tr>
+  <tr><td>Critter Snare</td><td>+2</td><td>10</td><td>+20</td><td>—</td></tr>
+  <tr><td>Glint Weed</td><td>+2</td><td>20</td><td>+40</td><td>—</td></tr>
+  <tr><td>Grassper</td><td>+2</td><td>10</td><td>+20</td><td>—</td></tr>
+  <tr><td>Tall Grass / Fern</td><td>+3</td><td>50</td><td>+150</td><td>Tall grass + fern share the cap</td></tr>
+  <tr><td>Early Vanilla Leaves</td><td>+3</td><td>100 per type</td><td>+300 each</td><td>Birch, jungle, oak, spruce leaves — each type separate</td></tr>
+  <tr><td>Later Vanilla Leaves</td><td>+3</td><td>100 per type</td><td>+300 each</td><td>Acacia, dark oak — separate caps</td></tr>
+  <tr><td>Cactus</td><td>+3</td><td>50</td><td>+150</td><td>—</td></tr>
+  <tr><td>Sugar Cane</td><td>+3</td><td>50</td><td>+150</td><td>—</td></tr>
+  <tr><td>Grey Mushroom</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Red Mushroom</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Grey Mushroom Block</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Red Mushroom Block</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Witchery Wood (logs)</td><td>+3</td><td>100</td><td>+300</td><td>Alder, hawthorn, rowan logs — shared cap</td></tr>
+  <tr><td>Spanish Moss</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Wispy Cotton</td><td>+3</td><td>20</td><td>+60</td><td>—</td></tr>
+  <tr><td>Wheat Crop</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Carrot Crop</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Potato Crop</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Melon (block)</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Pumpkin</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Vanilla Saplings</td><td>+4</td><td>20 per type</td><td>+80 per type</td><td>Each of the 6 vanilla sapling types counted separately</td></tr>
+  <tr><td>Witchery Saplings</td><td>+4</td><td>20</td><td>+80</td><td>Alder, hawthorn, rowan saplings — shared 20-block cap</td></tr>
+  <tr><td>Dandelion</td><td>+4</td><td>30</td><td>+120</td><td>—</td></tr>
+  <tr><td>Vanilla Flowers</td><td>+4</td><td>30</td><td>+120</td><td>Allium, azure bluet, blue orchid, tulips, oxeye daisy, poppy — all share the 30-block cap</td></tr>
+  <tr><td>Witchery Leaves</td><td>+4</td><td>50</td><td>+200</td><td>Alder, hawthorn, rowan leaves — shared 50-block cap</td></tr>
+  <tr><td>Belladonna</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Ember Moss</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Mandrake (plant block)</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Snowbell</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Water Artichoke</td><td>+4</td><td>20</td><td>+80</td><td>—</td></tr>
+  <tr><td>Demon Heart (placed)</td><td>+100</td><td>2</td><td>+200</td><td>—</td></tr>
+  <tr><td>Dragon Egg</td><td>+250</td><td>1</td><td>+250</td><td>—</td></tr>
+  <tr><td>Infinity Egg (creative)</td><td>+6,000</td><td>1</td><td>+6,000</td><td>—</td></tr>
+</table>
+
+<p class="appendix-label" id="appB">Appendix B</p>
+<h2 class="chapter">Brew Quick Reference</h2>
+<table>
+  <tr><th>Brew</th><th>Effect Summary</th><th>Altar Power</th><th>Familiar Bonus</th></tr>
+  <tr><td>Brew of Bats</td><td>Bat swarm + AoE Slowness</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Hitchcock</td><td>Parrot swarm; disorientation cloud</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Ink</td><td>AoE Blindness</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Cursed Leaping</td><td>Flings AoE targets upward</td><td>None</td><td><a href="#ch7">Cat Familiar</a> required to brew</td></tr>
+  <tr><td>Brew of Frog's Tongue</td><td>Pulls all nearby entities toward caster</td><td>None</td><td><a href="#ch7">Toad Familiar</a> required to brew</td></tr>
+  <tr><td>Brew of Webs</td><td>Cobweb sphere at impact</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Vines</td><td>Grows vines down surfaces from impact</td><td>None</td><td><a href="#ch7">Toad Familiar</a> empowers</td></tr>
+  <tr><td>Brew of Thorns</td><td>Cactus ring at impact</td><td>None</td><td><a href="#ch7">Toad Familiar</a> empowers</td></tr>
+  <tr><td>Brew of Sprouting</td><td>Log bridge grows from impact</td><td>None</td><td><a href="#ch7">Toad Familiar</a> empowers</td></tr>
+  <tr><td>Brew of Hollow Tears</td><td>Weakens self; buffs nearby undead</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Ice</td><td>Ice dome at impact</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of the Depths</td><td>Water Breathing + Dolphin's Grace + Night Vision</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Solid Stone/Dirt/Sand/Sandstone</td><td>Converts area blocks to chosen type</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Substitution</td><td>Shuffles block types in area</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Erosion</td><td>Erodes surrounding blocks gradually</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Soaring</td><td>120 min flight; +30% speed</td><td>Required</td><td><a href="#ch7">Owl Familiar</a>: +50% speed</td></tr>
+  <tr><td>Brew of Flowing Spirit</td><td><a href="#ch20">Spirit World</a> entry</td><td>Required</td><td>—</td></tr>
+  <tr><td>Brew of Frost</td><td>Freezes water; extinguishes fires in area</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Love</td><td>Charms nearby mobs toward target</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Infection</td><td>Spreads disease debuffs to nearby mobs</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Poison</td><td>Poison effect, splash delivery</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Sleeping</td><td>Forces sleep on nearby mobs/players</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Wasting</td><td>Long-duration gradual health reduction</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Raising</td><td>Animates nearby corpses as undead</td><td>Required</td><td>—</td></tr>
+  <tr><td>Brew of Revealing</td><td>Reveals invisible or cloaked entities</td><td>None</td><td>—</td></tr>
+  <tr><td>Brew of Nightmare</td><td>Triggers Nightmare spawns in area</td><td>None</td><td>—</td></tr>
+  <tr><td>Flying Ointment</td><td>Not drinkable; used in Broom Infusion rite only</td><td>3,000 to brew</td><td>—</td></tr>
+</table>
+
+<p class="appendix-label" id="appC">Appendix C</p>
+<h2 class="chapter">Rite Power Requirements</h2>
+<table>
+  <tr><th>Rite</th><th>Chalk</th><th>Size</th><th class="tbl-power">Power</th></tr>
+  <tr><td>Binding — Circle Talisman (free)</td><td>Any</td><td>Any</td><td class="tbl-power">0 (needs Charged Stone)</td></tr>
+  <tr><td>Binding — Circle Talisman (powered)</td><td>Any</td><td>Any</td><td class="tbl-power">1,000</td></tr>
+  <tr><td>Binding — Waystone</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0 or 500</td></tr>
+  <tr><td>Binding — Familiar</td><td>Ritual</td><td>11×11</td><td class="tbl-power">8,000</td></tr>
+  <tr><td>Binding — Spectral Stone</td><td>Ritual</td><td>11×11</td><td class="tbl-power">5,000</td></tr>
+  <tr><td>Binding — Any Fetish</td><td>Ritual</td><td>11×11</td><td class="tbl-power">6,000</td></tr>
+  <tr><td>Transposition — Location</td><td>Otherwhere</td><td>7×7</td><td class="tbl-power">0</td></tr>
+  <tr><td>Transposition — Entity Pull</td><td>Otherwhere</td><td>11×11</td><td class="tbl-power">3,000</td></tr>
+  <tr><td>Transposition — Iron Ore</td><td>Otherwhere</td><td>15×15</td><td class="tbl-power">0 (Charged Stone)</td></tr>
+  <tr><td>Summoning — Demon</td><td>Infernal</td><td>15×15</td><td class="tbl-power">3,000</td></tr>
+  <tr><td>Summoning — Flame Imp</td><td>Infernal</td><td>11×11</td><td class="tbl-power">5,000 + 1 coven</td></tr>
+  <tr><td>Summoning — Wither</td><td>Infernal</td><td>15×11</td><td class="tbl-power">4,000</td></tr>
+  <tr><td>Summoning — Dismissed Familiar</td><td>Ritual</td><td>11×11</td><td class="tbl-power">1,000</td></tr>
+  <tr><td>Necromancy — Necromantic Stone</td><td>Ritual (night)</td><td>7×7</td><td class="tbl-power">1,000</td></tr>
+  <tr><td>Necromancy — Spectral Stone</td><td>Ritual (night)</td><td>7×7</td><td class="tbl-power">6,000</td></tr>
+  <tr><td>Charging — Attuned Stone</td><td>Ritual</td><td>7×7 or 11×11</td><td class="tbl-power">2,000</td></tr>
+  <tr><td>Charging — Player Infusion</td><td>Ritual</td><td>7×7 or 11×11</td><td class="tbl-power">4,000</td></tr>
+  <tr><td>Total Eclipse</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0 (Charged Stone) or 3,000</td></tr>
+  <tr><td>Protection (small, ongoing)</td><td>Ritual</td><td>7×7</td><td class="tbl-power">500 + 24/sec</td></tr>
+  <tr><td>Protection (large, ongoing)</td><td>Ritual</td><td>11×11</td><td class="tbl-power">1,000 + 28/sec</td></tr>
+  <tr><td>Banishing</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0 (Charged Stone) or 2,000</td></tr>
+  <tr><td>Infusion — Enchanted Broom</td><td>Ritual</td><td>7×7 or 11×11</td><td class="tbl-power">3,000</td></tr>
+  <tr><td>Infusion — Light / Overworld</td><td>Ritual</td><td>7×7 or 11×11</td><td class="tbl-power">2,000</td></tr>
+  <tr><td>Infusion — Otherwhere</td><td>Otherwhere</td><td>7×7 or 11×11</td><td class="tbl-power">2,000</td></tr>
+  <tr><td>Infusion — Infernal</td><td>Infernal</td><td>7×7 or 11×11</td><td class="tbl-power">2,000</td></tr>
+  <tr><td>Crystal Ball creation</td><td>Ritual</td><td>11×11</td><td class="tbl-power">2,000</td></tr>
+  <tr><td>Shifting Seasons</td><td>Ritual</td><td>15×15</td><td class="tbl-power">Very high + 4 coven</td></tr>
+  <tr><td>Rite of the Forest</td><td>Ritual</td><td>11×11</td><td class="tbl-power">4,000</td></tr>
+  <tr><td>Rite of Nature's Power</td><td>Ritual</td><td>11×11</td><td class="tbl-power">0 (Charged Stone)</td></tr>
+  <tr><td>Rite of Broken Earth</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0</td></tr>
+  <tr><td>Rite of Moving Earth</td><td>Ritual</td><td>7×7–15×15</td><td class="tbl-power">0</td></tr>
+  <tr><td>Rite of Icy Expansion</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0 (Charged Stone); 2 coven min</td></tr>
+  <tr><td>Rite of Earth's Wrath</td><td>Infernal</td><td>7×7</td><td class="tbl-power">0 (Charged Stone)</td></tr>
+  <tr><td>Rite of Sky's Wrath</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0–2,000 (variant)</td></tr>
+  <tr><td>Rite of Fertility</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0 (Charged Stone) or 3,000</td></tr>
+  <tr><td>Rite of Broiling</td><td>Infernal</td><td>7×7</td><td class="tbl-power">0 (Charged Stone) or 1,000</td></tr>
+  <tr><td>Rite of Sanctity</td><td>Ritual</td><td>7×7</td><td class="tbl-power">500 init + 16/sec</td></tr>
+  <tr><td>Rite of Imprisonment</td><td>Ritual</td><td>7×7</td><td class="tbl-power">500 init + 16/sec</td></tr>
+  <tr><td>Rite of Beastial Call</td><td>Otherwhere</td><td>15×15</td><td class="tbl-power">6,000 + 3 coven</td></tr>
+  <tr><td>Rite of Prior Incarnation</td><td>Ritual</td><td>7×7</td><td class="tbl-power">0</td></tr>
+  <tr><td>Rite of Manifestation</td><td>Otherwhere</td><td>7×7</td><td class="tbl-power">5,000 + coven</td></tr>
+  <tr><td>Rite of Glyphic Transformation</td><td>Any</td><td>Any</td><td class="tbl-power">1,000</td></tr>
+</table>
+
+<p class="appendix-label" id="appD">Appendix D</p>
+<h2 class="chapter">Item IDs for Commands</h2>
+<p>Use as <code>/give @p witchery:&lt;id&gt;</code>. All in the <code>witchery:</code> namespace.</p>
+<table>
+  <tr><th>ID</th><th>Item</th></tr>
+  <tr><td><code>taglock_kit</code></td><td>Taglock Kit</td></tr>
+  <tr><td><code>chalk</code></td><td>Ritual Chalk</td></tr>
+  <tr><td><code>chalk_infernal</code></td><td>Infernal Chalk</td></tr>
+  <tr><td><code>chalk_otherwhere</code></td><td>Otherwhere Chalk</td></tr>
+  <tr><td><code>chalk_golden</code></td><td>Golden Chalk (centre glyph; Witch's Cauldron required — see Ch 9b)</td></tr>
+  <tr><td><code>circle_talisman</code></td><td>Circle Talisman</td></tr>
+  <tr><td><code>waystone</code></td><td>Waystone (Unbound)</td></tr>
+  <tr><td><code>poppet</code></td><td>Base Poppet</td></tr>
+  <tr><td><code>voodoo_poppet</code></td><td>Voodoo Poppet</td></tr>
+  <tr><td><code>death_protection_poppet</code></td><td>Death Protection Poppet</td></tr>
+  <tr><td><code>armor_protection_poppet</code></td><td>Armor Protection Poppet</td></tr>
+  <tr><td><code>earth_protection_poppet</code></td><td>Earth Protection Poppet</td></tr>
+  <tr><td><code>fire_protection_poppet</code></td><td>Fire Protection Poppet</td></tr>
+  <tr><td><code>water_protection_poppet</code></td><td>Water Protection Poppet</td></tr>
+  <tr><td><code>hunger_protection_poppet</code></td><td>Hunger Protection Poppet</td></tr>
+  <tr><td><code>tool_protection_poppet</code></td><td>Tool Protection Poppet</td></tr>
+  <tr><td><code>poppet_protection_poppet</code></td><td>Poppet Protection Poppet</td></tr>
+  <tr><td><code>voodoo_protection_poppet</code></td><td>Voodoo Protection Poppet</td></tr>
+  <tr><td><code>vampiric_poppet</code></td><td>Vampiric Poppet</td></tr>
+  <tr><td><code>broom</code></td><td>Broom</td></tr>
+  <tr><td><code>enchanted_broom</code></td><td>Enchanted Broom</td></tr>
+  <tr><td><code>attuned_stone_charged</code></td><td>Attuned Stone (Charged)</td></tr>
+  <tr><td><code>spectral_stone</code></td><td>Spectral Stone</td></tr>
+  <tr><td><code>seer_stone</code></td><td>Seer Stone</td></tr>
+  <tr><td><code>mystic_branch</code></td><td>Mystic Branch</td></tr>
+  <tr><td><code>mutandis</code></td><td>Mutandis</td></tr>
+  <tr><td><code>mutandis_extremis</code></td><td>Mutandis Extremis</td></tr>
+  <tr><td><code>witches_primer</code></td><td>Witches' Primer</td></tr>
+  <tr><td><code>silver_sword</code></td><td>Silver Sword</td></tr>
+  <tr><td><code>demonic_blood</code></td><td>Demonic Blood</td></tr>
+  <tr><td><code>rowan_door_key</code></td><td>Rowan Door Key</td></tr>
+  <tr><td><code>rowan_keyring</code></td><td>Rowan Keyring</td></tr>
+  <tr><td><code>koboldite_pickaxe</code></td><td>Koboldite Pickaxe</td></tr>
+  <tr><td><code>koboldite_pentacle</code></td><td>Koboldite Pentacle</td></tr>
+  <tr><td><code>icy_needle</code></td><td>Icy Needle</td></tr>
+  <tr><td><code>apple_of_sleeping</code></td><td>Apple of Sleeping</td></tr>
+  <tr><td><code>mandrake_root</code></td><td>Mandrake Root</td></tr>
+  <tr><td><code>wormwood</code></td><td>Wormwood</td></tr>
+  <tr><td><code>snowbell</code></td><td>Snowbell</td></tr>
+  <tr><td><code>brew_of_soaring</code></td><td>Brew of Soaring</td></tr>
+  <tr><td><code>brew_of_bats</code></td><td>Brew of Bats</td></tr>
+  <tr><td><code>brew_of_flowing_spirit</code></td><td>Brew of Flowing Spirit</td></tr>
+  <tr><td><code>brew_of_cursed_leaping</code></td><td>Brew of Cursed Leaping</td></tr>
+  <tr><td><code>brew_of_frogs_tongue</code></td><td>Brew of Frog's Tongue</td></tr>
+  <tr><td><code>brew_of_hitchcock</code></td><td>Brew of Hitchcock</td></tr>
+  <tr><td><code>brew_of_ink</code></td><td>Brew of Ink</td></tr>
+  <tr><td><code>brew_of_webs</code></td><td>Brew of Webs</td></tr>
+  <tr><td><code>brew_of_vines</code></td><td>Brew of Vines</td></tr>
+  <tr><td><code>brew_of_thorns</code></td><td>Brew of Thorns</td></tr>
+  <tr><td><code>brew_of_ice</code></td><td>Brew of Ice</td></tr>
+  <tr><td><code>brew_of_the_depths</code></td><td>Brew of the Depths</td></tr>
+  <tr><td><code>brew_of_hollow_tears</code></td><td>Brew of Hollow Tears</td></tr>
+  <tr><td><code>brew_of_frost</code></td><td>Brew of Frost</td></tr>
+  <tr><td><code>brew_of_erosion</code></td><td>Brew of Erosion</td></tr>
+  <tr><td><code>brew_of_love</code></td><td>Brew of Love</td></tr>
+  <tr><td><code>brew_of_raising</code></td><td>Brew of Raising</td></tr>
+  <tr><td><code>brew_of_nightmare</code></td><td>Brew of Nightmare</td></tr>
+  <tr><td><code>brew_of_sleeping</code></td><td>Brew of Sleeping</td></tr>
+  <tr><td><code>brew_of_wasting</code></td><td>Brew of Wasting</td></tr>
+</table>
+
+<p class="appendix-label" id="appE">Appendix E</p>
+<h2 class="chapter">Creature Stats Summary</h2>
+<table>
+  <tr><th>Entity</th><th>HP</th><th>Damage</th><th>Hostility</th><th>Key Drop</th></tr>
+  <tr><td>Coven Witch</td><td>30</td><td>Potion throws</td><td>Neutral</td><td>Witch's Hand</td></tr>
+  <tr><td>Witch Hunter</td><td>Moderate</td><td>Crossbow + melee</td><td>Hostile to witches</td><td>Witch Hunter armor pieces</td></tr>
+  <tr><td>Hobgoblin</td><td>20</td><td>Low</td><td>Neutral / hostile to villagers</td><td>Koboldite Dust</td></tr>
+  <tr><td>Familiar (any)</td><td>50</td><td>Low</td><td>Neutral</td><td>—</td></tr>
+  <tr><td>Owl (wild)</td><td>5</td><td>1</td><td>Neutral</td><td>Feather; rare Owlet's Wing</td></tr>
+  <tr><td>Toad (wild)</td><td>5</td><td>1</td><td>Neutral</td><td>Slimeball; rare Toe of Frog</td></tr>
+  <tr><td>Ent</td><td>200</td><td>4.5 + fling</td><td>Hostile (deforestation)</td><td>Ent Twig + saplings</td></tr>
+  <tr><td>Treefyd (base)</td><td>50</td><td>4 + Blindness</td><td>Hostile to non-whitelist</td><td>Roses</td></tr>
+  <tr><td>Treefyd (Creeper Heart)</td><td>100</td><td>4</td><td>Hostile</td><td>Roses</td></tr>
+  <tr><td>Treefyd (Demon Heart)</td><td>150</td><td>8</td><td>Hostile</td><td>Roses</td></tr>
+  <tr><td>Demon</td><td>High</td><td>High</td><td>Hostile</td><td>Demon Heart</td></tr>
+  <tr><td>Banshee</td><td>Moderate</td><td>AoE scream</td><td>Hostile</td><td>—</td></tr>
+  <tr><td>Spectre</td><td>Moderate</td><td>Moderate</td><td>Hostile</td><td>—</td></tr>
+  <tr><td>Poltergeist</td><td>Low</td><td>Item throwing</td><td>Hostile</td><td>—</td></tr>
+  <tr><td>Nightmare</td><td>100</td><td>4</td><td>Hostile</td><td>Mellifluous Hunger (Spirit World only)</td></tr>
+  <tr><td>Flame Imp</td><td>Low</td><td>Fire</td><td>Hostile</td><td>—</td></tr>
+  <tr><td>Flying Monkey</td><td>Moderate</td><td>Low</td><td>Neutral (tamed)</td><td>—</td></tr>
+  <tr><td>Horned Huntsman</td><td>200 or 400</td><td>Up to 20</td><td>Hostile</td><td>Enchanted Books, Spear of Huntsman, Demonic Blood</td></tr>
+  <tr><td>Lord of Torment</td><td>Very High</td><td>Very High</td><td>Hostile</td><td>Endgame materials</td></tr>
+  <tr><td>Baba Yaga</td><td>Unknown</td><td>Potion barrage</td><td>Neutral or Hostile</td><td>Baba Yaga's Hat</td></tr>
+  <tr><td>Binky</td><td>High</td><td>High</td><td>Special</td><td>Binky's Skull</td></tr>
+</table>
+
+<div class="page-footer">
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 3 &nbsp;·&nbsp; Second Edition &nbsp;·&nbsp; ☽ ✦ ☾
+</div>
+
+<p class="appendix-label" id="appF">Appendix F</p>
+<h2 class="chapter">In-Game Reference Books</h2>
+
+<p>Witchery includes several in-game books that players can hold and read. Each covers a different area of the craft. This document supplements them but does not replace them — the books update when new content is added to the mod.</p>
+
+<table>
+  <tr><th>Book</th><th>Obtained By</th><th>Covers</th></tr>
+  <tr><td><strong>Witches' Primer</strong> (<span class="item">witchery:witches_primer</span>)</td><td>Craft: Witch's Hand + Book (shapeless). The only craftable guidebook.</td><td>Getting started, brewing, circle magic, poppet magic, conjuration, creatures, transformations, Spirit World. This is your primary in-game reference.</td></tr>
+  <tr><td><strong>Witchcraft: Brews &amp; Infusions</strong></td><td>Dropped by Coven Witches; found in generated structures. Also referenced when using the Witch's Cauldron.</td><td>Detailed kettle and cauldron recipes, infused brew variants, brewing special items. Includes Custom Brew layouts that the Witches' Primer omits.</td></tr>
+  <tr><td><strong>Witchcraft: Conjuration &amp; Fetishes</strong></td><td>Dropped by Coven Witches; found in generated structures.</td><td>Brazier conjurations, full fetish activation modes and targeting system, all spectral creature types and their uses.</td></tr>
+  <tr><td><strong>Book of Biomes</strong></td><td>Crafting: see Witches' Primer for recipe. Auto-generates based on the modpack's available biomes.</td><td>Complete listing of all biomes in the current pack, their group (Forest/Plains/Swamp/etc.), and the Glowstone Dust quantity needed to select each specific biome for the Rite of Shifting Seasons. Needed for that rite — keep a copy near your altar.</td></tr>
+</table>
+
+<div class="callout callout-tip">The Witches' Primer and Witchcraft: Brews &amp; Infusions cover different content. If a recipe is not in the Primer, check the Brews &amp; Infusions book before assuming it does not exist. JEI covers the machines; the books cover everything the craft keeps undocumented on purpose.</div>
+
+</body>
+</html>
