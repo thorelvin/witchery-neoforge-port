@@ -617,3 +617,5 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
   ```
 - The perception issue of "glass facing wall" for N/S was likely caused by the inverted VoxelShape: with the hitbox on the player side, the player was stopped far from the glass and the glass appeared to be against the wall, even though the blockstate rotation (NORTH: y=180, SOUTH: y=0) was theoretically correct.
 - Blockstate y-rotations (CW when viewed from above): NORTH→y=180, SOUTH→y=0, WEST→y=270, EAST→y=90. These put the model's decorative "north" face toward the player for all four directions.
+
+- `AbstractGolem` does **not** exist in NeoForge 21.11.42 — use `net.minecraft.world.entity.animal.golem.IronGolem` and `net.minecraft.world.entity.animal.golem.SnowGolem` explicitly for the 1.7.10 `EntityGolem` equivalent.
