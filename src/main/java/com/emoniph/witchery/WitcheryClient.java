@@ -22,6 +22,7 @@ import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.Identifier;
@@ -101,6 +102,9 @@ public class WitcheryClient {
     }
 
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tintIndex) ->
+                tintIndex == 0 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
+                WitcheryBlocks.WITCH_CAULDRON.get());
         event.register((state, level, pos, tintIndex) ->
                 tintIndex == 0 ? (level != null && pos != null ? 0x208030 : 0x71C35C) : -1,
                 WitcheryBlocks.LEAPING_LILY.get());
