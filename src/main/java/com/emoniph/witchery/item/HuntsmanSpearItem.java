@@ -75,7 +75,7 @@ public class HuntsmanSpearItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.accept(Component.translatable("item.witchery.huntsmans_spear.tip")
+        tooltip.accept(Component.translatable(getDescriptionId() + ".tip")
                 .withStyle(ChatFormatting.DARK_PURPLE));
     }
 }
