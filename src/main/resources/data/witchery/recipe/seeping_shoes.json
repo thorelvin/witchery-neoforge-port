@@ -10,7 +10,7 @@
     "S": "witchery:golden_thread",
     "H": "witchery:witch_hand",
     "R": "witchery:redstone_soup",
-    "M": "minecraft:clay_ball"
+    "M": "minecraft:milk_bucket"
   },
   "result": {
     "id": "witchery:seeping_shoes",
