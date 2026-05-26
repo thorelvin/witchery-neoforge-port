@@ -9,6 +9,9 @@ import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.BroomEntity;
+import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.entity.WitchHunterEntity;
@@ -30,9 +33,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.animal.golem.SnowGolem;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.spider.Spider;
@@ -174,6 +183,7 @@ public class WitcheryPlayerEvents {
         if (dataEveryTick.hasSoaringBuff()) dataEveryTick.tickSoaring();
         if (dataEveryTick.getHowlCooldown() > 0) dataEveryTick.setHowlCooldown(dataEveryTick.getHowlCooldown() - 1);
         dataEveryTick.tickTormentPortal();
+        tickGrotesqueAura(player, dataEveryTick);
 
         if (player.tickCount % 100 == 0
                 && dataEveryTick.isManifestedGhost()
@@ -366,6 +376,44 @@ public class WitcheryPlayerEvents {
     public static void syncToClient(ServerPlayer player) {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
+    }
+
+    /**
+     * Source: Infusion.handleBrewGrotesqueEffect (1.7.10) — runs every tick while
+     * grotesqueTicks > 0. Pushes nearby living entities away from the player
+     * within a 4-block radius, skipping bosses, golems, and witches.
+     */
+    private static void tickGrotesqueAura(ServerPlayer player, WitcheryPlayerData data) {
+        if (!data.hasGrotesqueAura()) return;
+        data.tickGrotesque();
+
+        AABB bounds = AABB.ofSize(player.position(), 8.0, 8.0, 8.0); // ±4 blocks each side
+        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (entity == player) continue;
+            // Source exclusions: Demon, Wither, Horned Huntsman, Dragon, Golem, Witch
+            if (entity instanceof DemonEntity
+                    || entity instanceof WitherBoss
+                    || entity instanceof HornedHuntsmanEntity
+                    || entity instanceof EnderDragon
+                    || entity instanceof IronGolem
+                    || entity instanceof SnowGolem
+                    || entity instanceof Witch
+                    || entity instanceof CovenWitchEntity) continue;
+
+            double dx = player.getX() - entity.getX();
+            double dy = player.getY() - entity.getY();
+            double dz = player.getZ() - entity.getZ();
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < 0.001 || dist > 4.0) continue;
+
+            // Same formula as pushProtectionMob in RitualExecutor
+            double scale = 0.22 / dist;
+            entity.push(
+                    Mth.clamp(-dx * scale, -0.22, 0.22),
+                    Mth.clamp(-dy * scale, -0.10, 0.12),
+                    Mth.clamp(-dz * scale, -0.22, 0.22));
+            entity.hurtMarked = true;
+        }
     }
 
     private static void tickDepthsBrew(ServerPlayer player, WitcheryPlayerData data) {

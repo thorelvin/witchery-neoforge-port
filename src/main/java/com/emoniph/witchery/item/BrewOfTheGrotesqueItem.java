@@ -1,13 +1,17 @@
 package com.emoniph.witchery.item;
 
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import com.emoniph.witchery.init.WitcheryAttachments;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
- * Brew of the Grotesque — monstrous transformation: extreme strength and resilience
- * at the cost of speed, control, and appearance. 30 seconds.
+ * Brew of the Grotesque — personal repulsion aura for 1200 ticks (60 seconds).
+ *
+ * Source: 1.7.10 Infusion.handleBrewGrotesqueEffect — each tick, all living entities
+ * within 4 blocks (except bosses, golems, witches) are pushed away from the drinker.
+ * Also changes the player's head model to a grotesque demon-head (cosmetic; handled
+ * separately as a render-layer pass when ready).
  */
 public class BrewOfTheGrotesqueItem extends BrewItem {
 
@@ -15,10 +19,9 @@ public class BrewOfTheGrotesqueItem extends BrewItem {
 
     @Override
     protected void applyEffect(Player player, Level level) {
-        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,     600, 3)); // 30s Strength IV
-        player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 600, 1)); // 30s Resistance II
-        player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 3)); // 30s Slowness IV
-        player.addEffect(new MobEffectInstance(MobEffects.NAUSEA,         600, 0)); // 30s Nausea
-        player.addEffect(new MobEffectInstance(MobEffects.GLOWING,           600, 0)); // 30s — grotesque glow
+        // Set the 1200-tick repulsion timer (transient, not serialized)
+        WitcheryAttachments.get(player).setGrotesqueTicks(1200);
+        player.displayClientMessage(
+            Component.translatable("witchery.brew.grotesque.activate"), false);
     }
 }
