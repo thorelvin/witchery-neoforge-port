@@ -1,6 +1,5 @@
 package com.emoniph.witchery.entity;
 
-import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.EarmuffsItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -64,13 +62,6 @@ public class MandrakeEntity extends Monster {
         }
         setLastHurtMob(target);
         return true;
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        spawnAtLocation(level, WitcheryItems.MANDRAKE_ROOT.get());
-        spawnAtLocation(level, new ItemStack(WitcheryItems.MANDRAKE_SEEDS.get(), random.nextDouble() <= 0.25 ? 2 : 1));
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.GHAST_SCREAM; }
