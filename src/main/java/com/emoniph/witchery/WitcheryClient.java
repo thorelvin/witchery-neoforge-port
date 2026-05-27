@@ -130,6 +130,7 @@ public class WitcheryClient {
             if (ar != null) {
                 ar.addLayer(new WerewolfLayer(ar, event.getContext()));
                 ar.addLayer(new ManifestedGhostLayer(ar));
+                ar.addLayer(new MountedBroomInventoryLayer(ar, event.getContext()));
             }
         }
     }
