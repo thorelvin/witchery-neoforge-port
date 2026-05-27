@@ -71,7 +71,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         state.bottleCount = Math.min(2, be.bottleCount());
         state.level = be.getLevel();
         state.bePos = be.getBlockPos();
-        state.liquidFrame = state.level == null ? 0 : (int) ((state.level.getGameTime() / 20L) & 7L);
+        state.liquidFrame = 0;
         state.renderCrossbar = state.level == null
                 || !state.level.getBlockState(state.bePos.above()).isFaceSturdy(state.level, state.bePos.above(), Direction.DOWN);
         state.liquidShade = state.brewing ? 0.5F : 1.0F;
