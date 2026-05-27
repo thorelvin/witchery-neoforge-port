@@ -70,6 +70,7 @@ public class WitcheryClient {
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
         Map.entry(RavenModel.LAYER_LOCATION,           RavenModel::createBodyLayer),
         Map.entry(ToadModel.LAYER_LOCATION,            ToadModel::createBodyLayer),
+        Map.entry(EarmuffsModel.LAYER_LOCATION,        EarmuffsModel::createBodyLayer),
         Map.entry(ParasyticLouseModel.LAYER_LOCATION,  ParasyticLouseModel::createBodyLayer),
         Map.entry(FlyingMonkeyModel.LAYER_LOCATION,    FlyingMonkeyModel::createBodyLayer),
         Map.entry(CatFamiliarModel.LAYER_LOCATION,     CatFamiliarModel::createBodyLayer),
@@ -133,6 +134,7 @@ public class WitcheryClient {
                 ar.addLayer(new WerewolfLayer(ar, event.getContext()));
                 ar.addLayer(new ManifestedGhostLayer(ar));
                 ar.addLayer(new MountedBroomInventoryLayer(ar, event.getContext()));
+                ar.addLayer(new EarmuffsLayer(ar, event.getContext()));
             }
         }
     }

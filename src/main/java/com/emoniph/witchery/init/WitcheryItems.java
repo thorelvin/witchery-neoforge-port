@@ -52,6 +52,28 @@ public class WitcheryItems {
                 .rarity(net.minecraft.world.item.Rarity.EPIC));
     }
 
+    private static Item earmuffs(net.minecraft.resources.Identifier id) {
+        return new EarmuffsItem(itemProps(id)
+                .durability(56)
+                .enchantable(15)
+                .repairable(net.minecraft.world.item.Items.LEATHER)
+                .component(net.minecraft.core.component.DataComponents.EQUIPPABLE,
+                        net.minecraft.world.item.equipment.Equippable.builder(net.minecraft.world.entity.EquipmentSlot.HEAD)
+                                .setEquipSound(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_LEATHER)
+                                .setDispensable(true)
+                                .setSwappable(true)
+                                .setDamageOnHurt(true)
+                                .build())
+                .attributes(net.minecraft.world.item.component.ItemAttributeModifiers.builder()
+                        .add(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR,
+                                new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                                        net.minecraft.resources.Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "earmuffs_armor"),
+                                        1.0D,
+                                        net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                                net.minecraft.world.entity.EquipmentSlotGroup.HEAD)
+                        .build()));
+    }
+
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
     // Witchery crops now split closer to source between planting stock and the
@@ -281,9 +303,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> WITCHES_ROBE  = ITEMS.register("witches_robe",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.register("witches_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
-    public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", id ->
-            new EarmuffsItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
-                    net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", WitcheryItems::earmuffs);
     public static final DeferredItem<Item> BITING_BELT = ITEMS.register("biting_belt", id ->
             new BitingBeltItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
                     net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));

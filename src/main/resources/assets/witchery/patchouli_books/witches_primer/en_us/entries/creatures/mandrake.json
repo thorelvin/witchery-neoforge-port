@@ -11,12 +11,12 @@
     {
       "type": "patchouli:crafting",
       "recipe": "witchery:earmuffs",
-      "text": "Craft $(item)Earmuffs$() from leather and white wool before gathering a large Mandrake patch. Wearing them in the head slot now blocks the restored nausea scream, which makes repeated harvests far less miserable.$(br2)They also now blunt the first practical Banshee scream damage again and hush the current ghast-scream placeholder cues on the client, though the deeper old sound-muting behavior is still rough around the edges."
+      "text": "Craft $(item)Earmuffs$() from leather and white wool before gathering a large Mandrake patch. Wearing them in the head slot blocks the restored nausea scream, which makes repeated harvests far less miserable.$(br2)They also blunt the first practical Banshee scream damage again and now mute world sounds on the client while worn, matching the old deafening protection much more closely."
     },
     {
       "type": "patchouli:text",
       "title": "What Still Remains",
-      "text": "The current port is strongest on the crop's summon-vs-drop branch and on the first practical protection loop: grow the crop, expect the scream, and wear Earmuffs if you plan to farm roots in quantity.$(br2)Exact scream audio flavor, custom Banshee scream assets, and the broader old sound-muting feel are still follow-up parity work, but the current cues are now at least pointed back toward the old ghast-scream family."
+      "text": "The current port is strongest on the crop's summon-vs-drop branch and on the first practical protection loop: grow the crop, expect the scream, and wear Earmuffs if you plan to farm roots in quantity.$(br2)Exact Mandrake scream audio flavor and broader in-game sound feel still need QA, but the protective item path is now live."
     }
   ]
 }

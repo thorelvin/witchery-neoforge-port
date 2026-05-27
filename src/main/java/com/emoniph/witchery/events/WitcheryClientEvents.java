@@ -50,9 +50,7 @@ public class WitcheryClientEvents {
     public static void onPlaySound(PlaySoundEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || !EarmuffsItem.isWorn(mc.player)) return;
-        if ("entity.ghast.scream".equals(event.getName()) || "entity.banshee.scream".equals(event.getName())) {
-            event.setSound(null);
-        }
+        event.setSound(null);
     }
 
     @SubscribeEvent
