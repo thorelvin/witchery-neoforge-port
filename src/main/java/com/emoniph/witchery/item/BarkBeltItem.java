@@ -49,7 +49,6 @@ public class BarkBeltItem extends Item {
     private static boolean isWitcheryClothing(ItemStack stack) {
         return stack.is(WitcheryItems.WITCHES_HAT.get())
                 || stack.is(WitcheryItems.WITCHES_ROBE.get())
-                || stack.is(WitcheryItems.WITCHES_SHOES.get())
                 || stack.is(WitcheryItems.BITING_BELT.get())
                 || stack.is(WitcheryItems.BARK_BELT.get())
                 || stack.is(WitcheryItems.EARMUFFS.get());
