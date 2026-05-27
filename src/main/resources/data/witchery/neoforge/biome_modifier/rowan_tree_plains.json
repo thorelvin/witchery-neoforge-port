@@ -1,8 +1,8 @@
 {
   "type": "neoforge:add_features",
   "biomes": [
-    "#minecraft:is_plains",
-    "#minecraft:is_savanna"
+    "minecraft:plains",
+    "minecraft:sunflower_plains"
   ],
   "features": "witchery:rowan_tree",
   "step": "vegetal_decoration"

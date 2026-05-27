@@ -1,9 +1,6 @@
 {
   "type": "neoforge:add_features",
-  "biomes": [
-    "#minecraft:is_taiga",
-    "#witchery:is_cold"
-  ],
+  "biomes": "#witchery:is_cold",
   "features": "witchery:rowan_tree",
   "step": "vegetal_decoration"
 }

@@ -50,6 +50,7 @@ public class WitcheryClient {
         Map.entry(DistilleryModel.LAYER_LOCATION,      DistilleryModel::createBodyLayer),
         Map.entry(PoppetShelfModel.LAYER_LOCATION,     PoppetShelfModel::createBodyLayer),
         Map.entry(BeartrapModel.LAYER_LOCATION,        BeartrapModel::createBodyLayer),
+        Map.entry(KettleModel.LAYER_LOCATION,          KettleModel::createBodyLayer),
         Map.entry(CandelabraModel.LAYER_LOCATION,      CandelabraModel::createBodyLayer),
         Map.entry(BrazierModel.LAYER_LOCATION,         BrazierModel::createBodyLayer),
         Map.entry(ChaliceModel.LAYER_LOCATION,         ChaliceModel::createBodyLayer),
