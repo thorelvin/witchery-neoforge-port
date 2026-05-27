@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DVE",
+    "FIF",
+    "HTH"
+  ],
+  "key": {
+    "D": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_swiftness"
+        }
+      }
+    },
+    "V": "witchery:diamond_vapour",
+    "E": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_slowness"
+        }
+      }
+    },
+    "F": "witchery:fanciful_thread",
+    "I": "minecraft:item_frame",
+    "H": "minecraft:feather",
+    "T": "witchery:tormented_twine"
+  },
+  "result": {
+    "id": "witchery:weave_fleet_foot",
+    "count": 1
+  }
+}

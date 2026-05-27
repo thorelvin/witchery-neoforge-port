@@ -5,6 +5,7 @@
   "sortnum": 2,
   "pages": [
     { "type": "patchouli:text", "text": "witchery.book.entry.crystal_ball.page1" },
-    { "type": "patchouli:crafting", "recipe": "witchery:crystal_ball", "text": "witchery.book.entry.crystal_ball.recipe" }
+    { "type": "patchouli:spotlight", "item": "witchery:quartz_sphere", "text": "witchery.book.entry.crystal_ball.ritual" },
+    { "type": "patchouli:spotlight", "item": "witchery:crystal_ball", "text": "witchery.book.entry.crystal_ball.use" }
   ]
 }

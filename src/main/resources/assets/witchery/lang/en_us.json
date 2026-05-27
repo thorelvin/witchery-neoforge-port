@@ -110,11 +110,17 @@
 
   "witchery.book.entry.dream_weavers": "Dream Weavers",
   "witchery.book.entry.dream_weavers.page1": "Sleep is not passive, and the spirit world is not a waiting room. A Dream Catcher placed near the sleeping body shapes what happens when consciousness moves through the boundary and returns.$(br2)Different thread weavings produce different effects on waking: Fleet Foot for speed, Iron Arm for strength, Fasting against hunger, Nightmares to shift the dream odds, Intensity to strengthen potions. Only one catcher near you takes effect. Choose deliberately.",
-  "witchery.book.entry.dream_weavers.recipe": "Sticks and thread. The weaving is what matters.",
+  "witchery.book.entry.dream_weavers.recipe": "Fleet Foot follows the old quickness weaving: Item Frame, Fanciful Thread, feathers, Diamond Vapour, Tormented Twine, and long swiftness/slowness splash potions.",
+  "witchery.book.entry.dream_weavers.recipe_iron": "Iron Arm uses the same weave frame, but swaps in long strength and weakness splash potions.",
+  "witchery.book.entry.dream_weavers.recipe_fasting": "Fasting uses a long poison splash potion and Mellifluous Hunger in the opposing potion slot.",
+  "witchery.book.entry.dream_weavers.recipe_nightmares": "Nightmares is the harsher Tormented Twine frame, woven with Diamond Vapour and long poison/night-vision splash potions.",
+  "witchery.book.entry.dream_weavers.recipe_intensity": "Intensity keeps the old frame but binds Brew of Flowing Spirit against Brew of Sleeping.",
 
   "witchery.book.entry.crystal_ball": "The Crystal Ball",
   "witchery.book.entry.crystal_ball.page1": "The crystal ball does not tell you what you want to hear. It tells you what it perceives - which is oblique, contextual, and occasionally alarming. Right-click it without an item in hand, with an altar nearby holding at least 500 power, and it will offer a reading.$(br2)There is a cooldown between readings. The ball will not repeat itself. Whether that is a limitation or a mercy is a matter of interpretation.",
-  "witchery.book.entry.crystal_ball.recipe": "Glass and an eye of ender. The ball knows more than you do. This is fine.",
+  "witchery.book.entry.crystal_ball.recipe": "The Crystal Ball is not crafted on a table.",
+  "witchery.book.entry.crystal_ball.ritual": "Infuse a Quartz Sphere at night on a small ritual circle. Offer a Gold Ingot and Happenstance Oil as support, and keep 2000 altar power ready.",
+  "witchery.book.entry.crystal_ball.use": "The rite returns a Crystal Ball and attunes it for fortune work. Use it near a powered altar for readings, or focus it with bound waystones and filled taglocks.",
 
   "witchery.book.entry.brazier": "The Brazier",
   "witchery.book.entry.brazier.page1": "Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. Load up to three ingredients by right-clicking, ignite it with a fire charge or flint and steel, then step back and let it burn.$(br2)Most brazier workings draw power from a nearby altar. The effect releases when the burning is complete. Patience is required - and occasionally a safe distance.",

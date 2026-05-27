@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DVE",
+    "FIF",
+    "HTH"
+  ],
+  "key": {
+    "D": "witchery:brew_of_flowing_spirit",
+    "V": "witchery:diamond_vapour",
+    "E": "witchery:brew_of_sleeping",
+    "F": "witchery:fanciful_thread",
+    "I": "minecraft:item_frame",
+    "H": "minecraft:feather",
+    "T": "witchery:tormented_twine"
+  },
+  "result": {
+    "id": "witchery:weave_intensity",
+    "count": 1
+  }
+}

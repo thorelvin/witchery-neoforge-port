@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DVE",
+    "TIT",
+    "HTH"
+  ],
+  "key": {
+    "D": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_poison"
+        }
+      }
+    },
+    "V": "witchery:diamond_vapour",
+    "E": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_night_vision"
+        }
+      }
+    },
+    "T": "witchery:tormented_twine",
+    "I": "minecraft:item_frame",
+    "H": "minecraft:feather"
+  },
+  "result": {
+    "id": "witchery:weave_nightmares",
+    "count": 1
+  }
+}

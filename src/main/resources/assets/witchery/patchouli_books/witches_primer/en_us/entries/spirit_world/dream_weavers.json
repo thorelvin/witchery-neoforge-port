@@ -5,6 +5,10 @@
   "sortnum": 1,
   "pages": [
     { "type": "patchouli:text", "text": "witchery.book.entry.dream_weavers.page1" },
-    { "type": "patchouli:crafting", "recipe": "witchery:dream_catcher", "text": "witchery.book.entry.dream_weavers.recipe" }
+    { "type": "patchouli:crafting", "recipe": "witchery:weave_fleet_foot", "text": "witchery.book.entry.dream_weavers.recipe" },
+    { "type": "patchouli:crafting", "recipe": "witchery:weave_iron_arm", "text": "witchery.book.entry.dream_weavers.recipe_iron" },
+    { "type": "patchouli:crafting", "recipe": "witchery:weave_fasting", "text": "witchery.book.entry.dream_weavers.recipe_fasting" },
+    { "type": "patchouli:crafting", "recipe": "witchery:weave_nightmares", "text": "witchery.book.entry.dream_weavers.recipe_nightmares" },
+    { "type": "patchouli:crafting", "recipe": "witchery:weave_intensity", "text": "witchery.book.entry.dream_weavers.recipe_intensity" }
   ]
 }
