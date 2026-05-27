@@ -260,7 +260,8 @@ public class WitcheryItems {
             id -> new SpiritBucketItem(itemProps(id)));
     public static final DeferredItem<Item> BUCKET_HOLLOW_TEARS = ITEMS.register("bucket_hollow_tears",
             id -> new SpiritBucketItem(itemProps(id), WitcheryBlocks.HOLLOW_TEARS));
-    public static final DeferredItem<Item> HAND_BOW = ITEMS.registerSimpleItem("hand_bow");
+    public static final DeferredItem<Item> HAND_BOW = ITEMS.register("hand_bow",
+            id -> new HandBowItem(itemProps(id)));
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.register("huntsman_spear",
             id -> new HuntsmanSpearItem(itemProps(id)));
     public static final DeferredItem<Item> HUNTSMANS_SPEAR = ITEMS.register("huntsmans_spear",
