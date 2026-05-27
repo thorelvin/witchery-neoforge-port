@@ -17,6 +17,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Hand of Death now restores the non-deployed spectral-touch attack: normal hits are canceled and replaced with source-shaped max-health-scaled, armor-bypassing player damage.
 - Latest bounded patch: Hand of Death scythe deployment now restores the source full-set toggle, deployed item model switch, hunger upkeep, and hunger-scaled AOE hunger/health feedback foundation.
 - Latest bounded patch: Earmuffs now restore the old wearable profile more fully: 56 durability, one armor point, enchant/repair support, original flat icon, custom player-head earmuff render, Mandrake/Banshee protection, and all-client-world-sound muting while worn.
+- Latest bounded patch: Witches Oven crafting is restored with the source-shaped Iron Bars plus Iron Ingots recipe, and the Primer `witchery:witches_oven` crafting page now points at a live recipe again.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
