@@ -236,11 +236,12 @@ public class WitcheryPlayerEvents {
         }
         WitchHunterEntity.tickBlackMagicHunterPressure(player);
 
+        ServerLevel level = (ServerLevel) player.level();
+
         if (player.tickCount % 20 != 0) return;
 
-        tickDeathsHoodEffect(player);
+        tickDeathsHoodEffect(player, level);
 
-        ServerLevel level = (ServerLevel) player.level();
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         tickDepthsBrew(player, data);
         tickSeepingShoesEffect(player, level);
@@ -377,8 +378,12 @@ public class WitcheryPlayerEvents {
         }
     }
 
-    private static void tickDeathsHoodEffect(ServerPlayer player) {
+    private static void tickDeathsHoodEffect(ServerPlayer player, ServerLevel level) {
         if (!player.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DEATHS_HOOD.get())) return;
+        if (level.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, player.blockPosition()) < 8) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 240, 1, true, false));
+        }
+
         Vec3 eyePos = player.getEyePosition();
         Vec3 lookEnd = eyePos.add(player.getLookAngle().scale(16.0));
         AABB searchBox = player.getBoundingBox().expandTowards(player.getLookAngle().scale(16.0)).inflate(1.0);

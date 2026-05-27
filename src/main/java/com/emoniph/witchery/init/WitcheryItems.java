@@ -42,6 +42,16 @@ public class WitcheryItems {
         return new VampireClothingItem(setType, itemProps(id).humanoidArmor(material, armorType));
     }
 
+    private static Item deathsArmor(net.minecraft.resources.Identifier id,
+                                    net.minecraft.world.item.equipment.ArmorType armorType,
+                                    DeathsClothingItem.Piece piece) {
+        int diamondDurability = armorType.getDurability(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND.durability());
+        return new DeathsClothingItem(piece, itemProps(id)
+                .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, armorType)
+                .durability(diamondDurability)
+                .rarity(net.minecraft.world.item.Rarity.EPIC));
+    }
+
 
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
     // Witchery crops now split closer to source between planting stock and the
@@ -339,10 +349,14 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.register("hunter_chestplate", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> HUNTER_LEGGINGS   = ITEMS.register("hunter_leggings",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
     public static final DeferredItem<Item> HUNTER_BOOTS      = ITEMS.register("hunter_boots",      id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
-    public static final DeferredItem<Item> DEATHS_HOOD  = ITEMS.register("deaths_hood",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.HELMET)));
-    public static final DeferredItem<Item> DEATHS_ROBE  = ITEMS.register("deaths_robe",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
-    public static final DeferredItem<Item> DEATHS_SHOES = ITEMS.register("deaths_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
-    public static final DeferredItem<Item> DEATHS_HAND  = ITEMS.registerSimpleItem("deaths_hand");
+    public static final DeferredItem<Item> DEATHS_HOOD = ITEMS.register("deaths_hood", id ->
+            deathsArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, DeathsClothingItem.Piece.HOOD));
+    public static final DeferredItem<Item> DEATHS_ROBE = ITEMS.register("deaths_robe", id ->
+            deathsArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, DeathsClothingItem.Piece.ROBE));
+    public static final DeferredItem<Item> DEATHS_SHOES = ITEMS.register("deaths_shoes", id ->
+            deathsArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, DeathsClothingItem.Piece.SHOES));
+    public static final DeferredItem<Item> DEATHS_HAND = ITEMS.register("deaths_hand", id ->
+            new DeathsHandItem(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
 
     // Brew items — all now have implemented effects
     public static final DeferredItem<Item> BREW_OF_RAISING        = ITEMS.register("brew_of_raising", id -> new BrewOfRaisingItem(itemProps(id)));
