@@ -253,6 +253,7 @@ public class WitcheryPlayerEvents {
         WitchHunterEntity.tickBlackMagicHunterPressure(player);
 
         ServerLevel level = (ServerLevel) player.level();
+        tickDeathsFootwearWaterWalk(player);
 
         if (player.tickCount % 20 != 0) return;
 
@@ -412,6 +413,17 @@ public class WitcheryPlayerEvents {
         if (!victim.hasEffect(MobEffects.SLOWNESS)) {
             victim.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 2));
         }
+    }
+
+    private static void tickDeathsFootwearWaterWalk(ServerPlayer player) {
+        if (!player.isInWater()) return;
+        if (!player.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.DEATHS_SHOES.get())) return;
+
+        Vec3 velocity = player.getDeltaMovement();
+        if (velocity.y >= 0.0D) return;
+
+        player.setDeltaMovement(velocity.x, velocity.y + 0.1D, velocity.z);
+        player.fallDistance = 0.0F;
     }
 
     public static void syncToClient(ServerPlayer player) {
