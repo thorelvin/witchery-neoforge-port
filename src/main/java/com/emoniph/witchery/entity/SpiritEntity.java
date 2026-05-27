@@ -40,10 +40,11 @@ public class SpiritEntity extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, 4.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.FLYING_SPEED, 0.4)
-                .add(Attributes.FOLLOW_RANGE, 16.0);
+                .add(Attributes.FOLLOW_RANGE, 16.0)
+                .add(Attributes.ATTACK_DAMAGE, 4.0);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class SpiritEntity extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), new ItemStack(WitcheryItems.SUBDUED_SPIRIT.get(), 1));
+        this.spawnAtLocation(level, new ItemStack(WitcheryItems.SUBDUED_SPIRIT.get(), 1));
     }
 
 }

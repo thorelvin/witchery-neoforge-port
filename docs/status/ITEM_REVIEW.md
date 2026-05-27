@@ -200,6 +200,7 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 | 124 | `witchery:ghost_of_the_light` | |
 | 125 | `witchery:soul_of_the_world` | |
 | 126 | `witchery:spirit_of_otherwhere` | |
+| 126a | `witchery:subdued_spirit` | `Done - source capture/release loop restored` | Spirits now match the source-fragile 4-health/4-attack baseline, drop exactly one Subdued Spirit through their entity death path, and the item right-clicks valid ground to awaken a persistent Spirit. Spirit World inventory transfer already carries it back to the Overworld. Needs in-game Spirit World obtain/use QA. |
 | 127 | `witchery:infernal_animus` | |
 | 128 | `witchery:mystic_unguent` | |
 | 129 | `witchery:flying_ointment` | |
