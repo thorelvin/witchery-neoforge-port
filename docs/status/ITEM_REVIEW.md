@@ -156,10 +156,10 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 | 104 | `witchery:hunter_chestplate` | `Partial - source recipe ingredient and display name restored` | The old Witch Hunter Coat recipe used Nullified Leather in the chestplate shape and the source display name was "Witch Hunter Coat." The port recipe and canonical display name now match that source slice. Remaining work is source model/rarity/durability/tooltips plus full-set protection hooks. |
 | 105 | `witchery:hunter_leggings` | `Partial - source recipe ingredient and display name restored` | The old Witch Hunter Trousers recipe used Nullified Leather in the leggings shape and the source display name was "Witch Hunter Trousers." The port recipe and canonical display name now match that source slice. Remaining work is source model/rarity/durability/tooltips plus full-set protection hooks. |
 | 106 | `witchery:hunter_boots` | `Partial - source recipe ingredient and display name restored` | The old Witch Hunter Boots recipe used Nullified Leather in the boots shape and already used the Witch Hunter Boots naming. The port recipe now uses `witchery:nullified_leather`, and the canonical display name keeps the source wording. Remaining work is source model/rarity/durability/tooltips plus full-set protection hooks. |
-| 107 | `witchery:deaths_hood` | |
-| 108 | `witchery:deaths_robe` | |
-| 109 | `witchery:deaths_shoes` | |
-| 110 | `witchery:deaths_hand` | |
+| 107 | `witchery:deaths_hood` | `Partial - source display name reviewed` | The canonical display name already matched the old `deathscowl` source string, "Death's Hood." Remaining work is the old `ItemDeathsClothes` item class parity: epic rarity, iron material with diamond durability, custom Death clothing model/texture, hood stare-freeze tick, low-light Night Vision pulse, and tooltip. |
+| 108 | `witchery:deaths_robe` | `Partial - source display name reviewed` | The canonical display name already matched the old `deathsrobe` source string, "Death's Robe." Remaining work is source item class parity, including fire resistance behavior/tooltip and the shared Death clothing model/rarity/durability details. |
+| 109 | `witchery:deaths_shoes` | `Partial - source display name restored` | Source named the boots `deathfeet` / "Death's Footwear"; the port now uses that canonical display name instead of "Death's Shoes." Remaining work is the source water-walking behavior/tooltip plus shared Death clothing model/rarity/durability details. |
+| 110 | `witchery:deaths_hand` | `Partial - source display name restored` | Source named this "Hand of Death"; the port now uses that canonical display name instead of "Death's Hand." Remaining work is spectral-touch armor-ignoring damage, Death set scythe bonus behavior, tooltip, and any deployed-scythe alias reconciliation. |
 
 ---
 
