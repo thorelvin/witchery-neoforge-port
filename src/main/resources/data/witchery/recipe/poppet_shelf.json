@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ANA",
+    "NGN",
+    "ANA"
+  ],
+  "key": {
+    "A": "witchery:attuned_stone",
+    "G": "minecraft:green_wool",
+    "N": "minecraft:nether_brick"
+  },
+  "result": {
+    "id": "witchery:poppet_shelf",
+    "count": 1
+  }
+}

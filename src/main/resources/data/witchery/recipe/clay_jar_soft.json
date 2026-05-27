@@ -1,11 +1,13 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    "minecraft:clay",
-    "minecraft:clay",
-    "minecraft:clay",
-    "minecraft:clay"
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "CCC"
   ],
+  "key": {
+    "C": "minecraft:clay_ball"
+  },
   "result": {
     "id": "witchery:clay_jar_soft",
     "count": 4

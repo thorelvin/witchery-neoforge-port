@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "STS",
+    "TAT",
+    " C "
+  ],
+  "key": {
+    "A": "witchery:attuned_stone",
+    "C": "minecraft:cauldron",
+    "S": "minecraft:stick",
+    "T": "minecraft:string"
+  },
+  "result": {
+    "id": "witchery:kettle",
+    "count": 1
+  }
+}

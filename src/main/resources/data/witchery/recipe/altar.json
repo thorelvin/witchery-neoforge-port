@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GWE",
+    "SRS",
+    "SRS"
+  ],
+  "key": {
+    "G": "witchery:breath_of_goddess",
+    "W": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:water"
+        }
+      }
+    },
+    "E": "witchery:exhale_of_horned_one",
+    "S": "minecraft:stone_bricks",
+    "R": "witchery:rowan_log"
+  },
+  "result": {
+    "id": "witchery:altar",
+    "count": 3
+  }
+}
