@@ -112,7 +112,7 @@ public class BroomEntity extends Mob {
     private boolean isLocallyControlledBroom() {
         LivingEntity controller = getControllingPassenger();
         if (controller instanceof Player player) {
-            return player.isLocalPlayer();
+            return !level().isClientSide() || player.isLocalPlayer();
         }
         return !level().isClientSide();
     }
