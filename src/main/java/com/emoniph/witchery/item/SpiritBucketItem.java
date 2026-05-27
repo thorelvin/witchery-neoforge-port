@@ -21,10 +21,19 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
-/** Source-style Spirit Bucket: places Flowing Spirit and leaves an empty bucket. */
+import java.util.function.Supplier;
+
+/** Source-style Witchery bucket: places its Witchery liquid stand-in and leaves an empty bucket. */
 public class SpiritBucketItem extends Item {
+    private final Supplier<? extends Block> placedBlock;
+
     public SpiritBucketItem(Properties properties) {
+        this(properties, WitcheryBlocks.FLOWING_SPIRIT);
+    }
+
+    public SpiritBucketItem(Properties properties, Supplier<? extends Block> placedBlock) {
         super(properties.stacksTo(1).craftRemainder(Items.BUCKET));
+        this.placedBlock = placedBlock;
     }
 
     @Override
@@ -46,7 +55,7 @@ public class SpiritBucketItem extends Item {
         }
 
         if (!level.isClientSide()) {
-            BlockState state = WitcheryBlocks.FLOWING_SPIRIT.get().defaultBlockState();
+            BlockState state = placedBlock.get().defaultBlockState();
             BlockState oldState = level.getBlockState(placePos);
             if (!oldState.getFluidState().isEmpty()) {
                 level.destroyBlock(placePos, true);

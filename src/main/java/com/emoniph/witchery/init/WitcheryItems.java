@@ -258,6 +258,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> LEAPING_LILY_ITEM = ITEMS.registerSimpleItem("leaping_lily_item");
     public static final DeferredItem<Item> BUCKET_SPIRIT = ITEMS.register("bucket_spirit",
             id -> new SpiritBucketItem(itemProps(id)));
+    public static final DeferredItem<Item> BUCKET_HOLLOW_TEARS = ITEMS.register("bucket_hollow_tears",
+            id -> new SpiritBucketItem(itemProps(id), WitcheryBlocks.HOLLOW_TEARS));
     public static final DeferredItem<Item> HAND_BOW = ITEMS.registerSimpleItem("hand_bow");
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.register("huntsman_spear",
             id -> new HuntsmanSpearItem(itemProps(id)));
@@ -534,7 +536,6 @@ public class WitcheryItems {
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "devils_tongue_charm",
-            "bucket_hollow_tears",
             "infernal_blood",
             "odd_porkchop_raw",
             "odd_porkchop_cooked",
