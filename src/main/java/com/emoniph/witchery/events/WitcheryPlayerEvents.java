@@ -31,6 +31,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -57,10 +58,12 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
@@ -120,6 +123,19 @@ public class WitcheryPlayerEvents {
         event.setCanceled(true);
         player.setHealth(1.0f);
         SpiritWorldHelper.exit(player);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onDeathsRobeFireDamage(LivingDamageEvent.Pre event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (event.getNewDamage() <= 0.0F) return;
+        if (!event.getSource().is(DamageTypeTags.IS_FIRE)) return;
+        if (!player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.DEATHS_ROBE.get())) return;
+
+        if (!player.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100, 0, true, false));
+        }
+        event.setNewDamage(0.0F);
     }
 
     @SubscribeEvent
