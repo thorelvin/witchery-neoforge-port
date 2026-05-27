@@ -14,6 +14,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Subdued Spirit now follows the source capture/release loop: Spirits use the 4-health/4-attack baseline, drop exactly one Subdued Spirit without random/looting loot-table scaling, and the item releases a persistent Spirit when used on valid ground.
 - Latest bounded patch: Death's Robe now restores the source fire-damage hook: fire damage is canceled while the robe is worn and the wearer gets a short Fire Resistance pulse.
 - Latest bounded patch: Death's Footwear now restores the source water-walk tick: while sinking in water, the boots nudge the wearer upward like the original liquid hook.
+- Latest bounded patch: Hand of Death now restores the non-deployed spectral-touch attack: normal hits are canceled and replaced with source-shaped max-health-scaled, armor-bypassing player damage.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
