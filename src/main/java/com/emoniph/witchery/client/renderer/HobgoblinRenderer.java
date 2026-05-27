@@ -34,11 +34,6 @@ public class HobgoblinRenderer extends HumanoidMobRenderer<HobgoblinEntity, Hobg
 
     @Override
     public Identifier getTextureLocation(HobgoblinRenderState state) {
-        return switch (Math.floorMod(state.profession, TEXTURES.length)) {
-            case 1 -> TEXTURES[0];
-            case 2 -> TEXTURES[3];
-            case 3 -> TEXTURES[2];
-            default -> TEXTURES[1];
-        };
+        return TEXTURES[Math.floorMod(state.profession, TEXTURES.length)];
     }
 }
