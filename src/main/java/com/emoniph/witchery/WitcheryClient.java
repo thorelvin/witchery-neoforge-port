@@ -118,6 +118,8 @@ public class WitcheryClient {
                 PoppetShelfCompassAngleProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "blocking"),
                 HuntsmanSpearBlockingProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "deaths_hand_deployed"),
+                DeathsHandDeployedProperty.MAP_CODEC);
     }
 
     public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
