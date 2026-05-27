@@ -5,6 +5,8 @@ import com.emoniph.witchery.crafting.KettleRecipeInput;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -29,6 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     private static final int INGREDIENT_SLOTS = 6;
+    public static final int MAX_WATER_LEVEL = 3;
     public static final int RESULT_SLOT = 6;
     public static final int BOTTLE_SLOT = 7;
     private static final int SLOT_COUNT = 8;
@@ -54,7 +57,11 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
 
     private void sync() {
         setChanged();
@@ -68,9 +75,10 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     public int getWaterLevel() { return waterLevel; }
     public int getColor()      { return color; }
     public boolean isFilled()  { return waterLevel > 0; }
+    public boolean canFillWater() { return waterLevel < MAX_WATER_LEVEL; }
 
     public boolean fillWater() {
-        if (waterLevel >= 3) return false;
+        if (!canFillWater()) return false;
         waterLevel++;
         sync();
         return true;
@@ -298,7 +306,7 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        waterLevel = tag.getIntOr("WaterLevel", 0);
+        waterLevel = Math.max(0, Math.min(MAX_WATER_LEVEL, tag.getIntOr("WaterLevel", 0)));
         isRuined = tag.getBooleanOr("IsRuined", false);
         isPowered = tag.getBooleanOr("IsPowered", false);
         color = tag.getIntOr("Color", 0);

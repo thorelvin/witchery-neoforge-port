@@ -71,7 +71,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         state.bottleCount = Math.min(2, be.bottleCount());
         state.level = be.getLevel();
         state.bePos = be.getBlockPos();
-        state.liquidFrame = state.level == null ? 0 : (int) ((state.level.getGameTime() / 20L) & 3L);
+        state.liquidFrame = state.level == null ? 0 : (int) ((state.level.getGameTime() / 20L) & 7L);
         state.renderCrossbar = state.level == null
                 || !state.level.getBlockState(state.bePos.above()).isFaceSturdy(state.level, state.bePos.above(), Direction.DOWN);
         state.liquidShade = state.brewing ? 0.5F : 1.0F;
@@ -106,8 +106,11 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
             }
         }
         if (state.waterLevel > 0) {
+            ps.pushPose();
+            ps.translate(0.0F, liquidYOffset(state.waterLevel), 0.0F);
             collector.submitModelPart(model.liquid(state.liquidFrame), ps, RenderTypes.entityTranslucent(TEXTURE),
                     state.lightCoords, OverlayTexture.NO_OVERLAY, null, liquidColor(state), null);
+            ps.popPose();
         }
 
         ps.popPose();
@@ -115,6 +118,14 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         if (state.brewing && state.level != null && state.level.isClientSide()) {
             spawnBubbles(state.level, state.bePos);
         }
+    }
+
+    private static float liquidYOffset(int waterLevel) {
+        return switch (Math.max(1, Math.min(KettleBlockEntity.MAX_WATER_LEVEL, waterLevel))) {
+            case 1 -> 2.0F / 16.0F;
+            case 2 -> 1.0F / 16.0F;
+            default -> 0.0F;
+        };
     }
 
     private static int liquidColor(KettleRenderState state) {

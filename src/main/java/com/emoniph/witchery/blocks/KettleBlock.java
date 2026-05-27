@@ -5,10 +5,15 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,6 +34,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -127,6 +133,85 @@ public class KettleBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                          InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof KettleBlockEntity kettle)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+
+        if (stack.is(Items.GLASS_BOTTLE)) {
+            if (!kettle.isReady()) {
+                if (!level.isClientSide()) {
+                    showStatus(player, kettle);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            if (!level.isClientSide()) {
+                ItemStack brew = kettle.extractBrew(player);
+                if (!brew.isEmpty()) {
+                    stack.shrink(1);
+                    if (stack.isEmpty()) {
+                        player.setItemInHand(hand, brew);
+                    } else if (!player.getInventory().add(brew)) {
+                        level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, brew));
+                    }
+                    player.displayClientMessage(Component.translatable("witchery.kettle.extracted"), true);
+                } else {
+                    player.displayClientMessage(Component.translatable("witchery.kettle.status.brewing"), true);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        if (stack.is(Items.WATER_BUCKET)) {
+            if (!kettle.canFillWater()) {
+                if (!level.isClientSide()) {
+                    player.displayClientMessage(Component.translatable("witchery.kettle.already_full"), true);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            if (!level.isClientSide() && kettle.fillWater()) {
+                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
+                player.awardStat(Stats.FILL_CAULDRON);
+                player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+                kettle.reset(false);
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
+                player.displayClientMessage(Component.translatable("witchery.kettle.filled"), true);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        if (stack.is(Items.BUCKET)) {
+            if (!kettle.isFilled()) return InteractionResult.TRY_WITH_EMPTY_HAND;
+            if (!level.isClientSide() && kettle.drainWater()) {
+                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
+                player.awardStat(Stats.USE_CAULDRON);
+                player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+                kettle.reset(false);
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+                player.displayClientMessage(Component.translatable("witchery.kettle.drained"), true);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!stack.isEmpty() && kettle.isFilled() && !kettle.isRuined()) {
+            if (!level.isClientSide()) {
+                boolean added = kettle.addIngredient(stack);
+                if (added) {
+                    if (!player.isCreative()) stack.shrink(1);
+                    player.displayClientMessage(Component.translatable("witchery.kettle.ingredient_added"), true);
+                } else {
+                    player.displayClientMessage(Component.translatable(
+                            kettle.isRuined() ? "witchery.kettle.ruined" : "witchery.kettle.no_space"), true);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof KettleBlockEntity kettle)) return InteractionResult.PASS;
 
@@ -195,6 +280,15 @@ public class KettleBlock extends BaseEntityBlock {
             player.displayClientMessage(Component.translatable("witchery.kettle.status", status), true);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    private static void showStatus(Player player, KettleBlockEntity kettle) {
+        Component status = kettle.isRuined()   ? Component.translatable("witchery.kettle.status.ruined") :
+                !kettle.isFilled()              ? Component.translatable("witchery.kettle.status.empty") :
+                kettle.isReady()                ? Component.translatable("witchery.kettle.status.ready") :
+                kettle.isBrewing()              ? Component.translatable("witchery.kettle.status.brewing") :
+                                                  Component.translatable("witchery.kettle.status.filled");
+        player.displayClientMessage(Component.translatable("witchery.kettle.status", status), true);
     }
 
     /** Items thrown into the kettle (EntityItem collision) */
