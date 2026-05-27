@@ -1,6 +1,13 @@
 {
   "type": "neoforge:add_features",
-  "biomes": "#witchery:is_cold",
+  "biomes": [
+    "minecraft:taiga",
+    "minecraft:snowy_taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:snowy_plains",
+    "minecraft:ice_spikes"
+  ],
   "features": "witchery:rowan_tree",
   "step": "vegetal_decoration"
 }
