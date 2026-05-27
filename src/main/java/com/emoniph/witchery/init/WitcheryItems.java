@@ -256,7 +256,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
     public static final DeferredItem<Item> PARASYTIC_LOUSE = ITEMS.register("parasytic_louse", id -> new ParasyticLouseItem(itemProps(id)));
     public static final DeferredItem<Item> LEAPING_LILY_ITEM = ITEMS.registerSimpleItem("leaping_lily_item");
-    public static final DeferredItem<Item> BUCKET_SPIRIT = ITEMS.registerSimpleItem("bucket_spirit");
+    public static final DeferredItem<Item> BUCKET_SPIRIT = ITEMS.register("bucket_spirit",
+            id -> new SpiritBucketItem(itemProps(id)));
     public static final DeferredItem<Item> HAND_BOW = ITEMS.registerSimpleItem("hand_bow");
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.register("huntsman_spear",
             id -> new HuntsmanSpearItem(itemProps(id)));
