@@ -139,7 +139,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Drop of Luck
 - **Source:** Crafted from Mutandis Extremis above Refined Evil above a Water Bottle; the port also keeps the altar-powered Witch's Cauldron working.
-- **Uses:** Component for various recipes and Circle Rituals including Armor Protection Poppet, Brew of Insanity, and more.
+- **Uses:** Component for various recipes and Circle Rituals including Tool Protection Poppet, Armor Protection Poppet, Brew of Insanity, and more.
 - **Notes:** Not specified.
 
 ## Ember Moss
@@ -391,6 +391,16 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Source:** Not specified, but used in various recipes.
 - **Uses:** Used to create Armor Protection Poppet, Brew of Remove Buffs, Brew of Vines, Tool Protection Poppet, Tormented Twine, and Treefyd Seed.
 - **Notes:** None.
+
+## Tool Protection Poppet
+- **Source:** Crafted from a Poppet with Reek of Misfortune above/below and Drop of Luck on both sides.
+- **Uses:** Repairs held tools through poppet protection behavior.
+- **Notes:** Can be bound with a filled Taglock Kit through the shared poppet binding recipe.
+
+## Armor Protection Poppet
+- **Source:** Crafted from a Poppet with Reek of Misfortune above, Drop of Luck on both sides, and Diamond Vapour below.
+- **Uses:** Repairs worn armor through poppet protection behavior.
+- **Notes:** Can be bound with a filled Taglock Kit through the shared poppet binding recipe.
 
 ## Refined Evil
 - **Source:** Crafted using Distillery or Ghast Tear in survival mode.

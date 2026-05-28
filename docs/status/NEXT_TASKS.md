@@ -32,6 +32,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Drop of Luck now has the local 0.19 source crafting-table recipe restored: Mutandis Extremis over Refined Evil over a water potion, while the cauldron route remains live.
 - Latest bounded patch: Leaping Lily survival access now matches the source recipe more closely: five lilies from Lily Pads, Glowstone Dust, Breath of the Goddess, and a Swiftness Potion instead of one lily from any potion.
 - Latest bounded patch: Mutating Sprig now has the local 0.19 source crafting-table route restored: Mutandis Extremis surrounding an Ent Twig, alongside the existing cauldron route.
+- Latest bounded patch: Tool Protection and Armor Protection Poppets now have their source shaped survival recipes restored after the recipe scan found the registered items had no JSON recipes.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.

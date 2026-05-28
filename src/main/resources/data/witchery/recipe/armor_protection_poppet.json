@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " R ",
+    "DPD",
+    " V "
+  ],
+  "key": {
+    "R": "witchery:reek_of_misfortune",
+    "D": "witchery:drop_of_luck",
+    "P": "witchery:poppet",
+    "V": "witchery:diamond_vapour"
+  },
+  "result": {
+    "id": "witchery:armor_protection_poppet",
+    "count": 1
+  }
+}
