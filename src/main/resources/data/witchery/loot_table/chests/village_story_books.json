@@ -332,6 +332,42 @@
               "mode": "replace_all"
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Mandrake at Millrow",
+              "author": "Oswin Hale, witness of Millrow field",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "I was there when Tom Brindle pulled the mandrake.",
+                "That is the first thing I want written plain. I did not hear it from a cousin or gather it from alehouse talk. I stood three rows away with mud on my boots and a sack of barley seed over one shoulder. I saw his hands close around the green tuft. I heard him laugh before the root came loose. I heard",
+                "what happened after.\n\nTom had always been quick to laugh at warnings.",
+                "Old Mother Hem told us mandrakes were not weeds. She said if one grew among your crop, you marked the place, fetched earmuffs if you had them, and pulled after dusk with care. Tom said witches made rules so honest folk would feel foolish buying them charms.\n\n\"It is a turnip with a temper,\" he said.",
+                "The plant stood at the edge of Millrow field, between barley and the ditch. Its leaves were broad and dark, too clean for that muddy place. Even before the pulling, there was something mean about the stillness around it. No flies settled there. The wind moved the barley, but the mandrake leaves did",
+                "not stir.\n\nI told Tom to leave it.\n\nHe grinned at me. \"If it screams, Hale, I will apologize to the turnip.\"\n\nThen he bent down and pulled.",
+                "The earth split with a wet sound. A pale root came free, twisted like a little person caught in a bad dream. It had thin limbs, a knotted head, and a mouth opening wider than any root should have a mouth. For one heartbeat the whole field seemed to lean toward it.\n\nThen it screamed.",
+                "I dropped the barley. Someone behind me fell. The sound was not loud in the way a bell is loud. It was inside the teeth. It climbed through bone and made every thought in my skull scatter like spilled nails. I could see Tom shouting, but I could not hear him over the root in his hands.",
+                "The horses at the lane reared hard enough to snap a rail. Windows rattled in the mill. My left ear bled. A woman by the ditch began laughing and could not stop.\n\nTom tried to throw the mandrake away.\n\nThat was when it kicked him.",
+                "I swear this by every saint who ever looked away from us: the root kicked him in the chest with both little feet. Tom went backward into the barley, and the mandrake landed on the ground running. Not crawling. Running. It went straight for the ditch, shrieking all the while, legs flashing pale under",
+                "the leaves.\n\nPanic makes scholars of no one. Half the field ran from it. The other half ran after it. I did both in that order.\n\nMother Hem arrived before the mandrake reached the water.",
+                "No one had sent for her. Witches are like rain on washing day; they come when your plans are worst. She wore earmuffs made of brown wool and carried a sack that wriggled at the seams. She stepped into the ditch path, planted both feet, and waited.\n\nThe mandrake saw her and screamed louder.",
+                "Mother Hem did not flinch. She opened the sack with one hand and snapped her fingers with the other. The root ran at her like a furious child. At the last moment she tipped the sack low. The mandrake rushed in, and she tied it shut with red thread so fast it looked like one motion.",
+                "The screaming became muffled. Then sulky.\n\nTom sat up, clutching his chest. \"I think it broke something.\"\n\n\"Your pride, if we are lucky,\" Mother Hem said.",
+                "She gave the rest of us strips of wool soaked in something bitter and told us to press them to our ears. By sunset the laughing woman had stopped laughing. The horses settled. The mill windows held. Tom lived, though he claimed for a week that the mandrake had cursed his ribs specifically.",
+                "Mother Hem planted the root again beyond the hedge, under a marker of rowan twigs.\n\n\"Why not kill it?\" I asked.\n\nShe looked at me as if I had suggested burning down the mill because flour makes dust.\n\n\"Mandrake is medicine,\" she said. \"Also trouble. Most useful things are both.\"",
+                "Now, when I see those dark leaves in a field, I mark the place and fetch someone wiser. I do not laugh at warnings. I do not call roots by names they have not given me.\n\nAnd if Tom Brindle tells you he pulled the mandrake bravely, ask him why he still wears wool in his ears every planting season."
+              ],
+              "mode": "replace_all"
+            }
+          ]
         }
       ]
     }
