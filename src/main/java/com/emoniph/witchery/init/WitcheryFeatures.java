@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.worldgen.SpanishMossVinesFeature;
 import com.emoniph.witchery.worldgen.WildRowanTreeFeature;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -15,4 +16,7 @@ public final class WitcheryFeatures {
 
     public static final DeferredHolder<Feature<?>, WildRowanTreeFeature> WILD_ROWAN_TREE =
             FEATURES.register("wild_rowan_tree", WildRowanTreeFeature::new);
+
+    public static final DeferredHolder<Feature<?>, SpanishMossVinesFeature> SPANISH_MOSS_VINES =
+            FEATURES.register("spanish_moss_vines", SpanishMossVinesFeature::new);
 }

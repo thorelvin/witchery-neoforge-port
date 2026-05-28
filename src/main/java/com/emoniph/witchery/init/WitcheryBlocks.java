@@ -173,7 +173,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SpanishMossBlock> SPANISH_MOSS = BLOCKS.registerBlock("spanish_moss",
             SpanishMossBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
-                    .strength(0.2f).noOcclusion().randomTicks());
+                    .strength(0.2f).noOcclusion().noCollision().randomTicks());
     public static final DeferredBlock<BrambleBlock> BRAMBLE = BLOCKS.registerBlock("bramble",
             BrambleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(20.0f, 1000.0f).noOcclusion().noCollision());

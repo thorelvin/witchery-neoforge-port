@@ -1,40 +1,16 @@
 {
   "type": "minecraft:random_patch",
   "config": {
-    "tries": 3,
-    "xspread": 5,
-    "yspread": 3,
-    "zspread": 5,
+    "tries": 12,
+    "xspread": 7,
+    "yspread": 5,
+    "zspread": 7,
     "feature": {
       "feature": {
-        "type": "minecraft:simple_block",
-        "config": {
-          "to_place": {
-            "type": "minecraft:simple_state_provider",
-            "state": {
-              "Name": "witchery:spanish_moss",
-              "Properties": {}
-            }
-          }
-        }
+        "type": "witchery:spanish_moss_vines",
+        "config": {}
       },
-      "placement": [
-        {
-          "type": "minecraft:block_predicate_filter",
-          "predicate": {
-            "type": "minecraft:matching_blocks",
-            "blocks": [
-              "minecraft:grass_block",
-              "minecraft:dirt"
-            ],
-            "offset": [
-              0,
-              -1,
-              0
-            ]
-          }
-        }
-      ]
+      "placement": []
     }
   }
 }
