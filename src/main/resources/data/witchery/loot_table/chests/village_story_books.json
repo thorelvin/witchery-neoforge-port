@@ -1,0 +1,339 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "witchery_story_books",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Bell and the Belladonna",
+              "author": "Harlan Pike, bell-ringer of Whitethorn",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "Every village has a bell, and every bell has a job. Ours calls folk to market, warns of fire, marks a wedding, and counts the dead into the ground. I have rung it since my father's hands grew too stiff to climb the tower ladder, and in thirty-two years I have learned this: iron speaks plain, but it",
+                "does not always speak first.",
+                "There is a patch of belladonna behind the old sheep wall. No one planted it. No one admits to watering it. Yet every spring it comes up with leaves black-green and berries like buttons on a widow's coat. The children are told not to touch it. The goats know better without being told.",
+                "On the night Mistress Vale came to town, the belladonna bloomed out of season.",
+                "She arrived at dusk with a basket on one arm and a crow on the other, though I never saw the crow move. The baker's wife crossed herself. The reeve shut his shutters. I did what I always do when strangers come after dark: I rang the ninth bell and watched.",
+                "Mistress Vale did not ask for lodging. She bought a heel of bread, a twist of salt, and every brown egg left in the market. Then she went to the belladonna patch and knelt there like a woman at prayer.\n\nBy morning, little Piers was breathing again.",
+                "You will hear folk say it was fever turning on its own. You will hear the priest say Providence works through many hands. You will hear Piers' mother say nothing at all, because she knows how near she came to washing her boy for burial. I only know what I saw from the tower window: a witch at the",
+                "wall, a bowl of water gone silver in moonlight, three eggs cracked one by one, and her lips moving as if she were scolding someone too rude to answer.\n\nAfter that, the village changed by inches.",
+                "People still spat when they said \"witch,\" but they also left milk near the sheep wall when lambs came early. They still barred the doors on storm nights, but they asked Mistress Vale which shutters faced the wrong wind. The blacksmith swore no charm would ever hang in his forge, then tied a strip of",
+                "red thread over the bellows after his youngest stopped coughing.\n\nI asked her once what the belladonna was for.\n\n\"Listening,\" she said.\n\n\"Plants do not listen.\"\n\n\"Neither do bells,\" she answered, \"until someone teaches them what to carry.\"",
+                "I thought that was witch nonsense until the winter plague. Three graves in one week, and the fourth dug before the child had died. Mistress Vale climbed the tower with me then. She carried a sprig of belladonna wrapped in wool and told me to ring once, hard, when she gave the nod.",
+                "Below us, the village waited in the snow.\n\nShe tied the sprig to the clapper. She spoke to the bell, not loudly, but close, as if it were a stubborn horse. Then she nodded.\n\nI rang.",
+                "The sound rolled over the roofs and went strange at the edge of hearing. Dogs whimpered. A flock of starlings burst from the church yews. Every candle in every window leaned toward the tower flame-first. When the sound faded, the snow kept falling, but the coughing in the sick house had stopped.",
+                "Not everyone lived. Witchery is not a bargain with kindness. It is not a rope thrown across every pit. It is a knowing of where the ropes are hidden, and what they cost to pull.\n\nMistress Vale left in spring. The belladonna stayed.",
+                "Now when I ring the dead into the ground, I listen after the last note. Sometimes there is only wind. Sometimes there is a hush that feels like a hand over a fevered brow. And sometimes, when the moon is thin and the berries shine, the bell answers back."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "Ashes in the Oven",
+              "author": "Elspeth Rook, witch of the south lane",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "The village thinks my work happens at midnight.\n\nThat is because the village sleeps at midnight and can safely imagine anything it likes. They picture knives, smoke, red circles, perhaps a skull polished bright enough to see tomorrow in. I do not blame them. Midnight has theater in it.",
+                "Most witchery happens after breakfast.",
+                "At dawn I clear the ash from the oven, and if the ash is pale I save it for chalk. If it is black and greasy, I throw it on the compost and call the fire lazy. I scrub jars. I sort roots. I argue with the kettle, which has opinions about rainwater. I mend the left cuff of my robe because the cat has",
+                "decided cuffs are prey. None of this would frighten a child unless the child had been raised to fear chores.\n\nOn market days, I trade cures for gossip.",
+                "Gossip is the best reagent. Breath of the Goddess can lift a fever, but only gossip tells you who was kissed behind the mill, who hides bruises under sleeves, whose cow dries up only when the new moon sits low. A witch who does not listen will spend her life making remedies for symptoms and never",
+                "once touch a cause.\n\nLast Leafday, Mera Talbot came with a basket of onions and a lie.\n\n\"My husband cannot sleep,\" she said.\n\nHer husband slept like a felled tree. Half the village had complained of his snoring.",
+                "I gave her tea anyway and watched her hands. They were red from lye. Her nails were bitten. Around her wrist she wore three turns of blue thread, tied by someone with clumsy fingers. A child's knot.\n\n\"Does your son dream?\" I asked.\n\nShe looked at the floor. \"He wakes screaming of antlers.\"\n\nAh.",
+                "Nightmares are not always dreams. Sometimes they are visitors too proud to knock. I packed mandrake, a scrap of wool, and one of my last clean jars. Mera tried to pay with onions. I took two because refusing payment makes folk nervous.",
+                "Her boy was seven, thin as a rake handle, with eyes too large for his face. His bed stood under a window that looked toward the forest. Above it, a toy horse hung by one thread, turning slowly though the room was still.\n\nI sent Mera to boil water. Mothers need tasks when fear sits on their chests.",
+                "I placed a bowl under the window and poured in the mandrake steep. The smell could have shamed a pigsty. The boy laughed once, weakly, which told me he was not too far gone. I wound wool around the bedpost and pinned it with a thorn. Then I asked the room what it wanted.\n\nThe horse stopped turning.",
+                "There are two kinds of silence. One is empty. The other is listening.\n\n\"He is not yours,\" I told the corner.",
+                "The shadow by the window stretched itself into a shape like branches. I could have drawn a circle. I could have called fire. Instead I took the bowl and flung the mandrake water straight through it.\n\nThe scream broke three cups in the kitchen.",
+                "By sunset the boy was eating soup. By moonrise the blue thread around Mera's wrist had come loose on its own.\n\nThat night, the village saw my lamp burning late and decided I was whispering to devils.\n\nI was washing jars.\n\nThe work is mostly jars."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Mayor's Black Cat",
+              "author": "Tollen Reed, clerk to Mayor Amabel Firth",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "Before the cat, Mayor Firth was a sensible woman.",
+                "She kept accounts in straight columns. She salted roads before frost. She could hear a dishonest weight across a crowded market. If anyone had told me she would one day cancel a tax hearing because a black cat sneezed at the east window, I would have accused them of slander.",
+                "The cat arrived in the flour cart.\n\nIt was small, wet, furious, and covered in enough meal to look ghost-pale from nose to tail. The miller tried to throw it out. The cat bit him through his glove. Mayor Firth, who valued decisive creatures, wrapped it in her cloak and named it Ink.",
+                "At first Ink was only a cat. It slept in the ledger shelf, spilled sand across petitions, and placed dead mice on legal documents of which it disapproved. Then the strange accuracies began.\n\nInk hissed at Alderman Voss the morning before we found spoiled grain under his seal.",
+                "Ink slept on the northern map the day before the bridge washed out there.\n\nInk knocked a marriage license into the fire, and three days later the groom was discovered already married in Birchfall, Oakhollow, and possibly a hamlet no one could find on any map.",
+                "The mayor called it instinct. I called it office management.\n\nThen came the witch trial.",
+                "Old Mother Hem was accused of souring milk, blighting cabbages, and making Jory Bell fall in love with the cooper's apprentice instead of the reeve's niece. The last charge was spoken softly, as if love were more embarrassing than blight.",
+                "The whole village packed the hall. Mother Hem stood alone in a brown shawl, looking less like a terror of the unseen arts and more like a woman who wanted to sit down. Mayor Firth asked for evidence.",
+                "They brought a cracked churn. A basket of curled cabbage leaves. A lock of hair tied with red thread. Jory Bell, red to the ears.\n\nInk sat on the mayor's desk, washing flour that had not existed for months from one paw.",
+                "The reeve spoke first and longest. He said the village had tolerated hedge ways too long. He said a line must be drawn. He said no honest woman needed charms.\n\nAt that, Ink stopped washing.\n\nI saw Mayor Firth glance at the cat. I saw the cat look at the reeve's coat pocket.",
+                "\"Empty your pocket,\" said the mayor.\n\nThe reeve laughed. Nobody else did.",
+                "Inside his pocket was a twist of waxed cloth. Inside that, a thumb-sized poppet stuffed with cabbage root and cow hair, bound around with red thread. Also a note in his own hand listing debts owed by the dairy families who had accused Mother Hem.\n\nThe hall went very quiet.",
+                "Mother Hem looked at the poppet and then at the reeve.\n\n\"Poor work,\" she said. \"You tied the malice backward.\"\n\nThat was how we learned two things: the reeve was a thief, and Mother Hem was not nearly so harmless as she looked.\n\nAfterward, Mayor Firth asked the old woman whether Ink was a familiar.",
+                "Mother Hem peered at the cat. Ink peered back.\n\n\"No,\" said the witch. \"That cat is your conscience.\"\n\nSince then, no one in the office signs anything until Ink has sat on it. The mayor says this is not superstition. It is procedure.\n\nI have entered it in the ledger accordingly."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Price of a Clean Floor",
+              "author": "Mara Venn, apprentice witch",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "My mistress says a clean floor is the first circle.\n\nI thought she meant it as a lesson in humility. Apprentices are always being handed humility in buckets. Sweep the floor, Mara. Scrub the jars, Mara. Pick the slugs off the wolfsbane, Mara. Do not ask the skull whether it is bored, Mara.",
+                "But the first time I drew a proper rite circle, I understood.\n\nDust lies.",
+                "You cannot see a broken chalk line under dust. You cannot tell whether ash fell from the brazier or someone tracked grave soil in from the yard. You cannot feel the floor's little slopes beneath your knees if crumbs from breakfast keep grinding into your palm. A dirty floor turns every working into",
+                "a guess, and guesses invite company.\n\nThat morning we were meant to call rain.",
+                "The fields had cracked open. Sheep nosed dry troughs. Even the well rope sounded thirsty. Men came to our door who had crossed the road to avoid it every other day of the year. They brought coins, cheese, a silver button, two apologies, and one threat carefully disguised as worry.",
+                "Mistress took the apologies and the cheese. She told them to keep the rest.\n\n\"Rain is not bought,\" she said. \"It is reminded.\"\n\nWe spent an hour cleaning the floor.",
+                "I hated her for it. Outside, the village stared at our chimney as if smoke might hurry. Inside, I swept while Mistress sorted chalk by color and hummed that awful tune with only three notes.\n\nWhen the floor was clean, she let me draw the outer ring.",
+                "My hand shook. Chalk dust gathered in the crease of my thumb. The circle wavered near the north point. Mistress said nothing. That was worse than scolding.",
+                "We set the offerings: water, wood ash, belladonna, a breath caught in a bottle, and one chicken feather because rain likes jokes. The kettle ticked over the fire. The room smelled of wet stone though there had been no wet stone for weeks.\n\nThen the old skull on the shelf whispered, \"Ant.\"\n\nI froze.",
+                "Mistress looked at the floor.\n\nOne black ant crossed the chalk line.\n\nIt was tiny. It was absurd. It carried a crumb, which meant I had not swept under the table as well as I thought.\n\n\"Break,\" Mistress said.",
+                "I broke the circle with my sleeve, and the air snapped flat. Outside, someone groaned. Inside, Mistress picked up the ant on a scrap of paper and carried it to the garden.\n\n\"Again,\" she said.\n\n\"The village needs rain.\"\n\n\"The village needs us not to open a crooked door.\"",
+                "So I swept again. Under the table this time. Behind the stool. Beneath the rug I had pretended not to see. We drew the circle a second time. My hand did not shake as much.\n\nWhen Mistress spoke the last word, the roof answered.",
+                "Not with thunder. Not at first. With one drop. Then five. Then such a drumming that the men outside shouted like boys. Water ran down the window in sheets. The dry yard became black mud.\n\nMistress handed me a mop.\n\n\"Now,\" she said, \"you will learn the second circle.\"",
+                "I still sweep before every working. I sweep when no one asks. I sweep even when the floor looks clean. Especially then.\n\nWitchery begins where pride ends."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "Rowan at the Door",
+              "author": "Petyr Moss, woodcutter",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "There is rowan over my door, tied with red thread and my wife's hair.\n\nI did not put it there. I came home from the north wood with frost in my beard and found the sprig fixed above the lintel. My first thought was thieves. My second was worse: witches.\n\nMy wife told me to leave it.",
+                "\"It will keep out bad wishing,\" she said.\n\n\"Bad wishing has never paid rent here,\" I answered.\n\nShe looked at me in the way wives do when husbands have mistaken talking for thinking.\n\nThat winter, bad wishing came.",
+                "His name was Brennock, and he had once owned the strip of woodland I bought from his brother. He told everyone I cheated him, though the deed was signed and witnessed and paid in coin so heavy I still remember the ache of carrying it. Brennock smiled in public and spat when he passed my cart.",
+                "Then my axe heads began to crack.\n\nGood iron, all of them. Split at the eye after a dozen strokes. My mule went lame without swelling. The milk soured. One morning I woke to find every nail in the woodshed bent like fishhooks.\n\nMy wife pointed at the rowan.\n\n\"Still there,\" she said.",
+                "The sprig above the door had blackened at the tips.\n\nI went to Old Nan, who lives where the lane forgets itself. Folk call her a witch when they need someone blamed and Mistress Nan when they need a child turned from breech. She listened, chewing something that smelled like cloves.",
+                "\"Do you want proof,\" she asked, \"or peace?\"\n\nI said proof. I was younger then.\n\nShe gave me a rowan berry and told me to sleep with it under my tongue. I asked how I was meant not to choke. She said that was the first test.\n\nThat night I dreamed of my woodshed.",
+                "Brennock stood outside it with a twist of string and a chicken bone. He was crying. Not noble tears. Angry, ugly tears, like a man trying to wring water from a stone. He tied knots in the string and spoke my name between each one. Each knot became a bent nail. Each word struck the rowan over my door",
+                "and fell smoking to the ground.\n\nWhen I woke, the berry under my tongue had turned to ash.\n\nI went to Brennock's house with my axe.",
+                "I wish I could say I behaved wisely. I did not. I kicked his door open hard enough to crack it. He was at the table with the string in his hands. We stared at each other. Then he began to sob.",
+                "He said the woods had been his father's. He said his brother sold what should not have been sold. He said he had meant only to frighten me, not hurt my wife, not lame the mule, not spoil the milk.\n\nI believed half of it.",
+                "Old Nan arrived before I decided which half. She had followed me, of course. Witches do that. They arrive exactly when men are most likely to become stories told as warnings.\n\nShe took the string, cut it once, and slapped Brennock so hard his chair tipped over.\n\n\"There,\" she said. \"Justice.\"",
+                "\"That is all?\"\n\n\"No,\" said Nan. \"Now comes repair.\"\n\nBrennock fixed my shed. He paid for a new mule shoe. Every spring he brings my wife a rowan sprig, and she ties it over the door. We do not speak of the string.\n\nThe north wood is still mine. The grief is still his.",
+                "Witchery did not make that clean. It only stopped it poisoning the well."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Guard Who Counted Candles",
+              "author": "Sella Brant, village guard",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "My captain says a guard must count three things: doors, strangers, and candles.\n\nDoors tell you who fears the night. Strangers tell you what the road is carrying. Candles tell you where trouble is awake.",
+                "On ordinary nights, our village has twelve late candles. The baker, because dough rises when it pleases. The priest, because guilt keeps poor hours. Two mothers with infants. One old man who sleeps by day and curses by moonlight. The rest are witches.\n\nWe have four, though only two admit it.",
+                "Mistress Jale keeps bees and sells salves. She admits to herbcraft, which is what witches call witchery when customers are listening. Young Corvin charms locks, shoes horses, and insists he is merely good with small mechanisms. No lock has ever agreed. The third is a girl of thirteen who makes",
+                "rainwater turn blue when she is angry. The fourth is my captain.\n\nHe thinks no one knows.",
+                "Captain Oren wears iron at his throat and keeps rowan berries in his boot. He can smell poppet work the way dogs smell meat. Once, when a traveling merchant tried to sell love philters by the well, the captain bought one, poured it onto the ground, and the dust crawled away from it in every",
+                "direction.\n\n\"Bad sugar,\" he said.\n\nThe merchant left before sunset.\n\nOne fog-month night, I counted nineteen candles.\n\nToo many.",
+                "The extra lights burned in houses where no one should have been awake. The tanner's empty loft. The old granary. Three windows in the abandoned cooperage. A steady yellow dot under the bridge.\n\nI woke the captain.",
+                "He did not ask questions. He took his spear, a pouch of salt, and the little brass bell he pretends is for signaling patrols. We went first to the bridge.",
+                "Under it sat seven villagers in their nightclothes, each holding a candle, each staring at the stream. Their feet were in the water. Their faces were peaceful in a way I did not like.\n\nOn the far bank stood something wearing antlers.",
+                "Not a deer. Not a man. It was too tall for one and too still for the other. The fog around it bent inward, as if listening.\n\nThe captain rang his brass bell.\n\nThe sound was tiny. Embarrassingly tiny. I nearly laughed. Then every candle went out.",
+                "The villagers woke screaming. The antlered thing turned its head. Where its face should have been, there was only more fog.\n\n\"Salt,\" said the captain.",
+                "I threw the pouch. My hands were shaking, so most of it went wide. Enough struck the water. The stream flashed white, and the thing on the far bank stepped back like a cat from flame.\n\nMistress Jale arrived with her bees.",
+                "I do not mean she brought a hive. I mean the fog filled with bees, hundreds of them, each glowing faintly gold. They made a wall between us and the antlers. The girl of thirteen stood behind Jale in her nightdress, crying angry blue tears into a jar. Corvin was there too, locking and unlocking his",
+                "empty hands.\n\nThe captain looked at them all and sighed.\n\n\"Nobody admit anything,\" he said.\n\nBy dawn the fog was ordinary again. The villagers remembered bad dreams. The bridge smelled of honey and salt.\n\nNow I count candles twice.",
+                "Doors, strangers, candles. And if the captain's candle burns after midnight, I let it be. A village needs guards for the roads.\n\nFor the other roads, it needs witches."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "Lessons in Mutandis",
+              "author": "Brindle Thatch, hedge witch and bad teacher",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "My first apprentice turned a cabbage into a frog.\n\nNot with skill. With panic.",
+                "Mutandis is change persuaded into a bottle. It is not meant for vegetables already committed to soup. I had told Nib to test it on grass, as any sensible witch does. Grass is forgiving. Grass has no ambitions beyond becoming taller grass or occasionally a flower.",
+                "Nib saw a cabbage, saw me looking away, and decided destiny had roots.\n\nThe frog looked as surprised as the cabbage would have, had cabbages faces.\n\n\"Can we change it back?\" Nib whispered.\n\n\"Do you know the cabbage's true name?\"\n\n\"It had a name?\"",
+                "\"Everything has a name. Most things are wise enough not to tell us.\"\n\nThe frog burped. A cabbage leaf came out.",
+                "Teaching witchery is mostly teaching restraint. Young folk think power is what happens when the world obeys. They learn, slowly and with many stains, that power is what happens when you know what not to ask.",
+                "The village does not see this. They see Nib walking with a basket of jars and think, there goes a witchling, half dangerous and half daft. They are correct, but not in the way they mean.\n\nOn the third day of lessons, I gave Nib a task: gather mandrake root without waking the plant.\n\n\"How?\"",
+                "\"Carefully.\"\n\nCarefully lasted six minutes.",
+                "The mandrake came out shrieking, all legs and outrage, and Nib chased it through three gardens, over the baker's pig, and into the chapel, where it hid beneath a pew and made the priest forget the second half of his sermon. Earmuffs saved us from the worst of it. Pride did not.",
+                "That evening, while Nib sulked, I brewed Mutandis. Wood ash for memory. Mandrake for stubbornness. Egg for what may yet be. Bone meal for the promise bodies make to soil. Green dye because change likes a door painted its own color.\n\nNib watched the cauldron breathe.",
+                "\"Is that all witchery is?\" they asked. \"Things becoming other things?\"\n\n\"No. That is childhood.\"\n\n\"What is adulthood?\"\n\n\"Knowing what they were before you touched them.\"",
+                "Weeks passed. Nib learned to grow rowan from saplings, to leave berries for birds, to ask water artichoke politely where it wished to root. They learned that belladonna is not wicked, only particular. They learned snowbell prefers cold fingers and that wolfsbane should be handled with respect even",
+                "when it looks harmless.\n\nAt midsummer, the miller's daughter came to us with a broken charm. It had been meant to keep nightmares out. Instead it kept sleep away entirely. Her eyes were bruised purple from waking.\n\nNib took the charm, sniffed it, and did not reach for Mutandis.",
+                "\"This should not be changed,\" they said. \"It should be untied.\"\n\nGood.\n\nWe sat all night picking knots from red thread. At dawn the girl slept in my chair with sunlight on her face. Nib covered her with a shawl and looked at me as if expecting praise.\n\nI gave them the frog.",
+                "It had been living happily in the herb trough, round and green and increasingly cabbage-scented.\n\n\"Find its name,\" I said, \"and ask what it wants.\"\n\nTwo days later, we had a cabbage again.\n\nMostly.\n\nIt croaks when it rains, but many of us do."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Midwife and the Mirror",
+              "author": "Annis Crowe, midwife",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "I have delivered eighty-three children, six foals, two calves, one baby in a thunderstorm under a cart, and one witch's secret.\n\nThe secret came wrapped in a mirror.",
+                "It belonged to Selene Ash, who lived alone beyond the alder stand and came to births only when invited twice. Once meant the mother was afraid of gossip. Twice meant the child was in danger. Selene never took offense at being asked late. Witches are used to thresholds.",
+                "When Lysa Fen went into labor, the baby turned wrong. I tried all I knew. Warm cloth. Walking. Prayer. Threats directed at the father, who had fainted into the flour bin. Nothing.\n\nSo I sent for Selene twice.",
+                "She arrived with a mirror no larger than a plate, its frame blackened silver. She placed it under the bed.\n\n\"That is not clean,\" I said.\n\n\"Neither is birth.\"\n\nFair.",
+                "The room changed after the mirror went down. Not in a way any man would notice. Men notice blood, shouting, broken furniture. Women notice when air stops leaving through the cracks. The candle flames shortened. The shadows gathered under the bed like skirts.",
+                "Selene knelt beside Lysa and spoke to the child.\n\nNot to the mother. To the child.\n\n\"Wrong door,\" she said gently. \"Turn around.\"",
+                "Lysa screamed. I took her hand. Selene put one palm flat on the floor above the mirror. For a moment, I saw another room inside the glass: the same bed, the same candle, the same women, but all of us pale as moon milk and looking the other way.\n\nSomething on that side put its palm against Selene's.",
+                "The child turned.\n\nHe came into the world blue, furious, and alive. His first cry cracked the mirror from rim to rim.\n\nAfterward, when Lysa slept and the father had been revived with vinegar, I found Selene in the yard burying the pieces.\n\n\"What was on the other side?\" I asked.\n\n\"A possibility.\"",
+                "\"That is not an answer.\"\n\n\"Most true things are not answers.\"\n\nI disliked her for that. I disliked her more because I understood.",
+                "Years passed. I saw Selene's mirror work only twice again. Once for a boy whose fever showed him walking into a river before he had learned to stand. Once for an old woman who wished to see her dead husband and instead saw the daughter she had never forgiven waiting beside him.",
+                "Witch mirrors are not for vanity. They are for crossroads too narrow to stand on.\n\nWhen Selene died, no priest would take the body at first. The village remembered too many cracked mirrors and not enough saved children. So I washed her myself.",
+                "Under her bed I found a bundle of mirror shards, each wrapped in linen and labeled in her thin hand.\n\nLysa Fen's son. Fever boy. Old Mara's forgiveness. Broken oath at mill. Lost cow returned. Midwife, if needed.\n\nThe last shard was whole enough to show one eye when I lifted it.",
+                "I am an old woman now. My hands ache in rain. I cannot run for witches in the night as I once did. The shard sits in my birthing bag between scissors and cord.\n\nI have not used it.\n\nBut I have felt it grow warm twice, and both times a child turned before I asked."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Bargain at the Silver Vat",
+              "author": "Odran Kel, journeyman smith",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "Silver is an honest metal until witches touch it.\n\nIron tells you what it is. Copper complains but behaves. Gold is soft, vain, and useful for making rich men poorer. Silver watches. Leave it by the forge overnight and it looks back at you in the morning as if it knows what you dreamed.",
+                "The silver vat in Mistress Iven's shed was worse.\n\nIt crouched on three legs like a black kettle that had learned suspicion. Inside, a skin of metal shivered though there was no heat under it. I had come to repair a cracked handle, and I told myself I would not ask questions.",
+                "\"Do not lean over it,\" Mistress Iven said.\n\nSo naturally I leaned over it.\n\nThe surface showed my face older by twenty years, with a scar I did not have and grief sitting under my eyes like soot.\n\nI stepped back.\n\n\"Vat does that,\" she said.\n\n\"Shows the future?\"\n\n\"Shows one bill you may have to pay.\"",
+                "I decided the handle could remain cracked.\n\nShe laughed and gave me tea strong enough to tan leather. We sat while the vat whispered tiny metallic sounds behind us. I asked what it was for, because smiths are weak before mysteries with hinges.\n\n\"Deposits,\" she said.\n\n\"Of silver?\"\n\n\"Of consequence.\"",
+                "That was witch talk, which means true and annoying.\n\nShe showed me by dropping in a gold ring. Not much of a ring. Thin, bent, set with a dull red glass stone. The vat swallowed it without a splash. A moment later, three silver flecks rose to the surface, bright as stars in mud.",
+                "\"A widow gave me that,\" Mistress Iven said. \"Her husband promised it was ruby. He lied about many things.\"\n\n\"The vat punishes lies?\"\n\n\"No. It renders them useful.\"",
+                "I thought of every false weight I had repaired, every sword sold as battle steel that would fold at first fear, every pretty hinge hiding rotten wood. The world was full of lies. We should have been rich in silver.\n\nThen Mistress Iven asked why I had really come.\n\nI showed her the knife.",
+                "It was my brother's. He had been bitten on the road east of town. The wound was not healing. It smoked at sunrise. He laughed at prayers and flinched from garlic though he had eaten it raw since boyhood.\n\n\"I need silver that hurts monsters,\" I said.\n\n\"Most monsters are hurt by truth first.\"",
+                "\"I do not need a proverb. I need a blade.\"\n\nShe took the knife, weighed it, and looked at me for a long time.\n\n\"What will you give?\"\n\n\"Coin.\"\n\n\"Coin buys metal. Not mercy.\"",
+                "So I gave what I had: the truth that my brother had not been bitten by a stranger. He had gone seeking the pale woman under the bridge because he wanted power. He came home changed, and I wanted him saved without anyone knowing what he had chosen.\n\nThe vat began to tremble.",
+                "Mistress Iven dropped the knife in.\n\nWhen it rose, the edge shone silver-white. The handle was colder than winter. My reflection in it looked younger than I was, which frightened me more than the older face had.\n\n\"Cut the lie first,\" she said. \"Then cut only if you must.\"",
+                "I went home and told my brother I knew.\n\nHe wept until dawn.\n\nThe blade stayed sheathed.\n\nHe still avoids garlic. He still watches the sunset like a thirsty man watches a cup. But he has not gone back to the bridge.\n\nI repaired the vat handle the next week.\n\nI did not lean over it."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "When the Broom Came Home",
+              "author": "Nettie Vale, witch of no fixed roof",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "A broom is not a horse.\n\nThis is the first lesson and the one no one believes until they are upside down in a hawthorn hedge.",
+                "Horses want oats, patience, and the illusion that they chose your direction. Brooms want balance, wind, and a rider who does not lie to herself. If you are afraid, the broom knows. If you are proud, the broom knows sooner. If you have eaten too much onion soup before flying, the broom will make its",
+                "opinion plain.\n\nMine was named Lark.\n\nI did not name it. Never name a broom before its first storm. Names given in calm weather are decorative and usually wrong. Lark earned its name by rising through a thunderhead with such rude joy that lightning turned aside out of embarrassment.",
+                "We lived mostly between villages. I traded weather readings, curse untangling, and the occasional discreet truth for bread and thread. Some witches keep cottages. I kept a saddlebag, three jars, and a broom that stole ribbons from washing lines.\n\nOne autumn, Lark threw me.",
+                "Not far. Into a pond. Still, betrayal has no minimum distance.\n\nI surfaced with duckweed in my hair and saw the broom hovering over the water, bristles twitching toward the east.\n\n\"Absolutely not,\" I said.\n\nIt dipped once.",
+                "East meant home, though I had not called it that in years. East meant Whitethorn. East meant a bell tower, a sheep wall, and people who remembered me as a barefoot girl who talked to nettles. I had left before they could decide whether that was charming or dangerous.\n\nLark flew east without me.",
+                "I followed on foot, wet, furious, and increasingly certain the broom had been right.",
+                "Whitethorn smelled smaller than memory. Smoke, apples, damp wool. The bell tower leaned a little more. The sheep wall had been repaired with mismatched stones. Above one cottage door hung rowan, fresh and carefully tied.",
+                "At the square, I found half the village gathered around a girl floating six inches above the well.\n\nShe was perhaps twelve. Her braids stood out as if underwater. Her mother cried. The priest prayed. The reeve suggested ropes. My broom hovered beside the girl, smug as a cat with cream.",
+                "\"How long?\" I asked.\n\nThe mother stared. \"Since dawn.\"\n\n\"Angry?\"\n\n\"Very.\"\n\n\"Good. Anger has handles.\"\n\nI stepped close. The girl looked at me with eyes bright enough to scorch.\n\n\"They want me to stop,\" she said.\n\n\"Do you?\"\n\nThat confused her.",
+                "Witchery often begins with someone else wanting you to stop.\n\nI asked what happened. She said the baker's son had called her mother a hedge hag. She said the well rope snapped when she shouted. She said the ground forgot her afterward.\n\n\"The ground did not forget,\" I told her. \"You let go first.\"",
+                "She began to cry then, and slowly, carefully, she came down. The moment her shoes touched stone, the well coughed up a silver fish no one had ever seen before.\n\nThe village gasped.\n\nLark knocked me in the back of the head with its handle.\n\nSo I stayed.",
+                "Not forever. Witches should be careful with forever. But long enough to teach the girl how to sweep a floor before drawing chalk, how to thank rowan without plucking it bare, how to listen when water turns quiet. Long enough for the village to stop whispering every time a jar clinked in my bag.",
+                "On the day I left again, the girl stood in the lane holding Lark's newest stolen ribbon.\n\n\"Will my broom come back for me too?\" she asked.\n\n\"Only if it has better sense than you.\"\n\nShe smiled. That was answer enough.",
+                "Lark rose under me, eager for weather. Below, Whitethorn grew small. Not gone. Never gone.\n\nA broom is not a horse. A village is not a cage. And home, if witchery has touched it, is rarely where you left it."
+              ],
+              "mode": "replace_all"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
