@@ -4,6 +4,8 @@ import com.emoniph.witchery.client.model.BroomModel;
 import com.emoniph.witchery.entity.BroomEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.LightTexture;
@@ -34,7 +36,7 @@ public class MountedBroomInventoryLayer extends RenderLayer<AvatarRenderState, P
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light,
                        AvatarRenderState state, float f1, float f2) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (!(minecraft.screen instanceof InventoryScreen) || minecraft.level == null) return;
+        if (!isInventoryPreviewScreen(minecraft.screen) || minecraft.level == null) return;
         if (!state.shadowPieces.isEmpty()) return;
 
         Entity entity = minecraft.level.getEntity(state.id);
@@ -47,5 +49,9 @@ public class MountedBroomInventoryLayer extends RenderLayer<AvatarRenderState, P
                 LightTexture.FULL_BRIGHT, LivingEntityRenderer.getOverlayCoords(state, 0.0F),
                 -1, null, state.outlineColor, null);
         poseStack.popPose();
+    }
+
+    private static boolean isInventoryPreviewScreen(Screen screen) {
+        return screen instanceof InventoryScreen || screen instanceof CreativeModeInventoryScreen;
     }
 }
