@@ -23,7 +23,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** The altar must be surrounded with a variety of blocks to store enough power for demanding rituals. Some small sets of blocks are considered equivalent, so an altar cannot benefit from more than the combined limit of those equivalent blocks.
 
 ## Arthana
-- **Obtain:** Crafted using a recipe available in Feed The Beast Infinity Evolved Expert Mode.
+- **Obtain:** Crafted from a Gold Ingot above an Emerald above a Stick, with Gold Nuggets flanking the Emerald.
 - **Use:** Increases loot chances for Witchery items when used on specific mobs. Can also be used as a range upgrade for the Altar and is an ingredient in some rituals.
 - **Stats:** Durability 251
 - **Notes:** Not consumed during rituals.

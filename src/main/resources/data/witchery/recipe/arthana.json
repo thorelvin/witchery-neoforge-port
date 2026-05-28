@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " G ",
+    "NEN",
+    " S "
+  ],
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "N": "minecraft:gold_nugget",
+    "E": "minecraft:emerald",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "witchery:arthana",
+    "count": 1
+  }
+}
