@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TTT",
+    "IAI",
+    " I "
+  ],
+  "key": {
+    "T": "minecraft:torch",
+    "I": "minecraft:iron_ingot",
+    "A": "witchery:attuned_stone"
+  },
+  "result": {
+    "id": "witchery:candelabra",
+    "count": 1
+  }
+}

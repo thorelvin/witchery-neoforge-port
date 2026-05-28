@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NAN",
+    "NGN",
+    " G "
+  ],
+  "key": {
+    "N": "minecraft:gold_nugget",
+    "A": "witchery:attuned_stone",
+    "G": "minecraft:gold_ingot"
+  },
+  "result": {
+    "id": "witchery:chalice",
+    "count": 1
+  }
+}

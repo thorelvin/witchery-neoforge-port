@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "R",
+    "C"
+  ],
+  "key": {
+    "R": "witchery:redstone_soup",
+    "C": "witchery:chalice"
+  },
+  "result": {
+    "id": "witchery:chalice",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {
+        "Filled": true
+      }
+    }
+  }
+}

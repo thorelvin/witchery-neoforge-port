@@ -83,7 +83,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Must be crafted with specific materials and enchanted by a witch.
 
 ## Candelabra
-- **Obtain:** Crafting recipe required.
+- **Obtain:** Crafted from three Torches, three Iron Ingots, and an Attuned Stone.
 - **Function:** Provides light and is used in various rituals.
 - **Notes:** Can be placed on a solid block surface and requires fuel to stay lit.
 
@@ -93,12 +93,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be upgraded with additional enchantments to enhance its capabilities.
 
 ## Chalice
-- **Obtain:** Obtained by crafting with gold ingots and glass bottles.
+- **Obtain:** Crafted from Gold Nuggets, Gold Ingots, and an Attuned Stone.
 - **Function:** Used for brewing potions and rituals in Witchery.
 - **Notes:** Must be filled with a liquid to function properly.
 
 ## Chalice (Filled)
-- **Obtain:** Fill an empty chalice with a potion or liquid.
+- **Obtain:** Crafted from Redstone Soup above an empty Chalice, or by filling a placed empty Chalice with Redstone Soup.
 - **Function:** Holds magical liquids used in rituals and crafting.
 - **Notes:** The type of liquid determines the effect when used.
 

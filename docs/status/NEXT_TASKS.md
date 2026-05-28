@@ -28,6 +28,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Waystone survival access restored with the source one-row recipe: Flint plus Bone Needle.
 - Latest bounded patch: Arthana survival access restored with the source shaped recipe: Gold Ingot over Emerald over Stick, with Gold Nuggets flanking the Emerald.
 - Latest bounded patch: Chalk survival access now matches the source recipe table more closely: base Ritual Chalk crafts 2 at a time, and Golden, Otherwhere, and Infernal Chalk have their source crafting-table recipes alongside the cauldron upgrade route.
+- Latest bounded patch: Candelabra, empty Chalice, and Filled Chalice survival recipes restored from source, including the Redstone Soup plus Chalice path that yields a filled custom-data stack.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.

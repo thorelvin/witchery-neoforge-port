@@ -148,7 +148,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** None
 
 ## Candelabra
-- **Obtain:** Crafting recipe
+- **Obtain:** Crafted from three Torches, three Iron Ingots, and an Attuned Stone.
 - **Use:** Improves Altar power regeneration and recharge rate.
 - **Stats:** None
 - **Notes:** Doesn't accumulate with other Torch type upgrades.
@@ -160,13 +160,13 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No known uses in crafting.
 
 ## Chalice (Filled)
-- **Obtain:** Crafting recipe
+- **Obtain:** Crafted from Redstone Soup above an empty Chalice, or by filling a placed empty Chalice with Redstone Soup.
 - **Use:** Improves Altar power capacity.
 - **Stats:** None
 - **Notes:** Doesn't accumulate with other Chalice type upgrades.
 
 ## Chalice
-- **Obtain:** Crafting recipe
+- **Obtain:** Crafted from Gold Nuggets, Gold Ingots, and an Attuned Stone.
 - **Use:** Improves Altar power capacity, can be upgraded to Chalice (Filled).
 - **Stats:** None
 - **Notes:** Doesn't cumulate with other Chalice type upgrades.
