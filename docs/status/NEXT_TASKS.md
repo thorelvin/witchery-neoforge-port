@@ -39,6 +39,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Tester QA confirmed the old Mutandis startup process, Rowan sapling/berry leaf acquisition, and Anointing Paste cauldron conversion path. Anointing Paste is now visible in the Witchery creative ingredient/alchemy section, and the Witch's Cauldron uses its own dark handled model/texture family instead of looking identical to an un-anointed vanilla cauldron.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Completed bounded patch: Rowan/Alder/Hawthorn logs now restore the source `BlockWitchLog` Ent-spawn-on-break hook: survival breaks roll 1% base plus 1% per adjacent Witchery log, capped at 5%, then try to spawn an Ent in the old 8-16 block outer band with at least 3 blocks of headroom.
+- Latest bounded patch: Ent combat behavior now matches the old source profile more closely: player-targeting aggression is restored, target approach range is 32 blocks, wander speed is 0.6, attack damage is 4 instead of the previous port's 8, and killed Ents award 25 XP.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
 

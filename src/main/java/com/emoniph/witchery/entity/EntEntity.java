@@ -13,16 +13,20 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsTargetGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.level.Level;
 
 /**
- * Ent - ancient tree spirit. Passive until attacked; then fights back hard.
+ * Ent - ancient tree spirit angered by broken Witchery trees.
  */
 public class EntEntity extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACK_TIMER =
@@ -32,6 +36,7 @@ public class EntEntity extends Monster {
 
     public EntEntity(EntityType<? extends EntEntity> type, Level level) {
         super(type, level);
+        this.xpReward = 25;
     }
 
     @Override
@@ -45,8 +50,8 @@ public class EntEntity extends Monster {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 200.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
-                .add(Attributes.ATTACK_DAMAGE, 8.0)
-                .add(Attributes.FOLLOW_RANGE, 12.0)
+                .add(Attributes.ATTACK_DAMAGE, 4.0)
+                .add(Attributes.FOLLOW_RANGE, 32.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
@@ -54,9 +59,12 @@ public class EntEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new MoveTowardsTargetGoal(this, 0.9, 32.0F));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
     }
 
     @Override
