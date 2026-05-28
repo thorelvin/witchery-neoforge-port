@@ -4,7 +4,10 @@ import com.emoniph.witchery.blocks.entity.WitchesOvenBlockEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,6 +17,8 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 
 public class WitchesOvenMenu extends AbstractContainerMenu {
 
@@ -41,19 +46,19 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
                 return playerInventory.player.level().fuelValues().isFuel(stack);
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED, 116, 21) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED, 118, 21) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT, 116, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT, 118, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 31, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 83, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());
@@ -101,7 +106,11 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
         if (index == WitchesOvenBlockEntity.SLOT_COOKED || index == WitchesOvenBlockEntity.SLOT_BYPRODUCT) {
             if (!moveItemStackTo(stack, 5, 41, true)) return ItemStack.EMPTY;
         } else if (index >= 5) {
-            if (stack.getBurnTime(WitcheryRecipeTypes.OVEN.get(), player.level().fuelValues()) > 0) {
+            if (isOvenInput(player, stack)) {
+                if (!moveItemStackTo(stack, WitchesOvenBlockEntity.SLOT_INPUT, WitchesOvenBlockEntity.SLOT_INPUT + 1, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (stack.getBurnTime(WitcheryRecipeTypes.OVEN.get(), player.level().fuelValues()) > 0) {
                 if (!moveItemStackTo(stack, WitchesOvenBlockEntity.SLOT_FUEL, WitchesOvenBlockEntity.SLOT_FUEL + 1, false)) {
                     return ItemStack.EMPTY;
                 }
@@ -109,7 +118,7 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
                 if (!moveItemStackTo(stack, WitchesOvenBlockEntity.SLOT_JARS, WitchesOvenBlockEntity.SLOT_JARS + 1, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!moveItemStackTo(stack, WitchesOvenBlockEntity.SLOT_INPUT, WitchesOvenBlockEntity.SLOT_INPUT + 1, false)) {
+            } else if (!moveItemStackTo(stack, 5, 41, false)) {
                 return ItemStack.EMPTY;
             }
         } else if (!moveItemStackTo(stack, 5, 41, false)) {
@@ -125,6 +134,24 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
         if (stack.getCount() == result.getCount()) return ItemStack.EMPTY;
         slot.onTake(player, stack);
         return result;
+    }
+
+    private boolean isOvenInput(Player player, ItemStack stack) {
+        if (stack.isEmpty() || stack.is(WitcheryItems.CLAY_JAR.get())) {
+            return false;
+        }
+        if (stack.is(ItemTags.SAPLINGS)) {
+            return true;
+        }
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        SingleRecipeInput input = new SingleRecipeInput(stack);
+        if (serverLevel.getServer().getRecipeManager().getRecipeFor(WitcheryRecipeTypes.OVEN.get(), input, serverLevel).isPresent()) {
+            return true;
+        }
+        return stack.has(DataComponents.FOOD)
+                && serverLevel.getServer().getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, serverLevel).isPresent();
     }
 
     @Override
