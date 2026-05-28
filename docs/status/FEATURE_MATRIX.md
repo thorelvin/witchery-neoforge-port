@@ -12,7 +12,7 @@ Latest machine note: Fume Filter can now be used directly on a placed unfiltered
 
 Latest presentation note: Sun Collector now renders from the old daylightcollector cross-plane block art in-world, shows the stored sphere through a block-entity renderer, uses source `power` state as a render fallback for inserted/charged spheres, and keeps a flat generated inventory sprite instead of the old broken cube/item-atlas path.
 
-Latest plant note: Leaping Lily now uses the old vanilla lily-pad texture/display model with Witchery block/item tinting, replacing the custom texture path that rendered as a full square in-world.
+Latest plant note: Leaping Lily now uses the old vanilla lily-pad texture/display model with Witchery block/item tinting, replacing the custom texture path that rendered as a full square in-world. Its source crafting output is also restored to five lilies and now requires a Swiftness Potion rather than any potion.
 
 ---
 

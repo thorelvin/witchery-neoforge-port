@@ -268,9 +268,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Part of the Koboldite Dust processing chain.
 
 ## Leaping Lily
-- **Source:** Placed on most surfaces.
+- **Source:** Crafted in batches of 5 from Lily Pads, Glowstone Dust, Breath of the Goddess, and a Swiftness Potion.
 - **Uses:** Provides a short speed and jump boost when walked across.
-- **Notes:** No known crafting uses; emits light level 6.
+- **Notes:** Emits light level 6.
 
 ## Mandrake (Plant)
 - **Source:** Grown from Mandrake Seeds.
