@@ -197,6 +197,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FANCIFUL_THREAD.get(),
                 WitcheryItems.GOLDEN_THREAD.get(),
                 WitcheryItems.REDSTONE_SOUP.get(),
+                WitcheryItems.ANOINTING_PASTE.get(),
                 WitcheryItems.BAT_WOOL.get(),
                 WitcheryItems.CONCENTRATED_BAT_BALL.get(),
                 WitcheryItems.WOOD_ASH.get(),
