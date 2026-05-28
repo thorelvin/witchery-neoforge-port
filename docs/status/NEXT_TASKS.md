@@ -6,6 +6,23 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 ---
 
+## Next session memory - 1.7.10 baseline plan
+
+Use decompiled Witchery `1.7.10-0.24.1` as the parity baseline for new work. The next session should start by generating a focused parity inventory from the 1.7.10 registries, then use that inventory to choose bounded implementation slices instead of relying on older 1.7.2-era assumptions or scattered QA reports.
+
+Recommended order:
+
+1. Build a 1.7.10 parity matrix from `WitcheryItems`, `WitcheryBlocks`, `WitcheryRecipes`, entity registration, worldgen, and the brew registry. Mark each feature as `Done`, `Partial`, `Placeholder`, `Missing`, or `Wrong behavior`.
+2. Group remaining work into five lanes: Custom Brew / Witch's Cauldron, Vampire / Werewolf progression, Village / mobs / bosses / structures, Machines / storage exactness, and Dimensions / world feel.
+3. Start implementation with Custom Brew / Witch's Cauldron after the matrix exists. Compare `WitcheryBrewRegistry`, `BlockCauldron`, brew action classes, and fluid/gas/block behavior in 1.7.10, then land one missing brew/action path at a time.
+4. After the first brew-cauldron slice, move into vampire progression: Blood Crucible, Blood Power, Elle/Lilith chain, vampire levels, villager conversion, and old counterplay.
+5. Keep small machine/storage QA fixes moving in parallel only when they are clearly bounded: Silver Vat, Kettle, Witches' Oven, Distillery, Poppet Shelf, Refilling Chest, hopper/GUI/render edge cases.
+6. Later 1.7.10 expansion lanes are Bookshop, Village Guard, Gulg/Mog, Leonard/Lost Souls, Baba Yaga, were-villager/werewolf mob path, and exact structure/worldgen parity.
+
+First concrete next task: create and commit the 1.7.10 parity matrix doc, then pick the first Custom Brew / Witch's Cauldron gap from it.
+
+---
+
 ## Current plan
 
 - Treat the former temporary scan notes as merged into the main backlog below; keep any future temporary scans short and promote them here before they grow stale.
