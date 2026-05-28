@@ -77,7 +77,7 @@ Custom brew plant-target brews now obtainable: Foulness, Foaming, Poison (see Cu
 | Chalk variants | Done | All four done |
 | Glyph blocks | Done | CIRCLE, CIRCLE_GLYPH, CIRCLE_OTHERWHERE, CIRCLE_INFERNAL |
 | Full rite roster | Partial | All major rites now route through the dispatcher with original ring/family/offering/cost behavior and outer-to-inner ring retry. Full 1.7.10 upkeep/refund, multi-sacrifice recipe registry, and session-persistent active queue remain incomplete — see Bug #1. |
-| Circle talisman | Done | Store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4); blank talisman binding no longer depends on the wrong large-circle dispatcher and now stores absent ring slots as 0 instead of defaulting them back to ritual glyphs; stored talisman names now show their captured ring makeup like the old damage-based item name; deployed stored talismans now follow old inventory behavior by working from either an existing center circle or a valid floor support, then resetting a single talisman to blank or splitting one blank talisman out of a stored stack; item rarity is back to the old uncommon tier |
+| Circle talisman | Done | Source-shaped blank talisman crafting is restored with Gold Nuggets on the corners, Gold Ingots on the cross, and a Diamond center; store+deploy both work; fixed CIRCLE (golden chalk) variant=0 bug (now variant 4); blank talisman binding no longer depends on the wrong large-circle dispatcher and now stores absent ring slots as 0 instead of defaulting them back to ritual glyphs; stored talisman names now show their captured ring makeup like the old damage-based item name; deployed stored talismans now follow old inventory behavior by working from either an existing center circle or a valid floor support, then resetting a single talisman to blank or splitting one blank talisman out of a stored stack; item rarity is back to the old uncommon tier |
 
 ---
 
@@ -234,7 +234,7 @@ Custom brew plant-target brews now obtainable: Foulness, Foaming, Poison (see Cu
 
 | Item | Priority | Notes |
 |---|---:|---|
-| Circle talisman | Done | Store+deploy complete; golden chalk bug fixed; blank binding no longer large-circle locked; stored names show ring makeup; deployment now works from an existing center circle or a valid floor support and returns/resets a blank talisman instead of consuming the stored item outright; old uncommon rarity restored |
+| Circle talisman | Done | Source-shaped blank recipe restored; store+deploy complete; golden chalk bug fixed; blank binding no longer large-circle locked; stored names show ring makeup; deployment now works from an existing center circle or a valid floor support and returns/resets a blank talisman instead of consuming the stored item outright; old uncommon rarity restored |
 | Full persistent ritual queue parity | Quick | Storm/Toads now stage over time, Climate Change now preserves/refunds its consumed support sacrifices on queued-abort paths, and active rites now keep their original chalk family during sustain, but the original tile-entity ritual queue/refund system is still only partially recreated |
 | Werewolf body-hide rendering | Implemented / verify | Client render events now mark the player render state invisible while the wolfman layer draws, then restore the original invisibility flags after render; this avoids PlayerModel setup resetting part visibility |
 | Banshee GhostModel UV | Polish | Old screaming-mouth visibility restored; remaining work is in-game verification only |

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NGN",
+    "GDG",
+    "NGN"
+  ],
+  "key": {
+    "D": "minecraft:diamond",
+    "G": "minecraft:gold_ingot",
+    "N": "minecraft:gold_nugget"
+  },
+  "result": {
+    "id": "witchery:circle_talisman",
+    "count": 1
+  }
+}
