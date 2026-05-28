@@ -1,7 +1,7 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "particle": "witchery:block/witch_cauldron_side",
+    "particle": "minecraft:block/cauldron_side",
     "side": "witchery:block/witch_cauldron_side",
     "inside": "witchery:block/witch_cauldron_inner",
     "top": "witchery:block/witch_cauldron_top",
