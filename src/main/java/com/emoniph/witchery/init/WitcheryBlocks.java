@@ -79,7 +79,7 @@ public class WitcheryBlocks {
 
     // Wood logs/leaves
     public static final DeferredBlock<RotatedPillarBlock> ROWAN_LOG = BLOCKS.registerBlock("rowan_log",
-            RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+            WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
     public static final DeferredBlock<Block> ROWAN_WOOD = BLOCKS.registerSimpleBlock("rowan_wood",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
     public static final DeferredBlock<RowanLeavesBlock> ROWAN_LEAVES = BLOCKS.registerBlock("rowan_leaves",
@@ -89,7 +89,7 @@ public class WitcheryBlocks {
             props -> new SaplingBlock(ROWAN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> ALDER_LOG = BLOCKS.registerBlock("alder_log",
-            RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+            WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
     public static final DeferredBlock<Block> ALDER_PLANKS = BLOCKS.registerSimpleBlock("alder_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
     public static final DeferredBlock<WitcheryWoodStairBlock> ALDER_STAIRS = BLOCKS.registerBlock("alder_stairs",
@@ -109,7 +109,7 @@ public class WitcheryBlocks {
             props -> new SaplingBlock(ALDER_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> HAWTHORN_LOG = BLOCKS.registerBlock("hawthorn_log",
-            RotatedPillarBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
+            WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
     public static final DeferredBlock<Block> HAWTHORN_PLANKS = BLOCKS.registerSimpleBlock("hawthorn_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
     public static final DeferredBlock<WitcheryWoodStairBlock> HAWTHORN_STAIRS = BLOCKS.registerBlock("hawthorn_stairs",
