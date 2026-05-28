@@ -368,6 +368,44 @@
               "mode": "replace_all"
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:written_book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_book_cover",
+              "title": "The Knots on Widow Fen's Door",
+              "author": "Captain Oren Vale, village guard",
+              "generation": 0
+            },
+            {
+              "function": "minecraft:set_written_book_pages",
+              "pages": [
+                "Report filed under weather, theft, and matters I am not admitting are witchcraft.\n\nOn the third morning of rain, Fletcher Dobb came to the guardhouse to complain that Widow Fen had stolen the wind.",
+                "I asked him how one steals wind. He said by tying knots in string, which was not an answer, but was at least more specific than most complaints made before breakfast. Dobb claimed the smoke from his chimney had blown backward for two days, his hens refused to lay, and every shirt on his washing line",
+                "had twisted itself into a rope pointing at the widow's cottage.\n\nThe reeve told me to investigate quietly.\n\nThe reeve says this whenever he wants a loud thing done by someone else.",
+                "Widow Fen lives at the north edge, where the palisade stops pretending it is a wall and becomes several hopeful logs. Her cottage is small, tidy, and watched by three cats who looked disappointed to see me alive. Over the door hung a length of red cord tied with nine knots. Feathers, rowan berries,",
+                "and a chicken bone dangled between them.\n\nI knocked.\n\nThe cord moved though there was no wind.",
+                "Widow Fen opened the door with flour on her cheek and a knife in her hand. She is seventy if she is a day, thin as a fence stake, and has the calm expression of someone who has already decided where your body would be easiest to bury.\n\n\"Captain,\" she said. \"Come about the wind?\"\n\n\"Come about theft.\"",
+                "\"Then you are early. It has not stolen anything important yet.\"\n\nThis is why people dislike talking to witches. They answer the question hiding behind the question, and then expect you to keep up.\n\nI asked about the knots.",
+                "She looked past me toward the fields. \"First knot for rain. Second for smoke. Third for stray teeth. Fourth for hoof-rot. Fifth for things that knock with no hands. The rest are none of your business.\"",
+                "I wrote that down because a guard should record confessions even when he does not understand them.",
+                "While I stood there, Dobb's boy came running up the lane, white-faced and breathless. Something had taken a lamb from the north fold. Not killed it. Taken it. The mud showed no wolf tracks, no boot marks, no drag. Only three round prints as if a stool had walked away carrying supper.",
+                "Widow Fen shut her door, untied the seventh knot, and handed me the cord.\n\n\"Hold this,\" she said. \"Do not drop it unless you want to meet the stool.\"\n\nWe went to the fold.",
+                "The sheep huddled in the corner, all staring at the palisade gap. Beyond it, the rain fell in sheets, but one patch of air stayed dry. In that dry place stood a shape too thin to be a man and too tall to be a child. It held the lamb under one long arm. Its head bent sideways when it saw us, like a",
+                "hinge thinking.\n\nI reached for my spear.\n\n\"No iron,\" Widow Fen said. \"It is only borrowing.\"\n\n\"It can borrow my spear.\"\n\n\"Then it will return it inside you.\"",
+                "She took the cord from my hand and pulled the seventh knot loose with her teeth. The wind changed at once. Not strongly. Precisely. Rain swept sideways through the palisade gap and struck the dry patch. The thin thing hissed like a wet coal.\n\nThe lamb dropped into the mud and bolted.",
+                "The thing knocked on the empty air.\n\nThree taps.\n\nEvery door in the village answered.\n\nI heard latches jump, bars rattle, shutters bang. From the square came shouting. From Dobb's house came one heroic scream that I later learned was Dobb himself hiding under a table.",
+                "Widow Fen tied the seventh knot again.\n\nThe answering stopped.\n\nThe thin thing bowed, if a hinge can bow, and stepped backward into the rain until the rain had nothing left to fall around.",
+                "Afterward, Fletcher Dobb demanded the widow be punished for endangering his lamb. The lamb was standing beside him at the time eating his sleeve. I told Dobb the official finding was that no theft of wind had occurred, but that all washing lines should be secured against weather and foolishness.",
+                "He was not satisfied.\n\nNo one ever is.\n\nI returned to Widow Fen's cottage before dusk. The cord hung over her door again. Nine knots. I asked what the eighth and ninth were for.\n\nShe gave me a biscuit.\n\n\"Captain,\" she said, \"a village sleeps better when it does not know every door in the dark.\"",
+                "I have filed the cord as a lawful weather precaution.\n\nI have also ordered the palisade repaired."
+              ],
+              "mode": "replace_all"
+            }
+          ]
         }
       ]
     }
