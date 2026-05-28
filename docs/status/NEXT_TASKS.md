@@ -35,7 +35,9 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Tool Protection and Armor Protection Poppets now have their source shaped survival recipes restored after the recipe scan found the registered items had no JSON recipes.
 - Latest bounded patch: Awakened Mandrakes now use the correct `witchery:mandrake_mob` entity loot-table path, fixing the user-reported no-root/no-seed drops after killing spawned Mandrakes.
 - Latest bounded patch: The mob loot audit found no other stale registered-id/table-name mismatch, but did find real no-loot gaps; Flying Monkey and Raven now drop source-shaped Feathers, and Spectral Familiar now drops its original guaranteed Spectral Dust.
+- Latest bounded patch: Witchery leaves now restore the source sapling route: Rowan/Alder/Hawthorn leaves drop their matching sapling at the original 1-in-20 base chance, shears/Silk Touch return the leaves, and Rowan berries are back to the original rare 1-in-200 leaf drop instead of the temporary 5% route.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
+- Important next step: restore the source BlockWitchLog Ent-spawn-on-break hook for Rowan/Alder/Hawthorn logs. Original 1.7.2 `BlockWitchLog` used a 1% base spawn chance, +1% for each adjacent Witchery log, capped at 5%, then tried to spawn an Ent 8-16 blocks away with at least three blocks of vertical clearance.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
 
