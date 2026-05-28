@@ -334,7 +334,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** The custom update recipe and readable book UI are still follow-up work.
 
 ## Golden Chalk
-- **Obtain:** Crafted at a Witch's Cauldron near an Altar with at least 3000 power.
+- **Obtain:** Crafted from Ritual Chalk, Gold Nuggets, Yellow Dye, and Redstone; also obtainable through the Witch's Cauldron upgrade route.
 - **Use:** Used to draw the center golden glyph in Circle Rituals.
 - **Stats:** N/A
 - **Notes:** Stackable up to 64.
@@ -420,13 +420,13 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be dyed and enchanted like leather boots.
 
 ## Infernal Chalk
-- **Obtain:** N/A (Recipe not provided)
+- **Obtain:** Crafted from Ritual Chalk, Blaze Powder, Ember Moss, and Red Dye; also obtainable through the Witch's Cauldron upgrade route.
 - **Use:** N/A (Functionality not described)
 - **Stats:** N/A
 - **Notes:** N/A
 
 ## Infernal Chalk
-- **Obtain:** Crafted using Witch's Cauldron.
+- **Obtain:** Crafted from Ritual Chalk, Blaze Powder, Ember Moss, and Red Dye; also obtainable through the Witch's Cauldron upgrade route.
 - **Use:** Used to draw infernal red glyphs for Circle Rituals involving Nether, fire, or demons.
 - **Stats:** None
 - **Notes:** No known crafting uses.
@@ -504,7 +504,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Projectile/crossbow behavior is still a follow-up; the old shot cost and power-drain behavior are not implemented yet.
 
 ## Otherwhere Chalk
-- **Obtain:** Crafted using unknown recipe.
+- **Obtain:** Crafted from Ritual Chalk, Water Artichoke, Lapis Lazuli, and an Ender Pearl; also obtainable through the Witch's Cauldron upgrade route.
 - **Use:** Used for drawing otherwhere purple glyphs in Circle Rituals, often concerning transposition and The End dimension.
 - **Stats:** None
 - **Notes:** No known uses in crafting.
@@ -566,7 +566,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Only a Boline can safely harvest these without damaging them.
 
 ## Ritual Chalk
-- **Obtain:** Crafted using a specific recipe.
+- **Obtain:** Crafted as 2 from Wood Ash, Gypsum, and Tear of the Goddess.
 - **Use:** Used to draw white glyphs for creating Circle Rituals and in several ritual-related recipes.
 - **Stats:** None specified.
 - **Notes:** None provided.

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "EBE",
+    "RCR",
+    "RCR"
+  ],
+  "key": {
+    "E": "witchery:ember_moss",
+    "B": "minecraft:blaze_powder",
+    "R": "minecraft:red_dye",
+    "C": "witchery:chalk"
+  },
+  "result": {
+    "id": "witchery:chalk_infernal",
+    "count": 2
+  }
+}

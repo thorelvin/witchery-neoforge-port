@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "AEA",
+    "LCL",
+    "LCL"
+  ],
+  "key": {
+    "A": "witchery:artichoke",
+    "E": "minecraft:ender_pearl",
+    "L": "minecraft:lapis_lazuli",
+    "C": "witchery:chalk"
+  },
+  "result": {
+    "id": "witchery:chalk_otherwhere",
+    "count": 2
+  }
+}

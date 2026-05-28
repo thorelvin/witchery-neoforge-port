@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NNN",
+    "YCY",
+    "YRY"
+  ],
+  "key": {
+    "N": "minecraft:gold_nugget",
+    "Y": "minecraft:yellow_dye",
+    "C": "witchery:chalk",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "witchery:chalk_golden",
+    "count": 1
+  }
+}
