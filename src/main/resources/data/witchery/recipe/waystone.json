@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FB"
+  ],
+  "key": {
+    "F": "minecraft:flint",
+    "B": "witchery:bone_needle"
+  },
+  "result": {
+    "id": "witchery:waystone",
+    "count": 1
+  }
+}

@@ -25,6 +25,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 - Latest bounded patch: Witches Oven menu slots now match the original 1.7 coordinates again: clay jars are centered at `83,53`, outputs use the source right-side positions, and shift-click tests oven-cookable input before fuel so saplings/logs move into the input slot instead of being captured as fuel.
 - Latest bounded patch: Broom survival access restored with the source 1.7 recipe: two Sticks over three Hawthorn Saplings, matching the old Witchery sapling metadata 2 ingredient.
 - Latest bounded patch: Circle Talisman survival access restored with the source blank recipe: Gold Nuggets on the corners, Gold Ingots on the cross, and a Diamond center.
+- Latest bounded patch: Waystone survival access restored with the source one-row recipe: Flint plus Bone Needle.
 - Next wake-up handoff: start from `git status`, this file, and `ITEM_REVIEW.md`; avoid opening a large gameplay lane with low context. Prefer one small visual/resource parity fix or in-game QA verification note, then run `.\gradlew.bat compileJava processResources`, update docs, and commit.
 - Keep placeholder items inert until a family gets a real mechanics/recipe/alias decision, then update `ITEM_REVIEW.md`, `FEATURE_MATRIX.md`, and the Primer together.
 - Pull from the high-priority user QA/fix queue below before broader backlog work unless a new blocker appears.
