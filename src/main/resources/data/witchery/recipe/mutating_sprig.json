@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "MMM",
+    "MEM",
+    "MMM"
+  ],
+  "key": {
+    "M": "witchery:mutandis_extremis",
+    "E": "witchery:ent_twig"
+  },
+  "result": {
+    "id": "witchery:mutator",
+    "count": 1
+  }
+}

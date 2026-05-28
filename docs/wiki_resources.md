@@ -317,6 +317,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Uses:** Transforms multi-stage growth plants; used in some Witchery crafting recipes.
 - **Notes:** Higher form of Mutandis, can transform more items.
 
+## Mutating Sprig
+- **Source:** Crafted from Mutandis Extremis surrounding an Ent Twig; the port also keeps the cauldron working route live.
+- **Uses:** Performs controlled block and plant mutations.
+- **Notes:** Durability tool used for classic structure mutations such as Grasspers, Leech Chests, Blood Roses, Brambles, and Wormwood.
+
 ## Null Catalyst
 - **Source:** Crafted using relatively cheap materials once one is made.
 - **Uses:** Important for crafting items that nullify effects.
