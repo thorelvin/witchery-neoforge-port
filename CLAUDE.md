@@ -17,6 +17,7 @@ This file is always loaded by Claude Code. Keep it short; read deeper docs only 
 - NeoForge: 21.11.42
 - Java: 21
 - Style: feature-faithful gameplay, modern NeoForge internals.
+- Parity baseline: compare against decompiled Witchery `1.7.10-0.24.1` first; use `1.7.2-0.19.0` only as historical context.
 
 ## Core rule
 
@@ -38,6 +39,7 @@ Read only the doc needed for the task:
 - `docs/status/BUGS.md` - active bug list and priority order.
 - `docs/status/NEXT_TASKS.md` - recommended next implementation slices.
 - `docs/reference/PORTING_GUIDE.md` - quick implementation recipes and workflow.
+- `docs/reference/DECOMPILED_SOURCES.md` - canonical decompiled source priority and parity baseline notes.
 - `docs/reference/API_MAP.md` - 1.7.10 Forge to NeoForge 1.21.11 API mapping reference.
 - `docs/reference/PORTING_NOTES.md` - chronological API gotchas; search before guessing.
 - `docs/reference/OBSCURE_MECHANICS.md` - obscure original behavior notes.

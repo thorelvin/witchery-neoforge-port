@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-05-25
+Last updated: 2026-05-28
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -19,11 +19,14 @@ Current unattended execution note:
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:
 
-1. Original Witchery mechanics and edge cases: `C:\claude\witchery\decompiled\witchery-1.7.2-0.19.0`.
-2. Witchery Resurrected visual parity, models, textures, GUI clues, and renderer clues: `C:\claude\witchery\decompiled\WitcheryResurrected-1.12.2-0.5.2.4-forge-all`.
-3. Witchery Companion bugfixes, compatibility notes, mixins, and community corrections: `C:\claude\witchery\decompiled\witcherycompanion-0.36.1-beta`.
-4. The active NeoForge port being changed and verified: `C:\claude\witchery\witchery-port`.
-5. NeoForge docs and modern examples are API-shape references only; they do not override Witchery behavior without a documented reason.
+1. Original Witchery parity baseline: `C:\claude\witchery\decompiled\witchery-1.7.10-0.24.1`.
+2. Historical original Witchery context only: `C:\claude\witchery\decompiled\witchery-1.7.2-0.19.0`.
+3. Witchery Resurrected visual parity, models, textures, GUI clues, and renderer clues: `C:\claude\witchery\decompiled\WitcheryResurrected-1.12.2-0.5.2.4-forge-all`.
+4. Witchery Companion bugfixes, compatibility notes, mixins, and community corrections: `C:\claude\witchery\decompiled\witcherycompanion-0.36.1-beta`.
+5. The active NeoForge port being changed and verified: `C:\claude\witchery\witchery-port`.
+6. NeoForge docs and modern examples are API-shape references only; they do not override Witchery behavior without a documented reason.
+
+Baseline correction note: local comparison shows `1.7.10-0.24.1` adds 670 files over `1.7.2-0.19.0`, including 346 Java files and 323 assets. The added/expanded areas include the custom brew and Witch's Cauldron system, vampire/werewolf content, Blood Crucible, Silver Vat, Coffin, Beartrap/Wolftrap, Garlic Garland, Mirror/Mirror Wall, Daylight Collector, Shaded Glass, Perpetual Ice, Stockade, Wolf Head/Altar, Mindrake/Garlic/Wolfsbane crops, village/goblin structures, and many new mobs/renderers/assets. Future parity checks should compare the port against 1.7.10 first.
 
 ## External reference set
 
