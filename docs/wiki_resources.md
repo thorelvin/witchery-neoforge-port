@@ -138,7 +138,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Cannot be replanted; Wispy Cotton remains in inventories when leaving the Spirit World.
 
 ## Drop of Luck
-- **Source:** Crafted using a recipe in Witchery with an Altar Power of 7000.
+- **Source:** Crafted from Mutandis Extremis above Refined Evil above a Water Bottle; the port also keeps the altar-powered Witch's Cauldron working.
 - **Uses:** Component for various recipes and Circle Rituals including Armor Protection Poppet, Brew of Insanity, and more.
 - **Notes:** Not specified.
 

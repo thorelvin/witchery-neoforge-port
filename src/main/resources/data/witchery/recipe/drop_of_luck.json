@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "M",
+    "R",
+    "W"
+  ],
+  "key": {
+    "M": "witchery:mutandis_extremis",
+    "R": "witchery:refined_evil",
+    "W": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:water"
+        }
+      }
+    }
+  },
+  "result": {
+    "id": "witchery:drop_of_luck",
+    "count": 1
+  }
+}
