@@ -40,7 +40,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -54,11 +53,25 @@ public class WitchCauldronBlock extends Block {
     public static final MapCodec<WitchCauldronBlock> CODEC = simpleCodec(WitchCauldronBlock::new);
     public static final int MAX_FILL_LEVEL = 3;
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, MAX_FILL_LEVEL);
-    private static final VoxelShape INSIDE = box(2.0, 4.0, 2.0, 14.0, 16.0, 14.0);
-    private static final VoxelShape SHAPE = Shapes.join(
-            Shapes.block(),
-            Shapes.or(box(0.0, 0.0, 4.0, 16.0, 3.0, 12.0), box(4.0, 0.0, 0.0, 12.0, 3.0, 16.0), box(2.0, 0.0, 2.0, 14.0, 3.0, 14.0), INSIDE),
-            BooleanOp.ONLY_FIRST
+    private static final VoxelShape SHAPE = Shapes.or(
+            box(2.0, 0.0, 2.0, 5.0, 2.0, 5.0),
+            box(11.0, 0.0, 2.0, 14.0, 2.0, 5.0),
+            box(2.0, 0.0, 11.0, 5.0, 2.0, 14.0),
+            box(11.0, 0.0, 11.0, 14.0, 2.0, 14.0),
+            box(3.0, 1.0, 3.0, 13.0, 2.0, 13.0),
+            box(3.0, 2.0, 3.0, 13.0, 3.0, 13.0),
+            box(0.0, 2.0, 0.0, 16.0, 10.0, 3.0),
+            box(0.0, 2.0, 13.0, 16.0, 10.0, 16.0),
+            box(0.0, 2.0, 3.0, 3.0, 10.0, 13.0),
+            box(13.0, 2.0, 3.0, 16.0, 10.0, 13.0),
+            box(1.0, 10.0, 1.0, 15.0, 12.0, 3.0),
+            box(1.0, 10.0, 13.0, 15.0, 12.0, 15.0),
+            box(1.0, 10.0, 3.0, 3.0, 12.0, 13.0),
+            box(13.0, 10.0, 3.0, 15.0, 12.0, 13.0),
+            box(0.0, 12.0, 0.0, 16.0, 14.0, 3.0),
+            box(0.0, 12.0, 13.0, 16.0, 14.0, 16.0),
+            box(0.0, 12.0, 3.0, 3.0, 14.0, 13.0),
+            box(13.0, 12.0, 3.0, 16.0, 14.0, 13.0)
     );
     private static final float RAIN_FILL_CHANCE = 0.05F;
     private static final int CHALK_ALTAR_RADIUS = 8;
@@ -248,7 +261,12 @@ public class WitchCauldronBlock extends Block {
 
     private double getContentHeight(BlockState state) {
         int level = state.getValue(LEVEL);
-        return level <= 0 ? 0.0 : (6.0 + level * 3.0) / 16.0;
+        return switch (level) {
+            case 1 -> 5.0 / 16.0;
+            case 2 -> 9.0 / 16.0;
+            case 3 -> 13.0 / 16.0;
+            default -> 0.0;
+        };
     }
 
     private boolean isEntityInsideContent(BlockState state, BlockPos pos, Entity entity) {
