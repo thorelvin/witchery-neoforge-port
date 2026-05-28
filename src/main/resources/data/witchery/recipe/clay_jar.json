@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "ingredient": {
-    "item": "witchery:clay_jar_soft"
-  },
+  "ingredient": "witchery:clay_jar_soft",
   "result": {
     "id": "witchery:clay_jar",
     "count": 1
