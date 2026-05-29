@@ -216,6 +216,58 @@ public class WitcheryEntities {
                             .sized(0.6F, 1.95F).clientTrackingRange(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "village_guard"))));
 
+    // ── Bolt — witch-hunter crossbow projectile ───────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.BoltEntity>> BOLT =
+            ENTITY_TYPES.register("bolt", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.BoltEntity>of(com.emoniph.witchery.entity.BoltEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "bolt"))));
+
+    // ── Goblin bosses — Gulg (melee) and Mog (ranged) ────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.GoblinGulgEntity>> GOBLIN_GULG =
+            ENTITY_TYPES.register("goblin_gulg", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.GoblinGulgEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 1.8F).clientTrackingRange(16)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "goblin_gulg"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.GoblinMogEntity>> GOBLIN_MOG =
+            ENTITY_TYPES.register("goblin_mog", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.GoblinMogEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 1.8F).clientTrackingRange(16)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "goblin_mog"))));
+
+    // ── Vampire mob ───────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.VampireEntity>> VAMPIRE =
+            ENTITY_TYPES.register("vampire", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.VampireEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "vampire"))));
+
+    // ── Baba Yaga — boss witch ────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.BabaYagaEntity>> BABA_YAGA =
+            ENTITY_TYPES.register("baba_yaga", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.BabaYagaEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(16)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "baba_yaga"))));
+
+    // ── Wolfman + Were-Villager — werewolf mob chain ──────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.WolfmanEntity>> WOLFMAN =
+            ENTITY_TYPES.register("wolfman", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.WolfmanEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "wolfman"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.WereVillagerEntity>> WERE_VILLAGER =
+            ENTITY_TYPES.register("were_villager", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.WereVillagerEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "were_villager"))));
+
     // ── Shade of Leonard + Lost Souls — Leonard boss chain ───────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LeonardEntity>> LEONARD =
@@ -260,6 +312,14 @@ public class WitcheryEntities {
         event.register(MANDRAKE_MOB.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(DEMON.get(),        SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(NIGHTMARE.get(),    SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(GOBLIN_GULG.get(),  SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(GOBLIN_MOG.get(),   SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(VAMPIRE.get(),      SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(BABA_YAGA.get(),    SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(WOLFMAN.get(),      SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(WERE_VILLAGER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(VILLAGE_GUARD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -321,6 +381,12 @@ public class WitcheryEntities {
         event.put(ELLE.get(),             ElleEntity.createAttributes().build());
         event.put(LILITH.get(),           LilithEntity.createAttributes().build());
         event.put(VILLAGE_GUARD.get(),     com.emoniph.witchery.entity.VillageGuardEntity.createAttributes().build());
+        event.put(GOBLIN_GULG.get(),       com.emoniph.witchery.entity.GoblinGulgEntity.createAttributes().build());
+        event.put(GOBLIN_MOG.get(),        com.emoniph.witchery.entity.GoblinMogEntity.createAttributes().build());
+        event.put(VAMPIRE.get(),           com.emoniph.witchery.entity.VampireEntity.createAttributes().build());
+        event.put(BABA_YAGA.get(),         com.emoniph.witchery.entity.BabaYagaEntity.createAttributes().build());
+        event.put(WOLFMAN.get(),           com.emoniph.witchery.entity.WolfmanEntity.createAttributes().build());
+        event.put(WERE_VILLAGER.get(),     com.emoniph.witchery.entity.WereVillagerEntity.createAttributes().build());
         event.put(LEONARD.get(),          com.emoniph.witchery.entity.LeonardEntity.createAttributes().build());
         event.put(LOST_SOUL.get(),        com.emoniph.witchery.entity.LostSoulEntity.createAttributes().build());
     }

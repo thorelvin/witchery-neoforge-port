@@ -331,7 +331,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CONTRACT_SMELTING.get(),
                 WitcheryItems.SOUL_OF_TORMENT.get(),
                 WitcheryItems.TORMENT_SCROLL.get(),
-                WitcheryItems.LEONARDS_URN.get());
+                WitcheryItems.LEONARDS_URN.get(),
+                WitcheryItems.GULGS_GIRDLE.get(),
+                WitcheryItems.MOGS_QUIVER.get());
     }
 
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
@@ -394,6 +396,12 @@ public class WitcheryCreativeTabs {
     private static void addSpawnEggs(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.COVEN_WITCH_SPAWN_EGG.get(),
+                WitcheryItems.VAMPIRE_SPAWN_EGG.get(),
+                WitcheryItems.GOBLIN_GULG_SPAWN_EGG.get(),
+                WitcheryItems.GOBLIN_MOG_SPAWN_EGG.get(),
+                WitcheryItems.BABA_YAGA_SPAWN_EGG.get(),
+                WitcheryItems.WOLFMAN_SPAWN_EGG.get(),
+                WitcheryItems.WERE_VILLAGER_SPAWN_EGG.get(),
                 WitcheryItems.VILLAGE_GUARD_SPAWN_EGG.get(),
                 WitcheryItems.WITCH_HUNTER_SPAWN_EGG.get(),
                 WitcheryItems.RAVEN_SPAWN_EGG.get(),

@@ -3,6 +3,9 @@ package com.emoniph.witchery;
 import com.emoniph.witchery.client.model.*;
 import com.emoniph.witchery.client.model.LeonardModel;
 import com.emoniph.witchery.client.model.VillageGuardModel;
+import com.emoniph.witchery.client.model.WolfmanModel;
+import com.emoniph.witchery.client.renderer.WereVillagerRenderer;
+import com.emoniph.witchery.client.renderer.WolfmanRenderer;
 import com.emoniph.witchery.client.renderer.VillageGuardRenderer;
 import com.emoniph.witchery.client.model.LilithModel;
 import com.emoniph.witchery.client.model.NightmareModel;
@@ -10,6 +13,12 @@ import com.emoniph.witchery.client.model.SpiritModel;
 import com.emoniph.witchery.client.model.PoppetShelfCompassAngleProperty;
 import com.emoniph.witchery.client.renderer.*;
 import com.emoniph.witchery.client.renderer.ElleRenderer;
+import com.emoniph.witchery.client.model.BabaYagaModel;
+import com.emoniph.witchery.client.renderer.BabaYagaRenderer;
+import com.emoniph.witchery.client.renderer.VampireRenderer;
+import com.emoniph.witchery.client.renderer.BoltRenderer;
+import com.emoniph.witchery.client.renderer.GoblinGulgRenderer;
+import com.emoniph.witchery.client.renderer.GoblinMogRenderer;
 import com.emoniph.witchery.client.renderer.LeonardRenderer;
 import com.emoniph.witchery.client.renderer.LilithRenderer;
 import com.emoniph.witchery.client.renderer.NightmareRenderer;
@@ -102,6 +111,8 @@ public class WitcheryClient {
         Map.entry(com.emoniph.witchery.client.model.BloodCrucibleModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.BloodCrucibleModel::createBodyLayer),
         Map.entry(LilithModel.LAYER_LOCATION,     LilithModel::createBodyLayer),
+        Map.entry(BabaYagaModel.LAYER_LOCATION,        BabaYagaModel::createBodyLayer),
+        Map.entry(WolfmanModel.LAYER_LOCATION,         WolfmanModel::createBodyLayer),
         Map.entry(VillageGuardModel.LAYER_LOCATION,    VillageGuardModel::createBodyLayer),
         Map.entry(VillageGuardModel.ARMOR_HEAD_LAYER,  VillageGuardModel::createArmorHeadLayer),
         Map.entry(LeonardModel.LAYER_LOCATION,    LeonardModel::createBodyLayer),
@@ -216,6 +227,13 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.REFLECTION.get(),      ReflectionRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.ELLE.get(),            ElleRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LILITH.get(),          LilithRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.GOBLIN_GULG.get(), GoblinGulgRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.GOBLIN_MOG.get(),  GoblinMogRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.VAMPIRE.get(),     VampireRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.BABA_YAGA.get(),  BabaYagaRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.BOLT.get(),       BoltRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.WOLFMAN.get(),          WolfmanRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.WERE_VILLAGER.get(),   WereVillagerRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.VILLAGE_GUARD.get(),   VillageGuardRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LEONARD.get(),         LeonardRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LOST_SOUL.get(),       com.emoniph.witchery.client.renderer.LostSoulRenderer::new);

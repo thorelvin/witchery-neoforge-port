@@ -11,12 +11,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import com.emoniph.witchery.entity.WereVillagerEntity;
+import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.npc.villager.Villager;
-import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -92,18 +91,7 @@ public class WerewolfEvents {
         return false;
     }
 
-    // ── Silver damage bonus ───────────────────────────────────────────────────
-
-    /** Silver held by attacker deals 2 bonus damage to werewolves and vampires. */
-    @SubscribeEvent
-    public static void onSilverDamage(LivingDamageEvent.Pre event) {
-        if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
-        if (!isSilverHeld(attacker.getMainHandItem())) return;
-
-        if (isWerewolfOrVampire(event.getEntity())) {
-            event.setNewDamage(event.getNewDamage() + 2f);
-        }
-    }
+    // Silver damage bonus is now handled centrally in SilverEvents.onSilverDamage
 
     @SubscribeEvent
     public static void onWerewolfVillagerDeath(LivingDeathEvent event) {
@@ -134,25 +122,18 @@ public class WerewolfEvents {
     }
 
     private static boolean spawnWereVillagerPlaceholder(ServerLevel level, Villager villager, ServerPlayer target) {
-        ZombieVillager zombie = EntityType.ZOMBIE_VILLAGER.create(level, EntitySpawnReason.TRIGGERED);
-        if (zombie == null) {
-            return false;
-        }
-
-        VillagerData villagerData = villager.getVillagerData();
-        zombie.setVillagerData(villagerData);
-        zombie.setPos(villager.getX(), villager.getY(), villager.getZ());
-        zombie.setYRot(villager.getYRot());
-        zombie.setXRot(villager.getXRot());
-        zombie.setBaby(villager.isBaby());
-        zombie.setPersistenceRequired();
-        zombie.setTarget(target);
-        zombie.getPersistentData().putBoolean("witchery_were_villager_placeholder", true);
-        if (villager.hasCustomName()) {
-            zombie.setCustomName(villager.getCustomName());
-        }
-        level.addFreshEntity(zombie);
-        level.levelEvent(null, 1016, zombie.blockPosition(), 0);
+        WereVillagerEntity were = WitcheryEntities.WERE_VILLAGER.get()
+                .create(level, EntitySpawnReason.TRIGGERED);
+        if (were == null) return false;
+        were.setPos(villager.getX(), villager.getY(), villager.getZ());
+        were.setYRot(villager.getYRot());
+        were.setXRot(villager.getXRot());
+        were.setFormerProfession(0); // profession stored as type (0=default); full profession mapping deferred
+        were.setInfectious(true); // player-caused infection is always infectious
+        were.setPersistenceRequired();
+        if (villager.hasCustomName()) were.setCustomName(villager.getCustomName());
+        level.addFreshEntity(were);
+        level.levelEvent(null, 1016, were.blockPosition(), 0);
         return true;
     }
 

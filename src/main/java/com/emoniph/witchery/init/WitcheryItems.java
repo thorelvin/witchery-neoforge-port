@@ -533,6 +533,8 @@ public class WitcheryItems {
                     itemProps(id).stacksTo(16).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.registerSimpleItem("leonards_urn");
+    public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.registerSimpleItem("gulgs_girdle");
+    public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.registerSimpleItem("mogs_quiver");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
     public static final DeferredItem<Item> KOBOLDITE_NUGGET   = ITEMS.registerSimpleItem("koboldite_nugget");
@@ -616,13 +618,11 @@ public class WitcheryItems {
             "dandelion_of_thorns",
             "dandelion_of_webs",
             "duplication_grenade",
-            "gulgs_girdle",
             "hellhound_head",
             "horn_of_the_hunt",
             "ice_slab",
             "ice_stairs",
             "ice_stockade",
-            "mogs_quiver",
             "moon_charm",
             "perpetual_ice",
             "poppy_of_ink",
@@ -730,6 +730,24 @@ public class WitcheryItems {
             ITEMS.register("coven_witch_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.COVEN_WITCH.get())));
 
+    public static final DeferredItem<SpawnEggItem> GOBLIN_GULG_SPAWN_EGG =
+            ITEMS.register("goblin_gulg_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.GOBLIN_GULG.get())));
+    public static final DeferredItem<SpawnEggItem> GOBLIN_MOG_SPAWN_EGG =
+            ITEMS.register("goblin_mog_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.GOBLIN_MOG.get())));
+    public static final DeferredItem<SpawnEggItem> VAMPIRE_SPAWN_EGG =
+            ITEMS.register("vampire_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.VAMPIRE.get())));
+    public static final DeferredItem<SpawnEggItem> BABA_YAGA_SPAWN_EGG =
+            ITEMS.register("baba_yaga_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.BABA_YAGA.get())));
+    public static final DeferredItem<SpawnEggItem> WOLFMAN_SPAWN_EGG =
+            ITEMS.register("wolfman_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.WOLFMAN.get())));
+    public static final DeferredItem<SpawnEggItem> WERE_VILLAGER_SPAWN_EGG =
+            ITEMS.register("were_villager_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.WERE_VILLAGER.get())));
     public static final DeferredItem<SpawnEggItem> VILLAGE_GUARD_SPAWN_EGG =
             ITEMS.register("village_guard_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.VILLAGE_GUARD.get())));

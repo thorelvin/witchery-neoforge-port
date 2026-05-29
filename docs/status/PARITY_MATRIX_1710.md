@@ -258,8 +258,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | **EntityBabaYaga** | ❌ Missing | Boss; Baba Yaga hut structure dependency |
 | ~~**EntityVillageGuard**~~ | ✅ Done | `VillageGuardEntity` — 25 HP, iron sword, 4 armour; targets undead/raiders/vampires/witches/demonic mobs and vampire/werewolf players; neutral to normal players; 2 variants |
 | **EntityVampire** | ❌ Missing | Vampire mob (separate from player vampirism) |
-| **EntityWolfman** | ❌ Missing | Standalone werewolf entity; Wolftrap summon/capture dependency |
-| **EntityVillagerWere** | ❌ Missing | Were-villager; placeholder zombie-villager substitute is live |
+| ~~**EntityWolfman**~~ | ✅ Done | `WolfmanEntity` — 40 HP, silver weakness, moon reversion to WereVillager; WolfmanModel (64×64) |
+| ~~**EntityVillagerWere**~~ | ✅ Done | `WereVillagerEntity` — peaceful mob, full-moon transforms to WolfmanEntity |
 | **EntityGoblin** | ❌ Missing | Base trading/labor goblin |
 | **EntityGoblinGulg** | ❌ Missing | Gulg boss |
 | **EntityGoblinMog** | ❌ Missing | Mog boss |
