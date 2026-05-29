@@ -9,6 +9,31 @@ Current target:
 
 ---
 
+## 2026-05-28 WitcheryPlayerData — 16-field DFU codec limit
+
+`RecordCodecBuilder.mapCodec` hard-caps at 16 fields. Adding vampire progression fields (`level`, `ultimate`, `ultimateCharges`) without wrapping them would push past this limit.
+
+**Pattern used**: replace a simple `Codec.BOOL.optionalFieldOf("vampire")` with a single `VampireState.CODEC.optionalFieldOf("vampire_state")` that embeds all 4 vampire sub-fields. Total top-level fields stays at 16.
+
+Any future expansion of player state fields must follow the same pattern — add a new nested state class (like `FamiliarState`, `InfusionChargeState`, `SpiritWorldState`, `VampireState`) instead of adding flat codec fields.
+
+## 2026-05-28 BloodCrucibleBlock — BESR / model coordinate system
+
+Block entity renderers in this project use the standard entity-model flip:
+```java
+ps.translate(0.5, 0.5, 0.5);
+ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+ps.translate(0.0F, -1.0F, 0.0F);
+```
+After this transform, model coords map to block coords as:
+- `block_x = 0.5 - model_px / 16`
+- `block_y = 1.5 - model_py / 16`  ← model Y=24 → block y=0 (floor)
+- `block_z = 0.5 + model_pz / 16`
+
+`ps.translate(0, +N/16, 0)` in the rotated pose moves the part **down** in world space (positive is toward block floor). Use this for liquid fill offset.
+
+---
+
 ## 2026-05-26 NeoForge 21.11.42 API surface vs decompiled source
 
 The `ng_execute` Gradle cache contains **decompiled NeoForge sources that may be newer than 21.11.42**. Do not trust those source files as the ground truth for which APIs are available on the compile classpath. Always verify against the actual compiled binary (e.g. `javap -p <class-from-compiledWithNeoForge_*.jar>`).
@@ -633,3 +658,19 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - Blockstate y-rotations (CW when viewed from above): NORTH→y=180, SOUTH→y=0, WEST→y=270, EAST→y=90. These put the model's decorative "north" face toward the player for all four directions.
 
 - `AbstractGolem` does **not** exist in NeoForge 21.11.42 — use `net.minecraft.world.entity.animal.golem.IronGolem` and `net.minecraft.world.entity.animal.golem.SnowGolem` explicitly for the 1.7.10 `EntityGolem` equivalent.
+
+**`GlintWeedBlock` particle type: use `END_ROD`, not `FLAME` (2026-05-29)**
+- The original Glint Weed emits soft magical light (level 14–15). Using `ParticleTypes.FLAME` in `animateTick` made it look like a burning fire plant — identical in appearance to Ember Moss, which is the plant that *should* look fiery.
+- Fix: `ParticleTypes.END_ROD` with a slow upward velocity `(0, 0.01, 0)` gives the correct drifting magical-glow look.
+- Rule: do not share particle types between plants with different themes. FLAME = fire/heat; END_ROD/GLOW = cold magical light.
+- Known gap: original Glint Weed can spread on walls and ceilings. The port's `BushBlock` base class `canSurvive()` requires a solid floor face, so spread is currently ground-only. Fixing wall/ceiling placement requires overriding `canSurvive` to accept any adjacent solid face and providing appropriate model/placement code.
+
+**`setNoGravity(true)` breaks ground pathfinding for Monster-based entities (2026-05-29)**
+- `LeonardEntity` was given `setNoGravity(true)` to make it feel like a floating shade. This silently broke all movement: `WaterAvoidingRandomStrollGoal` and `MeleeAttackGoal` both stalled because the vanilla ground path planner cannot find floor waypoints for a mid-air entity. The entity would retaliate (HurtByTargetGoal fired correctly) but never move toward the target.
+- Fix: remove `setNoGravity(true)`. For the visual hover effect, use a renderer-level `scale()` override that applies `PoseStack.translate(0, Mth.sin(ageInTicks * 0.05F) * 0.06F, 0)`. This moves the whole rendered model without touching physics.
+- Rule: entities that extend `Monster` use ground navigation by default. Only add `setNoGravity` if you also override `createNavigation()` to return a `FlyingPathNavigation` (or equivalent) and swap `MoveControl` for `FlyingMoveControl`.
+
+**`BloodCrucibleModel` front wall Z offset and blood UV/tint bugs (2026-05-29)**
+- **Front wall 1 pixel outside AABB**: `PartPose.offset(-4f, 19f, -5f)` placed the front wall at world Z=0.1875–0.25, but the block AABB starts at z=4/16=0.25. Correct value is `(-4f, 19f, -4f)` → world Z=0.25–0.3125 (outer face flush with AABB, inner face at z=5/16). The general formula for a BESR with `translate(0.5,0.5,0.5) → rotateZ(180°) → translate(0,-1,0)` is: `world_z = 0.5 + model_z/16`. Verify each wall offset satisfies the AABB face coordinates before committing.
+- **Blood UV region**: `texOffs(0,44)` on the blood flat quad samples rows 44–49 of the 32×64 block texture. If those rows are dark/transitional material instead of the intended blood colour, blood renders near-black. Always ensure the target UV region in the texture matches the intended colour — check with a visualiser or generate the texture programmatically.
+- **Blood tint multiplier**: `ARGB.colorFromFloat(1.0F, R, G, B)` multiplies the texture colour channel-by-channel. Using a dark red (R=0.55, G=0.05, B=0.05) on an already-crimson texture produces near-black (110, 1, 1). Use white `(1.0F, 1.0F, 1.0F, 1.0F)` or near-white for translucency when the texture already has the right colour baked in.

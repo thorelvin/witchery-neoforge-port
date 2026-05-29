@@ -1,7 +1,10 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
+import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -39,6 +42,15 @@ public class ImmortalsObservationsBookItem extends Item {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new OpenObservationsBookPayload(getVisiblePages(stack)));
             player.awardStat(Stats.ITEM_USED.get(this));
+            // Unlocks the next vampire level cap when a vampire reads this book
+            var data = WitcheryAttachments.get(serverPlayer);
+            if (data.isVampire()) {
+                int newCap = getResearchLevel(stack) + 1;
+                if (newCap > data.getVampireLevelCap()) {
+                    data.increaseVampireLevelCap(newCap);
+                    PacketDistributor.sendToPlayer(serverPlayer, SyncPlayerDataPayload.from(serverPlayer, data));
+                }
+            }
         }
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }

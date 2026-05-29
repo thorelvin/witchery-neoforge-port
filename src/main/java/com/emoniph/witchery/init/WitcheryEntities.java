@@ -2,6 +2,9 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.entity.*;
+import com.emoniph.witchery.entity.ElleEntity;
+import com.emoniph.witchery.entity.LilithEntity;
+import com.emoniph.witchery.entity.EgassyEntity;
 import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.SoulfireProjectile;
@@ -173,6 +176,13 @@ public class WitcheryEntities {
                     EntityType.Builder.of(com.emoniph.witchery.entity.FlyingMonkeyEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 0.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "flying_monkey"))));
 
+    // ── Egassy ───────────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EgassyEntity>> EGASSY =
+            ENTITY_TYPES.register("egassy", () ->
+                    EntityType.Builder.of(EgassyEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "egassy"))));
+
     // ── Hobgoblin (M9) ────────────────────────────────────────────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.HobgoblinEntity>> HOBGOBLIN =
@@ -198,6 +208,42 @@ public class WitcheryEntities {
                             .sized(0.6F, 0.2F).clientTrackingRange(10).noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "corpse"))));
 
+    // ── Village Guard ─────────────────────────────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.VillageGuardEntity>> VILLAGE_GUARD =
+            ENTITY_TYPES.register("village_guard", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.VillageGuardEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "village_guard"))));
+
+    // ── Shade of Leonard + Lost Souls — Leonard boss chain ───────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LeonardEntity>> LEONARD =
+            ENTITY_TYPES.register("leonard", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.LeonardEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(16)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "leonard"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LostSoulEntity>> LOST_SOUL =
+            ENTITY_TYPES.register("lost_soul", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.LostSoulEntity::new, MobCategory.MONSTER)
+                            .sized(0.5F, 0.5F).clientTrackingRange(8)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "lost_soul"))));
+
+    // ── Elle + Lilith — vampire patron chain ─────────────────────────────────
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ElleEntity>> ELLE =
+            ENTITY_TYPES.register("elle", () ->
+                    EntityType.Builder.of(ElleEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "elle"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LilithEntity>> LILITH =
+            ENTITY_TYPES.register("lilith", () ->
+                    EntityType.Builder.of(LilithEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 2.5F).clientTrackingRange(16).fireImmune()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "lilith"))));
+
     // ── Mirror World ──────────────────────────────────────────────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.ReflectionEntity>> REFLECTION =
@@ -214,6 +260,11 @@ public class WitcheryEntities {
         event.register(MANDRAKE_MOB.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(DEMON.get(),        SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(NIGHTMARE.get(),    SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(VILLAGE_GUARD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(LEONARD.get(),      SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(LOST_SOUL.get(),    SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(HOBGOBLIN.get(),     SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, spawnType, pos, rand) -> level.getBlockState(pos.below())
                         .is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
@@ -262,9 +313,15 @@ public class WitcheryEntities {
         event.put(FLAME_IMP.get(),        com.emoniph.witchery.entity.FlameImpEntity.createAttributes().build());
         event.put(BINKY.get(),            com.emoniph.witchery.entity.BinkyEntity.createAttributes().build());
         event.put(DEATH.get(),            DeathEntity.createAttributes().build());
+        event.put(EGASSY.get(),           EgassyEntity.createAttributes().build());
         event.put(HOBGOBLIN.get(),        com.emoniph.witchery.entity.HobgoblinEntity.createAttributes().build());
         event.put(FLYING_MONKEY.get(),    com.emoniph.witchery.entity.FlyingMonkeyEntity.createAttributes().build());
         event.put(CORPSE.get(),           com.emoniph.witchery.entity.CorpseEntity.createAttributes().build());
         event.put(REFLECTION.get(),       com.emoniph.witchery.entity.ReflectionEntity.createAttributes().build());
+        event.put(ELLE.get(),             ElleEntity.createAttributes().build());
+        event.put(LILITH.get(),           LilithEntity.createAttributes().build());
+        event.put(VILLAGE_GUARD.get(),     com.emoniph.witchery.entity.VillageGuardEntity.createAttributes().build());
+        event.put(LEONARD.get(),          com.emoniph.witchery.entity.LeonardEntity.createAttributes().build());
+        event.put(LOST_SOUL.get(),        com.emoniph.witchery.entity.LostSoulEntity.createAttributes().build());
     }
 }

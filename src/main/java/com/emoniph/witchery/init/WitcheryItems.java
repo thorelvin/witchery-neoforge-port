@@ -74,7 +74,6 @@ public class WitcheryItems {
                         .build()));
     }
 
-
     // ── M3/M4 crop + ingredient items ──────────────────────────────────────────
     // Witchery crops now split closer to source between planting stock and the
     // harvested ingredient item they produce.
@@ -214,6 +213,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ALLURING_SKULL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALLURING_SKULL);
     public static final DeferredItem<BlockItem> DEMON_HEART = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DEMON_HEART);
     public static final DeferredItem<BlockItem> COFFIN               = ITEMS.registerSimpleBlockItem(WitcheryBlocks.COFFIN);
+    public static final DeferredItem<BlockItem> BLOOD_CRUCIBLE       = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_CRUCIBLE);
     public static final DeferredItem<BlockItem> MIRROR_WALL          = ITEMS.registerSimpleBlockItem(WitcheryBlocks.MIRROR_WALL);
     public static final DeferredItem<BlockItem> MIRROR               = ITEMS.register("mirror", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.MIRROR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ROWAN_PLANKS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_PLANKS);
@@ -256,6 +256,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> MYSTIC_BRANCH = ITEMS.register("mystic_branch", id -> new MysticBranchItem(itemProps(id)));
     public static final DeferredItem<Item> DEBUG_DEATH_WARD =
             ITEMS.register("debug_death_ward", id -> new DebugDeathWardItem(itemProps(id)));
+    public static final DeferredItem<Item> DEBUG_INSPECTOR =
+            ITEMS.register("debug_inspector", id -> new com.emoniph.witchery.item.DebugInspectorItem(itemProps(id)));
     public static final DeferredItem<Item> TAGLOCK_KIT = ITEMS.register("taglock_kit", id -> new com.emoniph.witchery.item.TaglockKitItem(itemProps(id).stacksTo(16)));
 
     // ── Poppets ────────────────────────────────────────────────────────────────
@@ -530,6 +532,7 @@ public class WitcheryItems {
             id -> new com.emoniph.witchery.item.VampireBloodItem(com.emoniph.witchery.item.VampireBloodItem.Kind.LILITH,
                     itemProps(id).stacksTo(16).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
+    public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.registerSimpleItem("leonards_urn");
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
     public static final DeferredItem<Item> KOBOLDITE_NUGGET   = ITEMS.registerSimpleItem("koboldite_nugget");
@@ -640,7 +643,6 @@ public class WitcheryItems {
             "universal_antidote",
             "wolf_head",
             "brew_of_endless_water",
-            "leonards_urn",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
             "bound_taglock_kit",
@@ -727,6 +729,10 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> COVEN_WITCH_SPAWN_EGG =
             ITEMS.register("coven_witch_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.COVEN_WITCH.get())));
+
+    public static final DeferredItem<SpawnEggItem> VILLAGE_GUARD_SPAWN_EGG =
+            ITEMS.register("village_guard_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.VILLAGE_GUARD.get())));
 
     // dark brown shell + gold spots (hunter leather + crossbow bolts)
     public static final DeferredItem<SpawnEggItem> WITCH_HUNTER_SPAWN_EGG =

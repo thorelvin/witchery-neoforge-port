@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -205,6 +208,11 @@ public class WitchCauldronBlock extends Block {
         InteractionResult mutandisExtremisResult = tryBrewMutandisExtremis(stack, state, level, pos, player);
         if (mutandisExtremisResult.consumesAction()) {
             return mutandisExtremisResult;
+        }
+
+        InteractionResult leonardResult = trySummonLeonard(stack, state, level, pos, player);
+        if (leonardResult.consumesAction()) {
+            return leonardResult;
         }
 
         return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -517,6 +525,69 @@ public class WitchCauldronBlock extends Block {
     }
 
     private record ChalkUpgradeMatch(Item result, int powerCost, List<ItemEntity> offerings, String successKey) {}
+
+    /**
+     * Brew of Summon Leonard — Witches' Hat (trigger) + Refined Evil + Mandrake Root +
+     * Tear of the Goddess + Nether Wart, with 10 000 altar power.
+     * Spawns the Shade of Leonard 1 block above the cauldron; consumes all ingredients.
+     */
+    private InteractionResult trySummonLeonard(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!stack.is(WitcheryItems.WITCHES_HAT.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        Optional<ItemEntity> refinedEvil  = findCauldronOffering(level, pos, WitcheryItems.REFINED_EVIL.get());
+        Optional<ItemEntity> mandrake     = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
+        Optional<ItemEntity> tear         = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
+        Optional<ItemEntity> nWart        = findCauldronOffering(level, pos, net.minecraft.world.item.Items.NETHER_WART);
+
+        if (refinedEvil.isEmpty() || mandrake.isEmpty() || tear.isEmpty() || nWart.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+        if (altar == null || !altar.hasValidStructure() || altar.getPower() < 10000) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!altar.consumePower(10000)) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        for (ItemEntity offering : List.of(refinedEvil.get(), mandrake.get(), tear.get(), nWart.get())) {
+            ItemStack offeringStack = offering.getItem();
+            offeringStack.shrink(1);
+            if (offeringStack.isEmpty()) {
+                offering.discard();
+            } else {
+                offering.setItem(offeringStack);
+            }
+        }
+        lowerFillLevel(state, level, pos);
+
+        if (level instanceof ServerLevel serverLevel) {
+            LeonardEntity leonard = WitcheryEntities.LEONARD.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            if (leonard != null) {
+                leonard.setPos(pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5);
+                leonard.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
+                leonard.setPersistenceRequired();
+                serverLevel.addFreshEntity(leonard);
+            }
+        }
+
+        level.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 1.0F, 0.6F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.success"), false);
+        return InteractionResult.CONSUME;
+    }
 
     // Mandrake Root + Exhale of the Horned One (trigger) + Egg -> 6x Mutandis
     private InteractionResult tryBrewMutandis(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {

@@ -1,0 +1,26 @@
+{
+  "output": "concepts",
+  "bg": "rembg",
+  "sizes": "32,16",
+  "border": 1,
+  "soften": 0.8,
+  "sharpen": 1.2,
+  "subfolders": true,
+  "skip": true,
+  "sheets": [
+    {
+      "file": "2026-05-22-batch-29-creature-trophies-and-ritual-parts-concept.png",
+      "grid": "4x2",
+      "names": [
+        "heart_earth",
+        "heart_fire",
+        "heart_ice",
+        "orb_bat",
+        "skull_dragon",
+        "dagger_bone",
+        "twig_living",
+        "stone_rune"
+      ]
+    }
+  ]
+}

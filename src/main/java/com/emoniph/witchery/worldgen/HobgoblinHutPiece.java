@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
@@ -111,7 +112,10 @@ public class HobgoblinHutPiece extends StructurePiece {
             if (hobgoblin != null) {
                 hobgoblin.setPersistenceRequired();
                 hobgoblin.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-                hobgoblin.finalizeSpawn(level, level.getLevel().getCurrentDifficultyAt(spawnPos),
+                // Use base difficulty only — calling getLevel().getCurrentDifficultyAt() here
+                // deadlocks because it calls ServerLevel.getChunk() on a mid-generation chunk.
+                hobgoblin.finalizeSpawn(level,
+                        new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                         EntitySpawnReason.STRUCTURE, null);
                 level.addFreshEntityWithPassengers(hobgoblin);
             }

@@ -205,6 +205,28 @@ Emoniph is credited in-world as the scholar who codified the craft. Whether the 
 3. One-per-world enforcement via SavedData flag
 4. Primer dialogue that reads player infusion type
 
+### 12. Crystal Ball — Extended Prediction Roster
+
+**Confidence:** speculative; these are original-feeling expansions, not confirmed original Witchery content.
+
+The original game documents 14 Crystal Ball predictions. The following 11 additional predictions were cut from the Book of Shadows (they were not confirmed by wiki sources) but are reasonable expansions of the system. Each maps to an existing mod mechanic.
+
+| Prediction Text | Intended Consequence |
+|---|---|
+| "Will find coal" | Coal ore placed nearby (Transposition variant) |
+| "Will find diamonds" | Diamond ore placed nearby |
+| "Will find emeralds" | Emerald ore placed nearby |
+| "Will have visitors" | Villagers spawn near the player |
+| "Will be visited by demons" | Demons spawn near the player |
+| "Will feel the cold touch of death" | Spectres or similar undead appear |
+| "Will be harassed by the small folk" | Hobgoblins spawn and target the player |
+| "Will be filled with doubt and uncertainty" | Insanity-like disorientation effect applied |
+| "Will be visited by a spectral presence" | Spectres, Banshees, or Poltergeists appear |
+| "Will receive a gift from the goddess" | Items or blessings drop at the player's feet |
+| "Will be inundated by nature" | Plants and natural growth appear around player |
+
+Implementation note: predictions are dispatched from a single random-pick handler. Adding new entries is a matter of registering the message string and a consequence lambda — low effort once the base system is stable.
+
 ## Recommended order after port
 
 1. Stabilize port + replace placeholder assets.

@@ -38,5 +38,10 @@
     "sounds": [
       "witchery:entity/raven/idle5"
     ]
+  },
+  "entity.egassy.fart": {
+    "sounds": [
+      "witchery:entity/egassy/fart"
+    ]
   }
 }

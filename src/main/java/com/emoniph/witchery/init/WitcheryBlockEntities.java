@@ -88,4 +88,8 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("silver_vat", () -> new BlockEntityType<>(
                     com.emoniph.witchery.blocks.entity.SilverVatBlockEntity::new,
                     Set.of(WitcheryBlocks.SILVER_VAT.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.BloodCrucibleBlockEntity>> BLOOD_CRUCIBLE =
+            BLOCK_ENTITIES.register("blood_crucible", () -> new BlockEntityType<>(
+                    com.emoniph.witchery.blocks.entity.BloodCrucibleBlockEntity::new,
+                    Set.of(WitcheryBlocks.BLOOD_CRUCIBLE.get())));
 }

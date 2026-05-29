@@ -1,0 +1,27 @@
+{
+  "output": "concepts",
+  "bg": "color",
+  "sizes": "32,16",
+  "border": 1,
+  "soften": 0.0,
+  "sharpen": 0.0,
+  "subfolders": true,
+  "skip": true,
+  "sheets": [
+    {
+      "file": "ChatGPT Image 22. mai 2026, 22_55_36.png",
+      "grid": "3x3",
+      "names": [
+        "dagger",
+        "witch_hat",
+        "poppet_voodoo",
+        "bone_wand",
+        "bottle_purple",
+        "mandrake",
+        "garlic",
+        "bottle_smoke",
+        "satchel"
+      ]
+    }
+  ]
+}

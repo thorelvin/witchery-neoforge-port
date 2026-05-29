@@ -20,9 +20,11 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.client.gui.screens.worldselection.ExperimentsScreen;
 import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -140,6 +142,31 @@ public class WitcheryClientEvents {
         event.setRed(color.red());
         event.setGreen(color.green());
         event.setBlue(color.blue());
+    }
+
+    /**
+     * Auto-confirm the vanilla ExperimentsScreen (Bundle / Trade Rebalance) so world
+     * creation and loading are never blocked by it. Equivalent to the user clicking
+     * "Done" with no experiments enabled — the current pack selection is applied and
+     * the screen is skipped entirely.
+     *
+     * NeoForge replaces the vanilla screen with ScrollableExperimentsScreen, which
+     * extends ExperimentsScreen, so the instanceof check catches both variants.
+     * The private onDone() method is called via reflection; it applies the (unmodified)
+     * pack selection and triggers the output callback that navigates back to the caller.
+     */
+    @SubscribeEvent
+    public static void onExperimentsScreenOpening(ScreenEvent.Opening event) {
+        if (!(event.getScreen() instanceof ExperimentsScreen screen)) return;
+        try {
+            java.lang.reflect.Method onDone = ExperimentsScreen.class.getDeclaredMethod("onDone");
+            onDone.setAccessible(true);
+            onDone.invoke(screen);
+        } catch (Exception e) {
+            WitcheryMod.LOGGER.debug("Could not auto-confirm ExperimentsScreen: {}", e.getMessage());
+            return;
+        }
+        event.setCanceled(true);
     }
 
     private record PlayerVisibilityState(boolean invisible, boolean invisibleToPlayer) {}

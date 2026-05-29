@@ -116,10 +116,6 @@ public class HobgoblinEntity extends AbstractVillager {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        InteractionResult vanillaResult = super.mobInteract(player, hand);
-        if (vanillaResult.consumesAction()) {
-            return vanillaResult;
-        }
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }

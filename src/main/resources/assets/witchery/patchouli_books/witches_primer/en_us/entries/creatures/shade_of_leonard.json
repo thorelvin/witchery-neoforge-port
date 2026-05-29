@@ -1,0 +1,33 @@
+{
+  "name": "Shade of Leonard",
+  "icon": "witchery:leonards_urn",
+  "category": "witchery:creatures",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Shade of Leonard",
+      "text": "Leonard is an old, dark name — the black goat of the sabbath, the lord at the crossroads of infernal commerce. His Shade does not wander freely; he must be forced into the world through the Witch's Cauldron."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Summoning Ritual",
+      "text": "Heat the Witch's Cauldron over fire. Fill it with water. Drop in $(item)Refined Evil$(), $(item)Mandrake Root$(), a $(item)Tear of the Goddess$(), and $(item)Nether Wart$(). Hold a $(item)Witches' Hat$() and right-click the cauldron. The nearby altar must hold at least 10 000 power.$(br2)When the conditions are met, the Shade rises above the cauldron."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Behaviour",
+      "text": "Leonard is neutral until struck. Once provoked, he retaliates and brands his attacker with a curse of withering that drains life over time.$(br2)At half strength, he calls forth $(item)Lost Souls$(). While those souls remain alive nearby, Leonard cannot be harmed."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Lost Souls",
+      "text": "Three kinds of soul attend him.$(br2)$(bold)Green souls$() can be harmed by anything.$(br2)$(bold)Red souls$() resist everything but fire and explosions.$(br2)$(bold)Black souls$() resist everything except magic and potions.$(br2)Each drops a $(item)Subdued Spirit$() when destroyed."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Reward",
+      "text": "A defeated Shade drops $(item)Leonard's Urn$() — a vessel of considerable infernal standing. Its precise uses in cauldron and infernal commerce await further investigation.$(br2)The encounter is costly but the standing it confers among creatures of the night is real."
+    }
+  ]
+}

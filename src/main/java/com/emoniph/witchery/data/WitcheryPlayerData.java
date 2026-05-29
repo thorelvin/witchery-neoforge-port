@@ -56,6 +56,49 @@ public class WitcheryPlayerData {
         ).apply(i, InfusionChargeState::new));
     }
 
+    public enum VampireUltimate {
+        NONE, STORM, SWARM, FARM;
+        public static VampireUltimate fromOrdinal(int i) {
+            VampireUltimate[] vals = values();
+            return i >= 0 && i < vals.length ? vals[i] : NONE;
+        }
+    }
+
+    /** Nested vampire progression state — keeps the main CODEC under the 16-field DFU limit. */
+    public static class VampireState {
+        public boolean vampire = false;
+        public int level = 0;
+        public int ultimate = 0;
+        public int ultimateCharges = 0;
+        public int bloodPower = 0;
+        // Max level the player can reach without quest-gating items; 10 = uncapped during dev.
+        public int levelCap = 10;
+        public int questCounter = 0;
+
+        public VampireState() {}
+
+        private VampireState(boolean vampire, int level, int ultimate, int ultimateCharges,
+                             int bloodPower, int levelCap, int questCounter) {
+            this.vampire = vampire;
+            this.level = Math.clamp(level, 0, 10);
+            this.ultimate = Math.clamp(ultimate, 0, 3);
+            this.ultimateCharges = Math.max(0, ultimateCharges);
+            this.bloodPower = Math.max(0, bloodPower);
+            this.levelCap = Math.clamp(levelCap, 1, 10);
+            this.questCounter = Math.max(0, questCounter);
+        }
+
+        public static final Codec<VampireState> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.BOOL.optionalFieldOf("vampire", false).forGetter(s -> s.vampire),
+            Codec.INT.optionalFieldOf("level", 0).forGetter(s -> s.level),
+            Codec.INT.optionalFieldOf("ultimate", 0).forGetter(s -> s.ultimate),
+            Codec.INT.optionalFieldOf("ultimate_charges", 0).forGetter(s -> s.ultimateCharges),
+            Codec.INT.optionalFieldOf("blood_power", 0).forGetter(s -> s.bloodPower),
+            Codec.INT.optionalFieldOf("level_cap", 10).forGetter(s -> s.levelCap),
+            Codec.INT.optionalFieldOf("quest_counter", 0).forGetter(s -> s.questCounter)
+        ).apply(i, VampireState::new));
+    }
+
     /** Nested record for Spirit World state — keeps the main CODEC under the 16-field DFU limit. */
     public static class SpiritWorldState {
         public boolean isDream = false;
@@ -116,7 +159,7 @@ public class WitcheryPlayerData {
         ).apply(i, SpiritWorldState::new));
     }
 
-    private boolean vampire = false;
+    private VampireState vs = new VampireState();
     private boolean werewolf = false;
     private int bloodLevel = 0;
     private float transformationLevel = 0f;
@@ -144,7 +187,7 @@ public class WitcheryPlayerData {
 
     public WitcheryPlayerData() {}
 
-    private WitcheryPlayerData(boolean vampire, boolean werewolf, int bloodLevel,
+    private WitcheryPlayerData(VampireState vs, boolean werewolf, int bloodLevel,
                                float transformationLevel, FamiliarState familiar,
                                String infusionType, InfusionChargeState infusionChargeState,
                                long lastDeathPos, String lastDeathDimension,
@@ -152,7 +195,7 @@ public class WitcheryPlayerData {
                                boolean inSpiritWorld, SpiritWorldState sw,
                                String creaturePowerType, int creaturePowerCharges,
                                int wolfMastery) {
-        this.vampire = vampire;
+        this.vs = vs != null ? vs : new VampireState();
         this.werewolf = werewolf;
         this.bloodLevel = bloodLevel;
         this.transformationLevel = transformationLevel;
@@ -170,7 +213,7 @@ public class WitcheryPlayerData {
         this.wolfMastery = wolfMastery;
     }
 
-    private static WitcheryPlayerData fromCodec(boolean vampire, boolean werewolf, int bloodLevel,
+    private static WitcheryPlayerData fromCodec(VampireState vs, boolean werewolf, int bloodLevel,
                                                 float transformationLevel, FamiliarState familiar,
                                                 String infusionType, InfusionChargeState infusionChargeState,
                                                 long lastDeathPos, String lastDeathDimension,
@@ -178,13 +221,13 @@ public class WitcheryPlayerData {
                                                 boolean inSpiritWorld, SpiritWorldState sw,
                                                 String creaturePowerType, int creaturePowerCharges,
                                                 int wolfMastery) {
-        return new WitcheryPlayerData(vampire, werewolf, bloodLevel, transformationLevel,
+        return new WitcheryPlayerData(vs, werewolf, bloodLevel, transformationLevel,
                 familiar, infusionType, infusionChargeState, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
                 inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wolfMastery);
     }
 
     public static final com.mojang.serialization.MapCodec<WitcheryPlayerData> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-        Codec.BOOL.optionalFieldOf("vampire", false).forGetter(d -> d.vampire),
+        VampireState.CODEC.optionalFieldOf("vampire_state", new VampireState()).forGetter(d -> d.vs),
         Codec.BOOL.optionalFieldOf("werewolf", false).forGetter(d -> d.werewolf),
         Codec.INT.optionalFieldOf("blood_level", 0).forGetter(d -> d.bloodLevel),
         Codec.FLOAT.optionalFieldOf("transformation_level", 0f).forGetter(d -> d.transformationLevel),
@@ -202,7 +245,10 @@ public class WitcheryPlayerData {
         Codec.INT.optionalFieldOf("wolf_mastery", 0).forGetter(d -> d.wolfMastery)
     ).apply(i, WitcheryPlayerData::fromCodec));
 
-    public boolean isVampire() { return vampire; }
+    public boolean isVampire() { return vs.vampire; }
+    public int getVampireLevel() { return vs.level; }
+    public VampireUltimate getVampireUltimate() { return VampireUltimate.fromOrdinal(vs.ultimate); }
+    public int getVampireUltimateCharges() { return vs.ultimateCharges; }
     public boolean isWerewolf() { return werewolf; }
     public int getBloodLevel() { return bloodLevel; }
     public float getTransformationLevel() { return transformationLevel; }
@@ -222,7 +268,46 @@ public class WitcheryPlayerData {
     public int getInfusionEnergy() { return infusionChargeState.currentEnergy; }
     public int getInfusionMaxEnergy() { return infusionChargeState.maxEnergy; }
 
-    public void setVampire(boolean v) { this.vampire = v; }
+    public void setVampire(boolean v) {
+        vs.vampire = v;
+        if (v && vs.level == 0) vs.level = 1;
+        if (!v) { vs.level = 0; vs.bloodPower = 0; vs.questCounter = 0; }
+    }
+    public void setVampireLevel(int level) {
+        int clamped = Math.clamp(level, 0, 10);
+        if (clamped != vs.level) {
+            vs.level = clamped;
+            vs.questCounter = 0;
+            vs.bloodPower = Math.min(vs.bloodPower, getMaxBloodPower());
+        }
+    }
+    public void setVampireUltimate(VampireUltimate ultimate, int charges) {
+        vs.ultimate = ultimate == null ? 0 : ultimate.ordinal();
+        vs.ultimateCharges = Math.max(0, charges);
+    }
+    public boolean spendVampireUltimateCharge() {
+        if (vs.ultimateCharges <= 0) return false;
+        vs.ultimateCharges--;
+        return true;
+    }
+    public void clearVampireUltimate() { vs.ultimate = 0; vs.ultimateCharges = 0; }
+    public int getBloodPower() { return vs.bloodPower; }
+    public int getMaxBloodPower() { return 500 + vs.level * 250; }
+    public int getVampireLevelCap() { return vs.levelCap; }
+    public int getVampireQuestCounter() { return vs.questCounter; }
+    public boolean canIncreaseVampireLevel() { return vs.level < vs.levelCap && vs.level < 10; }
+    public void setBloodPower(int p) { vs.bloodPower = Math.clamp(p, 0, getMaxBloodPower()); }
+    public void addBloodPower(int amount) { setBloodPower(vs.bloodPower + amount); }
+    public boolean spendBloodPower(int amount) {
+        if (vs.bloodPower < amount) return false;
+        setBloodPower(vs.bloodPower - amount);
+        return true;
+    }
+    public void increaseVampireLevelCap(int cap) {
+        if (cap > vs.levelCap) vs.levelCap = Math.clamp(cap, 1, 10);
+    }
+    public void incrementQuestCounter() { vs.questCounter++; }
+    public void resetQuestCounter() { vs.questCounter = 0; }
     public void setWerewolf(boolean w) { this.werewolf = w; }
     public void setBloodLevel(int b) { this.bloodLevel = Math.clamp(b, 0, 500); }
     public void addBlood(int amount) { setBloodLevel(bloodLevel + amount); }
@@ -361,7 +446,8 @@ public class WitcheryPlayerData {
     public void clearWitchHunterTrigger() { this.witchHunterTriggerGameTime = Long.MIN_VALUE; }
 
     public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
-        this.vampire = other.vampire;
+        this.vs = new VampireState(other.vs.vampire, other.vs.level, other.vs.ultimate, other.vs.ultimateCharges,
+                other.vs.bloodPower, other.vs.levelCap, other.vs.questCounter);
         this.werewolf = other.werewolf;
         this.transformationLevel = other.transformationLevel;
         this.familiar = new FamiliarState(other.familiar.uuid, other.familiar.type, other.familiar.name, other.familiar.sitting, other.familiar.nameVisible);
@@ -387,7 +473,7 @@ public class WitcheryPlayerData {
 
     @Override
     public String toString() {
-        return "WitcheryPlayerData{vampire=" + vampire + ", werewolf=" + werewolf
+        return "WitcheryPlayerData{vampire=" + vs.vampire + ", vampireLevel=" + vs.level + ", werewolf=" + werewolf
                 + ", blood=" + bloodLevel + ", transform=" + transformationLevel
                 + ", familiarType=" + familiar.type + ", infusion=" + infusionType
                 + ", infusionEnergy=" + infusionChargeState.currentEnergy + "/" + infusionChargeState.maxEnergy + "}";

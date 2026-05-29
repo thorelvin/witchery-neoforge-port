@@ -235,6 +235,13 @@ public class WitcheryCommands {
                         .then(Commands.literal("spiritworld")
                                 .executes(ctx -> verifySpiritWorld(ctx.getSource()))))
 
+                .then(Commands.literal("debug")
+                        .then(Commands.literal("brew")
+                                .executes(ctx -> showBrewDebug(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(ctx -> showBrewDebug(ctx.getSource(),
+                                                EntityArgument.getPlayer(ctx, "target"))))))
+
                 .then(Commands.literal("give")
                         .then(Commands.literal("primer")
                                 .executes(ctx -> givePrimer(ctx.getSource())))
@@ -299,7 +306,11 @@ public class WitcheryCommands {
                         .then(Commands.literal("lord_of_torment").executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LORD_OF_TORMENT.get())))
                         .then(Commands.literal("flame_imp")      .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.FLAME_IMP.get())))
                         .then(Commands.literal("death")          .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.DEATH.get())))
-                        .then(Commands.literal("reflection")     .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.REFLECTION.get()))))
+                        .then(Commands.literal("reflection")     .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.REFLECTION.get())))
+                        .then(Commands.literal("egassy")         .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.EGASSY.get())))
+                        .then(Commands.literal("village_guard")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.VILLAGE_GUARD.get())))
+                        .then(Commands.literal("leonard")        .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LEONARD.get())))
+                        .then(Commands.literal("lost_soul")      .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LOST_SOUL.get()))))
 
                 .then(Commands.literal("reflection")
                         .executes(ctx -> summonReflection(ctx.getSource())))
@@ -506,20 +517,86 @@ public class WitcheryCommands {
     private static int showStatus(CommandSourceStack src) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         WitcheryPlayerData d = WitcheryAttachments.get(p);
-        src.sendSuccess(() -> Component.literal(
-                "[Witchery] " + p.getName().getString() + "\n"
-                + "  vampire=" + d.isVampire() + " blood=" + d.getBloodLevel() + "/500\n"
-                + "  werewolf=" + d.isWerewolf()
-                + " transform=" + String.format("%.2f", d.getTransformationLevel())
-                + " wolfmastery=" + d.getWolfMastery() + "/3\n"
-                + "  infusion=" + d.getInfusionType()
-                + " energy=" + d.getInfusionEnergy() + "/" + d.getInfusionMaxEnergy()
-                + " soaring=" + d.getSoaringTicks() + "t\n"
-                + "  familiar=" + d.getFamiliarUUID().map(u -> u.toString().substring(0, 8) + "...").orElse("none") + "\n"
-                + "  spiritWorld=" + d.isInSpiritWorld()
-                + (d.isInSpiritWorld() ? " (" + (d.isSpiritWorldDream() ? "dream" : "nightmare") + ")" : "") + "\n"
-                + "  lastDeath=" + d.getLastDeathPos().map(Object::toString).orElse("none")), false);
+
+        // ── transformations ──────────────────────────────────────────────
+        String vampire  = "  vampire=" + d.isVampire() + "  blood=" + d.getBloodLevel() + "/500";
+        String werewolf = "  werewolf=" + d.isWerewolf()
+                + "  transform=" + String.format("%.2f", d.getTransformationLevel())
+                + "  wolfmastery=" + d.getWolfMastery() + "/3"
+                + "  howlCooldown=" + tickStr(d.getHowlCooldown());
+
+        // ── brew buffs ───────────────────────────────────────────────────
+        String brews = "  soaring=" + tickStr(d.getSoaringTicks())
+                + "  depths=" + tickStr(d.getDepthsTicks())
+                + "  grotesque=" + tickStr(d.getGrotesqueTicks());
+        String misc  = "  ghostWalker=" + d.isGhostWalkerActive()
+                + "  tormentCooldown=" + tickStr(d.getTormentPortalCooldown())
+                + "  demonicNightmare=" + d.isDemonicNightmare();
+
+        // ── infusion / creature power ────────────────────────────────────
+        String infusion = "  infusion=" + d.getInfusionType()
+                + "  energy=" + d.getInfusionEnergy() + "/" + d.getInfusionMaxEnergy();
+        String creature = "  creaturePower=" + (d.getCreaturePowerType().isEmpty() ? "none" : d.getCreaturePowerType())
+                + "  charges=" + d.getCreaturePowerCharges() + "/100";
+
+        // ── familiar ─────────────────────────────────────────────────────
+        String famUUID = d.getFamiliarUUID().map(u -> u.toString().substring(0, 8) + "...").orElse("none");
+        String famExtra = d.getFamiliarType().isEmpty() ? "" :
+                " (" + d.getFamiliarType() + " \"" + d.getFamiliarName() + "\""
+                        + " sitting=" + d.isFamiliarSitting()
+                        + " nameVisible=" + d.isFamiliarNameVisible() + ")";
+        String familiar = "  familiar=" + famUUID + famExtra;
+
+        // ── Spirit World ─────────────────────────────────────────────────
+        String sw = "  inSpiritWorld=" + d.isInSpiritWorld()
+                + (d.isInSpiritWorld() ? "  (" + (d.isSpiritWorldDream() ? "dream" : "nightmare") + ")" : "")
+                + "  manifestedGhost=" + d.isManifestedGhost()
+                + "  manifestTime=" + tickStr(d.getManifestationTime())
+                + "  corpse=" + d.getCorpseUUID().map(u -> u.toString().substring(0, 8) + "...").orElse("none");
+        String returnP = "  returnPos=" + d.getReturnPos().map(Object::toString).orElse("none")
+                + "  returnDim=" + (d.getReturnDimension().isEmpty() ? "none" : d.getReturnDimension());
+
+        // ── death / hunter timing ────────────────────────────────────────
+        String death = "  lastDeath=" + d.getLastDeathPos().map(Object::toString).orElse("none")
+                + "  dim=" + (d.getLastDeathDimension().isEmpty() ? "none" : d.getLastDeathDimension());
+        long nhKill   = d.getLastNightmareKillGameTime();
+        long whTrigger = d.getWitchHunterTriggerGameTime();
+        String timing = "  lastNightmareKill=" + (nhKill == Long.MIN_VALUE ? "never" : nhKill + "t")
+                + "  witchHunterTrigger=" + (whTrigger == Long.MIN_VALUE ? "none" : whTrigger + "t");
+
+        String out = "[Witchery] " + p.getName().getString() + "\n"
+                + vampire + "\n" + werewolf + "\n"
+                + brews + "\n" + misc + "\n"
+                + infusion + "\n" + creature + "\n"
+                + familiar + "\n"
+                + sw + "\n" + returnP + "\n"
+                + death + "\n" + timing;
+
+        src.sendSuccess(() -> Component.literal(out), false);
         return 1;
+    }
+
+    private static int showBrewDebug(CommandSourceStack src, ServerPlayer target)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        WitcheryPlayerData d = WitcheryAttachments.get(target);
+        String out = "[Witchery Brews] " + target.getName().getString() + "\n"
+                + "  Soaring:          " + tickStr(d.getSoaringTicks()) + "\n"
+                + "  Depths:           " + tickStr(d.getDepthsTicks()) + "\n"
+                + "  Grotesque Aura:   " + tickStr(d.getGrotesqueTicks()) + "\n"
+                + "  Ghost Walker:     " + (d.isGhostWalkerActive() ? "active" : "inactive") + "\n"
+                + "  Howl Cooldown:    " + tickStr(d.getHowlCooldown()) + "\n"
+                + "  TormentCooldown:  " + tickStr(d.getTormentPortalCooldown()) + "\n"
+                + "  Infusion:         " + d.getInfusionType()
+                + "  " + d.getInfusionEnergy() + "/" + d.getInfusionMaxEnergy() + "\n"
+                + "  CreaturePower:    " + (d.getCreaturePowerType().isEmpty() ? "none" : d.getCreaturePowerType())
+                + "  charges=" + d.getCreaturePowerCharges() + "/100";
+        src.sendSuccess(() -> Component.literal(out), false);
+        return 1;
+    }
+
+    /** Formats tick count as "0t" or "Xt (Ys)". */
+    private static String tickStr(int t) {
+        return t == 0 ? "0t" : t + "t (" + (t / 20) + "s)";
     }
 
     // ── Dimension helpers ─────────────────────────────────────────────────────
@@ -652,6 +729,8 @@ public class WitcheryCommands {
         if (entity == null) return 0;
         var pos = player.blockPosition().relative(player.getDirection(), 2);
         entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        entity.finalizeSpawn(sl, new net.minecraft.world.DifficultyInstance(sl.getDifficulty(), 0L, 0L, 0.0F),
+                net.minecraft.world.entity.EntitySpawnReason.TRIGGERED, null);
         sl.addFreshEntity(entity);
         src.sendSuccess(() -> Component.literal("Spawned " + type.getDescription().getString() + "."), false);
         return 1;

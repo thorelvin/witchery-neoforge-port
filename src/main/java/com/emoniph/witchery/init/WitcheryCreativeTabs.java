@@ -134,6 +134,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ALLURING_SKULL.get(),
                 WitcheryItems.DEMON_HEART.get(),
                 WitcheryItems.COFFIN.get(),
+                WitcheryItems.BLOOD_CRUCIBLE.get(),
                 WitcheryItems.MIRROR.get(),
                 WitcheryItems.MIRROR_WALL.get(),
                 WitcheryItems.FETISH_SCARECROW.get(),
@@ -168,7 +169,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WITCH_HAND.get(),
                 WitcheryItems.BUCKET_SPIRIT.get(),
                 WitcheryItems.BUCKET_HOLLOW_TEARS.get(),
-                WitcheryItems.DEBUG_DEATH_WARD.get());
+                WitcheryItems.DEBUG_DEATH_WARD.get(),
+                WitcheryItems.DEBUG_INSPECTOR.get());
     }
 
     private static void addPoppetsTaglocksAndScrying(CreativeModeTab.Output output) {
@@ -328,7 +330,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CONTRACT_FIERY_TOUCH.get(),
                 WitcheryItems.CONTRACT_SMELTING.get(),
                 WitcheryItems.SOUL_OF_TORMENT.get(),
-                WitcheryItems.TORMENT_SCROLL.get());
+                WitcheryItems.TORMENT_SCROLL.get(),
+                WitcheryItems.LEONARDS_URN.get());
     }
 
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
@@ -353,7 +356,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting", "cane_sword",
                 "charged_crossbow", "duplication_grenade", "staff_of_duplication", "horn_of_the_hunt",
-                "hellhound_head", "wolf_head", "leonards_urn", "bound_taglock_kit",
+                "hellhound_head", "wolf_head", "bound_taglock_kit",
                 "crossbow_pistol", "deployed_deaths_hand", "drawn_cane_sword", "witches_hand", "hunts_horn");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
@@ -391,6 +394,7 @@ public class WitcheryCreativeTabs {
     private static void addSpawnEggs(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.COVEN_WITCH_SPAWN_EGG.get(),
+                WitcheryItems.VILLAGE_GUARD_SPAWN_EGG.get(),
                 WitcheryItems.WITCH_HUNTER_SPAWN_EGG.get(),
                 WitcheryItems.RAVEN_SPAWN_EGG.get(),
                 WitcheryItems.OWL_SPAWN_EGG.get(),

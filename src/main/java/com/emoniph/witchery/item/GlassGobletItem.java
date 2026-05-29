@@ -1,8 +1,10 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.ElleEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
@@ -78,11 +80,24 @@ public class GlassGobletItem extends Item {
 
         ServerPlayer player = context.getPlayer() instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (canStartChickenBloodRite(level, skullPos)) {
-            if (player != null) {
-                player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.elle_pending")
-                        .withStyle(ChatFormatting.DARK_RED), true);
+            if (ElleEntity.isElleNear(level, skullPos)) {
+                if (player != null) {
+                    player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.elle_already")
+                            .withStyle(ChatFormatting.DARK_RED), true);
+                }
+            } else {
+                ElleEntity elle = WitcheryEntities.ELLE.get().create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+                if (elle != null) {
+                    elle.setPos(skullPos.getX() + 0.5, skullPos.getY() + 1.0, skullPos.getZ() + 0.5);
+                    if (player != null) elle.setOwnerUUID(player.getUUID());
+                    level.addFreshEntity(elle);
+                }
+                if (player != null) {
+                    player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.elle_pending")
+                            .withStyle(ChatFormatting.DARK_RED), true);
+                }
+                level.playSound(null, skullPos, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.BLOCKS, 0.5F, 0.6F);
             }
-            level.playSound(null, skullPos, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.BLOCKS, 0.5F, 0.6F);
         } else {
             if (player != null) {
                 player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.something_wrong")
