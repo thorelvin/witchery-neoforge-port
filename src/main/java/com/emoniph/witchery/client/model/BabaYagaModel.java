@@ -72,9 +72,26 @@ public class BabaYagaModel extends EntityModel<LivingEntityRenderState> {
                 PartPose.offsetAndRotation(1.75f, -2, 2, (float)(-Math.PI / 15), 0, 0.10471976f));
 
         // ── Body — villager 8×12×6 (slightly wider/deeper than standard) ──────
-        root.addOrReplaceChild("body",
+        PartDefinition body = root.addOrReplaceChild("body",
                 CubeListBuilder.create().texOffs(16, 20).addBox(-4, 0, -3, 8, 12, 6),
                 PartPose.offset(0, 0, 0));
+
+        // ── Mortar — the bowl she sits in (ported from ModelBabaYaga) ──────────
+        // pos (-7, 10, -8) from body; two boxes: outer rim + inner bowl
+        // UV at (72,107) for top rim and (80,88) for inner, in 128×128 texture
+        PartDefinition mortar = body.addOrReplaceChild("mortar",
+                CubeListBuilder.create()
+                        .texOffs(72, 107).addBox(0, 0, 1, 14, 7, 14)    // outer top rim
+                        .texOffs(80, 88).addBox(1, 7, 2, 12, 7, 12),    // inner bowl base
+                PartPose.offset(-7, 10, -8));
+
+        // ── Pestle — the stick she wields/stirs with ──────────────────────────
+        // Rotated at an angle (xRot≈-1.15, yRot≈-2.31, zRot≈1.84)
+        body.addOrReplaceChild("pestle",
+                CubeListBuilder.create()
+                        .texOffs(124, 0).addBox(-1, -7, 0, 1, 12, 1)    // upper thin stick
+                        .texOffs(116, 13).addBox(-2, 5, -1, 3, 12, 3),  // lower wider handle
+                PartPose.offsetAndRotation(-3, 6, -4, -1.152537f, -2.305074f, 1.839205f));
 
         // ── Arms — shorter villager arms 4×8×4 ───────────────────────────────
         root.addOrReplaceChild("right_arm",

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -91,13 +92,56 @@ public class GoblinGulgEntity extends Monster {
     protected void registerGoals() {
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        // Move toward nearest Mog partner (range 64)
-        goalSelector.addGoal(3, new MoveTowardsTargetGoal(this, 1.0, 48.0F));
+        // Priority 3: seek nearest Mog to stay close (source: EntityAIMoveTowardsEntityClass)
+        goalSelector.addGoal(3, seekMogGoal());
+        // Priority 4: move toward current combat target
+        goalSelector.addGoal(4, new MoveTowardsTargetGoal(this, 1.0, 48.0F));
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this, GoblinMogEntity.class, GoblinGulgEntity.class));
-        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
+        // Priority 1 (same as HurtBy) — both target selectors active simultaneously (source parity)
+        targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
+    }
+
+    /** Moves toward nearest GoblinMog within 64 blocks, stops when within 6 blocks. */
+    private Goal seekMogGoal() {
+        return new Goal() {
+            private GoblinMogEntity targetMog;
+
+            @Override
+            public boolean canUse() {
+                if (getTarget() != null) return false; // combat takes priority
+                AABB search = getBoundingBox().inflate(64, 16, 64);
+                java.util.List<GoblinMogEntity> mogs = level().getEntitiesOfClass(GoblinMogEntity.class, search);
+                if (mogs.isEmpty()) return false;
+                targetMog = mogs.stream().min(java.util.Comparator.comparingDouble(GoblinGulgEntity.this::distanceTo)).orElse(null);
+                return targetMog != null && distanceTo(targetMog) > 6.0;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return targetMog != null && targetMog.isAlive() && distanceTo(targetMog) > 6.0 && getTarget() == null;
+            }
+
+            @Override
+            public void start() {
+                setFlags(java.util.EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public void tick() {
+                if (targetMog != null) {
+                    getNavigation().moveTo(targetMog, 1.0);
+                }
+            }
+
+            @Override
+            public void stop() {
+                getNavigation().stop();
+                targetMog = null;
+            }
+        };
     }
 
     // ── Boss bar ──────────────────────────────────────────────────────────────

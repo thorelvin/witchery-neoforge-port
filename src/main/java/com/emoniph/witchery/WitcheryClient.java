@@ -14,6 +14,8 @@ import com.emoniph.witchery.client.model.PoppetShelfCompassAngleProperty;
 import com.emoniph.witchery.client.renderer.*;
 import com.emoniph.witchery.client.renderer.ElleRenderer;
 import com.emoniph.witchery.client.model.BabaYagaModel;
+import com.emoniph.witchery.client.model.GoblinGulgModel;
+import com.emoniph.witchery.client.model.GoblinMogModel;
 import com.emoniph.witchery.client.renderer.BabaYagaRenderer;
 import com.emoniph.witchery.client.renderer.VampireRenderer;
 import com.emoniph.witchery.client.renderer.BoltRenderer;
@@ -111,6 +113,8 @@ public class WitcheryClient {
         Map.entry(com.emoniph.witchery.client.model.BloodCrucibleModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.BloodCrucibleModel::createBodyLayer),
         Map.entry(LilithModel.LAYER_LOCATION,     LilithModel::createBodyLayer),
+        Map.entry(GoblinGulgModel.LAYER_LOCATION,      GoblinGulgModel::createBodyLayer),
+        Map.entry(GoblinMogModel.LAYER_LOCATION,       GoblinMogModel::createBodyLayer),
         Map.entry(BabaYagaModel.LAYER_LOCATION,        BabaYagaModel::createBodyLayer),
         Map.entry(WolfmanModel.LAYER_LOCATION,         WolfmanModel::createBodyLayer),
         Map.entry(VillageGuardModel.LAYER_LOCATION,    VillageGuardModel::createBodyLayer),

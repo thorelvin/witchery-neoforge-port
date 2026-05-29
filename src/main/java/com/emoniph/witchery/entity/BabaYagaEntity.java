@@ -52,6 +52,11 @@ import java.util.Optional;
  */
 public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
+    // ── Potion self-drinking state ────────────────────────────────────────────
+    private boolean isDrinking = false;
+    private int drinkTimer    = 0;
+    @Nullable private MobEffectInstance pendingDrinkEffect = null;
+
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.witchery.baba_yaga"),
             BossEvent.BossBarColor.PURPLE,
@@ -85,7 +90,10 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new FloatGoal(this));
-        goalSelector.addGoal(2, new RangedBowAttackGoal<BabaYagaEntity>(this, 1.0, 60, 10.0F));
+        // Custom ranged goal — RangedBowAttackGoal requires a BowItem in hand,
+        // but Baba Yaga holds an enchanted broom. This goal fires performRangedAttack
+        // directly every 60 ticks when a target is in range (source parity: EntityAIArrowAttack).
+        goalSelector.addGoal(2, potionAttackGoal());
         goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0));
         goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(5, new RandomLookAroundGoal(this));
@@ -93,6 +101,48 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(
                 this, Player.class, 0, false, true,
                 (entity, sl) -> ownerName == null || !entity.getName().getString().equalsIgnoreCase(ownerName)));
+    }
+
+    /** Fires performRangedAttack every 60 ticks when target is within 10 blocks — bypasses bow check. */
+    private Goal potionAttackGoal() {
+        return new Goal() {
+            private int cooldown = 0;
+
+            { setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK)); }
+
+            @Override public boolean canUse() {
+                return getTarget() != null && getTarget().isAlive();
+            }
+            @Override public boolean canContinueToUse() { return canUse(); }
+
+            @Override public void start() { cooldown = 20; }
+
+            @Override
+            public void tick() {
+                LivingEntity target = getTarget();
+                if (target == null) return;
+                getLookControl().setLookAt(target, 30, 30);
+                double dist = distanceTo(target);
+
+                // Walk toward target if too far, back off if too close
+                if (dist > 10.0) {
+                    getNavigation().moveTo(target, 1.0);
+                } else if (dist < 5.0) {
+                    getNavigation().moveTo(
+                        getX() - (target.getX() - getX()),
+                        getY(),
+                        getZ() - (target.getZ() - getZ()),
+                        1.0);
+                } else {
+                    getNavigation().stop();
+                }
+
+                if (--cooldown <= 0 && hasLineOfSight(target) && dist < 15.0) {
+                    cooldown = 60;
+                    performRangedAttack(target, 1.0f);
+                }
+            }
+        };
     }
 
     // ── Boss bar ──────────────────────────────────────────────────────────────
@@ -117,6 +167,36 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
         if (level().isClientSide()) return;
 
         bossEvent.setProgress(getHealth() / getMaxHealth());
+
+        // ── Witch self-potion-drinking mechanic (source: EntityBabaYaga.func_70636_d) ──
+        if (isDrinking) {
+            drinkTimer--;
+            if (drinkTimer <= 0) {
+                isDrinking = false;
+                if (pendingDrinkEffect != null) {
+                    addEffect(pendingDrinkEffect);
+                    pendingDrinkEffect = null;
+                }
+                removeEffect(MobEffects.SLOWNESS); // remove drinking speed penalty
+                playSound(SoundEvents.GENERIC_DRINK.value(), 1.0f, 1.0f);
+            }
+        } else {
+            // Decide whether to drink a self-potion this tick
+            LivingEntity tgt = getTarget();
+            int potionChoice = -1;
+            if (random.nextFloat() < 0.15F && isOnFire() && !hasEffect(MobEffects.FIRE_RESISTANCE)) {
+                potionChoice = 0; // fire resistance
+            } else if (random.nextFloat() < 0.01F && getHealth() < getMaxHealth()) {
+                potionChoice = 1; // healing
+            } else if (random.nextFloat() < 0.25F && tgt != null
+                    && !hasEffect(MobEffects.SPEED)
+                    && distanceToSqr(tgt) > 121.0) {
+                potionChoice = 2; // speed
+            }
+            if (potionChoice >= 0) {
+                startDrinking(potionChoice);
+            }
+        }
 
         LivingEntity target = getTarget();
 
@@ -147,6 +227,19 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
         }
     }
 
+    /** Start a potion-drinking phase. Source: EntityBabaYaga (choices 0/1/2). */
+    private void startDrinking(int choice) {
+        isDrinking = true;
+        drinkTimer = 40;
+        pendingDrinkEffect = switch (choice) {
+            case 0 -> new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 600, 0);
+            case 1 -> new MobEffectInstance(MobEffects.INSTANT_HEALTH,             1,   1);
+            default -> new MobEffectInstance(MobEffects.SPEED,  600, 1);
+        };
+        addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 50, 0));
+        playSound(SoundEvents.GENERIC_DRINK.value(), 0.5f, 1.0f);
+    }
+
     private void teleportTowardTarget(LivingEntity target) {
         double range = 8.0;
         double nx = getX() + (random.nextDouble() - 0.5) * range;
@@ -174,6 +267,7 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
     @Override
     public void performRangedAttack(LivingEntity target, float power) {
         if (level().isClientSide()) return;
+        if (isDrinking) return; // source: "if (!this.getAggressive())" check
 
         List<MobEffectInstance> effects;
         if (random.nextInt(3) == 0) {
@@ -298,6 +392,19 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
     public void setOwner(String name) { this.ownerName = name; }
     @Nullable public String getOwnerName() { return ownerName; }
+
+    // ── Spawn init — wield enchanted broom ───────────────────────────────────
+
+    @Override
+    public SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level,
+                                        net.minecraft.world.DifficultyInstance difficulty,
+                                        EntitySpawnReason spawnType,
+                                        @javax.annotation.Nullable SpawnGroupData spawnGroupData) {
+        // Baba Yaga wields an enchanted broom — her "pestle" weapon
+        setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                new ItemStack(WitcheryItems.ENCHANTED_BROOM.get()));
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
 
     // ── Sounds ────────────────────────────────────────────────────────────────
 
