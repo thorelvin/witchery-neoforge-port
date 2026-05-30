@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "witchery:coven_circle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 8,
+    "salt": 502938471,
+    "exclusion_zone": {
+      "chunk_count": 4,
+      "other_set": "minecraft:villages"
+    }
+  }
+}

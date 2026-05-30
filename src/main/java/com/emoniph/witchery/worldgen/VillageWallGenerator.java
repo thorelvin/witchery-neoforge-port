@@ -59,6 +59,8 @@ public final class VillageWallGenerator {
 
     public static void generate(ServerLevel level, StructureStart start) {
         List<StructurePiece> pieces = start.getPieces();
+        WitcheryMod.LOGGER.info("[VillageWalls] generate() called: {} pieces, bb={}",
+                pieces.size(), start.getBoundingBox());
         if (pieces.isEmpty()) return;
 
         // 1. Village extents
@@ -179,7 +181,7 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++) {
                 if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
                 int wx = originX + x, wz = originZ + z;
-                if (!level.isLoaded(new BlockPos(wx, 64, wz))) continue;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
                 heights[x][z] = (short) Math.max(h, minBuild + 5);
             }
@@ -191,7 +193,7 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++) {
                 if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
                 int wx = originX + x, wz = originZ + z;
-                if (!level.isLoaded(new BlockPos(wx, 64, wz))) continue;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
                 if (sy == 0) continue;
                 for (int dy = 0; dy < WALL_HEIGHT + 5; dy++) {
@@ -208,7 +210,7 @@ public final class VillageWallGenerator {
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
                 int wx = originX + x, wz = originZ + z;
-                if (!level.isLoaded(new BlockPos(wx, 64, wz))) continue;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
                 if (sy == 0) continue; // unloaded, skip
 
@@ -333,7 +335,7 @@ public final class VillageWallGenerator {
                         if (ix < 0 || iz < 0 || ix >= w || iz >= d) break;
                         if (grid[ix][iz] != INTERIOR) break;
                         int wx = ox + ix, wz = oz + iz;
-                        if (!level.isLoaded(new BlockPos(wx, 64, wz))) break;
+                        if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) break;
                         int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
                         if (sy < 1) break;
                         for (int dy = -8; dy <= 5; dy++) {
@@ -520,7 +522,7 @@ public final class VillageWallGenerator {
 
     private static void setBlock(ServerLevel level, int x, int y, int z, BlockState state) {
         BlockPos pos = new BlockPos(x, y, z);
-        if (!level.isLoaded(pos)) return;
+        if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) return;
         BlockState existing = level.getBlockState(pos);
         // Replace air, liquids, and any "replaceable" world decoration
         // (grass, tall grass, flowers, snow layers, etc.) but not solid village blocks.
@@ -531,7 +533,7 @@ public final class VillageWallGenerator {
     private static void fillDown(ServerLevel level, int x, int startY, int z, BlockState block) {
         for (int y = startY; y >= startY - 12; y--) {
             BlockPos pos = new BlockPos(x, y, z);
-            if (!level.isLoaded(pos)) break;
+            if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) break;
             if (level.getBlockState(pos).isSolid()) break;
             level.setBlock(pos, block, 3);
         }
