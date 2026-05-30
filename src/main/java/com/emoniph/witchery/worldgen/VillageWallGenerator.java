@@ -154,6 +154,12 @@ public final class VillageWallGenerator {
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
 
+        // 6b. Fill concave inward pockets.
+        //     A WALL cell with WALL on two adjacent (non-opposite) cardinal sides creates a
+        //     concave corner that traps an interior pocket.  Converting those INTERIOR cells
+        //     to WALL iteratively eliminates every inward-facing C/U pocket until stable.
+        fillConcavePockets(grid, w, d);
+
         // 7. Gate detection: scan INTERIOR cells that directly border the wall for DIRT_PATH.
         //    Roads are inside the village (1–N cells inward from the wall), so scanning the
         //    wall cell itself rarely finds them — scanning its interior neighbours does.
@@ -273,6 +279,40 @@ public final class VillageWallGenerator {
     }
 
     private static long pack(int x, int z) { return (long)x << 20 | z; }
+
+    /**
+     * Fills inward-facing wall pockets by converting INTERIOR cells that have
+     * WALL on two adjacent (non-opposite) cardinal sides into WALL cells.
+     *
+     * A concave pocket arises when the wall makes two consecutive inward turns,
+     * e.g. a C-shape or U-shape.  The corner INTERIOR cells of such pockets have
+     * WALL to the north AND east (or any other adjacent pair), and converting them
+     * expands the wall inward.  The loop repeats until stable so that multi-cell
+     * deep pockets are fully filled, not just their outermost corners.
+     *
+     * This does NOT affect large open interior areas: cells well inside the village
+     * have at most one WALL cardinal neighbour and are left unchanged.
+     */
+    private static void fillConcavePockets(byte[][] grid, int w, int d) {
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (grid[x][z] != INTERIOR) continue;
+                    boolean wN = grid[x][z - 1] == WALL || grid[x][z - 1] == GATE;
+                    boolean wS = grid[x][z + 1] == WALL || grid[x][z + 1] == GATE;
+                    boolean wE = grid[x + 1][z] == WALL || grid[x + 1][z] == GATE;
+                    boolean wW = grid[x - 1][z] == WALL || grid[x - 1][z] == GATE;
+                    // Convert if any two adjacent (non-opposite) sides are wall
+                    if ((wN && wE) || (wN && wW) || (wS && wE) || (wS && wW)) {
+                        grid[x][z] = WALL;
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
 
     private static boolean isNaturalVegetation(BlockState state) {
         return state.is(BlockTags.LEAVES)

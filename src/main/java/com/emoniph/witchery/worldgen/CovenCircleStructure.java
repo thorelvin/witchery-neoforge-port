@@ -35,10 +35,13 @@ public class CovenCircleStructure extends Structure {
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
             int x = cx - 5;
             int z = cz - 5;
+            // getFirstOccupiedHeight returns the first-air-block Y in this NeoForge build
+            // (equivalent to getBaseHeight, not getBaseHeight-1 as the name implies).
+            // Subtract 1 so the floor is placed at the surface block, not 1 above it.
             int y = ctx.chunkGenerator().getFirstOccupiedHeight(
                     x + 5, z + 5,
                     Heightmap.Types.WORLD_SURFACE_WG,
-                    ctx.heightAccessor(), ctx.randomState());
+                    ctx.heightAccessor(), ctx.randomState()) - 1;
             builder.addPiece(new CovenCirclePiece(
                     WitcheryStructures.COVEN_CIRCLE_PIECE.get(), x, y, z));
         });
