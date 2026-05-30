@@ -331,6 +331,10 @@ public class WitcheryCommands {
                         .then(Commands.literal("village_taiga")   .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_taiga")))
                         .then(Commands.literal("village_snowy")   .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_snowy")))
                         .then(Commands.literal("village_desert")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_desert"))))
+                .then(Commands.literal("walls")
+                        .executes(ctx -> buildWalls(ctx.getSource()))
+                        .then(Commands.literal("reset")
+                                .executes(ctx -> resetWalls(ctx.getSource()))))
         );
     }
 
@@ -1722,6 +1726,91 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal(
                 "Spawned a bloodied wickerman at " + base.getX() + ", " + base.getY() + ", " + base.getZ()
                         + ". Light any bloodied bundle with flint and steel to summon the Horned Huntsman."),
+                false);
+        return 1;
+    }
+
+    // ── walls command ────────────────────────────────────────────────────────
+
+    private static int buildWalls(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+
+        // Step 1: check if player is already inside a village (cheapest path)
+        if (com.emoniph.witchery.events.VillageWallEvents.tryQueueVillageAt(level, player.blockPosition())) {
+            src.sendSuccess(() -> Component.literal(
+                    "[VillageWalls] Village detected at current position — walls queued (2 s delay)."), false);
+            return 1;
+        }
+
+        // Step 2: search nearby explored chunks for any village type
+        java.util.List<net.minecraft.core.Holder<net.minecraft.world.level.levelgen.structure.Structure>> holders =
+                new java.util.ArrayList<>();
+        for (String id : java.util.List.of(
+                "village_plains", "village_savanna", "village_taiga", "village_snowy", "village_desert")) {
+            level.registryAccess()
+                    .lookup(Registries.STRUCTURE)
+                    .flatMap(reg -> reg.get(net.minecraft.resources.ResourceKey.create(
+                            Registries.STRUCTURE, Identifier.fromNamespaceAndPath("minecraft", id))))
+                    .ifPresent(holders::add);
+        }
+        if (holders.isEmpty()) {
+            src.sendFailure(Component.literal("[VillageWalls] Village structure types not found in registry."));
+            return 0;
+        }
+
+        var holderSet = net.minecraft.core.HolderSet.direct(holders);
+        var result = level.getChunkSource().getGenerator()
+                .findNearestMapStructure(level, holderSet, player.blockPosition(), 50, true);
+
+        if (result == null) {
+            src.sendFailure(Component.literal(
+                    "[VillageWalls] No village found within 50 chunks. Explore more first."));
+            return 0;
+        }
+
+        net.minecraft.core.BlockPos found = result.getFirst();
+        // Force-load the village's start chunk so StructureManager can find the start.
+        level.getChunkSource().getChunk(found.getX() >> 4, found.getZ() >> 4, true);
+
+        if (com.emoniph.witchery.events.VillageWallEvents.tryQueueVillageAt(level, found)) {
+            src.sendSuccess(() -> Component.literal(
+                    "[VillageWalls] Village at " + found.getX() + " ~ " + found.getZ()
+                            + " queued for wall generation (2 s delay)."), false);
+            return 1;
+        }
+
+        // Village was found by structure scan but tryQueueVillageAt couldn't confirm it
+        // (may already be processed, or no piece at that exact pos). Try force-generate.
+        com.emoniph.witchery.world.VillageWallData data =
+                com.emoniph.witchery.world.VillageWallData.get(level);
+        net.minecraft.world.level.levelgen.structure.StructureStart start =
+                com.emoniph.witchery.events.VillageWallEvents.findVillageStart(level, found);
+
+        if (start != null && start.isValid()) {
+            com.emoniph.witchery.events.VillageWallEvents.forceLoadVillageChunks(level, start);
+            com.emoniph.witchery.worldgen.VillageWallGenerator.generate(level, start);
+            data.markProcessed(start.getBoundingBox());
+            src.sendSuccess(() -> Component.literal(
+                    "[VillageWalls] Walls generated for village at " + found.getX() + " ~ " + found.getZ()
+                            + " (forced — may have been previously processed)."), false);
+            return 1;
+        }
+
+        src.sendFailure(Component.literal(
+                "[VillageWalls] Village structure found by scan but no valid StructureStart available."
+                        + " Try standing inside the village and run again."));
+        return 0;
+    }
+
+    private static int resetWalls(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = src.getLevel();
+        // Clear the processed set so villages can be re-walled.
+        com.emoniph.witchery.world.VillageWallData.get(level).reset();
+        src.sendSuccess(() -> Component.literal(
+                "[VillageWalls] Processed-village set cleared. All villages will be re-walled on next scan."),
                 false);
         return 1;
     }

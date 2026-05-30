@@ -1,0 +1,8 @@
+{
+  "type": "witchery:coven_circle",
+  "biomes": "#witchery:coven_circle",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin",
+  "max_distance_from_center": 80
+}

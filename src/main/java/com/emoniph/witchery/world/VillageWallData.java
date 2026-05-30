@@ -54,6 +54,11 @@ public class VillageWallData extends SavedData {
         setDirty();
     }
 
+    public void reset() {
+        processed.clear();
+        setDirty();
+    }
+
     private static long key(BoundingBox bb) {
         return ((long) (bb.minX() & 0xFFFFFFF) | ((long) (bb.minZ() & 0xFFFFFFF) << 28));
     }
