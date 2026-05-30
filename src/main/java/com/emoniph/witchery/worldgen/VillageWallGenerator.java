@@ -129,6 +129,34 @@ public final class VillageWallGenerator {
             }
         }
 
+        // 3c. Orthogonal hull: enforce 90-degree-only wall segments.
+        //     Fill each row from its leftmost to rightmost INTERIOR cell, and each column
+        //     from its topmost to bottommost INTERIOR cell.  Any staircase diagonal in the
+        //     boundary is absorbed so the resulting perimeter consists only of horizontal
+        //     and vertical runs — no diagonal staircase steps.
+        int[] minXrow = new int[d], maxXrow = new int[d];
+        int[] minZcol = new int[w], maxZcol = new int[w];
+        for (int i = 0; i < d; i++) { minXrow[i] = w;  maxXrow[i] = -1; }
+        for (int i = 0; i < w; i++) { minZcol[i] = d;  maxZcol[i] = -1; }
+        for (int x = 0; x < w; x++) {
+            for (int z = 0; z < d; z++) {
+                if (grid[x][z] == INTERIOR) {
+                    if (x < minXrow[z]) minXrow[z] = x;
+                    if (x > maxXrow[z]) maxXrow[z] = x;
+                    if (z < minZcol[x]) minZcol[x] = z;
+                    if (z > maxZcol[x]) maxZcol[x] = z;
+                }
+            }
+        }
+        for (int z = 0; z < d; z++)
+            if (maxXrow[z] >= 0)
+                for (int x = minXrow[z]; x <= maxXrow[z]; x++)
+                    if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
+        for (int x = 0; x < w; x++)
+            if (maxZcol[x] >= 0)
+                for (int z = minZcol[x]; z <= maxZcol[x]; z++)
+                    if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
+
         // 4. Flood-fill from grid border to mark cells truly OUTSIDE the village.
         //    Cells not reachable from the border are enclosed "holes" (internal paths,
         //    plazas) and must NOT become wall cells — only the outer ring should be walled.
@@ -183,8 +211,9 @@ public final class VillageWallGenerator {
         // 7. Biome-adaptive materials
         int cx = minX + (maxX - minX) / 2;
         int cz = minZ + (maxZ - minZ) / 2;
-        BlockState wallBlock  = wallMaterial(level, cx, cz);
-        BlockState brickBlock = brickMaterial(level, cx, cz);
+        BlockState wallBlock   = wallMaterial(level, cx, cz);
+        BlockState brickBlock  = brickMaterial(level, cx, cz);
+        BlockState merlonBlock = merlonMaterial(level, cx, cz);
 
         // 8. Pre-sample ALL terrain heights before placing any blocks.
         //    placeThickenBlock wrote cobblestone at neighbors, which updated their heightmap;
@@ -230,13 +259,13 @@ public final class VillageWallGenerator {
                 if (sy == 0) continue; // unloaded, skip
 
                 if (grid[x][z] == WALL) {
-                    placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, grid, x, z, w, d);
+                    placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, grid, x, z, w, d);
                     if (++guardCounter >= GUARD_SPACING) {
                         spawnGuard(level, wx, wz, sy);
                         guardCounter = 0;
                     }
                 } else if (grid[x][z] == GATE) {
-                    placeGatePillar(level, wx, sy, wz, wallBlock, brickBlock, grid, x, z, w, d);
+                    placeGatePillar(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, grid, x, z, w, d);
                 }
             }
         }
@@ -369,39 +398,37 @@ public final class VillageWallGenerator {
 
     // ── Wall placement ─────────────────────────────────────────────────────────
 
-    private static final BlockState CWALL = Blocks.COBBLESTONE_WALL.defaultBlockState();
-
     /**
-     * One wall column with:
-     *  - Stone brick base (2 courses)   — more grounded look
+     * One wall column:
+     *  - Stone brick base (2 courses)
      *  - Cobblestone main shaft
-     *  - Stone brick cap course          — visual break before merlons
-     *  - Alternating merlons: 2-high cobblestone_wall (battlements) / flat top
-     *  - Corner bonus: +2 height when the wall bends 90° (tower effect)
+     *  - Stone brick cap
+     *  - 1-high stone brick wall merlon every 2 blocks (classic castle cadence)
+     *  - Corner bonus: +2 height + 2-high merlon (tower effect)
      */
     private static void placeWallColumn(ServerLevel level, int wx, int sy, int wz,
-                                         BlockState wall, BlockState brick,
+                                         BlockState wall, BlockState brick, BlockState merlon,
                                          byte[][] grid, int gx, int gz, int w, int d) {
         boolean corner = isCorner(grid, gx, gz, w, d);
-        int top = sy + WALL_HEIGHT + (corner ? 2 : 0);
+        int extra = corner ? 2 : 0;
+        int top = sy + WALL_HEIGHT + extra;
 
         // Base: 2 courses of stone brick
         setBlock(level, wx, sy,     wz, brick);
         setBlock(level, wx, sy + 1, wz, brick);
         // Main cobblestone shaft
-        for (int dy = 2; dy < WALL_HEIGHT - 1 + (corner ? 2 : 0); dy++)
+        for (int dy = 2; dy < WALL_HEIGHT - 1 + extra; dy++)
             setBlock(level, wx, sy + dy, wz, wall);
         // Cap course: stone brick
         setBlock(level, wx, top - 1, wz, brick);
 
-        // Merlon pattern — 2-high cobblestone wall blocks every 4 blocks,
-        // gap (flat top only) between them.  Pattern repeats on (wx+wz) % 4.
-        int phase = Math.floorMod(wx + wz, 4);
-        if (phase < 2) {
-            setBlock(level, wx, top,     wz, CWALL);
-            setBlock(level, wx, top + 1, wz, CWALL);
+        // Merlons: 1-high stone brick wall every 2 blocks (period=2, classic castle).
+        // Corners get 2-high merlons to emphasise the tower.
+        int phase = Math.floorMod(wx + wz, 2);
+        if (phase == 0) {
+            setBlock(level, wx, top, wz, merlon);
+            if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
-        // else: open crenel — nothing above the cap, letting sky through
 
         fillDown(level, wx, sy - 1, wz, wall);
     }
@@ -422,7 +449,7 @@ public final class VillageWallGenerator {
      *  - Open (air) at middle gate cells
      */
     private static void placeGatePillar(ServerLevel level, int wx, int sy, int wz,
-                                          BlockState wall, BlockState brick,
+                                          BlockState wall, BlockState brick, BlockState merlon,
                                           byte[][] grid, int gx, int gz, int w, int d) {
         boolean isEdge = isGateEdge(grid, gx, gz, -1, 0, w, d)
                       || isGateEdge(grid, gx, gz,  1, 0, w, d)
@@ -430,13 +457,18 @@ public final class VillageWallGenerator {
                       || isGateEdge(grid, gx, gz, 0,  1, w, d);
 
         if (!isEdge) {
-            // Middle of gate: clear any terrain blocks in the opening
+            // Middle of gate — passage + arch overhead.
+            // Clear 5 blocks for player passage (fence gate counts as one of them).
             for (int dy = 0; dy < 5; dy++) {
                 BlockPos p = new BlockPos(wx, sy + dy, wz);
                 if (!level.getBlockState(p).isAir())
                     level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             }
-            // Place a fence gate at ground level
+            // Arch: brick blocks from sy+5 to sy+WALL_HEIGHT-1 form an overhead
+            // vault connecting the two pillars — 3 blocks of clearance above the gate.
+            for (int dy = 5; dy < WALL_HEIGHT; dy++)
+                setBlock(level, wx, sy + dy, wz, brick);
+            // Fence gate at ground level
             Direction facing = gateWallFacing(grid, gx, gz, w, d);
             BlockState fenceGate = Blocks.OAK_FENCE_GATE.defaultBlockState()
                     .setValue(FenceGateBlock.FACING, facing);
@@ -444,10 +476,10 @@ public final class VillageWallGenerator {
             return;
         }
 
-        // Pillar: stone brick base + full brick shaft + finial
+        // Pillar: full brick shaft, merlon finial on top
         for (int dy = 0; dy < WALL_HEIGHT + 1; dy++)
             setBlock(level, wx, sy + dy, wz, brick);
-        setBlock(level, wx, sy + WALL_HEIGHT + 1, wz, CWALL); // finial
+        setBlock(level, wx, sy + WALL_HEIGHT + 1, wz, merlon); // finial matches merlon material
         fillDown(level, wx, sy - 1, wz, wall);
     }
 
@@ -505,6 +537,16 @@ public final class VillageWallGenerator {
         if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
             return Blocks.CHISELED_SANDSTONE.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
+    }
+
+    /** Battlement / merlon material — biome-adaptive wall-block variant. */
+    private static BlockState merlonMaterial(ServerLevel level, int x, int z) {
+        var biome = level.getBiome(new BlockPos(x, 64, z));
+        if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
+            return Blocks.SANDSTONE_WALL.defaultBlockState();
+        if (biome.is(BiomeTags.IS_TAIGA) || biome.is(BiomeTags.IS_SAVANNA))
+            return Blocks.COBBLESTONE_WALL.defaultBlockState();
+        return Blocks.STONE_BRICK_WALL.defaultBlockState();
     }
 
     // ── Block helpers ──────────────────────────────────────────────────────────
