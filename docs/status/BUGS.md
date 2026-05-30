@@ -1,6 +1,10 @@
 # Active Bugs
 
-Last reconciled: 2026-05-25. Bugs #2–59 are closed — see `docs/archive/BUGS_CLOSED.md` for the full history.
+Last reconciled: 2026-05-30. Bugs #2–59 are closed — see `docs/archive/BUGS_CLOSED.md` for the full history.
+
+**Closed 2026-05-30:**
+- ~~`/witchery goto` teleports player far underground~~ — `Level.getHeight(MOTION_BLOCKING)` returns `0` (not `-64`) for cold/unloaded chunks; old threshold `<= -59` missed it. Fixed: threshold now `< 10`.
+- ~~Village walls have no gate opening~~ — `placeGatePillar` cleared terrain but never placed a gate block; gate detection only scanned 1 cell deep ±4 height. Fixed: detection now scans WALL→INTERIOR up to depth 3 ±8 height and also checks GRAVEL; middle cells now place `OAK_FENCE_GATE`. `GAP_FILL` reduced 7→4 to reduce stub wall protrusions.
 
 **Closed 2026-05-25:**
 - ~~Coffin bottom exterior texture wrapping wrong~~ — spurious `inner_floor` parts (not in original source) removed from `CoffinModel.createHeadLayer()` and `createBottomLayer()`.
