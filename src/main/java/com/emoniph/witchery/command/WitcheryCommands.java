@@ -92,6 +92,8 @@ import java.util.List;
  * /witchery exit                    — return to previous dimension
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
+ * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / torment_chamber / coven_circle)
+ *                                   village buildings (apothecary / witch_hut / keep / watchtower) are now inside vanilla villages — use /locate structure minecraft:village_plains etc.
  */
 @EventBusSubscriber
 public class WitcheryCommands {
@@ -320,6 +322,15 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("reflection")
                         .executes(ctx -> summonReflection(ctx.getSource())))
+                .then(Commands.literal("goto")
+                        .then(Commands.literal("hobgoblin_hut")   .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "hobgoblin_hut")))
+                        .then(Commands.literal("torment_chamber") .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "torment_chamber")))
+                        .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
+                        .then(Commands.literal("village_plains")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_plains")))
+                        .then(Commands.literal("village_savanna") .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_savanna")))
+                        .then(Commands.literal("village_taiga")   .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_taiga")))
+                        .then(Commands.literal("village_snowy")   .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_snowy")))
+                        .then(Commands.literal("village_desert")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_desert"))))
         );
     }
 
@@ -1712,6 +1723,70 @@ public class WitcheryCommands {
                 "Spawned a bloodied wickerman at " + base.getX() + ", " + base.getY() + ", " + base.getZ()
                         + ". Light any bloodied bundle with flint and steel to summon the Horned Huntsman."),
                 false);
+        return 1;
+    }
+
+    // ── goto structure ────────────────────────────────────────────────────────
+
+    private static int gotoStructure(CommandSourceStack src, String structureId)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        return gotoStructure(src, "witchery", structureId);
+    }
+
+    private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+
+        net.minecraft.resources.ResourceKey<net.minecraft.world.level.levelgen.structure.Structure> key =
+                net.minecraft.resources.ResourceKey.create(Registries.STRUCTURE,
+                        Identifier.fromNamespaceAndPath(namespace, structureId));
+
+        java.util.Optional<net.minecraft.core.Holder.Reference<net.minecraft.world.level.levelgen.structure.Structure>> holderOpt =
+                level.registryAccess()
+                        .lookup(Registries.STRUCTURE)
+                        .flatMap(reg -> reg.get(key));
+
+        if (holderOpt.isEmpty()) {
+            src.sendFailure(Component.literal("Unknown structure: " + namespace + ":" + structureId));
+            return 0;
+        }
+
+        // skipKnownStructures=true: only checks already-generated chunks — safe on any thread
+        // and fast because it reads cached structure data rather than probing ungenerated chunks.
+        // Radius 100 is fine with this flag since no chunk generation is triggered.
+        final BlockPos from = player.blockPosition();
+        final net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.structure.Structure> holderSet =
+                net.minecraft.core.HolderSet.direct(holderOpt.get());
+
+        com.mojang.datafixers.util.Pair<BlockPos, net.minecraft.core.Holder<net.minecraft.world.level.levelgen.structure.Structure>> result =
+                level.getChunkSource().getGenerator()
+                        .findNearestMapStructure(level, holderSet, from, 100, true);
+
+        String fullId = namespace + ":" + structureId;
+        if (result == null) {
+            src.sendFailure(Component.literal(
+                    "No " + fullId + " found in explored chunks within 100 chunks. Explore more and try again."));
+            return 0;
+        }
+
+        BlockPos found = result.getFirst();
+        int surfaceY = level.getHeight(
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                found.getX(), found.getZ());
+        // getHeight returns 0 (not -64) for cold/unloaded chunks — catch both cases.
+        if (surfaceY < 10) {
+            surfaceY = found.getY() + 3;
+        }
+
+        player.teleportTo(level, found.getX() + 0.5, surfaceY, found.getZ() + 0.5,
+                java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+
+        int dist = (int) Math.sqrt(found.distSqr(from));
+        src.sendSuccess(() -> Component.literal(
+                "Teleported to " + fullId +
+                " at " + found.getX() + " ~ " + found.getZ() +
+                " (" + dist + " blocks)"), false);
         return 1;
     }
 

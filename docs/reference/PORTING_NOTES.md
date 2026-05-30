@@ -9,6 +9,16 @@ Current target:
 
 ---
 
+## 2026-05-30 VillageWallGenerator / goto command bugs
+
+**`/witchery goto` underground**: `Level.getHeight(MOTION_BLOCKING, x, z)` returns `0` (not `-64`) for cold/unloaded chunks. Old threshold `<= -59` missed it, sending the player to Y=0. Fixed: threshold is now `< 10`.
+
+**No fence gate in wall openings**: `placeGatePillar` cleared terrain in middle cells but never placed a gate block. Fixed: places `OAK_FENCE_GATE` at `sy` (first air block above ground), facing set from whether the gate run is E-W or N-S.
+
+**Gate detection missing roads**: old code only scanned the one INTERIOR cell directly adjacent to each WALL cell, ±4 height. Roads are often 1-3 cells inward from the wall. Fixed: scan from WALL cells inward up to depth 3, ±8 height, checking `DIRT_PATH` and `GRAVEL`. Also reduced `GAP_FILL` from 7 → 4 to reduce stub wall protrusions.
+
+---
+
 ## 2026-05-28 WitcheryPlayerData — 16-field DFU codec limit
 
 `RecordCodecBuilder.mapCodec` hard-caps at 16 fields. Adding vampire progression fields (`level`, `ultimate`, `ultimateCharges`) without wrapping them would push past this limit.
@@ -674,3 +684,17 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - **Front wall 1 pixel outside AABB**: `PartPose.offset(-4f, 19f, -5f)` placed the front wall at world Z=0.1875–0.25, but the block AABB starts at z=4/16=0.25. Correct value is `(-4f, 19f, -4f)` → world Z=0.25–0.3125 (outer face flush with AABB, inner face at z=5/16). The general formula for a BESR with `translate(0.5,0.5,0.5) → rotateZ(180°) → translate(0,-1,0)` is: `world_z = 0.5 + model_z/16`. Verify each wall offset satisfies the AABB face coordinates before committing.
 - **Blood UV region**: `texOffs(0,44)` on the blood flat quad samples rows 44–49 of the 32×64 block texture. If those rows are dark/transitional material instead of the intended blood colour, blood renders near-black. Always ensure the target UV region in the texture matches the intended colour — check with a visualiser or generate the texture programmatically.
 - **Blood tint multiplier**: `ARGB.colorFromFloat(1.0F, R, G, B)` multiplies the texture colour channel-by-channel. Using a dark red (R=0.55, G=0.05, B=0.05) on an already-crimson texture produces near-black (110, 1, 1). Use white `(1.0F, 1.0F, 1.0F, 1.0F)` or near-white for translucency when the texture already has the right colour baked in.
+
+**`StructurePiece.postProcess()`: never call `level.getLevel().getCurrentDifficultyAt()` (2026-05-30)**
+- `ServerLevel.getCurrentDifficultyAt(pos)` calls `getChunk()` internally. When invoked from inside a chunk generation task (which `postProcess` always runs on), this blocks waiting for the chunk — deadlocking the server and hanging the game at "Preparing for world creation".
+- Fix: construct `DifficultyInstance` directly: `new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F)`.
+- Affected pattern: any `entity.finalizeSpawn(level, level.getLevel().getCurrentDifficultyAt(spawnPos), ...)` inside `postProcess`. Replace with `entity.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F), ...)`.
+- Rule: inside `postProcess`, only use `WorldGenLevel` methods (not `level.getLevel()`) for anything that might touch chunk data.
+
+**`spawn_overrides` is REQUIRED in structure JSON in NeoForge 21.11.42 (2026-05-30)**
+- `StructureSettings` codec in this build treats `spawn_overrides` as a required field, not optional. Omitting it throws `IllegalStateException: No key spawn_overrides` and leaves the structure "unbound" in the registry, hanging world creation.
+- Fix: always include `"spawn_overrides": {}` (or with actual spawns) in every `worldgen/structure/*.json`.
+
+**`ResourceKey.location()` renamed to `ResourceKey.identifier()` in 1.21.11 (2026-05-30)**
+- `ResourceKey<T>.location()` no longer exists. Use `.identifier()` instead. Returns the same `ResourceLocation`/`Identifier` value.
+- Dynamic registries (like `Registries.STRUCTURE`) don't have `registryOrThrow()` on `RegistryAccess`. Use `lookupOrThrow(key)` → `HolderLookup.RegistryLookup<T>`. To get a `ResourceKey` from a value object, iterate `lookup.listElements()` and match by identity (`h.value() == object`), then call `h.key()`.
