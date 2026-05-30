@@ -22,8 +22,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Detects vanilla villages on chunk load and schedules adaptive wall generation
  * as a deferred server-tick task.
  *
- * Delay: 200 ticks (10 s) after detection — allows surrounding village chunks to
- * finish generating before we read bounding boxes and place wall blocks.
+ * Delay: 400 ticks (20 s) after detection — gives surrounding village chunks
+ * extra time to reach FULL loading level before wall blocks are placed.
+ * The generator skips any individual cell whose chunk is still unloaded, so a
+ * partial wall can appear in the worst case, but this delay covers the typical
+ * scenario of a player walking into a village and exploring for a few seconds.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -50,7 +53,7 @@ public class VillageWallEvents {
             if (!isVanillaVillage(entry.getKey(), level)) continue;
             if (data.isProcessed(start.getBoundingBox())) continue;
 
-            long processAt = level.getGameTime() + 200L;
+            long processAt = level.getGameTime() + 400L;
             QUEUE.add(new PendingWall(start, processAt));
             WitcheryMod.LOGGER.info("[VillageWalls] Queued village at {}.", start.getBoundingBox());
         }
@@ -71,16 +74,6 @@ public class VillageWallEvents {
         while (it.hasNext() && done < 1) {
             PendingWall pending = it.next();
             if (pending.processAfter() > now) continue;
-
-            // Ensure every chunk covered by the village bounding box is loaded before
-            // generating the wall — otherwise setBlock calls for unloaded chunks are
-            // silently skipped and only half the wall appears.
-            if (!allVillageChunksLoaded(level, pending.start())) {
-                // Retry in 200 more ticks (player may still be loading surrounding chunks).
-                it.remove();
-                QUEUE.add(new PendingWall(pending.start(), now + 200L));
-                continue;
-            }
 
             it.remove();
 

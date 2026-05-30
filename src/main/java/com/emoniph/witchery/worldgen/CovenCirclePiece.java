@@ -88,18 +88,32 @@ public class CovenCirclePiece extends StructurePiece {
                                      : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
         BlockState altar  = Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
         BlockState air    = Blocks.AIR.defaultBlockState();
-        BlockState grass  = isDesert ? Blocks.SAND.defaultBlockState()
-                                     : Blocks.GRASS_BLOCK.defaultBlockState();
+        // COARSE_DIRT: prevents vegetation from growing inside the circle post-generation.
+        // SAND in desert (same as before — sand also blocks vegetation).
+        BlockState floorState = isDesert ? Blocks.SAND.defaultBlockState()
+                                         : Blocks.COARSE_DIRT.defaultBlockState();
 
         // ── Clear interior (source: func_74878_a cross pattern) ───────────────
         generateBox(level, box, 3, 1, 0,  7, 3, 10, air, air, false);
         generateBox(level, box, 0, 1, 3, 10, 3,  7, air, air, false);
         generateBox(level, box, 1, 1, 1,  9, 3,  9, air, air, false);
 
-        // ── Floor (source: func_151549_a cross) ───────────────────────────────
-        generateBox(level, box, 3, 0, 0,  7, 0, 10, grass, grass, false);
-        generateBox(level, box, 0, 0, 3, 10, 0,  7, grass, grass, false);
-        generateBox(level, box, 1, 0, 1,  9, 0,  9, grass, grass, false);
+        // ── Floor — force-placed via level.setBlock to bypass StructurePiece's
+        //    canBeReplaced() guard, which silently skips solid terrain blocks.
+        //    Without this the terrain grass block at y=0 is never replaced and
+        //    the stones at y=1 appear to float one block above the terrain.
+        int[][] floorAreas = {{3,0,7,0,10},{0,0,10,3,7},{1,0,9,1,9}};
+        for (int[] a : floorAreas) {
+            for (int fx = a[0]; fx <= a[2]; fx++) {
+                for (int fz = a[3]; fz <= a[4]; fz++) {
+                    BlockPos fp = new BlockPos(
+                            boundingBox.minX() + fx,
+                            boundingBox.minY(),
+                            boundingBox.minZ() + fz);
+                    if (box.isInside(fp)) level.setBlock(fp, floorState, 3);
+                }
+            }
+        }
 
         // ── Altar — 3×3 chiseled bricks centred at (5,5) ─────────────────────
         // Source: altarBrick = STONE_BRICK meta 3 (chiseled), center = CAULDRON equiv
