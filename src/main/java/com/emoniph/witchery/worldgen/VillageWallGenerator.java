@@ -265,7 +265,7 @@ public final class VillageWallGenerator {
                 if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
                 int wx = originX + x, wz = originZ + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
-                int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
+                int h = groundHeight(level, wx, wz); // tree-corrected ground, not treetop
                 heights[x][z] = (short) Math.max(h, minBuild + 5);
             }
         }
@@ -377,9 +377,10 @@ public final class VillageWallGenerator {
      *
      * "Detect a path leaving the area, extend it through the wall":
      *
-     * Phase 1 — precompute which INTERIOR cells contain a road block (DIRT_PATH
-     * or GRAVEL).  Height is sampled per-cell so slope and underground sections
-     * are handled correctly.
+     * Phase 1 — precompute which INTERIOR cells contain a DIRT_PATH road block
+     * at the surface.  Only the exact surface block is checked (not a deep vertical
+     * window) so natural gravel/dirt deposits underground are NOT mistaken for roads.
+     * DIRT_PATH is the village street block in plains/savanna/taiga/snowy villages.
      *
      * Phase 2 — for each road cell that is the TIP of a run in a cardinal
      * direction (road exists behind it in that direction, no road ahead), trace
@@ -390,21 +391,17 @@ public final class VillageWallGenerator {
      */
     private static void detectGates(ServerLevel level, byte[][] grid,
                                      int ox, int oz, int w, int d) {
-        // Phase 1: locate every road block inside the INTERIOR region
+        // Phase 1: locate DIRT_PATH road blocks at the surface of INTERIOR cells
         boolean[][] road = new boolean[w][d];
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
                 if (grid[x][z] != INTERIOR) continue;
                 int wx = ox + x, wz = oz + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
-                int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
-                if (sy < 1) continue;
-                for (int dy = -8; dy <= 5; dy++) {
-                    BlockState bs = level.getBlockState(new BlockPos(wx, sy + dy, wz));
-                    if (bs.is(Blocks.DIRT_PATH) || bs.is(Blocks.GRAVEL)) {
-                        road[x][z] = true;
-                        break;
-                    }
+                int gy = groundHeight(level, wx, wz);
+                // The surface block is at gy-1 (groundHeight returns the cell above ground).
+                if (level.getBlockState(new BlockPos(wx, gy - 1, wz)).is(Blocks.DIRT_PATH)) {
+                    road[x][z] = true;
                 }
             }
         }
@@ -556,6 +553,17 @@ public final class VillageWallGenerator {
             }
             // Fence gate at outer face only
             level.setBlock(new BlockPos(wx, sy, wz), fenceGate, 3);
+
+            // Extend the path through the gate: from a few cells inside, through the
+            // 3-deep passage, to several cells outside — so the village road visibly
+            // exits the wall. Outward = opposite of inward.
+            int oDX = -inDX, oDZ = -inDZ;
+            for (int t = 1; t <= 5; t++)            // outside the wall
+                layPath(level, wx + oDX * t, wz + oDZ * t);
+            for (int depth = 0; depth < 3; depth++) // passage floor (inside)
+                layPath(level, wx + inDX * depth, wz + inDZ * depth);
+            for (int t = 3; t <= 5; t++)            // a little further inside to meet the road
+                layPath(level, wx + inDX * t, wz + inDZ * t);
             return;
         }
 
@@ -661,5 +669,41 @@ public final class VillageWallGenerator {
         byte[][] copy = new byte[w][d];
         for (int x = 0; x < w; x++) System.arraycopy(src[x], 0, copy[x], 0, d);
         return copy;
+    }
+
+    /**
+     * Returns the tree-corrected ground surface Y for a column: scans down from the
+     * MOTION_BLOCKING heightmap past air, liquids, leaves, logs, and replaceable
+     * vegetation to the first solid ground block, returning the Y just above it.
+     *
+     * MOTION_BLOCKING alone counts leaves and logs, so on a tree-covered cell it
+     * returns the treetop — building the wall there would float it on the canopy.
+     * This helper finds the real ground beneath the tree instead.
+     */
+    private static int groundHeight(ServerLevel level, int wx, int wz) {
+        int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
+        for (int i = 0; i < 48; i++) {
+            BlockState bs = level.getBlockState(new BlockPos(wx, h - 1, wz));
+            if (bs.isAir() || bs.liquid() || isNaturalVegetation(bs)) { h--; continue; }
+            break;
+        }
+        return h;
+    }
+
+    /**
+     * Lays a DIRT_PATH block at the ground surface of a column and clears 3 blocks
+     * of headroom above it (vegetation / replaceable only). Used to extend the
+     * village road out through a gate so the path visibly leaves the wall.
+     */
+    private static void layPath(ServerLevel level, int wx, int wz) {
+        if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) return;
+        int gy = groundHeight(level, wx, wz);
+        level.setBlock(new BlockPos(wx, gy - 1, wz), Blocks.DIRT_PATH.defaultBlockState(), 3);
+        for (int dy = 0; dy < 3; dy++) {
+            BlockPos p = new BlockPos(wx, gy + dy, wz);
+            BlockState bs = level.getBlockState(p);
+            if (!bs.isAir() && (isNaturalVegetation(bs) || bs.canBeReplaced()))
+                level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+        }
     }
 }
