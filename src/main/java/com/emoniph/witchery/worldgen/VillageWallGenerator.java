@@ -197,6 +197,31 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++)
                 if (grid[x][z] == OUTSIDE) grid[x][z] = EMPTY;
 
+        // 5b. Fill diagonal wall gaps so all wall adjacencies are strictly cardinal.
+        //     The orthogonal hull can produce perimeter corners where two WALL cells
+        //     are only diagonally adjacent (a staircase step), creating a visual
+        //     45° segment. For each such diagonal pair, add WALL to the EMPTY corner
+        //     cell to produce an L-shaped 90° turn instead.
+        boolean diagChanged = true;
+        while (diagChanged) {
+            diagChanged = false;
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (grid[x][z] != WALL) continue;
+                    for (int dx : new int[]{-1, 1}) {
+                        for (int dz : new int[]{-1, 1}) {
+                            int nx = x + dx, nz = z + dz;
+                            if (nx < 0 || nz < 0 || nx >= w || nz >= d) continue;
+                            if (grid[nx][nz] != WALL) continue;
+                            // Diagonal WALL pair — fill the EMPTY corner cell.
+                            if (grid[x + dx][z] == EMPTY) { grid[x + dx][z] = WALL; diagChanged = true; }
+                            else if (grid[x][z + dz] == EMPTY) { grid[x][z + dz] = WALL; diagChanged = true; }
+                        }
+                    }
+                }
+            }
+        }
+
         // 6. Remove small disconnected wall loops — keep only the largest connected ring.
         //    Gap-fill sometimes creates separate interior zones that each get their own wall;
         //    those internal loops must be removed before placement.
@@ -335,34 +360,36 @@ public final class VillageWallGenerator {
 
     /**
      * Marks wall cells as GATE where village roads cross the perimeter.
-     * Strategy: for each WALL cell, scan up to 3 INTERIOR cells inward in each
-     * direction for DIRT_PATH or GRAVEL (road materials), using a ±8 height window.
-     * Scanning from the wall inward is more reliable than scanning from the inside
-     * out because roads may not reach the cell directly adjacent to the wall.
+     *
+     * Road-first approach: scan every INTERIOR cell for DIRT_PATH / GRAVEL, then
+     * trace outward in each cardinal direction to the nearest WALL cell and mark it
+     * as GATE. This works regardless of how far the road is from the wall — after
+     * morphological dilation and orthogonal hull, roads can be many cells away.
      */
     private static void detectGates(ServerLevel level, byte[][] grid,
                                      int ox, int oz, int w, int d) {
         int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
-        for (int x = 1; x < w-1; x++) {
-            for (int z = 1; z < d-1; z++) {
-                if (grid[x][z] != WALL) continue;
-                outer:
+        for (int x = 1; x < w - 1; x++) {
+            for (int z = 1; z < d - 1; z++) {
+                if (grid[x][z] != INTERIOR) continue;
+                int wx = ox + x, wz = oz + z;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
+                int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
+                if (sy < 1) continue;
+                boolean isRoad = false;
+                for (int dy = -8; dy <= 5 && !isRoad; dy++) {
+                    BlockState bs = level.getBlockState(new BlockPos(wx, sy + dy, wz));
+                    if (bs.is(Blocks.DIRT_PATH) || bs.is(Blocks.GRAVEL)) isRoad = true;
+                }
+                if (!isRoad) continue;
+                // Found a road — mark the nearest WALL cell in each outward direction.
                 for (int[] dir : dirs) {
-                    for (int depth = 1; depth <= 3 + SMOOTH; depth++) {
-                        int ix = x + dir[0] * depth, iz = z + dir[1] * depth;
-                        if (ix < 0 || iz < 0 || ix >= w || iz >= d) break;
-                        if (grid[ix][iz] != INTERIOR) break;
-                        int wx = ox + ix, wz = oz + iz;
-                        if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) break;
-                        int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
-                        if (sy < 1) break;
-                        for (int dy = -8; dy <= 5; dy++) {
-                            BlockState bs = level.getBlockState(new BlockPos(wx, sy + dy, wz));
-                            if (bs.is(Blocks.DIRT_PATH) || bs.is(Blocks.GRAVEL)) {
-                                grid[x][z] = GATE;
-                                break outer;
-                            }
-                        }
+                    for (int d2 = 1; d2 < Math.max(w, d); d2++) {
+                        int nx = x + dir[0] * d2, nz = z + dir[1] * d2;
+                        if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
+                        if (grid[nx][nz] == INTERIOR) continue;
+                        if (grid[nx][nz] == WALL) { grid[nx][nz] = GATE; }
+                        break; // EMPTY or already GATE — stop in this direction
                     }
                 }
             }
@@ -456,31 +483,49 @@ public final class VillageWallGenerator {
                       || isGateEdge(grid, gx, gz, 0, -1, w, d)
                       || isGateEdge(grid, gx, gz, 0,  1, w, d);
 
+        // Determine which cardinal direction is "inward" (toward the village interior).
+        // The gate opens perpendicular to the wall axis; inward = toward INTERIOR cells.
+        boolean wallRunsEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
+                          || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
+        int inDX = 0, inDZ = 0;
+        if (wallRunsEW) {
+            if (gz > 0 && (grid[gx][gz-1] == INTERIOR || grid[gx][gz-1] == GATE)) inDZ = -1;
+            else if (gz < d-1 && (grid[gx][gz+1] == INTERIOR || grid[gx][gz+1] == GATE)) inDZ = 1;
+        } else {
+            if (gx > 0 && (grid[gx-1][gz] == INTERIOR || grid[gx-1][gz] == GATE)) inDX = -1;
+            else if (gx < w-1 && (grid[gx+1][gz] == INTERIOR || grid[gx+1][gz] == GATE)) inDX = 1;
+        }
+
         if (!isEdge) {
-            // Middle of gate — passage + arch overhead.
-            // Clear 5 blocks for player passage (fence gate counts as one of them).
-            for (int dy = 0; dy < 5; dy++) {
-                BlockPos p = new BlockPos(wx, sy + dy, wz);
-                if (!level.getBlockState(p).isAir())
-                    level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
-            }
-            // Arch: brick blocks from sy+5 to sy+WALL_HEIGHT-1 form an overhead
-            // vault connecting the two pillars — 3 blocks of clearance above the gate.
-            for (int dy = 5; dy < WALL_HEIGHT; dy++)
-                setBlock(level, wx, sy + dy, wz, brick);
-            // Fence gate at ground level
+            // Middle of gate — 3-block-deep passage + arch overhead.
             Direction facing = gateWallFacing(grid, gx, gz, w, d);
             BlockState fenceGate = Blocks.OAK_FENCE_GATE.defaultBlockState()
                     .setValue(FenceGateBlock.FACING, facing);
+            for (int depth = 0; depth < 3; depth++) {
+                int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
+                // Clear 5-block passage
+                for (int dy = 0; dy < 5; dy++) {
+                    BlockPos p = new BlockPos(dwx, sy + dy, dwz);
+                    if (!level.getBlockState(p).isAir())
+                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                }
+                // Arch/tunnel ceiling
+                for (int dy = 5; dy < WALL_HEIGHT; dy++)
+                    setBlock(level, dwx, sy + dy, dwz, brick);
+            }
+            // Fence gate at outer face only
             level.setBlock(new BlockPos(wx, sy, wz), fenceGate, 3);
             return;
         }
 
-        // Pillar: full brick shaft, merlon finial on top
-        for (int dy = 0; dy < WALL_HEIGHT + 1; dy++)
-            setBlock(level, wx, sy + dy, wz, brick);
-        setBlock(level, wx, sy + WALL_HEIGHT + 1, wz, merlon); // finial matches merlon material
-        fillDown(level, wx, sy - 1, wz, wall);
+        // Pillar — 3 blocks deep into the interior
+        for (int depth = 0; depth < 3; depth++) {
+            int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
+            for (int dy = 0; dy < WALL_HEIGHT + 1; dy++)
+                setBlock(level, dwx, sy + dy, dwz, brick);
+            setBlock(level, dwx, sy + WALL_HEIGHT + 1, dwz, depth == 0 ? merlon : brick);
+            if (depth == 0) fillDown(level, dwx, sy - 1, dwz, wall);
+        }
     }
 
     private static boolean isGateEdge(byte[][] grid, int x, int z,
@@ -555,9 +600,10 @@ public final class VillageWallGenerator {
         BlockPos pos = new BlockPos(x, y, z);
         if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) return;
         BlockState existing = level.getBlockState(pos);
-        // Replace air, liquids, and any "replaceable" world decoration
-        // (grass, tall grass, flowers, snow layers, etc.) but not solid village blocks.
-        if (!existing.isAir() && !existing.liquid() && !existing.canBeReplaced()) return;
+        // Replace air, liquids, replaceable decoration, and natural vegetation.
+        // Logs and leaves are solid+non-replaceable in 1.21 but must be cleared for walls.
+        if (!existing.isAir() && !existing.liquid() && !existing.canBeReplaced()
+                && !existing.is(BlockTags.LOGS) && !existing.is(BlockTags.LEAVES)) return;
         level.setBlock(pos, state, 3);
     }
 
