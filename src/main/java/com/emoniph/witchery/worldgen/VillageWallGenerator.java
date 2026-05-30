@@ -6,6 +6,7 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
@@ -151,6 +152,11 @@ public final class VillageWallGenerator {
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
 
+        // 6b. Remove dead-end stub protrusions iteratively.
+        //     A WALL cell with ≤1 cardinal WALL/GATE neighbor is a dead-end branch.
+        //     Removing it may expose the previous cell as a new dead-end; repeat until stable.
+        pruneDeadEnds(grid, w, d);
+
         // 7. Gate detection: scan INTERIOR cells that directly border the wall for DIRT_PATH.
         //    Roads are inside the village (1–N cells inward from the wall), so scanning the
         //    wall cell itself rarely finds them — scanning its interior neighbours does.
@@ -176,6 +182,24 @@ public final class VillageWallGenerator {
                 if (!level.isLoaded(new BlockPos(wx, 64, wz))) continue;
                 int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
                 heights[x][z] = (short) Math.max(h, minBuild + 5);
+            }
+        }
+
+        // 9a. Pre-clear vegetation/trees in every wall and gate column so logs and
+        //     leaves don't block wall placement (setBlock skips solid non-replaceable blocks).
+        for (int x = 0; x < w; x++) {
+            for (int z = 0; z < d; z++) {
+                if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
+                int wx = originX + x, wz = originZ + z;
+                if (!level.isLoaded(new BlockPos(wx, 64, wz))) continue;
+                int sy = heights[x][z];
+                if (sy == 0) continue;
+                for (int dy = 0; dy < WALL_HEIGHT + 5; dy++) {
+                    BlockPos p = new BlockPos(wx, sy + dy, wz);
+                    BlockState bs = level.getBlockState(p);
+                    if (!bs.isAir() && isNaturalVegetation(bs))
+                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                }
             }
         }
 
@@ -252,6 +276,40 @@ public final class VillageWallGenerator {
     }
 
     private static long pack(int x, int z) { return (long)x << 20 | z; }
+
+    /**
+     * Removes dead-end stub protrusions from the wall ring.
+     * A WALL cell with ≤1 cardinal WALL/GATE neighbour is a dead end (branch tip).
+     * Removing it may expose the previous cell as a new dead end; iterates until stable.
+     */
+    private static void pruneDeadEnds(byte[][] grid, int w, int d) {
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (grid[x][z] != WALL) continue;
+                    int wallNeighbours = 0;
+                    if (grid[x-1][z] == WALL || grid[x-1][z] == GATE) wallNeighbours++;
+                    if (grid[x+1][z] == WALL || grid[x+1][z] == GATE) wallNeighbours++;
+                    if (grid[x][z-1] == WALL || grid[x][z-1] == GATE) wallNeighbours++;
+                    if (grid[x][z+1] == WALL || grid[x][z+1] == GATE) wallNeighbours++;
+                    if (wallNeighbours <= 1) {
+                        grid[x][z] = INTERIOR;
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isNaturalVegetation(BlockState state) {
+        return state.is(BlockTags.LEAVES)
+            || state.is(BlockTags.LOGS)
+            || state.is(BlockTags.FLOWERS)
+            || state.is(BlockTags.SAPLINGS)
+            || state.canBeReplaced();
+    }
 
     // ── Gate detection ─────────────────────────────────────────────────────────
 

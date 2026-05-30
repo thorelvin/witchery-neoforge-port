@@ -71,6 +71,17 @@ public class VillageWallEvents {
         while (it.hasNext() && done < 1) {
             PendingWall pending = it.next();
             if (pending.processAfter() > now) continue;
+
+            // Ensure every chunk covered by the village bounding box is loaded before
+            // generating the wall — otherwise setBlock calls for unloaded chunks are
+            // silently skipped and only half the wall appears.
+            if (!allVillageChunksLoaded(level, pending.start())) {
+                // Retry in 200 more ticks (player may still be loading surrounding chunks).
+                it.remove();
+                QUEUE.add(new PendingWall(pending.start(), now + 200L));
+                continue;
+            }
+
             it.remove();
 
             VillageWallData data = VillageWallData.get(level);
@@ -84,6 +95,19 @@ public class VillageWallEvents {
             }
             done++;
         }
+    }
+
+    // ── Chunk readiness check ──────────────────────────────────────────────────
+
+    private static boolean allVillageChunksLoaded(ServerLevel level,
+            net.minecraft.world.level.levelgen.structure.StructureStart start) {
+        net.minecraft.world.level.levelgen.structure.BoundingBox bb = start.getBoundingBox();
+        int minCX = bb.minX() >> 4, maxCX = bb.maxX() >> 4;
+        int minCZ = bb.minZ() >> 4, maxCZ = bb.maxZ() >> 4;
+        for (int cx = minCX; cx <= maxCX; cx++)
+            for (int cz = minCZ; cz <= maxCZ; cz++)
+                if (level.getChunkSource().getChunkNow(cx, cz) == null) return false;
+        return true;
     }
 
     // ── Village detection ──────────────────────────────────────────────────────

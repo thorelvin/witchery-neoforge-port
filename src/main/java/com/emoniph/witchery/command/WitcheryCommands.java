@@ -1771,12 +1771,19 @@ public class WitcheryCommands {
         }
 
         BlockPos found = result.getFirst();
+        // Force the target chunk into memory so the heightmap is accurate.
+        // findNearestMapStructure uses skipKnownStructures=true, so the chunk is already
+        // generated on disk — this just reads it from disk, which is fast.
+        int chunkX = found.getX() >> 4, chunkZ = found.getZ() >> 4;
+        level.getChunkSource().getChunk(chunkX, chunkZ, true);
+
         int surfaceY = level.getHeight(
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
                 found.getX(), found.getZ());
-        // getHeight returns 0 (not -64) for cold/unloaded chunks — catch both cases.
-        if (surfaceY < 10) {
-            surfaceY = found.getY() + 3;
+        // Final safety net: if heightmap is still suspicious, use structure Y + 3.
+        // found.getY() is the village center Y (ground level at generation time).
+        if (surfaceY < 20) {
+            surfaceY = Math.max(found.getY() + 3, 20);
         }
 
         player.teleportTo(level, found.getX() + 0.5, surfaceY, found.getZ() + 0.5,
