@@ -157,6 +157,36 @@ public final class VillageWallGenerator {
                 for (int z = minZcol[x]; z <= maxZcol[x]; z++)
                     if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
 
+        // 3d. Fill diagonal INTERIOR corners so the perimeter never produces diagonal WALL pairs.
+        //     When two INTERIOR cells are diagonally adjacent and both corner cells between
+        //     them are EMPTY, the perimeter detection places WALL at both corners — two WALL
+        //     cells that are only diagonally connected, producing a 45° staircase segment.
+        //     Filling one corner cell as INTERIOR prevents this by giving the perimeter a
+        //     proper L-shape to trace.  Only INTERIOR cells are added (never EMPTY/exterior),
+        //     so this cannot cascade into the outside world.
+        boolean cornersChanged = true;
+        while (cornersChanged) {
+            cornersChanged = false;
+            byte[][] snap3d = copyGrid(grid, w, d);
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (snap3d[x][z] != INTERIOR) continue;
+                    for (int dx : new int[]{-1, 1}) {
+                        for (int dz : new int[]{-1, 1}) {
+                            int nx = x + dx, nz = z + dz;
+                            if (nx < 0 || nz < 0 || nx >= w || nz >= d) continue;
+                            if (snap3d[nx][nz] != INTERIOR) continue;
+                            // Both corner cells must be EMPTY for a diagonal pair to form.
+                            if (snap3d[x + dx][z] == EMPTY && snap3d[x][z + dz] == EMPTY) {
+                                grid[x + dx][z] = INTERIOR; // fill the corner in dx direction
+                                cornersChanged = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // 4. Flood-fill from grid border to mark cells truly OUTSIDE the village.
         //    Cells not reachable from the border are enclosed "holes" (internal paths,
         //    plazas) and must NOT become wall cells — only the outer ring should be walled.
@@ -196,31 +226,6 @@ public final class VillageWallGenerator {
         for (int x = 0; x < w; x++)
             for (int z = 0; z < d; z++)
                 if (grid[x][z] == OUTSIDE) grid[x][z] = EMPTY;
-
-        // 5b. Fill diagonal wall gaps so all wall adjacencies are strictly cardinal.
-        //     The orthogonal hull can produce perimeter corners where two WALL cells
-        //     are only diagonally adjacent (a staircase step), creating a visual
-        //     45° segment. For each such diagonal pair, add WALL to the EMPTY corner
-        //     cell to produce an L-shaped 90° turn instead.
-        boolean diagChanged = true;
-        while (diagChanged) {
-            diagChanged = false;
-            for (int x = 1; x < w - 1; x++) {
-                for (int z = 1; z < d - 1; z++) {
-                    if (grid[x][z] != WALL) continue;
-                    for (int dx : new int[]{-1, 1}) {
-                        for (int dz : new int[]{-1, 1}) {
-                            int nx = x + dx, nz = z + dz;
-                            if (nx < 0 || nz < 0 || nx >= w || nz >= d) continue;
-                            if (grid[nx][nz] != WALL) continue;
-                            // Diagonal WALL pair — fill the EMPTY corner cell.
-                            if (grid[x + dx][z] == EMPTY) { grid[x + dx][z] = WALL; diagChanged = true; }
-                            else if (grid[x][z + dz] == EMPTY) { grid[x][z + dz] = WALL; diagChanged = true; }
-                        }
-                    }
-                }
-            }
-        }
 
         // 6. Remove small disconnected wall loops — keep only the largest connected ring.
         //    Gap-fill sometimes creates separate interior zones that each get their own wall;
