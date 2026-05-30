@@ -46,6 +46,11 @@ public final class VillageWallGenerator {
     private static final int MAX_GRID      = 240; // abort if village is too large
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
     private static final int GUARD_SPACING = 200; // wall blocks between guard spawns
+    // Morphological dilation applied to the village footprint before perimeter detection.
+    // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
+    // the wall traces a smoother, more regularised contour (see reference: contour
+    // regularisation / morphological closing).  Gate detection depth is widened to match.
+    private static final int SMOOTH        = 4;
 
     // Grid cell values
     private static final byte EMPTY    = 0;
@@ -109,6 +114,21 @@ public final class VillageWallGenerator {
             }
         }
 
+        // 3b. Morphological dilation: expand INTERIOR outward by SMOOTH cells.
+        //     Each pass absorbs any EMPTY cell adjacent to INTERIOR, filling concave
+        //     recesses. The perimeter is then computed on the smoother region.
+        for (int s = 0; s < SMOOTH; s++) {
+            byte[][] snap = copyGrid(grid, w, d);
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (snap[x][z] != EMPTY) continue;
+                    if (snap[x-1][z] == INTERIOR || snap[x+1][z] == INTERIOR ||
+                        snap[x][z-1] == INTERIOR || snap[x][z+1] == INTERIOR)
+                        grid[x][z] = INTERIOR;
+                }
+            }
+        }
+
         // 4. Flood-fill from grid border to mark cells truly OUTSIDE the village.
         //    Cells not reachable from the border are enclosed "holes" (internal paths,
         //    plazas) and must NOT become wall cells — only the outer ring should be walled.
@@ -153,12 +173,6 @@ public final class VillageWallGenerator {
         //    Gap-fill sometimes creates separate interior zones that each get their own wall;
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
-
-        // 6b. Fill concave inward pockets.
-        //     A WALL cell with WALL on two adjacent (non-opposite) cardinal sides creates a
-        //     concave corner that traps an interior pocket.  Converting those INTERIOR cells
-        //     to WALL iteratively eliminates every inward-facing C/U pocket until stable.
-        fillConcavePockets(grid, w, d);
 
         // 7. Gate detection: scan INTERIOR cells that directly border the wall for DIRT_PATH.
         //    Roads are inside the village (1–N cells inward from the wall), so scanning the
@@ -280,40 +294,6 @@ public final class VillageWallGenerator {
 
     private static long pack(int x, int z) { return (long)x << 20 | z; }
 
-    /**
-     * Fills concave exterior pockets by converting EMPTY (outside) cells that
-     * have WALL on two adjacent (non-opposite) cardinal sides into WALL cells.
-     *
-     * A concave pocket on the outer wall face is an exterior bay enclosed between
-     * two wall segments — it looks like a C or U from outside.  The corner EMPTY
-     * cells of such a bay touch WALL on two adjacent sides (e.g. north AND east).
-     * Converting them adds wall there; those new WALL cells expose the next row as
-     * new corners, and the loop repeats until the pocket is fully filled.
-     *
-     * INTERIOR cells (the village interior) are untouched — only the exterior EMPTY
-     * cells in concave bays become additional wall, smoothing the outer boundary.
-     */
-    private static void fillConcavePockets(byte[][] grid, int w, int d) {
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (int x = 1; x < w - 1; x++) {
-                for (int z = 1; z < d - 1; z++) {
-                    if (grid[x][z] != EMPTY) continue;   // exterior cells only
-                    boolean wN = grid[x][z - 1] == WALL || grid[x][z - 1] == GATE;
-                    boolean wS = grid[x][z + 1] == WALL || grid[x][z + 1] == GATE;
-                    boolean wE = grid[x + 1][z] == WALL || grid[x + 1][z] == GATE;
-                    boolean wW = grid[x - 1][z] == WALL || grid[x - 1][z] == GATE;
-                    // Two adjacent (non-opposite) wall sides → enclosed corner → fill
-                    if ((wN && wE) || (wN && wW) || (wS && wE) || (wS && wW)) {
-                        grid[x][z] = WALL;
-                        changed = true;
-                    }
-                }
-            }
-        }
-    }
-
     private static boolean isNaturalVegetation(BlockState state) {
         return state.is(BlockTags.LEAVES)
             || state.is(BlockTags.LOGS)
@@ -339,7 +319,7 @@ public final class VillageWallGenerator {
                 if (grid[x][z] != WALL) continue;
                 outer:
                 for (int[] dir : dirs) {
-                    for (int depth = 1; depth <= 3; depth++) {
+                    for (int depth = 1; depth <= 3 + SMOOTH; depth++) {
                         int ix = x + dir[0] * depth, iz = z + dir[1] * depth;
                         if (ix < 0 || iz < 0 || ix >= w || iz >= d) break;
                         if (grid[ix][iz] != INTERIOR) break;
