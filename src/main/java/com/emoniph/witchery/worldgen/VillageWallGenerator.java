@@ -281,17 +281,17 @@ public final class VillageWallGenerator {
     private static long pack(int x, int z) { return (long)x << 20 | z; }
 
     /**
-     * Fills inward-facing wall pockets by converting INTERIOR cells that have
-     * WALL on two adjacent (non-opposite) cardinal sides into WALL cells.
+     * Fills concave exterior pockets by converting EMPTY (outside) cells that
+     * have WALL on two adjacent (non-opposite) cardinal sides into WALL cells.
      *
-     * A concave pocket arises when the wall makes two consecutive inward turns,
-     * e.g. a C-shape or U-shape.  The corner INTERIOR cells of such pockets have
-     * WALL to the north AND east (or any other adjacent pair), and converting them
-     * expands the wall inward.  The loop repeats until stable so that multi-cell
-     * deep pockets are fully filled, not just their outermost corners.
+     * A concave pocket on the outer wall face is an exterior bay enclosed between
+     * two wall segments — it looks like a C or U from outside.  The corner EMPTY
+     * cells of such a bay touch WALL on two adjacent sides (e.g. north AND east).
+     * Converting them adds wall there; those new WALL cells expose the next row as
+     * new corners, and the loop repeats until the pocket is fully filled.
      *
-     * This does NOT affect large open interior areas: cells well inside the village
-     * have at most one WALL cardinal neighbour and are left unchanged.
+     * INTERIOR cells (the village interior) are untouched — only the exterior EMPTY
+     * cells in concave bays become additional wall, smoothing the outer boundary.
      */
     private static void fillConcavePockets(byte[][] grid, int w, int d) {
         boolean changed = true;
@@ -299,12 +299,12 @@ public final class VillageWallGenerator {
             changed = false;
             for (int x = 1; x < w - 1; x++) {
                 for (int z = 1; z < d - 1; z++) {
-                    if (grid[x][z] != INTERIOR) continue;
+                    if (grid[x][z] != EMPTY) continue;   // exterior cells only
                     boolean wN = grid[x][z - 1] == WALL || grid[x][z - 1] == GATE;
                     boolean wS = grid[x][z + 1] == WALL || grid[x][z + 1] == GATE;
                     boolean wE = grid[x + 1][z] == WALL || grid[x + 1][z] == GATE;
                     boolean wW = grid[x - 1][z] == WALL || grid[x - 1][z] == GATE;
-                    // Convert if any two adjacent (non-opposite) sides are wall
+                    // Two adjacent (non-opposite) wall sides → enclosed corner → fill
                     if ((wN && wE) || (wN && wW) || (wS && wE) || (wS && wW)) {
                         grid[x][z] = WALL;
                         changed = true;
