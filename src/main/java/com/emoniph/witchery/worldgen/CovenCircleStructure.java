@@ -1,0 +1,51 @@
+package com.emoniph.witchery.worldgen;
+
+import com.emoniph.witchery.init.WitcheryStructures;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+
+import java.util.Optional;
+
+public class CovenCircleStructure extends Structure {
+
+    public static final MapCodec<CovenCircleStructure> CODEC = simpleCodec(CovenCircleStructure::new);
+
+    public CovenCircleStructure(StructureSettings settings) {
+        super(settings);
+    }
+
+    @Override
+    public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
+        int cx = ctx.chunkPos().getMiddleBlockX();
+        int cz = ctx.chunkPos().getMiddleBlockZ();
+
+        // WORLD_SURFACE_WG treats water as solid (returns water surface Y).
+        // OCEAN_FLOOR_WG ignores fluids and returns the solid floor Y.
+        // If they differ, the position is over water — reject it.
+        int surfaceY = ctx.chunkGenerator().getFirstOccupiedHeight(
+                cx, cz, Heightmap.Types.WORLD_SURFACE_WG,
+                ctx.heightAccessor(), ctx.randomState());
+        int floorY = ctx.chunkGenerator().getFirstOccupiedHeight(
+                cx, cz, Heightmap.Types.OCEAN_FLOOR_WG,
+                ctx.heightAccessor(), ctx.randomState());
+        if (surfaceY > floorY) return Optional.empty(); // over water
+
+        return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
+            int x = cx - 5;
+            int z = cz - 5;
+            int y = ctx.chunkGenerator().getFirstOccupiedHeight(
+                    x + 5, z + 5,
+                    Heightmap.Types.WORLD_SURFACE_WG,
+                    ctx.heightAccessor(), ctx.randomState());
+            builder.addPiece(new CovenCirclePiece(
+                    WitcheryStructures.COVEN_CIRCLE_PIECE.get(), x, y, z));
+        });
+    }
+
+    @Override
+    public StructureType<?> type() {
+        return WitcheryStructures.COVEN_CIRCLE_TYPE.get();
+    }
+}
