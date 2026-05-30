@@ -129,11 +129,13 @@ public final class VillageWallGenerator {
             }
         }
 
-        // 3c. Orthogonal hull: enforce 90-degree-only wall segments.
+        // 3c. Orthogonal convex hull: make the footprint row-convex AND column-convex.
         //     Fill each row from its leftmost to rightmost INTERIOR cell, and each column
-        //     from its topmost to bottommost INTERIOR cell.  Any staircase diagonal in the
-        //     boundary is absorbed so the resulting perimeter consists only of horizontal
-        //     and vertical runs — no diagonal staircase steps.
+        //     from its topmost to bottommost INTERIOR cell.  The result is an orthogonally
+        //     convex region whose boundary is a staircase of horizontal/vertical runs
+        //     connected by 90° turns — exactly the orthogonal-convex-hull shape we want.
+        //     (Do NOT additionally fill diagonal notches afterwards — that collapses the
+        //      staircase into the bounding box; see note below.)
         int[] minXrow = new int[d], maxXrow = new int[d];
         int[] minZcol = new int[w], maxZcol = new int[w];
         for (int i = 0; i < d; i++) { minXrow[i] = w;  maxXrow[i] = -1; }
@@ -157,44 +159,11 @@ public final class VillageWallGenerator {
                 for (int z = minZcol[x]; z <= maxZcol[x]; z++)
                     if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
 
-        // 3d. Fill diagonal INTERIOR corners so the perimeter never produces diagonal WALL pairs.
-        //     When two INTERIOR cells are diagonally adjacent and both corner cells between
-        //     them are EMPTY, the perimeter detection places WALL at both corners — two WALL
-        //     cells that are only diagonally connected, producing a 45° staircase segment.
-        //     Filling one corner cell as INTERIOR prevents this by giving the perimeter a
-        //     proper L-shape to trace.  Only INTERIOR cells are added (never EMPTY/exterior),
-        //     so this cannot cascade into the outside world.
-        boolean cornersChanged = true;
-        while (cornersChanged) {
-            cornersChanged = false;
-            byte[][] snap3d = copyGrid(grid, w, d);
-            for (int x = 1; x < w - 1; x++) {
-                for (int z = 1; z < d - 1; z++) {
-                    if (snap3d[x][z] != INTERIOR) continue;
-                    for (int dx : new int[]{-1, 1}) {
-                        for (int dz : new int[]{-1, 1}) {
-                            int nx = x + dx, nz = z + dz;
-                            if (nx < 0 || nz < 0 || nx >= w || nz >= d) continue;
-                            if (snap3d[nx][nz] != INTERIOR) continue;
-                            // Fill the first EMPTY corner found.
-                            // Previously required BOTH corners to be EMPTY, but a diagonal
-                            // WALL pair also forms when one corner is already WALL (not EMPTY
-                            // and not INTERIOR) and the other is EMPTY — the perimeter still
-                            // places WALL at the EMPTY corner, creating the diagonal.
-                            // Fixing: fill whichever corner is EMPTY to guarantee at least
-                            // one corner is INTERIOR, which breaks the diagonal entirely.
-                            if (snap3d[x + dx][z] == EMPTY) {
-                                grid[x + dx][z] = INTERIOR;
-                                cornersChanged = true;
-                            } else if (snap3d[x][z + dz] == EMPTY) {
-                                grid[x][z + dz] = INTERIOR;
-                                cornersChanged = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // NOTE: no interior-corner filling here.  Filling diagonal INTERIOR notches
+        // cascades — each fill exposes a new diagonal notch — and zippers the entire
+        // orthogonal-convex-hull silhouette into its bounding box (a plain square).
+        // The hull's staircase boundary (the desired "several 90° turns") must be kept.
+        // Diagonal WALL connectivity is handled after perimeter detection instead (step 5b).
 
         // 4. Flood-fill from grid border to mark cells truly OUTSIDE the village.
         //    Cells not reachable from the border are enclosed "holes" (internal paths,
@@ -235,6 +204,31 @@ public final class VillageWallGenerator {
         for (int x = 0; x < w; x++)
             for (int z = 0; z < d; z++)
                 if (grid[x][z] == OUTSIDE) grid[x][z] = EMPTY;
+
+        // 5b. Orthogonalise diagonal WALL adjacencies (keeps the staircase, removes 45° gaps).
+        //     At a single-cell staircase step the two perimeter WALL cells can be only
+        //     diagonally adjacent, leaving a visual 45° gap. For each such diagonal pair,
+        //     convert the INTERIOR-side shared corner to WALL so the two connect with a 90°
+        //     L instead. Only INTERIOR cells are ever converted (never EMPTY exterior), so
+        //     this cannot cascade outward. Bounded pass count guards against any runaway.
+        for (int pass = 0; pass < 8; pass++) {
+            boolean changed = false;
+            byte[][] snap = copyGrid(grid, w, d);
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (snap[x][z] != WALL) continue;
+                    for (int dx : new int[]{-1, 1}) {
+                        for (int dz : new int[]{-1, 1}) {
+                            if (snap[x + dx][z + dz] != WALL) continue; // diagonal WALL pair
+                            // The two shared orthogonal corners; convert the INTERIOR one.
+                            if (snap[x + dx][z] == INTERIOR) { grid[x + dx][z] = WALL; changed = true; }
+                            else if (snap[x][z + dz] == INTERIOR) { grid[x][z + dz] = WALL; changed = true; }
+                        }
+                    }
+                }
+            }
+            if (!changed) break;
+        }
 
         // 6. Remove small disconnected wall loops — keep only the largest connected ring.
         //    Gap-fill sometimes creates separate interior zones that each get their own wall;
