@@ -176,9 +176,18 @@ public final class VillageWallGenerator {
                             int nx = x + dx, nz = z + dz;
                             if (nx < 0 || nz < 0 || nx >= w || nz >= d) continue;
                             if (snap3d[nx][nz] != INTERIOR) continue;
-                            // Both corner cells must be EMPTY for a diagonal pair to form.
-                            if (snap3d[x + dx][z] == EMPTY && snap3d[x][z + dz] == EMPTY) {
-                                grid[x + dx][z] = INTERIOR; // fill the corner in dx direction
+                            // Fill the first EMPTY corner found.
+                            // Previously required BOTH corners to be EMPTY, but a diagonal
+                            // WALL pair also forms when one corner is already WALL (not EMPTY
+                            // and not INTERIOR) and the other is EMPTY — the perimeter still
+                            // places WALL at the EMPTY corner, creating the diagonal.
+                            // Fixing: fill whichever corner is EMPTY to guarantee at least
+                            // one corner is INTERIOR, which breaks the diagonal entirely.
+                            if (snap3d[x + dx][z] == EMPTY) {
+                                grid[x + dx][z] = INTERIOR;
+                                cornersChanged = true;
+                            } else if (snap3d[x][z + dz] == EMPTY) {
+                                grid[x][z + dz] = INTERIOR;
                                 cornersChanged = true;
                             }
                         }
@@ -366,61 +375,63 @@ public final class VillageWallGenerator {
     /**
      * Marks wall cells as GATE where a village road exits through the perimeter.
      *
-     * Wall-centric approach (matches the user intent: "detect a path leaving the
-     * area, extend it through the wall"):
+     * "Detect a path leaving the area, extend it through the wall":
      *
-     * For each WALL cell, determine its wall axis (E-W or N-S) from adjacent
-     * wall neighbours.  The inward direction is perpendicular to that axis,
-     * toward the INTERIOR.  Scan inward up to MAX_ROAD_SCAN cells; if a
-     * DIRT_PATH or GRAVEL block is found at any depth, the road is heading
-     * straight toward this wall cell — mark it GATE.
+     * Phase 1 — precompute which INTERIOR cells contain a road block (DIRT_PATH
+     * or GRAVEL).  Height is sampled per-cell so slope and underground sections
+     * are handled correctly.
      *
-     * This prevents parallel roads (running along the inside of the wall) from
-     * triggering gates at wrong positions: only roads that are perpendicular to
-     * the wall and actually aimed at a specific wall cell create a gate there.
+     * Phase 2 — for each road cell that is the TIP of a run in a cardinal
+     * direction (road exists behind it in that direction, no road ahead), trace
+     * forward until the nearest WALL cell and mark it GATE.  This captures
+     * exactly the road segments that EXIT the village: roads running parallel to
+     * the wall do not have a tip pointing toward it, so they never trigger gates
+     * at wrong positions.
      */
-    private static final int MAX_ROAD_SCAN = 32; // max cells to scan inward
-
     private static void detectGates(ServerLevel level, byte[][] grid,
                                      int ox, int oz, int w, int d) {
+        // Phase 1: locate every road block inside the INTERIOR region
+        boolean[][] road = new boolean[w][d];
+        for (int x = 0; x < w; x++) {
+            for (int z = 0; z < d; z++) {
+                if (grid[x][z] != INTERIOR) continue;
+                int wx = ox + x, wz = oz + z;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
+                int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx, wz);
+                if (sy < 1) continue;
+                for (int dy = -8; dy <= 5; dy++) {
+                    BlockState bs = level.getBlockState(new BlockPos(wx, sy + dy, wz));
+                    if (bs.is(Blocks.DIRT_PATH) || bs.is(Blocks.GRAVEL)) {
+                        road[x][z] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Phase 2: find road tips, trace to wall
+        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
         for (int x = 1; x < w - 1; x++) {
             for (int z = 1; z < d - 1; z++) {
-                if (grid[x][z] != WALL) continue;
+                if (!road[x][z]) continue;
+                for (int[] dir : dirs) {
+                    int bx = x - dir[0], bz = z - dir[1]; // cell behind
+                    if (bx < 0 || bz < 0 || bx >= w || bz >= d) continue;
+                    if (!road[bx][bz]) continue; // road must come from behind
 
-                // Determine wall axis from cardinal wall neighbours
-                boolean wallRunsEW = (x > 0   && (grid[x-1][z] == WALL || grid[x-1][z] == GATE))
-                                  || (x < w-1 && (grid[x+1][z] == WALL || grid[x+1][z] == GATE));
+                    int fx = x + dir[0], fz = z + dir[1]; // cell ahead
+                    boolean roadAhead = fx >= 0 && fz >= 0 && fx < w && fz < d && road[fx][fz];
+                    if (roadAhead) continue; // road continues — not the tip yet
 
-                // Inward direction: perpendicular to wall axis, toward INTERIOR
-                int inDX = 0, inDZ = 0;
-                if (wallRunsEW) {
-                    // Wall is horizontal — inward is north or south
-                    if (z > 0   && grid[x][z-1] == INTERIOR) inDZ = -1;
-                    else if (z < d-1 && grid[x][z+1] == INTERIOR) inDZ =  1;
-                } else {
-                    // Wall is vertical — inward is west or east
-                    if (x > 0   && grid[x-1][z] == INTERIOR) inDX = -1;
-                    else if (x < w-1 && grid[x+1][z] == INTERIOR) inDX =  1;
-                }
-                if (inDX == 0 && inDZ == 0) continue; // can't determine inward side
-
-                // Scan inward along the perpendicular for a road block
-                for (int depth = 1; depth <= MAX_ROAD_SCAN; depth++) {
-                    int ix = x + inDX * depth, iz = z + inDZ * depth;
-                    if (ix < 0 || iz < 0 || ix >= w || iz >= d) break;
-                    if (grid[ix][iz] != INTERIOR) break; // left interior region
-                    int wx2 = ox + ix, wz2 = oz + iz;
-                    if (level.getChunkSource().getChunkNow(wx2 >> 4, wz2 >> 4) == null) break;
-                    int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, wx2, wz2);
-                    if (sy < 1) break;
-                    for (int dy = -8; dy <= 5; dy++) {
-                        BlockState bs = level.getBlockState(new BlockPos(wx2, sy + dy, wz2));
-                        if (bs.is(Blocks.DIRT_PATH) || bs.is(Blocks.GRAVEL)) {
-                            grid[x][z] = GATE; // road exits through this wall cell
-                            break;
-                        }
+                    // This cell is the tip of a road run pointing in (dir).
+                    // Extend the road's trajectory through the wall.
+                    for (int depth = 1; depth < Math.max(w, d); depth++) {
+                        int nx = x + dir[0] * depth, nz = z + dir[1] * depth;
+                        if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
+                        if (grid[nx][nz] == INTERIOR) continue; // still inside, keep going
+                        if (grid[nx][nz] == WALL) { grid[nx][nz] = GATE; }
+                        break; // WALL marked (or EMPTY — no wall this direction)
                     }
-                    if (grid[x][z] == GATE) break;
                 }
             }
         }
