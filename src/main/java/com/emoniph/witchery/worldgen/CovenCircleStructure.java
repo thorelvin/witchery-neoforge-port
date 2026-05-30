@@ -41,7 +41,7 @@ public class CovenCircleStructure extends Structure {
             int y = ctx.chunkGenerator().getFirstOccupiedHeight(
                     x + 5, z + 5,
                     Heightmap.Types.WORLD_SURFACE_WG,
-                    ctx.heightAccessor(), ctx.randomState()) - 1;
+                    ctx.heightAccessor(), ctx.randomState()) - 2;
             builder.addPiece(new CovenCirclePiece(
                     WitcheryStructures.COVEN_CIRCLE_PIECE.get(), x, y, z));
         });
