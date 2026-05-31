@@ -45,6 +45,8 @@ public class WitcheryBlocks {
             Identifier.fromNamespaceAndPath("witchery", "hawthorn_tree"))),
         Optional.empty());
 
+    private static final BlockBehaviour.StatePredicate NEVER = (state, level, pos) -> false;
+
     // Wood & Rowan family
     public static final DeferredBlock<Block> ROWAN_PLANKS = BLOCKS.registerSimpleBlock("rowan_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
@@ -63,6 +65,17 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
 
     // Ice blocks
+    public static final DeferredBlock<PerpetualIceBlock> PERPETUAL_ICE = BLOCKS.registerBlock("perpetual_ice",
+            PerpetualIceBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE)
+                    .friction(0.98f)
+                    .strength(2.0f, 5.0f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER));
     public static final DeferredBlock<DoorBlock> ICE_DOOR = BLOCKS.registerBlock("ice_door",
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noOcclusion().friction(0.98f)),
             BlockBehaviour.Properties.of());

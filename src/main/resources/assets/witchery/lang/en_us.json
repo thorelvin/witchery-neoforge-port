@@ -1168,7 +1168,8 @@
   "item.witchery.mogs_quiver": "Mog's Quiver (Placeholder)",
   "item.witchery.moon_charm": "Moon Charm (Placeholder)",
   "item.witchery.nullifying_bolt": "Nullifying Bolt",
-  "item.witchery.perpetual_ice": "Perpetual Ice (Placeholder)",
+  "item.witchery.perpetual_ice": "Perpetual Ice",
+  "block.witchery.perpetual_ice": "Perpetual Ice",
   "item.witchery.player_compass": "Player Compass",
   "witchery.player_compass.bound": "Compass attuned to %s.",
   "witchery.player_compass.already_bound": "Compass already attuned to %s.",
@@ -1315,4 +1316,3 @@
   "item.witchery.golden_heart": "Golden Heart (Placeholder)"
 
 }
-

@@ -148,6 +148,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BEARTRAP.get(),
                 WitcheryItems.WOLFTRAP.get(),
                 WitcheryItems.WITCH_DOOR.get(),
+                WitcheryItems.PERPETUAL_ICE.get(),
                 WitcheryItems.ICE_DOOR.get(),
                 WitcheryItems.ICE_FENCE.get(),
                 WitcheryItems.ICE_GATE.get(),
@@ -340,7 +341,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "ice_slab", "ice_stairs", "ice_stockade", "perpetual_ice",
+                "ice_slab", "ice_stairs", "ice_stockade",
                 "snow_pressure_plate", "snow_slab", "snow_stairs");
         addLegacy(output, accepted,
                 "devils_tongue_charm", "moon_charm", "twisting_band",

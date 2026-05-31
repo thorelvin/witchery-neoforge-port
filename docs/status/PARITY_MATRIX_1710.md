@@ -119,7 +119,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | ice_fence | ✅ Done | |
 | ice_gate | ✅ Done | |
 | ice_pressure_plate | ✅ Done | |
-| perpetual_ice (base block) | ❌ Missing | Source: `BlockPerpetualIce` — never melts |
+| perpetual_ice (base block) | ✅ Done | Source `BlockPerpetualIce` base behavior restored: vanilla ice break feel, never random-melts, hardness 2.0/resistance 5.0/light opacity 3 |
 | ice_stairs | ❌ Missing | |
 | ice_slab (single/double) | ❌ Missing | |
 | ice_fence_gate | ❌ Missing | |

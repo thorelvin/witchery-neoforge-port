@@ -224,6 +224,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      ROWAN_DOOR_KEY       = ITEMS.register("rowan_door_key", id -> new com.emoniph.witchery.item.RowanDoorKeyItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_KEYRING        = ITEMS.register("rowan_keyring", id -> new com.emoniph.witchery.item.RowanKeyringItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_DOOR           = ITEMS.register("rowan_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.ROWAN_DOOR.get(), itemProps(id)));
+    public static final DeferredItem<BlockItem> PERPETUAL_ICE        = ITEMS.registerSimpleBlockItem(WitcheryBlocks.PERPETUAL_ICE);
     public static final DeferredItem<BlockItem> ICE_DOOR             = ITEMS.register("ice_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.ICE_DOOR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ICE_FENCE            = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_FENCE);
     public static final DeferredItem<BlockItem> ICE_GATE             = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_GATE);
@@ -624,7 +625,6 @@ public class WitcheryItems {
             "ice_stairs",
             "ice_stockade",
             "moon_charm",
-            "perpetual_ice",
             "poppy_of_ink",
             "poppy_of_sprouting",
             "poppy_of_thorns",
