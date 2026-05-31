@@ -1,5 +1,7 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.events.VillageWallEvents;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -9,6 +11,7 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
@@ -21,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.data.worldgen.Pools;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
@@ -29,7 +33,14 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSetting
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * Custom StructurePoolElement that places Witchery village buildings via
@@ -45,8 +56,49 @@ public class WitcheryVillageElement extends StructurePoolElement {
                     Codec.STRING.fieldOf("building").forGetter(e -> e.building),
                     projectionCodec()
             ).apply(instance, WitcheryVillageElement::new));
+    private static final int VILLAGE_CLAIM_RADIUS_BLOCKS = 384;
+    private static final int VILLAGE_CLAIM_RADIUS_SQR = VILLAGE_CLAIM_RADIUS_BLOCKS * VILLAGE_CLAIM_RADIUS_BLOCKS;
+    private static final Map<ServerLevel, List<VillageClaim>> VILLAGE_CLAIMS =
+            Collections.synchronizedMap(new WeakHashMap<>());
 
     private final String building;
+
+    private record VillageKey(int chunkX, int chunkZ, int minX, int minZ, int maxX, int maxZ) {
+        static VillageKey of(StructureStart start) {
+            BoundingBox bb = start.getBoundingBox();
+            ChunkPos chunk = start.getChunkPos();
+            return new VillageKey(chunk.x, chunk.z, bb.minX(), bb.minZ(), bb.maxX(), bb.maxZ());
+        }
+    }
+
+    private static final class VillageClaim {
+        VillageKey key;
+        final int centerX;
+        final int centerZ;
+        final Map<String, BlockPos> buildings = new HashMap<>();
+        final Set<BlockPos> skippedOrigins = new HashSet<>();
+
+        VillageClaim(VillageKey key, BlockPos origin) {
+            this.key = key;
+            this.centerX = origin.getX();
+            this.centerZ = origin.getZ();
+        }
+
+        boolean matches(VillageKey candidateKey, BlockPos origin) {
+            if (key != null && key.equals(candidateKey)) return true;
+            if (key == null && candidateKey != null && isNear(origin)) {
+                key = candidateKey;
+                return true;
+            }
+            return candidateKey == null && isNear(origin);
+        }
+
+        boolean isNear(BlockPos origin) {
+            long dx = origin.getX() - (long) centerX;
+            long dz = origin.getZ() - (long) centerZ;
+            return dx * dx + dz * dz <= VILLAGE_CLAIM_RADIUS_SQR;
+        }
+    }
 
     public WitcheryVillageElement(String building, StructureTemplatePool.Projection projection) {
         super(projection);
@@ -107,6 +159,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
                          ChunkGenerator generator, BlockPos offset, BlockPos pos, Rotation rotation,
                          BoundingBox box, RandomSource random,
                          LiquidSettings liquidSettings, boolean keepJigsaws) {
+        if (!claimVillageBuilding(level, structureMgr, offset)) return true;
         StructurePiece piece = createPiece(offset);
         if (piece == null) return false;
         ChunkPos chunkPos = new ChunkPos(new BlockPos(box.minX(), 0, box.minZ()));
@@ -158,5 +211,65 @@ public class WitcheryVillageElement extends StructurePoolElement {
             case "village_keep"        -> new VillageKeepPiece(WitcheryStructures.VILLAGE_KEEP_PIECE.get(), x, y, z);
             default -> null;
         };
+    }
+
+    private boolean claimVillageBuilding(WorldGenLevel level, StructureManager structureMgr, BlockPos origin) {
+        BlockPos immutableOrigin = origin.immutable();
+        ServerLevel serverLevel = level.getLevel();
+        VillageKey villageKey = findVillageKey(serverLevel, structureMgr, origin);
+        synchronized (VILLAGE_CLAIMS) {
+            List<VillageClaim> claims = VILLAGE_CLAIMS.computeIfAbsent(serverLevel, key -> new ArrayList<>());
+            VillageClaim claim = null;
+            for (VillageClaim candidate : claims) {
+                if (candidate.matches(villageKey, origin)) {
+                    claim = candidate;
+                    break;
+                }
+            }
+            if (claim == null) {
+                claim = new VillageClaim(villageKey, origin);
+                claims.add(claim);
+            }
+
+            BlockPos existing = claim.buildings.get(building);
+            if (existing == null) {
+                claim.buildings.put(building, immutableOrigin);
+                return true;
+            }
+            if (existing.equals(immutableOrigin)) {
+                return true;
+            }
+            if (claim.skippedOrigins.add(immutableOrigin)) {
+                WitcheryMod.LOGGER.info("[VillageBuildings] Skipping duplicate {} near {} (already placed at {}).",
+                        building, immutableOrigin, existing);
+            }
+            return false;
+        }
+    }
+
+    private VillageKey findVillageKey(ServerLevel level, StructureManager structureMgr, BlockPos origin) {
+        StructureStart best = null;
+        long bestDist = Long.MAX_VALUE;
+        for (StructureStart start : structureMgr.startsForStructure(
+                new ChunkPos(origin), structure -> VillageWallEvents.isVillageStructure(structure, level))) {
+            if (start == null || !start.isValid()) continue;
+            BoundingBox bb = start.getBoundingBox();
+            if (origin.getX() >= bb.minX() && origin.getX() <= bb.maxX()
+                    && origin.getZ() >= bb.minZ() && origin.getZ() <= bb.maxZ()) {
+                return VillageKey.of(start);
+            }
+            long dist = distToCenterSqr(bb, origin);
+            if (dist < bestDist) {
+                best = start;
+                bestDist = dist;
+            }
+        }
+        return best != null && bestDist <= VILLAGE_CLAIM_RADIUS_SQR ? VillageKey.of(best) : null;
+    }
+
+    private static long distToCenterSqr(BoundingBox bb, BlockPos pos) {
+        long dx = pos.getX() - (long) ((bb.minX() + bb.maxX()) / 2);
+        long dz = pos.getZ() - (long) ((bb.minZ() + bb.maxZ()) / 2);
+        return dx * dx + dz * dz;
     }
 }
