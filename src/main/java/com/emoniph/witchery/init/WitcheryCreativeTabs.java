@@ -249,6 +249,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SUN_COLLECTOR.get(),
                 WitcheryItems.SUN_GRENADE.get(),
                 WitcheryItems.MOON_CHARM.get(),
+                WitcheryItems.CREATIVE_BAT_WOLF_TOKEN.get(),
                 WitcheryItems.STAKE.get(),
                 WitcheryItems.VAMPIRE_TOP_HAT.get(),
                 WitcheryItems.VAMPIRE_VEIL_HAT.get(),
@@ -381,7 +382,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
                 "contract_ownership", "contract_torment",
-                "creative_bat_wolf_token", "creative_medallion");
+                "creative_medallion");
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
                 "endless_water_brew");

@@ -178,16 +178,16 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be opened with shift right click, Taglock Kits can still be gathered.
 
 ## Creative Bat Wolf Token
-- **Obtain:** Not specified in text
-- **Use:** Not specified in text
+- **Obtain:** Creative/QA item.
+- **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level.
 - **Stats:** None
-- **Notes:** None
+- **Notes:** Not intended for regular survival progression. The port maps the old werewolf-level side to the current 0-3 mastery model.
 
 ## Creative Bat/Wolf Token
 - **Obtain:** Available through creative mode or similar means.
-- **Use:** Increases the user's lycanthropy and vampirism levels by one each use. Resets to zero at level ten.
+- **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level. Vampire level wraps after 10, while werewolf mastery wraps after 3 in the current port.
 - **Stats:** None
-- **Notes:** Not intended for regular play.
+- **Notes:** Not intended for regular play. Use `/witchery status` to confirm the synced player state.
 
 ## Crystal Ball
 - **Obtain:** Crafted using an Altar with a power of 2000.

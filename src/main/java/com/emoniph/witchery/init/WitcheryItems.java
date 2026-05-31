@@ -557,6 +557,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.registerSimpleItem("leonards_urn");
     public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.registerSimpleItem("gulgs_girdle");
     public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.registerSimpleItem("mogs_quiver");
+    public static final DeferredItem<Item> CREATIVE_BAT_WOLF_TOKEN = ITEMS.register("creative_bat_wolf_token",
+            id -> new CreativeBatWolfTokenItem(itemProps(id)));
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
     public static final DeferredItem<Item> KOBOLDITE_NUGGET   = ITEMS.registerSimpleItem("koboldite_nugget");
@@ -636,7 +638,6 @@ public class WitcheryItems {
             "witches_brews_book",
             "charged_crossbow",
             "cooked_sheep_liver",
-            "creative_bat_wolf_token",
             "creative_medallion",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
