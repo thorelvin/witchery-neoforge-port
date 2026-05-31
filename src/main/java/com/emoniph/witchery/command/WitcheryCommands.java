@@ -1742,64 +1742,21 @@ public class WitcheryCommands {
         ServerPlayer player = src.getPlayerOrException();
         ServerLevel level = src.getLevel();
 
-        // Find nearest explored village (same method as /witchery goto, radius 50 chunks)
-        java.util.List<net.minecraft.core.Holder<net.minecraft.world.level.levelgen.structure.Structure>> holders =
-                new java.util.ArrayList<>();
-        for (String id : java.util.List.of("village_plains","village_savanna","village_taiga","village_snowy","village_desert")) {
-            level.registryAccess()
-                    .lookup(Registries.STRUCTURE)
-                    .flatMap(reg -> reg.get(net.minecraft.resources.ResourceKey.create(
-                            Registries.STRUCTURE, Identifier.fromNamespaceAndPath("minecraft", id))))
-                    .ifPresent(holders::add);
-        }
-        if (holders.isEmpty()) {
-            src.sendFailure(Component.literal("[VillageWalls] Village structure types not found in registry."));
-            return 0;
-        }
-        var holderSet = net.minecraft.core.HolderSet.direct(holders);
-        var result = level.getChunkSource().getGenerator()
-                .findNearestMapStructure(level, holderSet, player.blockPosition(), 50, true);
-        if (result == null) {
+        // Manual walls should operate on an already generated nearby village.
+        // Vanilla locate can trigger the same synchronous scan that made chained
+        // village goto commands freeze.
+        net.minecraft.world.level.levelgen.structure.StructureStart start =
+                com.emoniph.witchery.events.VillageWallEvents.findVillageStartNear(level, player.blockPosition());
+
+        if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
             src.sendFailure(Component.literal(
-                    "[VillageWalls] No village found within 50 chunks. Explore more first."));
+                    "[VillageWalls] No generated village start found nearby. Stand in or near an explored village."));
             return 0;
         }
 
-        // Force-load the start chunk and query getAllStarts() — same approach that
-        // works in ChunkEvent.Load detection (confirmed working in prior sessions).
-        net.minecraft.core.BlockPos found = result.getFirst();
-        int startCX = found.getX() >> 4, startCZ = found.getZ() >> 4;
-        net.minecraft.world.level.chunk.LevelChunk startChunk =
-                level.getChunkSource().getChunk(startCX, startCZ, true);
-        if (startChunk == null) {
-            src.sendFailure(Component.literal("[VillageWalls] Could not load village start chunk."));
-            return 0;
-        }
-
-        net.minecraft.world.level.levelgen.structure.StructureStart start = null;
-        for (java.util.Map.Entry<net.minecraft.world.level.levelgen.structure.Structure,
-                net.minecraft.world.level.levelgen.structure.StructureStart> entry
-                : startChunk.getAllStarts().entrySet()) {
-            net.minecraft.world.level.levelgen.structure.StructureStart candidate = entry.getValue();
-            if (!candidate.isValid()) continue;
-            if (!com.emoniph.witchery.events.VillageWallEvents.isVillageStructure(entry.getKey(), level)) continue;
-            start = candidate;
-            break;
-        }
-
-        if (start == null) {
-            // getAllStarts() empty for the start chunk — try the StructureManager reference path
-            start = com.emoniph.witchery.events.VillageWallEvents.findVillageStartNear(level, found);
-        }
-
-        if (start == null || !start.isValid()) {
-            src.sendFailure(Component.literal(
-                    "[VillageWalls] Village found at " + found.getX() + " ~ " + found.getZ()
-                    + " but StructureStart unavailable. Try again after exploring the village."));
-            return 0;
-        }
-
-        final net.minecraft.world.level.levelgen.structure.StructureStart finalStart = start;
+        net.minecraft.world.level.levelgen.structure.BoundingBox bb = start.getBoundingBox();
+        net.minecraft.core.BlockPos found = new net.minecraft.core.BlockPos(
+                (bb.minX() + bb.maxX()) / 2, 64, (bb.minZ() + bb.maxZ()) / 2);
         int pieces = start.getPieces().size();
         boolean alreadyProcessed = com.emoniph.witchery.world.VillageWallData.get(level)
                 .isProcessed(start.getBoundingBox());
@@ -1873,16 +1830,31 @@ public class WitcheryCommands {
             return 0;
         }
 
-        // Keep this close to vanilla /locate semantics. Passing true here means
-        // "skip already-referenced starts", so repeated gotos can march into
-        // fresh structure-start generation before the player ever teleports.
-        // That was the plains-village freeze with no crash line in latest.log.
         final BlockPos from = player.blockPosition();
+        if (com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)) {
+            WitcheryMod.LOGGER.info("[Goto] Queueing safe village search for {}:{} from {} (radius={}, one candidate chunk per tick).",
+                    namespace, structureId, from, GOTO_VILLAGE_SEARCH_RADIUS_RINGS);
+            boolean queued = com.emoniph.witchery.events.VillageWallEvents.queueVillageGotoLocate(
+                    level, player, holderOpt.get(), from, namespace, structureId, GOTO_VILLAGE_SEARCH_RADIUS_RINGS);
+            if (!queued) {
+                src.sendFailure(Component.literal(
+                        "The hidden paths could not prepare a safe village search for that structure.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return 0;
+            }
+            GOTO_COOLDOWN.put(player.getUUID(), now);
+            src.sendSuccess(() -> Component.literal(
+                    "The hidden paths begin a slower search, one village omen at a time.")
+                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+            return 1;
+        }
+
+        // Non-village Witchery structures still use vanilla locate semantics.
+        // Village gotos use the ticked safe-locate path above because biome-specific
+        // vanilla village locate can monopolize the server thread when chained.
         final net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.structure.Structure> holderSet =
                 net.minecraft.core.HolderSet.direct(holderOpt.get());
-        int searchRadius = com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)
-                ? GOTO_VILLAGE_SEARCH_RADIUS_RINGS
-                : GOTO_SEARCH_RADIUS_RINGS;
+        int searchRadius = GOTO_SEARCH_RADIUS_RINGS;
 
         WitcheryMod.LOGGER.info("[Goto] Searching for {}:{} from {} (radius={}, skipReferenced={}).",
                 namespace, structureId, from, searchRadius, GOTO_SKIP_REFERENCED_STRUCTURES);
@@ -1906,27 +1878,6 @@ public class WitcheryCommands {
         int preloaded = preloadGotoDestination(level, found);
         WitcheryMod.LOGGER.info("[Goto] Prepared {} chunk(s) around {}:{} at {} before teleport.",
                 preloaded, namespace, structureId, found);
-
-        if (com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)) {
-            com.emoniph.witchery.events.VillageWallEvents.VillageGotoResult wallResult =
-                    com.emoniph.witchery.events.VillageWallEvents
-                    .queueVillageGoto(level, player, found, from, namespace, structureId);
-            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation job for {}:{} at {} -> {}.",
-                    namespace, structureId, found, wallResult.name().toLowerCase(java.util.Locale.ROOT));
-            if (wallResult == com.emoniph.witchery.events.VillageWallEvents.VillageGotoResult.NOT_READY) {
-                src.sendFailure(Component.literal(
-                        "The hidden paths found the village, but its walls are not ready to form yet. Try again in a moment.")
-                        .withStyle(ChatFormatting.DARK_PURPLE));
-                return 0;
-            }
-            GOTO_COOLDOWN.put(player.getUUID(), now);
-            if (wallResult == com.emoniph.witchery.events.VillageWallEvents.VillageGotoResult.QUEUED) {
-                src.sendSuccess(() -> Component.literal(
-                        "The hidden paths pause to raise the village walls before carrying you through.")
-                        .withStyle(ChatFormatting.LIGHT_PURPLE), false);
-            }
-            return 1;
-        }
 
         int surfaceY = level.getHeight(
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,

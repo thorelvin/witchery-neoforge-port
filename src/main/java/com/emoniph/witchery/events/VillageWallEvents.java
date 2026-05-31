@@ -6,6 +6,8 @@ import com.emoniph.witchery.worldgen.VillageWallGenerator;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -14,10 +16,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureCheckResult;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -25,10 +33,12 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -50,6 +60,7 @@ public class VillageWallEvents {
     private record PendingWall(StructureStart start, long processAfter, int attempts) {}
     private record PendingTeleport(UUID playerId, BlockPos target, BlockPos from,
                                    float yRot, float xRot, String namespace, String structureId) {}
+    private record LocateCandidate(ChunkPos chunk, StructurePlacement placement, double distanceSqr) {}
 
     public enum VillageGotoResult {
         NOT_READY,
@@ -83,8 +94,37 @@ public class VillageWallEvents {
         }
     }
 
+    private static final class VillageGotoLocateJob {
+        final UUID playerId;
+        final BlockPos from;
+        final float yRot;
+        final float xRot;
+        final String namespace;
+        final String structureId;
+        final Holder<Structure> holder;
+        final List<LocateCandidate> candidates;
+        final long queuedAt;
+        int cursor;
+        long lastLogAt;
+
+        VillageGotoLocateJob(UUID playerId, BlockPos from, float yRot, float xRot,
+                             String namespace, String structureId, Holder<Structure> holder,
+                             List<LocateCandidate> candidates, long queuedAt) {
+            this.playerId = playerId;
+            this.from = from;
+            this.yRot = yRot;
+            this.xRot = xRot;
+            this.namespace = namespace;
+            this.structureId = structureId;
+            this.holder = holder;
+            this.candidates = candidates;
+            this.queuedAt = queuedAt;
+        }
+    }
+
     private static final ConcurrentLinkedQueue<PendingWall> QUEUE = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<WallJob> JOBS = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<VillageGotoLocateJob> GOTO_LOCATES = new ConcurrentLinkedQueue<>();
     private static final long WALL_GENERATION_DELAY_TICKS = 0L;
     private static final long WALL_GENERATION_RETRY_TICKS = 20L;
     private static final int WALL_GENERATION_MAX_ATTEMPTS = 6;
@@ -97,6 +137,8 @@ public class VillageWallEvents {
     private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
     private static final int WALL_JOB_CHUNK_TICKET_BATCH = 1;
     private static final int WALL_JOB_FORCED_CHUNK_CAP = 144;
+    private static final int VILLAGE_GOTO_LOCATE_CHUNKS_PER_TICK = 1;
+    private static final long VILLAGE_GOTO_LOCATE_LOG_INTERVAL_TICKS = 40L;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -146,6 +188,14 @@ public class VillageWallEvents {
         if (job != null) {
             if (processWallJob(level, job, now)) {
                 JOBS.poll();
+            }
+            return;
+        }
+
+        VillageGotoLocateJob locateJob = GOTO_LOCATES.peek();
+        if (locateJob != null) {
+            if (processVillageGotoLocateJob(level, locateJob, now)) {
+                GOTO_LOCATES.poll();
             }
             return;
         }
@@ -212,6 +262,26 @@ public class VillageWallEvents {
                 : VillageGotoResult.NOT_READY;
     }
 
+    public static boolean queueVillageGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
+                                                 BlockPos from, String namespace, String structureId,
+                                                 int searchRadius) {
+        if (!isVillageId(namespace, structureId)) return false;
+        List<LocateCandidate> candidates = villageGotoLocateCandidates(level, holder, from, searchRadius);
+        if (candidates.isEmpty()) {
+            WitcheryMod.LOGGER.info("[Goto] No safe locate candidates for {}:{} from {}.",
+                    namespace, structureId, from);
+            return false;
+        }
+
+        UUID playerId = player.getUUID();
+        GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
+        GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
+                namespace, structureId, holder, candidates, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued safe village locate for {}:{} from {} with {} candidate chunk(s).",
+                namespace, structureId, from, candidates.size());
+        return true;
+    }
+
     private static StructureStart refreshVillageStart(ServerLevel level, StructureStart queued) {
         if (queued == null) return null;
         BoundingBox bb = queued.getBoundingBox();
@@ -232,6 +302,108 @@ public class VillageWallEvents {
                 pending.attempts() + 1));
         WitcheryMod.LOGGER.info("[VillageWalls] Village start at {} not ready yet; retry {}/{}.",
                 retryStart.getBoundingBox(), pending.attempts() + 1, WALL_GENERATION_MAX_ATTEMPTS);
+    }
+
+    private static boolean processVillageGotoLocateJob(ServerLevel level, VillageGotoLocateJob job, long now) {
+        ServerPlayer player = level.getServer().getPlayerList().getPlayer(job.playerId);
+        if (player == null) return true;
+
+        int checked = 0;
+        while (job.cursor < job.candidates.size() && checked < VILLAGE_GOTO_LOCATE_CHUNKS_PER_TICK) {
+            LocateCandidate candidate = job.candidates.get(job.cursor++);
+            checked++;
+
+            BlockPos found = probeVillageGotoCandidate(level, job.holder, candidate);
+            if (found == null) continue;
+
+            int preloaded = preloadVillageGotoDestination(level, found);
+            WitcheryMod.LOGGER.info("[Goto] Safe village locate found {}:{} at {} after {}/{} probe(s); prepared {} chunk(s).",
+                    job.namespace, job.structureId, found, job.cursor, job.candidates.size(), preloaded);
+
+            VillageGotoResult wallResult = queueVillageGoto(level, player, found, job.from, job.namespace, job.structureId);
+            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation job for {}:{} at {} -> {}.",
+                    job.namespace, job.structureId, found, wallResult.name().toLowerCase(java.util.Locale.ROOT));
+            if (wallResult == VillageGotoResult.NOT_READY) {
+                player.sendSystemMessage(Component.literal(
+                        "The hidden paths found a village, but its walls are not ready to form yet. Try again in a moment.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+            } else if (wallResult == VillageGotoResult.QUEUED) {
+                player.sendSystemMessage(Component.literal(
+                        "The hidden paths found the village and pause to raise its walls before carrying you through.")
+                        .withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            return true;
+        }
+
+        if (job.cursor >= job.candidates.size()) {
+            player.sendSystemMessage(Component.literal(
+                    "The scrying mists reveal no matching village nearby within the safe range. Wander further and gaze again.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            WitcheryMod.LOGGER.info("[Goto] Safe village locate found no {}:{} from {} after {} probe(s).",
+                    job.namespace, job.structureId, job.from, job.candidates.size());
+            return true;
+        }
+
+        if (now - job.lastLogAt >= VILLAGE_GOTO_LOCATE_LOG_INTERVAL_TICKS) {
+            job.lastLogAt = now;
+            WitcheryMod.LOGGER.info("[Goto] Safe village locate still probing {}:{} from {}: {}/{} candidate chunk(s).",
+                    job.namespace, job.structureId, job.from, job.cursor, job.candidates.size());
+        }
+        return false;
+    }
+
+    private static List<LocateCandidate> villageGotoLocateCandidates(ServerLevel level, Holder<Structure> holder,
+                                                                     BlockPos from, int searchRadius) {
+        ChunkGeneratorStructureState state = level.getChunkSource().getGeneratorState();
+        int sectionX = SectionPos.blockToSectionCoord(from.getX());
+        int sectionZ = SectionPos.blockToSectionCoord(from.getZ());
+        List<LocateCandidate> candidates = new ArrayList<>();
+        Set<Long> seen = new HashSet<>();
+
+        for (StructurePlacement placement : state.getPlacementsForStructure(holder)) {
+            if (!(placement instanceof RandomSpreadStructurePlacement spreadPlacement)) continue;
+            int spacing = spreadPlacement.spacing();
+            for (int radius = 0; radius <= searchRadius; radius++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    boolean zEdge = dz == -radius || dz == radius;
+                    for (int dx = -radius; dx <= radius; dx++) {
+                        boolean xEdge = dx == -radius || dx == radius;
+                        if (!zEdge && !xEdge) continue;
+                        int candidateSectionX = sectionX + spacing * dx;
+                        int candidateSectionZ = sectionZ + spacing * dz;
+                        ChunkPos chunk = spreadPlacement.getPotentialStructureChunk(
+                                state.getLevelSeed(), candidateSectionX, candidateSectionZ);
+                        if (!seen.add(chunk.toLong())) continue;
+                        BlockPos locatePos = placement.getLocatePos(chunk);
+                        candidates.add(new LocateCandidate(chunk, placement, locatePos.distSqr(from)));
+                    }
+                }
+            }
+        }
+
+        candidates.sort(Comparator.comparingDouble(LocateCandidate::distanceSqr));
+        return candidates;
+    }
+
+    private static BlockPos probeVillageGotoCandidate(ServerLevel level, Holder<Structure> holder,
+                                                      LocateCandidate candidate) {
+        StructureCheckResult result = level.structureManager().checkStructurePresence(
+                candidate.chunk(), holder.value(), candidate.placement(), false);
+        if (result == StructureCheckResult.START_NOT_PRESENT) {
+            return null;
+        }
+        if (result == StructureCheckResult.START_PRESENT) {
+            return candidate.placement().getLocatePos(candidate.chunk());
+        }
+
+        ChunkAccess chunk = level.getChunk(candidate.chunk().x, candidate.chunk().z,
+                ChunkStatus.STRUCTURE_STARTS, true);
+        StructureStart start = level.structureManager().getStartForStructure(
+                SectionPos.bottomOf(chunk), holder.value(), chunk);
+        if (start != null && start.isValid()) {
+            return candidate.placement().getLocatePos(start.getChunkPos());
+        }
+        return null;
     }
 
     private static boolean queueVillage(ServerLevel level, VillageWallData data, StructureStart start) {
@@ -514,6 +686,12 @@ public class VillageWallEvents {
         player.sendSystemMessage(Component.literal(
                 "The hidden paths carry you away, across " + dist + " blocks, to "
                 + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
+    }
+
+    private static int preloadVillageGotoDestination(ServerLevel level, BlockPos target) {
+        ChunkPos chunk = new ChunkPos(target);
+        level.getChunk(chunk.x, chunk.z, ChunkStatus.FULL, true);
+        return 1;
     }
 
     private static List<ChunkPos> wallJobChunks(StructureStart start) {
