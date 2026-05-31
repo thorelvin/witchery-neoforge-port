@@ -5,15 +5,23 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.JigsawBlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.data.worldgen.Pools;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -56,7 +64,35 @@ public class WitcheryVillageElement extends StructurePoolElement {
     @Override
     public List<StructureTemplate.JigsawBlockInfo> getShuffledJigsawBlocks(
             StructureTemplateManager mgr, BlockPos pos, Rotation rotation, RandomSource random) {
-        return List.of(); // standalone — no jigsaw road connections
+        // The procedural pieces are only built in their NORTH orientation, so we only offer a
+        // connection for the NONE rotation; the building then attaches on the north side of a
+        // village street whose street jigsaw faces south. (Offering other rotations without
+        // rotating the build would misalign the piece and it would be rejected anyway.)
+        if (rotation != Rotation.NONE) return List.of();
+
+        int[] s = dims();
+        // Connection jigsaw on the building's north face (z=0), centred in X, at the door
+        // course (y=1), facing NORTH so it mates with a street jigsaw just outside (z=-1).
+        BlockPos jigPos = new BlockPos(s[0] / 2, 1, 0);
+        var state = Blocks.JIGSAW.defaultBlockState()
+                .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.NORTH_UP);
+
+        CompoundTag tag = new CompoundTag();
+        tag.putString("name", "minecraft:building_entrance");
+        tag.putString("target", "minecraft:empty");
+        tag.putString("pool", "minecraft:empty");
+        tag.putString("final_state", "minecraft:air");
+        tag.putString("joint", "aligned");
+
+        StructureTemplate.StructureBlockInfo info =
+                new StructureTemplate.StructureBlockInfo(jigPos, state, tag);
+        // name MUST equal the village street's target ("minecraft:building_entrance") to connect.
+        return List.of(new StructureTemplate.JigsawBlockInfo(
+                info, JigsawBlockEntity.JointType.ALIGNED,
+                Identifier.withDefaultNamespace("building_entrance"),
+                Pools.EMPTY,
+                Identifier.withDefaultNamespace("empty"),
+                0, 0));
     }
 
     @Override
