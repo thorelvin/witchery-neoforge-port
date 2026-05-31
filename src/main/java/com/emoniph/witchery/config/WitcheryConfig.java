@@ -11,6 +11,8 @@ public class WitcheryConfig {
     public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
+    public static final ModConfigSpec.BooleanValue DEBUG;
+
     // ── Vampire ───────────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue VAMPIRE_BLOOD_DRAIN_INTERVAL;
     public static final ModConfigSpec.IntValue VAMPIRE_SUNBURN_CHECK_INTERVAL;
@@ -36,6 +38,10 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_BRAMBLE_PATCHES;
 
     static {
+        DEBUG = BUILDER
+                .comment("Enable extra Witchery diagnostic logging for QA. Default: true")
+                .define("debug", true);
+
         BUILDER.push("vampire");
         VAMPIRE_BLOOD_DRAIN_INTERVAL = BUILDER
                 .comment("Ticks between blood drain ticks (lower = faster drain). Default: 100 (5s)")

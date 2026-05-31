@@ -15,6 +15,8 @@ Current unattended execution note:
 - When a subsystem needs a custom renderer, prefer matching original orientation, brightness, transparency, and inventory pose before adding extra effects.
 - Behavior-preserving refactors are explicitly allowed when they remove a real parity blocker, reduce ritual/storage renderer duplication, or make the next parity fix safer to land. Avoid broad cleanup that does not improve correctness, traceability, or verification.
 
+Debug logging note (2026-05-31): `config/witchery-common.toml` defaults `debug = true` during the village wall/goto freeze chase. Look for `[VillageWalls:Debug]` lines around queue state, loaded-only reference lookups, safe-locate probes, goto full-chunk prep, forced ticket requests, automatic footprint readiness, and wall-generator entry. If logs become too noisy after the freeze path is settled, set `debug = false` and restart.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

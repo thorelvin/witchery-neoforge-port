@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.world.VillageWallData;
 import com.emoniph.witchery.worldgen.VillageWallGenerator;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -171,6 +172,7 @@ public class VillageWallEvents {
     private static final int VILLAGE_GOTO_LANDING_CHUNK_RADIUS = 2;
     private static final long VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS = 40L;
     private static final long VILLAGE_GOTO_PREP_TIMEOUT_TICKS = 20L * 150L;
+    private static long lastQueueDebugAt = Long.MIN_VALUE;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -178,6 +180,16 @@ public class VillageWallEvents {
 
     public static boolean isVillageId(String namespace, String path) {
         return "minecraft".equals(namespace) && VILLAGE_IDS.contains(path);
+    }
+
+    private static boolean debugEnabled() {
+        return WitcheryConfig.DEBUG.get();
+    }
+
+    private static void debugLog(String message, Object... args) {
+        if (debugEnabled()) {
+            WitcheryMod.LOGGER.info("[VillageWalls:Debug] " + message, args);
+        }
     }
 
     // ── Detection: ChunkEvent.Load + getAllStarts() ────────────────────────────
@@ -195,6 +207,8 @@ public class VillageWallEvents {
             StructureStart start = entry.getValue();
             if (!start.isValid()) continue;
             if (!isVillageStructure(entry.getKey(), level)) continue;
+            debugLog("Chunk {} loaded direct village start {} with {} piece(s).",
+                    chunk.getPos(), start.getBoundingBox(), start.getPieces().size());
             queued |= queueVillage(level, data, start);
         }
 
@@ -203,6 +217,8 @@ public class VillageWallEvents {
             BlockPos probe = new BlockPos((cp.x << 4) + 8, 64, (cp.z << 4) + 8);
             StructureStart referenced = findVillageStartFromReferences(level, probe);
             if (referenced != null && referenced.isValid()) {
+                debugLog("Chunk {} resolved loaded referenced village start {} with {} piece(s).",
+                        cp, referenced.getBoundingBox(), referenced.getPieces().size());
                 queueVillage(level, data, referenced);
             }
         }
@@ -216,6 +232,8 @@ public class VillageWallEvents {
         if (level.dimension() != Level.OVERWORLD) return;
 
         long now = level.getGameTime();
+        logQueueDebugState(now);
+
         VillageGotoPrepJob gotoPrep = GOTO_PREPS.peek();
         if (gotoPrep != null) {
             if (processVillageGotoPrepJob(level, gotoPrep, now)) {
@@ -270,6 +288,20 @@ public class VillageWallEvents {
                 queuedJobs++;
             }
         }
+    }
+
+    private static void logQueueDebugState(long now) {
+        if (!debugEnabled() || now - lastQueueDebugAt < WALL_JOB_LOG_INTERVAL_TICKS) return;
+        int pending = QUEUE.size();
+        int jobs = JOBS.size();
+        int locates = GOTO_LOCATES.size();
+        int preps = GOTO_PREPS.size();
+        if (pending == 0 && jobs == 0 && locates == 0 && preps == 0) return;
+        lastQueueDebugAt = now;
+        debugLog("tick={} queues: pending={}, wallJobs={}, gotoLocates={}, gotoPreps={}, budgets jobs/tick={}, pendingScan/check/queue={}/{}/{}.",
+                now, pending, jobs, locates, preps, WALL_JOB_STEPS_PER_TICK,
+                PENDING_WALL_SCAN_LIMIT_PER_TICK, PENDING_WALL_CHECKS_PER_TICK,
+                PENDING_WALL_QUEUES_PER_TICK);
     }
 
     /**
@@ -376,6 +408,9 @@ public class VillageWallEvents {
         while (job.cursor < job.candidates.size() && checked < VILLAGE_GOTO_LOCATE_CHUNKS_PER_TICK) {
             LocateCandidate candidate = job.candidates.get(job.cursor++);
             checked++;
+            debugLog("Probing goto candidate {}/{} for {}:{} from {}: chunk={}, distanceSqr={}.",
+                    job.cursor, job.candidates.size(), job.namespace, job.structureId, job.from,
+                    candidate.chunk(), candidate.distanceSqr());
 
             VillageGotoFound found = probeVillageGotoCandidate(level, job.holder, candidate);
             if (found == null) continue;
@@ -447,19 +482,27 @@ public class VillageWallEvents {
 
     private static VillageGotoFound probeVillageGotoCandidate(ServerLevel level, Holder<Structure> holder,
                                                               LocateCandidate candidate) {
+        debugLog("Checking structure presence for goto candidate chunk {}.", candidate.chunk());
         StructureCheckResult result = level.structureManager().checkStructurePresence(
                 candidate.chunk(), holder.value(), candidate.placement(), false);
+        debugLog("Structure presence for goto candidate chunk {} -> {}.", candidate.chunk(), result);
         if (result == StructureCheckResult.START_NOT_PRESENT) {
             return null;
         }
 
+        debugLog("Loading STRUCTURE_STARTS for goto candidate chunk {}.", candidate.chunk());
         ChunkAccess chunk = level.getChunk(candidate.chunk().x, candidate.chunk().z,
                 ChunkStatus.STRUCTURE_STARTS, true);
+        debugLog("Loaded STRUCTURE_STARTS for goto candidate chunk {}.", candidate.chunk());
         StructureStart start = level.structureManager().getStartForStructure(
                 SectionPos.bottomOf(chunk), holder.value(), chunk);
         if (start != null && start.isValid()) {
-            return new VillageGotoFound(candidate.placement().getLocatePos(start.getChunkPos()), start);
+            BlockPos target = candidate.placement().getLocatePos(start.getChunkPos());
+            debugLog("Goto candidate chunk {} resolved start {} with {} piece(s), target {}.",
+                    candidate.chunk(), start.getBoundingBox(), start.getPieces().size(), target);
+            return new VillageGotoFound(target, start);
         }
+        debugLog("Goto candidate chunk {} had no valid start after STRUCTURE_STARTS load.", candidate.chunk());
         return null;
     }
 
@@ -470,8 +513,14 @@ public class VillageWallEvents {
         try {
             int loadedThisTick = 0;
             while (job.cursor < job.chunks.size() && loadedThisTick < VILLAGE_GOTO_PREP_CHUNKS_PER_TICK) {
+                int chunkIndex = job.cursor;
                 ChunkPos cp = job.chunks.get(job.cursor++);
+                debugLog("Goto prep loading FULL chunk {}/{} {} for {}:{} target {} (generateWalls={}).",
+                        chunkIndex + 1, job.chunks.size(), cp, job.teleport.namespace(),
+                        job.teleport.structureId(), job.teleport.target(), job.generateWalls);
                 level.getChunk(cp.x, cp.z, ChunkStatus.FULL, true);
+                debugLog("Goto prep loaded FULL chunk {}/{} {} for target {}.",
+                        chunkIndex + 1, job.chunks.size(), cp, job.teleport.target());
                 loadedThisTick++;
             }
 
@@ -503,6 +552,8 @@ public class VillageWallEvents {
                 }
                 WitcheryMod.LOGGER.info("[VillageWalls] Generating walls (goto-prep) for village at {} ({} pieces, {} chunks prepared).",
                         start.getBoundingBox(), start.getPieces().size(), job.chunks.size());
+                debugLog("Starting goto-prep wall generation for {} after {} prepared chunk(s).",
+                        start.getBoundingBox(), job.chunks.size());
                 VillageWallGenerator.generate(level, start);
                 data.markProcessed(start.getBoundingBox());
                 WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
@@ -520,12 +571,24 @@ public class VillageWallEvents {
     }
 
     private static boolean queueVillage(ServerLevel level, VillageWallData data, StructureStart start) {
-        if (data.isProcessed(start.getBoundingBox())) return false;
+        if (data.isProcessed(start.getBoundingBox())) {
+            debugLog("Skipping automatic village queue for already processed {}.", start.getBoundingBox());
+            return false;
+        }
 
         BoundingBox bb = start.getBoundingBox();
-        if (QUEUE.stream().anyMatch(p -> p.start().getBoundingBox().equals(bb))) return false;
-        if (JOBS.stream().anyMatch(job -> job.start.getBoundingBox().equals(bb))) return false;
-        if (GOTO_PREPS.stream().anyMatch(job -> job.start.getBoundingBox().equals(bb))) return false;
+        if (QUEUE.stream().anyMatch(p -> p.start().getBoundingBox().equals(bb))) {
+            debugLog("Skipping automatic village queue for {} because it is already pending.", bb);
+            return false;
+        }
+        if (JOBS.stream().anyMatch(job -> job.start.getBoundingBox().equals(bb))) {
+            debugLog("Skipping automatic village queue for {} because a wall job is active.", bb);
+            return false;
+        }
+        if (GOTO_PREPS.stream().anyMatch(job -> job.start.getBoundingBox().equals(bb))) {
+            debugLog("Skipping automatic village queue for {} because a goto prep owns it.", bb);
+            return false;
+        }
 
         long processAt = level.getGameTime() + WALL_GENERATION_DELAY_TICKS;
         QUEUE.add(new PendingWall(start, processAt, 0));
@@ -572,6 +635,8 @@ public class VillageWallEvents {
             if (!chunks.contains(targetChunk)) chunks.add(targetChunk);
         }
         JOBS.add(new WallJob(start, force, reason, chunks, teleport, level.getGameTime(), ticketChunks));
+        debugLog("Queued wall job reason={} force={} ticketChunks={} bb={} chunks={} teleportTarget={}.",
+                reason, force, ticketChunks, bb, chunks.size(), teleport != null ? teleport.target() : "none");
         if (ticketChunks) {
             WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} wall chunk ticket(s).",
                     reason, bb, chunks.size());
@@ -629,8 +694,12 @@ public class VillageWallEvents {
                 int end = Math.min(job.ticketCursor + WALL_JOB_CHUNK_TICKET_BATCH, job.chunks.size());
                 while (job.ticketCursor < end) {
                     ChunkPos cp = job.chunks.get(job.ticketCursor);
+                    debugLog("Requesting forced wall chunk {}/{} {} for {} (reason={}).",
+                            job.ticketCursor + 1, job.chunks.size(), cp, job.start.getBoundingBox(), job.reason);
                     level.getChunkSource().updateChunkForced(cp, true);
                     job.ticketCursor++;
+                    debugLog("Requested forced wall chunk {}/{} {} for {}.",
+                            job.ticketCursor, job.chunks.size(), cp, job.start.getBoundingBox());
                 }
                 job.lastProgressAt = now;
                 job.lastReadyCount = readyRequested;
@@ -685,6 +754,9 @@ public class VillageWallEvents {
 
             WitcheryMod.LOGGER.info("[VillageWalls] Generating walls ({}) for village at {} ({} pieces, {} chunks ready).",
                     job.reason, job.start.getBoundingBox(), job.start.getPieces().size(), job.chunks.size());
+            debugLog("Starting wall generator reason={} bb={} chunks={} teleports={} processedBefore={}.",
+                    job.reason, job.start.getBoundingBox(), job.chunks.size(), job.teleports.size(),
+                    data.isProcessed(job.start.getBoundingBox()));
             VillageWallGenerator.generate(level, job.start);
             data.markProcessed(job.start.getBoundingBox());
             WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
@@ -740,9 +812,13 @@ public class VillageWallEvents {
         List<ChunkPos> chunks = wallJobChunks(start);
         int ready = readyChunkCount(level, chunks);
         if (ready < chunks.size()) {
+            debugLog("Automatic village wall footprint not ready for {}: {}/{} loaded; retry attempt {}.",
+                    start.getBoundingBox(), ready, chunks.size(), pending.attempts() + 1);
             retryPendingForChunks(level, pending, start, ready, chunks.size());
             return false;
         }
+        debugLog("Automatic village wall footprint ready for {}: {}/{} loaded; queueing generation.",
+                start.getBoundingBox(), ready, chunks.size());
         return queueGeneration(level, start, false, "queue", null, false);
     }
 
@@ -923,15 +999,26 @@ public class VillageWallEvents {
     private static StructureStart findVillageStartFromReferences(ServerLevel level, BlockPos pos) {
         Map<Structure, LongSet> refs = level.structureManager().getAllStructuresAt(pos);
         if (refs.isEmpty()) return null;
+        debugLog("Loaded-only reference lookup at {} found {} structure reference entrie(s).", pos, refs.size());
         for (Map.Entry<Structure, LongSet> entry : refs.entrySet()) {
             if (!isVillageStructure(entry.getKey(), level)) continue;
             Structure struct = entry.getKey();
             for (long packed : entry.getValue()) {
                 ChunkPos cp = new ChunkPos(packed);
                 LevelChunk chunk = level.getChunkSource().getChunkNow(cp.x, cp.z);
-                if (chunk == null) continue;
+                if (chunk == null) {
+                    debugLog("Referenced village start chunk {} for lookup at {} is not loaded; skipping sync load.",
+                            cp, pos);
+                    continue;
+                }
                 StructureStart start = chunk.getAllStarts().get(struct);
-                if (start != null && start.isValid()) return start;
+                if (start != null && start.isValid()) {
+                    debugLog("Loaded-only reference lookup at {} resolved {} with {} piece(s).",
+                            pos, start.getBoundingBox(), start.getPieces().size());
+                    return start;
+                }
+                debugLog("Referenced village start chunk {} was loaded but had no valid start for lookup at {}.",
+                        cp, pos);
             }
         }
         return null;
