@@ -269,6 +269,21 @@ public final class VillageWallGenerator {
             }
         }
 
+        // 8b. Flatten each gate run to a single reference height (its centre cell) so the
+        //     gatehouse sits level instead of stepping up and down with the terrain.
+        for (int x = 0; x < w; x++) {
+            for (int z = 0; z < d; z++) {
+                if (grid[x][z] != GATE) continue;
+                boolean ew = (x > 0 && (grid[x-1][z] == WALL || grid[x-1][z] == GATE))
+                          || (x < w-1 && (grid[x+1][z] == WALL || grid[x+1][z] == GATE));
+                int off = gateRunOffset(grid, x, z, ew, w, d);
+                int cxr = ew ? x - off : x;
+                int czr = ew ? z : z - off;
+                if (cxr >= 0 && czr >= 0 && cxr < w && czr < d && heights[cxr][czr] > 0)
+                    heights[x][z] = heights[cxr][czr];
+            }
+        }
+
         // 9a. Pre-clear vegetation/trees in every wall and gate column so logs and
         //     leaves don't block wall placement (setBlock skips solid non-replaceable blocks).
         for (int x = 0; x < w; x++) {
@@ -506,7 +521,9 @@ public final class VillageWallGenerator {
     private static void placeWallColumn(ServerLevel level, int wx, int sy, int wz,
                                          BlockState wall, BlockState brick, BlockState merlon,
                                          byte[][] grid, int gx, int gz, int w, int d) {
-        boolean corner = isCorner(grid, gx, gz, w, d);
+        // A corner adjacent to a gate is suppressed (built as straight wall): the gate's own
+        // towers take precedence, so no tall corner pokes up right beside the gatehouse.
+        boolean corner = isCorner(grid, gx, gz, w, d) && !adjacentToGate(grid, gx, gz, w, d);
         int extra = corner ? 2 : 0;
         int top = sy + WALL_HEIGHT + extra;
 
@@ -539,6 +556,17 @@ public final class VillageWallGenerator {
         return (n || s) && (e || ww);
     }
 
+    /** True if any of the 8 neighbours of (gx,gz) is a GATE cell. */
+    private static boolean adjacentToGate(byte[][] grid, int gx, int gz, int w, int d) {
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
+                int nx = gx + dx, nz = gz + dz;
+                if (nx >= 0 && nz >= 0 && nx < w && nz < d && grid[nx][nz] == GATE) return true;
+            }
+        return false;
+    }
+
     /**
      * One cell of a 7-wide gate. The central 3 cells (offset |Δ|≤1 from the run centre) are
      * the OPENING — a 3-deep passage with a brick arch overhead and NO fence. The outer 2
@@ -564,19 +592,27 @@ public final class VillageWallGenerator {
 
         boolean opening = Math.abs(gateRunOffset(grid, gx, gz, wallRunsEW, w, d)) <= 1;
 
+        // Gates use ONLY the stone-brick family (no cobblestone): brick body + matching
+        // stone-brick/sandstone wall cap.
+        BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
+                ? Blocks.SANDSTONE_WALL.defaultBlockState()
+                : Blocks.STONE_BRICK_WALL.defaultBlockState();
+
         if (!opening) {
-            // Gate-tower pillar: solid brick, 3-deep, 2 blocks taller than the wall.
+            // Gate-tower pillar: solid stone brick, 3-deep, 2 blocks taller than the wall.
             for (int depth = 0; depth < 3; depth++) {
                 int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
                 for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++)
                     setBlock(level, dwx, sy + dy, dwz, brick);
-                setBlock(level, dwx, sy + WALL_HEIGHT + 2, dwz, merlon);
-                if (depth == 0) fillDown(level, dwx, sy - 1, dwz, wall);
+                setBlock(level, dwx, sy + WALL_HEIGHT + 2, dwz, gateCap);
+                fillDown(level, dwx, sy - 1, dwz, brick); // stone-brick foundation
             }
             return;
         }
 
-        // Opening: 3-deep passage with brick arch overhead, no fence.
+        // Opening: 3-deep passage with stone-brick arch overhead, no fence. The floor is held
+        // at the flat reference height (sy-1) and supported downward with stone brick so the
+        // passage stays level even where the terrain beneath the gate dips.
         for (int depth = 0; depth < 3; depth++) {
             int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
             for (int dy = 0; dy < 5; dy++) { // clear 5-high passage
@@ -584,11 +620,12 @@ public final class VillageWallGenerator {
                 if (!level.getBlockState(p).isAir())
                     level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             }
-            for (int dy = 5; dy < WALL_HEIGHT; dy++) // brick arch ceiling
+            for (int dy = 5; dy < WALL_HEIGHT; dy++) // stone-brick arch ceiling
                 setBlock(level, dwx, sy + dy, dwz, brick);
             // Passage floor path set DIRECTLY at sy-1. (Using layPath/groundHeight here would
             // sample the arch roof just placed above and drop dirt on top of the gate.)
             level.setBlock(new BlockPos(dwx, sy - 1, dwz), Blocks.DIRT_PATH.defaultBlockState(), 3);
+            fillDown(level, dwx, sy - 2, dwz, brick); // support flat floor over lower terrain
         }
 
         // Path outward over open terrain.
