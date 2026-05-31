@@ -330,6 +330,7 @@ public class WitcheryCommands {
                         .then(Commands.literal("hobgoblin_hut")   .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "hobgoblin_hut")))
                         .then(Commands.literal("torment_chamber") .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "torment_chamber")))
                         .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
+                        .then(Commands.literal("stone_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("straw_man")       .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "straw_man")))
                         .then(Commands.literal("village_plains")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_plains")))
                         .then(Commands.literal("village_savanna") .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_savanna")))
