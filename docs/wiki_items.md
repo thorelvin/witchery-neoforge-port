@@ -364,10 +364,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Stackable (64)
 
 ## Horn of the Hunt
-- **Obtain:** Obtained during the Wolf Alter quest chain
-- **Use:** Summons a Horned Huntsman. May require an open area for successful summoning.
+- **Obtain:** Obtained during the Wolf Altar quest chain; the port also keeps the Resurrected `hunts_horn` alias.
+- **Use:** Hold for two seconds to sound the horn and summon a Horned Huntsman on safe nearby ground.
 - **Stats:** None
-- **Notes:** Not stackable
+- **Notes:** Not stackable. In survival it breaks only after a successful summon; the summoned Huntsman enters with source-like invulnerability, reduced health, and a delayed explosive entrance. Exact old horn sound asset still needs final QA.
 
 ## Ice Door
 - **Obtain:** Hit a normal door with a Brew of Ice World

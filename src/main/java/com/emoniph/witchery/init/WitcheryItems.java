@@ -316,6 +316,10 @@ public class WitcheryItems {
             id -> new HuntsmanSpearItem(itemProps(id)));
     public static final DeferredItem<Item> HUNTSMANS_SPEAR = ITEMS.register("huntsmans_spear",
             id -> new HuntsmanSpearItem(itemProps(id)));
+    public static final DeferredItem<Item> HORN_OF_THE_HUNT = ITEMS.register("horn_of_the_hunt",
+            id -> new HornOfTheHuntItem(itemProps(id)));
+    public static final DeferredItem<Item> HUNTS_HORN = ITEMS.register("hunts_horn",
+            id -> new HornOfTheHuntItem(itemProps(id)));
 
     // Armour
     public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
@@ -640,7 +644,6 @@ public class WitcheryItems {
             "dandelion_of_webs",
             "duplication_grenade",
             "hellhound_head",
-            "horn_of_the_hunt",
             "poppy_of_ink",
             "poppy_of_sprouting",
             "poppy_of_thorns",
@@ -665,7 +668,6 @@ public class WitcheryItems {
             "splash_brew_bottle",
             "lingering_brew_bottle",
             "endless_water_brew",
-            "hunts_horn",
             "vines_brew",
             "webs_brew",
             "thorns_brew",

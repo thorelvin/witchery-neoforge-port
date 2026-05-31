@@ -66,6 +66,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
 
     private int attackTimer;
     private long ticksSinceTeleport;
+    private boolean explosiveEntrance;
 
     public HornedHuntsmanEntity(EntityType<? extends HornedHuntsmanEntity> type, Level level) {
         super(type, level);
@@ -118,6 +119,11 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
             invulnerableTicks--;
             setInvulnerableTicks(invulnerableTicks);
             if (invulnerableTicks == 0) {
+                if (explosiveEntrance) {
+                    explosiveEntrance = false;
+                    level().explode(this, getX(), getY() + getEyeHeight(), getZ(),
+                            6.0F, Level.ExplosionInteraction.MOB);
+                }
                 level().levelEvent(1013, blockPosition(), 0);
             }
             if (tickCount % 10 == 0) {
@@ -217,6 +223,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
         tag.putBoolean("PlayerCreated", isPlayerCreated());
         tag.putInt("Invul", getInvulnerableTicks());
         tag.putLong("TeleTicks", ticksSinceTeleport);
+        tag.putBoolean("ExplosiveEntrance", explosiveEntrance);
     }
 
     @Override
@@ -225,6 +232,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
         setPlayerCreated(tag.getBooleanOr("PlayerCreated", false));
         setInvulnerableTicks(tag.getIntOr("Invul", 0));
         ticksSinceTeleport = tag.getLongOr("TeleTicks", 0L);
+        explosiveEntrance = tag.getBooleanOr("ExplosiveEntrance", false);
     }
 
     public boolean isPlayerCreated() {
@@ -242,6 +250,10 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
 
     public void setInvulnerableTicks(int ticks) {
         entityData.set(INVULNERABLE_TICKS, Math.max(0, ticks));
+    }
+
+    public void causeExplosiveEntrance() {
+        explosiveEntrance = true;
     }
 
     public int getAttackTimer() {

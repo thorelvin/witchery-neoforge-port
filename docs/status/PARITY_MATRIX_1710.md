@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 263 functional + 123 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 265 functional + 121 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -55,7 +55,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | brew_bag | 🔲 Placeholder | Item registered; no container logic |
 | leonards_urn | 🔲 Placeholder | Item registered; no drop/range-boost mechanic |
 | moon_charm | Partial | Source: `ItemMoonCharm` now has rare single-stack durability, gold-nugget repair, 60-tick bow-style use, manual werewolf transform/restore toggle, wolfsbane refusal, inventory prevention of forced moon shifting, and Wolf Altar 3-nugget output. Remaining: exact wolf/wolfman split and old level-gate quest semantics. |
-| horn_of_the_hunt | 🔲 Placeholder | Item registered; no Huntsman-challenge mechanic |
+| horn_of_the_hunt / hunts_horn | 🔶 Partial | Source `ItemHornOfTheHunt` / Resurrected alias now use 40-tick bow-style hold, one-use durability, nearby safe Horned Huntsman spawn, 150-tick quarter-health entrance, horn/Wither-spawn feedback, and source-only explosive entrance. Remaining: in-game boss entrance/terrain QA and exact old horn sound asset. |
 | wolf_token | 🔲 Placeholder | Creative-only; no mechanic |
 | cane_sword | Partial | Source: `ItemCaneSword` combo weapon now has sheathed/drawn variants, sneak-use transform, recipe, vampire blood-reservoir capture from villagers/players, and sheathed extraction into blood power. Remaining: exact old sound assets and player-data-backed reserve parity. |
 | dup_staff | ❌ Missing | Source: `ItemDuplicationStaff` |
@@ -386,7 +386,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | InfusionOtherwhere | ✅ Done | Registered + basic mechanics |
 | InfusionInfernal | ✅ Done | Registered + basic mechanics |
 | Vampirism (player infusion) | 🔶 Partial | Boolean state, bite, sunlight, mesmerise; missing 10-level progression |
-| Lycanthropy (player infusion) | 🔶 Partial | Wolfman render, wolf form, mastery foundation; missing 10-level Wolf Altar quest chain |
+| Lycanthropy (player infusion) | 🔶 Partial | Wolfman render, wolf form, mastery foundation, Moon Charm control, and Horn of the Hunt summon item; missing 10-level Wolf Altar quest chain |
 | **Creature Powers (14 types)** | 🟡 Partial | Source: CreaturePowerBat/Blaze/Creeper/Enderman/Ghast/Heal/Jump/PigMan/Skeleton/Speed/Spider/Squid/Zombie + base. Practical altar-kill acquisition and Mystic Branch activations now exist for the old sacrifice families; passive effects, exact charge UI/selection flow, and symbol drawing remain missing |
 | Spirit infusions (7 types) | 🔶 Partial | Infused brew base items present; GhostWalker/Screamer/Sentinel/Twister/Twister effects not implemented |
 | Symbol/glyph drawing (Mystic Branch) | ❌ Missing | Source: `SymbolEffect`, `StrokeSet`, `EffectRegistry` — gesture/stroke recognition system |
