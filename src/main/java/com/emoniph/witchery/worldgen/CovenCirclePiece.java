@@ -35,7 +35,8 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
  * 11×4×11 ring of 2-high standing stones surrounding a 3×3 chiseled altar.
  * Materials are biome-adaptive: sandstone in desert/mesa biomes.
  * A Coven Witch has the source 90% resident spawn chance at the altar; vanilla
- * Witch spawners and a loot dispenser sit hidden below it like the original component.
+ * Witch spawners, a loot dispenser, and the old cobweb ring details sit like the
+ * original component.
  */
 public class CovenCirclePiece extends StructurePiece {
 
@@ -86,9 +87,8 @@ public class CovenCirclePiece extends StructurePiece {
         BlockState brick  = isDesert ? Blocks.CUT_SANDSTONE.defaultBlockState()
                                      : Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
 
-        BlockState mossy  = isDesert ? Blocks.SANDSTONE.defaultBlockState()
-                                     : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
         BlockState altar  = Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
+        BlockState cobweb = Blocks.COBWEB.defaultBlockState();
         BlockState air    = Blocks.AIR.defaultBlockState();
         // Source ComponentCoven used grass as the visible non-desert surface.
         // Keep the modern support stone-backed so uneven terrain cannot expose
@@ -134,7 +134,7 @@ public class CovenCirclePiece extends StructurePiece {
         // Source exactly — 18 base positions forming the oval ring
         placeBlock(level, stone, 1, 1,  2, box);
         placeBlock(level, stone, 2, 1,  1, box);
-        placeBlock(level, mossy, 3, 1,  0, box);   // mossy = special marker stone
+        placeBlock(level, cobweb, 3, 1,  0, box);
         placeBlock(level, stone, 4, 1,  0, box);
         placeBlock(level, stone, 6, 1,  0, box);
         placeBlock(level, stone, 8, 1,  1, box);
@@ -147,7 +147,6 @@ public class CovenCirclePiece extends StructurePiece {
         placeBlock(level, stone, 4, 1, 10, box);
         placeBlock(level, stone, 2, 1,  9, box);
         placeBlock(level, stone, 1, 1,  8, box);
-        placeBlock(level, mossy, 0, 1,  7, box);   // W marker
         placeBlock(level, stone, 0, 1,  4, box);
         placeBlock(level, stone, 0, 1,  6, box);
 
@@ -161,6 +160,7 @@ public class CovenCirclePiece extends StructurePiece {
         placeBlock(level, stone,10, 2,  4, box);
         placeBlock(level, stone,10, 2,  6, box);
         placeBlock(level, brick, 9, 2,  8, box);
+        placeBlock(level, cobweb,10, 2,  7, box);
         placeBlock(level, brick, 8, 2,  9, box);
         placeBlock(level, stone, 6, 2, 10, box);
         placeBlock(level, stone, 4, 2, 10, box);
@@ -197,6 +197,7 @@ public class CovenCirclePiece extends StructurePiece {
         placeBlock(level, brick, 0, 3,  4, box);
         placeBlock(level, brick, 0, 3,  5, box);
         placeBlock(level, brick, 0, 3,  6, box);
+        placeBlock(level, cobweb, 0, 3,  7, box);
         placeBlock(level, brick, 1, 3,  7, box);
 
         // ── Foundation downward ──────────────────────────────────────────────
