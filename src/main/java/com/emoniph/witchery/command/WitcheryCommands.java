@@ -1897,6 +1897,13 @@ public class WitcheryCommands {
         WitcheryMod.LOGGER.info("[Goto] Prepared {} chunk(s) around {}:{} at {} before teleport.",
                 preloaded, namespace, structureId, found);
 
+        if (com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)) {
+            boolean generated = com.emoniph.witchery.events.VillageWallEvents
+                    .generateForVillageNear(level, found, true);
+            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation for {}:{} at {} -> {}.",
+                    namespace, structureId, found, generated ? "complete" : "not ready");
+        }
+
         int surfaceY = level.getHeight(
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
                 found.getX(), found.getZ());
