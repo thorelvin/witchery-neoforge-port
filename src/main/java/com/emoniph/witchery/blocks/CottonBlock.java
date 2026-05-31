@@ -42,7 +42,7 @@ public class CottonBlock extends BushBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(10) != 0) {
+        if (random.nextInt(6) != 0) {
             return;
         }
         if (!canSourceSpread(level, pos)) {
@@ -90,11 +90,17 @@ public class CottonBlock extends BushBlock {
     }
 
     private boolean canSourceSpread(ServerLevel level, BlockPos pos) {
-        return level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD) || hasFlowingSpiritBelowNeighbor(level, pos);
+        return level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD) && hasFlowingSpiritBelowNeighbor(level, pos);
     }
 
     private boolean canSpreadTo(LevelReader level, BlockPos pos) {
-        return level.isEmptyBlock(pos) && canSurvive(defaultBlockState(), level, pos);
+        return level.isEmptyBlock(pos)
+                && isCottonSpreadSupport(level.getBlockState(pos.below()))
+                && canSurvive(defaultBlockState(), level, pos);
+    }
+
+    private boolean isCottonSpreadSupport(BlockState state) {
+        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
     }
 
     private boolean hasFlowingSpiritBelowNeighbor(LevelReader level, BlockPos pos) {
