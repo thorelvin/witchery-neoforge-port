@@ -4,11 +4,14 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.world.VillageWallData;
 import com.emoniph.witchery.worldgen.VillageWallGenerator;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -20,9 +23,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -41,11 +46,38 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class VillageWallEvents {
 
     private record PendingWall(StructureStart start, long processAfter, int attempts) {}
+    private record PendingTeleport(UUID playerId, BlockPos target, BlockPos from,
+                                   float yRot, float xRot, String namespace, String structureId) {}
+
+    private static final class WallJob {
+        final StructureStart start;
+        boolean force;
+        final String reason;
+        final List<ChunkPos> chunks;
+        final List<PendingTeleport> teleports = new ArrayList<>();
+        final long queuedAt;
+        boolean ticketsAdded;
+        long ticketedAt;
+        long lastLogAt;
+
+        WallJob(StructureStart start, boolean force, String reason,
+                List<ChunkPos> chunks, PendingTeleport teleport, long queuedAt) {
+            this.start = start;
+            this.force = force;
+            this.reason = reason;
+            this.chunks = chunks;
+            this.queuedAt = queuedAt;
+            if (teleport != null) this.teleports.add(teleport);
+        }
+    }
 
     private static final ConcurrentLinkedQueue<PendingWall> QUEUE = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<WallJob> JOBS = new ConcurrentLinkedQueue<>();
     private static final long WALL_GENERATION_DELAY_TICKS = 0L;
     private static final long WALL_GENERATION_RETRY_TICKS = 20L;
     private static final int WALL_GENERATION_MAX_ATTEMPTS = 6;
+    private static final long WALL_JOB_LOG_INTERVAL_TICKS = 40L;
+    private static final long WALL_JOB_TIMEOUT_TICKS = 20L * 30L;
     private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
     private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
 
@@ -91,9 +123,18 @@ public class VillageWallEvents {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
         if (level.dimension() != Level.OVERWORLD) return;
-        if (QUEUE.isEmpty()) return;
 
         long now = level.getGameTime();
+        WallJob job = JOBS.peek();
+        if (job != null) {
+            if (processWallJob(level, job, now)) {
+                JOBS.poll();
+            }
+            return;
+        }
+
+        if (QUEUE.isEmpty()) return;
+
         Iterator<PendingWall> it = QUEUE.iterator();
         int done = 0;
 
@@ -108,23 +149,43 @@ public class VillageWallEvents {
                 continue;
             }
 
-            generateWalls(level, start, false, "queue");
+            queueGeneration(level, start, false, "queue");
             done++;
         }
     }
 
     /**
-     * Direct generation hook for commands that already know the village target.
-     * This makes /witchery goto village_* build walls before the player arrives,
-     * instead of relying on the chunk-load queue to win a timing race.
+     * Queue a village wall job for commands/debug paths that already resolved the start.
      */
-    public static boolean generateForVillageNear(ServerLevel level, BlockPos pos, boolean force) {
+    public static boolean queueGeneration(ServerLevel level, StructureStart start, boolean force, String reason) {
+        return queueGeneration(level, start, force, reason, null);
+    }
+
+    /**
+     * Queue generation near a known position. Used by command fallbacks.
+     */
+    public static boolean queueGenerationForVillageNear(ServerLevel level, BlockPos pos, boolean force, String reason) {
         StructureStart start = findVillageStartNear(level, pos);
         if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
-            WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for direct generation.", pos);
+            WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for queued generation.", pos);
             return false;
         }
-        return generateWalls(level, start, force, "direct");
+        return queueGeneration(level, start, force, reason);
+    }
+
+    /**
+     * Queue village walls and teleport the player only after the walls are generated.
+     */
+    public static boolean queueVillageGoto(ServerLevel level, ServerPlayer player, BlockPos target,
+                                           BlockPos from, String namespace, String structureId) {
+        StructureStart start = findVillageStartNear(level, target);
+        if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
+            WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for goto pre-generation.", target);
+            return false;
+        }
+        PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
+                player.getYRot(), player.getXRot(), namespace, structureId);
+        return queueGeneration(level, start, true, "goto", teleport);
     }
 
     private static StructureStart refreshVillageStart(ServerLevel level, StructureStart queued) {
@@ -162,25 +223,149 @@ public class VillageWallEvents {
         return true;
     }
 
-    private static boolean generateWalls(ServerLevel level, StructureStart start, boolean force, String reason) {
+    private static boolean queueGeneration(ServerLevel level, StructureStart start, boolean force,
+                                           String reason, PendingTeleport teleport) {
         VillageWallData data = VillageWallData.get(level);
-        if (!force && data.isProcessed(start.getBoundingBox())) return true;
+        if (!force && data.isProcessed(start.getBoundingBox())) {
+            if (teleport != null) completeTeleport(level, teleport, true);
+            return true;
+        }
         if (!start.isValid() || start.getPieces().isEmpty()) return false;
 
+        BoundingBox bb = start.getBoundingBox();
+        for (WallJob job : JOBS) {
+            if (job.start.getBoundingBox().equals(bb)) {
+                if (force) job.force = true;
+                if (teleport != null) job.teleports.add(teleport);
+                return true;
+            }
+        }
+
+        List<ChunkPos> chunks = perimeterChunks(start);
+        if (teleport != null) {
+            ChunkPos targetChunk = new ChunkPos(teleport.target());
+            if (!chunks.contains(targetChunk)) chunks.add(targetChunk);
+        }
+        JOBS.add(new WallJob(start, force, reason, chunks, teleport, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} perimeter chunk ticket(s).",
+                reason, bb, chunks.size());
+        return true;
+    }
+
+    private static boolean processWallJob(ServerLevel level, WallJob job, long now) {
         try {
-            WitcheryMod.LOGGER.info("[VillageWalls] Generating walls ({}) for village at {} ({} pieces).",
-                    reason, start.getBoundingBox(), start.getPieces().size());
-            forceLoadVillageChunks(level, start);
-            VillageWallGenerator.generate(level, start);
-            data.markProcessed(start.getBoundingBox());
+            if (!job.ticketsAdded) {
+                for (ChunkPos cp : job.chunks) {
+                    level.getChunkSource().updateChunkForced(cp, true);
+                }
+                job.ticketsAdded = true;
+                job.ticketedAt = now;
+                job.lastLogAt = now;
+                WitcheryMod.LOGGER.info("[VillageWalls] Requested {} perimeter chunk ticket(s) for {}.",
+                        job.chunks.size(), job.start.getBoundingBox());
+                return false;
+            }
+
+            int ready = readyChunkCount(level, job.chunks);
+            if (ready < job.chunks.size()) {
+                if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
+                    job.lastLogAt = now;
+                    WitcheryMod.LOGGER.info("[VillageWalls] Waiting for perimeter chunks at {}: {}/{} ready.",
+                            job.start.getBoundingBox(), ready, job.chunks.size());
+                }
+                if (job.ticketedAt > 0 && now - job.ticketedAt > WALL_JOB_TIMEOUT_TICKS) {
+                    WitcheryMod.LOGGER.error("[VillageWalls] Timed out waiting for perimeter chunks at {}: {}/{} ready.",
+                            job.start.getBoundingBox(), ready, job.chunks.size());
+                    finishWallJob(level, job, false);
+                    return true;
+                }
+                return false;
+            }
+
+            VillageWallData data = VillageWallData.get(level);
+            if (!job.force && data.isProcessed(job.start.getBoundingBox())) {
+                finishWallJob(level, job, true);
+                return true;
+            }
+
+            WitcheryMod.LOGGER.info("[VillageWalls] Generating walls ({}) for village at {} ({} pieces, {} chunks ready).",
+                    job.reason, job.start.getBoundingBox(), job.start.getPieces().size(), job.chunks.size());
+            VillageWallGenerator.generate(level, job.start);
+            data.markProcessed(job.start.getBoundingBox());
             WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
-                    start.getBoundingBox());
+                    job.start.getBoundingBox());
+            finishWallJob(level, job, true);
             return true;
         } catch (Exception e) {
             WitcheryMod.LOGGER.error("[VillageWalls] Wall generation failed for {}",
-                    start.getBoundingBox(), e);
-            return false;
+                    job.start.getBoundingBox(), e);
+            finishWallJob(level, job, false);
+            return true;
         }
+    }
+
+    private static int readyChunkCount(ServerLevel level, List<ChunkPos> chunks) {
+        int ready = 0;
+        for (ChunkPos cp : chunks) {
+            if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) ready++;
+        }
+        return ready;
+    }
+
+    private static void finishWallJob(ServerLevel level, WallJob job, boolean success) {
+        for (PendingTeleport teleport : job.teleports) {
+            completeTeleport(level, teleport, success);
+        }
+        for (ChunkPos cp : job.chunks) {
+            level.getChunkSource().updateChunkForced(cp, false);
+        }
+    }
+
+    private static void completeTeleport(ServerLevel level, PendingTeleport teleport, boolean wallsReady) {
+        ServerPlayer player = level.getServer().getPlayerList().getPlayer(teleport.playerId());
+        if (player == null) return;
+
+        if (!wallsReady) {
+            player.sendSystemMessage(Component.literal(
+                    "The hidden paths could not prepare that village safely. Try again in a moment.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return;
+        }
+
+        BlockPos target = teleport.target();
+        int surfaceY = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                target.getX(), target.getZ());
+        if (surfaceY < 20) {
+            surfaceY = Math.max(target.getY() + 3, 20);
+        }
+
+        player.teleportTo(level, target.getX() + 0.5, surfaceY, target.getZ() + 0.5,
+                java.util.Set.of(), teleport.yRot(), teleport.xRot(), false);
+        player.setDeltaMovement(0.0, 0.0, 0.0);
+        player.fallDistance = 0.0F;
+
+        int dist = (int) Math.sqrt(target.distSqr(teleport.from()));
+        player.sendSystemMessage(Component.literal(
+                "The hidden paths carry you away, across " + dist + " blocks, to "
+                + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
+    }
+
+    private static List<ChunkPos> perimeterChunks(StructureStart start) {
+        BoundingBox bb = start.getBoundingBox();
+        int pad = FORCE_LOAD_PADDING_BLOCKS;
+        int minCX = (bb.minX() - pad) >> 4, maxCX = (bb.maxX() + pad) >> 4;
+        int minCZ = (bb.minZ() - pad) >> 4, maxCZ = (bb.maxZ() + pad) >> 4;
+        List<ChunkPos> chunks = new ArrayList<>();
+        for (int cx = minCX; cx <= maxCX; cx++) {
+            for (int cz = minCZ; cz <= maxCZ; cz++) {
+                boolean nearEdge = (cx - minCX) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (maxCX - cx) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (cz - minCZ) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (maxCZ - cz) < FORCE_LOAD_EDGE_RING_CHUNKS;
+                if (nearEdge) chunks.add(new ChunkPos(cx, cz));
+            }
+        }
+        return chunks;
     }
 
     // ── Chunk force-loading ────────────────────────────────────────────────────
@@ -254,7 +439,7 @@ public class VillageWallEvents {
         long bestDist = Long.MAX_VALUE;
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
-                LevelChunk chunk = level.getChunkSource().getChunk(center.x + dx, center.z + dz, true);
+                LevelChunk chunk = level.getChunkSource().getChunkNow(center.x + dx, center.z + dz);
                 if (chunk == null) continue;
                 for (Map.Entry<Structure, StructureStart> entry : chunk.getAllStarts().entrySet()) {
                     StructureStart start = entry.getValue();

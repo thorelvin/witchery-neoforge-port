@@ -1801,12 +1801,14 @@ public class WitcheryCommands {
 
         final net.minecraft.world.level.levelgen.structure.StructureStart finalStart = start;
         int pieces = start.getPieces().size();
-        com.emoniph.witchery.world.VillageWallData data = com.emoniph.witchery.world.VillageWallData.get(level);
-        com.emoniph.witchery.events.VillageWallEvents.forceLoadVillageChunks(level, start);
-        com.emoniph.witchery.worldgen.VillageWallGenerator.generate(level, start);
-        data.markProcessed(start.getBoundingBox());
+        boolean queued = com.emoniph.witchery.events.VillageWallEvents
+                .queueGeneration(level, start, true, "command");
+        if (!queued) {
+            src.sendFailure(Component.literal("[VillageWalls] Could not queue wall generation for that village."));
+            return 0;
+        }
         src.sendSuccess(() -> Component.literal(
-                "[VillageWalls] Walls generated for village at " + found.getX() + " ~ " + found.getZ()
+                "[VillageWalls] Wall generation queued for village at " + found.getX() + " ~ " + found.getZ()
                 + " (" + pieces + " pieces). Run /witchery walls reset if you need to re-run."), false);
         return 1;
     }
@@ -1898,10 +1900,21 @@ public class WitcheryCommands {
                 preloaded, namespace, structureId, found);
 
         if (com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)) {
-            boolean generated = com.emoniph.witchery.events.VillageWallEvents
-                    .generateForVillageNear(level, found, true);
-            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation for {}:{} at {} -> {}.",
-                    namespace, structureId, found, generated ? "complete" : "not ready");
+            boolean queued = com.emoniph.witchery.events.VillageWallEvents
+                    .queueVillageGoto(level, player, found, from, namespace, structureId);
+            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation job for {}:{} at {} -> {}.",
+                    namespace, structureId, found, queued ? "queued" : "not ready");
+            if (!queued) {
+                src.sendFailure(Component.literal(
+                        "The hidden paths found the village, but its walls are not ready to form yet. Try again in a moment.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return 0;
+            }
+            GOTO_COOLDOWN.put(player.getUUID(), now);
+            src.sendSuccess(() -> Component.literal(
+                    "The hidden paths pause to raise the village walls before carrying you through.")
+                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+            return 1;
         }
 
         int surfaceY = level.getHeight(
