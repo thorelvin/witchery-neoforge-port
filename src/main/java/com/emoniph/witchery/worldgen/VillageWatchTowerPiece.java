@@ -66,6 +66,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState stairsE = materials.roofStairs(Direction.EAST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
         BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+        BlockState upperLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
 
         // ── Main tower shell (2-6, 0-17, 2-6) ────────────────────────────────
         generateBox(level, box, 2, 0, 2, 6, 17, 6, cobble, cobble, false);
@@ -162,12 +163,15 @@ public class VillageWatchTowerPiece extends StructurePiece {
         placeBlock(level, torch, 4, 14, 3, box);
         placeBlock(level, torch, 5, 16, 5, box);
 
-        // Straight shaft: a single supported ladder run from the entry to the upper deck.
-        for (int ly = 13; ly <= 15; ly++) placeBlock(level, cobble, 4, ly, 5, box);
+        // Straight shaft plus the source upper handoff so the deck can descend cleanly.
+        for (int ly = 13; ly <= 15; ly++) {
+            placeBlock(level, cobble, 4, ly, 5, box);
+            placeBlock(level, upperLadder, 3, ly, 5, box);
+        }
         for (int ly = 1; ly <= 15; ly++) placeBlock(level, ladder, 4, ly, 4, box);
 
-        // ── Loot chest on upper platform ──────────────────────────────────────
-        createChest(level, box, random, 5, 13, 5, LOOT);
+        // ── Loot chest on mid platform ───────────────────────────────────────
+        createChest(level, box, random, 5, 10, 5, LOOT);
 
         // ── Foundation below y=0 ─────────────────────────────────────────────
         for (int bx = 1; bx < 7; bx++) {
