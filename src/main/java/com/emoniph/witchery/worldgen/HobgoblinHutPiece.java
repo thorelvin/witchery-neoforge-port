@@ -197,7 +197,7 @@ public class HobgoblinHutPiece extends StructurePiece {
                 .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (hobgoblin == null) return;
         hobgoblin.setPersistenceRequired();
-        hobgoblin.setPos(boundingBox.minX() + 4.5, boundingBox.minY() + 1, boundingBox.minZ() + 3.5);
+        hobgoblin.setPos(boundingBox.minX() + 4.5, boundingBox.minY() + 1.5, boundingBox.minZ() + 3.5);
         hobgoblin.finalizeSpawn(level,
                 new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                 EntitySpawnReason.STRUCTURE, null);
