@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BXB",
+    "DSE",
+    "BTB"
+  ],
+  "key": {
+    "B": "minecraft:blaze_powder",
+    "X": "witchery:polynesia_charm",
+    "D": "witchery:demon_heart",
+    "S": "minecraft:sugar",
+    "E": "witchery:refined_evil",
+    "T": "witchery:tongue_of_dog"
+  },
+  "result": {
+    "id": "witchery:devils_tongue_charm",
+    "count": 1
+  }
+}

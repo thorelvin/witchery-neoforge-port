@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -49,12 +51,17 @@ public class DemonEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, true, false,
+                (entity, serverLevel) -> !hasDevilsTongueCharm(entity)));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Villager.class, true));
     }
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        if (hasDevilsTongueCharm(target) && random.nextDouble() >= 0.05D) {
+            playSound(SoundEvents.NOTE_BLOCK_SNARE.value(), 0.4F, 0.7F);
+            return;
+        }
         double dx = target.getX() - this.getX();
         double dy = target.getBoundingBox().minY + target.getBbHeight() / 2.0 - (this.getY() + this.getBbHeight() / 2.0);
         double dz = target.getZ() - this.getZ();
@@ -73,6 +80,13 @@ public class DemonEntity extends Monster implements RangedAttackMob {
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (target instanceof LivingEntity living
+                && hasDevilsTongueCharm(living)
+                && random.nextDouble() >= 0.05D) {
+            playSound(SoundEvents.NOTE_BLOCK_SNARE.value(), 0.4F, 0.7F);
+            setTarget(null);
+            return false;
+        }
         target.hurt(damageSources().mobAttack(this), MIN_MELEE_DAMAGE + random.nextInt(MELEE_DAMAGE_ROLL));
         setLastHurtMob(target);
         target.setDeltaMovement(target.getDeltaMovement().add(0.0, 0.4, 0.0));
@@ -87,6 +101,14 @@ public class DemonEntity extends Monster implements RangedAttackMob {
 
     @Override public boolean fireImmune() { return true; }
     @Override public boolean isOnFire()   { return false; }
+
+    private static boolean hasDevilsTongueCharm(LivingEntity entity) {
+        return isDevilsTongueCharm(entity.getMainHandItem()) || isDevilsTongueCharm(entity.getOffhandItem());
+    }
+
+    private static boolean isDevilsTongueCharm(ItemStack stack) {
+        return stack.is(WitcheryItems.DEVILS_TONGUE_CHARM.get());
+    }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.BLAZE_AMBIENT; }
     @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.BLAZE_HURT; }

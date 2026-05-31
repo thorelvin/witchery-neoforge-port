@@ -201,6 +201,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SEER_STONE.get(),
                 WitcheryItems.POPPET_SHELF_COMPASS.get(),
                 WitcheryItems.POLYNESIA_CHARM.get(),
+                WitcheryItems.DEVILS_TONGUE_CHARM.get(),
                 WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get(),
                 WitcheryItems.PARASYTIC_LOUSE.get());
     }
@@ -358,8 +359,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "devils_tongue_charm", "twisting_band",
-                "blooded_waystone", "bound_waystone");
+                "twisting_band", "blooded_waystone", "bound_waystone");
         addLegacy(output, accepted,
                 "infernal_blood", "odd_porkchop_raw", "odd_porkchop_cooked", "odd_porkchop", "cooked_odd_porkchop",
                 "nullified_leather", "silver_dust", "biome_note", "cooked_sheep_liver", "sheep_liver",

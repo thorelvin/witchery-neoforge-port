@@ -300,6 +300,8 @@ public class WitcheryItems {
             id -> new PoppetShelfCompassItem(itemProps(id)));
     public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.register("polynesia_charm",
             id -> new PolynesiaCharmItem(itemProps(id)));
+    public static final DeferredItem<Item> DEVILS_TONGUE_CHARM = ITEMS.register("devils_tongue_charm",
+            id -> new PolynesiaCharmItem(itemProps(id), true));
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
     public static final DeferredItem<Item> MOON_CHARM = ITEMS.register("moon_charm",
             id -> new MoonCharmItem(itemProps(id)));
@@ -606,7 +608,6 @@ public class WitcheryItems {
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
-            "devils_tongue_charm",
             "infernal_blood",
             "odd_porkchop_raw",
             "odd_porkchop_cooked",

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NIN",
+    "PXP",
+    "NWN"
+  ],
+  "key": {
+    "N": "minecraft:ender_pearl",
+    "I": "minecraft:iron_ingot",
+    "P": "witchery:odour_of_purity",
+    "X": "minecraft:ink_sac",
+    "W": "witchery:whiff_of_magic"
+  },
+  "result": {
+    "id": "witchery:polynesia_charm",
+    "count": 1
+  }
+}

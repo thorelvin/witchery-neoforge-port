@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 267 functional + 119 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 268 functional + 118 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -66,8 +66,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
 | brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
 | stew (cooked/raw) | ✅ Done | `witchery:meaty_stew` / `witchery:raw_meaty_stew` now use source `ItemStew` food values, bowl return, original sprites, raw stew crafting, and smelting |
-| polynesia_charm | ❌ Missing | Source: `ItemPolynesiaCharm` — two variants |
-| devils_tongue_charm | ❌ Missing | (in placeholder list but no mechanic planned yet) |
+| polynesia_charm | 🔶 Partial | Source `ItemPolynesiaCharm(false)` shell is live with 50 durability, uncommon rarity, source tooltip, and the old shaped recipe. Remaining: original animal-merchant interaction/trade stock behavior. |
+| devils_tongue_charm | 🔶 Partial | Source `ItemPolynesiaCharm(true)` variant is live with 50 durability, uncommon rarity, source-shaped upgrade recipe, and held Demon protection from targeting/melee/fireballs with the old 5% failure chance. Remaining: exact old demon merchant price/trade behavior and broader imp/demon edge cases. |
 
 ### 1b. Armor & Clothing
 
