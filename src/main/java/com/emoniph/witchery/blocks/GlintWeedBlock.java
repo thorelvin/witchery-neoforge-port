@@ -72,7 +72,7 @@ public class GlintWeedBlock extends BushBlock {
         double x = pos.getX() + 0.4 + random.nextInt(3) * 0.1;
         double y = pos.getY() + 0.4 + random.nextInt(3) * 0.1;
         double z = pos.getZ() + 0.4 + random.nextInt(3) * 0.1;
-        level.addParticle(ParticleTypes.END_ROD, x, y, z, 0.0, 0.01, 0.0);
+        level.addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
     }
 
     private boolean tooDense(ServerLevel level, BlockPos pos) {
