@@ -1,6 +1,7 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.events.VillageWallEvents;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.mojang.serialization.Codec;
@@ -119,13 +120,22 @@ public class WitcheryVillageElement extends StructurePoolElement {
         // The procedural pieces are only built in their StructurePiece NORTH orientation.
         // That orientation flips local z=0 to the generated south face, so the jigsaw must
         // be advertised on the local south edge to line up with the visible front door.
-        if (rotation != Rotation.NONE) return List.of();
+        if (rotation != Rotation.NONE) {
+            if ("village_keep".equals(building)) {
+                debugLog("Skipping rotated village_keep jigsaw candidate at {} with rotation {}.", pos, rotation);
+            }
+            return List.of();
+        }
 
         int[] s = dims();
         // Most Witchery village buildings keep the vanilla raised-floor baseline. The
         // source bookshop is a shallow step-up building, so its entrance jigsaw sits one
         // block above its floor to keep the foundation level with the road.
         BlockPos jigPos = new BlockPos(doorX(), jigsawY(), s[2] - 1);
+        if ("village_keep".equals(building)) {
+            debugLog("Offering village_keep jigsaw at local {} with size {}x{}x{} from pool position {}.",
+                    jigPos, s[0], s[1], s[2], pos);
+        }
         var state = Blocks.JIGSAW.defaultBlockState()
                 .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.SOUTH_UP);
 
@@ -162,6 +172,8 @@ public class WitcheryVillageElement extends StructurePoolElement {
         if (!claimVillageBuilding(level, structureMgr, offset)) return true;
         StructurePiece piece = createPiece(offset);
         if (piece == null) return false;
+        debugLog("Placing {} at {} with element box {} and generation box {}.",
+                building, offset, piece.getBoundingBox(), box);
         ChunkPos chunkPos = new ChunkPos(new BlockPos(box.minX(), 0, box.minZ()));
         piece.postProcess(level, structureMgr, generator, random, box, chunkPos, pos);
         return true;
@@ -238,9 +250,11 @@ public class WitcheryVillageElement extends StructurePoolElement {
             BlockPos existing = claim.buildings.get(building);
             if (existing == null) {
                 claim.buildings.put(building, immutableOrigin);
+                debugLog("Claimed {} at {} for village key {}.", building, immutableOrigin, villageKey);
                 return true;
             }
             if (existing.equals(immutableOrigin)) {
+                debugLog("Replaying already claimed {} at {}.", building, immutableOrigin);
                 return true;
             }
             if (claim.skippedOrigins.add(immutableOrigin)) {
@@ -269,6 +283,12 @@ public class WitcheryVillageElement extends StructurePoolElement {
             }
         }
         return best != null && bestDist <= VILLAGE_CLAIM_RADIUS_SQR ? VillageKey.of(best) : null;
+    }
+
+    private static void debugLog(String message, Object... args) {
+        if (WitcheryConfig.DEBUG.get()) {
+            WitcheryMod.LOGGER.info("[VillageBuildings:Debug] " + message, args);
+        }
     }
 
     private static long distToCenterSqr(BoundingBox bb, BlockPos pos) {

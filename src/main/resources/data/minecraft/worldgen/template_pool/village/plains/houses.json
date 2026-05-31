@@ -355,7 +355,7 @@
       "element": { "element_type": "witchery:village_building", "building": "village_watch_tower", "projection": "rigid" }
     },
     {
-      "weight": 8,
+      "weight": 32,
       "element": { "element_type": "witchery:village_building", "building": "village_keep", "projection": "rigid" }
     },
     {
