@@ -15,8 +15,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -50,47 +48,45 @@ public class WitchHutPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        BlockState spruce = Blocks.SPRUCE_PLANKS.defaultBlockState();
-        BlockState birch = Blocks.BIRCH_PLANKS.defaultBlockState();
-        BlockState cobble = Blocks.COBBLESTONE.defaultBlockState();
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        BlockState wall = materials.wall();
+        BlockState trim = materials.trim();
+        BlockState foundation = materials.foundation();
         BlockState air = Blocks.AIR.defaultBlockState();
-        BlockState glass = Blocks.GLASS_PANE.defaultBlockState();
+        BlockState glassSide = VillageBuildingMaterials.paneNorthSouth();
         BlockState rowanLog = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
 
         generateBox(level, box, 1, 1, 1, 3, 5, 4, air, air, false);
-        generateBox(level, box, 0, 0, 0, 3, 0, 4, cobble, cobble, false);
+        generateBox(level, box, 0, 0, 0, 3, 0, 4, foundation, foundation, false);
+        generateBox(level, box, 1, 0, 1, 2, 0, 3, foundation, foundation, false);
 
-        generateBox(level, box, 1, 5, 1, 2, 5, 3, spruce, spruce, false);
+        generateBox(level, box, 1, 5, 1, 2, 5, 3, wall, wall, false);
         for (int x = 0; x <= 3; x++) {
             for (int z = 1; z <= 3; z++) {
-                placeBlock(level, spruce, x, 4, z, box);
+                placeBlock(level, wall, x, 4, z, box);
             }
         }
-        placeBlock(level, spruce, 1, 4, 0, box);
-        placeBlock(level, spruce, 2, 4, 0, box);
-        placeBlock(level, spruce, 1, 4, 4, box);
-        placeBlock(level, spruce, 2, 4, 4, box);
+        placeBlock(level, wall, 1, 4, 0, box);
+        placeBlock(level, wall, 2, 4, 0, box);
+        placeBlock(level, wall, 1, 4, 4, box);
+        placeBlock(level, wall, 2, 4, 4, box);
 
-        generateBox(level, box, 0, 1, 0, 0, 3, 0, birch, birch, false);
-        generateBox(level, box, 3, 1, 0, 3, 3, 0, birch, birch, false);
-        generateBox(level, box, 0, 1, 4, 0, 3, 4, birch, birch, false);
-        generateBox(level, box, 3, 1, 4, 3, 3, 4, birch, birch, false);
-        generateBox(level, box, 0, 1, 1, 0, 3, 3, spruce, spruce, false);
-        generateBox(level, box, 3, 1, 1, 3, 3, 3, spruce, spruce, false);
-        generateBox(level, box, 1, 1, 0, 2, 3, 0, spruce, spruce, false);
-        generateBox(level, box, 1, 1, 4, 2, 3, 4, spruce, spruce, false);
-        placeBlock(level, glass, 0, 2, 2, box);
-        placeBlock(level, glass, 3, 2, 2, box);
+        generateBox(level, box, 0, 1, 0, 0, 3, 0, trim, trim, false);
+        generateBox(level, box, 3, 1, 0, 3, 3, 0, trim, trim, false);
+        generateBox(level, box, 0, 1, 4, 0, 3, 4, trim, trim, false);
+        generateBox(level, box, 3, 1, 4, 3, 3, 4, trim, trim, false);
+        generateBox(level, box, 0, 1, 1, 0, 3, 3, wall, wall, false);
+        generateBox(level, box, 3, 1, 1, 3, 3, 3, wall, wall, false);
+        generateBox(level, box, 1, 1, 0, 2, 3, 0, wall, wall, false);
+        generateBox(level, box, 1, 1, 4, 2, 3, 4, wall, wall, false);
+        placeBlock(level, glassSide, 0, 2, 2, box);
+        placeBlock(level, glassSide, 3, 2, 2, box);
 
         placeBlock(level, air, 1, 1, 0, box);
         placeBlock(level, air, 1, 2, 0, box);
-        placeBlock(level, Blocks.OAK_DOOR.defaultBlockState()
-                .setValue(DoorBlock.FACING, Direction.NORTH)
-                .setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER), 1, 1, 0, box);
-        placeBlock(level, Blocks.OAK_DOOR.defaultBlockState()
-                .setValue(DoorBlock.FACING, Direction.NORTH)
-                .setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 1, 2, 0, box);
-        placeFrontStep(level);
+        placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.LOWER), 1, 1, 0, box);
+        placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.UPPER), 1, 2, 0, box);
+        placeFrontStep(level, materials);
 
         placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 1, 1, 3, box);
         placeBlock(level, rowanLog, 2, 1, 3, box);
@@ -99,7 +95,7 @@ public class WitchHutPiece extends StructurePiece {
 
         for (int x = 0; x < 4; x++) {
             for (int z = 0; z < 5; z++) {
-                fillColumnDown(level, cobble, x, -1, z, box);
+                fillColumnDown(level, foundation, x, -1, z, box);
             }
         }
 
@@ -115,11 +111,10 @@ public class WitchHutPiece extends StructurePiece {
         }
     }
 
-    private void placeFrontStep(WorldGenLevel level) {
+    private void placeFrontStep(WorldGenLevel level, VillageBuildingMaterials materials) {
         BlockPos stepPos = getWorldPos(1, 0, -1);
         if (level.getBlockState(stepPos).isAir() && !level.getBlockState(stepPos.below()).isAir()) {
-            level.setBlock(stepPos, Blocks.COBBLESTONE_STAIRS.defaultBlockState()
-                    .setValue(StairBlock.FACING, Direction.NORTH), 2);
+            level.setBlock(stepPos, materials.stepStairs(Direction.SOUTH), 2);
         }
     }
 }
