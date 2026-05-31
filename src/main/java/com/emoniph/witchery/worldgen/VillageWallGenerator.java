@@ -39,7 +39,7 @@ import java.util.Set;
  */
 public final class VillageWallGenerator {
 
-    private static final int WALL_HEIGHT   = 8;   // blocks above surface
+    private static final int WALL_HEIGHT   = 6;   // blocks above surface
     // PADDING must exceed SMOOTH + BLOCK (see step 3c) so the coarse-hull blocks can never
     // reach the grid border; if the INTERIOR touches the edge the flood-fill cannot mark
     // OUTSIDE there and that side is left unwalled.
@@ -264,7 +264,7 @@ public final class VillageWallGenerator {
                 if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
                 int wx = originX + x, wz = originZ + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
-                int h = groundHeight(level, wx, wz); // tree-corrected ground, not treetop
+                int h = wallBaseHeight(level, wx, wz); // water surface over water, else ground
                 heights[x][z] = (short) Math.max(h, minBuild + 5);
             }
         }
@@ -544,7 +544,7 @@ public final class VillageWallGenerator {
             if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
-        fillDown(level, wx, sy - 1, wz, wall);
+        fillDown(level, wx, sy - 1, wz, Blocks.STONE.defaultBlockState());
     }
 
     /** True when this wall cell sits at a 90° bend (has wall in both N/S and E/W axes). */
@@ -605,7 +605,8 @@ public final class VillageWallGenerator {
                 for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++)
                     setBlock(level, dwx, sy + dy, dwz, brick);
                 setBlock(level, dwx, sy + WALL_HEIGHT + 2, dwz, gateCap);
-                fillDown(level, dwx, sy - 1, dwz, brick); // stone-brick foundation
+                fillDown(level, dwx, sy - 1, dwz, Blocks.STONE.defaultBlockState()); // stone foundation
+
             }
             return;
         }
@@ -625,7 +626,7 @@ public final class VillageWallGenerator {
             // Passage floor path set DIRECTLY at sy-1. (Using layPath/groundHeight here would
             // sample the arch roof just placed above and drop dirt on top of the gate.)
             level.setBlock(new BlockPos(dwx, sy - 1, dwz), Blocks.DIRT_PATH.defaultBlockState(), 3);
-            fillDown(level, dwx, sy - 2, dwz, brick); // support flat floor over lower terrain
+            fillDown(level, dwx, sy - 2, dwz, Blocks.STONE.defaultBlockState()); // support flat floor / bridge water
         }
 
         // Path outward over open terrain.
@@ -679,16 +680,13 @@ public final class VillageWallGenerator {
     // ── Biome materials ────────────────────────────────────────────────────────
 
     private static BlockState wallMaterial(ServerLevel level, int x, int z) {
+        // Stone-brick family only — no cobblestone.
         var biome = level.getBiome(new BlockPos(x, 64, z));
         if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
             return Blocks.SANDSTONE.defaultBlockState();
-        if (biome.is(BiomeTags.IS_TAIGA))
-            return Blocks.COBBLESTONE.defaultBlockState();
-        if (biome.is(BiomeTags.IS_SAVANNA))
-            return Blocks.COBBLESTONE.defaultBlockState();
         if (biome.is(BiomeTags.IS_FOREST))
-            return Blocks.MOSSY_COBBLESTONE.defaultBlockState();
-        return Blocks.COBBLESTONE.defaultBlockState();
+            return Blocks.MOSSY_STONE_BRICKS.defaultBlockState();
+        return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
     private static BlockState brickMaterial(ServerLevel level, int x, int z) {
@@ -701,10 +699,9 @@ public final class VillageWallGenerator {
     /** Battlement / merlon material — biome-adaptive wall-block variant. */
     private static BlockState merlonMaterial(ServerLevel level, int x, int z) {
         var biome = level.getBiome(new BlockPos(x, 64, z));
+        // Stone-brick family only — no cobblestone wall.
         if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
             return Blocks.SANDSTONE_WALL.defaultBlockState();
-        if (biome.is(BiomeTags.IS_TAIGA) || biome.is(BiomeTags.IS_SAVANNA))
-            return Blocks.COBBLESTONE_WALL.defaultBlockState();
         return Blocks.STONE_BRICK_WALL.defaultBlockState();
     }
 
@@ -721,13 +718,30 @@ public final class VillageWallGenerator {
         level.setBlock(pos, state, 3);
     }
 
+    // Foundation / underwater fill: deep enough to bridge a wall sitting at the water
+    // surface all the way down to the sea floor.
     private static void fillDown(ServerLevel level, int x, int startY, int z, BlockState block) {
-        for (int y = startY; y >= startY - 12; y--) {
+        for (int y = startY; y >= startY - 40; y--) {
             BlockPos pos = new BlockPos(x, y, z);
             if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) break;
             if (level.getBlockState(pos).isSolid()) break;
             level.setBlock(pos, block, 3);
         }
+    }
+
+    /**
+     * Wall base Y. Same as {@link #groundHeight} on land, but over water it returns the
+     * water-surface level so the wall sits at sea level; {@link #fillDown} then bridges the
+     * water column down to the sea floor with stone.
+     */
+    private static int wallBaseHeight(ServerLevel level, int wx, int wz) {
+        int gy = groundHeight(level, wx, wz); // sea floor (groundHeight skips liquids)
+        if (level.getBlockState(new BlockPos(wx, gy, wz)).liquid()) {
+            int y = gy;
+            while (level.getBlockState(new BlockPos(wx, y, wz)).liquid()) y++;
+            return y; // first non-liquid above the water = surface level
+        }
+        return gy;
     }
 
     private static byte[][] copyGrid(byte[][] src, int w, int d) {
