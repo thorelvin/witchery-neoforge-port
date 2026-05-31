@@ -206,7 +206,7 @@ public class WitcheryCommands {
 
                 // ── Dimensions ───────────────────────────────────────────────
                 .then(Commands.literal("dream")
-                        .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.DREAM_WORLD)))
+                        .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.SPIRIT_WORLD)))
 
                 .then(Commands.literal("mirror")
                         .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.MIRROR_WORLD)))
