@@ -24,6 +24,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,9 +91,12 @@ public class VillageWallEvents {
     private static final int WALL_CHUNK_READINESS_MAX_ATTEMPTS = 120;
     private static final long WALL_JOB_LOG_INTERVAL_TICKS = 40L;
     private static final long WALL_JOB_TIMEOUT_TICKS = 20L * 30L;
+    private static final long WALL_JOB_STUCK_CHUNK_SKIP_TICKS = 20L * 10L;
     private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
+    private static final int FORCE_LOAD_TICKET_PADDING_BLOCKS = 18;
     private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
-    private static final int WALL_JOB_CHUNK_TICKET_BATCH = 4;
+    private static final int WALL_JOB_CHUNK_TICKET_BATCH = 1;
+    private static final int WALL_JOB_FORCED_CHUNK_CAP = 144;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -275,7 +279,8 @@ public class VillageWallEvents {
             }
         }
 
-        List<ChunkPos> chunks = wallJobChunks(start);
+        BlockPos focus = teleport != null ? teleport.target() : boundingBoxCenter(start.getBoundingBox());
+        List<ChunkPos> chunks = ticketChunks ? wallJobTicketChunks(start, focus) : wallJobChunks(start);
         if (teleport != null) {
             ChunkPos targetChunk = new ChunkPos(teleport.target());
             if (!chunks.contains(targetChunk)) chunks.add(targetChunk);
@@ -320,6 +325,11 @@ public class VillageWallEvents {
                         job.lastLogAt = now;
                         WitcheryMod.LOGGER.info("[VillageWalls] Waiting for requested wall chunk batch at {}: {}/{} requested ready ({} total).",
                                 job.start.getBoundingBox(), readyRequested, job.ticketCursor, job.chunks.size());
+                    }
+                    if (job.ticketChunks && now - job.lastProgressAt > WALL_JOB_STUCK_CHUNK_SKIP_TICKS
+                            && dropFirstMissingRequestedChunk(level, job, 0, job.ticketCursor, now,
+                            "requested batch")) {
+                        return false;
                     }
                     if (now - job.lastProgressAt > WALL_JOB_TIMEOUT_TICKS) {
                         WitcheryMod.LOGGER.error("[VillageWalls] Timed out loading requested wall chunk batch at {}: {}/{} ready.",
@@ -367,6 +377,11 @@ public class VillageWallEvents {
                     WitcheryMod.LOGGER.info("[VillageWalls] Waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
                 }
+                if (job.ticketChunks && now - job.lastProgressAt > WALL_JOB_STUCK_CHUNK_SKIP_TICKS
+                        && dropFirstMissingRequestedChunk(level, job, 0, job.chunks.size(), now,
+                        "final readiness")) {
+                    return false;
+                }
                 if (job.lastProgressAt > 0 && now - job.lastProgressAt > WALL_JOB_TIMEOUT_TICKS) {
                     WitcheryMod.LOGGER.error("[VillageWalls] Timed out waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
@@ -410,6 +425,26 @@ public class VillageWallEvents {
             if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) ready++;
         }
         return ready;
+    }
+
+    private static boolean dropFirstMissingRequestedChunk(ServerLevel level, WallJob job, int from, int to,
+                                                          long now, String stage) {
+        int end = Math.min(to, job.chunks.size());
+        for (int i = Math.max(0, from); i < end; i++) {
+            ChunkPos cp = job.chunks.get(i);
+            if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) continue;
+
+            level.getChunkSource().updateChunkForced(cp, false);
+            job.chunks.remove(i);
+            if (i < job.ticketCursor) job.ticketCursor--;
+            job.lastProgressAt = now;
+            job.lastLogAt = now;
+            job.lastReadyCount = readyChunkCount(level, job.chunks, 0, job.ticketCursor);
+            WitcheryMod.LOGGER.warn("[VillageWalls] Dropped stuck wall chunk {} during {} for {}; continuing with {} chunk(s).",
+                    cp, stage, job.start.getBoundingBox(), job.chunks.size());
+            return true;
+        }
+        return false;
     }
 
     private static boolean queueAutomaticGeneration(ServerLevel level, PendingWall pending, StructureStart start) {
@@ -482,8 +517,11 @@ public class VillageWallEvents {
     }
 
     private static List<ChunkPos> wallJobChunks(StructureStart start) {
+        return wallJobChunks(start, FORCE_LOAD_PADDING_BLOCKS);
+    }
+
+    private static List<ChunkPos> wallJobChunks(StructureStart start, int pad) {
         BoundingBox bb = start.getBoundingBox();
-        int pad = FORCE_LOAD_PADDING_BLOCKS;
         int minCX = (bb.minX() - pad) >> 4, maxCX = (bb.maxX() + pad) >> 4;
         int minCZ = (bb.minZ() - pad) >> 4, maxCZ = (bb.maxZ() + pad) >> 4;
         LinkedHashSet<ChunkPos> chunks = new LinkedHashSet<>();
@@ -493,6 +531,32 @@ public class VillageWallEvents {
             }
         }
         return new ArrayList<>(chunks);
+    }
+
+    private static List<ChunkPos> wallJobTicketChunks(StructureStart start, BlockPos focus) {
+        List<ChunkPos> chunks = wallJobChunks(start, FORCE_LOAD_TICKET_PADDING_BLOCKS);
+        ChunkPos focusChunk = new ChunkPos(focus);
+        chunks.sort(Comparator
+                .comparingLong((ChunkPos cp) -> chunkDistanceSqr(cp, focusChunk))
+                .thenComparingInt(cp -> cp.x)
+                .thenComparingInt(cp -> cp.z));
+        if (chunks.size() <= WALL_JOB_FORCED_CHUNK_CAP) {
+            return chunks;
+        }
+        List<ChunkPos> capped = new ArrayList<>(chunks.subList(0, WALL_JOB_FORCED_CHUNK_CAP));
+        WitcheryMod.LOGGER.info("[VillageWalls] Limiting forced wall chunk tickets for {} from {} to {} nearest chunks.",
+                start.getBoundingBox(), chunks.size(), capped.size());
+        return capped;
+    }
+
+    private static long chunkDistanceSqr(ChunkPos a, ChunkPos b) {
+        long dx = a.x - (long) b.x;
+        long dz = a.z - (long) b.z;
+        return dx * dx + dz * dz;
+    }
+
+    private static BlockPos boundingBoxCenter(BoundingBox bb) {
+        return new BlockPos((bb.minX() + bb.maxX()) / 2, 64, (bb.minZ() + bb.maxZ()) / 2);
     }
 
     // ── Chunk force-loading ────────────────────────────────────────────────────

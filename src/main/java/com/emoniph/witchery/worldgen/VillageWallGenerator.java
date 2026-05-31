@@ -51,6 +51,9 @@ public final class VillageWallGenerator {
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
     private static final int GUARD_SPACING = 200; // wall blocks between guard spawns
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
+    private static final int GATE_PATH_OUTWARD_MAX = 10;
+    private static final int GATE_PATH_INWARD_MAX = 10;
+    private static final int GATE_PATH_SAMPLE_OUTWARD = 4;
     // Morphological dilation applied to the village footprint before perimeter detection.
     // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
     // the wall traces a smoother, more regularised contour (see reference: contour
@@ -488,7 +491,7 @@ public final class VillageWallGenerator {
                                          int ddx, int ddz, boolean desert) {
         int idx = -ddx, idz = -ddz; // inward (toward the village)
         long sum = 0; int n = 0;
-        for (int t = -4; t <= 40; t++) { // t<0 = outside the wall, t>0 = inside
+        for (int t = -GATE_PATH_SAMPLE_OUTWARD; t <= GATE_PATH_INWARD_MAX; t++) { // t<0 = outside the wall, t>0 = inside
             int ix = cwx + idx * t, iz = cwz + idz * t;
             if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) continue;
             int gy = groundHeight(level, ix, iz);
@@ -696,8 +699,8 @@ public final class VillageWallGenerator {
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, 10, false, pathBlock, brick, desert);
-            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, 40, true, pathBlock, brick, desert);
+            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, pathBlock, brick, desert);
+            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, pathBlock, brick, desert);
         }
     }
 
