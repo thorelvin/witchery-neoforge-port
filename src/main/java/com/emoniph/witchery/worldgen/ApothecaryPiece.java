@@ -1,7 +1,5 @@
 package com.emoniph.witchery.worldgen;
 
-import com.emoniph.witchery.entity.CovenWitchEntity;
-import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,7 +8,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -31,8 +32,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * Source-shaped 9x9x6 village apothecary.
- * Front door at local X=1, Z=0. Keeps the current Coven Witch shopkeeper until
- * a dedicated Apothecary villager/profession is restored.
+ * Front door at local X=1, Z=0. Spawns a librarian-skinned Apothecary villager
+ * with the source trade list.
  */
 public class ApothecaryPiece extends StructurePiece {
 
@@ -142,13 +143,14 @@ public class ApothecaryPiece extends StructurePiece {
                 boundingBox.minZ() + 2);
         if (!box.isInside(spawnPos)) return;
 
-        CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
-        if (witch != null) {
-            witch.setPersistenceRequired();
-            witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            witch.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
+        Villager villager = EntityType.VILLAGER.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+        if (villager != null) {
+            villager.setPersistenceRequired();
+            villager.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+            villager.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                     EntitySpawnReason.STRUCTURE, null);
-            level.addFreshEntityWithPassengers(witch);
+            ApothecaryVillager.configure(villager, level);
+            level.addFreshEntityWithPassengers(villager);
         }
     }
 
