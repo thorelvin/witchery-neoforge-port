@@ -42,8 +42,11 @@ import java.util.Set;
 public final class VillageWallGenerator {
 
     private static final int WALL_HEIGHT   = 8;   // blocks above surface
-    private static final int PADDING       = 10;  // extra space outside village edge
-    private static final int MAX_GRID      = 240; // abort if village is too large
+    // PADDING must exceed SMOOTH + BLOCK (see step 3c) so the coarse-hull blocks can never
+    // reach the grid border; if the INTERIOR touches the edge the flood-fill cannot mark
+    // OUTSIDE there and that side is left unwalled.
+    private static final int PADDING       = 18;  // extra space outside village edge
+    private static final int MAX_GRID      = 260; // abort if village is too large
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
     private static final int GUARD_SPACING = 200; // wall blocks between guard spawns
     // Morphological dilation applied to the village footprint before perimeter detection.
@@ -406,26 +409,30 @@ public final class VillageWallGenerator {
             }
         }
 
-        // Phase 2: find road tips, trace to wall.
-        // Vanilla streets mix in occasional plain dirt / coarse dirt / gravel between the
-        // DIRT_PATH blocks, so the path map has small gaps. We bridge gaps up to ROAD_GAP
-        // cells when deciding whether a run "comes from behind" or "continues ahead". This
-        // keeps a dotted path treated as one continuous run (no false tip at a dirt spot,
-        // and the true tip near the wall is still found) without matching farmland/farm dirt
-        // (which is never within ROAD_GAP of a DIRT_PATH along a single axis run).
+        // Phase 2: find the END of each MAIN STREET and trace it through the wall.
+        //
+        // A gate must come from an actual street exiting the village, not from every road
+        // cell. The road network has many short fragments and plaza/junction edges; treating
+        // each as a tip marks gates all around the wall. So a cell only qualifies as a street
+        // end in direction (dir) when:
+        //   • a long straight run of road (>= MIN_RUN) leads up to it from behind (-dir),
+        //     bridging small dirt/gravel gaps (ROAD_GAP) — i.e. it's the end of a real street;
+        //   • the street does NOT continue ahead (no road within ROAD_GAP in +dir).
+        // The street's trajectory is then extended straight ahead through the interior to the
+        // nearest WALL cell, which becomes the gate.
         final int ROAD_GAP = 3;
+        final int MIN_RUN  = 5;
         int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
         for (int x = 1; x < w - 1; x++) {
             for (int z = 1; z < d - 1; z++) {
                 if (!road[x][z]) continue;
                 for (int[] dir : dirs) {
-                    // Road must genuinely come from behind (within the gap tolerance)…
-                    if (!roadWithin(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP)) continue;
-                    // …and genuinely END here (no road within the gap tolerance ahead).
+                    // Long straight street leading up to this cell from behind?
+                    if (roadRun(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP, 40) < MIN_RUN) continue;
+                    // Street ends here (does not continue ahead)?
                     if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue;
 
-                    // This cell is the tip of a road run pointing in (dir).
-                    // Extend the road's trajectory through the wall.
+                    // Extend the street straight ahead through the interior to the wall.
                     for (int depth = 1; depth < Math.max(w, d); depth++) {
                         int nx = x + dir[0] * depth, nz = z + dir[1] * depth;
                         if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
@@ -447,6 +454,23 @@ public final class VillageWallGenerator {
             if (road[nx][nz]) return true;
         }
         return false;
+    }
+
+    /**
+     * Counts how many road cells lie along direction (dx,dz) from (x,z), bridging gaps of
+     * up to {@code gap} non-road cells (so a dotted street still counts as continuous).
+     * Stops after {@code max} steps or when a gap longer than {@code gap} is hit.
+     */
+    private static int roadRun(boolean[][] road, int x, int z, int dx, int dz,
+                                int w, int d, int gap, int max) {
+        int count = 0, miss = 0, cx = x, cz = z;
+        for (int s = 0; s < max; s++) {
+            cx += dx; cz += dz;
+            if (cx < 0 || cz < 0 || cx >= w || cz >= d) break;
+            if (road[cx][cz]) { count++; miss = 0; }
+            else if (++miss > gap) break;
+        }
+        return count;
     }
 
     /** Expand each GATE cell ±2 cells along the wall run for a 5-wide gate. */
