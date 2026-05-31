@@ -31,7 +31,7 @@ Five implementation lanes — work one bounded slice at a time per lane:
 
 2. **Vampire / Werewolf progression** — Elle/Lilith chain ✅ ported. Remaining: Blood Crucible/Blood Power, Resist Sun, Zombie Respect, exact werewolf Wolf Altar quests, Moon Charm form, Horn of Hunt/Huntsman step, actual vampire villager/entity conversion, cure rite, levels 8–10 full gates. Source: `ExtendedPlayer.java`, `Shapeshift.java`, infusion package, `EntityVampire.java`, `EntityWolfman.java`, `EntityVillagerWere.java`.
 
-3. **Village / mobs / bosses / structures** - major recent progress: Village Guard, Wolfman/WereVillager, Vampire, Baba Yaga, Leonard/Lost Souls, Gulg/Mog, village apothecary/bookshop/witch hut injection, Watch Tower, Keep, first-pass town walls, first-pass Coven Circle, and first-pass Straw Man are live. Next village slice: fresh-village QA for walls/buildings. Broader remaining structure/entity parity: Coven Circle/Straw Man fresh-world QA, Stone Circle naming, Minedrake, illusion mobs, summoned undead, Baba Yaga hut, and later Witch Forest additive work.
+3. **Village / mobs / bosses / structures** - major recent progress: Village Guard, Wolfman/WereVillager, Vampire, Baba Yaga, Leonard/Lost Souls, Gulg/Mog, village apothecary/bookshop/witch hut injection, Watch Tower, Keep, first-pass town walls, first-pass Coven Circle, and first-pass Straw Man are live. Next village slice: fresh-village QA for walls/buildings. Broader remaining structure/entity parity: Coven Circle/Straw Man fresh-world QA, Stone Circle naming, Minedrake, illusion mobs, summoned undead, any optional/non-source Baba Yaga hut decision, and later Witch Forest additive work.
 
 4. **Machines / storage exactness** — hopper QA for Kettle/Oven/Distillery/Spinning Wheel/Brazier; Silver Vat furnace/hopper QA; any remaining source-behavior edge cases.
 
@@ -248,18 +248,18 @@ Files:
 
 ### 4e. Entity backlog — 1.7.10 missing entities
 
-The 1.7.10 decompiled source has 46+ entity classes. The port currently registers 27-28. These are confirmed missing:
+The 1.7.10 decompiled source has 46+ entity classes. This tracking table lists the source-confirmed entity parity backlog; struck-through rows are already ported and registered in the current repo:
 
 | Entity class | Description | Priority |
 |---|---|---|
 | ~~`EntityLilith`~~ | ~~Lilith vampire patron~~ | ✅ Done — `LilithEntity` + `ElleEntity` ported |
 | ~~`EntityLeonard`~~ | ~~Shade of Leonard boss~~ | ✅ Done — `LeonardEntity` ported |
 | ~~`EntityLostSoul`~~ | ~~Leonard immunity phase mob~~ | ✅ Done — `LostSoulEntity` ported |
-| `EntityBabaYaga` | Baba Yaga boss | High — boss chain |
+| ~~`EntityBabaYaga`~~ | ~~Baba Yaga boss~~ | ✅ Done — `BabaYagaEntity` ported; boss QA/reward polish remains in entity QA, not missing registration |
 | ~~`EntityVillageGuard`~~ | ~~Village Guard~~ | ✅ Done — `VillageGuardEntity` ported, design locked |
-| `EntityVampire` | Vampire mob (player vampirism is separate) | Medium — vampire lane |
-| `EntityWolfman` | Standalone werewolf entity | Medium — werewolf chain / Wolftrap dep |
-| `EntityVillagerWere` | Were-villager | Medium — werewolf chain |
+| ~~`EntityVampire`~~ | ~~Vampire mob (player vampirism is separate)~~ | ✅ Done — `VampireEntity` ported; conversion/cure/quest parity remains in vampire progression |
+| ~~`EntityWolfman`~~ | ~~Standalone werewolf entity~~ | ✅ Done — `WolfmanEntity` ported; Wolftrap wiring remains a separate item |
+| ~~`EntityVillagerWere`~~ | ~~Were-villager~~ | ✅ Done — `WereVillagerEntity` ported |
 | `EntityGoblin` | Base goblin | Medium — goblin/village chain |
 | ~~`EntityGoblinGulg`~~ | ~~Gulg goblin boss~~ | ✅ Done — `GoblinGulgEntity` ported |
 | ~~`EntityGoblinMog`~~ | ~~Mog goblin boss~~ | ✅ Done — `GoblinMogEntity` ported |
@@ -403,7 +403,7 @@ A focused source-behavior restore pass across 32 commits:
 
 ## Deferred (do not implement unless asked)
 
-- Village additions beyond the current live village slice: Coven Circle/Straw Man fresh-world QA, Stone Circle naming, Baba Yaga hut, and broader Witch Forest structures
+- Village additions beyond the current live village slice: Coven Circle/Straw Man fresh-world QA, Stone Circle naming, any optional/non-source Baba Yaga hut decision, and broader Witch Forest structures
 - Werewolf player model full replacement
 - Flowing Spirit as proper fluid (currently plain block)
 - Manifestation ghost rendering / style polish

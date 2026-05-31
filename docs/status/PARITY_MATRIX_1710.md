@@ -252,17 +252,17 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | soulfire (projectile) | ✅ Done | |
 | thrown_brew (projectile) | ✅ Done | |
 | sun_grenade (projectile) | ✅ Done | |
-| **EntityLilith** | ❌ Missing | Vampire patron boss — required for vampire progression level-up chain |
-| **EntityLeonard** | ❌ Missing | Shade of Leonard boss — custom brew summon, Mortal Coil, Lost Souls immunity phase |
-| **EntityLostSoul** | ❌ Missing | Leonard immunity-phase mob |
-| **EntityBabaYaga** | ❌ Missing | Boss; Baba Yaga hut structure dependency |
+| ~~**EntityLilith**~~ | ✅ Done | `LilithEntity` + `ElleEntity` are registered/ported; remaining late vampire gates belong to the progression lane, not missing entity parity |
+| ~~**EntityLeonard**~~ | ✅ Done | `LeonardEntity` registered/ported with custom boss behavior; exact brew summon wiring remains in the dynamic cauldron lane |
+| ~~**EntityLostSoul**~~ | ✅ Done | `LostSoulEntity` registered/ported as Leonard's immunity-phase mob |
+| ~~**EntityBabaYaga**~~ | ✅ Done | `BabaYagaEntity` registered/ported as 500 HP boss with renderer, spawn egg, and spawn command; local 1.7.10 scan found no source hut generator |
 | ~~**EntityVillageGuard**~~ | ✅ Done | `VillageGuardEntity` — 25 HP, iron sword, 4 armour; targets undead/raiders/vampires/witches/demonic mobs and vampire/werewolf players; neutral to normal players; 2 variants |
-| **EntityVampire** | ❌ Missing | Vampire mob (separate from player vampirism) |
+| ~~**EntityVampire**~~ | ✅ Done | `VampireEntity` registered/ported; villager conversion/cure/level gates remain in vampire progression |
 | ~~**EntityWolfman**~~ | ✅ Done | `WolfmanEntity` — 40 HP, silver weakness, moon reversion to WereVillager; WolfmanModel (64×64) |
 | ~~**EntityVillagerWere**~~ | ✅ Done | `WereVillagerEntity` — peaceful mob, full-moon transforms to WolfmanEntity |
 | **EntityGoblin** | ❌ Missing | Base trading/labor goblin |
-| **EntityGoblinGulg** | ❌ Missing | Gulg boss |
-| **EntityGoblinMog** | ❌ Missing | Mog boss |
+| ~~**EntityGoblinGulg**~~ | ✅ Done | `GoblinGulgEntity` registered/ported; reward/patron in-game QA remains |
+| ~~**EntityGoblinMog**~~ | ✅ Done | `GoblinMogEntity` registered/ported; reward/patron in-game QA remains |
 | **EntityHellhound** | ❌ Missing | Infernal mob |
 | **EntityMindrake** | ❌ Missing | Mindrake mob (crop → mob) |
 | **EntityIllusionCreeper/Spider/Zombie** | ❌ Missing | Illusion mob variants (3 entities) |
@@ -272,7 +272,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | **EntityEye** | ❌ Missing | Eye mob |
 | **EntityAttackBat** | ❌ Missing | Attack bat entity |
 | **EntityWitchCat** (wild) | ❌ Missing | Wild witch cat (different from familiar_cat) |
-| **EntityBolt** | ❌ Missing | Source bolt projectile (crossbow/hand bow) |
+| **EntityBolt** | 🔶 Partial | `BoltEntity` is registered and live for wooden/silver handbow shots; source bolt types 1-3 (draining/powered/holy) still need exact behavior |
 | **EntitySpellEffect** | ❌ Missing | Spell visual effect entity |
 
 ---
@@ -424,7 +424,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Coven Circle / Stone Circle worldgen | Partial | `witchery:coven_circle` is registered with a source-inspired 11x4x11 `ComponentCoven` ring, hidden mineshaft-loot dispenser, two vanilla Witch spawners under the altar, source 90% Coven Witch resident spawn chance, center/corner water rejection, village exclusion, and desert/badlands-only sandstone variant. Stone Circle naming/details and fresh-world QA remain open. |
 | Straw Man / Wicker Man worldgen | Partial | `witchery:straw_man` is registered from source `ComponentWickerMan`: 6x8x5 hay effigy, grass/sand footprint, dandelion/dead-bush biome plants, hidden Zombie/Zombie/Skeleton spawner, water rejection, village exclusion, and `/witchery goto straw_man`. Fresh-world QA remains open. |
 | Goblin structures | ❌ Missing | Source: `WorldGenGoblinHut` |
-| Baba Yaga hut | ❌ Missing | Source: `WorldGenBabaYagaHut` |
+| Baba Yaga hut | Deferred / not source-backed | Local 1.7.10 source scan found `EntityBabaYaga`, predictions, model/renderer, and no `WorldGenBabaYagaHut` or `ComponentBabaYagaHut`. Do not treat as canonical 1.7.10 parity unless another source is found. |
 | Witch Hut (Witchery-specific) | ❌ Missing | Source: `WorldGenWitchHut` |
 
 ---
@@ -435,15 +435,15 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 1. **Blood Crucible block** — gates the entire vampire level progression system
 2. **Dynamic cauldron brew action system** — gates Brew Bag, Leonard summon, ~60 missing brews
-3. **EntityLilith** — gates vampire level-up chain completion
-4. **EntityWolfman** — gates Wolftrap entity-backed summon/capture (currently blocked)
+3. **Late vampire progression gates** — Blood Crucible/Blood Power, level storage, conversion/cure, levels 8-10
+4. **Wolftrap entity-backed summon/capture** — `WolfmanEntity` exists; trap wiring still needs source behavior
 
 ### High value (large surface area)
 
 5. **Creature Powers + Mystic Branch symbol system** — 14 creature power types, none working
 6. **10-level vampire progression** (Blood Crucible → level storage → ability gates)
 7. **10-level werewolf progression** (Wolf Altar quest chain → Moon Charm)
-8. **EntityLeonard + EntityLostSoul** — boss chain, requires custom brew summon action
+8. **Leonard summon integration** — `LeonardEntity`/`LostSoulEntity` exist; custom brew summon action still missing
 9. **MobEffect registrations** (PotionMortalCoil, PotionGrotesque, PotionParalysis, etc.)
 10. **~25 missing rituals** — especially Creatures of the Night (vampire induction gate)
 
@@ -453,9 +453,9 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 12. Stockade blocks (2 blocks)
 13. Shaded glass (2 block states)
 14. Blood Crucible item + recipe
-15. EntityBabaYaga + hut worldgen
-16. EntityVillageGuard + village structure gen
-17. Goblin entity family (EntityGoblin / Gulg / Mog)
+15. Baba Yaga boss in-game QA / non-source hut decision
+16. Fresh village structure QA for guards, walls, watch towers, keeps, bookshops, apothecaries, and witch huts
+17. Goblin entity family (`EntityGoblin` base remains; Gulg/Mog bosses are ported)
 18. Illusion entity family (3 entities)
 19. EntitySummonedUndead (Brew of Raising dep)
 20. Cursed redstone family (7 blocks — low gameplay impact)
