@@ -90,10 +90,12 @@ public class CovenCirclePiece extends StructurePiece {
                                      : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
         BlockState altar  = Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
         BlockState air    = Blocks.AIR.defaultBlockState();
-        // COARSE_DIRT: prevents vegetation from growing inside the circle post-generation.
-        // SAND in desert (same as before — sand also blocks vegetation).
+        // Source ComponentCoven uses grass as the visible non-desert surface and
+        // dirt only as underground support. Avoid the raised coarse-dirt pad look.
         BlockState floorState = isDesert ? Blocks.SAND.defaultBlockState()
-                                         : Blocks.COARSE_DIRT.defaultBlockState();
+                                         : Blocks.GRASS_BLOCK.defaultBlockState();
+        BlockState supportState = isDesert ? Blocks.SAND.defaultBlockState()
+                                           : Blocks.DIRT.defaultBlockState();
 
         // ── Clear interior (source: func_74878_a cross pattern) ───────────────
         generateBox(level, box, 3, 1, 0,  7, 3, 10, air, air, false);
@@ -196,10 +198,10 @@ public class CovenCirclePiece extends StructurePiece {
         placeBlock(level, brick, 0, 3,  6, box);
         placeBlock(level, brick, 1, 3,  7, box);
 
-        // ── Foundation downward ───────────────────────────────────────────────
+        // ── Foundation downward (source undergroundID: dirt or sand) ─────────
         for (int fx = 0; fx <= 10; fx++) {
             for (int fz = 0; fz <= 10; fz++) {
-                fillColumnDown(level, stone, fx, -1, fz, box);
+                fillColumnDown(level, supportState, fx, -1, fz, box);
             }
         }
 
