@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-05-28
+Last updated: 2026-05-31
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -62,6 +62,7 @@ Priority mechanics checklist:
 
 Current entity verification note:
 - Village wall/building QA should be run on fresh or newly generated plains, desert, savanna, taiga, and snowy villages. Confirm Witchery apothecaries, bookshops, village witch huts, watch towers, and keeps can attach to vanilla streets with the rebalanced weights; confirm adaptive walls generate once per village without artificial delay, leave 2-3 road-aligned gate openings, do not place under water, grade hilly gate approaches without burying paths, use desert sandstone path material only for desert/badlands, keep savanna on dirt/stone materials, hide gate/path support fill with matching gatehouse blocks, spawn guards on wall tops, and no longer freeze the client when `/witchery goto village_*` is used after the 5x5 arrival preload / 30 second cooldown changes.
+- Coven Circle QA should be run in fresh plains, desert, savanna, and badlands terrain. Confirm `witchery:coven_circle` rejects water, keeps the 11x4x11 old `ComponentCoven` footprint, places its loot chest/kettle/standing-stone ring/Coven Witch, uses grass/dirt with cobble/stone-brick materials in savanna and other non-desert biomes, and switches to sand/sandstone only in actual desert/badlands.
 - Sleeping Apple and Brew of Sleeping should be retested against the Spirit World entry roll: use each item in the Overworld while not already spirit-walking or manifested, confirm entry still refuses recursive/wrong-dimension use, confirm Apple starts from the old guaranteed nightmare chance, and confirm Brew starts from the old `0.998` chance that nearby Nightmare-weave Dream Catcher setups can still modify.
 - Broom flight should be retested specifically for the old snap-back symptom and the rider-facing visual yaw after the 2026-05-25 server-authority/render-state follow-ups: mount via item or `/witchery spawn broom`, fly forward and upward for more than several seconds, turn the rider in place and while moving, and confirm the broom no longer returns toward its placement point while preserving pitch lift, Soaring/Owl speed bonuses, and player-facing model rotation.
 - Witch Hunter aggro should be retested after the target-parity pass: spawn a hunter near a Coven Witch, undead mob, Demon/Blaze-style demonic target, a future entity type tagged `witchery:vampires`, and a player carrying a Voodoo or Vampiric Poppet, then confirm it selects valid supernatural targets without attacking ordinary players.

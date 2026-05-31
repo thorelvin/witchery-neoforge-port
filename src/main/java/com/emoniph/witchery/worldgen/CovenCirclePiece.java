@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -225,7 +227,6 @@ public class CovenCirclePiece extends StructurePiece {
 
     private static boolean isDesertBiome(WorldGenLevel level, int x, int z) {
         net.minecraft.core.Holder<Biome> biome = level.getBiome(new BlockPos(x, 64, z));
-        return biome.is(net.minecraft.tags.BiomeTags.IS_BADLANDS) ||
-               biome.value().getBaseTemperature() > 1.5f;
+        return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
     }
 }

@@ -421,7 +421,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Mirror World | 🔶 Partial | Portal loop, room generator, Reflection guardian; room QA with fresh world needed |
 | Rowan tree worldgen | ✅ Done | Placed in biomes |
 | Village additions (Bookshop, Guard Tower, Town Wall) | Partial | Village Guard, apothecary/bookshop/witch-hut village injection, Watch Tower, Keep, and first-pass adaptive town walls are live. Cross-biome fresh-village wall/building QA remains open, especially structure distribution, savanna materials, gate support fill, and immediate wall generation. |
-| Stone Circle / Coven Circle worldgen | ❌ Missing | Source: `WorldGenWitchCircle` |
+| Coven Circle / Stone Circle worldgen | Partial | `witchery:coven_circle` is registered with a source-inspired 11x4x11 `ComponentCoven` ring, book/ritual loot chest, Coven Witch spawn, water rejection, village exclusion, and desert/badlands-only sandstone variant. Exact old vanilla Witch spawners/dispenser loot, Stone Circle naming/details, and fresh-world QA remain open. |
 | Straw Man | ❌ Missing | Source: `WorldGenStrawMan` |
 | Goblin structures | ❌ Missing | Source: `WorldGenGoblinHut` |
 | Baba Yaga hut | ❌ Missing | Source: `WorldGenBabaYagaHut` |
