@@ -99,11 +99,15 @@ public class WitcheryBlocks {
                     props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noOcclusion().friction(0.98f)),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<PressurePlateBlock> ICE_PRESSURE_PLATE = BLOCKS.registerBlock("ice_pressure_plate",
-            props -> new PressurePlateBlock(BlockSetType.IRON, props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noCollision().friction(0.98f)),
+            props -> new PerpetualIcePressurePlateBlock(BlockSetType.IRON,
+                    props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(2.0f, 5.0f)
+                            .noCollision().friction(0.98f),
+                    true),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<PressurePlateBlock> SNOW_PRESSURE_PLATE = BLOCKS.registerBlock("snow_pressure_plate",
-            props -> new PressurePlateBlock(BlockSetType.OAK,
-                    props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noCollision()),
+            props -> new PerpetualIcePressurePlateBlock(BlockSetType.OAK,
+                    props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noCollision(),
+                    false),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<StairBlock> SNOW_STAIRS = BLOCKS.registerBlock("snow_stairs",
             props -> new StairBlock(net.minecraft.world.level.block.Blocks.SNOW_BLOCK.defaultBlockState(),
