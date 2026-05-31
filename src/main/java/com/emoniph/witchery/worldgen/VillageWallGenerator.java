@@ -575,12 +575,12 @@ public final class VillageWallGenerator {
         int extra = corner ? 2 : 0;
         int top = sy + WALL_HEIGHT + extra;
 
-        // Base: 2 courses of stone brick
-        setBlock(level, wx, sy,     wz, brick);
-        setBlock(level, wx, sy + 1, wz, brick);
-        // Main shaft
+        // Base: 2 courses of stone brick (stone if submerged)
+        placeWallMat(level, wx, sy,     wz, brick);
+        placeWallMat(level, wx, sy + 1, wz, brick);
+        // Main shaft (stone if submerged)
         for (int dy = 2; dy < WALL_HEIGHT - 1 + extra; dy++)
-            setBlock(level, wx, sy + dy, wz, wall);
+            placeWallMat(level, wx, sy + dy, wz, wall);
         // Cap course: stone brick
         setBlock(level, wx, top - 1, wz, brick);
 
@@ -591,13 +591,9 @@ public final class VillageWallGenerator {
             if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
-        // Extend the curtain down to the lowest neighbour so cliff steps stay connected.
-        // Below the water line use stone (hidden foundation) instead of wall material, so the
-        // wall never shows blocks under water.
-        for (int y = sy - 1; y >= floorTo; y--) {
-            boolean underwater = level.getBlockState(new BlockPos(wx, y, wz)).liquid();
-            setBlock(level, wx, y, wz, underwater ? Blocks.STONE.defaultBlockState() : wall);
-        }
+        // Extend the curtain down to the lowest neighbour so cliff steps stay connected
+        // (stone wherever submerged, via placeWallMat).
+        for (int y = sy - 1; y >= floorTo; y--) placeWallMat(level, wx, y, wz, wall);
         fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, Blocks.STONE.defaultBlockState());
     }
 
@@ -648,19 +644,42 @@ public final class VillageWallGenerator {
             }
         }
 
-        // Path through the 3 opening lanes. Start beyond the gate footprint (|depth|<=1) so
-        // layPath never samples the arch roof: outward from depth -2, inward from depth +2.
+        // Path through the 3 opening lanes — GRADED so a hill outside can't block the gate.
+        // Starts from the gate's outer/inner edge cell (depth ±1, floor refY-1) and ramps to
+        // the terrain at most 1 block per cell, cutting headroom so there is never a dirt face
+        // across the opening. Inward stops when it meets the existing village road.
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            for (int t = 2; t <= 7; t++) layPath(level, bx + oDX * t, bz + oDZ * t, pathBlock);
-            for (int t = 2; t <= 40; t++) {
-                int ix = bx + g.inDX() * t, iz = bz + g.inDZ() * t;
-                if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
-                int gy = groundHeight(level, ix, iz);
-                if (isVillageRoad(level.getBlockState(new BlockPos(ix, gy - 1, iz)), desert)) break;
-                layPath(level, ix, iz, pathBlock);
+            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, 10, false, pathBlock, desert);
+            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, 40, true, pathBlock, desert);
+        }
+    }
+
+    /**
+     * Lays a graded path from a start cell in direction (dx,dz): the floor ramps toward the
+     * natural ground at most 1 block per cell, headroom is cleared above (cutting through
+     * rising terrain so a hill can't wall off the gate), and any gap below is filled. If
+     * {@code stopAtRoad}, it ends once it reaches an existing village road.
+     */
+    private static void gradePath(ServerLevel level, int startWX, int startWZ, int dx, int dz,
+                                   int startFloorY, int maxLen, boolean stopAtRoad,
+                                   BlockState pathBlock, boolean desert) {
+        int floorY = startFloorY;
+        for (int t = 1; t <= maxLen; t++) {
+            int ix = startWX + dx * t, iz = startWZ + dz * t;
+            if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
+            int natural = groundHeight(level, ix, iz) - 1; // natural surface block Y
+            if (stopAtRoad && isVillageRoad(level.getBlockState(new BlockPos(ix, natural, iz)), desert)) break;
+            if (natural > floorY) floorY++;
+            else if (natural < floorY) floorY--;
+            forceSet(level, ix, floorY, iz, pathBlock);                         // path surface
+            for (int dy = 1; dy <= 4; dy++) {                                   // cut headroom
+                BlockPos p = new BlockPos(ix, floorY + dy, iz);
+                BlockState bs = level.getBlockState(p);
+                if (!bs.isAir() && !bs.liquid()) level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             }
+            fillDown(level, ix, floorY - 1, iz, Blocks.STONE.defaultBlockState()); // support if floating
         }
     }
 
@@ -751,18 +770,30 @@ public final class VillageWallGenerator {
     }
 
     /**
-     * Wall base Y. Same as {@link #groundHeight} on land, but over water it returns the
-     * water-surface level so the wall sits at sea level; {@link #fillDown} then bridges the
-     * water column down to the sea floor with stone.
+     * Wall base Y. On land = {@link #groundHeight}; over water = the water-surface level so the
+     * wall sits at sea level (fillDown bridges the water column to the sea floor with stone).
+     * Uses WORLD_SURFACE (top non-air block, which over water is the water surface) for a
+     * robust water-surface read regardless of how groundHeight scanned the column.
      */
     private static int wallBaseHeight(ServerLevel level, int wx, int wz) {
-        int gy = groundHeight(level, wx, wz); // sea floor (groundHeight skips liquids)
-        if (level.getBlockState(new BlockPos(wx, gy, wz)).liquid()) {
-            int y = gy;
-            while (level.getBlockState(new BlockPos(wx, y, wz)).liquid()) y++;
-            return y; // first non-liquid above the water = surface level
-        }
-        return gy;
+        int ground = groundHeight(level, wx, wz);
+        int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz);
+        if (surface > ground && level.getBlockState(new BlockPos(wx, surface - 1, wz)).liquid())
+            return surface; // standing water above the ground → build at the surface
+        return ground;
+    }
+
+    /**
+     * Places wall material, but substitutes STONE wherever the target cell is liquid, so the
+     * wall never shows its facing blocks under water (the submerged part reads as foundation).
+     * Leaves solid village/terrain blocks untouched (same skip rule as {@link #setBlock}).
+     */
+    private static void placeWallMat(ServerLevel level, int x, int y, int z, BlockState wall) {
+        if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return;
+        BlockState ex = level.getBlockState(new BlockPos(x, y, z));
+        if (ex.liquid()) { level.setBlock(new BlockPos(x, y, z), Blocks.STONE.defaultBlockState(), 3); return; }
+        if (!ex.isAir() && !ex.canBeReplaced() && !ex.is(BlockTags.LOGS) && !ex.is(BlockTags.LEAVES)) return;
+        level.setBlock(new BlockPos(x, y, z), wall, 3);
     }
 
     private static byte[][] copyGrid(byte[][] src, int w, int d) {
@@ -790,20 +821,4 @@ public final class VillageWallGenerator {
         return h;
     }
 
-    /**
-     * Lays a DIRT_PATH block at the ground surface of a column and clears 3 blocks
-     * of headroom above it (vegetation / replaceable only). Used to extend the
-     * village road out through a gate so the path visibly leaves the wall.
-     */
-    private static void layPath(ServerLevel level, int wx, int wz, BlockState pathBlock) {
-        if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) return;
-        int gy = groundHeight(level, wx, wz);
-        level.setBlock(new BlockPos(wx, gy - 1, wz), pathBlock, 3);
-        for (int dy = 0; dy < 3; dy++) {
-            BlockPos p = new BlockPos(wx, gy + dy, wz);
-            BlockState bs = level.getBlockState(p);
-            if (!bs.isAir() && (isNaturalVegetation(bs) || bs.canBeReplaced()))
-                level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
-        }
-    }
 }
