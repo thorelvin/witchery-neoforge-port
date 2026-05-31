@@ -16,6 +16,7 @@ public class StrawManStructure extends Structure {
     public static final MapCodec<StrawManStructure> CODEC = simpleCodec(StrawManStructure::new);
     private static final int FOOTPRINT_WIDTH = 6;
     private static final int FOOTPRINT_DEPTH = 5;
+    private static final int TERRAIN_PADDING = 1;
     private static final int MAX_FOOTPRINT_HEIGHT_VARIANCE = 2;
 
     public StrawManStructure(StructureSettings settings) {
@@ -59,8 +60,8 @@ public class StrawManStructure extends Structure {
     }
 
     private static boolean hasDryLandFootprint(GenerationContext ctx, int x, int z) {
-        for (int dx = 0; dx < FOOTPRINT_WIDTH; dx++) {
-            for (int dz = 0; dz < FOOTPRINT_DEPTH; dz++) {
+        for (int dx = -TERRAIN_PADDING; dx < FOOTPRINT_WIDTH + TERRAIN_PADDING; dx++) {
+            for (int dz = -TERRAIN_PADDING; dz < FOOTPRINT_DEPTH + TERRAIN_PADDING; dz++) {
                 int wx = x + dx;
                 int wz = z + dz;
                 if (isOverWater(ctx, wx, wz) || isWaterBiome(ctx, wx, wz)) {
@@ -75,8 +76,8 @@ public class StrawManStructure extends Structure {
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
 
-        for (int dx = 0; dx < FOOTPRINT_WIDTH; dx++) {
-            for (int dz = 0; dz < FOOTPRINT_DEPTH; dz++) {
+        for (int dx = -TERRAIN_PADDING; dx < FOOTPRINT_WIDTH + TERRAIN_PADDING; dx++) {
+            for (int dz = -TERRAIN_PADDING; dz < FOOTPRINT_DEPTH + TERRAIN_PADDING; dz++) {
                 int y = surfaceY(ctx, x + dx, z + dz);
                 minY = Math.min(minY, y);
                 maxY = Math.max(maxY, y);
@@ -92,7 +93,7 @@ public class StrawManStructure extends Structure {
     private static int surfaceY(GenerationContext ctx, int x, int z) {
         return ctx.chunkGenerator().getFirstOccupiedHeight(
                 x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                ctx.heightAccessor(), ctx.randomState()) - 1;
+                ctx.heightAccessor(), ctx.randomState());
     }
 
     private static boolean isWaterBiome(GenerationContext ctx, int x, int z) {
