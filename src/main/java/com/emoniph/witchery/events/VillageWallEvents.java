@@ -53,8 +53,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Generation: queued from chunk load and processed by a wall job. Automatic jobs wait
  * for the padded village footprint to become naturally loaded; manual wall commands can
  * request those chunks in small ticket batches because the player is explicitly waiting.
- * Village goto queues a natural-load wall job and teleports after preparing the arrival
- * chunk, because forced wall tickets can still stall distant chained teleports.
+ * Village goto pre-generates the target village footprint one chunk per tick before
+ * teleporting, because dropping a player into a fresh distant village can leave the
+ * integrated client hanging in an empty arrival chunk while view-distance loading catches up.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -66,6 +67,7 @@ public class VillageWallEvents {
 
     public enum VillageGotoResult {
         NOT_READY,
+        PREPARING,
         TELEPORTED
     }
 
@@ -123,9 +125,29 @@ public class VillageWallEvents {
         }
     }
 
+    private static final class VillageGotoPrepJob {
+        final StructureStart start;
+        final PendingTeleport teleport;
+        final List<ChunkPos> chunks;
+        final boolean generateWalls;
+        final long queuedAt;
+        int cursor;
+        long lastLogAt;
+
+        VillageGotoPrepJob(StructureStart start, PendingTeleport teleport, List<ChunkPos> chunks,
+                           boolean generateWalls, long queuedAt) {
+            this.start = start;
+            this.teleport = teleport;
+            this.chunks = chunks;
+            this.generateWalls = generateWalls;
+            this.queuedAt = queuedAt;
+        }
+    }
+
     private static final ConcurrentLinkedQueue<PendingWall> QUEUE = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<WallJob> JOBS = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<VillageGotoLocateJob> GOTO_LOCATES = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<VillageGotoPrepJob> GOTO_PREPS = new ConcurrentLinkedQueue<>();
     private static final long WALL_GENERATION_DELAY_TICKS = 0L;
     private static final long WALL_GENERATION_RETRY_TICKS = 20L;
     private static final int WALL_GENERATION_MAX_ATTEMPTS = 6;
@@ -140,6 +162,10 @@ public class VillageWallEvents {
     private static final int WALL_JOB_FORCED_CHUNK_CAP = 144;
     private static final int VILLAGE_GOTO_LOCATE_CHUNKS_PER_TICK = 1;
     private static final long VILLAGE_GOTO_LOCATE_LOG_INTERVAL_TICKS = 40L;
+    private static final int VILLAGE_GOTO_PREP_CHUNKS_PER_TICK = 1;
+    private static final int VILLAGE_GOTO_LANDING_CHUNK_RADIUS = 2;
+    private static final long VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS = 40L;
+    private static final long VILLAGE_GOTO_PREP_TIMEOUT_TICKS = 20L * 150L;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -185,6 +211,14 @@ public class VillageWallEvents {
         if (level.dimension() != Level.OVERWORLD) return;
 
         long now = level.getGameTime();
+        VillageGotoPrepJob gotoPrep = GOTO_PREPS.peek();
+        if (gotoPrep != null) {
+            if (processVillageGotoPrepJob(level, gotoPrep, now)) {
+                GOTO_PREPS.poll();
+            }
+            return;
+        }
+
         WallJob job = JOBS.peek();
         if (job != null) {
             if (processWallJob(level, job, now)) {
@@ -243,9 +277,8 @@ public class VillageWallEvents {
     }
 
     /**
-     * Queue village walls for the found destination, then teleport immediately. The
-     * arriving player's normal view-distance load lets the natural wall job finish
-     * without forced chunk tickets blocking the command before teleport.
+     * Queue a controlled destination prep for the found village. The prep job loads the
+     * needed chunks one per tick, generates walls if needed, then teleports the player.
      */
     public static VillageGotoResult queueVillageGoto(ServerLevel level, ServerPlayer player, BlockPos target,
                                                      BlockPos from, String namespace, String structureId) {
@@ -256,13 +289,20 @@ public class VillageWallEvents {
         }
         PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
                 player.getYRot(), player.getXRot(), namespace, structureId);
-        if (VillageWallData.get(level).isProcessed(start.getBoundingBox())) {
-            completeTeleport(level, teleport, true);
-            return VillageGotoResult.TELEPORTED;
-        }
-        queueVillage(level, VillageWallData.get(level), start);
-        completeTeleport(level, teleport, true);
-        return VillageGotoResult.TELEPORTED;
+        boolean processed = VillageWallData.get(level).isProcessed(start.getBoundingBox());
+        List<ChunkPos> chunks = processed
+                ? landingPrepChunks(target)
+                : gotoWallPrepChunks(start, target);
+        GOTO_PREPS.removeIf(job -> job.teleport.playerId().equals(player.getUUID()));
+        GOTO_PREPS.add(new VillageGotoPrepJob(start, teleport, chunks, !processed, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued village arrival prep for {}:{} at {} with {} chunk(s){}.",
+                namespace, structureId, target, chunks.size(), processed ? "" : " and wall generation");
+        player.sendSystemMessage(Component.literal(
+                processed
+                        ? "The hidden paths find a known village. Hold still while the arrival stones settle."
+                        : "The hidden paths find a village. Hold still while its walls rise before the crossing.")
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
+        return VillageGotoResult.PREPARING;
     }
 
     public static boolean queueVillageGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
@@ -319,9 +359,8 @@ public class VillageWallEvents {
             BlockPos found = probeVillageGotoCandidate(level, job.holder, candidate);
             if (found == null) continue;
 
-            int preloaded = preloadVillageGotoDestination(level, found);
-            WitcheryMod.LOGGER.info("[Goto] Safe village locate found {}:{} at {} after {}/{} probe(s); prepared {} chunk(s).",
-                    job.namespace, job.structureId, found, job.cursor, job.candidates.size(), preloaded);
+            WitcheryMod.LOGGER.info("[Goto] Safe village locate found {}:{} at {} after {}/{} probe(s).",
+                    job.namespace, job.structureId, found, job.cursor, job.candidates.size());
 
             VillageGotoResult wallResult = queueVillageGoto(level, player, found, job.from, job.namespace, job.structureId);
             WitcheryMod.LOGGER.info("[Goto] Village wall job for {}:{} at {} -> {}.",
@@ -403,6 +442,62 @@ public class VillageWallEvents {
             return candidate.placement().getLocatePos(start.getChunkPos());
         }
         return null;
+    }
+
+    private static boolean processVillageGotoPrepJob(ServerLevel level, VillageGotoPrepJob job, long now) {
+        ServerPlayer player = level.getServer().getPlayerList().getPlayer(job.teleport.playerId());
+        if (player == null) return true;
+
+        try {
+            int loadedThisTick = 0;
+            while (job.cursor < job.chunks.size() && loadedThisTick < VILLAGE_GOTO_PREP_CHUNKS_PER_TICK) {
+                ChunkPos cp = job.chunks.get(job.cursor++);
+                level.getChunk(cp.x, cp.z, ChunkStatus.FULL, true);
+                loadedThisTick++;
+            }
+
+            if (now - job.lastLogAt >= VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS || job.cursor >= job.chunks.size()) {
+                job.lastLogAt = now;
+                WitcheryMod.LOGGER.info("[Goto] Preparing village arrival at {}:{} for {}: {}/{} chunk(s) ready.",
+                        job.teleport.namespace(), job.teleport.structureId(), job.teleport.target(),
+                        Math.min(job.cursor, job.chunks.size()), job.chunks.size());
+            }
+
+            if (job.cursor < job.chunks.size()) {
+                if (now - job.queuedAt > VILLAGE_GOTO_PREP_TIMEOUT_TICKS) {
+                    WitcheryMod.LOGGER.error("[Goto] Timed out preparing village arrival at {} after {}/{} chunk(s).",
+                            job.teleport.target(), job.cursor, job.chunks.size());
+                    completeTeleport(level, job.teleport, false);
+                    return true;
+                }
+                return false;
+            }
+
+            VillageWallData data = VillageWallData.get(level);
+            if (job.generateWalls && !data.isProcessed(job.start.getBoundingBox())) {
+                StructureStart start = refreshVillageStart(level, job.start);
+                if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
+                    WitcheryMod.LOGGER.info("[Goto] Village start was not ready after arrival prep at {}.",
+                            job.teleport.target());
+                    completeTeleport(level, job.teleport, false);
+                    return true;
+                }
+                WitcheryMod.LOGGER.info("[VillageWalls] Generating walls (goto-prep) for village at {} ({} pieces, {} chunks prepared).",
+                        start.getBoundingBox(), start.getPieces().size(), job.chunks.size());
+                VillageWallGenerator.generate(level, start);
+                data.markProcessed(start.getBoundingBox());
+                WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
+                        start.getBoundingBox());
+            }
+
+            completeTeleport(level, job.teleport, true);
+            return true;
+        } catch (Exception e) {
+            WitcheryMod.LOGGER.error("[Goto] Village arrival prep failed for {}",
+                    job.teleport.target(), e);
+            completeTeleport(level, job.teleport, false);
+            return true;
+        }
     }
 
     private static boolean queueVillage(ServerLevel level, VillageWallData data, StructureStart start) {
@@ -687,12 +782,6 @@ public class VillageWallEvents {
                 + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
-    private static int preloadVillageGotoDestination(ServerLevel level, BlockPos target) {
-        ChunkPos chunk = new ChunkPos(target);
-        level.getChunk(chunk.x, chunk.z, ChunkStatus.FULL, true);
-        return 1;
-    }
-
     private static List<ChunkPos> wallJobChunks(StructureStart start) {
         return wallJobChunks(start, FORCE_LOAD_PADDING_BLOCKS);
     }
@@ -708,6 +797,32 @@ public class VillageWallEvents {
             }
         }
         return new ArrayList<>(chunks);
+    }
+
+    private static List<ChunkPos> landingPrepChunks(BlockPos target) {
+        ChunkPos center = new ChunkPos(target);
+        LinkedHashSet<ChunkPos> chunks = new LinkedHashSet<>();
+        for (int radius = 0; radius <= VILLAGE_GOTO_LANDING_CHUNK_RADIUS; radius++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                boolean zEdge = dz == -radius || dz == radius;
+                for (int dx = -radius; dx <= radius; dx++) {
+                    boolean xEdge = dx == -radius || dx == radius;
+                    if (!zEdge && !xEdge) continue;
+                    chunks.add(new ChunkPos(center.x + dx, center.z + dz));
+                }
+            }
+        }
+        return new ArrayList<>(chunks);
+    }
+
+    private static List<ChunkPos> gotoWallPrepChunks(StructureStart start, BlockPos target) {
+        List<ChunkPos> chunks = wallJobChunks(start);
+        ChunkPos focus = new ChunkPos(target);
+        chunks.sort(Comparator
+                .comparingLong((ChunkPos cp) -> chunkDistanceSqr(cp, focus))
+                .thenComparingInt(cp -> cp.x)
+                .thenComparingInt(cp -> cp.z));
+        return chunks;
     }
 
     private static List<ChunkPos> wallJobTicketChunks(StructureStart start, BlockPos focus) {
