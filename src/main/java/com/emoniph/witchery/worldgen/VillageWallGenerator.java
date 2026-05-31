@@ -129,35 +129,44 @@ public final class VillageWallGenerator {
             }
         }
 
-        // 3c. Orthogonal convex hull: make the footprint row-convex AND column-convex.
-        //     Fill each row from its leftmost to rightmost INTERIOR cell, and each column
-        //     from its topmost to bottommost INTERIOR cell.  The result is an orthogonally
-        //     convex region whose boundary is a staircase of horizontal/vertical runs
-        //     connected by 90° turns — exactly the orthogonal-convex-hull shape we want.
-        //     (Do NOT additionally fill diagonal notches afterwards — that collapses the
-        //      staircase into the bounding box; see note below.)
-        int[] minXrow = new int[d], maxXrow = new int[d];
-        int[] minZcol = new int[w], maxZcol = new int[w];
-        for (int i = 0; i < d; i++) { minXrow[i] = w;  maxXrow[i] = -1; }
-        for (int i = 0; i < w; i++) { minZcol[i] = d;  maxZcol[i] = -1; }
-        for (int x = 0; x < w; x++) {
-            for (int z = 0; z < d; z++) {
-                if (grid[x][z] == INTERIOR) {
-                    if (x < minXrow[z]) minXrow[z] = x;
-                    if (x > maxXrow[z]) maxXrow[z] = x;
-                    if (z < minZcol[x]) minZcol[x] = z;
-                    if (z > maxZcol[x]) maxZcol[x] = z;
-                }
-            }
-        }
-        for (int z = 0; z < d; z++)
-            if (maxXrow[z] >= 0)
-                for (int x = minXrow[z]; x <= maxXrow[z]; x++)
-                    if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
+        // 3c. COARSE orthogonal convex hull: quantise the footprint into BLOCK-sized cells,
+        //     then make that coarse grid row-convex AND column-convex.  Working at coarse
+        //     resolution means the boundary is built from long straight runs joined by big
+        //     90° corners ("several square boxes") instead of a fine 1-cell staircase that
+        //     reads as a 45° line and forces thick terraced walls.  Row+column convexity
+        //     also removes concave pockets along both axes, so the wall only follows the
+        //     outer outline.
+        final int BLOCK = 8;
+        int cw = (w + BLOCK - 1) / BLOCK;
+        int cd = (d + BLOCK - 1) / BLOCK;
+        boolean[][] coarse = new boolean[cw][cd];
         for (int x = 0; x < w; x++)
-            if (maxZcol[x] >= 0)
-                for (int z = minZcol[x]; z <= maxZcol[x]; z++)
-                    if (grid[x][z] == EMPTY) grid[x][z] = INTERIOR;
+            for (int z = 0; z < d; z++)
+                if (grid[x][z] == INTERIOR) coarse[x / BLOCK][z / BLOCK] = true;
+
+        // Orthogonal convex hull on the coarse grid (row-convex + column-convex)
+        int[] cMinX = new int[cd], cMaxX = new int[cd];
+        int[] cMinZ = new int[cw], cMaxZ = new int[cw];
+        java.util.Arrays.fill(cMinX, cw); java.util.Arrays.fill(cMaxX, -1);
+        java.util.Arrays.fill(cMinZ, cd); java.util.Arrays.fill(cMaxZ, -1);
+        for (int cx = 0; cx < cw; cx++)
+            for (int cz = 0; cz < cd; cz++)
+                if (coarse[cx][cz]) {
+                    cMinX[cz] = Math.min(cMinX[cz], cx); cMaxX[cz] = Math.max(cMaxX[cz], cx);
+                    cMinZ[cx] = Math.min(cMinZ[cx], cz); cMaxZ[cx] = Math.max(cMaxZ[cx], cz);
+                }
+        for (int cz = 0; cz < cd; cz++)
+            if (cMaxX[cz] >= 0)
+                for (int cx = cMinX[cz]; cx <= cMaxX[cz]; cx++) coarse[cx][cz] = true;
+        for (int cx = 0; cx < cw; cx++)
+            if (cMaxZ[cx] >= 0)
+                for (int cz = cMinZ[cx]; cz <= cMaxZ[cx]; cz++) coarse[cx][cz] = true;
+
+        // Map the coarse hull back onto the fine grid
+        for (int x = 0; x < w; x++)
+            for (int z = 0; z < d; z++)
+                if (coarse[x / BLOCK][z / BLOCK] && grid[x][z] == EMPTY)
+                    grid[x][z] = INTERIOR;
 
         // NOTE: no interior-corner filling here.  Filling diagonal INTERIOR notches
         // cascades — each fill exposes a new diagonal notch — and zippers the entire
@@ -205,14 +214,13 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++)
                 if (grid[x][z] == OUTSIDE) grid[x][z] = EMPTY;
 
-        // 5b. Orthogonalise diagonal WALL adjacencies (keeps the staircase, removes 45° gaps).
-        //     At a single-cell staircase step the two perimeter WALL cells can be only
-        //     diagonally adjacent, leaving a visual 45° gap. For each such diagonal pair,
-        //     convert the INTERIOR-side shared corner to WALL so the two connect with a 90°
-        //     L instead. Only INTERIOR cells are ever converted (never EMPTY exterior), so
-        //     this cannot cascade outward. Bounded pass count guards against any runaway.
-        for (int pass = 0; pass < 8; pass++) {
-            boolean changed = false;
+        // 5b. Orthogonalise diagonal WALL adjacencies — SINGLE pass only.
+        //     With the coarse hull, diagonal WALL pairs are rare and isolated (they occur
+        //     only where two coarse blocks touch at a corner), so one pass connects them
+        //     with a 90° L by converting the INTERIOR-side shared corner to WALL. A single
+        //     pass cannot thicken straight runs (the previous multi-pass version grew
+        //     diagonal staircases into wide terraced bands).
+        {
             byte[][] snap = copyGrid(grid, w, d);
             for (int x = 1; x < w - 1; x++) {
                 for (int z = 1; z < d - 1; z++) {
@@ -220,14 +228,12 @@ public final class VillageWallGenerator {
                     for (int dx : new int[]{-1, 1}) {
                         for (int dz : new int[]{-1, 1}) {
                             if (snap[x + dx][z + dz] != WALL) continue; // diagonal WALL pair
-                            // The two shared orthogonal corners; convert the INTERIOR one.
-                            if (snap[x + dx][z] == INTERIOR) { grid[x + dx][z] = WALL; changed = true; }
-                            else if (snap[x][z + dz] == INTERIOR) { grid[x][z + dz] = WALL; changed = true; }
+                            if (snap[x + dx][z] == INTERIOR) grid[x + dx][z] = WALL;
+                            else if (snap[x][z + dz] == INTERIOR) grid[x][z + dz] = WALL;
                         }
                     }
                 }
             }
-            if (!changed) break;
         }
 
         // 6. Remove small disconnected wall loops — keep only the largest connected ring.
@@ -510,15 +516,27 @@ public final class VillageWallGenerator {
     private static void placeGatePillar(ServerLevel level, int wx, int sy, int wz,
                                           BlockState wall, BlockState brick, BlockState merlon,
                                           byte[][] grid, int gx, int gz, int w, int d) {
-        boolean isEdge = isGateEdge(grid, gx, gz, -1, 0, w, d)
-                      || isGateEdge(grid, gx, gz,  1, 0, w, d)
-                      || isGateEdge(grid, gx, gz, 0, -1, w, d)
-                      || isGateEdge(grid, gx, gz, 0,  1, w, d);
-
-        // Determine which cardinal direction is "inward" (toward the village interior).
-        // The gate opens perpendicular to the wall axis; inward = toward INTERIOR cells.
+        // Determine the wall axis (the direction the gate RUN extends along).
         boolean wallRunsEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
                           || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
+
+        // A gate is a 1-cell-deep run of GATE cells along the wall axis. The two END cells
+        // of that run are pillars; the middle cells are the opening. "Edge" therefore means
+        // an END of the run along the wall axis — NOT a generic non-GATE neighbour (the
+        // perpendicular inward/outward neighbours are never GATE, so the old all-direction
+        // check made every gate cell an edge and the opening was never carved).
+        boolean isEdge;
+        if (wallRunsEW) {
+            boolean gateW = gx > 0   && grid[gx-1][gz] == GATE;
+            boolean gateE = gx < w-1 && grid[gx+1][gz] == GATE;
+            isEdge = !(gateW && gateE);
+        } else {
+            boolean gateN = gz > 0   && grid[gx][gz-1] == GATE;
+            boolean gateS = gz < d-1 && grid[gx][gz+1] == GATE;
+            isEdge = !(gateN && gateS);
+        }
+
+        // Inward direction (toward the village interior), perpendicular to the wall axis.
         int inDX = 0, inDZ = 0;
         if (wallRunsEW) {
             if (gz > 0 && (grid[gx][gz-1] == INTERIOR || grid[gx][gz-1] == GATE)) inDZ = -1;
@@ -569,13 +587,6 @@ public final class VillageWallGenerator {
             setBlock(level, dwx, sy + WALL_HEIGHT + 1, dwz, depth == 0 ? merlon : brick);
             if (depth == 0) fillDown(level, dwx, sy - 1, dwz, wall);
         }
-    }
-
-    private static boolean isGateEdge(byte[][] grid, int x, int z,
-                                        int dx, int dz, int w, int d) {
-        int nx = x + dx, nz = z + dz;
-        if (nx < 0 || nz < 0 || nx >= w || nz >= d) return true;
-        return grid[nx][nz] != GATE;
     }
 
     /**
