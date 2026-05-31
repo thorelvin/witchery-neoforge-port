@@ -247,6 +247,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CHARGED_QUARTZ_SPHERE.get(),
                 WitcheryItems.SUN_COLLECTOR.get(),
                 WitcheryItems.SUN_GRENADE.get(),
+                WitcheryItems.MOON_CHARM.get(),
                 WitcheryItems.STAKE.get(),
                 WitcheryItems.VAMPIRE_TOP_HAT.get(),
                 WitcheryItems.VAMPIRE_VEIL_HAT.get(),
@@ -355,7 +356,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "devils_tongue_charm", "moon_charm", "twisting_band",
+                "devils_tongue_charm", "twisting_band",
                 "blooded_waystone", "bound_waystone");
         addLegacy(output, accepted,
                 "infernal_blood", "odd_porkchop_raw", "odd_porkchop_cooked", "odd_porkchop", "cooked_odd_porkchop",

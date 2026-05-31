@@ -23,6 +23,7 @@ import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.GlassGobletItem;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import net.minecraft.ChatFormatting;
@@ -165,7 +166,7 @@ public class WitcheryPlayerEvents {
         if (pos == null) return;
         BlockState state = event.getLevel().getBlockState(pos);
         WitcheryPlayerData data = WitcheryAttachments.get(event.getEntity());
-        if (data.isWerewolf()) {
+        if (data.isWerewolf() && WerewolfShiftUtil.isTransformed(data)) {
             event.getEntity().displayClientMessage(Component.translatable("witchery.nosleep.wolf")
                     .withStyle(ChatFormatting.RED), true);
             event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);

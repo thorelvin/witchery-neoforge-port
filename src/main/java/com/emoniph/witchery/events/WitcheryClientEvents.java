@@ -112,12 +112,15 @@ public class WitcheryClientEvents {
     private static boolean isWerewolfRenderState(AvatarRenderState state) {
         Minecraft mc = Minecraft.getInstance();
         Entity entity = mc.level != null ? mc.level.getEntity(state.id) : null;
-        return entity instanceof Player player && WitcheryAttachments.get(player).isWerewolf();
+        return entity instanceof Player player
+                && WitcheryAttachments.get(player).isWerewolf()
+                && WitcheryAttachments.get(player).getTransformationLevel() > 0.01F;
     }
 
     private static void tryHowl(Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND) return;
-        if (!WitcheryAttachments.get(player).isWerewolf()) return;
+        var data = WitcheryAttachments.get(player);
+        if (!data.isWerewolf() || data.getTransformationLevel() <= 0.01F) return;
         if (!player.isShiftKeyDown()) return;
         if (player.getXRot() > -75f) return;
         net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(HowlPayload.INSTANCE);

@@ -5,6 +5,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -16,7 +17,6 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,9 +28,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * Handles all werewolf gameplay: transformation buffs, wolfsbane weakness, and silver damage bonus.
  *
- * Wolf form buffs apply whenever the player is cursed (isWerewolf=true), not just at full moon.
- * The visual (wolfman model) also always shows — both are consistent.
- * Wolfsbane in inventory suppresses buffs and applies Weakness II.
+ * Wolf form buffs apply only while the werewolf transformation state is active.
+ * Carrying a Moon Charm suppresses automatic moon-forced shifting.
+ * Wolfsbane in inventory forces the transformation off and applies Weakness II.
  * Silver ingots/weapons deal bonus damage to werewolves and vampires.
  */
 @EventBusSubscriber
@@ -49,46 +49,46 @@ public class WerewolfEvents {
         if (!(player.level() instanceof ServerLevel level)) return;
 
         int tick = player.tickCount;
-        if (tick % EFFECT_INTERVAL == 0) applyWolfEffects(player, level, data);
-        if (tick % 40              == 0) checkWolfsbane(player);
+        if (tick % 40              == 0) updateMoonShift(player, level, data);
+        if (tick % EFFECT_INTERVAL == 0) applyWolfEffects(player, data);
         if (data.getHowlCooldown() > 0) data.setHowlCooldown(data.getHowlCooldown() - 1);
         if (tick % SYNC_INTERVAL   == 0) PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private static void applyWolfEffects(ServerPlayer player, ServerLevel level, WitcheryPlayerData data) {
-        if (!hasWolfsbane(player)) {
-            if (!WitcheryConfig.WEREWOLF_FULL_MOON_ONLY.get() || isFullMoon(level)) {
-                applyWolfForm(player, data);
+    private static void updateMoonShift(ServerPlayer player, ServerLevel level, WitcheryPlayerData data) {
+        if (WerewolfShiftUtil.hasWolfsbane(player)) {
+            if (WerewolfShiftUtil.isTransformed(data)) {
+                WerewolfShiftUtil.setTransformed(player, data, false,
+                        Component.translatable("witchery.werewolf.wolfsbane"));
             }
-        }
-    }
-
-    /** Wolfsbane in inventory suppresses the wolf form and applies Weakness. */
-    private static void checkWolfsbane(ServerPlayer player) {
-        if (hasWolfsbane(player)) {
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 1, true, true));
-            // Remove wolf-form buffs
             player.removeEffect(MobEffects.SPEED);
             player.removeEffect(MobEffects.STRENGTH);
             player.removeEffect(MobEffects.JUMP_BOOST);
             if (player.tickCount % 200 == 0) {
                 player.displayClientMessage(Component.translatable("witchery.werewolf.wolfsbane"), false);
             }
+            return;
+        }
+
+        if (WerewolfShiftUtil.hasMoonCharm(player)) {
+            return;
+        }
+
+        boolean shouldTransform = !WitcheryConfig.WEREWOLF_FULL_MOON_ONLY.get() || isFullMoon(level);
+        if (shouldTransform != WerewolfShiftUtil.isTransformed(data)) {
+            WerewolfShiftUtil.setTransformed(player, data, shouldTransform,
+                    shouldTransform ? Component.translatable("witchery.werewolf.transformed")
+                            : Component.translatable("witchery.werewolf.restored"));
         }
     }
 
-    private static boolean hasWolfsbane(ServerPlayer player) {
-        return hasItemInInventory(player, WitcheryItems.WOLFSBANE_FLOWER.get());
-    }
-
-    private static boolean hasItemInInventory(ServerPlayer player, Item item) {
-        for (int _i = 0; _i < player.getInventory().getContainerSize(); _i++) {
-            ItemStack stack = player.getInventory().getItem(_i);
-            if (stack.is(item)) return true;
+    private static void applyWolfEffects(ServerPlayer player, WitcheryPlayerData data) {
+        if (WerewolfShiftUtil.isTransformed(data)) {
+            applyWolfForm(player, data);
         }
-        return false;
     }
 
     // Silver damage bonus is now handled centrally in SilverEvents.onSilverDamage
@@ -144,12 +144,6 @@ public class WerewolfEvents {
         player.addEffect(new MobEffectInstance(MobEffects.HUNGER,         EFFECT_DURATION, 1, true, true));  // Hunger II
         player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,   EFFECT_DURATION, 0, true, false)); // Night Vision
 
-        // Warn on first application each interval (not every tick)
-        float prev = data.getTransformationLevel();
-        if (prev < 1f) {
-            data.setTransformationLevel(1f);
-            player.displayClientMessage(Component.translatable("witchery.werewolf.transformed"), false);
-        }
     }
 
     /** Phase 0 = full moon in vanilla's 8-phase moon cycle. */

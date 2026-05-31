@@ -298,6 +298,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> POLYNESIA_CHARM = ITEMS.register("polynesia_charm",
             id -> new PolynesiaCharmItem(itemProps(id)));
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
+    public static final DeferredItem<Item> MOON_CHARM = ITEMS.register("moon_charm",
+            id -> new MoonCharmItem(itemProps(id)));
     public static final DeferredItem<Item> PARASYTIC_LOUSE = ITEMS.register("parasytic_louse", id -> new ParasyticLouseItem(itemProps(id)));
     public static final DeferredItem<Item> LEAPING_LILY_ITEM = ITEMS.registerSimpleItem("leaping_lily_item");
     public static final DeferredItem<Item> BUCKET_SPIRIT = ITEMS.register("bucket_spirit",
@@ -639,7 +641,6 @@ public class WitcheryItems {
             "duplication_grenade",
             "hellhound_head",
             "horn_of_the_hunt",
-            "moon_charm",
             "poppy_of_ink",
             "poppy_of_sprouting",
             "poppy_of_thorns",

@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -38,7 +39,7 @@ public class HowlPayload implements CustomPacketPayload {
         if (!(ctx.player() instanceof ServerPlayer player)) return;
         WitcheryPlayerData data = WitcheryAttachments.get(player);
 
-        if (!data.isWerewolf()) return;
+        if (!data.isWerewolf() || !WerewolfShiftUtil.isTransformed(data)) return;
         if (data.getHowlCooldown() > 0) return;
 
         ServerLevel level = ((net.minecraft.server.level.ServerLevel) player.level());

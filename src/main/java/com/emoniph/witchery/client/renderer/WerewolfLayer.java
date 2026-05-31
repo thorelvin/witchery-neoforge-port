@@ -39,7 +39,8 @@ public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
         Entity entity = Minecraft.getInstance().level != null
                 ? Minecraft.getInstance().level.getEntity(state.id) : null;
         if (!(entity instanceof Player player)) return;
-        if (!WitcheryAttachments.get(player).isWerewolf()) return;
+        var data = WitcheryAttachments.get(player);
+        if (!data.isWerewolf() || data.getTransformationLevel() <= 0.01F) return;
 
         ps.pushPose();
         ps.scale(1.1f, 1.1f, 1.1f);

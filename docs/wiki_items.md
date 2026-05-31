@@ -972,9 +972,15 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** Durability 56, Armor 1
 - **Notes:** Becomes invisible to other players.
 
+## Moon Charm
+- **Obtain:** In the NeoForge port, a werewolf can right-click a Wolf Altar with three Gold Nuggets to create one.
+- **Use:** Hold use to toggle werewolf transformation between human and wolf form. Carrying it prevents automatic moon-forced transformation changes, while Wolfsbane carried in the inventory blocks charm use and forces the beast back down.
+- **Stats:** Stack size 1, durability 49, rare, repairable with Gold Nuggets.
+- **Notes:** Current port restores the practical transformation-control item path. Exact old wolf/wolfman split and detailed Wolf Altar quest gates remain follow-up work.
+
 ## Wolf Altar
 - **Obtain:** Crafted using specific ingredients including Wolf Heads or Hellhound Heads.
-- **Use:** Used by werewolves to communicate with their god and receive quests. Can be used to bless a wolfman into spreading the curse.
+- **Use:** Used by werewolves to communicate with their god and receive quests. In the NeoForge port, it grants wolf mastery boons and can temper three Gold Nuggets into a Moon Charm for werewolves. Can be used to bless a wolfman into spreading the curse.
 - **Stats:** Unknown
 - **Notes:** Required for certain werewolf quests.
 
