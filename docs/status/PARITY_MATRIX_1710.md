@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 268 functional + 118 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 269 functional + 117 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -83,7 +83,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Hunter set (garlicked) | 🔲 Placeholder | Items registered; no garlic-effect on wear |
 | Death's Hood/Robe/Shoes | ✅ Done | Fire cancel, water-walk, low-light NV |
 | Death's Hand | ✅ Done | Spectral touch + scythe deploy |
-| Koboldite Helm / Mog's Quiver / Gulg's Gurdle | 🔲 Placeholder | Items registered; no goblin-tier mechanics |
+| Koboldite Helm / Mog's Quiver / Gulg's Gurdle | 🔶 Partial | Koboldite Helm is represented by `witchery:twisting_band`: rare head item, source recipe, and observer-disorientation shell. Mog's Quiver and Gulg's Gurdle are registered/dropped but still need wearable reward mechanics. |
 | Vampire clothing sets (12 variants) | 🔶 Partial | Items/recipes present; exact level-gate parity and full ability-selection/paralysis incomplete |
 | Witch Hunter Dawn set | 🔶 Partial | Items registered; armor values in; combat bonuses not fully verified |
 

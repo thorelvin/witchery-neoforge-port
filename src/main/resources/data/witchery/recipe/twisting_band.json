@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "III",
+    "IAI"
+  ],
+  "key": {
+    "I": "witchery:koboldite_ingot",
+    "A": "witchery:attuned_stone_charged"
+  },
+  "result": {
+    "id": "witchery:twisting_band",
+    "count": 1
+  }
+}

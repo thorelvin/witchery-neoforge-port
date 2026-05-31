@@ -351,6 +351,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SOUL_OF_TORMENT.get(),
                 WitcheryItems.TORMENT_SCROLL.get(),
                 WitcheryItems.LEONARDS_URN.get(),
+                WitcheryItems.TWISTING_BAND.get(),
                 WitcheryItems.GULGS_GIRDLE.get(),
                 WitcheryItems.MOGS_QUIVER.get());
     }
@@ -359,7 +360,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "twisting_band", "blooded_waystone", "bound_waystone");
+                "blooded_waystone", "bound_waystone");
         addLegacy(output, accepted,
                 "infernal_blood", "odd_porkchop_raw", "odd_porkchop_cooked", "odd_porkchop", "cooked_odd_porkchop",
                 "nullified_leather", "silver_dust", "biome_note", "cooked_sheep_liver", "sheep_liver",
