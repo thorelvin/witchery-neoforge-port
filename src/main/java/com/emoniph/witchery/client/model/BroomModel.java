@@ -37,6 +37,22 @@ public class BroomModel extends EntityModel<net.minecraft.client.renderer.entity
         this.bristle9 = root.getChild("bristle9");
     }
 
+    public void setHandleVisible(boolean visible) {
+        this.handle.visible = visible;
+    }
+
+    public void setBristlesVisible(boolean visible) {
+        this.bristle1.visible = visible;
+        this.bristle2.visible = visible;
+        this.bristle3.visible = visible;
+        this.bristle4.visible = visible;
+        this.bristle5.visible = visible;
+        this.bristle6.visible = visible;
+        this.bristle7.visible = visible;
+        this.bristle8.visible = visible;
+        this.bristle9.visible = visible;
+    }
+
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
