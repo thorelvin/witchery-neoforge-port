@@ -51,8 +51,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * disk by the time ChunkEvent.Load fires, so getAllStarts() returns all pieces.
  *
  * Generation: queued from chunk load and processed by a wall job. Automatic jobs wait
- * for the padded village footprint to become naturally loaded; command/goto jobs can
+ * for the padded village footprint to become naturally loaded; manual wall commands can
  * request those chunks in small ticket batches because the player is explicitly waiting.
+ * Village goto queues a natural-load wall job and teleports after preparing the arrival
+ * chunk, because forced wall tickets can still stall distant chained teleports.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -64,7 +66,6 @@ public class VillageWallEvents {
 
     public enum VillageGotoResult {
         NOT_READY,
-        QUEUED,
         TELEPORTED
     }
 
@@ -242,13 +243,15 @@ public class VillageWallEvents {
     }
 
     /**
-     * Queue village walls and teleport the player only after the walls are generated.
+     * Queue village walls for the found destination, then teleport immediately. The
+     * arriving player's normal view-distance load lets the natural wall job finish
+     * without forced chunk tickets blocking the command before teleport.
      */
     public static VillageGotoResult queueVillageGoto(ServerLevel level, ServerPlayer player, BlockPos target,
                                                      BlockPos from, String namespace, String structureId) {
         StructureStart start = findVillageStartNear(level, target);
         if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
-            WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for goto pre-generation.", target);
+            WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for goto wall queue.", target);
             return VillageGotoResult.NOT_READY;
         }
         PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
@@ -257,9 +260,9 @@ public class VillageWallEvents {
             completeTeleport(level, teleport, true);
             return VillageGotoResult.TELEPORTED;
         }
-        return queueGeneration(level, start, false, "goto", teleport)
-                ? VillageGotoResult.QUEUED
-                : VillageGotoResult.NOT_READY;
+        queueVillage(level, VillageWallData.get(level), start);
+        completeTeleport(level, teleport, true);
+        return VillageGotoResult.TELEPORTED;
     }
 
     public static boolean queueVillageGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
@@ -321,16 +324,12 @@ public class VillageWallEvents {
                     job.namespace, job.structureId, found, job.cursor, job.candidates.size(), preloaded);
 
             VillageGotoResult wallResult = queueVillageGoto(level, player, found, job.from, job.namespace, job.structureId);
-            WitcheryMod.LOGGER.info("[Goto] Village wall pre-generation job for {}:{} at {} -> {}.",
+            WitcheryMod.LOGGER.info("[Goto] Village wall job for {}:{} at {} -> {}.",
                     job.namespace, job.structureId, found, wallResult.name().toLowerCase(java.util.Locale.ROOT));
             if (wallResult == VillageGotoResult.NOT_READY) {
                 player.sendSystemMessage(Component.literal(
                         "The hidden paths found a village, but its walls are not ready to form yet. Try again in a moment.")
                         .withStyle(ChatFormatting.DARK_PURPLE));
-            } else if (wallResult == VillageGotoResult.QUEUED) {
-                player.sendSystemMessage(Component.literal(
-                        "The hidden paths found the village and pause to raise its walls before carrying you through.")
-                        .withStyle(ChatFormatting.LIGHT_PURPLE));
             }
             return true;
         }
@@ -462,7 +461,7 @@ public class VillageWallEvents {
             WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} wall chunk ticket(s).",
                     reason, bb, chunks.size());
         } else {
-            WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} after {} wall chunk(s) loaded naturally.",
+            WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {}; waiting for {} wall chunk(s) to load naturally.",
                     reason, bb, chunks.size());
         }
         return true;
