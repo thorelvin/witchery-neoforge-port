@@ -153,9 +153,8 @@ public class VillageKeepPiece extends StructurePiece {
         placeBlock(level, materials.trim(Direction.Axis.X), 8, 7, 9, box);
         placeBlock(level, materials.trim(Direction.Axis.Z), 6, 7, 11, box);
 
-        // Ladder on S bridge W wall (y=1-14)
-        BlockState ladderW = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
-        for (int h = 1; h <= 14; h++) placeBlock(level, ladderW, 2, h, 10, box);
+        // Source ladder meta 2 attaches to the north wall here; wrong side facings self-prune.
+        for (int h = 1; h <= 14; h++) placeBlock(level, ladder, 2, h, 10, box);
 
         // Torches on S bridge
         placeBlock(level, torch, 2, 2, 13, box);
@@ -195,9 +194,8 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 10, 5, 11, 1, 2, 1, air);
         fill(level, box, 10, 1, 11, 1, 2, 1, air);
 
-        // Ladder on E bridge E wall (y=1-14)
-        BlockState ladderE = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
-        for (int h = 1; h <= 14; h++) placeBlock(level, ladderE, 11, h, 10, box);
+        // Source ladder meta 2 attaches to the north wall here too.
+        for (int h = 1; h <= 14; h++) placeBlock(level, ladder, 11, h, 10, box);
 
         // Torches on E bridge
         placeBlock(level, torch, 11, 2, 12, box);
