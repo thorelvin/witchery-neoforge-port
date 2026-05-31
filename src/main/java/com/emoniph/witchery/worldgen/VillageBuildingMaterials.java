@@ -64,13 +64,13 @@ final class VillageBuildingMaterials {
         if (biome.is(Biomes.SAVANNA) || biome.is(Biomes.SAVANNA_PLATEAU)
                 || biome.is(Biomes.WINDSWEPT_SAVANNA)) {
             return new VillageBuildingMaterials(
-                    Blocks.COBBLESTONE.defaultBlockState(),
+                    Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
                     Blocks.ACACIA_PLANKS.defaultBlockState(),
                     Blocks.ACACIA_PLANKS.defaultBlockState(),
                     Blocks.ACACIA_LOG.defaultBlockState(),
                     Blocks.ACACIA_PLANKS.defaultBlockState(),
                     Blocks.ACACIA_STAIRS,
-                    Blocks.COBBLESTONE_STAIRS,
+                    Blocks.ACACIA_STAIRS,
                     Blocks.ACACIA_SLAB,
                     Blocks.ACACIA_FENCE.defaultBlockState(),
                     Blocks.ACACIA_DOOR);

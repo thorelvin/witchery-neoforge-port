@@ -128,10 +128,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
         }
 
         int[] s = dims();
-        // Most Witchery village buildings keep the vanilla raised-floor baseline. The
-        // source bookshop is a shallow step-up building, so its entrance jigsaw sits one
-        // block above its floor to keep the foundation level with the road.
-        BlockPos jigPos = new BlockPos(doorX(), jigsawY(), s[2] - 1);
+        BlockPos jigPos = new BlockPos(doorX(), 0, s[2] - 1);
         if ("village_keep".equals(building)) {
             debugLog("Offering village_keep jigsaw at local {} with size {}x{}x{} from pool position {}.",
                     jigPos, s[0], s[1], s[2], pos);
@@ -211,10 +208,6 @@ public class WitcheryVillageElement extends StructurePoolElement {
             case "village_keep" -> 8;
             default -> dims()[0] / 2;
         };
-    }
-
-    private int jigsawY() {
-        return "bookshop".equals(building) ? 1 : 0;
     }
 
     private StructurePiece createPiece(BlockPos origin) {

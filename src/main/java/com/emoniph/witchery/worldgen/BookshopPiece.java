@@ -76,10 +76,10 @@ public class BookshopPiece extends StructurePiece {
 
         generateBox(level, box, 1, 1, 1, 1, 3, 1, trim, trim, false);
         generateBox(level, box, 8, 1, 1, 8, 3, 1, trim, trim, false);
-        placeBlock(level, materials.stepStairs(Direction.SOUTH), 3, 0, 0, box);
-        placeBlock(level, materials.stepStairs(Direction.SOUTH), 4, 0, 0, box);
-        placeBlock(level, materials.stepStairs(Direction.SOUTH), 5, 0, 0, box);
-        placeBlock(level, materials.stepStairs(Direction.SOUTH), 6, 0, 0, box);
+        placeBlock(level, materials.stepStairs(Direction.NORTH), 3, 0, 0, box);
+        placeBlock(level, materials.stepStairs(Direction.NORTH), 4, 0, 0, box);
+        placeBlock(level, materials.stepStairs(Direction.NORTH), 5, 0, 0, box);
+        placeBlock(level, materials.stepStairs(Direction.NORTH), 6, 0, 0, box);
 
         // Keep the bookshop recognisable in the modern port while preserving the source shell.
         placeBlock(level, shelf, 2, 1, 5, box);
