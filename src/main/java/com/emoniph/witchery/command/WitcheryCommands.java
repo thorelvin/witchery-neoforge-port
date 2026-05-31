@@ -2,6 +2,7 @@ package com.emoniph.witchery.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.AltarBlock;
 import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.DistilleryBlock;
@@ -28,7 +29,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -1828,7 +1831,8 @@ public class WitcheryCommands {
     // Per-player cooldown so /witchery goto can't be spammed (each teleport triggers heavy
     // village wall generation + chunk loading; rapid repeats can overload/freeze the game).
     private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
-    private static final long GOTO_COOLDOWN_TICKS = 200L; // 10 seconds
+    private static final long GOTO_COOLDOWN_TICKS = 600L; // 30 seconds
+    private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 2; // 5x5 around the arrival chunk
 
     private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
@@ -1844,8 +1848,6 @@ public class WitcheryCommands {
                     + "s before you walk the hidden paths again.").withStyle(ChatFormatting.DARK_PURPLE));
             return 0;
         }
-        GOTO_COOLDOWN.put(player.getUUID(), now);
-
         net.minecraft.resources.ResourceKey<net.minecraft.world.level.levelgen.structure.Structure> key =
                 net.minecraft.resources.ResourceKey.create(Registries.STRUCTURE,
                         Identifier.fromNamespaceAndPath(namespace, structureId));
@@ -1881,11 +1883,12 @@ public class WitcheryCommands {
         }
 
         BlockPos found = result.getFirst();
-        // Force the target chunk into memory so the heightmap is accurate.
+        // Force a small arrival area into memory so the heightmap is accurate.
         // findNearestMapStructure uses skipKnownStructures=true, so the chunk is already
         // generated on disk — this just reads it from disk, which is fast.
-        int chunkX = found.getX() >> 4, chunkZ = found.getZ() >> 4;
-        level.getChunkSource().getChunk(chunkX, chunkZ, true);
+        int preloaded = preloadGotoDestination(level, found);
+        WitcheryMod.LOGGER.info("[Goto] Prepared {} chunks around {}:{} at {} before teleport.",
+                preloaded, namespace, structureId, found);
 
         int surfaceY = level.getHeight(
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
@@ -1898,12 +1901,27 @@ public class WitcheryCommands {
 
         player.teleportTo(level, found.getX() + 0.5, surfaceY, found.getZ() + 0.5,
                 java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+        player.setDeltaMovement(0.0, 0.0, 0.0);
+        player.fallDistance = 0.0F;
+        GOTO_COOLDOWN.put(player.getUUID(), now);
 
         int dist = (int) Math.sqrt(found.distSqr(from));
         src.sendSuccess(() -> Component.literal(
                 "The hidden paths carry you away, across " + dist + " blocks, to "
                 + found.getX() + " ~ " + found.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
         return 1;
+    }
+
+    private static int preloadGotoDestination(ServerLevel level, BlockPos found) {
+        ChunkPos center = new ChunkPos(found);
+        int count = 0;
+        for (int dx = -GOTO_PRELOAD_RADIUS_CHUNKS; dx <= GOTO_PRELOAD_RADIUS_CHUNKS; dx++) {
+            for (int dz = -GOTO_PRELOAD_RADIUS_CHUNKS; dz <= GOTO_PRELOAD_RADIUS_CHUNKS; dz++) {
+                level.getChunk(center.x + dx, center.z + dz, ChunkStatus.FULL, true);
+                count++;
+            }
+        }
+        return count;
     }
 
     private static void sync(ServerPlayer player, WitcheryPlayerData data) {

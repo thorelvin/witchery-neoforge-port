@@ -420,7 +420,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Torment maze | 🔶 Partial | 6-level maze, Refilling Chests, Force walls; pit_dirt/pit_grass blocks missing |
 | Mirror World | 🔶 Partial | Portal loop, room generator, Reflection guardian; room QA with fresh world needed |
 | Rowan tree worldgen | ✅ Done | Placed in biomes |
-| Village additions (Bookshop, Guard Tower) | ❌ Missing | No Witchery-specific structure generation in villages |
+| Village additions (Bookshop, Guard Tower, Town Wall) | Partial | Village Guard, apothecary/bookshop/witch-hut village injection, Watch Tower, Keep, and first-pass adaptive town walls are live. Cross-biome fresh-village wall/building QA remains open, especially structure distribution, savanna materials, gate support fill, and immediate wall generation. |
 | Stone Circle / Coven Circle worldgen | ❌ Missing | Source: `WorldGenWitchCircle` |
 | Straw Man | ❌ Missing | Source: `WorldGenStrawMan` |
 | Goblin structures | ❌ Missing | Source: `WorldGenGoblinHut` |

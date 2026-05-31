@@ -7,14 +7,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -574,6 +577,7 @@ public final class VillageWallGenerator {
         boolean corner = isCorner(grid, gx, gz, w, d);
         int extra = corner ? 2 : 0;
         int top = sy + WALL_HEIGHT + extra;
+        if (hasLivingEntityInColumn(level, wx, Math.min(sy, floorTo), wz, top + 1)) return;
 
         // Base: 2 courses of stone brick (stone if submerged)
         placeWallMat(level, wx, sy,     wz, brick);
@@ -594,7 +598,7 @@ public final class VillageWallGenerator {
         // Extend the curtain down to the lowest neighbour so cliff steps stay connected
         // (stone wherever submerged, via placeWallMat).
         for (int y = sy - 1; y >= floorTo; y--) placeWallMat(level, wx, y, wz, wall);
-        fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, Blocks.STONE.defaultBlockState());
+        fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, brick);
     }
 
     /** True when this wall cell sits at a 90° bend (has wall in both N/S and E/W axes). */
@@ -606,6 +610,11 @@ public final class VillageWallGenerator {
         return (n || s) && (e || ww);
     }
 
+    private static boolean hasLivingEntityInColumn(ServerLevel level, int x, int minY, int z, int maxY) {
+        AABB box = new AABB(x, minY, z, x + 1.0, maxY + 1.0, z + 1.0);
+        return !level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
+    }
+
     /**
      * Builds one gatehouse as an independent locked 7×3 model, OVERRIDING whatever wall or
      * terrain it covers. It is built straight along the wall axis from the centre + reference
@@ -614,7 +623,7 @@ public final class VillageWallGenerator {
      *
      * Layout along the wall axis (offset o): |o|=2,3 → solid stone-brick PILLAR (2 taller than
      * the wall); |o|<=1 → OPENING (3-deep cleared passage, stone-brick arch, fence-less, path
-     * floor). Stone fillDown bridges the structure down to the terrain/sea floor, and the path
+     * floor). Matching fillDown bridges the structure down to the terrain/sea floor, and the path
      * is laid out and in (meeting the existing road) for the central 3 lanes.
      */
     private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick,
@@ -635,11 +644,11 @@ public final class VillageWallGenerator {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
                     forceSet(level, dwx, refY - 1, dwz, pathBlock);                                       // floor
-                    fillDown(level, dwx, refY - 2, dwz, Blocks.STONE.defaultBlockState());
+                    fillDown(level, dwx, refY - 2, dwz, brick);
                 } else {
                     for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++) forceSet(level, dwx, refY + dy, dwz, brick);
                     forceSet(level, dwx, refY + WALL_HEIGHT + 2, dwz, gateCap);
-                    fillDown(level, dwx, refY - 1, dwz, Blocks.STONE.defaultBlockState());
+                    fillDown(level, dwx, refY - 1, dwz, brick);
                 }
             }
         }
@@ -651,8 +660,8 @@ public final class VillageWallGenerator {
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, 10, false, pathBlock, desert);
-            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, 40, true, pathBlock, desert);
+            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, 10, false, pathBlock, brick, desert);
+            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, 40, true, pathBlock, brick, desert);
         }
     }
 
@@ -664,7 +673,7 @@ public final class VillageWallGenerator {
      */
     private static void gradePath(ServerLevel level, int startWX, int startWZ, int dx, int dz,
                                    int startFloorY, int maxLen, boolean stopAtRoad,
-                                   BlockState pathBlock, boolean desert) {
+                                   BlockState pathBlock, BlockState supportBlock, boolean desert) {
         int floorY = startFloorY;
         for (int t = 1; t <= maxLen; t++) {
             int ix = startWX + dx * t, iz = startWZ + dz * t;
@@ -679,7 +688,7 @@ public final class VillageWallGenerator {
                 BlockState bs = level.getBlockState(p);
                 if (!bs.isAir() && !bs.liquid()) level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             }
-            fillDown(level, ix, floorY - 1, iz, Blocks.STONE.defaultBlockState()); // support if floating
+            fillDown(level, ix, floorY - 1, iz, supportBlock); // support if floating
         }
     }
 
@@ -691,8 +700,12 @@ public final class VillageWallGenerator {
     }
 
     private static boolean isDesertLike(ServerLevel level, int x, int z) {
+        return usesSandstoneVillageMaterials(level, x, z);
+    }
+
+    private static boolean usesSandstoneVillageMaterials(ServerLevel level, int x, int z) {
         var biome = level.getBiome(new BlockPos(x, 64, z));
-        return biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f;
+        return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
     }
 
     /** Unconditional block set (overrides existing), chunk-load guarded. */
@@ -722,7 +735,7 @@ public final class VillageWallGenerator {
     private static BlockState wallMaterial(ServerLevel level, int x, int z) {
         // Stone-brick family only — no cobblestone.
         var biome = level.getBiome(new BlockPos(x, 64, z));
-        if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
+        if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE.defaultBlockState();
         if (biome.is(BiomeTags.IS_FOREST))
             return Blocks.MOSSY_STONE_BRICKS.defaultBlockState();
@@ -730,17 +743,15 @@ public final class VillageWallGenerator {
     }
 
     private static BlockState brickMaterial(ServerLevel level, int x, int z) {
-        var biome = level.getBiome(new BlockPos(x, 64, z));
-        if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
+        if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.CHISELED_SANDSTONE.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
     /** Battlement / merlon material — biome-adaptive wall-block variant. */
     private static BlockState merlonMaterial(ServerLevel level, int x, int z) {
-        var biome = level.getBiome(new BlockPos(x, 64, z));
         // Stone-brick family only — no cobblestone wall.
-        if (biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f)
+        if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE_WALL.defaultBlockState();
         return Blocks.STONE_BRICK_WALL.defaultBlockState();
     }

@@ -36,7 +36,7 @@ import java.util.List;
  * procedural Java code (no NBT template). Registered as "witchery:village_building"
  * and referenced from vanilla village/{type}/houses pools.
  *
- * Supported "building" values: apothecary, witch_hut, village_watch_tower, village_keep.
+ * Supported "building" values: apothecary, bookshop, witch_hut, village_watch_tower, village_keep.
  */
 public class WitcheryVillageElement extends StructurePoolElement {
 
@@ -129,6 +129,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
     private int[] dims() {
         return switch (building) {
             case "apothecary"           -> new int[]{9, 8, 6};
+            case "bookshop"             -> new int[]{10, 8, 9};
             case "witch_hut"            -> new int[]{7, 7, 7};
             case "village_watch_tower"  -> new int[]{8, 23, 8};
             case "village_keep"         -> new int[]{16, 26, 16};
@@ -140,6 +141,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
         int x = origin.getX(), y = origin.getY(), z = origin.getZ();
         return switch (building) {
             case "apothecary"          -> new ApothecaryPiece(WitcheryStructures.APOTHECARY_PIECE.get(), x, y, z);
+            case "bookshop"            -> new BookshopPiece(WitcheryStructures.BOOKSHOP_PIECE.get(), x, y, z);
             case "witch_hut"           -> new WitchHutPiece(WitcheryStructures.WITCH_HUT_PIECE.get(), x, y, z);
             case "village_watch_tower" -> new VillageWatchTowerPiece(WitcheryStructures.VILLAGE_WATCH_TOWER_PIECE.get(), x, y, z);
             case "village_keep"        -> new VillageKeepPiece(WitcheryStructures.VILLAGE_KEEP_PIECE.get(), x, y, z);

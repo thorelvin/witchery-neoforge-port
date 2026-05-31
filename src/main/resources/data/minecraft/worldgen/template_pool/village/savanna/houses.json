@@ -336,19 +336,23 @@
       "weight": 2
     },
     {
-      "weight": 2,
+      "weight": 8,
       "element": { "element_type": "witchery:village_building", "building": "apothecary", "projection": "rigid" }
     },
     {
-      "weight": 1,
+      "weight": 6,
       "element": { "element_type": "witchery:village_building", "building": "witch_hut", "projection": "rigid" }
     },
     {
-      "weight": 2,
+      "weight": 10,
+      "element": { "element_type": "witchery:village_building", "building": "bookshop", "projection": "rigid" }
+    },
+    {
+      "weight": 3,
       "element": { "element_type": "witchery:village_building", "building": "village_watch_tower", "projection": "rigid" }
     },
     {
-      "weight": 1,
+      "weight": 2,
       "element": { "element_type": "witchery:village_building", "building": "village_keep", "projection": "rigid" }
     },
     {

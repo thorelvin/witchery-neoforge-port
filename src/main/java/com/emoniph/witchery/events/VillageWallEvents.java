@@ -33,8 +33,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * The start chunk of a village has its full StructureStart deserialized from
  * disk by the time ChunkEvent.Load fires, so getAllStarts() returns all pieces.
  *
- * Generation: 200-tick delay, then force-load all village chunks before
- * generating so no wall cells are silently skipped by getChunkNow() checks.
+ * Generation: queued from chunk load and processed on the next level tick, then
+ * force-loads the perimeter chunks before generating so wall cells on the outer hull
+ * pass getChunkNow() checks.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -42,6 +43,9 @@ public class VillageWallEvents {
     private record PendingWall(StructureStart start, long processAfter) {}
 
     private static final ConcurrentLinkedQueue<PendingWall> QUEUE = new ConcurrentLinkedQueue<>();
+    private static final long WALL_GENERATION_DELAY_TICKS = 0L;
+    private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
+    private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -68,7 +72,7 @@ public class VillageWallEvents {
             BoundingBox bb = start.getBoundingBox();
             if (QUEUE.stream().anyMatch(p -> p.start().getBoundingBox().equals(bb))) continue;
 
-            long processAt = level.getGameTime() + 200L;
+            long processAt = level.getGameTime() + WALL_GENERATION_DELAY_TICKS;
             QUEUE.add(new PendingWall(start, processAt));
             WitcheryMod.LOGGER.info("[VillageWalls] Queued village at {} ({} pieces).",
                     bb, start.getPieces().size());
@@ -114,26 +118,24 @@ public class VillageWallEvents {
     // ── Chunk force-loading ────────────────────────────────────────────────────
 
     /**
-     * Force-loads all chunks in the village bounding box plus 12-block padding
-     * so every wall cell passes the getChunkNow() check in the generator.
+     * Force-loads a narrow perimeter ring around the village bounding box.
      */
     public static void forceLoadVillageChunks(ServerLevel level, StructureStart start) {
         BoundingBox bb = start.getBoundingBox();
-        int pad = 12;
+        int pad = FORCE_LOAD_PADDING_BLOCKS;
         int minCX = (bb.minX() - pad) >> 4, maxCX = (bb.maxX() + pad) >> 4;
         int minCZ = (bb.minZ() - pad) >> 4, maxCZ = (bb.maxZ() + pad) >> 4;
         // Only force-load the PERIMETER ring of chunks. The orthogonal-convex-hull wall lives
         // on the village's outer boundary, so the interior chunks never hold a wall block —
-        // loading them all was the heavy part (a big village = ~200 synchronous chunk loads,
-        // which on a marginal heap froze the game when several gotos were chained). Road
-        // detection inside the village uses whatever chunks are already loaded around the
-        // player. RING covers the dilation + padding so the whole wall is reachable.
-        final int RING = 3; // chunks of edge band to load
+        // loading them all was the heavy part when several gotos were chained. Road
+        // detection can use whatever chunks are already loaded around the player.
         int count = 0;
         for (int cx = minCX; cx <= maxCX; cx++)
             for (int cz = minCZ; cz <= maxCZ; cz++) {
-                boolean nearEdge = (cx - minCX) < RING || (maxCX - cx) < RING
-                                || (cz - minCZ) < RING || (maxCZ - cz) < RING;
+                boolean nearEdge = (cx - minCX) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (maxCX - cx) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (cz - minCZ) < FORCE_LOAD_EDGE_RING_CHUNKS
+                                || (maxCZ - cz) < FORCE_LOAD_EDGE_RING_CHUNKS;
                 if (!nearEdge) continue; // skip interior — no wall there
                 level.getChunkSource().getChunk(cx, cz, true);
                 count++;

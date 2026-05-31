@@ -1,6 +1,11 @@
 # Active Bugs
 
-Last reconciled: 2026-05-30. Bugs #2–59 are closed — see `docs/archive/BUGS_CLOSED.md` for the full history.
+Last reconciled: 2026-05-31. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+
+**Closed 2026-05-31:**
+- ~~Witchery village buildings never appear in vanilla villages~~ - the procedural `WitcheryVillageElement` had no connectable jigsaw block, so village house pools could list Witchery buildings without ever attaching them to streets. Fixed: the element now exposes a north-facing `minecraft:building_entrance` connection for the generated piece, allowing apothecaries, bookshops, witch huts, watch towers, and keeps to be selected by village pools.
+- ~~Village wall generation freezes when `/witchery goto` is chained~~ - wall setup was force-loading every chunk in the village bounding box plus padding. Fixed: only a perimeter ring is force-loaded because the wall lives on the outer hull, and `/witchery goto` now has a per-player cooldown.
+- ~~Village walls/gates still fail on water and hill edges~~ - the RC wall pass now avoids placing walls under water, keeps walls at water level when crossing water, centers gatehouses on the wall line, grades approaches to hilly gates, prefers biome-appropriate road/path materials, and keeps corners from overwriting gates.
 
 **Closed 2026-05-30:**
 - ~~`/witchery goto` teleports player far underground~~ — `Level.getHeight(MOTION_BLOCKING)` returns `0` (not `-64`) for cold/unloaded chunks; old threshold `<= -59` missed it. Fixed: threshold now `< 10`.
@@ -16,7 +21,11 @@ Last reconciled: 2026-05-30. Bugs #2–59 are closed — see `docs/archive/BUGS_
 
 ## Open
 
-### 1. Ritual queue parity is still partial
+### 1. Village goto savanna hang needs follow-up retest
+
+The 2026-05-31 `/witchery goto village_savanna` hang stopped immediately after the success chat at `8560 ~ -3072` and before `[VillageWalls] Generating walls...`, so the remaining symptom is immediate post-teleport chunk/view loading rather than confirmed wall placement. Follow-up fix: `/witchery goto` preloads a 5x5 full-chunk arrival area, raises the cooldown to 30 seconds, resets motion/fall distance after teleport, removes the artificial wall-generation delay, trims wall force-loading to a one-chunk perimeter ring, skips wall columns occupied by living entities, keeps savanna on dirt/stone materials instead of desert sandstone/sand, and makes gate/path support fill match the gatehouse block. Retest on fresh savanna/taiga/snowy villages after restarting the client.
+
+### 2. Ritual queue parity is still partial
 
 Current gaps:
 
@@ -36,4 +45,5 @@ See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
 | Item | Effort |
 |---|---|
+| Fresh-village wall/building QA across plains, desert, savanna, taiga, and snowy villages | 1-2 hrs |
 | Spirit World horizon/day-angle atmosphere and fresh-chunk vegetation/spawn QA | 1-2 hrs |

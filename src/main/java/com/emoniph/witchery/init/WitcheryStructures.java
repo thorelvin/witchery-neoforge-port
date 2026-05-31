@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.worldgen.ApothecaryPiece;
+import com.emoniph.witchery.worldgen.BookshopPiece;
 import com.emoniph.witchery.worldgen.CovenCirclePiece;
 import com.emoniph.witchery.worldgen.CovenCircleStructure;
 import com.emoniph.witchery.worldgen.HobgoblinHutPiece;
@@ -58,6 +59,9 @@ public class WitcheryStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> APOTHECARY_PIECE =
             PIECE_TYPES.register("apothecary", () -> ApothecaryPiece::new);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> BOOKSHOP_PIECE =
+            PIECE_TYPES.register("bookshop", () -> BookshopPiece::new);
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> VILLAGE_WATCH_TOWER_PIECE =
             PIECE_TYPES.register("village_watch_tower", () -> VillageWatchTowerPiece::new);
