@@ -1824,10 +1824,25 @@ public class WitcheryCommands {
         return gotoStructure(src, "witchery", structureId);
     }
 
+    // Per-player cooldown so /witchery goto can't be spammed (each teleport triggers heavy
+    // village wall generation + chunk loading; rapid repeats can overload/freeze the game).
+    private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
+    private static final long GOTO_COOLDOWN_TICKS = 200L; // 10 seconds
+
     private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
         ServerLevel level = src.getLevel();
+
+        long now = level.getGameTime();
+        Long last = GOTO_COOLDOWN.get(player.getUUID());
+        if (last != null && now - last < GOTO_COOLDOWN_TICKS) {
+            long remaining = (GOTO_COOLDOWN_TICKS - (now - last) + 19) / 20; // round up to seconds
+            src.sendFailure(Component.literal(
+                    "/witchery goto is cooling down — wait " + remaining + "s (lets village walls finish generating)."));
+            return 0;
+        }
+        GOTO_COOLDOWN.put(player.getUUID(), now);
 
         net.minecraft.resources.ResourceKey<net.minecraft.world.level.levelgen.structure.Structure> key =
                 net.minecraft.resources.ResourceKey.create(Registries.STRUCTURE,
