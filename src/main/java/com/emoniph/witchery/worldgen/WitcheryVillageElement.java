@@ -73,7 +73,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
         int[] s = dims();
         // Connection jigsaw on the building's north face (z=0), centred in X, at the door
         // course (y=1), facing NORTH so it mates with a street jigsaw just outside (z=-1).
-        BlockPos jigPos = new BlockPos(s[0] / 2, 1, 0);
+        BlockPos jigPos = new BlockPos(doorX(), 1, 0);
         var state = Blocks.JIGSAW.defaultBlockState()
                 .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.NORTH_UP);
 
@@ -130,10 +130,21 @@ public class WitcheryVillageElement extends StructurePoolElement {
         return switch (building) {
             case "apothecary"           -> new int[]{9, 8, 6};
             case "bookshop"             -> new int[]{10, 8, 9};
-            case "witch_hut"            -> new int[]{7, 7, 7};
+            case "witch_hut"            -> new int[]{4, 6, 5};
             case "village_watch_tower"  -> new int[]{8, 23, 8};
             case "village_keep"         -> new int[]{16, 26, 16};
             default                     -> new int[]{8, 8, 8};
+        };
+    }
+
+    private int doorX() {
+        return switch (building) {
+            case "apothecary" -> 1;
+            case "bookshop" -> 5;
+            case "witch_hut" -> 1;
+            case "village_watch_tower" -> 4;
+            case "village_keep" -> 8;
+            default -> dims()[0] / 2;
         };
     }
 
