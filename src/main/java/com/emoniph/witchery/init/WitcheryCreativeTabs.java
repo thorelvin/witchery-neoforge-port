@@ -306,6 +306,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BREW_OF_THE_GROTESQUE.get(),
                 WitcheryItems.BREW_OF_REVEALING.get(),
                 WitcheryItems.BREW_OF_ENDLESS_WATER.get(),
+                WitcheryItems.COMBUSTION_BREW.get(),
                 WitcheryItems.BREW_OF_POISON.get(),
                 WitcheryItems.BREW_OF_ICE.get(),
                 WitcheryItems.BREW_OF_FOAMING.get(),
@@ -378,7 +379,7 @@ public class WitcheryCreativeTabs {
                 "creative_bat_wolf_token", "creative_medallion");
         addLegacy(output, accepted,
                 "meaty_stew", "raw_meaty_stew", "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
-                "combustion_brew", "endless_water_brew");
+                "endless_water_brew");
         addLegacy(output, accepted,
                 "vines_brew", "webs_brew", "thorns_brew", "ink_brew", "sprouting_brew", "erosion_brew",
                 "raising_brew", "love_brew", "ice_brew", "frogs_tongue_brew", "cursed_leaping_brew",

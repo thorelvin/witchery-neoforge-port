@@ -1,0 +1,9 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "minecraft:coal"}
+  ],
+  "result": {"id": "witchery:combustion_brew", "count": 3},
+  "power": 0.0,
+  "color": 16754270
+}

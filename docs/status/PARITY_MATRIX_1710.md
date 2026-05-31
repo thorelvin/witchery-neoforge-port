@@ -300,7 +300,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 | Brew bottle / splash / lingering / bucket variants | 🔶 Partial | Item-based only; no container conversion |
 | Brew Bag container logic | ❌ Missing | |
 | Brew of Endless Water | Done | Source-style glowing 100-use utility item fills cauldrons or places water source blocks |
-| Brew of Combustion | ❌ Missing | |
+| Brew of Combustion | Partial | `witchery:combustion_brew` is now a real glowing stackable furnace/Witches' Oven fuel with the Resurrected `Level` burn tiers (2400/5000/10000/50000 ticks) and a base coal kettle recipe; full dynamic composed-brew creation remains under the custom cauldron backlog |
 
 ### 4b. Brew Effects (as items vs dynamic actions)
 
