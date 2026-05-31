@@ -93,7 +93,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 |---|---|---|
 | Silver Sword | ✅ Done | Tagged vampire/werewolf damage |
 | Huntsman's Spear | ✅ Done | Blocking retaliation, weapon-id parity |
-| Hand Bow (Crossbow Pistol) | 🔶 Partial | Dedicated item now uses source-style stored bolt loading: crouch-hold loads a preferred bolt, crouch-cycles through Wooden/Nullifying/Bone/Splitting/Silver while returning the old loaded bolt, firing uses the stored bolt, and launch behavior covers live Wooden/Silver/Nullifying/Bone/Splitting `BoltEntity` shots. Old Infinity/Power/Punch/Flame behavior is restored for loaded bolts, with nullifying bolts skipping Power/Punch/Flame. Client charged-predicate polish remains |
+| Hand Bow (Crossbow Pistol) | 🔶 Partial | Dedicated item now uses source-style stored bolt loading: crouch-hold loads a preferred bolt, crouch-cycles through Wooden/Nullifying/Bone/Splitting/Silver while returning the old loaded bolt, firing uses the stored bolt, and launch behavior covers live Wooden/Silver/Nullifying/Bone/Splitting `BoltEntity` shots. Old Infinity/Power/Punch/Flame behavior is restored for loaded bolts, with nullifying bolts skipping Power/Punch/Flame. Client range-dispatch predicates now show idle, pull, and loaded crossbow states. Exact old anti-magic power-drain polish remains |
 | Witch Hand | 🔲 Placeholder | Item registered; no active power |
 | Mystic Branch | 🔲 Placeholder | Item registered; symbol/glyph drawing system MISSING |
 | Koboldite Pickaxe | ✅ Done | Mining bonuses placeholder |

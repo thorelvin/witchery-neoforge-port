@@ -152,6 +152,12 @@ public class WitcheryClient {
                 HuntsmanSpearBlockingProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "deaths_hand_deployed"),
                 DeathsHandDeployedProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_pull"),
+                HandBowPullProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_pulling"),
+                HandBowPullingProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_charged"),
+                HandBowChargedProperty.MAP_CODEC);
     }
 
     public static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {

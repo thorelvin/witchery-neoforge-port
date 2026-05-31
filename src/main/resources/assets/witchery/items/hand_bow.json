@@ -1,6 +1,52 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/hand_bow"
+    "type": "minecraft:range_dispatch",
+    "property": "witchery:hand_bow_charged",
+    "entries": [
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/charged_crossbow"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:range_dispatch",
+      "property": "witchery:hand_bow_pulling",
+      "entries": [
+        {
+          "threshold": 1.0,
+          "model": {
+            "type": "minecraft:range_dispatch",
+            "property": "witchery:hand_bow_pull",
+            "entries": [
+              {
+                "threshold": 0.5,
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "witchery:item/crossbow_pulling_1"
+                }
+              },
+              {
+                "threshold": 0.75,
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "witchery:item/crossbow_pulling_2"
+                }
+              }
+            ],
+            "fallback": {
+              "type": "minecraft:model",
+              "model": "witchery:item/crossbow_pulling_0"
+            }
+          }
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "witchery:item/crossbow_pistol"
+      }
+    }
   }
 }

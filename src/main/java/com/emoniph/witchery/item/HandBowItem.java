@@ -61,10 +61,14 @@ public class HandBowItem extends Item {
         super(properties.durability(768));
     }
 
+    public static boolean hasLoadedBolt(ItemStack stack) {
+        return getBoltType(TAG_CURRENT, stack) != NO_BOLT;
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        boolean hasLoadedBolt = getBoltType(TAG_CURRENT, stack) != NO_BOLT;
+        boolean hasLoadedBolt = hasLoadedBolt(stack);
         boolean canLoadBolt = player.isShiftKeyDown() && findAvailableBolt(player, getPreferredBolt(stack), NO_BOLT) != NO_BOLT;
         if (!hasLoadedBolt && !canLoadBolt) {
             return InteractionResult.FAIL;
