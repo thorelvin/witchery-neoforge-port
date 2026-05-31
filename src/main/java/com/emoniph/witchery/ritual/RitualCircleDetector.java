@@ -49,6 +49,16 @@ public class RitualCircleDetector {
 
     public record DetectionResult(CircleSize size, List<BlockPos> ringBlocks) {}
 
+    public static List<BlockPos> ringPositions(BlockPos floorCenter, CircleSize size) {
+        BlockPos markLevel = floorCenter.above();
+        int[][] offsets = offsetsFor(size);
+        List<BlockPos> positions = new ArrayList<>(offsets.length);
+        for (int[] off : offsets) {
+            positions.add(markLevel.offset(off[0], 0, off[1]));
+        }
+        return positions;
+    }
+
     public static DetectionResult detect(Level level, BlockPos floorCenter) {
         BlockPos markLevel = floorCenter.above();
 
@@ -118,6 +128,14 @@ public class RitualCircleDetector {
             positions.add(pos);
         }
         return positions;
+    }
+
+    private static int[][] offsetsFor(CircleSize size) {
+        return switch (size) {
+            case SMALL -> SMALL_RING;
+            case MEDIUM -> MEDIUM_RING;
+            case LARGE -> LARGE_RING;
+        };
     }
 
     /**

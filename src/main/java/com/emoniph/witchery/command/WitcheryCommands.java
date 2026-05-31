@@ -3,6 +3,7 @@ package com.emoniph.witchery.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.AltarBlock;
 import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.DistilleryBlock;
@@ -25,6 +26,7 @@ import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -66,6 +68,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
@@ -96,6 +99,7 @@ import java.util.List;
  * /witchery exit                    — return to previous dimension
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
+ * /witchery setup rite              - place a QA pad with ritual circle rings
  * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / torment_chamber / coven_circle / straw_man)
  *                                   village buildings (apothecary / witch_hut / keep / watchtower) are now inside vanilla villages — use /locate structure minecraft:village_plains etc.
  */
@@ -112,6 +116,12 @@ public class WitcheryCommands {
     private static final int SETUP_FORWARD_OFFSET = 5;
     private static final int SETUP_CLEAR_PAD_SIZE = 20;
     private static final int SETUP_SHELL_DROP = 1;
+    private static final int SETUP_RITE_PAD_WIDTH = 31;
+    private static final int SETUP_RITE_PAD_DEPTH = 11;
+    private static final int SETUP_RITE_FORWARD_OFFSET = 5;
+    private static final int SETUP_RITE_FOUNDATION_DEPTH = 3;
+    private static final int SETUP_RITE_CLEAR_HEIGHT = 5;
+    private static final int SETUP_RITE_FLOOR_Y = -1;
 
     private record SetupHouseLayout(BlockPos origin, Direction depth, Direction width) {
         BlockPos pos(int x, int z) {
@@ -128,6 +138,16 @@ public class WitcheryCommands {
 
         Direction frontFacing() {
             return depth.getOpposite();
+        }
+    }
+
+    private record SetupRiteLayout(BlockPos origin, Direction depth, Direction width) {
+        BlockPos pos(int x, int z) {
+            return origin.relative(width, x).relative(depth, z);
+        }
+
+        BlockPos pos(int x, int y, int z) {
+            return pos(x, z).above(y);
         }
     }
 
@@ -272,7 +292,9 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("setup")
                         .then(Commands.literal("stations")
-                                .executes(ctx -> setupStations(ctx.getSource()))))
+                                .executes(ctx -> setupStations(ctx.getSource())))
+                        .then(Commands.literal("rite")
+                                .executes(ctx -> setupRite(ctx.getSource()))))
                 .then(Commands.literal("ritual")
                         .then(Commands.literal("hitchcock")
                                 .executes(ctx -> startHitchcockRitual(ctx.getSource()))
@@ -1373,6 +1395,22 @@ public class WitcheryCommands {
         return 1;
     }
 
+    private static int setupRite(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) return 0;
+
+        SetupRiteLayout layout = createSetupRiteLayout(player);
+        clearSetupRitePad(level, layout);
+        buildSetupRitePad(level, layout);
+        placeSetupRiteCircles(level, layout);
+
+        src.sendSuccess(() -> Component.literal(
+                "Cleared a 31x11 pad in front and placed white, golden, otherwhere, and infernal small/medium/large rite rings."),
+                false);
+        return 1;
+    }
+
     private static SetupHouseLayout createSetupHouseLayout(ServerPlayer player) {
         Direction depth = player.getDirection();
         Direction width = depth.getClockWise();
@@ -1380,6 +1418,61 @@ public class WitcheryCommands {
                 .relative(depth, SETUP_FORWARD_OFFSET)
                 .relative(width.getOpposite(), SETUP_HOUSE_SIZE / 2);
         return new SetupHouseLayout(origin, depth, width);
+    }
+
+    private static SetupRiteLayout createSetupRiteLayout(ServerPlayer player) {
+        Direction depth = player.getDirection();
+        Direction width = depth.getClockWise();
+        BlockPos origin = player.blockPosition()
+                .relative(depth, SETUP_RITE_FORWARD_OFFSET)
+                .relative(width.getOpposite(), SETUP_RITE_PAD_WIDTH / 2);
+        return new SetupRiteLayout(origin, depth, width);
+    }
+
+    private static void clearSetupRitePad(ServerLevel level, SetupRiteLayout layout) {
+        clearBox(level,
+                layout.pos(0, 0, 0),
+                layout.pos(SETUP_RITE_PAD_WIDTH - 1, SETUP_RITE_CLEAR_HEIGHT, SETUP_RITE_PAD_DEPTH - 1));
+    }
+
+    private static void buildSetupRitePad(ServerLevel level, SetupRiteLayout layout) {
+        BlockState floor = Blocks.SMOOTH_STONE.defaultBlockState();
+        BlockState border = Blocks.STONE_BRICKS.defaultBlockState();
+        BlockState foundation = Blocks.STONE_BRICKS.defaultBlockState();
+
+        for (int x = 0; x < SETUP_RITE_PAD_WIDTH; x++) {
+            for (int z = 0; z < SETUP_RITE_PAD_DEPTH; z++) {
+                for (int depth = 1; depth <= SETUP_RITE_FOUNDATION_DEPTH; depth++) {
+                    level.setBlock(layout.pos(x, SETUP_RITE_FLOOR_Y - depth, z), foundation, 3);
+                }
+                boolean edge = x == 0 || z == 0 || x == SETUP_RITE_PAD_WIDTH - 1 || z == SETUP_RITE_PAD_DEPTH - 1;
+                level.setBlock(layout.pos(x, SETUP_RITE_FLOOR_Y, z), edge ? border : floor, 3);
+            }
+        }
+    }
+
+    private static void placeSetupRiteCircles(ServerLevel level, SetupRiteLayout layout) {
+        int centerZ = SETUP_RITE_PAD_DEPTH / 2;
+        placeSetupRiteCircle(level, layout, 3, centerZ,
+                WitcheryBlocks.CIRCLE_GLYPH.get(), Blocks.CALCITE.defaultBlockState());
+        placeSetupRiteCircle(level, layout, 11, centerZ,
+                WitcheryBlocks.CIRCLE.get(), Blocks.GOLD_BLOCK.defaultBlockState());
+        placeSetupRiteCircle(level, layout, 19, centerZ,
+                WitcheryBlocks.CIRCLE_OTHERWHERE.get(), Blocks.PURPLE_CONCRETE.defaultBlockState());
+        placeSetupRiteCircle(level, layout, 27, centerZ,
+                WitcheryBlocks.CIRCLE_INFERNAL.get(), Blocks.RED_NETHER_BRICKS.defaultBlockState());
+    }
+
+    private static void placeSetupRiteCircle(ServerLevel level, SetupRiteLayout layout, int centerX, int centerZ,
+                                             Block chalkBlock, BlockState centerFloor) {
+        BlockPos floorCenter = layout.pos(centerX, SETUP_RITE_FLOOR_Y, centerZ);
+        level.setBlock(floorCenter, centerFloor, 3);
+        for (RitualCircleDetector.CircleSize size : RitualCircleDetector.CircleSize.values()) {
+            for (BlockPos markPos : RitualCircleDetector.ringPositions(floorCenter, size)) {
+                BlockState mark = ChalkCircleBlock.withRandomGlyph(chalkBlock.defaultBlockState(), level.getRandom());
+                level.setBlock(markPos, mark, 3);
+            }
+        }
     }
 
     private static void clearSetupHouse(ServerLevel level, SetupHouseLayout layout) {
