@@ -39,9 +39,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * The start chunk of a village has its full StructureStart deserialized from
  * disk by the time ChunkEvent.Load fires, so getAllStarts() returns all pieces.
  *
- * Generation: queued from chunk load and processed by a ticketed wall job. Jobs load
- * the padded village footprint before generating so both the outer wall cells and the
- * existing street/path cells pass getChunkNow() checks.
+ * Generation: queued from chunk load and processed by a wall job. Automatic jobs wait
+ * for the padded village footprint to become naturally loaded; command/goto jobs can
+ * request those chunks in small ticket batches because the player is explicitly waiting.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -63,18 +63,20 @@ public class VillageWallEvents {
         final List<ChunkPos> chunks;
         final List<PendingTeleport> teleports = new ArrayList<>();
         final long queuedAt;
+        boolean ticketChunks;
         boolean ticketsAdded;
         int ticketCursor;
         long ticketedAt;
         long lastLogAt;
 
         WallJob(StructureStart start, boolean force, String reason,
-                List<ChunkPos> chunks, PendingTeleport teleport, long queuedAt) {
+                List<ChunkPos> chunks, PendingTeleport teleport, long queuedAt, boolean ticketChunks) {
             this.start = start;
             this.force = force;
             this.reason = reason;
             this.chunks = chunks;
             this.queuedAt = queuedAt;
+            this.ticketChunks = ticketChunks;
             if (teleport != null) this.teleports.add(teleport);
         }
     }
@@ -84,6 +86,7 @@ public class VillageWallEvents {
     private static final long WALL_GENERATION_DELAY_TICKS = 0L;
     private static final long WALL_GENERATION_RETRY_TICKS = 20L;
     private static final int WALL_GENERATION_MAX_ATTEMPTS = 6;
+    private static final int WALL_CHUNK_READINESS_MAX_ATTEMPTS = 120;
     private static final long WALL_JOB_LOG_INTERVAL_TICKS = 40L;
     private static final long WALL_JOB_TIMEOUT_TICKS = 20L * 30L;
     private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
@@ -158,8 +161,9 @@ public class VillageWallEvents {
                 continue;
             }
 
-            queueGeneration(level, start, false, "queue");
-            done++;
+            if (queueAutomaticGeneration(level, pending, start)) {
+                done++;
+            }
         }
     }
 
@@ -241,6 +245,11 @@ public class VillageWallEvents {
 
     private static boolean queueGeneration(ServerLevel level, StructureStart start, boolean force,
                                            String reason, PendingTeleport teleport) {
+        return queueGeneration(level, start, force, reason, teleport, true);
+    }
+
+    private static boolean queueGeneration(ServerLevel level, StructureStart start, boolean force,
+                                           String reason, PendingTeleport teleport, boolean ticketChunks) {
         VillageWallData data = VillageWallData.get(level);
         if (!force && data.isProcessed(start.getBoundingBox())) {
             if (teleport != null) completeTeleport(level, teleport, true);
@@ -252,6 +261,13 @@ public class VillageWallEvents {
         for (WallJob job : JOBS) {
             if (job.start.getBoundingBox().equals(bb)) {
                 if (force) job.force = true;
+                if (ticketChunks && !job.ticketChunks) {
+                    job.ticketChunks = true;
+                    if (job.ticketsAdded && job.ticketCursor == 0) {
+                        job.ticketsAdded = false;
+                        job.ticketedAt = 0L;
+                    }
+                }
                 if (teleport != null) job.teleports.add(teleport);
                 return true;
             }
@@ -262,15 +278,29 @@ public class VillageWallEvents {
             ChunkPos targetChunk = new ChunkPos(teleport.target());
             if (!chunks.contains(targetChunk)) chunks.add(targetChunk);
         }
-        JOBS.add(new WallJob(start, force, reason, chunks, teleport, level.getGameTime()));
-        WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} wall chunk ticket(s).",
-                reason, bb, chunks.size());
+        JOBS.add(new WallJob(start, force, reason, chunks, teleport, level.getGameTime(), ticketChunks));
+        if (ticketChunks) {
+            WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} wall chunk ticket(s).",
+                    reason, bb, chunks.size());
+        } else {
+            WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} after {} wall chunk(s) loaded naturally.",
+                    reason, bb, chunks.size());
+        }
         return true;
     }
 
     private static boolean processWallJob(ServerLevel level, WallJob job, long now) {
         try {
             if (!job.ticketsAdded) {
+                if (!job.ticketChunks) {
+                    job.ticketsAdded = true;
+                    job.ticketedAt = now;
+                    job.lastLogAt = now;
+                    WitcheryMod.LOGGER.info("[VillageWalls] Using {} naturally loaded wall chunk(s) for {}.",
+                            job.chunks.size(), job.start.getBoundingBox());
+                    return false;
+                }
+
                 if (job.ticketCursor == 0) {
                     job.ticketedAt = now;
                     job.lastLogAt = now;
@@ -345,6 +375,32 @@ public class VillageWallEvents {
             if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) ready++;
         }
         return ready;
+    }
+
+    private static boolean queueAutomaticGeneration(ServerLevel level, PendingWall pending, StructureStart start) {
+        List<ChunkPos> chunks = wallJobChunks(start);
+        int ready = readyChunkCount(level, chunks);
+        if (ready < chunks.size()) {
+            retryPendingForChunks(level, pending, start, ready, chunks.size());
+            return false;
+        }
+        return queueGeneration(level, start, false, "queue", null, false);
+    }
+
+    private static void retryPendingForChunks(ServerLevel level, PendingWall pending, StructureStart start,
+                                              int ready, int total) {
+        int nextAttempt = pending.attempts() + 1;
+        BoundingBox bb = start.getBoundingBox();
+        if (nextAttempt >= WALL_CHUNK_READINESS_MAX_ATTEMPTS) {
+            WitcheryMod.LOGGER.info("[VillageWalls] Gave up waiting for naturally loaded wall chunks at {}: {}/{} ready.",
+                    bb, ready, total);
+            return;
+        }
+        QUEUE.add(new PendingWall(start, level.getGameTime() + WALL_GENERATION_RETRY_TICKS, nextAttempt));
+        if (nextAttempt == 1 || nextAttempt % 10 == 0) {
+            WitcheryMod.LOGGER.info("[VillageWalls] Waiting for naturally loaded wall chunks at {}: {}/{} ready (retry {}/{}).",
+                    bb, ready, total, nextAttempt, WALL_CHUNK_READINESS_MAX_ATTEMPTS);
+        }
     }
 
     private static void finishWallJob(ServerLevel level, WallJob job, boolean success) {
