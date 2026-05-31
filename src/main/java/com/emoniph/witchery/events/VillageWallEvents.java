@@ -21,6 +21,9 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureCheckResult;
@@ -86,6 +89,8 @@ public class VillageWallEvents {
         long lastProgressAt;
         long lastLogAt;
         int lastReadyCount;
+        int generationAttempts;
+        long nextGenerateAt;
 
         WallJob(StructureStart start, boolean force, String reason,
                 List<ChunkPos> chunks, PendingTeleport teleport, long queuedAt, boolean ticketChunks) {
@@ -135,6 +140,8 @@ public class VillageWallEvents {
         final long queuedAt;
         int cursor;
         long lastLogAt;
+        int wallAttempts;
+        long nextWallAttemptAt;
 
         VillageGotoPrepJob(StructureStart start, PendingTeleport teleport, List<ChunkPos> chunks,
                            boolean generateWalls, long queuedAt) {
@@ -172,6 +179,10 @@ public class VillageWallEvents {
     private static final int VILLAGE_GOTO_LANDING_CHUNK_RADIUS = 2;
     private static final long VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS = 40L;
     private static final long VILLAGE_GOTO_PREP_TIMEOUT_TICKS = 20L * 150L;
+    private static final long VILLAGE_GOTO_WALL_RETRY_TICKS = 40L;
+    private static final int VILLAGE_GOTO_WALL_MAX_ATTEMPTS = 18;
+    private static final long WALL_GENERATION_RETRY_AFTER_NO_GATES_TICKS = 40L;
+    private static final int WALL_GENERATION_NO_GATE_MAX_ATTEMPTS = 6;
     private static long lastQueueDebugAt = Long.MIN_VALUE;
 
     static final List<String> VILLAGE_IDS = List.of(
@@ -543,6 +554,9 @@ public class VillageWallEvents {
 
             VillageWallData data = VillageWallData.get(level);
             if (job.generateWalls && !data.isProcessed(job.start.getBoundingBox())) {
+                if (job.nextWallAttemptAt > now) {
+                    return false;
+                }
                 StructureStart start = refreshVillageStart(level, job.start);
                 if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
                     WitcheryMod.LOGGER.info("[Goto] Village start was not ready after arrival prep at {}.",
@@ -550,17 +564,33 @@ public class VillageWallEvents {
                     completeTeleport(level, job.teleport, false);
                     return true;
                 }
+                job.wallAttempts++;
                 WitcheryMod.LOGGER.info("[VillageWalls] Generating walls (goto-prep) for village at {} ({} pieces, {} chunks prepared).",
                         start.getBoundingBox(), start.getPieces().size(), job.chunks.size());
-                debugLog("Starting goto-prep wall generation for {} after {} prepared chunk(s).",
-                        start.getBoundingBox(), job.chunks.size());
-                VillageWallGenerator.generate(level, start);
+                debugLog("Starting goto-prep wall generation for {} after {} prepared chunk(s), attempt {}/{}.",
+                        start.getBoundingBox(), job.chunks.size(), job.wallAttempts, VILLAGE_GOTO_WALL_MAX_ATTEMPTS);
+                VillageWallGenerator.GenerationResult result = VillageWallGenerator.generate(level, start);
+                if (!result.generated()) {
+                    if (job.wallAttempts < VILLAGE_GOTO_WALL_MAX_ATTEMPTS) {
+                        job.nextWallAttemptAt = now + VILLAGE_GOTO_WALL_RETRY_TICKS;
+                        WitcheryMod.LOGGER.info("[Goto] Village roads are not ready for wall gates at {} ({} candidate(s)); retry {}/{} in {} tick(s).",
+                                start.getBoundingBox(), result.gateCandidates(), job.wallAttempts,
+                                VILLAGE_GOTO_WALL_MAX_ATTEMPTS, VILLAGE_GOTO_WALL_RETRY_TICKS);
+                        return false;
+                    }
+                    WitcheryMod.LOGGER.warn("[Goto] Gave up preparing village walls at {} after {} attempt(s) with {} gate candidate(s).",
+                            start.getBoundingBox(), job.wallAttempts, result.gateCandidates());
+                    completeTeleport(level, job.teleport, false);
+                    return true;
+                }
                 data.markProcessed(start.getBoundingBox());
                 WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
                         start.getBoundingBox());
+                completeTeleport(level, job.teleport, true, start);
+                return true;
             }
 
-            completeTeleport(level, job.teleport, true);
+            completeTeleport(level, job.teleport, true, job.start);
             return true;
         } catch (Exception e) {
             WitcheryMod.LOGGER.error("[Goto] Village arrival prep failed for {}",
@@ -751,13 +781,31 @@ public class VillageWallEvents {
                 finishWallJob(level, job, true);
                 return true;
             }
+            if (job.nextGenerateAt > now) {
+                return false;
+            }
 
             WitcheryMod.LOGGER.info("[VillageWalls] Generating walls ({}) for village at {} ({} pieces, {} chunks ready).",
                     job.reason, job.start.getBoundingBox(), job.start.getPieces().size(), job.chunks.size());
             debugLog("Starting wall generator reason={} bb={} chunks={} teleports={} processedBefore={}.",
                     job.reason, job.start.getBoundingBox(), job.chunks.size(), job.teleports.size(),
                     data.isProcessed(job.start.getBoundingBox()));
-            VillageWallGenerator.generate(level, job.start);
+            job.generationAttempts++;
+            VillageWallGenerator.GenerationResult result = VillageWallGenerator.generate(level, job.start);
+            if (!result.generated()) {
+                if (job.generationAttempts < WALL_GENERATION_NO_GATE_MAX_ATTEMPTS) {
+                    job.nextGenerateAt = now + WALL_GENERATION_RETRY_AFTER_NO_GATES_TICKS;
+                    job.lastLogAt = now;
+                    WitcheryMod.LOGGER.info("[VillageWalls] Wall roads not ready for {} ({} gate candidate(s)); retry {}/{} in {} tick(s).",
+                            job.start.getBoundingBox(), result.gateCandidates(), job.generationAttempts,
+                            WALL_GENERATION_NO_GATE_MAX_ATTEMPTS, WALL_GENERATION_RETRY_AFTER_NO_GATES_TICKS);
+                    return false;
+                }
+                WitcheryMod.LOGGER.warn("[VillageWalls] Wall generation for {} did not find gate candidates after {} attempt(s); leaving village unprocessed.",
+                        job.start.getBoundingBox(), job.generationAttempts);
+                finishWallJob(level, job, false);
+                return true;
+            }
             data.markProcessed(job.start.getBoundingBox());
             WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
                     job.start.getBoundingBox());
@@ -850,6 +898,11 @@ public class VillageWallEvents {
     }
 
     private static void completeTeleport(ServerLevel level, PendingTeleport teleport, boolean wallsReady) {
+        completeTeleport(level, teleport, wallsReady, null);
+    }
+
+    private static void completeTeleport(ServerLevel level, PendingTeleport teleport, boolean wallsReady,
+                                         StructureStart start) {
         ServerPlayer player = level.getServer().getPlayerList().getPlayer(teleport.playerId());
         if (player == null) return;
 
@@ -860,12 +913,12 @@ public class VillageWallEvents {
             return;
         }
 
-        BlockPos target = teleport.target();
-        int surfaceY = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
-                target.getX(), target.getZ());
-        if (surfaceY < 20) {
-            surfaceY = Math.max(target.getY() + 3, 20);
-        }
+        BlockPos target = start != null
+                ? villageLandingTarget(level, start, teleport.target())
+                : findClearSurfaceNear(level, teleport.target(), 10);
+        int surfaceY = target.getY();
+        debugLog("Completing goto teleport for {}:{} from target {} to landing {} (wallsReady={}).",
+                teleport.namespace(), teleport.structureId(), teleport.target(), target, wallsReady);
 
         player.teleportTo(level, target.getX() + 0.5, surfaceY, target.getZ() + 0.5,
                 java.util.Set.of(), teleport.yRot(), teleport.xRot(), false);
@@ -876,6 +929,92 @@ public class VillageWallEvents {
         player.sendSystemMessage(Component.literal(
                 "The hidden paths carry you away, across " + dist + " blocks, to "
                 + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
+    }
+
+    private static BlockPos villageLandingTarget(ServerLevel level, StructureStart start, BlockPos fallback) {
+        BoundingBox bb = start.getBoundingBox();
+        BlockPos bestRoad = null;
+        double bestRoadDist = Double.MAX_VALUE;
+        for (int x = bb.minX(); x <= bb.maxX(); x++) {
+            for (int z = bb.minZ(); z <= bb.maxZ(); z++) {
+                if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                int y = safeSurfaceY(level, x, z, fallback.getY());
+                if (!isSafeLandingAt(level, x, y, z)) continue;
+                BlockState ground = level.getBlockState(new BlockPos(x, y - 1, z));
+                if (!isVillageRoadSurface(ground)) continue;
+                double dist = fallback.distSqr(new BlockPos(x, fallback.getY(), z));
+                if (dist < bestRoadDist) {
+                    bestRoadDist = dist;
+                    bestRoad = new BlockPos(x, y, z);
+                }
+            }
+        }
+        if (bestRoad != null) return bestRoad;
+
+        BlockPos center = new BlockPos((bb.minX() + bb.maxX()) / 2, fallback.getY(), (bb.minZ() + bb.maxZ()) / 2);
+        BlockPos nearCenter = findClearSurfaceNear(level, center, 18);
+        if (isSafeLandingAt(level, nearCenter.getX(), nearCenter.getY(), nearCenter.getZ())) {
+            return nearCenter;
+        }
+        return findClearSurfaceNear(level, fallback, 18);
+    }
+
+    private static BlockPos findClearSurfaceNear(ServerLevel level, BlockPos anchor, int radius) {
+        for (int r = 0; r <= radius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.abs(dx) != r && Math.abs(dz) != r) continue;
+                    int x = anchor.getX() + dx;
+                    int z = anchor.getZ() + dz;
+                    if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                    int y = safeSurfaceY(level, x, z, anchor.getY());
+                    if (isSafeLandingAt(level, x, y, z)) {
+                        return new BlockPos(x, y, z);
+                    }
+                }
+            }
+        }
+        int y = safeSurfaceY(level, anchor.getX(), anchor.getZ(), anchor.getY());
+        return new BlockPos(anchor.getX(), y, anchor.getZ());
+    }
+
+    private static int safeSurfaceY(ServerLevel level, int x, int z, int fallbackY) {
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        if (y <= level.getMinY() + 2) {
+            y = Math.max(fallbackY + 3, level.getMinY() + 2);
+        }
+        y = Math.min(Math.max(y, level.getMinY() + 2), level.getMaxY() - 2);
+
+        for (int dy = 0; dy <= 16; dy++) {
+            int up = y + dy;
+            if (up < level.getMaxY() - 1 && isSafeLandingAt(level, x, up, z)) return up;
+            int down = y - dy;
+            if (down > level.getMinY() + 1 && isSafeLandingAt(level, x, down, z)) return down;
+        }
+        return y;
+    }
+
+    private static boolean isSafeLandingAt(ServerLevel level, int x, int y, int z) {
+        if (y <= level.getMinY() || y >= level.getMaxY() - 1) return false;
+        BlockPos feet = new BlockPos(x, y, z);
+        BlockPos head = feet.above();
+        BlockPos groundPos = feet.below();
+        BlockState ground = level.getBlockState(groundPos);
+        BlockState feetState = level.getBlockState(feet);
+        BlockState headState = level.getBlockState(head);
+        return !ground.isAir() && !ground.liquid() && ground.isSolid()
+                && isOpenForPlayer(feetState) && isOpenForPlayer(headState);
+    }
+
+    private static boolean isOpenForPlayer(BlockState state) {
+        return state.isAir() || (state.canBeReplaced() && !state.liquid());
+    }
+
+    private static boolean isVillageRoadSurface(BlockState state) {
+        return state.is(Blocks.DIRT_PATH)
+                || state.is(Blocks.SMOOTH_SANDSTONE)
+                || state.is(Blocks.SANDSTONE)
+                || state.is(Blocks.CUT_SANDSTONE);
     }
 
     private static List<ChunkPos> wallJobChunks(StructureStart start) {

@@ -41,6 +41,13 @@ import java.util.Set;
  *  8. Spawn guards on wall-top every ~200 wall blocks.
  */
 public final class VillageWallGenerator {
+    public record GenerationResult(boolean generated, int gateCandidates, int gates) {
+        public static GenerationResult skipped(int gateCandidates, int gates) {
+            return new GenerationResult(false, gateCandidates, gates);
+        }
+    }
+
+    private record GateDetection(List<GateDef> gates, int candidates) {}
 
     private static final int WALL_HEIGHT   = 6;   // blocks above surface
     private static final int MIN_BUILD_Y   = -64;
@@ -78,11 +85,11 @@ public final class VillageWallGenerator {
 
     // ── Entry point ────────────────────────────────────────────────────────────
 
-    public static void generate(ServerLevel level, StructureStart start) {
+    public static GenerationResult generate(ServerLevel level, StructureStart start) {
         List<StructurePiece> pieces = start.getPieces();
         WitcheryMod.LOGGER.info("[VillageWalls] generate() called: {} pieces, bb={}",
                 pieces.size(), start.getBoundingBox());
-        if (pieces.isEmpty()) return;
+        if (pieces.isEmpty()) return GenerationResult.skipped(0, 0);
 
         // 1. Village extents
         int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
@@ -100,7 +107,7 @@ public final class VillageWallGenerator {
 
         if (w > MAX_GRID || d > MAX_GRID) {
             WitcheryMod.LOGGER.info("[VillageWalls] Village too large ({}x{}), skipping.", w, d);
-            return;
+            return GenerationResult.skipped(0, 0);
         }
 
         byte[][] grid = new byte[w][d];
@@ -271,7 +278,13 @@ public final class VillageWallGenerator {
         boolean desert = isDesertLike(level, cx, cz);
         BlockState pathBlock = desert ? Blocks.SMOOTH_SANDSTONE.defaultBlockState()
                                       : Blocks.DIRT_PATH.defaultBlockState();
-        List<GateDef> gates = detectGates(level, grid, originX, originZ, w, d, desert);
+        GateDetection gateDetection = detectGates(level, grid, originX, originZ, w, d, desert);
+        List<GateDef> gates = gateDetection.gates();
+        if (gateDetection.candidates() == 0) {
+            WitcheryMod.LOGGER.info("[VillageWalls] No gate candidates for {}; postponing wall generation until roads are ready.",
+                    start.getBoundingBox());
+            return GenerationResult.skipped(0, 0);
+        }
 
         // 8. Pre-sample wall base heights (water-aware). Walls follow terrain.
         int minBuild = MIN_BUILD_Y; // 1.21 minimum build height
@@ -340,6 +353,7 @@ public final class VillageWallGenerator {
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
+        return new GenerationResult(true, gateDetection.candidates(), gates.size());
     }
 
     // ── Loop pruning ───────────────────────────────────────────────────────────
@@ -472,7 +486,7 @@ public final class VillageWallGenerator {
      * Phase 3: rank by length, keep up to MAX_GATES spaced >= MIN_SPACING apart, rejecting any
      *          gate over water or without land on both sides; refY = median path height.
      */
-    private static List<GateDef> detectGates(ServerLevel level, byte[][] grid,
+    private static GateDetection detectGates(ServerLevel level, byte[][] grid,
                                               int ox, int oz, int w, int d, boolean desert) {
         // Phase 1
         boolean[][] road = new boolean[w][d];
@@ -544,7 +558,7 @@ public final class VillageWallGenerator {
         }
         WitcheryMod.LOGGER.info("[VillageWalls] {} gate candidate(s) -> {} gate(s).",
                 candidates.size(), gates.size());
-        return gates;
+        return new GateDetection(gates, candidates.size());
     }
 
     /**
