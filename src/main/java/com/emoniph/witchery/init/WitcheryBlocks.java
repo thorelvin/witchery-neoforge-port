@@ -9,8 +9,10 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -98,6 +100,17 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<PressurePlateBlock> ICE_PRESSURE_PLATE = BLOCKS.registerBlock("ice_pressure_plate",
             props -> new PressurePlateBlock(BlockSetType.IRON, props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noCollision().friction(0.98f)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<PressurePlateBlock> SNOW_PRESSURE_PLATE = BLOCKS.registerBlock("snow_pressure_plate",
+            props -> new PressurePlateBlock(BlockSetType.OAK,
+                    props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noCollision()),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<StairBlock> SNOW_STAIRS = BLOCKS.registerBlock("snow_stairs",
+            props -> new StairBlock(net.minecraft.world.level.block.Blocks.SNOW_BLOCK.defaultBlockState(),
+                    props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noOcclusion()),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<SlabBlock> SNOW_SLAB = BLOCKS.registerBlock("snow_slab",
+            props -> new SlabBlock(props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noOcclusion()),
             BlockBehaviour.Properties.of());
 
     // Wood logs/leaves

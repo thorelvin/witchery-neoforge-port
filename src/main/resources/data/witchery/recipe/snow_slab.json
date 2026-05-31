@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": "minecraft:snow"
+  },
+  "result": {
+    "id": "witchery:snow_slab",
+    "count": 6
+  }
+}

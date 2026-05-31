@@ -231,6 +231,9 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ICE_FENCE            = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_FENCE);
     public static final DeferredItem<BlockItem> ICE_GATE             = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_GATE);
     public static final DeferredItem<BlockItem> ICE_PRESSURE_PLATE   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> SNOW_PRESSURE_PLATE  = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SNOW_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> SNOW_STAIRS          = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SNOW_STAIRS);
+    public static final DeferredItem<BlockItem> SNOW_SLAB            = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SNOW_SLAB);
     public static final DeferredItem<BlockItem> FETISH_SCARECROW    = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FETISH_SCARECROW);
     public static final DeferredItem<BlockItem> FETISH_TRENT_EFFIGY  = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FETISH_TRENT_EFFIGY);
     public static final DeferredItem<BlockItem> FETISH_WITCHS_LADDER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.FETISH_WITCHS_LADDER);
@@ -635,9 +638,6 @@ public class WitcheryItems {
             "shrub_of_sprouting",
             "shrub_of_thorns",
             "shrub_of_webs",
-            "snow_pressure_plate",
-            "snow_slab",
-            "snow_stairs",
             "staff_of_duplication",
             "twisting_band",
             "universal_antidote",

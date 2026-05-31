@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS"
+  ],
+  "key": {
+    "S": "minecraft:snow_block"
+  },
+  "result": {
+    "id": "witchery:snow_pressure_plate"
+  }
+}
