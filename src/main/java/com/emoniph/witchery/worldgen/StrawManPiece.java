@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
@@ -45,6 +46,8 @@ public class StrawManPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
+        if (!hasDryLandFootprint(level)) return;
+
         boolean desert = isDesertBiome(level, boundingBox.minX() + 2, boundingBox.minZ() + 2);
 
         BlockState ground = desert ? Blocks.SAND.defaultBlockState()
@@ -101,6 +104,25 @@ public class StrawManPiece extends StructurePiece {
                 fillColumnDown(level, underground, x, -1, z, box);
             }
         }
+    }
+
+    private boolean hasDryLandFootprint(WorldGenLevel level) {
+        for (int x = 0; x <= 5; x++) {
+            for (int z = 0; z <= 4; z++) {
+                int wx = boundingBox.minX() + x;
+                int wz = boundingBox.minZ() + z;
+                int worldSurface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, wx, wz);
+                int oceanFloor = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, wx, wz);
+                if (worldSurface > oceanFloor) return false;
+
+                int baseY = boundingBox.minY();
+                for (int y = baseY - 1; y <= baseY + 1; y++) {
+                    if (!level.getFluidState(new BlockPos(wx, y, wz)).isEmpty()) return false;
+                }
+                if (!level.getFluidState(new BlockPos(wx, worldSurface - 1, wz)).isEmpty()) return false;
+            }
+        }
+        return true;
     }
 
     private void fillGround(WorldGenLevel level, BoundingBox box, BlockState ground) {
