@@ -459,7 +459,7 @@ public final class VillageWallGenerator {
                     || isOverWater(level, cwx - ddx, cwz - ddz))  // inside
                 continue;
 
-            int refY = pathBaselineY(level, road, tipx, tipz, ddx, ddz, w, d, ox, oz);
+            int refY = pathCorridorAvgY(level, cwx, cwz, ddx, ddz, desert);
             if (refY < 0) refY = wallBaseHeight(level, cwx, cwz);
 
             int axisDX = (ddx != 0) ? 0 : 1, axisDZ = (ddx != 0) ? 1 : 0; // along the wall
@@ -472,24 +472,24 @@ public final class VillageWallGenerator {
         return gates;
     }
 
-    /** Median ground height of a street, walking back from its tip along -dir (gap-bridged). */
-    private static int pathBaselineY(ServerLevel level, boolean[][] road, int tipx, int tipz,
-                                      int ddx, int ddz, int w, int d, int ox, int oz) {
-        List<Integer> ys = new ArrayList<>();
-        int cx = tipx, cz = tipz, miss = 0;
-        for (int s = 0; s < 64; s++) {
-            if (cx < 0 || cz < 0 || cx >= w || cz >= d) break;
-            if (road[cx][cz]) {
-                int wx = ox + cx, wz = oz + cz;
-                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) != null)
-                    ys.add(groundHeight(level, wx, wz));
-                miss = 0;
-            } else if (++miss > 3) break;
-            cx -= ddx; cz -= ddz;
+    /**
+     * Average ground height along the gate's path corridor: from a few cells outside the wall
+     * (-dir) inward (-dir·t) until the existing village road is reached. This is the ground the
+     * gatehouse and its path actually sit on, so averaging it places the gate at a height that
+     * the path can ramp to from both sides — instead of borrowing a far-away road's elevation.
+     */
+    private static int pathCorridorAvgY(ServerLevel level, int cwx, int cwz,
+                                         int ddx, int ddz, boolean desert) {
+        int idx = -ddx, idz = -ddz; // inward (toward the village)
+        long sum = 0; int n = 0;
+        for (int t = -4; t <= 40; t++) { // t<0 = outside the wall, t>0 = inside
+            int ix = cwx + idx * t, iz = cwz + idz * t;
+            if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) continue;
+            int gy = groundHeight(level, ix, iz);
+            sum += gy; n++;
+            if (t > 0 && isVillageRoad(level.getBlockState(new BlockPos(ix, gy - 1, iz)), desert)) break;
         }
-        if (ys.isEmpty()) return -1;
-        ys.sort(Integer::compareTo);
-        return ys.get(ys.size() / 2);
+        return n > 0 ? (int) (sum / n) : -1;
     }
 
     /** True if the column at (wx,wz) has water above its solid floor. */
@@ -592,7 +592,12 @@ public final class VillageWallGenerator {
         }
 
         // Extend the curtain down to the lowest neighbour so cliff steps stay connected.
-        for (int y = sy - 1; y >= floorTo; y--) setBlock(level, wx, y, wz, wall);
+        // Below the water line use stone (hidden foundation) instead of wall material, so the
+        // wall never shows blocks under water.
+        for (int y = sy - 1; y >= floorTo; y--) {
+            boolean underwater = level.getBlockState(new BlockPos(wx, y, wz)).liquid();
+            setBlock(level, wx, y, wz, underwater ? Blocks.STONE.defaultBlockState() : wall);
+        }
         fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, Blocks.STONE.defaultBlockState());
     }
 
@@ -623,10 +628,12 @@ public final class VillageWallGenerator {
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
         int refY = g.refY();
 
+        // Depth -1..+1 centres the 3-deep gatehouse on the wall line, so the wall meets the
+        // gate at the middle of its sides (one block of the gate sits outside the wall).
         for (int o = -3; o <= 3; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
             boolean opening = Math.abs(o) <= 1;
-            for (int depth = 0; depth < 3; depth++) {
+            for (int depth = -1; depth <= 1; depth++) {
                 int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
@@ -641,12 +648,13 @@ public final class VillageWallGenerator {
             }
         }
 
-        // Path through the 3 opening lanes: out ~6 cells, and in until it meets the road.
+        // Path through the 3 opening lanes. Start beyond the gate footprint (|depth|<=1) so
+        // layPath never samples the arch roof: outward from depth -2, inward from depth +2.
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            for (int t = 1; t <= 6; t++) layPath(level, bx + oDX * t, bz + oDZ * t, pathBlock);
-            for (int t = 3; t <= 40; t++) {
+            for (int t = 2; t <= 7; t++) layPath(level, bx + oDX * t, bz + oDZ * t, pathBlock);
+            for (int t = 2; t <= 40; t++) {
                 int ix = bx + g.inDX() * t, iz = bz + g.inDZ() * t;
                 if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
                 int gy = groundHeight(level, ix, iz);
