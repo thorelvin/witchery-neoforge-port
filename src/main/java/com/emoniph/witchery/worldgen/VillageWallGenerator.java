@@ -50,6 +50,7 @@ public final class VillageWallGenerator {
     private static final int MAX_GRID      = 260; // abort if village is too large
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
     private static final int GUARD_SPACING = 200; // wall blocks between guard spawns
+    private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     // Morphological dilation applied to the village footprint before perimeter detection.
     // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
     // the wall traces a smoother, more regularised contour (see reference: contour
@@ -433,7 +434,9 @@ public final class VillageWallGenerator {
                         int nx = x + dir[0] * depth, nz = z + dir[1] * depth;
                         if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
                         if (grid[nx][nz] == INTERIOR) continue;
-                        if (grid[nx][nz] == WALL) candidates.add(new int[]{nx, nz, run, dir[0], dir[1], x, z});
+                        if (grid[nx][nz] == WALL
+                                && isFlatGateFace(grid, nx, nz, dir[0], dir[1], w, d))
+                            candidates.add(new int[]{nx, nz, run, dir[0], dir[1], x, z});
                         break;
                     }
                 }
@@ -559,6 +562,39 @@ public final class VillageWallGenerator {
     }
 
     // ── Wall placement ─────────────────────────────────────────────────────────
+
+    /**
+     * A road may only create a gate where it reaches a straight wall face head-on.
+     * This rejects corner and parallel-wall hits that would put the gatehouse sideways
+     * against the nearby path instead of opening through the curtain.
+     */
+    private static boolean isFlatGateFace(byte[][] grid, int x, int z,
+                                           int outDX, int outDZ, int w, int d) {
+        int axisDX = (outDX != 0) ? 0 : 1;
+        int axisDZ = (outDX != 0) ? 1 : 0;
+
+        for (int o = -GATE_FLAT_FACE_HALF_WIDTH; o <= GATE_FLAT_FACE_HALF_WIDTH; o++) {
+            int gx = x + axisDX * o;
+            int gz = z + axisDZ * o;
+            if (!insideGrid(gx, gz, w, d) || grid[gx][gz] != WALL) return false;
+
+            int innerX = gx - outDX;
+            int innerZ = gz - outDZ;
+            int outerX = gx + outDX;
+            int outerZ = gz + outDZ;
+            if (!insideGrid(innerX, innerZ, w, d) || !insideGrid(outerX, outerZ, w, d))
+                return false;
+            if (grid[innerX][innerZ] != INTERIOR) return false;
+            if (grid[outerX][outerZ] == INTERIOR || grid[outerX][outerZ] == WALL
+                    || grid[outerX][outerZ] == GATE)
+                return false;
+        }
+        return true;
+    }
+
+    private static boolean insideGrid(int x, int z, int w, int d) {
+        return x >= 0 && z >= 0 && x < w && z < d;
+    }
 
     /**
      * One wall column:
