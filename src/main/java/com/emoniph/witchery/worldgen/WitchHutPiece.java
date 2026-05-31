@@ -90,8 +90,7 @@ public class WitchHutPiece extends StructurePiece {
         placeBlock(level, Blocks.OAK_DOOR.defaultBlockState()
                 .setValue(DoorBlock.FACING, Direction.NORTH)
                 .setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 1, 2, 0, box);
-        placeBlock(level, Blocks.COBBLESTONE_STAIRS.defaultBlockState()
-                .setValue(StairBlock.FACING, Direction.NORTH), 1, 0, -1, box);
+        placeFrontStep(level);
 
         placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 1, 1, 3, box);
         placeBlock(level, rowanLog, 2, 1, 3, box);
@@ -113,6 +112,14 @@ public class WitchHutPiece extends StructurePiece {
                     new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                     EntitySpawnReason.STRUCTURE, null);
             level.addFreshEntityWithPassengers(witch);
+        }
+    }
+
+    private void placeFrontStep(WorldGenLevel level) {
+        BlockPos stepPos = getWorldPos(1, 0, -1);
+        if (level.getBlockState(stepPos).isAir() && !level.getBlockState(stepPos.below()).isAir()) {
+            level.setBlock(stepPos, Blocks.COBBLESTONE_STAIRS.defaultBlockState()
+                    .setValue(StairBlock.FACING, Direction.NORTH), 2);
         }
     }
 }

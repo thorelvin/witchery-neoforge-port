@@ -64,18 +64,18 @@ public class WitcheryVillageElement extends StructurePoolElement {
     @Override
     public List<StructureTemplate.JigsawBlockInfo> getShuffledJigsawBlocks(
             StructureTemplateManager mgr, BlockPos pos, Rotation rotation, RandomSource random) {
-        // The procedural pieces are only built in their NORTH orientation, so we only offer a
-        // connection for the NONE rotation; the building then attaches on the north side of a
-        // village street whose street jigsaw faces south. (Offering other rotations without
-        // rotating the build would misalign the piece and it would be rejected anyway.)
+        // The procedural pieces are only built in their StructurePiece NORTH orientation.
+        // That orientation flips local z=0 to the generated south face, so the jigsaw must
+        // be advertised on the local south edge to line up with the visible front door.
         if (rotation != Rotation.NONE) return List.of();
 
         int[] s = dims();
-        // Connection jigsaw on the building's north face (z=0), centred in X, at the door
-        // course (y=1), facing NORTH so it mates with a street jigsaw just outside (z=-1).
-        BlockPos jigPos = new BlockPos(doorX(), 1, 0);
+        // Vanilla village houses put their building_entrance jigsaw at y=0 while streets
+        // expose theirs at y=1. Matching that baseline raises the building floor one block
+        // above the path, instead of sinking it level with the road.
+        BlockPos jigPos = new BlockPos(doorX(), 0, s[2] - 1);
         var state = Blocks.JIGSAW.defaultBlockState()
-                .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.NORTH_UP);
+                .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.SOUTH_UP);
 
         CompoundTag tag = new CompoundTag();
         tag.putString("name", "minecraft:building_entrance");
