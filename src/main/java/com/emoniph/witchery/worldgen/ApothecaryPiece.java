@@ -15,7 +15,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -53,51 +52,53 @@ public class ApothecaryPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        BlockState planks = Blocks.OAK_PLANKS.defaultBlockState();
-        BlockState cobble = Blocks.COBBLESTONE.defaultBlockState();
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        BlockState planks = materials.wall();
+        BlockState cobble = materials.foundation();
         BlockState air    = Blocks.AIR.defaultBlockState();
-        BlockState glass  = Blocks.GLASS_PANE.defaultBlockState();
-        BlockState log    = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
-        BlockState slab   = Blocks.OAK_SLAB.defaultBlockState();
+        BlockState glassFront = VillageBuildingMaterials.paneEastWest();
+        BlockState glassSide = VillageBuildingMaterials.paneNorthSouth();
+        BlockState log    = materials.trim();
+        BlockState slab   = materials.roofSlabBottom();
 
-        // Y=0 — cobblestone foundation
+        // Y=0 - biome foundation
         generateBox(level, box, 0, 0, 0, 8, 0, 5, cobble, cobble, false);
 
-        // Y=1-5 — oak plank walls (full perimeter, hollow interior)
+        // Y=1-5 - biome wall shell (full perimeter, hollow interior)
         for (int y = 1; y <= 5; y++) {
             generateBox(level, box, 0, y, 0, 8, y, 5, planks, planks, false);
             generateBox(level, box, 1, y, 1, 7, y, 4, air, air, false);
         }
 
-        // Witch log corner pillars (Y=1-5)
+        // Biome trim corner pillars (Y=1-5)
         for (int y = 1; y <= 5; y++) {
             placeBlock(level, log, 0, y, 0, box); placeBlock(level, log, 8, y, 0, box);
             placeBlock(level, log, 0, y, 5, box); placeBlock(level, log, 8, y, 5, box);
         }
 
-        // Y=1-2 — front door opening at X=1, Z=0
+        // Y=1-2 - front door opening at X=1, Z=0
         placeBlock(level, air, 1, 1, 0, box);
         placeBlock(level, air, 1, 2, 0, box);
 
         // Front face windows (Y=2-3, spaced across front)
-        placeBlock(level, glass, 3, 2, 0, box); placeBlock(level, glass, 3, 3, 0, box);
-        placeBlock(level, glass, 5, 2, 0, box); placeBlock(level, glass, 5, 3, 0, box);
-        placeBlock(level, glass, 7, 2, 0, box); placeBlock(level, glass, 7, 3, 0, box);
+        placeBlock(level, glassFront, 3, 2, 0, box); placeBlock(level, glassFront, 3, 3, 0, box);
+        placeBlock(level, glassFront, 5, 2, 0, box); placeBlock(level, glassFront, 5, 3, 0, box);
+        placeBlock(level, glassFront, 7, 2, 0, box); placeBlock(level, glassFront, 7, 3, 0, box);
 
         // Back face windows
-        placeBlock(level, glass, 2, 2, 5, box); placeBlock(level, glass, 2, 3, 5, box);
-        placeBlock(level, glass, 6, 2, 5, box); placeBlock(level, glass, 6, 3, 5, box);
+        placeBlock(level, glassFront, 2, 2, 5, box); placeBlock(level, glassFront, 2, 3, 5, box);
+        placeBlock(level, glassFront, 6, 2, 5, box); placeBlock(level, glassFront, 6, 3, 5, box);
 
         // Side windows (left X=0, right X=8)
-        placeBlock(level, glass, 0, 2, 2, box); placeBlock(level, glass, 0, 3, 2, box);
-        placeBlock(level, glass, 0, 2, 3, box); placeBlock(level, glass, 0, 3, 3, box);
-        placeBlock(level, glass, 8, 2, 2, box); placeBlock(level, glass, 8, 3, 2, box);
-        placeBlock(level, glass, 8, 2, 3, box); placeBlock(level, glass, 8, 3, 3, box);
+        placeBlock(level, glassSide, 0, 2, 2, box); placeBlock(level, glassSide, 0, 3, 2, box);
+        placeBlock(level, glassSide, 0, 2, 3, box); placeBlock(level, glassSide, 0, 3, 3, box);
+        placeBlock(level, glassSide, 8, 2, 2, box); placeBlock(level, glassSide, 8, 3, 2, box);
+        placeBlock(level, glassSide, 8, 2, 3, box); placeBlock(level, glassSide, 8, 3, 3, box);
 
-        // Y=6 — oak plank ceiling
+        // Y=6 - biome ceiling
         generateBox(level, box, 0, 6, 0, 8, 6, 5, planks, planks, false);
 
-        // Y=7 — slabbed gable roof (low apex at center, slabs on the ridge)
+        // Y=7 - slabbed gable roof (low apex at center, slabs on the ridge)
         generateBox(level, box, 0, 7, 0, 8, 7, 5, slab, slab, false);
 
         // ── Interior furnishings (Y=1) ────────────────────────────────────────

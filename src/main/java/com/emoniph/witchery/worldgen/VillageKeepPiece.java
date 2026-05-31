@@ -15,7 +15,6 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -27,21 +26,21 @@ import net.minecraft.world.level.storage.loot.LootTable;
 /**
  * Village fortified keep. Source parity: ComponentVillageKeep (1.7.10-0.24.1 / WitcheryWalls 1.12.2).
  *
- * 16×26×16 two-tower keep. Left tower (offsetX=0) and right tower (offsetX=8) connected by
+ * 16x26x16 two-tower keep. Left tower (offsetX=0) and right tower (offsetX=8) connected by
  * bridging walls, corridors, and a central staircase shaft. Twelve guard spawns total.
  *
- * Block mapping from 1.7.10 srg:
- *   field_150347_e = COBBLESTONE   (walls, floors)
- *   field_150344_f = STONE         (pyramid roof cap)
- *   field_150364_r = OAK_LOG       (frame beams)
+ * Block role mapping from 1.7.10 srg, remapped through VillageBuildingMaterials by biome:
+ *   field_150347_e = foundation    (walls, floors)
+ *   field_150344_f = roof solid    (pyramid roof cap)
+ *   field_150364_r = trim          (frame beams)
  *   field_150411_aY = IRON_BARS    (windows/arrow slits in walls)
  *   field_150350_a = AIR           (openings)
- *   field_150476_ad = OAK_STAIRS   (roof overhang)
- *   field_150390_bg = COBBLESTONE_STAIRS (door steps)
+ *   field_150476_ad = roof stairs  (roof overhang)
+ *   field_150390_bg = step stairs  (door steps)
  *   field_150468_ap = LADDER
  *   field_150478_aa = TORCH
  *   field_150333_U  = IRON_BARS    (used in different fill calls but same block)
- *   field_180407_aO = OAK_FENCE    (parapet rail)
+ *   field_180407_aO = parapet rail
  */
 public class VillageKeepPiece extends StructurePiece {
 
@@ -63,40 +62,27 @@ public class VillageKeepPiece extends StructurePiece {
 
     // ── State helpers ─────────────────────────────────────────────────────────
 
-    private static BlockState stairsN() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-    }
-    private static BlockState stairsS() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH);
-    }
-    private static BlockState stairsW() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.WEST);
-    }
-    private static BlockState stairsE() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST);
-    }
-    private static BlockState cobbleStairsN() {
-        return Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-    }
-    private static BlockState cobbleStairsS() {
-        return Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH);
-    }
-    private static BlockState cobbleStairsW() {
-        return Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.WEST);
-    }
-
     // ── Generation ────────────────────────────────────────────────────────────
 
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
 
-        BlockState cobble = Blocks.COBBLESTONE.defaultBlockState();
-        BlockState stone  = Blocks.STONE.defaultBlockState();
-        BlockState log    = Blocks.OAK_LOG.defaultBlockState();
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        BlockState cobble = materials.foundation();
+        BlockState stone  = materials.roofSolid();
+        BlockState log    = materials.trim();
+        BlockState logX   = materials.trim(Direction.Axis.X);
+        BlockState logZ   = materials.trim(Direction.Axis.Z);
         BlockState bars   = Blocks.IRON_BARS.defaultBlockState();
         BlockState air    = Blocks.AIR.defaultBlockState();
-        BlockState fence  = Blocks.OAK_FENCE.defaultBlockState();
+        BlockState stairsN = materials.roofStairs(Direction.NORTH);
+        BlockState stairsS = materials.roofStairs(Direction.SOUTH);
+        BlockState stairsW = materials.roofStairs(Direction.WEST);
+        BlockState stairsE = materials.roofStairs(Direction.EAST);
+        BlockState stepN = materials.stepStairs(Direction.NORTH);
+        BlockState stepS = materials.stepStairs(Direction.SOUTH);
+        BlockState stepW = materials.stepStairs(Direction.WEST);
         BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
 
@@ -104,8 +90,8 @@ public class VillageKeepPiece extends StructurePiece {
         generateBox(level, box, 1, 1, 1, 14, 25, 14, air, air, false);
 
         // ── Two towers ───────────────────────────────────────────────────────
-        drawTower(level, box, cobble, log, bars, air, ladder, torch, 0, 0);
-        drawTower(level, box, cobble, log, bars, air, ladder, torch, 8, 4);
+        drawTower(level, box, cobble, log, logX, logZ, bars, air, ladder, torch, 0, 0);
+        drawTower(level, box, cobble, log, logX, logZ, bars, air, ladder, torch, 8, 4);
 
         // ── Entry bridge (N face, x=7-9, y=0-6, z=2-4) ───────────────────────
         fill(level, box, 7, 0, 2, 3, 1, 3, cobble);
@@ -125,8 +111,8 @@ public class VillageKeepPiece extends StructurePiece {
 
         // Cobblestone-stair steps to N entrance
         for (int x = 7; x <= 9; x++) {
-            placeBlock(level, cobbleStairsN(), x, 0, 1, box);
-            placeBlock(level, cobbleStairsS(), x, 0, 4, box);
+            placeBlock(level, stepN, x, 0, 1, box);
+            placeBlock(level, stepS, x, 0, 4, box);
         }
 
         // ── S face bridge corridor ────────────────────────────────────────────
@@ -164,10 +150,8 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 6, 5, 11, 1, 2, 1, air);
 
         // Log roof support beams over S bridge
-        placeBlock(level, log.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,
-                net.minecraft.core.Direction.Axis.X), 8, 7, 9, box);
-        placeBlock(level, log.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,
-                net.minecraft.core.Direction.Axis.Z), 6, 7, 11, box);
+        placeBlock(level, materials.trim(Direction.Axis.X), 8, 7, 9, box);
+        placeBlock(level, materials.trim(Direction.Axis.Z), 6, 7, 11, box);
 
         // Ladder on S bridge W wall (y=1-14)
         BlockState ladderW = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
@@ -232,27 +216,27 @@ public class VillageKeepPiece extends StructurePiece {
 
         // Roof overhang stairs (facing outward)
         for (int x = 9; x <= 15; x++) {
-            placeBlock(level, stairsN(), x, 20, 8, box);
-            placeBlock(level, stairsS(), x, 20, 14, box);
+            placeBlock(level, stairsN, x, 20, 8, box);
+            placeBlock(level, stairsS, x, 20, 14, box);
         }
         for (int x = 10; x <= 14; x++) {
-            placeBlock(level, stairsN(), x, 22, 9, box);
-            placeBlock(level, stairsS(), x, 22, 13, box);
+            placeBlock(level, stairsN, x, 22, 9, box);
+            placeBlock(level, stairsS, x, 22, 13, box);
         }
         for (int x = 11; x <= 13; x++) {
-            placeBlock(level, stairsN(), x, 24, 10, box);
-            placeBlock(level, stairsS(), x, 24, 12, box);
+            placeBlock(level, stairsN, x, 24, 10, box);
+            placeBlock(level, stairsS, x, 24, 12, box);
         }
         for (int z = 9; z <= 13; z++) {
-            placeBlock(level, stairsW(), 9, 20, z, box);
-            placeBlock(level, stairsE(), 15, 20, z, box);
+            placeBlock(level, stairsW, 9, 20, z, box);
+            placeBlock(level, stairsE, 15, 20, z, box);
         }
         for (int z = 10; z <= 12; z++) {
-            placeBlock(level, stairsW(), 10, 22, z, box);
-            placeBlock(level, stairsE(), 14, 22, z, box);
+            placeBlock(level, stairsW, 10, 22, z, box);
+            placeBlock(level, stairsE, 14, 22, z, box);
         }
-        placeBlock(level, stairsW(), 11, 24, 11, box);
-        placeBlock(level, stairsE(), 13, 24, 11, box);
+        placeBlock(level, stairsW, 11, 24, 11, box);
+        placeBlock(level, stairsE, 13, 24, 11, box);
 
         // ── N corridor between the two towers (y=0-6, z=11-12) ───────────────
         fill(level, box, 7, 0, 11, 3, 1, 2, cobble);
@@ -265,7 +249,7 @@ public class VillageKeepPiece extends StructurePiece {
         // Torch above N door
         placeBlock(level, torch, 8, 2, 11, box);
         // Steps to N corridor
-        for (int x = 7; x <= 9; x++) placeBlock(level, cobbleStairsN(), x, 0, 10, box);
+        for (int x = 7; x <= 9; x++) placeBlock(level, stepN, x, 0, 10, box);
         // Iron bars
         placeBlock(level, bars, 7, 3, 11, box);
         placeBlock(level, bars, 9, 3, 11, box);
@@ -278,7 +262,7 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 3, 1, 6, 1, 4, 1, log);
         fill(level, box, 3, 1, 8, 1, 4, 1, log);
         placeBlock(level, torch, 4, 2, 7, box);
-        for (int z = 6; z <= 8; z++) placeBlock(level, cobbleStairsW(), 5, 0, z, box);
+        for (int z = 6; z <= 8; z++) placeBlock(level, stepW, 5, 0, z, box);
         placeBlock(level, bars, 4, 3, 6, box);
         placeBlock(level, bars, 4, 3, 8, box);
 
@@ -290,7 +274,7 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 13, 1, 6, 1, 4, 1, log);
         fill(level, box, 13, 1, 8, 1, 4, 1, log);
         placeBlock(level, torch, 12, 2, 7, box);
-        for (int z = 6; z <= 8; z++) placeBlock(level, cobbleStairsW(), 11, 0, z, box);
+        for (int z = 6; z <= 8; z++) placeBlock(level, stepW, 11, 0, z, box);
         placeBlock(level, bars, 12, 3, 6, box);
         placeBlock(level, bars, 12, 3, 8, box);
 
@@ -313,7 +297,7 @@ public class VillageKeepPiece extends StructurePiece {
     // ── Sub-tower (called twice with different offsets) ───────────────────────
 
     private void drawTower(WorldGenLevel level, BoundingBox box,
-                           BlockState cobble, BlockState log, BlockState bars,
+                           BlockState cobble, BlockState log, BlockState logX, BlockState logZ, BlockState bars,
                            BlockState air, BlockState ladder, BlockState torch,
                            int oX, int fX) {
         // Tower walls (11 blocks tall, 3×3 hollow footprint)
@@ -337,12 +321,8 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 4+oX, 6, 1, 1, 2, 1, bars);
         fill(level, box, 2+oX+fX, 6, 3, 1, 2, 1, bars);
         // Log roof support beams (horizontal, over tower top)
-        placeBlock(level, log.setValue(
-                net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,
-                net.minecraft.core.Direction.Axis.Z), 4+oX, 7, 5, box);
-        placeBlock(level, log.setValue(
-                net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,
-                net.minecraft.core.Direction.Axis.X), 6+oX-fX, 7, 3, box);
+        placeBlock(level, logZ, 4+oX, 7, 5, box);
+        placeBlock(level, logX, 6+oX-fX, 7, 3, box);
         // Air openings (door/window clearances)
         fill(level, box, 4+oX, 5, 5, 1, 2, 1, air);
         fill(level, box, 4+oX, 1, 5, 1, 2, 1, air);

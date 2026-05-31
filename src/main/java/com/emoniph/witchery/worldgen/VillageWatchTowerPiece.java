@@ -15,11 +15,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
@@ -29,7 +25,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * Guard watch tower. Source parity: ComponentVillageWatchTower (1.7.10-0.24.1 / WitcheryWalls 1.12.2).
- * 8×23×8 cobblestone tower, battlemented parapet, pyramidal oak roof, 3 guard spawns at the top.
+ * 8x23x8 biome-material tower, battlemented parapet, pyramidal roof, 3 guard spawns at the top.
  */
 public class VillageWatchTowerPiece extends StructurePiece {
 
@@ -51,30 +47,22 @@ public class VillageWatchTowerPiece extends StructurePiece {
 
     // ── Pre-baked states ──────────────────────────────────────────────────────
 
-    private static BlockState stairsN() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-    }
-    private static BlockState stairsS() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH);
-    }
-    private static BlockState stairsW() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.WEST);
-    }
-    private static BlockState stairsE() {
-        return Blocks.OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST);
-    }
-
     // ── Generation ────────────────────────────────────────────────────────────
 
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
 
-        BlockState cobble = Blocks.COBBLESTONE.defaultBlockState();
-        BlockState stone  = Blocks.STONE.defaultBlockState();
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        BlockState cobble = materials.foundation();
+        BlockState stone  = materials.roofSolid();
         BlockState air    = Blocks.AIR.defaultBlockState();
-        BlockState fence  = Blocks.OAK_FENCE.defaultBlockState();
-        BlockState slab   = Blocks.OAK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+        BlockState fence  = materials.parapet();
+        BlockState slab   = materials.roofSlabTop();
+        BlockState stairsN = materials.roofStairs(Direction.NORTH);
+        BlockState stairsS = materials.roofStairs(Direction.SOUTH);
+        BlockState stairsW = materials.roofStairs(Direction.WEST);
+        BlockState stairsE = materials.roofStairs(Direction.EAST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
         BlockState ladderN = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
         BlockState ladderS = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
@@ -112,27 +100,27 @@ public class VillageWatchTowerPiece extends StructurePiece {
         placeBlock(level, fence, 6, 18, 2, box);
         placeBlock(level, fence, 6, 18, 6, box);
 
-        // ── Stone roof at y=19-20 ─────────────────────────────────────────────
+        // ── Biome roof at y=19-20 ─────────────────────────────────────────────
         generateBox(level, box, 2, 19, 2, 6, 19, 6, stone, stone, false);
         generateBox(level, box, 3, 20, 3, 5, 20, 5, stone, stone, false);
 
-        // ── Pyramidal oak-stair overhang ──────────────────────────────────────
+        // ── Pyramidal stair overhang ──────────────────────────────────────────
         // N face (ascending north, z decreases outward)
-        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsN(), sx, 19, 1, box);
-        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsN(), sx, 20, 2, box);
-        for (int sx = 3; sx <= 5; sx++) placeBlock(level, stairsN(), sx, 21, 3, box);
+        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsN, sx, 19, 1, box);
+        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsN, sx, 20, 2, box);
+        for (int sx = 3; sx <= 5; sx++) placeBlock(level, stairsN, sx, 21, 3, box);
         // S face
-        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsS(), sx, 19, 7, box);
-        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsS(), sx, 20, 6, box);
-        for (int sx = 3; sx <= 5; sx++) placeBlock(level, stairsS(), sx, 21, 5, box);
+        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsS, sx, 19, 7, box);
+        for (int sx = 2; sx <= 6; sx++) placeBlock(level, stairsS, sx, 20, 6, box);
+        for (int sx = 3; sx <= 5; sx++) placeBlock(level, stairsS, sx, 21, 5, box);
         // W face
-        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsW(), 1, 19, sz, box);
-        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsW(), 2, 20, sz, box);
-        for (int sz = 3; sz <= 5; sz++) placeBlock(level, stairsW(), 3, 21, sz, box);
+        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsW, 1, 19, sz, box);
+        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsW, 2, 20, sz, box);
+        for (int sz = 3; sz <= 5; sz++) placeBlock(level, stairsW, 3, 21, sz, box);
         // E face
-        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE(), 7, 19, sz, box);
-        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE(), 6, 20, sz, box);
-        for (int sz = 3; sz <= 5; sz++) placeBlock(level, stairsE(), 5, 21, sz, box);
+        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE, 7, 19, sz, box);
+        for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE, 6, 20, sz, box);
+        for (int sz = 3; sz <= 5; sz++) placeBlock(level, stairsE, 5, 21, sz, box);
         // Peak slab
         placeBlock(level, slab, 4, 22, 4, box);
 
