@@ -7,6 +7,8 @@ import com.emoniph.witchery.worldgen.CovenCirclePiece;
 import com.emoniph.witchery.worldgen.CovenCircleStructure;
 import com.emoniph.witchery.worldgen.HobgoblinHutPiece;
 import com.emoniph.witchery.worldgen.HobgoblinHutStructure;
+import com.emoniph.witchery.worldgen.StrawManPiece;
+import com.emoniph.witchery.worldgen.StrawManStructure;
 import com.emoniph.witchery.worldgen.TormentChamberPiece;
 import com.emoniph.witchery.worldgen.TormentChamberStructure;
 import com.emoniph.witchery.worldgen.VillageKeepPiece;
@@ -38,6 +40,12 @@ public class WitcheryStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> COVEN_CIRCLE_PIECE =
             PIECE_TYPES.register("coven_circle", () -> CovenCirclePiece::new);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<StrawManStructure>> STRAW_MAN_TYPE =
+            STRUCTURE_TYPES.register("straw_man", () -> () -> StrawManStructure.CODEC);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> STRAW_MAN_PIECE =
+            PIECE_TYPES.register("straw_man", () -> StrawManPiece::new);
 
     public static final DeferredHolder<StructureType<?>, StructureType<HobgoblinHutStructure>> HOBGOBLIN_HUT_TYPE =
             STRUCTURE_TYPES.register("hobgoblin_hut", () -> () -> HobgoblinHutStructure.CODEC);

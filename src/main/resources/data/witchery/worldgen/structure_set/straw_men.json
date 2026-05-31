@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "witchery:straw_man",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 8,
+    "salt": 744019231,
+    "exclusion_zone": {
+      "chunk_count": 4,
+      "other_set": "minecraft:villages"
+    }
+  }
+}

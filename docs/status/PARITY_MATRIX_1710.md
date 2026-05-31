@@ -422,7 +422,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Rowan tree worldgen | ✅ Done | Placed in biomes |
 | Village additions (Bookshop, Guard Tower, Town Wall) | Partial | Village Guard, apothecary/bookshop/witch-hut village injection, Watch Tower, Keep, and first-pass adaptive town walls are live. Cross-biome fresh-village wall/building QA remains open, especially structure distribution, savanna materials, gate support fill, and immediate wall generation. |
 | Coven Circle / Stone Circle worldgen | Partial | `witchery:coven_circle` is registered with a source-inspired 11x4x11 `ComponentCoven` ring, hidden mineshaft-loot dispenser, two vanilla Witch spawners under the altar, source 90% Coven Witch resident spawn chance, center/corner water rejection, village exclusion, and desert/badlands-only sandstone variant. Stone Circle naming/details and fresh-world QA remain open. |
-| Straw Man | ❌ Missing | Source: `WorldGenStrawMan` |
+| Straw Man / Wicker Man worldgen | Partial | `witchery:straw_man` is registered from source `ComponentWickerMan`: 6x8x5 hay effigy, grass/sand footprint, dandelion/dead-bush biome plants, hidden Zombie/Zombie/Skeleton spawner, water rejection, village exclusion, and `/witchery goto straw_man`. Fresh-world QA remains open. |
 | Goblin structures | ❌ Missing | Source: `WorldGenGoblinHut` |
 | Baba Yaga hut | ❌ Missing | Source: `WorldGenBabaYagaHut` |
 | Witch Hut (Witchery-specific) | ❌ Missing | Source: `WorldGenWitchHut` |
