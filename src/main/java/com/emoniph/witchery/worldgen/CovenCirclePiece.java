@@ -5,12 +5,12 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
@@ -18,26 +18,26 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 
 /**
  * Coven stone circle. Source parity: ComponentCoven (1.7.10-0.24.1).
  *
  * 11×4×11 ring of 2-high standing stones surrounding a 3×3 chiseled altar.
  * Materials are biome-adaptive: sandstone in desert/mesa biomes.
- * One Coven Witch spawns at the altar.
+ * One Coven Witch spawns at the altar; vanilla Witch spawners and a loot dispenser
+ * sit hidden below it like the original component.
  */
 public class CovenCirclePiece extends StructurePiece {
-
-    private static final ResourceKey<LootTable> LOOT =
-            ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
-                    Identifier.fromNamespaceAndPath("witchery", "chests/coven_circle"));
 
     public CovenCirclePiece(StructurePieceType type, int x, int y, int z) {
         super(type, 0, new BoundingBox(x, y, z, x + 10, y + 3, z + 10));
@@ -203,8 +203,12 @@ public class CovenCirclePiece extends StructurePiece {
             }
         }
 
-        // ── Loot chest in altar (under the kettle) ────────────────────────────
-        createChest(level, box, random, 5, 0, 5, LOOT);
+        // Hidden altar internals.
+        // Source ComponentCoven hides a loot dispenser and two vanilla Witch spawners
+        // under the 3x3 altar, leaving the Coven Witch as the visible resident.
+        placeLootDispenser(level, box, random, 5, 0, 5);
+        placeSpawner(level, box, random, 4, 0, 4, EntityType.WITCH);
+        placeSpawner(level, box, random, 6, 0, 6, EntityType.WITCH);
 
         // ── Coven Witch spawn at altar ────────────────────────────────────────
         BlockPos spawnPos = new BlockPos(
@@ -228,5 +232,38 @@ public class CovenCirclePiece extends StructurePiece {
     private static boolean isDesertBiome(WorldGenLevel level, int x, int z) {
         net.minecraft.core.Holder<Biome> biome = level.getBiome(new BlockPos(x, 64, z));
         return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
+    }
+
+    private void placeLootDispenser(WorldGenLevel level, BoundingBox box, RandomSource random,
+                                    int localX, int localY, int localZ) {
+        BlockPos blockPos = localPos(localX, localY, localZ);
+        if (!box.isInside(blockPos)) return;
+
+        level.setBlock(blockPos,
+                Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, Direction.EAST),
+                3);
+        if (level.getBlockEntity(blockPos) instanceof DispenserBlockEntity dispenser) {
+            dispenser.setLootTable(BuiltInLootTables.ABANDONED_MINESHAFT, random.nextLong());
+            dispenser.setChanged();
+        }
+    }
+
+    private void placeSpawner(WorldGenLevel level, BoundingBox box, RandomSource random,
+                              int localX, int localY, int localZ, EntityType<?> entityType) {
+        BlockPos blockPos = localPos(localX, localY, localZ);
+        if (!box.isInside(blockPos)) return;
+
+        level.setBlock(blockPos, Blocks.SPAWNER.defaultBlockState(), 3);
+        if (level.getBlockEntity(blockPos) instanceof SpawnerBlockEntity spawner) {
+            spawner.setEntityId(entityType, random);
+            spawner.setChanged();
+        }
+    }
+
+    private BlockPos localPos(int localX, int localY, int localZ) {
+        return new BlockPos(
+                boundingBox.minX() + localX,
+                boundingBox.minY() + localY,
+                boundingBox.minZ() + localZ);
     }
 }
