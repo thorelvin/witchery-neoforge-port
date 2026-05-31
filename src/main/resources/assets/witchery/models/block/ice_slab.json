@@ -1,0 +1,9 @@
+{
+  "render_type": "minecraft:translucent",
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "minecraft:block/ice",
+    "top": "minecraft:block/ice",
+    "side": "minecraft:block/ice"
+  }
+}

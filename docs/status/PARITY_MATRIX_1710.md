@@ -120,8 +120,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | ice_gate | ✅ Done | |
 | ice_pressure_plate | ✅ Done | |
 | perpetual_ice (base block) | ✅ Done | Source `BlockPerpetualIce` base behavior restored: vanilla ice break feel, never random-melts, hardness 2.0/resistance 5.0/light opacity 3 |
-| ice_stairs | ❌ Missing | |
-| ice_slab (single/double) | ❌ Missing | |
+| ice_stairs | ✅ Done | Source `BlockPerpertualIceStairs` restored as a real stair block: ice friction, hardness 2.0/resistance 5.0/light opacity 3, translucent ice model, item, tags, and loot |
+| ice_slab (single/double) | ✅ Done | Source `BlockPerpetualIceSlab` restored as one modern slab block with bottom/top/double states and double-slab loot returning two singles |
 | ice_fence_gate | ❌ Missing | |
 | snow_pressure_plate | ❌ Missing | Source: `BlockPerpetualIcePressurePlate` (snow material) |
 | snow_stairs | ❌ Missing | |

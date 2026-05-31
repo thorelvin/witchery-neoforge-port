@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "witchery:block/ice_slab"
+    },
+    "type=double": {
+      "model": "witchery:block/perpetual_ice"
+    },
+    "type=top": {
+      "model": "witchery:block/ice_slab_top"
+    }
+  }
+}

@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:item/ice_stairs"
-  }
+  "parent": "witchery:block/ice_stairs"
 }

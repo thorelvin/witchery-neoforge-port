@@ -76,6 +76,16 @@ public class WitcheryBlocks {
                     .isRedstoneConductor(NEVER)
                     .isSuffocating(NEVER)
                     .isViewBlocking(NEVER));
+    public static final DeferredBlock<PerpetualIceStairBlock> ICE_STAIRS = BLOCKS.registerBlock("ice_stairs",
+            props -> new PerpetualIceStairBlock(PERPETUAL_ICE.get().defaultBlockState(),
+                    props.mapColor(MapColor.ICE).friction(0.98f).strength(2.0f, 5.0f).sound(SoundType.GLASS)
+                            .noOcclusion().isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER)),
+            BlockBehaviour.Properties.of());
+    public static final DeferredBlock<PerpetualIceSlabBlock> ICE_SLAB = BLOCKS.registerBlock("ice_slab",
+            props -> new PerpetualIceSlabBlock(props.mapColor(MapColor.ICE).friction(0.98f)
+                    .strength(2.0f, 5.0f).sound(SoundType.GLASS)
+                    .noOcclusion().isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER)),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<DoorBlock> ICE_DOOR = BLOCKS.registerBlock("ice_door",
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noOcclusion().friction(0.98f)),
             BlockBehaviour.Properties.of());
