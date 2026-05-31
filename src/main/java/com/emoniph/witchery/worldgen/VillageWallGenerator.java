@@ -244,11 +244,9 @@ public final class VillageWallGenerator {
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
 
-        // 7. Gate detection: scan INTERIOR cells that directly border the wall for DIRT_PATH.
-        //    Roads are inside the village (1–N cells inward from the wall), so scanning the
-        //    wall cell itself rarely finds them — scanning its interior neighbours does.
+        // 7. Gate detection: pick the 2-3 longest streets and open a 3-wide gate where each
+        //    exits the wall. (Selection + 3-wide expansion happen inside detectGates.)
         detectGates(level, grid, originX, originZ, w, d);
-        expandGates(grid, w, d);
 
         // 7. Biome-adaptive materials
         int cx = minX + (maxX - minX) / 2;
@@ -409,40 +407,62 @@ public final class VillageWallGenerator {
             }
         }
 
-        // Phase 2: find the END of each MAIN STREET and trace it through the wall.
-        //
-        // A gate must come from an actual street exiting the village, not from every road
-        // cell. The road network has many short fragments and plaza/junction edges; treating
-        // each as a tip marks gates all around the wall. So a cell only qualifies as a street
-        // end in direction (dir) when:
-        //   • a long straight run of road (>= MIN_RUN) leads up to it from behind (-dir),
-        //     bridging small dirt/gravel gaps (ROAD_GAP) — i.e. it's the end of a real street;
-        //   • the street does NOT continue ahead (no road within ROAD_GAP in +dir).
-        // The street's trajectory is then extended straight ahead through the interior to the
-        // nearest WALL cell, which becomes the gate.
+        // Phase 2: collect candidate gates — the END of each long straight street, traced
+        // to the wall cell it would exit through. Candidate = {wallX, wallZ, runLength}.
         final int ROAD_GAP = 3;
-        final int MIN_RUN  = 5;
+        final int MIN_RUN  = 8;   // only substantial streets qualify
         int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
+        List<int[]> candidates = new ArrayList<>();
         for (int x = 1; x < w - 1; x++) {
             for (int z = 1; z < d - 1; z++) {
                 if (!road[x][z]) continue;
                 for (int[] dir : dirs) {
-                    // Long straight street leading up to this cell from behind?
-                    if (roadRun(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP, 40) < MIN_RUN) continue;
-                    // Street ends here (does not continue ahead)?
-                    if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue;
-
-                    // Extend the street straight ahead through the interior to the wall.
+                    int run = roadRun(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP, 64);
+                    if (run < MIN_RUN) continue;                                   // long street only
+                    if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue; // must end here
                     for (int depth = 1; depth < Math.max(w, d); depth++) {
                         int nx = x + dir[0] * depth, nz = z + dir[1] * depth;
                         if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
                         if (grid[nx][nz] == INTERIOR) continue; // still inside, keep going
-                        if (grid[nx][nz] == WALL) { grid[nx][nz] = GATE; }
-                        break; // WALL marked (or EMPTY — no wall this direction)
+                        if (grid[nx][nz] == WALL) candidates.add(new int[]{nx, nz, run});
+                        break;
                     }
                 }
             }
         }
+
+        // Phase 3: keep only the longest, well-spaced streets (max MAX_GATES).
+        final int MAX_GATES   = 3;
+        final int MIN_SPACING = 28; // min cell distance between two gates
+        candidates.sort((a, b) -> Integer.compare(b[2], a[2])); // longest run first
+        List<int[]> chosen = new ArrayList<>();
+        for (int[] c : candidates) {
+            boolean farEnough = true;
+            for (int[] ch : chosen) {
+                long dx = c[0] - ch[0], dz = c[1] - ch[1];
+                if (dx * dx + dz * dz < (long) MIN_SPACING * MIN_SPACING) { farEnough = false; break; }
+            }
+            if (!farEnough) continue;
+            chosen.add(c);
+            if (chosen.size() >= MAX_GATES) break;
+        }
+
+        // Phase 4: mark each chosen gate and widen it to a 3-cell opening along the wall axis.
+        for (int[] c : chosen) {
+            int gx = c[0], gz = c[1];
+            grid[gx][gz] = GATE;
+            boolean wallEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
+                          || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
+            if (wallEW) {
+                if (gx > 0   && grid[gx-1][gz] == WALL) grid[gx-1][gz] = GATE;
+                if (gx < w-1 && grid[gx+1][gz] == WALL) grid[gx+1][gz] = GATE;
+            } else {
+                if (gz > 0   && grid[gx][gz-1] == WALL) grid[gx][gz-1] = GATE;
+                if (gz < d-1 && grid[gx][gz+1] == WALL) grid[gx][gz+1] = GATE;
+            }
+        }
+        WitcheryMod.LOGGER.info("[VillageWalls] {} gate candidate(s) -> {} gate(s) placed.",
+                candidates.size(), chosen.size());
     }
 
     /** True if any of the next {@code gap} cells from (x,z) in direction (dx,dz) is road. */
@@ -471,33 +491,6 @@ public final class VillageWallGenerator {
             else if (++miss > gap) break;
         }
         return count;
-    }
-
-    /** Expand each GATE cell ±2 cells along the wall run for a 5-wide gate. */
-    private static void expandGates(byte[][] grid, int w, int d) {
-        byte[][] copy = copyGrid(grid, w, d);
-        for (int x = 2; x < w-2; x++) {
-            for (int z = 2; z < d-2; z++) {
-                if (copy[x][z] != GATE) continue;
-                // Determine wall axis from adjacent WALL neighbors
-                boolean wallEW = copy[x-1][z] == WALL || copy[x+1][z] == WALL ||
-                                 copy[x-1][z] == GATE || copy[x+1][z] == GATE;
-                boolean wallNS = copy[x][z-1] == WALL || copy[x][z+1] == WALL ||
-                                 copy[x][z-1] == GATE || copy[x][z+1] == GATE;
-
-                if (wallEW) { // wall runs E-W, gate opens N-S: expand along X
-                    for (int dx = -2; dx <= 2; dx++) {
-                        int nx = x + dx;
-                        if (nx >= 0 && nx < w && grid[nx][z] == WALL) grid[nx][z] = GATE;
-                    }
-                } else if (wallNS) { // wall runs N-S: expand along Z
-                    for (int dz = -2; dz <= 2; dz++) {
-                        int nz = z + dz;
-                        if (nz >= 0 && nz < d && grid[x][nz] == WALL) grid[x][nz] = GATE;
-                    }
-                }
-            }
-        }
     }
 
     // ── Wall placement ─────────────────────────────────────────────────────────
@@ -547,33 +540,18 @@ public final class VillageWallGenerator {
     }
 
     /**
-     * Gate pillar column:
-     *  - Full-height stone brick pillar at edge positions
-     *  - Cobblestone wall block finial on top
-     *  - Open (air) at middle gate cells
+     * Gate opening cell: a 3-deep passage with a fence gate at the outer face and a brick
+     * arch overhead. Every GATE cell is an opening — the gate is 3 cells wide along the wall
+     * axis (set in detectGates) and the normal WALL cells flanking it act as the gate posts,
+     * so no internal brick pillars are placed. The path is laid through and out so the
+     * street visibly leaves the village.
      */
     private static void placeGatePillar(ServerLevel level, int wx, int sy, int wz,
                                           BlockState wall, BlockState brick, BlockState merlon,
                                           byte[][] grid, int gx, int gz, int w, int d) {
-        // Determine the wall axis (the direction the gate RUN extends along).
+        // Wall axis (the direction the gate run extends along).
         boolean wallRunsEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
                           || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
-
-        // A gate is a 1-cell-deep run of GATE cells along the wall axis. The two END cells
-        // of that run are pillars; the middle cells are the opening. "Edge" therefore means
-        // an END of the run along the wall axis — NOT a generic non-GATE neighbour (the
-        // perpendicular inward/outward neighbours are never GATE, so the old all-direction
-        // check made every gate cell an edge and the opening was never carved).
-        boolean isEdge;
-        if (wallRunsEW) {
-            boolean gateW = gx > 0   && grid[gx-1][gz] == GATE;
-            boolean gateE = gx < w-1 && grid[gx+1][gz] == GATE;
-            isEdge = !(gateW && gateE);
-        } else {
-            boolean gateN = gz > 0   && grid[gx][gz-1] == GATE;
-            boolean gateS = gz < d-1 && grid[gx][gz+1] == GATE;
-            isEdge = !(gateN && gateS);
-        }
 
         // Inward direction (toward the village interior), perpendicular to the wall axis.
         int inDX = 0, inDZ = 0;
@@ -585,47 +563,26 @@ public final class VillageWallGenerator {
             else if (gx < w-1 && (grid[gx+1][gz] == INTERIOR || grid[gx+1][gz] == GATE)) inDX = 1;
         }
 
-        if (!isEdge) {
-            // Middle of gate — 3-block-deep passage + arch overhead.
-            Direction facing = gateWallFacing(grid, gx, gz, w, d);
-            BlockState fenceGate = Blocks.OAK_FENCE_GATE.defaultBlockState()
-                    .setValue(FenceGateBlock.FACING, facing);
-            for (int depth = 0; depth < 3; depth++) {
-                int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
-                // Clear 5-block passage
-                for (int dy = 0; dy < 5; dy++) {
-                    BlockPos p = new BlockPos(dwx, sy + dy, dwz);
-                    if (!level.getBlockState(p).isAir())
-                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
-                }
-                // Arch/tunnel ceiling
-                for (int dy = 5; dy < WALL_HEIGHT; dy++)
-                    setBlock(level, dwx, sy + dy, dwz, brick);
-            }
-            // Fence gate at outer face only
-            level.setBlock(new BlockPos(wx, sy, wz), fenceGate, 3);
-
-            // Extend the path through the gate: from a few cells inside, through the
-            // 3-deep passage, to several cells outside — so the village road visibly
-            // exits the wall. Outward = opposite of inward.
-            int oDX = -inDX, oDZ = -inDZ;
-            for (int t = 1; t <= 5; t++)            // outside the wall
-                layPath(level, wx + oDX * t, wz + oDZ * t);
-            for (int depth = 0; depth < 3; depth++) // passage floor (inside)
-                layPath(level, wx + inDX * depth, wz + inDZ * depth);
-            for (int t = 3; t <= 5; t++)            // a little further inside to meet the road
-                layPath(level, wx + inDX * t, wz + inDZ * t);
-            return;
-        }
-
-        // Pillar — 3 blocks deep into the interior
+        Direction facing = gateWallFacing(grid, gx, gz, w, d);
+        BlockState fenceGate = Blocks.OAK_FENCE_GATE.defaultBlockState()
+                .setValue(FenceGateBlock.FACING, facing);
         for (int depth = 0; depth < 3; depth++) {
             int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
-            for (int dy = 0; dy < WALL_HEIGHT + 1; dy++)
+            for (int dy = 0; dy < 5; dy++) { // clear 5-high passage
+                BlockPos p = new BlockPos(dwx, sy + dy, dwz);
+                if (!level.getBlockState(p).isAir())
+                    level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+            }
+            for (int dy = 5; dy < WALL_HEIGHT; dy++) // brick arch ceiling
                 setBlock(level, dwx, sy + dy, dwz, brick);
-            setBlock(level, dwx, sy + WALL_HEIGHT + 1, dwz, depth == 0 ? merlon : brick);
-            if (depth == 0) fillDown(level, dwx, sy - 1, dwz, wall);
         }
+        level.setBlock(new BlockPos(wx, sy, wz), fenceGate, 3);
+
+        // Lay the path straight through the gate and out both faces.
+        int oDX = -inDX, oDZ = -inDZ;
+        for (int t = 1; t <= 6; t++)            layPath(level, wx + oDX * t, wz + oDZ * t);     // outside
+        for (int depth = 0; depth < 3; depth++) layPath(level, wx + inDX * depth, wz + inDZ * depth); // passage
+        for (int t = 3; t <= 6; t++)            layPath(level, wx + inDX * t, wz + inDZ * t);   // inside to road
     }
 
     /**
