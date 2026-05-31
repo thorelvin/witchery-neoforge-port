@@ -242,10 +242,6 @@ public final class VillageWallGenerator {
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
 
-        // 7. Gate detection: pick the 2-3 longest streets and open a 3-wide gate where each
-        //    exits the wall. (Selection + 3-wide expansion happen inside detectGates.)
-        detectGates(level, grid, originX, originZ, w, d);
-
         // 7. Biome-adaptive materials
         int cx = minX + (maxX - minX) / 2;
         int cz = minZ + (maxZ - minZ) / 2;
@@ -253,15 +249,17 @@ public final class VillageWallGenerator {
         BlockState brickBlock  = brickMaterial(level, cx, cz);
         BlockState merlonBlock = merlonMaterial(level, cx, cz);
 
-        // 8. Pre-sample ALL terrain heights before placing any blocks.
-        //    placeThickenBlock wrote cobblestone at neighbors, which updated their heightmap;
-        //    when those cells were later processed their base Y was wrong — hence stacking towers.
-        //    Sampling everything first prevents that cascade entirely.
+        // 7b. Detect gates as independent definitions (built after the wall, overriding it).
+        //     No GATE cells are marked in the grid — the wall ring is solid and each gatehouse
+        //     overrides whatever it covers.
+        List<GateDef> gates = detectGates(level, grid, originX, originZ, w, d);
+
+        // 8. Pre-sample wall base heights (water-aware). Walls follow terrain.
         int minBuild = -64; // 1.21 minimum build height
         short[][] heights = new short[w][d];
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
-                if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
+                if (grid[x][z] != WALL) continue;
                 int wx = originX + x, wz = originZ + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int h = wallBaseHeight(level, wx, wz); // water surface over water, else ground
@@ -269,26 +267,15 @@ public final class VillageWallGenerator {
             }
         }
 
-        // 8b. Flatten each gate run to a single reference height (its centre cell) so the
-        //     gatehouse sits level instead of stepping up and down with the terrain.
-        for (int x = 0; x < w; x++) {
-            for (int z = 0; z < d; z++) {
-                if (grid[x][z] != GATE) continue;
-                boolean ew = (x > 0 && (grid[x-1][z] == WALL || grid[x-1][z] == GATE))
-                          || (x < w-1 && (grid[x+1][z] == WALL || grid[x+1][z] == GATE));
-                int off = gateRunOffset(grid, x, z, ew, w, d);
-                int cxr = ew ? x - off : x;
-                int czr = ew ? z : z - off;
-                if (cxr >= 0 && czr >= 0 && cxr < w && czr < d && heights[cxr][czr] > 0)
-                    heights[x][z] = heights[cxr][czr];
-            }
-        }
+        // 8b. Anti-dive: a wall cell may not sit more than MAX_DIP below its WALL neighbours,
+        //     so a lone cave mouth / pit can't yank one column into the ground and disconnect
+        //     the ring. Walls still follow general slopes; fillDown bridges the gap beneath.
+        smoothWallDips(grid, heights, w, d);
 
-        // 9a. Pre-clear vegetation/trees in every wall and gate column so logs and
-        //     leaves don't block wall placement (setBlock skips solid non-replaceable blocks).
+        // 9a. Pre-clear vegetation/trees in every wall column.
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
-                if (grid[x][z] != WALL && grid[x][z] != GATE) continue;
+                if (grid[x][z] != WALL) continue;
                 int wx = originX + x, wz = originZ + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
@@ -302,29 +289,37 @@ public final class VillageWallGenerator {
             }
         }
 
-        // 9. Place walls and gates using pre-sampled heights
+        // 9. Place wall columns (gates are built afterwards, overriding the wall).
         int guardCounter = 0;
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
+                if (grid[x][z] != WALL) continue;
                 int wx = originX + x, wz = originZ + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
-                if (sy == 0) continue; // unloaded, skip
+                if (sy == 0) continue;
 
-                if (grid[x][z] == WALL) {
-                    placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, grid, x, z, w, d);
-                    if (++guardCounter >= GUARD_SPACING) {
-                        spawnGuard(level, wx, wz, sy);
-                        guardCounter = 0;
-                    }
-                } else if (grid[x][z] == GATE) {
-                    placeGatePillar(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, grid, x, z, w, d);
+                // Extend the curtain down to the lowest along-wall neighbour so steps over
+                // cliffs stay connected.
+                int floorTo = sy;
+                if (x > 0   && grid[x-1][z] == WALL && heights[x-1][z] > 0) floorTo = Math.min(floorTo, heights[x-1][z]);
+                if (x < w-1 && grid[x+1][z] == WALL && heights[x+1][z] > 0) floorTo = Math.min(floorTo, heights[x+1][z]);
+                if (z > 0   && grid[x][z-1] == WALL && heights[x][z-1] > 0) floorTo = Math.min(floorTo, heights[x][z-1]);
+                if (z < d-1 && grid[x][z+1] == WALL && heights[x][z+1] > 0) floorTo = Math.min(floorTo, heights[x][z+1]);
+
+                placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, floorTo, grid, x, z, w, d);
+                if (++guardCounter >= GUARD_SPACING) {
+                    spawnGuard(level, wx, wz, sy);
+                    guardCounter = 0;
                 }
             }
         }
 
-        WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{})",
-                cx, cz, w, d);
+        // 10. Build gatehouses — independent locked 7×3 models that override the wall.
+        for (GateDef g : gates) buildGatehouse(level, g, brickBlock);
+
+        WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
+                cx, cz, w, d, gates.size());
     }
 
     // ── Loop pruning ───────────────────────────────────────────────────────────
@@ -386,26 +381,23 @@ public final class VillageWallGenerator {
 
     // ── Gate detection ─────────────────────────────────────────────────────────
 
+    /** A gatehouse to build: world centre on the wall line, base height, inward + along-wall axes. */
+    private record GateDef(int centerWX, int centerWZ, int refY,
+                           int inDX, int inDZ, int axisDX, int axisDZ) {}
+
     /**
-     * Marks wall cells as GATE where a village road exits through the perimeter.
+     * Finds where village streets exit the wall and returns a GateDef for the best few.
+     * No grid cells are marked — gatehouses are built afterwards and override the wall.
      *
-     * "Detect a path leaving the area, extend it through the wall":
-     *
-     * Phase 1 — precompute which INTERIOR cells contain a DIRT_PATH road block
-     * at the surface.  Only the exact surface block is checked (not a deep vertical
-     * window) so natural gravel/dirt deposits underground are NOT mistaken for roads.
-     * DIRT_PATH is the village street block in plains/savanna/taiga/snowy villages.
-     *
-     * Phase 2 — for each road cell that is the TIP of a run in a cardinal
-     * direction (road exists behind it in that direction, no road ahead), trace
-     * forward until the nearest WALL cell and mark it GATE.  This captures
-     * exactly the road segments that EXIT the village: roads running parallel to
-     * the wall do not have a tip pointing toward it, so they never trigger gates
-     * at wrong positions.
+     * Phase 1: DIRT_PATH surface cells = road (no gravel/dirt → no farm/deposit false hits).
+     * Phase 2: candidates = the END of a long straight street, traced to the wall cell it
+     *          would exit through; keeps the approach dir and the street run length.
+     * Phase 3: rank by length, keep up to MAX_GATES spaced >= MIN_SPACING apart, rejecting any
+     *          gate over water or without land on both sides; refY = median path height.
      */
-    private static void detectGates(ServerLevel level, byte[][] grid,
-                                     int ox, int oz, int w, int d) {
-        // Phase 1: locate DIRT_PATH road blocks at the surface of INTERIOR cells
+    private static List<GateDef> detectGates(ServerLevel level, byte[][] grid,
+                                              int ox, int oz, int w, int d) {
+        // Phase 1
         boolean[][] road = new boolean[w][d];
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
@@ -413,17 +405,14 @@ public final class VillageWallGenerator {
                 int wx = ox + x, wz = oz + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int gy = groundHeight(level, wx, wz);
-                // The surface block is at gy-1 (groundHeight returns the cell above ground).
-                if (level.getBlockState(new BlockPos(wx, gy - 1, wz)).is(Blocks.DIRT_PATH)) {
+                if (level.getBlockState(new BlockPos(wx, gy - 1, wz)).is(Blocks.DIRT_PATH))
                     road[x][z] = true;
-                }
             }
         }
 
-        // Phase 2: collect candidate gates — the END of each long straight street, traced
-        // to the wall cell it would exit through. Candidate = {wallX, wallZ, runLength}.
+        // Phase 2 — candidate = {wallX, wallZ, run, dirX, dirZ, tipX, tipZ}
         final int ROAD_GAP = 3;
-        final int MIN_RUN  = 8;   // only substantial streets qualify
+        final int MIN_RUN  = 8;
         int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
         List<int[]> candidates = new ArrayList<>();
         for (int x = 1; x < w - 1; x++) {
@@ -431,53 +420,107 @@ public final class VillageWallGenerator {
                 if (!road[x][z]) continue;
                 for (int[] dir : dirs) {
                     int run = roadRun(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP, 64);
-                    if (run < MIN_RUN) continue;                                   // long street only
-                    if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue; // must end here
+                    if (run < MIN_RUN) continue;
+                    if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue;
                     for (int depth = 1; depth < Math.max(w, d); depth++) {
                         int nx = x + dir[0] * depth, nz = z + dir[1] * depth;
                         if (nx < 0 || nz < 0 || nx >= w || nz >= d) break;
-                        if (grid[nx][nz] == INTERIOR) continue; // still inside, keep going
-                        if (grid[nx][nz] == WALL) candidates.add(new int[]{nx, nz, run});
+                        if (grid[nx][nz] == INTERIOR) continue;
+                        if (grid[nx][nz] == WALL) candidates.add(new int[]{nx, nz, run, dir[0], dir[1], x, z});
                         break;
                     }
                 }
             }
         }
 
-        // Phase 3: keep only the longest, well-spaced streets (max MAX_GATES).
+        // Phase 3 — select longest, spaced, on-land gates
         final int MAX_GATES   = 3;
-        final int MIN_SPACING = 28; // min cell distance between two gates
-        candidates.sort((a, b) -> Integer.compare(b[2], a[2])); // longest run first
+        final int MIN_SPACING = 28;
+        candidates.sort((a, b) -> Integer.compare(b[2], a[2]));
+        List<GateDef> gates = new ArrayList<>();
         List<int[]> chosen = new ArrayList<>();
         for (int[] c : candidates) {
+            int nx = c[0], nz = c[1], ddx = c[3], ddz = c[4], tipx = c[5], tipz = c[6];
             boolean farEnough = true;
             for (int[] ch : chosen) {
-                long dx = c[0] - ch[0], dz = c[1] - ch[1];
+                long dx = nx - ch[0], dz = nz - ch[1];
                 if (dx * dx + dz * dz < (long) MIN_SPACING * MIN_SPACING) { farEnough = false; break; }
             }
             if (!farEnough) continue;
-            chosen.add(c);
-            if (chosen.size() >= MAX_GATES) break;
-        }
 
-        // Phase 4: mark each chosen gate and widen it to a 7-cell run along the wall axis
-        // (placeGatePillar opens the central 3 cells and builds the outer 2 each side as
-        // gate-tower pillars).
-        final int GATE_HALF = 3; // 7 cells = 2 pillars + 3 opening + 2 pillars
-        for (int[] c : chosen) {
-            int gx = c[0], gz = c[1];
-            boolean wallEW = (gx > 0 && grid[gx-1][gz] == WALL) || (gx < w-1 && grid[gx+1][gz] == WALL);
-            grid[gx][gz] = GATE;
-            for (int o = -GATE_HALF; o <= GATE_HALF; o++) {
-                if (o == 0) continue;
-                int nx = wallEW ? gx + o : gx;
-                int nz = wallEW ? gz : gz + o;
-                if (nx >= 0 && nz >= 0 && nx < w && nz < d && grid[nx][nz] == WALL)
-                    grid[nx][nz] = GATE;
+            int cwx = ox + nx, cwz = oz + nz;
+            // No gates on water: the gate cell and the cells just inside/outside must be land.
+            if (isOverWater(level, cwx, cwz)
+                    || isOverWater(level, cwx + ddx, cwz + ddz)   // outside
+                    || isOverWater(level, cwx - ddx, cwz - ddz))  // inside
+                continue;
+
+            int refY = pathBaselineY(level, road, tipx, tipz, ddx, ddz, w, d, ox, oz);
+            if (refY < 0) refY = wallBaseHeight(level, cwx, cwz);
+
+            int axisDX = (ddx != 0) ? 0 : 1, axisDZ = (ddx != 0) ? 1 : 0; // along the wall
+            gates.add(new GateDef(cwx, cwz, refY, -ddx, -ddz, axisDX, axisDZ));
+            chosen.add(c);
+            if (gates.size() >= MAX_GATES) break;
+        }
+        WitcheryMod.LOGGER.info("[VillageWalls] {} gate candidate(s) -> {} gate(s).",
+                candidates.size(), gates.size());
+        return gates;
+    }
+
+    /** Median ground height of a street, walking back from its tip along -dir (gap-bridged). */
+    private static int pathBaselineY(ServerLevel level, boolean[][] road, int tipx, int tipz,
+                                      int ddx, int ddz, int w, int d, int ox, int oz) {
+        List<Integer> ys = new ArrayList<>();
+        int cx = tipx, cz = tipz, miss = 0;
+        for (int s = 0; s < 64; s++) {
+            if (cx < 0 || cz < 0 || cx >= w || cz >= d) break;
+            if (road[cx][cz]) {
+                int wx = ox + cx, wz = oz + cz;
+                if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) != null)
+                    ys.add(groundHeight(level, wx, wz));
+                miss = 0;
+            } else if (++miss > 3) break;
+            cx -= ddx; cz -= ddz;
+        }
+        if (ys.isEmpty()) return -1;
+        ys.sort(Integer::compareTo);
+        return ys.get(ys.size() / 2);
+    }
+
+    /** True if the column at (wx,wz) has water above its solid floor. */
+    private static boolean isOverWater(ServerLevel level, int wx, int wz) {
+        if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) return false;
+        int gy = groundHeight(level, wx, wz);
+        return level.getBlockState(new BlockPos(wx, gy, wz)).liquid();
+    }
+
+    /**
+     * Anti-dive: raise any wall cell that sits more than MAX_DIP below the highest of its WALL
+     * neighbours, repeated until stable. Stops a lone pit/cave column from dropping out of the
+     * ring; walls still follow general slopes and fillDown bridges the raised base downward.
+     */
+    private static void smoothWallDips(byte[][] grid, short[][] heights, int w, int d) {
+        final int MAX_DIP = 3;
+        boolean changed = true;
+        int guard = 0;
+        while (changed && guard++ < 16) {
+            changed = false;
+            for (int x = 1; x < w - 1; x++) {
+                for (int z = 1; z < d - 1; z++) {
+                    if (grid[x][z] != WALL || heights[x][z] == 0) continue;
+                    int hi = 0;
+                    if (grid[x-1][z] == WALL) hi = Math.max(hi, heights[x-1][z]);
+                    if (grid[x+1][z] == WALL) hi = Math.max(hi, heights[x+1][z]);
+                    if (grid[x][z-1] == WALL) hi = Math.max(hi, heights[x][z-1]);
+                    if (grid[x][z+1] == WALL) hi = Math.max(hi, heights[x][z+1]);
+                    if (hi > 0 && heights[x][z] < hi - MAX_DIP) {
+                        heights[x][z] = (short) (hi - MAX_DIP);
+                        changed = true;
+                    }
+                }
             }
         }
-        WitcheryMod.LOGGER.info("[VillageWalls] {} gate candidate(s) -> {} gate(s) placed.",
-                candidates.size(), chosen.size());
     }
 
     /** True if any of the next {@code gap} cells from (x,z) in direction (dx,dz) is road. */
@@ -513,38 +556,40 @@ public final class VillageWallGenerator {
     /**
      * One wall column:
      *  - Stone brick base (2 courses)
-     *  - Cobblestone main shaft
+     *  - Stone brick main shaft
      *  - Stone brick cap
      *  - 1-high stone brick wall merlon every 2 blocks (classic castle cadence)
      *  - Corner bonus: +2 height + 2-high merlon (tower effect)
+     *
+     * The curtain is extended down to {@code floorTo} (the lowest along-wall neighbour base)
+     * so the wall stays connected across steps over cliffs; stone fills the foundation below.
      */
     private static void placeWallColumn(ServerLevel level, int wx, int sy, int wz,
                                          BlockState wall, BlockState brick, BlockState merlon,
-                                         byte[][] grid, int gx, int gz, int w, int d) {
-        // A corner adjacent to a gate is suppressed (built as straight wall): the gate's own
-        // towers take precedence, so no tall corner pokes up right beside the gatehouse.
-        boolean corner = isCorner(grid, gx, gz, w, d) && !adjacentToGate(grid, gx, gz, w, d);
+                                         int floorTo, byte[][] grid, int gx, int gz, int w, int d) {
+        boolean corner = isCorner(grid, gx, gz, w, d);
         int extra = corner ? 2 : 0;
         int top = sy + WALL_HEIGHT + extra;
 
         // Base: 2 courses of stone brick
         setBlock(level, wx, sy,     wz, brick);
         setBlock(level, wx, sy + 1, wz, brick);
-        // Main cobblestone shaft
+        // Main shaft
         for (int dy = 2; dy < WALL_HEIGHT - 1 + extra; dy++)
             setBlock(level, wx, sy + dy, wz, wall);
         // Cap course: stone brick
         setBlock(level, wx, top - 1, wz, brick);
 
         // Merlons: 1-high stone brick wall every 2 blocks (period=2, classic castle).
-        // Corners get 2-high merlons to emphasise the tower.
         int phase = Math.floorMod(wx + wz, 2);
         if (phase == 0) {
             setBlock(level, wx, top, wz, merlon);
             if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
-        fillDown(level, wx, sy - 1, wz, Blocks.STONE.defaultBlockState());
+        // Extend the curtain down to the lowest neighbour so cliff steps stay connected.
+        for (int y = sy - 1; y >= floorTo; y--) setBlock(level, wx, y, wz, wall);
+        fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, Blocks.STONE.defaultBlockState());
     }
 
     /** True when this wall cell sits at a 90° bend (has wall in both N/S and E/W axes). */
@@ -556,109 +601,60 @@ public final class VillageWallGenerator {
         return (n || s) && (e || ww);
     }
 
-    /** True if any of the 8 neighbours of (gx,gz) is a GATE cell. */
-    private static boolean adjacentToGate(byte[][] grid, int gx, int gz, int w, int d) {
-        for (int dx = -1; dx <= 1; dx++)
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
-                int nx = gx + dx, nz = gz + dz;
-                if (nx >= 0 && nz >= 0 && nx < w && nz < d && grid[nx][nz] == GATE) return true;
-            }
-        return false;
-    }
-
     /**
-     * One cell of a 7-wide gate. The central 3 cells (offset |Δ|≤1 from the run centre) are
-     * the OPENING — a 3-deep passage with a brick arch overhead and NO fence. The outer 2
-     * cells on each side are solid brick gate-tower PILLARS, a little taller than the wall.
-     * For opening cells the road is laid along the passage floor and extended both outward
-     * and inward until it meets the existing village road, filling any grass gap.
+     * Builds one gatehouse as an independent locked 7×3 model, OVERRIDING whatever wall or
+     * terrain it covers. It is built straight along the wall axis from the centre + reference
+     * height in the GateDef, so it never bends with a corner and its side towers are always
+     * intact regardless of nearby corners.
+     *
+     * Layout along the wall axis (offset o): |o|=2,3 → solid stone-brick PILLAR (2 taller than
+     * the wall); |o|<=1 → OPENING (3-deep cleared passage, stone-brick arch, fence-less, path
+     * floor). Stone fillDown bridges the structure down to the terrain/sea floor, and the path
+     * is laid out and in (meeting the existing road) for the central 3 lanes.
      */
-    private static void placeGatePillar(ServerLevel level, int wx, int sy, int wz,
-                                          BlockState wall, BlockState brick, BlockState merlon,
-                                          byte[][] grid, int gx, int gz, int w, int d) {
-        boolean wallRunsEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
-                          || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
-
-        // Inward direction (toward the village interior), perpendicular to the wall axis.
-        int inDX = 0, inDZ = 0;
-        if (wallRunsEW) {
-            if (gz > 0 && grid[gx][gz-1] == INTERIOR) inDZ = -1;
-            else if (gz < d-1 && grid[gx][gz+1] == INTERIOR) inDZ = 1;
-        } else {
-            if (gx > 0 && grid[gx-1][gz] == INTERIOR) inDX = -1;
-            else if (gx < w-1 && grid[gx+1][gz] == INTERIOR) inDX = 1;
-        }
-
-        boolean opening = Math.abs(gateRunOffset(grid, gx, gz, wallRunsEW, w, d)) <= 1;
-
-        // Gates use ONLY the stone-brick family (no cobblestone): brick body + matching
-        // stone-brick/sandstone wall cap.
+    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick) {
         BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
                 ? Blocks.SANDSTONE_WALL.defaultBlockState()
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
+        int refY = g.refY();
 
-        if (!opening) {
-            // Gate-tower pillar: solid stone brick, 3-deep, 2 blocks taller than the wall.
+        for (int o = -3; o <= 3; o++) {
+            int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
+            boolean opening = Math.abs(o) <= 1;
             for (int depth = 0; depth < 3; depth++) {
-                int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
-                for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++)
-                    setBlock(level, dwx, sy + dy, dwz, brick);
-                setBlock(level, dwx, sy + WALL_HEIGHT + 2, dwz, gateCap);
-                fillDown(level, dwx, sy - 1, dwz, Blocks.STONE.defaultBlockState()); // stone foundation
-
+                int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
+                if (opening) {
+                    for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
+                    for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
+                    forceSet(level, dwx, refY - 1, dwz, Blocks.DIRT_PATH.defaultBlockState());            // floor
+                    fillDown(level, dwx, refY - 2, dwz, Blocks.STONE.defaultBlockState());
+                } else {
+                    for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++) forceSet(level, dwx, refY + dy, dwz, brick);
+                    forceSet(level, dwx, refY + WALL_HEIGHT + 2, dwz, gateCap);
+                    fillDown(level, dwx, refY - 1, dwz, Blocks.STONE.defaultBlockState());
+                }
             }
-            return;
         }
 
-        // Opening: 3-deep passage with stone-brick arch overhead, no fence. The floor is held
-        // at the flat reference height (sy-1) and supported downward with stone brick so the
-        // passage stays level even where the terrain beneath the gate dips.
-        for (int depth = 0; depth < 3; depth++) {
-            int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
-            for (int dy = 0; dy < 5; dy++) { // clear 5-high passage
-                BlockPos p = new BlockPos(dwx, sy + dy, dwz);
-                if (!level.getBlockState(p).isAir())
-                    level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+        // Path through the 3 opening lanes: out ~6 cells, and in until it meets the road.
+        int oDX = -g.inDX(), oDZ = -g.inDZ();
+        for (int o = -1; o <= 1; o++) {
+            int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
+            for (int t = 1; t <= 6; t++) layPath(level, bx + oDX * t, bz + oDZ * t);
+            for (int t = 3; t <= 40; t++) {
+                int ix = bx + g.inDX() * t, iz = bz + g.inDZ() * t;
+                if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
+                int gy = groundHeight(level, ix, iz);
+                if (level.getBlockState(new BlockPos(ix, gy - 1, iz)).is(Blocks.DIRT_PATH)) break;
+                layPath(level, ix, iz);
             }
-            for (int dy = 5; dy < WALL_HEIGHT; dy++) // stone-brick arch ceiling
-                setBlock(level, dwx, sy + dy, dwz, brick);
-            // Passage floor path set DIRECTLY at sy-1. (Using layPath/groundHeight here would
-            // sample the arch roof just placed above and drop dirt on top of the gate.)
-            level.setBlock(new BlockPos(dwx, sy - 1, dwz), Blocks.DIRT_PATH.defaultBlockState(), 3);
-            fillDown(level, dwx, sy - 2, dwz, Blocks.STONE.defaultBlockState()); // support flat floor / bridge water
-        }
-
-        // Path outward over open terrain.
-        int oDX = -inDX, oDZ = -inDZ;
-        for (int t = 1; t <= 6; t++) layPath(level, wx + oDX * t, wz + oDZ * t);
-
-        // Path inward until it meets the existing village road — fills the grass gap between
-        // the gate and the road created by the wall sitting well outside the built-up area.
-        for (int t = 3; t <= 40; t++) {
-            int ix = wx + inDX * t, iz = wz + inDZ * t;
-            if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
-            int gy = groundHeight(level, ix, iz);
-            if (level.getBlockState(new BlockPos(ix, gy - 1, iz)).is(Blocks.DIRT_PATH)) break; // reached road
-            layPath(level, ix, iz);
         }
     }
 
-    /**
-     * Offset of a gate cell from the centre of its contiguous GATE run along the wall axis.
-     * Used to classify the central 3 cells as the opening and the rest as pillars.
-     */
-    private static int gateRunOffset(byte[][] grid, int gx, int gz, boolean ew, int w, int d) {
-        int lo = 0, hi = 0;
-        if (ew) {
-            while (gx - lo - 1 >= 0  && grid[gx - lo - 1][gz] == GATE) lo++;
-            while (gx + hi + 1 < w   && grid[gx + hi + 1][gz] == GATE) hi++;
-            return gx - ((gx - lo) + (gx + hi)) / 2;
-        } else {
-            while (gz - lo - 1 >= 0  && grid[gx][gz - lo - 1] == GATE) lo++;
-            while (gz + hi + 1 < d   && grid[gx][gz + hi + 1] == GATE) hi++;
-            return gz - ((gz - lo) + (gz + hi)) / 2;
-        }
+    /** Unconditional block set (overrides existing), chunk-load guarded. */
+    private static void forceSet(ServerLevel level, int x, int y, int z, BlockState state) {
+        if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return;
+        level.setBlock(new BlockPos(x, y, z), state, 3);
     }
 
     // ── Guard spawning ─────────────────────────────────────────────────────────
