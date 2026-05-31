@@ -83,7 +83,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Hunter set (garlicked) | 🔲 Placeholder | Items registered; no garlic-effect on wear |
 | Death's Hood/Robe/Shoes | ✅ Done | Fire cancel, water-walk, low-light NV |
 | Death's Hand | ✅ Done | Spectral touch + scythe deploy |
-| Koboldite Helm / Mog's Quiver / Gulg's Gurdle | 🔶 Partial | Koboldite Helm is represented by `witchery:twisting_band`: rare head item, source recipe, and observer-disorientation shell. Mog's Quiver and Gulg's Gurdle are registered/dropped but still need wearable reward mechanics. |
+| Koboldite Helm / Mog's Quiver / Gulg's Gurdle | 🔶 Partial | Koboldite Helm is represented by `witchery:twisting_band`: rare head item, source recipe, and observer-disorientation shell. Mog's Quiver and Gulg's Gurdle now restore the first practical wearable reward mechanics: epic chest/legs armor, limitless fast quiver arrows, airborne mogged-arrow punishment, empty-hand girdle launch hits, and paired Resistance II pulse. Remaining work is exact old armor model/render polish, patron-flow QA, and the inert `gulgs_grudle` alias decision. |
 | Vampire clothing sets (12 variants) | 🔶 Partial | Items/recipes present; exact level-gate parity and full ability-selection/paralysis incomplete |
 | Witch Hunter Dawn set | 🔶 Partial | Items registered; armor values in; combat bonuses not fully verified |
 

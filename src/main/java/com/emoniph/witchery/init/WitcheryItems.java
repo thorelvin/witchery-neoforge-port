@@ -560,8 +560,20 @@ public class WitcheryItems {
                     itemProps(id).stacksTo(16).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
     public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.registerSimpleItem("leonards_urn");
-    public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.registerSimpleItem("gulgs_girdle");
-    public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.registerSimpleItem("mogs_quiver");
+    public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.register("gulgs_girdle",
+            id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
+                    .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
+                            net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
+                    .rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.register("mogs_quiver",
+            id -> new GoblinClothesItem(GoblinClothesItem.Piece.MOGS_QUIVER, itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)
+                    .durability(net.minecraft.world.item.equipment.ArmorType.CHESTPLATE.getDurability(
+                            net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
+                    .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> TWISTING_BAND      = ITEMS.register("twisting_band",
             id -> new TwistingBandItem(itemProps(id)
                     .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)
