@@ -25,6 +25,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,9 +39,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * The start chunk of a village has its full StructureStart deserialized from
  * disk by the time ChunkEvent.Load fires, so getAllStarts() returns all pieces.
  *
- * Generation: queued from chunk load and processed on the next level tick, then
- * force-loads the perimeter chunks before generating so wall cells on the outer hull
- * pass getChunkNow() checks.
+ * Generation: queued from chunk load and processed by a ticketed wall job. Jobs load
+ * the padded village footprint before generating so both the outer wall cells and the
+ * existing street/path cells pass getChunkNow() checks.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class VillageWallEvents {
@@ -241,13 +242,13 @@ public class VillageWallEvents {
             }
         }
 
-        List<ChunkPos> chunks = perimeterChunks(start);
+        List<ChunkPos> chunks = wallJobChunks(start);
         if (teleport != null) {
             ChunkPos targetChunk = new ChunkPos(teleport.target());
             if (!chunks.contains(targetChunk)) chunks.add(targetChunk);
         }
         JOBS.add(new WallJob(start, force, reason, chunks, teleport, level.getGameTime()));
-        WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} perimeter chunk ticket(s).",
+        WitcheryMod.LOGGER.info("[VillageWalls] Queued wall job ({}) for {} with {} wall chunk ticket(s).",
                 reason, bb, chunks.size());
         return true;
     }
@@ -261,7 +262,7 @@ public class VillageWallEvents {
                 job.ticketsAdded = true;
                 job.ticketedAt = now;
                 job.lastLogAt = now;
-                WitcheryMod.LOGGER.info("[VillageWalls] Requested {} perimeter chunk ticket(s) for {}.",
+                WitcheryMod.LOGGER.info("[VillageWalls] Requested {} wall chunk ticket(s) for {}.",
                         job.chunks.size(), job.start.getBoundingBox());
                 return false;
             }
@@ -270,11 +271,11 @@ public class VillageWallEvents {
             if (ready < job.chunks.size()) {
                 if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
                     job.lastLogAt = now;
-                    WitcheryMod.LOGGER.info("[VillageWalls] Waiting for perimeter chunks at {}: {}/{} ready.",
+                    WitcheryMod.LOGGER.info("[VillageWalls] Waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
                 }
                 if (job.ticketedAt > 0 && now - job.ticketedAt > WALL_JOB_TIMEOUT_TICKS) {
-                    WitcheryMod.LOGGER.error("[VillageWalls] Timed out waiting for perimeter chunks at {}: {}/{} ready.",
+                    WitcheryMod.LOGGER.error("[VillageWalls] Timed out waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
                     finishWallJob(level, job, false);
                     return true;
@@ -350,22 +351,18 @@ public class VillageWallEvents {
                 + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
-    private static List<ChunkPos> perimeterChunks(StructureStart start) {
+    private static List<ChunkPos> wallJobChunks(StructureStart start) {
         BoundingBox bb = start.getBoundingBox();
         int pad = FORCE_LOAD_PADDING_BLOCKS;
         int minCX = (bb.minX() - pad) >> 4, maxCX = (bb.maxX() + pad) >> 4;
         int minCZ = (bb.minZ() - pad) >> 4, maxCZ = (bb.maxZ() + pad) >> 4;
-        List<ChunkPos> chunks = new ArrayList<>();
+        LinkedHashSet<ChunkPos> chunks = new LinkedHashSet<>();
         for (int cx = minCX; cx <= maxCX; cx++) {
             for (int cz = minCZ; cz <= maxCZ; cz++) {
-                boolean nearEdge = (cx - minCX) < FORCE_LOAD_EDGE_RING_CHUNKS
-                                || (maxCX - cx) < FORCE_LOAD_EDGE_RING_CHUNKS
-                                || (cz - minCZ) < FORCE_LOAD_EDGE_RING_CHUNKS
-                                || (maxCZ - cz) < FORCE_LOAD_EDGE_RING_CHUNKS;
-                if (nearEdge) chunks.add(new ChunkPos(cx, cz));
+                chunks.add(new ChunkPos(cx, cz));
             }
         }
-        return chunks;
+        return new ArrayList<>(chunks);
     }
 
     // ── Chunk force-loading ────────────────────────────────────────────────────
