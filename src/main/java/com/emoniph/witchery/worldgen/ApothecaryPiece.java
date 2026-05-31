@@ -141,6 +141,7 @@ public class ApothecaryPiece extends StructurePiece {
                 boundingBox.minX() + 4,
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 2);
+        if (!box.isInside(spawnPos)) return;
         CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (witch != null) {
             witch.setPersistenceRequired();

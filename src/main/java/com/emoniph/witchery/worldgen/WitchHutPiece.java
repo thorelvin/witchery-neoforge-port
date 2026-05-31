@@ -99,11 +99,16 @@ public class WitchHutPiece extends StructurePiece {
             }
         }
 
+        BlockPos spawnPos = new BlockPos(
+                boundingBox.minX() + 1,
+                boundingBox.minY() + 1,
+                boundingBox.minZ() + 2);
+        if (!box.isInside(spawnPos)) return;
         CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get()
                 .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (witch != null) {
             witch.setPersistenceRequired();
-            witch.setPos(boundingBox.minX() + 1.5, boundingBox.minY() + 1, boundingBox.minZ() + 2.5);
+            witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
             witch.finalizeSpawn(level,
                     new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                     EntitySpawnReason.STRUCTURE, null);

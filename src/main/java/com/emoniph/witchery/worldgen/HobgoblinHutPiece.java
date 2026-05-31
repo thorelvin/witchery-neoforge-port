@@ -3,6 +3,7 @@ package com.emoniph.witchery.worldgen;
 import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -54,7 +55,7 @@ public class HobgoblinHutPiece extends StructurePiece {
                 fillColumnDown(level, Blocks.DIRT.defaultBlockState(), x, -1, z, box);
             }
         }
-        spawnResident(level);
+        spawnResident(level, box);
     }
 
     private void placeSourceSchematic(WorldGenLevel level, BoundingBox box) {
@@ -192,12 +193,17 @@ public class HobgoblinHutPiece extends StructurePiece {
                 .setValue(DoorBlock.HALF, (oldMeta & 8) != 0 ? DoubleBlockHalf.UPPER : DoubleBlockHalf.LOWER);
     }
 
-    private void spawnResident(WorldGenLevel level) {
+    private void spawnResident(WorldGenLevel level, BoundingBox box) {
+        BlockPos spawnPos = new BlockPos(
+                boundingBox.minX() + 4,
+                boundingBox.minY() + 1,
+                boundingBox.minZ() + 3);
+        if (!box.isInside(spawnPos)) return;
         HobgoblinEntity hobgoblin = WitcheryEntities.HOBGOBLIN.get()
                 .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (hobgoblin == null) return;
         hobgoblin.setPersistenceRequired();
-        hobgoblin.setPos(boundingBox.minX() + 4.5, boundingBox.minY() + 1.5, boundingBox.minZ() + 3.5);
+        hobgoblin.setPos(spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5);
         hobgoblin.finalizeSpawn(level,
                 new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                 EntitySpawnReason.STRUCTURE, null);

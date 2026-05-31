@@ -111,14 +111,15 @@ public class BookshopPiece extends StructurePiece {
                 fillColumnDown(level, stone, x, -1, z, box);
             }
         }
-        spawnShopkeeper(level);
+        spawnShopkeeper(level, box);
     }
 
-    private void spawnShopkeeper(WorldGenLevel level) {
+    private void spawnShopkeeper(WorldGenLevel level, BoundingBox box) {
         BlockPos spawnPos = new BlockPos(
                 boundingBox.minX() + 5,
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 4);
+        if (!box.isInside(spawnPos)) return;
         Villager villager = EntityType.VILLAGER.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (villager == null) return;
         villager.setPersistenceRequired();
