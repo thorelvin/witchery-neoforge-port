@@ -1840,6 +1840,7 @@ public class WitcheryCommands {
     private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
     private static final long GOTO_COOLDOWN_TICKS = 600L; // 30 seconds
     private static final int GOTO_SEARCH_RADIUS_RINGS = 32;
+    private static final int GOTO_VILLAGE_SEARCH_RADIUS_RINGS = 8;
     private static final boolean GOTO_SKIP_REFERENCED_STRUCTURES = false;
     private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
 
@@ -1879,12 +1880,15 @@ public class WitcheryCommands {
         final BlockPos from = player.blockPosition();
         final net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.structure.Structure> holderSet =
                 net.minecraft.core.HolderSet.direct(holderOpt.get());
+        int searchRadius = com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)
+                ? GOTO_VILLAGE_SEARCH_RADIUS_RINGS
+                : GOTO_SEARCH_RADIUS_RINGS;
 
         WitcheryMod.LOGGER.info("[Goto] Searching for {}:{} from {} (radius={}, skipReferenced={}).",
-                namespace, structureId, from, GOTO_SEARCH_RADIUS_RINGS, GOTO_SKIP_REFERENCED_STRUCTURES);
+                namespace, structureId, from, searchRadius, GOTO_SKIP_REFERENCED_STRUCTURES);
         com.mojang.datafixers.util.Pair<BlockPos, net.minecraft.core.Holder<net.minecraft.world.level.levelgen.structure.Structure>> result =
                 level.getChunkSource().getGenerator()
-                        .findNearestMapStructure(level, holderSet, from, GOTO_SEARCH_RADIUS_RINGS,
+                        .findNearestMapStructure(level, holderSet, from, searchRadius,
                                 GOTO_SKIP_REFERENCED_STRUCTURES);
 
         String fullId = namespace + ":" + structureId;

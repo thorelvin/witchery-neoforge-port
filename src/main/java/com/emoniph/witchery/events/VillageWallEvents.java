@@ -378,6 +378,9 @@ public class VillageWallEvents {
     }
 
     private static boolean queueAutomaticGeneration(ServerLevel level, PendingWall pending, StructureStart start) {
+        if (VillageWallData.get(level).isProcessed(start.getBoundingBox())) {
+            return true;
+        }
         List<ChunkPos> chunks = wallJobChunks(start);
         int ready = readyChunkCount(level, chunks);
         if (ready < chunks.size()) {
