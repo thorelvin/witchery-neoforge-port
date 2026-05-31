@@ -122,13 +122,23 @@ public class VillageWallEvents {
         int pad = 12;
         int minCX = (bb.minX() - pad) >> 4, maxCX = (bb.maxX() + pad) >> 4;
         int minCZ = (bb.minZ() - pad) >> 4, maxCZ = (bb.maxZ() + pad) >> 4;
+        // Only force-load the PERIMETER ring of chunks. The orthogonal-convex-hull wall lives
+        // on the village's outer boundary, so the interior chunks never hold a wall block —
+        // loading them all was the heavy part (a big village = ~200 synchronous chunk loads,
+        // which on a marginal heap froze the game when several gotos were chained). Road
+        // detection inside the village uses whatever chunks are already loaded around the
+        // player. RING covers the dilation + padding so the whole wall is reachable.
+        final int RING = 3; // chunks of edge band to load
         int count = 0;
         for (int cx = minCX; cx <= maxCX; cx++)
             for (int cz = minCZ; cz <= maxCZ; cz++) {
+                boolean nearEdge = (cx - minCX) < RING || (maxCX - cx) < RING
+                                || (cz - minCZ) < RING || (maxCZ - cz) < RING;
+                if (!nearEdge) continue; // skip interior — no wall there
                 level.getChunkSource().getChunk(cx, cz, true);
                 count++;
             }
-        WitcheryMod.LOGGER.info("[VillageWalls] Force-loaded {} chunks for village at {}.", count, bb);
+        WitcheryMod.LOGGER.info("[VillageWalls] Force-loaded {} perimeter chunks for village at {}.", count, bb);
     }
 
     // ── Village structure identification ──────────────────────────────────────
