@@ -48,14 +48,17 @@ public class StrawManPiece extends StructurePiece {
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
         if (!hasDryLandFootprint(level)) return;
 
-        boolean desert = isDesertBiome(level, boundingBox.minX() + 2, boundingBox.minZ() + 2);
+        int centerX = boundingBox.minX() + 2;
+        int centerZ = boundingBox.minZ() + 2;
+        boolean sandGround = isSandGroundBiome(level, centerX, centerZ);
+        boolean dryShrubBiome = isDryShrubBiome(level, centerX, centerZ);
 
-        BlockState ground = desert ? Blocks.SAND.defaultBlockState()
-                                   : Blocks.GRASS_BLOCK.defaultBlockState();
-        BlockState underground = desert ? Blocks.SAND.defaultBlockState()
-                                        : Blocks.DIRT.defaultBlockState();
-        BlockState plant = desert ? Blocks.DEAD_BUSH.defaultBlockState()
-                                  : Blocks.DANDELION.defaultBlockState();
+        BlockState fallbackGround = sandGround ? Blocks.SAND.defaultBlockState()
+                                               : Blocks.GRASS_BLOCK.defaultBlockState();
+        BlockState fallbackUnderground = sandGround ? Blocks.SAND.defaultBlockState()
+                                                    : Blocks.DIRT.defaultBlockState();
+        BlockState plant = dryShrubBiome ? Blocks.DEAD_BUSH.defaultBlockState()
+                                         : Blocks.DANDELION.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();
 
         Direction.Axis bodyAxis = random.nextBoolean() ? Direction.Axis.X : Direction.Axis.Z;
@@ -67,7 +70,7 @@ public class StrawManPiece extends StructurePiece {
         generateBox(level, box, 1, 1, 0, 4, 7, 4, air, air, false);
         generateBox(level, box, 0, 1, 2, 5, 7, 2, air, air, false);
 
-        fillGround(level, box, ground);
+        fillGround(level, box, sandGround, fallbackGround);
 
         placeBlock(level, plant, 1, 1, 0, box);
         placeBlock(level, plant, 4, 1, 0, box);
@@ -101,7 +104,10 @@ public class StrawManPiece extends StructurePiece {
 
         for (int x = 0; x <= 5; x++) {
             for (int z = 0; z <= 4; z++) {
-                fillColumnDown(level, underground, x, -1, z, box);
+                if (isGroundFootprint(x, z)) {
+                    fillColumnDown(level, matchingSurfaceState(level, x, z, sandGround, fallbackUnderground),
+                            x, -1, z, box);
+                }
             }
         }
     }
@@ -125,15 +131,52 @@ public class StrawManPiece extends StructurePiece {
         return true;
     }
 
-    private void fillGround(WorldGenLevel level, BoundingBox box, BlockState ground) {
+    private void fillGround(WorldGenLevel level, BoundingBox box, boolean forceSand, BlockState fallbackGround) {
         for (int x = 1; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                setLocal(level, box, x, 0, z, ground);
+                setLocal(level, box, x, 0, z, matchingSurfaceState(level, x, z, forceSand, fallbackGround));
             }
         }
         for (int x = 0; x <= 5; x++) {
-            setLocal(level, box, x, 0, 2, ground);
+            setLocal(level, box, x, 0, 2, matchingSurfaceState(level, x, 2, forceSand, fallbackGround));
         }
+    }
+
+    private static boolean isGroundFootprint(int x, int z) {
+        return (x >= 1 && x <= 4) || z == 2;
+    }
+
+    private BlockState matchingSurfaceState(WorldGenLevel level, int localX, int localZ,
+                                            boolean forceSand, BlockState fallback) {
+        if (forceSand) {
+            return fallback;
+        }
+
+        BlockPos surfacePos = findNaturalSurface(level, boundingBox.minX() + localX, boundingBox.minZ() + localZ);
+        if (surfacePos == null) {
+            return fallback;
+        }
+
+        BlockState state = level.getBlockState(surfacePos);
+        return isUsableGroundState(state) ? state : fallback;
+    }
+
+    private static BlockPos findNaturalSurface(WorldGenLevel level, int x, int z) {
+        int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
+        int minY = level.getMinY();
+        while (y > minY) {
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = level.getBlockState(pos);
+            if (!state.isAir() && state.getFluidState().isEmpty() && state.blocksMotion()) {
+                return pos;
+            }
+            y--;
+        }
+        return null;
+    }
+
+    private static boolean isUsableGroundState(BlockState state) {
+        return !state.isAir() && state.getFluidState().isEmpty() && state.blocksMotion();
     }
 
     private void placeSpawner(WorldGenLevel level, BoundingBox box, RandomSource random,
@@ -167,7 +210,11 @@ public class StrawManPiece extends StructurePiece {
         return Blocks.HAY_BLOCK.defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
     }
 
-    private static boolean isDesertBiome(WorldGenLevel level, int x, int z) {
+    private static boolean isSandGroundBiome(WorldGenLevel level, int x, int z) {
+        return level.getBiome(new BlockPos(x, 64, z)).is(Biomes.DESERT);
+    }
+
+    private static boolean isDryShrubBiome(WorldGenLevel level, int x, int z) {
         net.minecraft.core.Holder<Biome> biome = level.getBiome(new BlockPos(x, 64, z));
         return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
     }
