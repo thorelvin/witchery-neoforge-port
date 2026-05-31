@@ -20,6 +20,8 @@ public class CovenCircleStructure extends Structure {
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
         int cx = ctx.chunkPos().getMiddleBlockX();
         int cz = ctx.chunkPos().getMiddleBlockZ();
+        int startX = cx - 5;
+        int startZ = cz - 5;
 
         // WORLD_SURFACE_WG treats water as solid (returns water surface Y).
         // OCEAN_FLOOR_WG ignores fluids and returns the solid floor Y.
@@ -30,7 +32,13 @@ public class CovenCircleStructure extends Structure {
         int floorY = ctx.chunkGenerator().getFirstOccupiedHeight(
                 cx, cz, Heightmap.Types.OCEAN_FLOOR_WG,
                 ctx.heightAccessor(), ctx.randomState());
-        if (surfaceY > floorY) return Optional.empty(); // over water
+        if (surfaceY > floorY
+                || isOverWater(ctx, startX, startZ)
+                || isOverWater(ctx, startX + 10, startZ)
+                || isOverWater(ctx, startX, startZ + 10)
+                || isOverWater(ctx, startX + 10, startZ + 10)) {
+            return Optional.empty();
+        }
 
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
             int x = cx - 5;
@@ -50,5 +58,15 @@ public class CovenCircleStructure extends Structure {
     @Override
     public StructureType<?> type() {
         return WitcheryStructures.COVEN_CIRCLE_TYPE.get();
+    }
+
+    private static boolean isOverWater(GenerationContext ctx, int x, int z) {
+        // WORLD_SURFACE_WG treats water as solid; OCEAN_FLOOR_WG ignores fluids.
+        return ctx.chunkGenerator().getFirstOccupiedHeight(
+                x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                ctx.heightAccessor(), ctx.randomState())
+                > ctx.chunkGenerator().getFirstOccupiedHeight(
+                x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                ctx.heightAccessor(), ctx.randomState());
     }
 }

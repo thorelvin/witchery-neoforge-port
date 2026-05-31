@@ -34,8 +34,8 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
  *
  * 11×4×11 ring of 2-high standing stones surrounding a 3×3 chiseled altar.
  * Materials are biome-adaptive: sandstone in desert/mesa biomes.
- * One Coven Witch spawns at the altar; vanilla Witch spawners and a loot dispenser
- * sit hidden below it like the original component.
+ * A Coven Witch has the source 90% resident spawn chance at the altar; vanilla
+ * Witch spawners and a loot dispenser sit hidden below it like the original component.
  */
 public class CovenCirclePiece extends StructurePiece {
 
@@ -215,7 +215,7 @@ public class CovenCirclePiece extends StructurePiece {
                 boundingBox.minX() + 7,
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 4);
-        if (box.isInside(spawnPos)) {
+        if (box.isInside(spawnPos) && random.nextInt(10) != 0) {
             CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get()
                     .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
             if (witch != null) {
