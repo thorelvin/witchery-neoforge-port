@@ -66,6 +66,11 @@ public class WitcheryBlocks {
             props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
 
+    public static final DeferredBlock<StockadeBlock> STOCKADE = BLOCKS.registerBlock("stockade",
+            props -> new StockadeBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
+                    .strength(25.0f, 20.0f).noOcclusion()),
+            BlockBehaviour.Properties.of());
+
     // Ice blocks
     public static final DeferredBlock<PerpetualIceBlock> PERPETUAL_ICE = BLOCKS.registerBlock("perpetual_ice",
             PerpetualIceBlock::new,

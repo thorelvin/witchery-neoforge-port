@@ -154,6 +154,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ICE_DOOR.get(),
                 WitcheryItems.ICE_FENCE.get(),
                 WitcheryItems.ICE_GATE.get(),
+                WitcheryItems.STOCKADE.get(),
                 WitcheryItems.ICE_STOCKADE.get(),
                 WitcheryItems.ICE_PRESSURE_PLATE.get(),
                 WitcheryItems.SNOW_PRESSURE_PLATE.get(),

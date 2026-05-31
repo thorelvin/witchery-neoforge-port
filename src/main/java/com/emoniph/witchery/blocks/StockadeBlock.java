@@ -24,8 +24,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.util.RandomSource;
 
 /**
- * Source BlockStockade parity slice for the ice variant: low fence-like collision,
- * ice translucency, cactus-style contact damage, and source connection targets.
+ * Source BlockStockade parity slice: low fence-like collision, cactus-style
+ * contact damage, and source connection targets.
  */
 public class StockadeBlock extends CrossCollisionBlock {
     public static final MapCodec<StockadeBlock> CODEC = simpleCodec(StockadeBlock::new);

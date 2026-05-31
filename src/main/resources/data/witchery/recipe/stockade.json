@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " W ",
+    "WFW",
+    "WWW"
+  ],
+  "key": {
+    "F": "witchery:exhale_of_horned_one",
+    "W": "#minecraft:logs"
+  },
+  "result": {
+    "id": "witchery:stockade",
+    "count": 9
+  }
+}

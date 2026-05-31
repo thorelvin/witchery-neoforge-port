@@ -193,7 +193,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | silver_vat | ✅ Done | |
 | statue_goddess | ✅ Done | |
 | fetish family (scarecrow/trent/ladder) | ✅ Done | |
-| stockade (wood) | ❌ Missing | Source: `BlockStockade(false)` — punishment/decoration block |
+| stockade (wood) | 🔶 Partial | `witchery:stockade` restores a first-pass source `BlockStockade(false)` slice with low stockade collision, 25/20 toughness, cactus contact damage, self/Iron Bars/Ice Gate connections, oak-log models, self loot, and the old logs + `Exhale of the Horned One` shaped recipe for 9. Remaining: per-wood metadata variants and freezing/brew conversion into Ice Stockades. |
 | stockade_ice | ✅ Done | Live under Perpetual Ice & Snow Family as `witchery:ice_stockade`; old source produced it through stockade freezing/brew conversion rather than direct crafting |
 | blooded_wool | ⚠️ Wrong | Port has `blood_stained_wool`; verify ID matches original |
 | shaded_glass | ❌ Missing | See 2c above |
@@ -451,7 +451,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 ### Medium (fill-in work)
 
 11. Perpetual ice/snow follow-up: cursed snow pressure plate and brew/rite placement hooks
-12. Stockade blocks: wooden stockade plus future freezing conversion from wood to ice
+12. Stockade follow-up: per-wood wooden stockade variants plus future freezing conversion from wood to ice
 13. Shaded glass (2 block states)
 14. Blood Crucible in-game fill/use QA and particle/sound exactness
 15. Baba Yaga boss in-game QA / non-source hut decision
