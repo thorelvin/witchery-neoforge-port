@@ -406,19 +406,23 @@ public final class VillageWallGenerator {
             }
         }
 
-        // Phase 2: find road tips, trace to wall
+        // Phase 2: find road tips, trace to wall.
+        // Vanilla streets mix in occasional plain dirt / coarse dirt / gravel between the
+        // DIRT_PATH blocks, so the path map has small gaps. We bridge gaps up to ROAD_GAP
+        // cells when deciding whether a run "comes from behind" or "continues ahead". This
+        // keeps a dotted path treated as one continuous run (no false tip at a dirt spot,
+        // and the true tip near the wall is still found) without matching farmland/farm dirt
+        // (which is never within ROAD_GAP of a DIRT_PATH along a single axis run).
+        final int ROAD_GAP = 3;
         int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
         for (int x = 1; x < w - 1; x++) {
             for (int z = 1; z < d - 1; z++) {
                 if (!road[x][z]) continue;
                 for (int[] dir : dirs) {
-                    int bx = x - dir[0], bz = z - dir[1]; // cell behind
-                    if (bx < 0 || bz < 0 || bx >= w || bz >= d) continue;
-                    if (!road[bx][bz]) continue; // road must come from behind
-
-                    int fx = x + dir[0], fz = z + dir[1]; // cell ahead
-                    boolean roadAhead = fx >= 0 && fz >= 0 && fx < w && fz < d && road[fx][fz];
-                    if (roadAhead) continue; // road continues — not the tip yet
+                    // Road must genuinely come from behind (within the gap tolerance)…
+                    if (!roadWithin(road, x, z, -dir[0], -dir[1], w, d, ROAD_GAP)) continue;
+                    // …and genuinely END here (no road within the gap tolerance ahead).
+                    if (roadWithin(road, x, z, dir[0], dir[1], w, d, ROAD_GAP)) continue;
 
                     // This cell is the tip of a road run pointing in (dir).
                     // Extend the road's trajectory through the wall.
@@ -432,6 +436,17 @@ public final class VillageWallGenerator {
                 }
             }
         }
+    }
+
+    /** True if any of the next {@code gap} cells from (x,z) in direction (dx,dz) is road. */
+    private static boolean roadWithin(boolean[][] road, int x, int z,
+                                       int dx, int dz, int w, int d, int gap) {
+        for (int s = 1; s <= gap; s++) {
+            int nx = x + dx * s, nz = z + dz * s;
+            if (nx < 0 || nz < 0 || nx >= w || nz >= d) return false;
+            if (road[nx][nz]) return true;
+        }
+        return false;
     }
 
     /** Expand each GATE cell ±2 cells along the wall run for a 5-wide gate. */
