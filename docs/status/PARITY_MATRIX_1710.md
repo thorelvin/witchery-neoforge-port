@@ -197,7 +197,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | stockade_ice | ✅ Done | Live under Perpetual Ice & Snow Family as `witchery:ice_stockade`; old source produced it through stockade freezing/brew conversion rather than direct crafting |
 | blooded_wool | ⚠️ Wrong | Port has `blood_stained_wool`; verify ID matches original |
 | shaded_glass | ❌ Missing | See 2c above |
-| pit_dirt / pit_grass | ❌ Missing | Source: `BlockPitDirt`, `BlockPitGrass` — Pit biome variants for Torment |
+| pit_dirt / pit_grass | 🔶 Partial | `witchery:pit_dirt` and `witchery:pit_grass` are now real no-collision camouflage blocks with vanilla dirt/grass visuals, source hardness/sound feel, self loot, creative-tab wiring, and old display names. Remaining: Tormented Twine Witch's Cauldron recipes and in-game trap/Torment QA. |
 | infinity_egg | ❌ Missing | Source: `BlockInfinityEgg` — dragon egg variant |
 | disease (block) | ❌ Missing | Source: `BlockDisease` — flowing disease block |
 | brew / brew_gas / brew_liquid (as placed blocks) | 🔶 Partial | Hollow Tears stand-in only; full moving brew gas/liquid blocks not ported |
@@ -418,7 +418,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 |---|---|---|
 | Spirit World (dimension) | 🔶 Partial | Biome, fog/sky, vegetation features connected; fresh-chunk QA pending |
 | Spirit World vegetation (cotton/grass/mushroom) | 🔶 Partial | Features registered; fresh-chunk spawn verification needed |
-| Torment maze | 🔶 Partial | 6-level maze, Refilling Chests, Force walls; pit_dirt/pit_grass blocks missing |
+| Torment maze | 🔶 Partial | 6-level maze, Refilling Chests, Force walls; pit_dirt/pit_grass block items are live, but fresh Torment trap QA and their old cauldron recipe route remain open |
 | Mirror World | 🔶 Partial | Portal loop, room generator, Reflection guardian; room QA with fresh world needed |
 | Rowan tree worldgen | ✅ Done | Placed in biomes |
 | Village additions (Bookshop, Guard Tower, Town Wall) | Partial | Village Guard, apothecary/bookshop/source-sized witch-hut village injection, Watch Tower, Keep, and first-pass adaptive town walls are live. Vanilla village house pools now weight Witchery buildings at apothecary 16, witch hut 12, bookshop 16, watch tower 8, and keep 8, and `WitcheryVillageElement` now advertises building-specific front-door jigsaws while capping each Witchery building type to one placement per owning village start. The wall queue now retries/refreshes early starts, can queue from non-start village chunks via structure references, waits for naturally loaded padded-footprint chunks on automatic discovery, and uses nearest-first readiness-gated temporary forced-chunk jobs only for `/witchery goto village_*` / `/witchery walls`; explicit jobs request one chunk ticket at a time, cap very large forced footprints at 144 chunks, and release/skip a forced chunk that makes no readiness progress for 10 seconds. Village gotos now also use a ticked safe locate queue that probes one candidate chunk per server tick instead of blocking in vanilla `findNearestMapStructure`. Goto/manual walls respect the processed-village set unless `/witchery walls reset` is used first, preventing duplicate wall stacks. Gate path grading and height sampling now stop within 10 inward blocks so gates do not level paths through houses, and wall/gate/path corridors now clear touched connected tree logs/leaves to avoid sliced taiga trees. Cross-biome fresh-village wall/building QA remains open, especially structure distribution, keep frequency, duplicate-cap verification, taiga tree cleanup, savanna materials, gate support fill, immediate wall generation, zero-gate automatic runs, and goto/manual-wall freeze retests. |
@@ -466,5 +466,5 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 21. In-game hopper QA for all 6 machines
 22. Spirit World fresh-chunk vegetation/spawn QA
 23. Mirror World room QA
-24. Torment pit_dirt/pit_grass block addition
+24. Pit Dirt/Pit Grass cauldron recipe plus in-game trap QA
 25. Model/UV verification pass (demon wings, death scythe, poltergeist)

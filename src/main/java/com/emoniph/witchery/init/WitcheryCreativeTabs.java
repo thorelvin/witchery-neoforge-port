@@ -144,6 +144,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WICKER_BUNDLE.get(),
                 WitcheryItems.BLOODIED_WICKER_BUNDLE.get(),
                 WitcheryItems.BLOOD_STAINED_WOOL.get(),
+                WitcheryItems.PIT_DIRT.get(),
+                WitcheryItems.PIT_GRASS.get(),
                 WitcheryItems.CRITTER_SNARE.get(),
                 WitcheryItems.BEARTRAP.get(),
                 WitcheryItems.WOLFTRAP.get(),

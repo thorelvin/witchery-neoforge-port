@@ -55,6 +55,24 @@ public class WitcheryBlocks {
     public static final DeferredBlock<Block> BLOOD_STAINED_WOOL = BLOCKS.registerSimpleBlock("blood_stained_wool",
             BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WHITE_WOOL)
                     .mapColor(MapColor.COLOR_RED));
+    public static final DeferredBlock<Block> PIT_DIRT = BLOCKS.registerSimpleBlock("pit_dirt",
+            BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DIRT)
+                    .mapColor(MapColor.DIRT)
+                    .strength(0.5f)
+                    .noCollision()
+                    .noOcclusion()
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER));
+    public static final DeferredBlock<Block> PIT_GRASS = BLOCKS.registerSimpleBlock("pit_grass",
+            BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                    .mapColor(MapColor.GRASS)
+                    .strength(0.6f)
+                    .noCollision()
+                    .noOcclusion()
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER));
     public static final DeferredBlock<WitcheryWoodStairBlock> ROWAN_STAIRS = BLOCKS.registerBlock("rowan_stairs",
             props -> new WitcheryWoodStairBlock(ROWAN_PLANKS.get().defaultBlockState(),
                     props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),

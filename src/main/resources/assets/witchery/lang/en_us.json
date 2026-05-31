@@ -1,5 +1,9 @@
 {
   "itemGroup.witchery": "Witchery",
+  "block.witchery.pit_dirt": "Dirt",
+  "block.witchery.pit_grass": "Grass",
+  "item.witchery.pit_dirt": "Dirt",
+  "item.witchery.pit_grass": "Grass",
   "item.witchery.witches_primer": "The Witches' Primer",
   "item.witchery.witches_primer.patchouli_missing": "Patchouli is required to open this book.",
 
