@@ -1,5 +1,16 @@
 {
   "variants": {
-    "": { "model": "witchery:block/circle_infernal" }
+    "glyph=0": { "model": "witchery:block/circle_infernal" },
+    "glyph=1": { "model": "witchery:block/circle_infernal_2" },
+    "glyph=2": { "model": "witchery:block/circle_infernal_3" },
+    "glyph=3": { "model": "witchery:block/circle_infernal_4" },
+    "glyph=4": { "model": "witchery:block/circle_infernal_5" },
+    "glyph=5": { "model": "witchery:block/circle_infernal_6" },
+    "glyph=6": { "model": "witchery:block/circle_infernal_7" },
+    "glyph=7": { "model": "witchery:block/circle_infernal_8" },
+    "glyph=8": { "model": "witchery:block/circle_infernal_9" },
+    "glyph=9": { "model": "witchery:block/circle_infernal_10" },
+    "glyph=10": { "model": "witchery:block/circle_infernal_11" },
+    "glyph=11": { "model": "witchery:block/circle_infernal_12" }
   }
 }

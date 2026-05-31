@@ -1,6 +1,7 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -3631,7 +3632,11 @@ public class RitualExecutor {
                         || state.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())
                         || state.is(WitcheryBlocks.CIRCLE_INFERNAL.get()))
                         && !state.is(targetBlock)) {
-                    level.setBlockAndUpdate(targetPos, targetBlock.defaultBlockState());
+                    BlockState next = targetBlock.defaultBlockState();
+                    if (state.hasProperty(ChalkCircleBlock.GLYPH)) {
+                        next = ChalkCircleBlock.withGlyph(next, state.getValue(ChalkCircleBlock.GLYPH));
+                    }
+                    level.setBlockAndUpdate(targetPos, next);
                     level.sendParticles(ParticleTypes.SMOKE,
                             targetPos.getX() + 0.5, targetPos.getY() + 0.2, targetPos.getZ() + 0.5,
                             4, 0.15, 0.1, 0.15, 0.0);

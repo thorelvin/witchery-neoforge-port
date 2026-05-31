@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.core.BlockPos;
@@ -206,7 +207,7 @@ public class CircleTalismanItem extends Item {
                 Block target = blockFor(cell, small, medium, large);
                 if (target == null) continue;
 
-                level.setBlock(worldPos, target.defaultBlockState(), 3);
+                level.setBlock(worldPos, ChalkCircleBlock.withRandomGlyph(target.defaultBlockState(), level.getRandom()), 3);
                 level.addParticle(ParticleTypes.POOF,
                         worldPos.getX() + 0.5, center.getY() + 1.1, worldPos.getZ() + 0.5,
                         0, 0.05, 0);

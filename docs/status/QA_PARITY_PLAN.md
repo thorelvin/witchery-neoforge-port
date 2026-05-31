@@ -34,6 +34,8 @@ Ice Stockade QA note (2026-05-31): `witchery:ice_stockade` is now promoted from 
 
 Village structure QA note (2026-05-31): village house-pool weights are now apothecary `16`, witch hut `12`, bookshop `16`, watch tower `8`, and keep `8` in plains/desert/savanna/snowy/taiga pools. Verify fresh villages show Witchery shops/huts more often than the earlier watchtower-heavy pass, verify keeps appear without requiring many dozens of villages, verify the village witch hut uses the old compact `4x6x5` footprint attached at the real front door, and verify the Hobgoblin Hut resembles the old `7x6x7` source schematic with one resident hobgoblin.
 
+Chalk glyph QA note (2026-05-31): draw at least 12 marks each with Ritual Chalk, Otherwhere Chalk, and Infernal Chalk and confirm the visible symbol varies across the old family textures. Use the same chalk on an existing same-family mark and confirm it rerolls the symbol instead of deleting the mark. Then complete small/medium/large circles with mixed visual symbols and confirm ritual circle detection still treats the visual `glyph=0..11` state as cosmetic only.
+
 ## External reference set
 
 Use these as implementation examples when the modern runtime differs from 1.7.10:

@@ -141,7 +141,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | poppet_shelf | ✅ Done | |
 | crystal_ball | ✅ Done | |
 | dream_catcher | ✅ Done | |
-| circle / circle_glyph / circle_otherwhere / circle_infernal | ✅ Done | |
+| circle / circle_glyph / circle_otherwhere / circle_infernal | ✅ Done | Thin glyph block path restored; ritual/otherwhere/infernal glyphs now carry the source-style 12-way visual metadata/state and same-chalk use rerolls the visible symbol |
 | blood_crucible | 🔶 Partial | Block/BE/render, vampire fill path, source recipe, and level-10 ultimate selection are live; broader Blood Power/late vampire gates remain under Vampirism |
 | shaded_glass (off/on) | ❌ Missing | Source: `BlockShadedGlass` — light-blocking glass with switch state |
 | decurse_teleport | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaTeleportPullProtect) — area curse protection |

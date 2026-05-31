@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -20,10 +22,26 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class ChalkCircleBlock extends Block {
 
+    public static final int GLYPH_VARIANTS = 12;
+    public static final IntegerProperty GLYPH = IntegerProperty.create("glyph", 0, GLYPH_VARIANTS - 1);
+
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
 
     public ChalkCircleBlock(BlockBehaviour.Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(GLYPH, 0));
+    }
+
+    public static BlockState withRandomGlyph(BlockState state, RandomSource random) {
+        return state.hasProperty(GLYPH)
+                ? state.setValue(GLYPH, random.nextInt(GLYPH_VARIANTS))
+                : state;
+    }
+
+    public static BlockState withGlyph(BlockState state, int glyph) {
+        return state.hasProperty(GLYPH)
+                ? state.setValue(GLYPH, Math.floorMod(glyph, GLYPH_VARIANTS))
+                : state;
     }
 
     @Override
@@ -49,5 +67,10 @@ public class ChalkCircleBlock extends Block {
             return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(GLYPH);
     }
 }

@@ -1,5 +1,16 @@
 {
   "variants": {
-    "": { "model": "witchery:block/circle" }
+    "glyph=0": { "model": "witchery:block/circle" },
+    "glyph=1": { "model": "witchery:block/circle" },
+    "glyph=2": { "model": "witchery:block/circle" },
+    "glyph=3": { "model": "witchery:block/circle" },
+    "glyph=4": { "model": "witchery:block/circle" },
+    "glyph=5": { "model": "witchery:block/circle" },
+    "glyph=6": { "model": "witchery:block/circle" },
+    "glyph=7": { "model": "witchery:block/circle" },
+    "glyph=8": { "model": "witchery:block/circle" },
+    "glyph=9": { "model": "witchery:block/circle" },
+    "glyph=10": { "model": "witchery:block/circle" },
+    "glyph=11": { "model": "witchery:block/circle" }
   }
 }

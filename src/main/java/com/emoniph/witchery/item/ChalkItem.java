@@ -1,25 +1,23 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.function.Supplier;
 
 /**
- * Chalk — draws or erases chalk circle marks on floors.
- * Different chalk variants place different circle block types.
- * Right-clicking the same mark erases it; right-clicking a different mark replaces it.
+ * Chalk draws floor glyphs. Same-type use rerolls the glyph art, like source metadata.
  */
 public class ChalkItem extends Item {
 
@@ -35,36 +33,59 @@ public class ChalkItem extends Item {
         Level level = ctx.getLevel();
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        // Only act on the top face of a block
-        if (ctx.getClickedFace() != Direction.UP) return InteractionResult.PASS;
-
-        var above  = ctx.getClickedPos().above();
-        var current = level.getBlockState(above);
-        var target  = targetBlock.get();
+        Block target = targetBlock.get();
+        BlockPosAndState mark = targetMark(level, ctx);
+        if (mark == null) return InteractionResult.PASS;
 
         EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+        BlockState next = placementState(level, target, mark.state);
 
-        if (current.is(WitcheryBlockTags.CHALK_CIRCLES)) {
-            if (current.getBlock() == target) {
-                // Same type → erase
-                level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
-                level.playSound(null, above, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS, 0.5f, 1.2f);
-            } else {
-                // Different type → replace
-                level.setBlock(above, target.defaultBlockState(), 3);
-                level.playSound(null, above, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
-            }
+        if (mark.state.is(WitcheryBlockTags.CHALK_CIRCLES)) {
+            level.setBlock(mark.pos, next, 3);
+            level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
             if (ctx.getPlayer() != null) ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
             return InteractionResult.CONSUME;
         }
 
-        if (!current.canBeReplaced()) return InteractionResult.PASS;
-        if (!target.defaultBlockState().canSurvive(level, above)) return InteractionResult.PASS;
+        if (ctx.getClickedFace() != Direction.UP) return InteractionResult.PASS;
+        if (!mark.state.canBeReplaced()) return InteractionResult.PASS;
+        if (!next.canSurvive(level, mark.pos)) return InteractionResult.PASS;
 
-        level.setBlock(above, target.defaultBlockState(), 3);
-        level.playSound(null, above, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
+        level.setBlock(mark.pos, next, 3);
+        level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
         if (ctx.getPlayer() != null) ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
         return InteractionResult.CONSUME;
     }
+
+    private static BlockPosAndState targetMark(Level level, UseOnContext ctx) {
+        var clicked = ctx.getClickedPos();
+        BlockState clickedState = level.getBlockState(clicked);
+        if (clickedState.is(WitcheryBlockTags.CHALK_CIRCLES)) {
+            return new BlockPosAndState(clicked, clickedState);
+        }
+
+        var above = clicked.above();
+        return new BlockPosAndState(above, level.getBlockState(above));
+    }
+
+    private static BlockState placementState(Level level, Block target, BlockState current) {
+        BlockState state = target.defaultBlockState();
+        if (!state.hasProperty(ChalkCircleBlock.GLYPH)) {
+            return state;
+        }
+
+        int glyph = level.getRandom().nextInt(ChalkCircleBlock.GLYPH_VARIANTS);
+        if (current.is(target) && current.hasProperty(ChalkCircleBlock.GLYPH)
+                && ChalkCircleBlock.GLYPH_VARIANTS > 1) {
+            int previous = current.getValue(ChalkCircleBlock.GLYPH);
+            glyph = level.getRandom().nextInt(ChalkCircleBlock.GLYPH_VARIANTS - 1);
+            if (glyph >= previous) {
+                glyph++;
+            }
+        }
+        return ChalkCircleBlock.withGlyph(state, glyph);
+    }
+
+    private record BlockPosAndState(net.minecraft.core.BlockPos pos, BlockState state) {}
 }
