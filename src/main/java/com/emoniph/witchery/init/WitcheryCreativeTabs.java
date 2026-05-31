@@ -305,6 +305,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BREW_OF_LOVE.get(),
                 WitcheryItems.BREW_OF_THE_GROTESQUE.get(),
                 WitcheryItems.BREW_OF_REVEALING.get(),
+                WitcheryItems.BREW_OF_ENDLESS_WATER.get(),
                 WitcheryItems.BREW_OF_POISON.get(),
                 WitcheryItems.BREW_OF_ICE.get(),
                 WitcheryItems.BREW_OF_FOAMING.get(),
@@ -373,7 +374,7 @@ public class WitcheryCreativeTabs {
                 "shrub_of_ink", "shrub_of_sprouting", "shrub_of_thorns", "shrub_of_webs", "trapped_plant");
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
-                "brew_of_endless_water", "contract_ownership", "contract_torment",
+                "contract_ownership", "contract_torment",
                 "creative_bat_wolf_token", "creative_medallion");
         addLegacy(output, accepted,
                 "meaty_stew", "raw_meaty_stew", "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",

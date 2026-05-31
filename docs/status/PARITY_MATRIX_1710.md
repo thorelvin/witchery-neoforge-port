@@ -64,7 +64,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | cauldron_book | ❌ Missing | Source: `ItemMarkupBook(7)` — in-game cauldron guide |
 | vampire_book | ❌ Missing | Source: `ItemMarkupBook(7, [0,9])` — vampire progression book with level callbacks |
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
-| brew_fuel / brew_endless_water | ❌ Missing | Source: `ItemBrewFuel`, `ItemBrewEndlessWater` — fuel/endless brew item forms |
+| brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; `ItemBrewFuel` remains missing |
 | stew (cooked/raw) | ❌ Missing | Source: `ItemStew` — 12-nutrition witch stew; raw variant |
 | polynesia_charm | ❌ Missing | Source: `ItemPolynesiaCharm` — two variants |
 | devils_tongue_charm | ❌ Missing | (in placeholder list but no mechanic planned yet) |
@@ -299,7 +299,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 | EntityBrew (thrown brew projectile physics) | 🔶 Partial | thrown_brew entity exists; full brew physics incomplete |
 | Brew bottle / splash / lingering / bucket variants | 🔶 Partial | Item-based only; no container conversion |
 | Brew Bag container logic | ❌ Missing | |
-| Brew of Endless Water | ❌ Missing | |
+| Brew of Endless Water | Done | Source-style glowing 100-use utility item fills cauldrons or places water source blocks |
 | Brew of Combustion | ❌ Missing | |
 
 ### 4b. Brew Effects (as items vs dynamic actions)
