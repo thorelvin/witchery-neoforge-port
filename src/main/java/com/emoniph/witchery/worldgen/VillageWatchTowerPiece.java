@@ -64,8 +64,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState stairsW = materials.roofStairs(Direction.WEST);
         BlockState stairsE = materials.roofStairs(Direction.EAST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
-        BlockState ladderN = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
-        BlockState ladderS = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
 
         // ── Main tower shell (2-6, 0-17, 2-6) ────────────────────────────────
         generateBox(level, box, 2, 0, 2, 6, 17, 6, cobble, cobble, false);
@@ -160,12 +159,11 @@ public class VillageWatchTowerPiece extends StructurePiece {
         placeBlock(level, torch, 3, 2, 4, box);
         placeBlock(level, torch, 5, 2, 4, box);
         placeBlock(level, torch, 4, 14, 3, box);
-        placeBlock(level, torch, 4, 16, 4, box);
+        placeBlock(level, torch, 5, 16, 5, box);
 
-        // ── Ladder (y=1-12 facing south = attached to north block at z=3) ─────
-        for (int ly = 1; ly <= 12; ly++) placeBlock(level, ladderS, 4, ly, 4, box);
-        // Upper offset (y=13-15 facing north = attached to south block at z=4→5 area)
-        for (int ly = 13; ly <= 15; ly++) placeBlock(level, ladderN, 3, ly, 5, box);
+        // Straight shaft: a single supported ladder run from the entry to the upper deck.
+        for (int ly = 13; ly <= 15; ly++) placeBlock(level, cobble, 4, ly, 5, box);
+        for (int ly = 1; ly <= 15; ly++) placeBlock(level, ladder, 4, ly, 4, box);
 
         // ── Loot chest on upper platform ──────────────────────────────────────
         createChest(level, box, random, 5, 13, 5, LOOT);
@@ -178,15 +176,17 @@ public class VillageWatchTowerPiece extends StructurePiece {
         }
 
         // ── Guard spawns (3 guards on the top parapet) ────────────────────────
-        spawnGuards(level, box, 4, 16, 4, 3, random);
+        spawnGuards(level, box, 4, 16, 5, 3);
     }
 
     private void spawnGuards(WorldGenLevel level, BoundingBox box,
-                              int lx, int ly, int lz, int count, RandomSource random) {
+                              int lx, int ly, int lz, int count) {
+        int[][] offsets = {{0, 0}, {-1, -1}, {1, -1}, {-1, 0}, {1, 0}, {0, 1}};
         for (int i = 0; i < count; i++) {
-            int wx = boundingBox.minX() + lx + (i == 0 ? 0 : (random.nextInt(3) - 1));
+            int[] offset = offsets[i % offsets.length];
+            int wx = boundingBox.minX() + lx + offset[0];
             int wy = boundingBox.minY() + ly;
-            int wz = boundingBox.minZ() + lz + (i == 0 ? 0 : (random.nextInt(3) - 1));
+            int wz = boundingBox.minZ() + lz + offset[1];
             if (!box.isInside(new BlockPos(wx, wy, wz))) continue;
             VillageGuardEntity guard = WitcheryEntities.VILLAGE_GUARD.get()
                     .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
