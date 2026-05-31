@@ -289,7 +289,10 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WATER_DIVINER = ITEMS.register("water_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.WATER, itemProps(id).durability(50)));
     public static final DeferredItem<Item> LAVA_DIVINER = ITEMS.register("lava_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.LAVA, itemProps(id).durability(50)));
     public static final DeferredItem<Item> CIRCLE_TALISMAN = ITEMS.register("circle_talisman", id -> new com.emoniph.witchery.item.CircleTalismanItem(itemProps(id).stacksTo(16)));
-    public static final DeferredItem<Item> WITCH_HAND = ITEMS.registerSimpleItem("witch_hand");
+    public static final DeferredItem<Item> WITCH_HAND = ITEMS.register("witch_hand",
+            id -> new WitchHandItem(itemProps(id)));
+    public static final DeferredItem<Item> WITCHES_HAND = ITEMS.register("witches_hand",
+            id -> new WitchHandItem(itemProps(id)));
     public static final DeferredItem<Item> WORMWOOD_SEEDS = ITEMS.register("wormwood_seeds", id -> new BlockItem(WitcheryBlocks.WORMWOOD_PLANT.get(), itemProps(id)));
     public static final DeferredItem<Item> MUTATOR = ITEMS.register("mutator", id -> new MutatingSprigItem(itemProps(id).durability(16)));
     public static final DeferredItem<Item> SPECTRAL_STONE = ITEMS.register("spectral_stone", id -> new SpectralStoneItem(itemProps(id)));
@@ -664,7 +667,6 @@ public class WitcheryItems {
             "bound_taglock_kit",
             "crossbow_pistol",
             "deployed_deaths_hand",
-            "witches_hand",
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",

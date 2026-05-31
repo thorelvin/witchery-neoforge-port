@@ -2,6 +2,7 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.entity.BabaYagaEntity;
+import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.GoblinGulgEntity;
 import com.emoniph.witchery.entity.GoblinMogEntity;
@@ -94,6 +95,14 @@ public class WitcheryMobDropEvents {
         if (entity instanceof Witch && rng.nextFloat() < 0.4f) {
             event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get())));
+        }
+
+        if ((entity instanceof Witch || entity instanceof CovenWitchEntity)
+                && killer != null
+                && rng.nextFloat() < sourceArthanaChance(arthana)
+                && !hasDrop(event, WitcheryItems.WITCH_HAND.get())) {
+            event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new ItemStack(WitcheryItems.WITCH_HAND.get())));
         }
     }
 

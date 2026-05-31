@@ -374,7 +374,7 @@ public class WitcheryCreativeTabs {
                 "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting",
                 "charged_crossbow", "duplication_grenade", "staff_of_duplication",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
-                "crossbow_pistol", "deployed_deaths_hand", "witches_hand");
+                "crossbow_pistol", "deployed_deaths_hand");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
                 "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",

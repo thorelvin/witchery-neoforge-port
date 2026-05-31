@@ -1,0 +1,417 @@
+package com.emoniph.witchery.item;
+
+import com.emoniph.witchery.data.CreaturePowerType;
+import com.emoniph.witchery.data.InfusionType;
+import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.Set;
+import java.util.function.Consumer;
+
+public class WitchHandItem extends Item {
+    private static final int USE_DURATION = 400;
+    private static final int OTHERWHERE_RECALL_TICKS = 60;
+    private static final String RECALL_X = "WITCRecallX";
+    private static final String RECALL_Y = "WITCRecallY";
+    private static final String RECALL_Z = "WITCRecallZ";
+    private static final String RECALL_DIM = "WITCRecallDim";
+    private static final String ENSLAVED_OWNER = "WITCHERY_INFUSION_ENSLAVED_OWNER";
+
+    public WitchHandItem(Properties properties) {
+        super(properties.stacksTo(1).rarity(Rarity.UNCOMMON));
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        return ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return USE_DURATION;
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+        if (level.isClientSide() || !(entity instanceof ServerPlayer player)) {
+            return;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        int elapsed = getUseDuration(stack, entity) - remainingUseDuration;
+        switch (data.getInfusionType()) {
+            case LIGHT -> sustainLight(player, data, elapsed);
+            case OVERWORLD -> sustainOverworld(player, data, elapsed);
+            case OTHERWHERE -> otherwhereFeedback(player, elapsed);
+            default -> {
+            }
+        }
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
+        if (level.isClientSide() || !(entity instanceof ServerPlayer player)) {
+            return true;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        int elapsed = getUseDuration(stack, entity) - timeCharged;
+        boolean success = switch (data.getInfusionType()) {
+            case OTHERWHERE -> releaseOtherwhere(stack, player, data, elapsed);
+            case INFERNAL -> releaseInfernal(player, data);
+            default -> false;
+        };
+
+        if (!success && data.getInfusionType() == InfusionType.NONE) {
+            player.displayClientMessage(Component.translatable("item.witchery.witch_hand.no_infusion")
+                    .withStyle(ChatFormatting.GRAY), true);
+        }
+        return true;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+        tooltip.accept(Component.translatable("item.witchery.witch_hand.tip")
+                .withStyle(ChatFormatting.GRAY));
+        CompoundTag tag = getTag(stack);
+        if (hasRecall(tag)) {
+            tooltip.accept(Component.translatable("item.witchery.witch_hand.recall",
+                            tag.getIntOr(RECALL_X, 0), tag.getIntOr(RECALL_Y, 0), tag.getIntOr(RECALL_Z, 0))
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+        }
+    }
+
+    public static boolean isWitchHand(ItemStack stack) {
+        return stack.is(WitcheryItems.WITCH_HAND.get()) || stack.is(WitcheryItems.WITCHES_HAND.get());
+    }
+
+    public static boolean leftClickEntity(ItemStack stack, ServerPlayer player, LivingEntity target) {
+        if (!isWitchHand(stack)) {
+            return false;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        return switch (data.getInfusionType()) {
+            case LIGHT -> lightTarget(player, data, target);
+            case OVERWORLD -> overworldPush(player, data, target);
+            case OTHERWHERE -> otherwhereHike(player, data, target);
+            case INFERNAL -> infernalCommandOrEnslave(player, data, target);
+            default -> false;
+        };
+    }
+
+    private static void sustainLight(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        if (elapsed <= 20 || elapsed % 30 != 0 || !spendInfusionEnergy(player, data, 1)) {
+            return;
+        }
+
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.INVISIBILITY, 40, 0, true, false));
+        AABB area = player.getBoundingBox().inflate(20.0D, 4.0D, 20.0D);
+        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> mob.getTarget() == player)) {
+            mob.setTarget(null);
+        }
+        ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                8, 0.5D, 0.6D, 0.5D, 0.01D);
+    }
+
+    private static void sustainOverworld(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        if (!player.isShiftKeyDown() || elapsed < 40 || elapsed % 10 != 0 || !spendInfusionEnergy(player, data, 1)) {
+            return;
+        }
+
+        Vec3 pullTo = player.position().add(0.0D, 1.0D, 0.0D);
+        AABB area = player.getBoundingBox().inflate(6.0D);
+        for (ItemEntity item : player.level().getEntitiesOfClass(ItemEntity.class, area)) {
+            Vec3 delta = pullTo.subtract(item.position());
+            if (delta.lengthSqr() > 0.01D) {
+                item.setDeltaMovement(item.getDeltaMovement().add(delta.normalize().scale(0.25D)));
+            }
+        }
+        player.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.PLAYERS, 0.25F, 1.5F);
+    }
+
+    private static void otherwhereFeedback(ServerPlayer player, int elapsed) {
+        if (player.isShiftKeyDown() && elapsed == OTHERWHERE_RECALL_TICKS) {
+            player.displayClientMessage(Component.translatable("item.witchery.witch_hand.can_set_recall")
+                    .withStyle(ChatFormatting.GRAY), true);
+            player.level().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_PLING.value(),
+                    SoundSource.PLAYERS, 0.5F, 1.2F);
+        } else if (!player.isShiftKeyDown() && elapsed > 0 && elapsed % 20 == 0) {
+            player.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
+                    SoundSource.PLAYERS, 0.25F, 1.0F);
+        }
+    }
+
+    private static boolean releaseOtherwhere(ItemStack stack, ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        if (player.isShiftKeyDown() && elapsed >= OTHERWHERE_RECALL_TICKS) {
+            storeRecall(stack, player);
+            feedback(player, ParticleTypes.PORTAL, SoundEvents.FIRE_EXTINGUISH);
+            return true;
+        }
+        if (player.isShiftKeyDown()) {
+            return recall(stack, player, data);
+        }
+        return teleportToLook(player, data, Math.min(120.0D, 40.0D + 20.0D * Math.max(0, elapsed / 20)));
+    }
+
+    private static boolean releaseInfernal(ServerPlayer player, WitcheryPlayerData data) {
+        CreaturePowerType power = CreaturePowerType.fromString(data.getCreaturePowerType());
+        if (power == null || data.getCreaturePowerCharges() <= 0 || !spendInfusionEnergy(player, data, 1)) {
+            fail(player);
+            return false;
+        }
+        if (!data.spendCreaturePowerCharge()) {
+            fail(player);
+            return false;
+        }
+        power.activate(player);
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        return true;
+    }
+
+    private static boolean lightTarget(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        if (!spendInfusionEnergy(player, data, 3)) {
+            fail(player);
+            return true;
+        }
+        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.GLOWING, 200, 0));
+        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.SLOWNESS, 100, 3));
+        ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD,
+                target.getX(), target.getY() + 1.0D, target.getZ(),
+                18, 0.5D, 0.8D, 0.5D, 0.02D);
+        return true;
+    }
+
+    private static boolean overworldPush(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        int cost = player.isShiftKeyDown() ? 4 : 2;
+        if (!spendInfusionEnergy(player, data, cost)) {
+            fail(player);
+            return true;
+        }
+        Vec3 look = player.getLookAngle().normalize().scale(player.isShiftKeyDown() ? 2.4D : 1.5D);
+        target.push(look.x, player.isShiftKeyDown() ? 0.9D : 0.3D, look.z);
+        target.hurtMarked = true;
+        feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
+        return true;
+    }
+
+    private static boolean otherwhereHike(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        if (!spendInfusionEnergy(player, data, 2)) {
+            fail(player);
+            return true;
+        }
+        double lift = clearLiftDistance(target, 8);
+        if (lift <= 0.0D) {
+            fail(player);
+            return true;
+        }
+        player.fallDistance = 0.0F;
+        target.fallDistance = 0.0F;
+        player.teleportTo(player.getX(), player.getY() + Math.min(clearLiftDistance(player, 8), lift), player.getZ());
+        target.teleportTo(target.getX(), target.getY() + lift, target.getZ());
+        feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
+        return true;
+    }
+
+    private static boolean infernalCommandOrEnslave(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        if (player.isShiftKeyDown()) {
+            if (!(target instanceof Mob mob) || !spendInfusionEnergy(player, data, 5)) {
+                fail(player);
+                return true;
+            }
+            mob.getPersistentData().putString(ENSLAVED_OWNER, player.getUUID().toString());
+            mob.setTarget(null);
+            mob.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.GLOWING, 200, 0));
+            feedback(player, ParticleTypes.WITCH, SoundEvents.ZOMBIE_INFECT);
+            return true;
+        }
+
+        if (!spendInfusionEnergy(player, data, 1)) {
+            fail(player);
+            return true;
+        }
+        int count = 0;
+        AABB area = player.getBoundingBox().inflate(50.0D, 15.0D, 50.0D);
+        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> isEnslavedBy(mob, player))) {
+            mob.setTarget(target);
+            count++;
+        }
+        if (count > 0) {
+            feedback(player, ParticleTypes.CRIT, SoundEvents.BREEZE_CHARGE);
+        } else {
+            fail(player);
+        }
+        return true;
+    }
+
+    private static boolean spendInfusionEnergy(ServerPlayer player, WitcheryPlayerData data, int amount) {
+        if (player.isCreative()) {
+            return true;
+        }
+        int current = data.getInfusionEnergy();
+        if (current < amount) {
+            return false;
+        }
+        data.setInfusionEnergy(current - amount, data.getInfusionMaxEnergy());
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        return true;
+    }
+
+    private static void storeRecall(ItemStack stack, ServerPlayer player) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putInt(RECALL_X, player.blockPosition().getX());
+            tag.putInt(RECALL_Y, player.blockPosition().getY());
+            tag.putInt(RECALL_Z, player.blockPosition().getZ());
+            tag.putString(RECALL_DIM, player.level().dimension().identifier().toString());
+        });
+        player.displayClientMessage(Component.translatable("item.witchery.witch_hand.set_recall",
+                        player.blockPosition().getX(), player.blockPosition().getY(), player.blockPosition().getZ())
+                .withStyle(ChatFormatting.DARK_PURPLE), false);
+    }
+
+    private static boolean recall(ItemStack stack, ServerPlayer player, WitcheryPlayerData data) {
+        CompoundTag tag = getTag(stack);
+        if (!hasRecall(tag) || !spendInfusionEnergy(player, data, 2)) {
+            fail(player);
+            return false;
+        }
+        try {
+            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION,
+                    Identifier.parse(tag.getStringOr(RECALL_DIM, "")));
+            ServerLevel destination = ((ServerLevel) player.level()).getServer().getLevel(dimension);
+            if (destination == null) {
+                fail(player);
+                return false;
+            }
+            player.fallDistance = 0.0F;
+            player.teleportTo(destination, tag.getIntOr(RECALL_X, 0) + 0.5D, tag.getIntOr(RECALL_Y, 0),
+                    tag.getIntOr(RECALL_Z, 0) + 0.5D, Set.of(), player.getYRot(), player.getXRot(), false);
+            feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            fail(player);
+            return false;
+        }
+    }
+
+    private static boolean teleportToLook(ServerPlayer player, WitcheryPlayerData data, double range) {
+        if (!spendInfusionEnergy(player, data, 1)) {
+            fail(player);
+            return false;
+        }
+        HitResult hit = player.pick(range, 1.0F, true);
+        if (!(hit instanceof BlockHitResult blockHit)) {
+            fail(player);
+            return false;
+        }
+        BlockPos landing = findSafeLanding((ServerLevel) player.level(), blockHit);
+        if (landing == null) {
+            fail(player);
+            return false;
+        }
+        player.fallDistance = 0.0F;
+        player.teleportTo(landing.getX() + 0.5D, landing.getY(), landing.getZ() + 0.5D);
+        feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
+        return true;
+    }
+
+    private static BlockPos findSafeLanding(ServerLevel level, BlockHitResult hit) {
+        BlockPos base = hit.getBlockPos().relative(hit.getDirection());
+        for (int dy = 0; dy <= 3; dy++) {
+            BlockPos pos = base.above(dy);
+            if (hasStandingRoom(level, pos)) {
+                return pos;
+            }
+        }
+        for (int dy = 1; dy <= 3; dy++) {
+            BlockPos pos = base.below(dy);
+            if (hasStandingRoom(level, pos)) {
+                return pos;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasStandingRoom(ServerLevel level, BlockPos pos) {
+        return !level.getBlockState(pos.below()).isAir()
+                && level.getBlockState(pos).isAir()
+                && level.getBlockState(pos.above()).isAir();
+    }
+
+    private static double clearLiftDistance(LivingEntity entity, int max) {
+        Level level = entity.level();
+        for (int i = max; i > 0; i--) {
+            AABB moved = entity.getBoundingBox().move(0.0D, i, 0.0D);
+            if (level.noCollision(entity, moved)) {
+                return i;
+            }
+        }
+        return 0.0D;
+    }
+
+    private static boolean isEnslavedBy(Mob mob, ServerPlayer player) {
+        return mob.getPersistentData().getStringOr(ENSLAVED_OWNER, "").equals(player.getUUID().toString());
+    }
+
+    private static CompoundTag getTag(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    private static boolean hasRecall(CompoundTag tag) {
+        return tag.contains(RECALL_X) && tag.contains(RECALL_Y) && tag.contains(RECALL_Z) && tag.contains(RECALL_DIM);
+    }
+
+    private static void feedback(ServerPlayer player, net.minecraft.core.particles.ParticleOptions particle,
+                                 net.minecraft.sounds.SoundEvent sound) {
+        player.level().playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS, 0.7F, 1.0F);
+        ((ServerLevel) player.level()).sendParticles(particle,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                16, 0.5D, 0.7D, 0.5D, 0.02D);
+    }
+
+    private static void fail(ServerPlayer player) {
+        player.level().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
+                SoundSource.PLAYERS, 0.5F, 0.7F);
+    }
+}
