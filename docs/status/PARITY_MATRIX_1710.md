@@ -36,7 +36,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | poppets (9 types) | ✅ Done | Voodoo, Vampiric, Protection families |
 | glass_goblet / glass_goblet_full | ✅ Done | Blood fill/drink/induction |
 | warm_blood / liliths_blood | ✅ Done | Consumable semantics |
-| observations_of_an_immortal / torn_page | ✅ Done | Book screen, update recipe, kill drops |
+| observations_of_an_immortal / torn_page | ✅ Done | Book screen, update recipe, source-family kill drops including the current Witchery boss roster |
 | subdued_spirit | ✅ Done | Capture/release loop |
 | parasytic_louse (item) | ✅ Done | Potion bite/hotbar defense |
 | clay_jar / clay_jar_soft | ✅ Done | Smelting route restored |

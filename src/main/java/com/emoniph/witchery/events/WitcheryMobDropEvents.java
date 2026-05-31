@@ -1,7 +1,13 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.GoblinGulgEntity;
+import com.emoniph.witchery.entity.GoblinMogEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
@@ -116,7 +122,13 @@ public class WitcheryMobDropEvents {
     private static boolean isAlwaysTornPageTarget(LivingEntity entity) {
         return entity instanceof EnderDragon
                 || entity instanceof WitherBoss
+                || entity instanceof BabaYagaEntity
                 || entity instanceof DeathEntity
+                || entity instanceof GoblinGulgEntity
+                || entity instanceof GoblinMogEntity
+                || entity instanceof HornedHuntsmanEntity
+                || entity instanceof LeonardEntity
+                || entity instanceof LilithEntity
                 || entity instanceof LordOfTormentEntity
                 || entity instanceof ReflectionEntity;
     }
