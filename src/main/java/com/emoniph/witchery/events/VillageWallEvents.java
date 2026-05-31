@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -139,9 +140,11 @@ public class VillageWallEvents {
         final boolean generateWalls;
         final long queuedAt;
         int cursor;
+        int ticketCursor;
         long lastLogAt;
         int wallAttempts;
         long nextWallAttemptAt;
+        boolean loggedAllChunksReady;
 
         VillageGotoPrepJob(StructureStart start, PendingTeleport teleport, List<ChunkPos> chunks,
                            boolean generateWalls, long queuedAt) {
@@ -183,6 +186,10 @@ public class VillageWallEvents {
     private static final int VILLAGE_GOTO_WALL_MAX_ATTEMPTS = 18;
     private static final long WALL_GENERATION_RETRY_AFTER_NO_GATES_TICKS = 40L;
     private static final int WALL_GENERATION_NO_GATE_MAX_ATTEMPTS = 6;
+    // 1.21.11 does not expose custom ticket registration to mods. Use a transient
+    // FORCED-type radius ticket here, paired with removeTicketWithRadius before
+    // the prep job exits; this does not call updateChunkForced or persist chunks.
+    private static final TicketType VILLAGE_GOTO_PREP_TICKET = TicketType.FORCED;
     private static long lastQueueDebugAt = Long.MIN_VALUE;
 
     static final List<String> VILLAGE_IDS = List.of(
@@ -357,7 +364,13 @@ public class VillageWallEvents {
         List<ChunkPos> chunks = processed
                 ? landingPrepChunks(target)
                 : gotoWallPrepChunks(start, target);
-        GOTO_PREPS.removeIf(job -> job.teleport.playerId().equals(player.getUUID()));
+        GOTO_PREPS.removeIf(job -> {
+            boolean samePlayer = job.teleport.playerId().equals(player.getUUID());
+            if (samePlayer) {
+                releaseVillageGotoPrepTickets(level, job);
+            }
+            return samePlayer;
+        });
         GOTO_PREPS.add(new VillageGotoPrepJob(start, teleport, chunks, !processed, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued village arrival prep for {}:{} at {} with {} chunk(s){}.",
                 namespace, structureId, target, chunks.size(), processed ? "" : " and wall generation");
@@ -519,13 +532,18 @@ public class VillageWallEvents {
 
     private static boolean processVillageGotoPrepJob(ServerLevel level, VillageGotoPrepJob job, long now) {
         ServerPlayer player = level.getServer().getPlayerList().getPlayer(job.teleport.playerId());
-        if (player == null) return true;
+        if (player == null) {
+            releaseVillageGotoPrepTickets(level, job);
+            return true;
+        }
 
         try {
             int loadedThisTick = 0;
             while (job.cursor < job.chunks.size() && loadedThisTick < VILLAGE_GOTO_PREP_CHUNKS_PER_TICK) {
                 int chunkIndex = job.cursor;
                 ChunkPos cp = job.chunks.get(job.cursor++);
+                level.getChunkSource().addTicketWithRadius(VILLAGE_GOTO_PREP_TICKET, cp, 0);
+                job.ticketCursor = job.cursor;
                 debugLog("Goto prep loading FULL chunk {}/{} {} for {}:{} target {} (generateWalls={}).",
                         chunkIndex + 1, job.chunks.size(), cp, job.teleport.namespace(),
                         job.teleport.structureId(), job.teleport.target(), job.generateWalls);
@@ -535,8 +553,12 @@ public class VillageWallEvents {
                 loadedThisTick++;
             }
 
-            if (now - job.lastLogAt >= VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS || job.cursor >= job.chunks.size()) {
+            if (now - job.lastLogAt >= VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS
+                    || (job.cursor >= job.chunks.size() && !job.loggedAllChunksReady)) {
                 job.lastLogAt = now;
+                if (job.cursor >= job.chunks.size()) {
+                    job.loggedAllChunksReady = true;
+                }
                 WitcheryMod.LOGGER.info("[Goto] Preparing village arrival at {}:{} for {}: {}/{} chunk(s) ready.",
                         job.teleport.namespace(), job.teleport.structureId(), job.teleport.target(),
                         Math.min(job.cursor, job.chunks.size()), job.chunks.size());
@@ -546,8 +568,23 @@ public class VillageWallEvents {
                 if (now - job.queuedAt > VILLAGE_GOTO_PREP_TIMEOUT_TICKS) {
                     WitcheryMod.LOGGER.error("[Goto] Timed out preparing village arrival at {} after {}/{} chunk(s).",
                             job.teleport.target(), job.cursor, job.chunks.size());
-                    completeTeleport(level, job.teleport, false);
-                    return true;
+                    return finishVillageGotoPrep(level, job, false, null);
+                }
+                return false;
+            }
+
+            int ready = readyChunkCount(level, job.chunks);
+            if (ready < job.chunks.size()) {
+                if (now - job.lastLogAt >= VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS) {
+                    job.lastLogAt = now;
+                    WitcheryMod.LOGGER.info("[Goto] Holding village arrival chunks at {}:{} for {}: {}/{} still resident.",
+                            job.teleport.namespace(), job.teleport.structureId(), job.teleport.target(),
+                            ready, job.chunks.size());
+                }
+                if (now - job.queuedAt > VILLAGE_GOTO_PREP_TIMEOUT_TICKS) {
+                    WitcheryMod.LOGGER.error("[Goto] Timed out holding village arrival at {} after {}/{} chunk(s) stayed loaded.",
+                            job.teleport.target(), ready, job.chunks.size());
+                    return finishVillageGotoPrep(level, job, false, null);
                 }
                 return false;
             }
@@ -561,8 +598,7 @@ public class VillageWallEvents {
                 if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
                     WitcheryMod.LOGGER.info("[Goto] Village start was not ready after arrival prep at {}.",
                             job.teleport.target());
-                    completeTeleport(level, job.teleport, false);
-                    return true;
+                    return finishVillageGotoPrep(level, job, false, null);
                 }
                 job.wallAttempts++;
                 WitcheryMod.LOGGER.info("[VillageWalls] Generating walls (goto-prep) for village at {} ({} pieces, {} chunks prepared).",
@@ -580,23 +616,42 @@ public class VillageWallEvents {
                     }
                     WitcheryMod.LOGGER.warn("[Goto] Gave up preparing village walls at {} after {} attempt(s) with {} gate candidate(s).",
                             start.getBoundingBox(), job.wallAttempts, result.gateCandidates());
-                    completeTeleport(level, job.teleport, false);
-                    return true;
+                    return finishVillageGotoPrep(level, job, false, null);
                 }
                 data.markProcessed(start.getBoundingBox());
                 WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
                         start.getBoundingBox());
-                completeTeleport(level, job.teleport, true, start);
-                return true;
+                return finishVillageGotoPrep(level, job, true, start);
             }
 
-            completeTeleport(level, job.teleport, true, job.start);
-            return true;
+            return finishVillageGotoPrep(level, job, true, job.start);
         } catch (Exception e) {
             WitcheryMod.LOGGER.error("[Goto] Village arrival prep failed for {}",
                     job.teleport.target(), e);
-            completeTeleport(level, job.teleport, false);
-            return true;
+            return finishVillageGotoPrep(level, job, false, null);
+        }
+    }
+
+    private static boolean finishVillageGotoPrep(ServerLevel level, VillageGotoPrepJob job,
+                                                 boolean wallsReady, StructureStart start) {
+        try {
+            completeTeleport(level, job.teleport, wallsReady, start);
+        } finally {
+            releaseVillageGotoPrepTickets(level, job);
+        }
+        return true;
+    }
+
+    private static void releaseVillageGotoPrepTickets(ServerLevel level, VillageGotoPrepJob job) {
+        int ticketed = Math.min(job.ticketCursor, job.chunks.size());
+        for (int i = 0; i < ticketed; i++) {
+            ChunkPos cp = job.chunks.get(i);
+            level.getChunkSource().removeTicketWithRadius(VILLAGE_GOTO_PREP_TICKET, cp, 0);
+        }
+        if (ticketed > 0) {
+            debugLog("Released {} temporary goto-prep chunk ticket(s) for {}:{} target {}.",
+                    ticketed, job.teleport.namespace(), job.teleport.structureId(), job.teleport.target());
+            job.ticketCursor = 0;
         }
     }
 
