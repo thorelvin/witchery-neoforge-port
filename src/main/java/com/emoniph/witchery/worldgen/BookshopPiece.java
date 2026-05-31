@@ -1,5 +1,6 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,7 +11,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -25,7 +29,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * Source-shaped 10x8x9 Witchery village bookshop.
- * The old component carried a book loot chest at local 2,1,4.
+ * The old component carried a book loot chest at local 2,1,4 and four book
+ * item frames along the rear wall.
  */
 public class BookshopPiece extends StructurePiece {
 
@@ -93,8 +98,6 @@ public class BookshopPiece extends StructurePiece {
         // Explicit pane connections avoid isolated "pole" panes when generated from code.
         placeBlock(level, VillageBuildingMaterials.paneNorthSouth(), 1, 3, 5, box);
         placeBlock(level, VillageBuildingMaterials.paneNorthSouth(), 8, 3, 5, box);
-        placeBlock(level, VillageBuildingMaterials.paneEastWest(), 4, 3, 6, box);
-        placeBlock(level, VillageBuildingMaterials.paneEastWest(), 5, 3, 6, box);
 
         for (int x = 1; x <= 8; x++) {
             placeBlock(level, materials.roofStairs(Direction.NORTH), x, 5, 2, box);
@@ -106,12 +109,35 @@ public class BookshopPiece extends StructurePiece {
         }
 
         createChest(level, box, random, 2, 1, 4, LOOT_TABLE);
+        placeBookFrames(level, box, random, wall);
         for (int x = 1; x <= 8; x++) {
             for (int z = 1; z <= 6; z++) {
                 fillColumnDown(level, stone, x, -1, z, box);
             }
         }
         spawnShopkeeper(level, box);
+    }
+
+    private void placeBookFrames(WorldGenLevel level, BoundingBox box, RandomSource random, BlockState wall) {
+        for (int x = 3; x <= 6; x++) {
+            placeBlock(level, wall, x, 3, 6, box);
+            BlockPos framePos = getWorldPos(x, 3, 5).immutable();
+            BlockPos supportPos = getWorldPos(x, 3, 6).immutable();
+            if (!box.isInside(framePos) || !box.isInside(supportPos)) continue;
+
+            ItemFrame frame = new ItemFrame(level.getLevel(), framePos, Direction.SOUTH);
+            if (!frame.survives()) continue;
+            level.addFreshEntityWithPassengers(frame);
+            frame.setItem(randomBookFrameStack(random), false);
+        }
+    }
+
+    private static ItemStack randomBookFrameStack(RandomSource random) {
+        return switch (random.nextInt(6)) {
+            case 0, 1 -> new ItemStack(Items.BOOK);
+            case 2, 3, 4 -> new ItemStack(WitcheryItems.TORN_PAGE.get());
+            default -> new ItemStack(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get());
+        };
     }
 
     private void spawnShopkeeper(WorldGenLevel level, BoundingBox box) {
