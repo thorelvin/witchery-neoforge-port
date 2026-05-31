@@ -15,6 +15,8 @@ import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.entity.WitchHunterEntity;
+import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -39,15 +41,34 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
+import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.animal.feline.Cat;
+import net.minecraft.world.entity.animal.feline.Ocelot;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.golem.SnowGolem;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.squid.Squid;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
@@ -308,12 +329,7 @@ public class WitcheryPlayerEvents {
 
         var killed = event.getEntity();
         GlassGobletItem.tryFillChickenBloodFromRitual(level, player, killed);
-        CreaturePowerType power = null;
-        if (killed instanceof Zombie) power = CreaturePowerType.SPEED;
-        else if (killed instanceof Spider) power = CreaturePowerType.JUMP;
-        else if (killed instanceof Creeper) power = CreaturePowerType.HEAL;
-        else if (killed instanceof EnderMan) power = CreaturePowerType.ENDERMAN;
-        else if (killed instanceof Bat) power = CreaturePowerType.BAT;
+        CreaturePowerType power = creaturePowerFor(killed);
 
         if (power == null) return;
 
@@ -328,15 +344,55 @@ public class WitcheryPlayerEvents {
         if (altar == null || altar.getPower() < 50) return;
 
         String currentType = data.getCreaturePowerType();
+        int charges = creaturePowerChargesFor(killed, power);
         if (!power.name().equals(currentType)) {
-            data.setCreaturePower(power.name(), 3);
+            data.setCreaturePower(power.name(), charges);
         } else {
-            data.addCreaturePowerCharges(3);
+            data.addCreaturePowerCharges(charges);
         }
         altar.consumePower(50);
         syncToClient(player);
         player.displayClientMessage(Component.translatable("witchery.creature_power.absorbed",
                 power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
+    }
+
+    private static CreaturePowerType creaturePowerFor(LivingEntity killed) {
+        if (killed instanceof CaveSpider || killed instanceof Spider) return CreaturePowerType.SPIDER;
+        if (killed instanceof Creeper) return CreaturePowerType.CREEPER;
+        if (killed instanceof Bat || killed instanceof OwlFamiliarEntity) return CreaturePowerType.BAT;
+        if (killed instanceof Squid) return CreaturePowerType.SQUID;
+        if (killed instanceof Ghast) return CreaturePowerType.GHAST;
+        if (killed instanceof Blaze) return CreaturePowerType.BLAZE;
+        if (killed instanceof ZombifiedPiglin) return CreaturePowerType.PIGMAN;
+        if (killed instanceof Zombie) return CreaturePowerType.ZOMBIE;
+        if (killed instanceof Skeleton) return CreaturePowerType.SKELETON;
+        if (killed instanceof MagmaCube || killed instanceof Slime || killed instanceof ToadFamiliarEntity) {
+            return CreaturePowerType.JUMP;
+        }
+        if (killed instanceof Silverfish
+                || killed instanceof Ocelot
+                || killed instanceof Cat
+                || killed instanceof Wolf
+                || killed instanceof Horse) {
+            return CreaturePowerType.SPEED;
+        }
+        if (killed instanceof EnderMan) return CreaturePowerType.ENDERMAN;
+        if (killed instanceof Sheep
+                || killed instanceof Cow
+                || killed instanceof Chicken
+                || killed instanceof Pig
+                || killed instanceof Villager
+                || killed instanceof MushroomCow) {
+            return CreaturePowerType.HEAL;
+        }
+        return null;
+    }
+
+    private static int creaturePowerChargesFor(LivingEntity killed, CreaturePowerType power) {
+        if (power == CreaturePowerType.HEAL) {
+            return killed instanceof Villager || killed instanceof MushroomCow ? 2 : 1;
+        }
+        return 10;
     }
 
     @SubscribeEvent

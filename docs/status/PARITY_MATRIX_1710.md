@@ -18,7 +18,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
 | Potion effects | 43 custom classes | ~0 registered as MC effects; brews are items |
 | Rituals | ~45 | ~20+ dispatched |
-| Infusions (transformation types) | 4 types + creature powers | 4 types registered; creature powers missing |
+| Infusions (transformation types) | 4 types + creature powers | 4 types registered; Mystic Branch creature powers restored in practical active form; passive/symbol UI parity missing |
 | Machines (behavioral) | Kettle, Cauldron, Oven, Distillery, Spinning Wheel, Vat, Collector | Partial on all |
 | Dimensions | Spirit World, Torment, Mirror World | All 3 present; Spirit/Mirror need QA |
 
@@ -95,7 +95,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Huntsman's Spear | ✅ Done | Blocking retaliation, weapon-id parity |
 | Hand Bow (Crossbow Pistol) | 🔶 Partial | Dedicated item now uses source-style stored bolt loading: crouch-hold loads a preferred bolt, crouch-cycles through Wooden/Nullifying/Bone/Splitting/Silver while returning the old loaded bolt, firing uses the stored bolt, and launch behavior covers live Wooden/Silver/Nullifying/Bone/Splitting `BoltEntity` shots. Old Infinity/Power/Punch/Flame behavior is restored for loaded bolts, with nullifying bolts skipping Power/Punch/Flame. Full hunter/silvered/dawn hunter armor now powers Nullifying Bolts, draining the shooter's infusion energy on launch and half of a player target's max infusion energy on hit. Client range-dispatch predicates now show idle, pull, and loaded crossbow states. In-game projectile/visual QA remains |
 | Witch Hand | 🔲 Placeholder | Item registered; no active power |
-| Mystic Branch | 🔲 Placeholder | Item registered; symbol/glyph drawing system MISSING |
+| Mystic Branch | 🟡 Partial | Item registered; altar placement/enhancement and practical creature-power activation restored; symbol/glyph drawing system MISSING |
 | Koboldite Pickaxe | ✅ Done | Mining bonuses placeholder |
 
 ---
@@ -387,7 +387,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | InfusionInfernal | ✅ Done | Registered + basic mechanics |
 | Vampirism (player infusion) | 🔶 Partial | Boolean state, bite, sunlight, mesmerise; missing 10-level progression |
 | Lycanthropy (player infusion) | 🔶 Partial | Wolfman render, wolf form, mastery foundation; missing 10-level Wolf Altar quest chain |
-| **Creature Powers (14 types)** | ❌ Missing | Source: CreaturePowerBat/Blaze/Creeper/Enderman/Ghast/Heal/Jump/PigMan/Skeleton/Speed/Spider/Squid/Zombie + base; activated via Mystic Branch symbol drawing — entire system absent |
+| **Creature Powers (14 types)** | 🟡 Partial | Source: CreaturePowerBat/Blaze/Creeper/Enderman/Ghast/Heal/Jump/PigMan/Skeleton/Speed/Spider/Squid/Zombie + base. Practical altar-kill acquisition and Mystic Branch activations now exist for the old sacrifice families; passive effects, exact charge UI/selection flow, and symbol drawing remain missing |
 | Spirit infusions (7 types) | 🔶 Partial | Infused brew base items present; GhostWalker/Screamer/Sentinel/Twister/Twister effects not implemented |
 | Symbol/glyph drawing (Mystic Branch) | ❌ Missing | Source: `SymbolEffect`, `StrokeSet`, `EffectRegistry` — gesture/stroke recognition system |
 | InfusedBrewSoaring / Grave | 🔶 Partial | Items exist; exact source infusion application not verified |
@@ -442,7 +442,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 ### High value (large surface area)
 
-5. **Creature Powers + Mystic Branch symbol system** — 14 creature power types, none working
+5. **Creature Powers + Mystic Branch symbol system** — practical active powers now work; passive hooks, UI polish, and symbol drawing remain
 6. **10-level vampire progression** (broader Blood Power → level storage → ability gates)
 7. **10-level werewolf progression** (Wolf Altar quest chain → Moon Charm)
 8. **Leonard summon integration** — `LeonardEntity`/`LostSoulEntity` exist; custom brew summon action still missing
