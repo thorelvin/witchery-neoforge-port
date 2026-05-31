@@ -251,8 +251,12 @@ public final class VillageWallGenerator {
 
         // 7b. Detect gates as independent definitions (built after the wall, overriding it).
         //     No GATE cells are marked in the grid — the wall ring is solid and each gatehouse
-        //     overrides whatever it covers.
-        List<GateDef> gates = detectGates(level, grid, originX, originZ, w, d);
+        //     overrides whatever it covers. Road/path material is biome-aware (desert villages
+        //     pave with smooth sandstone, not dirt path).
+        boolean desert = isDesertLike(level, cx, cz);
+        BlockState pathBlock = desert ? Blocks.SMOOTH_SANDSTONE.defaultBlockState()
+                                      : Blocks.DIRT_PATH.defaultBlockState();
+        List<GateDef> gates = detectGates(level, grid, originX, originZ, w, d, desert);
 
         // 8. Pre-sample wall base heights (water-aware). Walls follow terrain.
         int minBuild = -64; // 1.21 minimum build height
@@ -316,7 +320,7 @@ public final class VillageWallGenerator {
         }
 
         // 10. Build gatehouses — independent locked 7×3 models that override the wall.
-        for (GateDef g : gates) buildGatehouse(level, g, brickBlock);
+        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, pathBlock, desert);
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
@@ -396,7 +400,7 @@ public final class VillageWallGenerator {
      *          gate over water or without land on both sides; refY = median path height.
      */
     private static List<GateDef> detectGates(ServerLevel level, byte[][] grid,
-                                              int ox, int oz, int w, int d) {
+                                              int ox, int oz, int w, int d, boolean desert) {
         // Phase 1
         boolean[][] road = new boolean[w][d];
         for (int x = 0; x < w; x++) {
@@ -405,7 +409,7 @@ public final class VillageWallGenerator {
                 int wx = ox + x, wz = oz + z;
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int gy = groundHeight(level, wx, wz);
-                if (level.getBlockState(new BlockPos(wx, gy - 1, wz)).is(Blocks.DIRT_PATH))
+                if (isVillageRoad(level.getBlockState(new BlockPos(wx, gy - 1, wz)), desert))
                     road[x][z] = true;
             }
         }
@@ -612,7 +616,8 @@ public final class VillageWallGenerator {
      * floor). Stone fillDown bridges the structure down to the terrain/sea floor, and the path
      * is laid out and in (meeting the existing road) for the central 3 lanes.
      */
-    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick) {
+    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick,
+                                        BlockState pathBlock, boolean desert) {
         BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
                 ? Blocks.SANDSTONE_WALL.defaultBlockState()
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
@@ -626,7 +631,7 @@ public final class VillageWallGenerator {
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
-                    forceSet(level, dwx, refY - 1, dwz, Blocks.DIRT_PATH.defaultBlockState());            // floor
+                    forceSet(level, dwx, refY - 1, dwz, pathBlock);                                       // floor
                     fillDown(level, dwx, refY - 2, dwz, Blocks.STONE.defaultBlockState());
                 } else {
                     for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++) forceSet(level, dwx, refY + dy, dwz, brick);
@@ -640,15 +645,27 @@ public final class VillageWallGenerator {
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            for (int t = 1; t <= 6; t++) layPath(level, bx + oDX * t, bz + oDZ * t);
+            for (int t = 1; t <= 6; t++) layPath(level, bx + oDX * t, bz + oDZ * t, pathBlock);
             for (int t = 3; t <= 40; t++) {
                 int ix = bx + g.inDX() * t, iz = bz + g.inDZ() * t;
                 if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
                 int gy = groundHeight(level, ix, iz);
-                if (level.getBlockState(new BlockPos(ix, gy - 1, iz)).is(Blocks.DIRT_PATH)) break;
-                layPath(level, ix, iz);
+                if (isVillageRoad(level.getBlockState(new BlockPos(ix, gy - 1, iz)), desert)) break;
+                layPath(level, ix, iz, pathBlock);
             }
         }
+    }
+
+    /** Village street surface: DIRT_PATH everywhere; sandstone family in desert villages. */
+    private static boolean isVillageRoad(BlockState bs, boolean desert) {
+        if (bs.is(Blocks.DIRT_PATH)) return true;
+        return desert && (bs.is(Blocks.SMOOTH_SANDSTONE) || bs.is(Blocks.SANDSTONE)
+                       || bs.is(Blocks.CUT_SANDSTONE));
+    }
+
+    private static boolean isDesertLike(ServerLevel level, int x, int z) {
+        var biome = level.getBiome(new BlockPos(x, 64, z));
+        return biome.is(BiomeTags.IS_BADLANDS) || biome.value().getBaseTemperature() > 1.5f;
     }
 
     /** Unconditional block set (overrides existing), chunk-load guarded. */
@@ -770,10 +787,10 @@ public final class VillageWallGenerator {
      * of headroom above it (vegetation / replaceable only). Used to extend the
      * village road out through a gate so the path visibly leaves the wall.
      */
-    private static void layPath(ServerLevel level, int wx, int wz) {
+    private static void layPath(ServerLevel level, int wx, int wz, BlockState pathBlock) {
         if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) return;
         int gy = groundHeight(level, wx, wz);
-        level.setBlock(new BlockPos(wx, gy - 1, wz), Blocks.DIRT_PATH.defaultBlockState(), 3);
+        level.setBlock(new BlockPos(wx, gy - 1, wz), pathBlock, 3);
         for (int dy = 0; dy < 3; dy++) {
             BlockPos p = new BlockPos(wx, gy + dy, wz);
             BlockState bs = level.getBlockState(p);
