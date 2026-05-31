@@ -21,9 +21,9 @@ Last reconciled: 2026-05-31. Latest village structure/wall bugs are closed; see 
 
 ## Open
 
-### 1. Village goto savanna hang needs follow-up retest
+### 1. Village goto plains/savanna hang needs follow-up retest
 
-The 2026-05-31 `/witchery goto village_savanna` hang stopped immediately after the success chat at `8560 ~ -3072` and before `[VillageWalls] Generating walls...`, so the remaining symptom is immediate post-teleport chunk/view loading rather than confirmed wall placement. Follow-up fix: `/witchery goto` preloads a 5x5 full-chunk arrival area, raises the cooldown to 30 seconds, resets motion/fall distance after teleport, removes the artificial wall-generation delay, trims wall force-loading to a one-chunk perimeter ring, skips wall columns occupied by living entities, keeps savanna on dirt/stone materials instead of desert sandstone/sand, and makes gate/path support fill match the gatehouse block. Retest on fresh savanna/taiga/snowy villages after restarting the client.
+The 2026-05-31 `/witchery goto village_savanna` hang stopped immediately after the success chat at `8560 ~ -3072` and before `[VillageWalls] Generating walls...`, pointing to post-teleport chunk/view loading rather than confirmed wall placement. A later `/witchery goto village_plains` hang left no exception in `latest.log` and did not reach the `[Goto] Prepared...` log, so the remaining risk moved earlier: pre-teleport structure lookup or synchronous arrival chunk generation. Follow-up fix: `/witchery goto` now logs before locate, uses a vanilla-style bounded locate search (`skipReferenced=false`, radius 32), preloads only the arrival chunk instead of a 5x5 full-chunk area, keeps the 30 second cooldown, resets motion/fall distance after teleport, removes the artificial wall-generation delay, trims wall force-loading to a one-chunk perimeter ring, skips wall columns occupied by living entities, keeps savanna on dirt/stone materials instead of desert sandstone/sand, and makes gate/path support fill match the gatehouse block. Retest on fresh plains/savanna/taiga/snowy villages after restarting the client.
 
 ### 2. Ritual queue parity is still partial
 

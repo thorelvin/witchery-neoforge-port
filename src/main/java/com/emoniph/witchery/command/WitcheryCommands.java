@@ -1833,7 +1833,9 @@ public class WitcheryCommands {
     // village wall generation + chunk loading; rapid repeats can overload/freeze the game).
     private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
     private static final long GOTO_COOLDOWN_TICKS = 600L; // 30 seconds
-    private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 2; // 5x5 around the arrival chunk
+    private static final int GOTO_SEARCH_RADIUS_RINGS = 32;
+    private static final boolean GOTO_SKIP_REFERENCED_STRUCTURES = false;
+    private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
 
     private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
@@ -1864,31 +1866,35 @@ public class WitcheryCommands {
             return 0;
         }
 
-        // skipKnownStructures=true: only checks already-generated chunks — safe on any thread
-        // and fast because it reads cached structure data rather than probing ungenerated chunks.
-        // Radius 100 is fine with this flag since no chunk generation is triggered.
+        // Keep this close to vanilla /locate semantics. Passing true here means
+        // "skip already-referenced starts", so repeated gotos can march into
+        // fresh structure-start generation before the player ever teleports.
+        // That was the plains-village freeze with no crash line in latest.log.
         final BlockPos from = player.blockPosition();
         final net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.structure.Structure> holderSet =
                 net.minecraft.core.HolderSet.direct(holderOpt.get());
 
+        WitcheryMod.LOGGER.info("[Goto] Searching for {}:{} from {} (radius={}, skipReferenced={}).",
+                namespace, structureId, from, GOTO_SEARCH_RADIUS_RINGS, GOTO_SKIP_REFERENCED_STRUCTURES);
         com.mojang.datafixers.util.Pair<BlockPos, net.minecraft.core.Holder<net.minecraft.world.level.levelgen.structure.Structure>> result =
                 level.getChunkSource().getGenerator()
-                        .findNearestMapStructure(level, holderSet, from, 100, true);
+                        .findNearestMapStructure(level, holderSet, from, GOTO_SEARCH_RADIUS_RINGS,
+                                GOTO_SKIP_REFERENCED_STRUCTURES);
 
         String fullId = namespace + ":" + structureId;
         if (result == null) {
             src.sendFailure(Component.literal(
-                    "The scrying mists reveal nothing nearby. Wander further and gaze again.")
+                    "The scrying mists reveal nothing nearby within the safe range. Wander further and gaze again.")
                     .withStyle(ChatFormatting.DARK_PURPLE));
             return 0;
         }
 
         BlockPos found = result.getFirst();
-        // Force a small arrival area into memory so the heightmap is accurate.
-        // findNearestMapStructure uses skipKnownStructures=true, so the chunk is already
-        // generated on disk — this just reads it from disk, which is fast.
+        // Force only the arrival chunk into memory so the heightmap is accurate.
+        // Loading the old 5x5 area synchronously could full-generate 25 chunks
+        // before teleport and make the integrated server appear frozen.
         int preloaded = preloadGotoDestination(level, found);
-        WitcheryMod.LOGGER.info("[Goto] Prepared {} chunks around {}:{} at {} before teleport.",
+        WitcheryMod.LOGGER.info("[Goto] Prepared {} chunk(s) around {}:{} at {} before teleport.",
                 preloaded, namespace, structureId, found);
 
         int surfaceY = level.getHeight(
