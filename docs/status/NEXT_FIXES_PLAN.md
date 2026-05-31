@@ -39,7 +39,7 @@ This backlog is separate from pure feature parity. The port is now far enough al
 5. Audit the remaining transient player-state fields around Spirit World handling.
    `SpiritWorldState` is now explicitly copyable and `WitcheryPlayerData.copyFrom` / constructor paths no longer share it by reference, so the old clone/respawn shared-mutable-state bug is closed. The remaining follow-up is to decide whether the fields that still live outside the CODEC after `wolfMastery` are intentionally transient, including the practical Soaring and Depths brew timers, and either document that choice or move them into a persistable nested state object.
 6. Wire config values through central helpers.
-   `WitcheryConfig.RITUAL_POWER_MULTIPLIER` and `ALLOW_BIOME_CHANGING` should not remain "defined but inconsistently enforced" knobs. Ritual power should route through one shared cost helper, and biome-changing rites should honor the biome-changing flag before final consumption or queueing, not only at effect time.
+   `WitcheryConfig.RITUAL_POWER_MULTIPLIER` now routes through shared ritual altar-power helpers for startup costs and active upkeep debt, and `ALLOW_BIOME_CHANGING` is already checked before the Climate Change rite queues or consumes support items. Remaining config follow-up is to keep new ritual power paths on those helpers and audit non-ritual altar consumers separately instead of letting fresh direct drains bypass the config.
 7. Reduce expensive ritual activation and upkeep scans.
    Some current scans are still acceptable for local QA but too expensive for repeated public-server usage. `isRitualAreaNulled` currently scans a very large cube, altar lookups repeat for startup/upkeep checks, and some active rites still redraw or rescan broad areas frequently. The next performance pass should focus on narrower scan ranges, indexing/cache helpers for Void Brambles and nearby altars, chunk-budgeted active-rite work, and using registries/tags/block entities where they remove repeated brute-force scans.
 8. Use helper methods for IDs and registry boilerplate.
@@ -93,7 +93,7 @@ When architecture work is chosen instead of another parity patch, take these fir
 3. Audit and document the remaining transient player-state fields after the `SpiritWorldState` deep-copy fix.
 4. Add tests around the now-single-source kettle recipe system.
 5. Persist or explicitly cancel/refund active rituals across stop/reload.
-6. Route ritual cost and biome-changing config through central helpers.
+6. Keep ritual cost and biome-changing config on central helpers; audit non-ritual altar consumers separately.
 7. Add GameTests for ritual failure/consumption and circle detection.
 
 ## Finish-phase focus

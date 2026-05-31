@@ -1824,22 +1824,41 @@ public class RitualExecutor {
     }
 
     private static boolean consumeNearbyRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
+        return consumeNearbyRawRitualAltarPower(level, center, radius, scaleRitualPowerCost(powerCost));
+    }
+
+    private static boolean consumeNearbyRawRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
         AltarBlockEntity altar = findNearbyRitualAltar(level, center, radius);
         return altar != null && altar.hasValidStructure() && altar.consumePower(powerCost);
     }
 
+    private static int scaleRitualPowerCost(int powerCost) {
+        if (powerCost <= 0) {
+            return 0;
+        }
+        return Math.max(1, Mth.ceil(powerCost * WitcheryConfig.RITUAL_POWER_MULTIPLIER.get()));
+    }
+
+    private static float scaleRitualUpkeepCost(float upkeepCost) {
+        if (upkeepCost <= 0.0f) {
+            return 0.0f;
+        }
+        return (float)(upkeepCost * WitcheryConfig.RITUAL_POWER_MULTIPLIER.get());
+    }
+
     private static boolean consumeNearbyRitualAltarPower(ServerLevel level, ActiveRitual ritual, int radius) {
-        if (ritual.upkeepCost <= 0.0f) {
+        float upkeepCost = scaleRitualUpkeepCost(ritual.upkeepCost);
+        if (upkeepCost <= 0.0f) {
             return true;
         }
 
-        ritual.upkeepDebt += ritual.upkeepCost;
+        ritual.upkeepDebt += upkeepCost;
         int wholePower = Mth.floor(ritual.upkeepDebt);
         if (wholePower <= 0) {
             return hasNearbyRitualAltar(level, ritual.center, radius);
         }
 
-        if (!consumeNearbyRitualAltarPower(level, ritual.center, radius, wholePower)) {
+        if (!consumeNearbyRawRitualAltarPower(level, ritual.center, radius, wholePower)) {
             return false;
         }
 
