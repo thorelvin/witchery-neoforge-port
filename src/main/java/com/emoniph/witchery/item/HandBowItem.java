@@ -129,14 +129,19 @@ public class HandBowItem extends Item {
             AbstractArrow.Pickup pickup = modifiers.infinity() || player.getAbilities().instabuild
                     ? AbstractArrow.Pickup.DISALLOWED
                     : AbstractArrow.Pickup.ALLOWED;
+            boolean poweredDraining = loadedBolt == BOLT_NULLIFYING && isFullHunterSet(player);
+            if (poweredDraining) {
+                BoltEntity.reducePowerLevels(player, BoltEntity.SHOOTER_POWER_REDUCTION);
+            }
             if (loadedBolt == BOLT_SPLITTING) {
                 launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE,
-                        look.yRot((float) Math.toRadians(-20.0D)), pickup, modifiers);
-                launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE, look, pickup, modifiers);
+                        look.yRot((float) Math.toRadians(-20.0D)), pickup, modifiers, false);
+                launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE, look, pickup, modifiers, false);
                 launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE,
-                        look.yRot((float) Math.toRadians(20.0D)), pickup, modifiers);
+                        look.yRot((float) Math.toRadians(20.0D)), pickup, modifiers, false);
             } else {
-                launchBolt(level, player, boltEntityTypeFor(loadedBolt), charge, BOLT_DAMAGE, look, pickup, modifiers);
+                launchBolt(level, player, boltEntityTypeFor(loadedBolt), charge, BOLT_DAMAGE, look, pickup, modifiers,
+                        poweredDraining);
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -151,10 +156,11 @@ public class HandBowItem extends Item {
     }
 
     private static void launchBolt(Level level, Player player, int boltType, float charge, float damage, Vec3 direction,
-                                   AbstractArrow.Pickup pickup, ShotModifiers modifiers) {
+                                   AbstractArrow.Pickup pickup, ShotModifiers modifiers, boolean poweredDraining) {
         BoltEntity bolt = new BoltEntity(level, player, boltType);
         bolt.setBaseDamage((damage + modifiers.damageBonus()) * charge);
         bolt.setKnockbackStrength(modifiers.knockback());
+        bolt.setPoweredDraining(poweredDraining);
         if (modifiers.flame()) {
             bolt.igniteForSeconds(100.0F);
         }
@@ -316,6 +322,34 @@ public class HandBowItem extends Item {
             case BOLT_SILVER -> WitcheryItems.SILVER_BOLT.get();
             default -> null;
         };
+    }
+
+    private static boolean isFullHunterSet(LivingEntity entity) {
+        return isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.HEAD),
+                WitcheryItems.HUNTER_HELMET.get(),
+                WitcheryItems.HUNTER_HELMET_SILVERED.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.CHEST),
+                WitcheryItems.HUNTER_CHESTPLATE.get(),
+                WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.LEGS),
+                WitcheryItems.HUNTER_LEGGINGS.get(),
+                WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.FEET),
+                WitcheryItems.HUNTER_BOOTS.get(),
+                WitcheryItems.HUNTER_BOOTS_SILVERED.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+    }
+
+    private static boolean isAnyHunterPiece(ItemStack stack, Item... items) {
+        for (Item item : items) {
+            if (stack.is(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ShotModifiers shotModifiers(Level level, ItemStack bowStack, int loadedBolt) {

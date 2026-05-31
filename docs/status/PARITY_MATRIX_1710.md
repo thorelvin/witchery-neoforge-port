@@ -93,7 +93,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 |---|---|---|
 | Silver Sword | ✅ Done | Tagged vampire/werewolf damage |
 | Huntsman's Spear | ✅ Done | Blocking retaliation, weapon-id parity |
-| Hand Bow (Crossbow Pistol) | 🔶 Partial | Dedicated item now uses source-style stored bolt loading: crouch-hold loads a preferred bolt, crouch-cycles through Wooden/Nullifying/Bone/Splitting/Silver while returning the old loaded bolt, firing uses the stored bolt, and launch behavior covers live Wooden/Silver/Nullifying/Bone/Splitting `BoltEntity` shots. Old Infinity/Power/Punch/Flame behavior is restored for loaded bolts, with nullifying bolts skipping Power/Punch/Flame. Client range-dispatch predicates now show idle, pull, and loaded crossbow states. Exact old anti-magic power-drain polish remains |
+| Hand Bow (Crossbow Pistol) | 🔶 Partial | Dedicated item now uses source-style stored bolt loading: crouch-hold loads a preferred bolt, crouch-cycles through Wooden/Nullifying/Bone/Splitting/Silver while returning the old loaded bolt, firing uses the stored bolt, and launch behavior covers live Wooden/Silver/Nullifying/Bone/Splitting `BoltEntity` shots. Old Infinity/Power/Punch/Flame behavior is restored for loaded bolts, with nullifying bolts skipping Power/Punch/Flame. Full hunter/silvered/dawn hunter armor now powers Nullifying Bolts, draining the shooter's infusion energy on launch and half of a player target's max infusion energy on hit. Client range-dispatch predicates now show idle, pull, and loaded crossbow states. In-game projectile/visual QA remains |
 | Witch Hand | 🔲 Placeholder | Item registered; no active power |
 | Mystic Branch | 🔲 Placeholder | Item registered; symbol/glyph drawing system MISSING |
 | Koboldite Pickaxe | ✅ Done | Mining bonuses placeholder |
@@ -272,7 +272,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | **EntityEye** | ❌ Missing | Eye mob |
 | **EntityAttackBat** | ❌ Missing | Attack bat entity |
 | **EntityWitchCat** (wild) | ❌ Missing | Wild witch cat (different from familiar_cat) |
-| **EntityBolt** | 🔶 Partial | `BoltEntity` is registered and live for Wooden/Silver/Nullifying/Bone/Splitting Hand Bow shots; nullifying strips active effects, bone has holy bonus, splitting fires three weaker bolts, and Hand Bow stored-bolt loading/cycling plus Infinity/Power/Punch/Flame handling now feeds those types. Exact old anti-magic power-drain polish remains |
+| **EntityBolt** | 🔶 Partial | `BoltEntity` is registered and live for Wooden/Silver/Nullifying/Bone/Splitting Hand Bow shots; nullifying strips active effects, powered nullifying shots from a full hunter/silvered/dawn hunter set carry a synced/saved drain flag and drain infusion energy from player targets, bone has holy bonus, splitting fires three weaker bolts, and Hand Bow stored-bolt loading/cycling plus Infinity/Power/Punch/Flame handling now feeds those types. In-game projectile/visual QA remains |
 | **EntitySpellEffect** | ❌ Missing | Spell visual effect entity |
 
 ---
