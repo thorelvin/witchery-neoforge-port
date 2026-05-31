@@ -137,6 +137,11 @@ public class WitcheryBlocks {
                     props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noCollision(),
                     false),
             BlockBehaviour.Properties.of());
+    public static final DeferredBlock<PressurePlateBlock> CURSED_SNOW_PRESSURE_PLATE = BLOCKS.registerBlock("cursed_snow_pressure_plate",
+            props -> new PerpetualIcePressurePlateBlock(BlockSetType.OAK,
+                    props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.5f).noCollision(),
+                    false),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<StairBlock> SNOW_STAIRS = BLOCKS.registerBlock("snow_stairs",
             props -> new StairBlock(net.minecraft.world.level.block.Blocks.SNOW_BLOCK.defaultBlockState(),
                     props.mapColor(MapColor.SNOW).sound(SoundType.SNOW).strength(0.2f).noOcclusion()),

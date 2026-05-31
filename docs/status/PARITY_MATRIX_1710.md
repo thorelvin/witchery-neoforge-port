@@ -125,6 +125,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | ice_fence_gate | ✅ Done | Live as modern `witchery:ice_gate`; old registry alias was `witchery:icefencegate` |
 | stockade_ice | ✅ Done | Source `BlockStockade(true)` restored as `witchery:ice_stockade`: low fence-like collision, 25.0 hardness / 20.0 resistance, light opacity 1, cactus contact damage, and connections to itself, Iron Bars, and Ice Gate |
 | snow_pressure_plate | ✅ Done | Source `BlockPerpetualIcePressurePlate(Material.snow)` restored as an all-entity snow pressure plate with 0.2 hardness, snow sound/model, loot, and source two-snow-block recipe |
+| cursed_snow_pressure_plate | Partial | Hidden source `BlockPressurePlateBase` wrapper now registers as `witchery:cursed_snow_pressure_plate`, reuses the snow pressure-plate models/behavior, has no item or creative-tab entry, and drops the normal snow pressure plate; remaining parity is the cursed block entity and triggered-brew conversion payload |
 | snow_stairs | ✅ Done | Source `BlockSnowStairs` restored with snow-block recipe, 0.2 hardness, snow sound/model, item, tags, and loot |
 | snow_slab (single/double) | ✅ Done | Source `BlockSnowSlab` restored as one modern slab block with snow-layer recipe, bottom/top/double states, and double-slab loot returning two singles |
 
@@ -450,7 +451,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 ### Medium (fill-in work)
 
-11. Perpetual ice/snow follow-up: cursed snow pressure plate and brew/rite placement hooks
+11. Perpetual ice/snow follow-up: cursed snow pressure plate brew payload/conversion hooks and brew/rite placement hooks
 12. Stockade follow-up: per-wood wooden stockade variants plus future freezing conversion from wood to ice
 13. Shaded glass (2 block states)
 14. Blood Crucible in-game fill/use QA and particle/sound exactness
