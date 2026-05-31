@@ -24,6 +24,7 @@ import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -1839,7 +1840,8 @@ public class WitcheryCommands {
         if (last != null && now - last < GOTO_COOLDOWN_TICKS) {
             long remaining = (GOTO_COOLDOWN_TICKS - (now - last) + 19) / 20; // round up to seconds
             src.sendFailure(Component.literal(
-                    "/witchery goto is cooling down — wait " + remaining + "s (lets village walls finish generating)."));
+                    "The leylines are still tangled from your last crossing. Rest " + remaining
+                    + "s before you walk the hidden paths again.").withStyle(ChatFormatting.DARK_PURPLE));
             return 0;
         }
         GOTO_COOLDOWN.put(player.getUUID(), now);
@@ -1854,7 +1856,8 @@ public class WitcheryCommands {
                         .flatMap(reg -> reg.get(key));
 
         if (holderOpt.isEmpty()) {
-            src.sendFailure(Component.literal("Unknown structure: " + namespace + ":" + structureId));
+            src.sendFailure(Component.literal("The spirits know of no such place: " + namespace + ":" + structureId)
+                    .withStyle(ChatFormatting.DARK_PURPLE));
             return 0;
         }
 
@@ -1872,7 +1875,8 @@ public class WitcheryCommands {
         String fullId = namespace + ":" + structureId;
         if (result == null) {
             src.sendFailure(Component.literal(
-                    "No " + fullId + " found in explored chunks within 100 chunks. Explore more and try again."));
+                    "The scrying mists reveal nothing nearby. Wander further and gaze again.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
             return 0;
         }
 
@@ -1897,9 +1901,8 @@ public class WitcheryCommands {
 
         int dist = (int) Math.sqrt(found.distSqr(from));
         src.sendSuccess(() -> Component.literal(
-                "Teleported to " + fullId +
-                " at " + found.getX() + " ~ " + found.getZ() +
-                " (" + dist + " blocks)"), false);
+                "The hidden paths carry you away, across " + dist + " blocks, to "
+                + found.getX() + " ~ " + found.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
         return 1;
     }
 
