@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/fence_inventory",
   "textures": {
-    "layer0": "witchery:item/ice_stockade"
+    "texture": "minecraft:block/ice"
   }
 }

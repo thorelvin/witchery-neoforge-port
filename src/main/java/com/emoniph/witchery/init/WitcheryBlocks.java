@@ -98,6 +98,11 @@ public class WitcheryBlocks {
             props -> new FenceGateBlock(net.minecraft.world.level.block.state.properties.WoodType.OAK,
                     props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(0.5f).noOcclusion().friction(0.98f)),
             BlockBehaviour.Properties.of());
+    public static final DeferredBlock<StockadeBlock> ICE_STOCKADE = BLOCKS.registerBlock("ice_stockade",
+            props -> new StockadeBlock(props.mapColor(MapColor.ICE).sound(SoundType.GLASS)
+                    .friction(0.98f).strength(25.0f, 20.0f).noOcclusion()
+                    .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER)),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<PressurePlateBlock> ICE_PRESSURE_PLATE = BLOCKS.registerBlock("ice_pressure_plate",
             props -> new PerpetualIcePressurePlateBlock(BlockSetType.IRON,
                     props.mapColor(MapColor.ICE).sound(SoundType.GLASS).strength(2.0f, 5.0f)

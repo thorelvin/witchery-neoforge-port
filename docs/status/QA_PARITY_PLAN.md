@@ -30,6 +30,8 @@ Baseline correction note: local comparison shows `1.7.10-0.24.1` adds 670 files 
 
 Blood Crucible QA note (2026-05-31): the basic crucible path is live and should be tested in-game before marking Done. Verify the restored stone-brick-stairs/stone-bricks/stone-brick-slab recipe, source-like stone sound/hardness/resistance, vampire/NPC fill path to 20 blood, level-10 vampire use with Artichoke/Bat Wool/written book selecting Storm/Swarm/Farm and draining blood, and creative-mode fullness bypass. Broader Blood Power and late-level gates remain separate parity work.
 
+Ice Stockade QA note (2026-05-31): `witchery:ice_stockade` is now promoted from placeholder to a real `BlockStockade(true)` slice. Verify the block/item appears in the Witchery creative tab without a placeholder suffix, places with low fence-like collision, connects to itself, vanilla Iron Bars, and `witchery:ice_gate`, remains translucent/waterloggable, and applies cactus-style contact damage to living entities. Direct crafting should remain absent until wooden stockade and brew-freezing conversion are restored.
+
 ## External reference set
 
 Use these as implementation examples when the modern runtime differs from 1.7.10:

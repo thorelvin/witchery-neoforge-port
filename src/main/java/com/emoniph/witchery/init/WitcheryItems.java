@@ -230,6 +230,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ICE_DOOR             = ITEMS.register("ice_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.ICE_DOOR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ICE_FENCE            = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_FENCE);
     public static final DeferredItem<BlockItem> ICE_GATE             = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_GATE);
+    public static final DeferredItem<BlockItem> ICE_STOCKADE         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_STOCKADE);
     public static final DeferredItem<BlockItem> ICE_PRESSURE_PLATE   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ICE_PRESSURE_PLATE);
     public static final DeferredItem<BlockItem> SNOW_PRESSURE_PLATE  = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SNOW_PRESSURE_PLATE);
     public static final DeferredItem<BlockItem> SNOW_STAIRS          = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SNOW_STAIRS);
@@ -626,7 +627,6 @@ public class WitcheryItems {
             "duplication_grenade",
             "hellhound_head",
             "horn_of_the_hunt",
-            "ice_stockade",
             "moon_charm",
             "poppy_of_ink",
             "poppy_of_sprouting",

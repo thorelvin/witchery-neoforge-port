@@ -154,6 +154,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ICE_DOOR.get(),
                 WitcheryItems.ICE_FENCE.get(),
                 WitcheryItems.ICE_GATE.get(),
+                WitcheryItems.ICE_STOCKADE.get(),
                 WitcheryItems.ICE_PRESSURE_PLATE.get(),
                 WitcheryItems.SNOW_PRESSURE_PLATE.get(),
                 WitcheryItems.SNOW_STAIRS.get(),
@@ -345,8 +346,6 @@ public class WitcheryCreativeTabs {
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
         Set<String> accepted = new LinkedHashSet<>();
 
-        addLegacy(output, accepted,
-                "ice_stockade");
         addLegacy(output, accepted,
                 "devils_tongue_charm", "moon_charm", "twisting_band",
                 "blooded_waystone", "bound_waystone");

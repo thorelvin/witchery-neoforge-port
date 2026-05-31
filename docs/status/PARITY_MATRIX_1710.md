@@ -123,6 +123,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | ice_stairs | ✅ Done | Source `BlockPerpertualIceStairs` restored as a real stair block: ice friction, hardness 2.0/resistance 5.0/light opacity 3, translucent ice model, item, tags, and loot |
 | ice_slab (single/double) | ✅ Done | Source `BlockPerpetualIceSlab` restored as one modern slab block with bottom/top/double states and double-slab loot returning two singles |
 | ice_fence_gate | ✅ Done | Live as modern `witchery:ice_gate`; old registry alias was `witchery:icefencegate` |
+| stockade_ice | ✅ Done | Source `BlockStockade(true)` restored as `witchery:ice_stockade`: low fence-like collision, 25.0 hardness / 20.0 resistance, light opacity 1, cactus contact damage, and connections to itself, Iron Bars, and Ice Gate |
 | snow_pressure_plate | ✅ Done | Source `BlockPerpetualIcePressurePlate(Material.snow)` restored as an all-entity snow pressure plate with 0.2 hardness, snow sound/model, loot, and source two-snow-block recipe |
 | snow_stairs | ✅ Done | Source `BlockSnowStairs` restored with snow-block recipe, 0.2 hardness, snow sound/model, item, tags, and loot |
 | snow_slab (single/double) | ✅ Done | Source `BlockSnowSlab` restored as one modern slab block with snow-layer recipe, bottom/top/double states, and double-slab loot returning two singles |
@@ -193,7 +194,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | statue_goddess | ✅ Done | |
 | fetish family (scarecrow/trent/ladder) | ✅ Done | |
 | stockade (wood) | ❌ Missing | Source: `BlockStockade(false)` — punishment/decoration block |
-| stockade_ice | ❌ Missing | Source: `BlockStockade(true)` |
+| stockade_ice | ✅ Done | Live under Perpetual Ice & Snow Family as `witchery:ice_stockade`; old source produced it through stockade freezing/brew conversion rather than direct crafting |
 | blooded_wool | ⚠️ Wrong | Port has `blood_stained_wool`; verify ID matches original |
 | shaded_glass | ❌ Missing | See 2c above |
 | pit_dirt / pit_grass | ❌ Missing | Source: `BlockPitDirt`, `BlockPitGrass` — Pit biome variants for Torment |
@@ -449,8 +450,8 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 ### Medium (fill-in work)
 
-11. Perpetual ice/snow block family (11 blocks)
-12. Stockade blocks (2 blocks)
+11. Perpetual ice/snow follow-up: cursed snow pressure plate and brew/rite placement hooks
+12. Stockade blocks: wooden stockade plus future freezing conversion from wood to ice
 13. Shaded glass (2 block states)
 14. Blood Crucible in-game fill/use QA and particle/sound exactness
 15. Baba Yaga boss in-game QA / non-source hut decision

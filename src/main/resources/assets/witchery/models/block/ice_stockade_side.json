@@ -1,0 +1,7 @@
+{
+  "render_type": "minecraft:translucent",
+  "parent": "minecraft:block/fence_side",
+  "textures": {
+    "texture": "minecraft:block/ice"
+  }
+}
