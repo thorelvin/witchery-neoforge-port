@@ -2,8 +2,10 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.BoltEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +18,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -117,30 +121,42 @@ public class HandBowItem extends Item {
         if (!level.isClientSide()) {
             Vec3 look = player.getLookAngle();
             float charge = sourceCharge(elapsedTicks >= MAX_DRAW_TICKS ? MAX_DRAW_TICKS : MAX_DRAW_TICKS - 1);
-            AbstractArrow.Pickup pickup = player.getAbilities().instabuild ? AbstractArrow.Pickup.DISALLOWED : AbstractArrow.Pickup.ALLOWED;
+            ShotModifiers modifiers = shotModifiers(level, stack, loadedBolt);
+            AbstractArrow.Pickup pickup = modifiers.infinity() || player.getAbilities().instabuild
+                    ? AbstractArrow.Pickup.DISALLOWED
+                    : AbstractArrow.Pickup.ALLOWED;
             if (loadedBolt == BOLT_SPLITTING) {
                 launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE,
-                        look.yRot((float) Math.toRadians(-20.0D)), pickup);
-                launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE, look, pickup);
+                        look.yRot((float) Math.toRadians(-20.0D)), pickup, modifiers);
+                launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE, look, pickup, modifiers);
                 launchBolt(level, player, BoltEntity.WOODEN, charge, SPLITTING_BOLT_DAMAGE,
-                        look.yRot((float) Math.toRadians(20.0D)), pickup);
+                        look.yRot((float) Math.toRadians(20.0D)), pickup, modifiers);
             } else {
-                launchBolt(level, player, boltEntityTypeFor(loadedBolt), charge, BOLT_DAMAGE, look, pickup);
+                launchBolt(level, player, boltEntityTypeFor(loadedBolt), charge, BOLT_DAMAGE, look, pickup, modifiers);
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
 
-            setBoltType(TAG_CURRENT, stack, NO_BOLT);
+            if (!modifiers.infinity()) {
+                setBoltType(TAG_CURRENT, stack, NO_BOLT);
+            }
             stack.hurtAndBreak(2, player, EquipmentSlot.MAINHAND);
         }
         return true;
     }
 
     private static void launchBolt(Level level, Player player, int boltType, float charge, float damage, Vec3 direction,
-                                   AbstractArrow.Pickup pickup) {
+                                   AbstractArrow.Pickup pickup, ShotModifiers modifiers) {
         BoltEntity bolt = new BoltEntity(level, player, boltType);
-        bolt.setBaseDamage(damage * charge);
+        bolt.setBaseDamage((damage + modifiers.damageBonus()) * charge);
+        bolt.setKnockbackStrength(modifiers.knockback());
+        if (modifiers.flame()) {
+            bolt.igniteForSeconds(100.0F);
+        }
+        if (charge >= 1.0F) {
+            bolt.setCritArrow(true);
+        }
         bolt.setPos(player.getX(), player.getEyeY() - 0.1D, player.getZ());
         bolt.shoot(direction.x, direction.y, direction.z, BOLT_SPEED * charge, 1.0F);
         bolt.pickup = pickup;
@@ -297,4 +313,26 @@ public class HandBowItem extends Item {
             default -> null;
         };
     }
+
+    private static ShotModifiers shotModifiers(Level level, ItemStack bowStack, int loadedBolt) {
+        boolean infinity = enchantmentLevel(level, bowStack, Enchantments.INFINITY) > 0
+                && level.random.nextDouble() < 0.25D;
+        if (loadedBolt == BOLT_NULLIFYING) {
+            return new ShotModifiers(infinity, 0.0D, 0, false);
+        }
+
+        int power = enchantmentLevel(level, bowStack, Enchantments.POWER);
+        double damageBonus = power > 0 ? power * 0.5D + 0.5D : 0.0D;
+        int punch = enchantmentLevel(level, bowStack, Enchantments.PUNCH);
+        boolean flame = enchantmentLevel(level, bowStack, Enchantments.FLAME) > 0;
+        return new ShotModifiers(infinity, damageBonus, punch, flame);
+    }
+
+    private static int enchantmentLevel(Level level, ItemStack stack, ResourceKey<Enchantment> enchantment) {
+        return stack.getEnchantmentLevel(level.registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(enchantment));
+    }
+
+    private record ShotModifiers(boolean infinity, double damageBonus, int knockback, boolean flame) {}
 }

@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Witch-Hunter crossbow bolt projectile.
@@ -38,6 +40,7 @@ public class BoltEntity extends AbstractArrow {
             SynchedEntityData.defineId(BoltEntity.class, EntityDataSerializers.INT);
 
     private double witcheryBaseDamage = 2.0D;
+    private int knockbackStrength;
 
     /** Deserialization constructor required by EntityType. */
     public BoltEntity(EntityType<? extends BoltEntity> type, Level level) {
@@ -61,6 +64,10 @@ public class BoltEntity extends AbstractArrow {
     public boolean isSilver() { return getBoltType() == SILVER; }
     public boolean isNullifying() { return getBoltType() == NULLIFYING; }
     public boolean isHolyDamage() { return getBoltType() == BONE; }
+
+    public void setKnockbackStrength(int knockbackStrength) {
+        this.knockbackStrength = knockbackStrength;
+    }
 
     @Override
     public void setBaseDamage(double baseDamage) {
@@ -89,6 +96,21 @@ public class BoltEntity extends AbstractArrow {
 
         super.onHitEntity(result);
         setBaseDamage(originalDamage);
+    }
+
+    @Override
+    protected void doKnockback(LivingEntity entity, DamageSource damageSource) {
+        if (knockbackStrength <= 0) {
+            super.doKnockback(entity, damageSource);
+            return;
+        }
+
+        Vec3 knockback = getDeltaMovement().multiply(1.0D, 0.0D, 1.0D)
+                .normalize()
+                .scale(knockbackStrength * 0.6D);
+        if (knockback.lengthSqr() > 0.0D) {
+            entity.push(knockback.x, 0.1D, knockback.z);
+        }
     }
 
     @Override
