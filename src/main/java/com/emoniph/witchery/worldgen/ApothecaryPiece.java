@@ -1,35 +1,38 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.entity.CovenWitchEntity;
-import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.network.chat.Component;
 
 /**
- * 9×8×6 apothecary shop placed on the surface.
- * Front door at Z=0, X=1. Contains a Coven Witch shopkeeper and a loot chest.
+ * Source-shaped 9x9x6 village apothecary.
+ * Front door at local X=1, Z=0. Keeps the current Coven Witch shopkeeper until
+ * a dedicated Apothecary villager/profession is restored.
  */
 public class ApothecaryPiece extends StructurePiece {
 
@@ -38,8 +41,8 @@ public class ApothecaryPiece extends StructurePiece {
                     Identifier.fromNamespaceAndPath("witchery", "chests/apothecary"));
 
     public ApothecaryPiece(StructurePieceType type, int x, int y, int z) {
-        super(type, 0, new BoundingBox(x, y, z, x + 8, y + 7, z + 5));
-        setOrientation(net.minecraft.core.Direction.NORTH);
+        super(type, 0, new BoundingBox(x, y, z, x + 8, y + 8, z + 5));
+        setOrientation(Direction.NORTH);
     }
 
     public ApothecaryPiece(StructurePieceSerializationContext ctx, CompoundTag tag) {
@@ -53,103 +56,125 @@ public class ApothecaryPiece extends StructurePiece {
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
         VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
+        BlockState stone = materials.foundation();
         BlockState planks = materials.wall();
-        BlockState cobble = materials.foundation();
-        BlockState air    = Blocks.AIR.defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
         BlockState glassFront = VillageBuildingMaterials.paneEastWest();
         BlockState glassSide = VillageBuildingMaterials.paneNorthSouth();
-        BlockState log    = materials.trim();
-        BlockState slab   = materials.roofSlabBottom();
 
-        // Y=0 - biome foundation
-        generateBox(level, box, 0, 0, 0, 8, 0, 5, cobble, cobble, false);
+        generateBox(level, box, 1, 1, 1, 7, 5, 4, air, air, false);
+        generateBox(level, box, 0, 0, 0, 8, 0, 5, stone, stone, false);
+        generateBox(level, box, 0, 5, 0, 8, 5, 5, stone, stone, false);
+        generateBox(level, box, 0, 6, 1, 8, 6, 4, stone, stone, false);
+        generateBox(level, box, 0, 7, 2, 8, 7, 3, stone, stone, false);
 
-        // Y=1-5 - biome wall shell (full perimeter, hollow interior)
-        for (int y = 1; y <= 5; y++) {
-            generateBox(level, box, 0, y, 0, 8, y, 5, planks, planks, false);
-            generateBox(level, box, 1, y, 1, 7, y, 4, air, air, false);
-        }
-
-        // Biome trim corner pillars (Y=1-5)
-        for (int y = 1; y <= 5; y++) {
-            placeBlock(level, log, 0, y, 0, box); placeBlock(level, log, 8, y, 0, box);
-            placeBlock(level, log, 0, y, 5, box); placeBlock(level, log, 8, y, 5, box);
-        }
-
-        // Y=1-2 - front door opening at X=1, Z=0
-        placeBlock(level, air, 1, 1, 0, box);
-        placeBlock(level, air, 1, 2, 0, box);
-
-        // Front face windows (Y=2-3, spaced across front)
-        placeBlock(level, glassFront, 3, 2, 0, box); placeBlock(level, glassFront, 3, 3, 0, box);
-        placeBlock(level, glassFront, 5, 2, 0, box); placeBlock(level, glassFront, 5, 3, 0, box);
-        placeBlock(level, glassFront, 7, 2, 0, box); placeBlock(level, glassFront, 7, 3, 0, box);
-
-        // Back face windows
-        placeBlock(level, glassFront, 2, 2, 5, box); placeBlock(level, glassFront, 2, 3, 5, box);
-        placeBlock(level, glassFront, 6, 2, 5, box); placeBlock(level, glassFront, 6, 3, 5, box);
-
-        // Side windows (left X=0, right X=8)
-        placeBlock(level, glassSide, 0, 2, 2, box); placeBlock(level, glassSide, 0, 3, 2, box);
-        placeBlock(level, glassSide, 0, 2, 3, box); placeBlock(level, glassSide, 0, 3, 3, box);
-        placeBlock(level, glassSide, 8, 2, 2, box); placeBlock(level, glassSide, 8, 3, 2, box);
-        placeBlock(level, glassSide, 8, 2, 3, box); placeBlock(level, glassSide, 8, 3, 3, box);
-
-        // Y=6 - biome ceiling
-        generateBox(level, box, 0, 6, 0, 8, 6, 5, planks, planks, false);
-
-        // Y=7 - slabbed gable roof (low apex at center, slabs on the ridge)
-        generateBox(level, box, 0, 7, 0, 8, 7, 5, slab, slab, false);
-
-        // ── Interior furnishings (Y=1) ────────────────────────────────────────
-        placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 2, 1, 1, box);
-        placeBlock(level, Blocks.BOOKSHELF.defaultBlockState(),      6, 1, 1, box);
-        placeBlock(level, Blocks.BOOKSHELF.defaultBlockState(),      7, 1, 1, box);
-        placeBlock(level, Blocks.FLOWER_POT.defaultBlockState(),     1, 1, 2, box);
-        placeBlock(level, Blocks.FLOWER_POT.defaultBlockState(),     1, 1, 3, box);
-        placeBlock(level, WitcheryBlocks.ALTAR.get().defaultBlockState(),      4, 1, 1, box);
-        placeBlock(level, WitcheryBlocks.KETTLE.get().defaultBlockState(),     3, 1, 4, box);
-        placeBlock(level, WitcheryBlocks.DISTILLERY.get().defaultBlockState(), 5, 1, 4, box);
-        placeBlock(level, WitcheryBlocks.CANDELABRA.get().defaultBlockState(), 7, 1, 4, box);
-
-        // Wall torches (Y=3)
-        placeBlock(level, Blocks.WALL_TORCH.defaultBlockState(), 1, 3, 1, box);
-        placeBlock(level, Blocks.WALL_TORCH.defaultBlockState(), 7, 3, 1, box);
-        placeBlock(level, Blocks.WALL_TORCH.defaultBlockState(), 1, 3, 4, box);
-        placeBlock(level, Blocks.WALL_TORCH.defaultBlockState(), 7, 3, 4, box);
-
-        // ── Loot chest ────────────────────────────────────────────────────────
-        createChest(level, box, random, 7, 1, 3, LOOT_TABLE);
-
-        // ── Apothecary sign on the front wall above the door ─────────────────
-        BlockPos signWorld = new BlockPos(
-                boundingBox.minX() + 1,
-                boundingBox.minY() + 4,
-                boundingBox.minZ());
-        BlockState signState = Blocks.OAK_WALL_SIGN.defaultBlockState()
-                .setValue(WallSignBlock.FACING, Direction.SOUTH);
-        if (box.isInside(signWorld)) {
-            level.setBlock(signWorld, signState, 3);
-            if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
-                if (sign.getLevel() == null) sign.setLevel(level.getLevel());
-                SignText text = new SignText();
-                text = text.setMessage(0, Component.literal("~ Apothecary ~"));
-                sign.setText(text, true);
+        for (int k = -1; k <= 2; k++) {
+            for (int x = 0; x <= 8; x++) {
+                placeBlock(level, materials.roofStairs(Direction.NORTH), x, 6 + k, k, box);
+                placeBlock(level, materials.roofStairs(Direction.SOUTH), x, 6 + k, 5 - k, box);
             }
         }
 
-        // ── Coven Witch (apothecary shopkeeper) ───────────────────────────────
+        generateBox(level, box, 0, 1, 0, 0, 1, 5, stone, stone, false);
+        generateBox(level, box, 1, 1, 5, 8, 1, 5, stone, stone, false);
+        generateBox(level, box, 8, 1, 0, 8, 1, 4, stone, stone, false);
+        generateBox(level, box, 2, 1, 0, 7, 1, 0, stone, stone, false);
+        generateBox(level, box, 0, 2, 0, 0, 4, 0, stone, stone, false);
+        generateBox(level, box, 0, 2, 5, 0, 4, 5, stone, stone, false);
+        generateBox(level, box, 8, 2, 5, 8, 4, 5, stone, stone, false);
+        generateBox(level, box, 8, 2, 0, 8, 4, 0, stone, stone, false);
+        generateBox(level, box, 0, 2, 1, 0, 4, 4, planks, planks, false);
+        generateBox(level, box, 1, 2, 5, 7, 4, 5, planks, planks, false);
+        generateBox(level, box, 8, 2, 1, 8, 4, 4, planks, planks, false);
+        generateBox(level, box, 1, 2, 0, 7, 4, 0, planks, planks, false);
+
+        placeBlock(level, glassFront, 4, 2, 0, box);
+        placeBlock(level, glassFront, 5, 2, 0, box);
+        placeBlock(level, glassFront, 6, 2, 0, box);
+        placeBlock(level, glassFront, 4, 3, 0, box);
+        placeBlock(level, glassFront, 5, 3, 0, box);
+        placeBlock(level, glassFront, 6, 3, 0, box);
+        placeBlock(level, glassSide, 0, 2, 2, box);
+        placeBlock(level, glassSide, 0, 2, 3, box);
+        placeBlock(level, glassSide, 0, 3, 2, box);
+        placeBlock(level, glassSide, 0, 3, 3, box);
+        placeBlock(level, glassSide, 8, 2, 2, box);
+        placeBlock(level, glassSide, 8, 2, 3, box);
+        placeBlock(level, glassSide, 8, 3, 2, box);
+        placeBlock(level, glassSide, 8, 3, 3, box);
+        placeBlock(level, glassFront, 2, 2, 5, box);
+        placeBlock(level, glassFront, 3, 2, 5, box);
+        placeBlock(level, glassFront, 5, 2, 5, box);
+        placeBlock(level, glassFront, 6, 2, 5, box);
+        placeBlock(level, glassFront, 2, 3, 5, box);
+        placeBlock(level, glassFront, 3, 3, 5, box);
+        placeBlock(level, glassFront, 5, 3, 5, box);
+        placeBlock(level, glassFront, 6, 3, 5, box);
+
+        generateBox(level, box, 1, 4, 1, 7, 4, 1, planks, planks, false);
+        generateBox(level, box, 1, 4, 4, 7, 4, 4, planks, planks, false);
+
+        placeBlock(level, air, 1, 1, 0, box);
+        placeBlock(level, air, 1, 2, 0, box);
+        placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.LOWER), 1, 1, 0, box);
+        placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.UPPER), 1, 2, 0, box);
+        placeFrontStep(level, box, materials);
+
+        placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 7, 1, 1, box);
+        placeBlock(level, upperStair(materials, Direction.SOUTH), 5, 1, 1, box);
+        placeBlock(level, upperStair(materials, Direction.NORTH), 5, 1, 3, box);
+        placeBlock(level, Blocks.FLOWER_POT.defaultBlockState(), 5, 1, 2, box);
+        placeBlock(level, Blocks.TORCH.defaultBlockState(), 5, 2, 3, box);
+        placeBlock(level, Blocks.SKELETON_SKULL.defaultBlockState(), 5, 2, 1, box);
+        createChest(level, box, random, 7, 0, 1, LOOT_TABLE);
+
+        placeApothecarySign(level, box);
+
+        for (int z = 0; z < 6; z++) {
+            for (int x = 0; x < 9; x++) {
+                fillColumnDown(level, stone, x, -1, z, box);
+            }
+        }
+
         BlockPos spawnPos = new BlockPos(
-                boundingBox.minX() + 4,
+                boundingBox.minX() + 2,
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 2);
         if (!box.isInside(spawnPos)) return;
+
         CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (witch != null) {
             witch.setPersistenceRequired();
             witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            witch.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F), EntitySpawnReason.STRUCTURE, null);
+            witch.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
+                    EntitySpawnReason.STRUCTURE, null);
             level.addFreshEntityWithPassengers(witch);
+        }
+    }
+
+    private static BlockState upperStair(VillageBuildingMaterials materials, Direction facing) {
+        return materials.roofStairs(facing).setValue(StairBlock.HALF, Half.TOP);
+    }
+
+    private void placeFrontStep(WorldGenLevel level, BoundingBox box, VillageBuildingMaterials materials) {
+        BlockPos stepPos = getWorldPos(1, 0, -1);
+        if (!box.isInside(stepPos)) return;
+        if (level.getBlockState(stepPos).isAir() && !level.getBlockState(stepPos.below()).isAir()) {
+            level.setBlock(stepPos, materials.stepStairs(Direction.NORTH), 2);
+        }
+    }
+
+    private void placeApothecarySign(WorldGenLevel level, BoundingBox box) {
+        BlockPos signWorld = getWorldPos(1, 3, -1);
+        if (!box.isInside(signWorld)) return;
+
+        BlockState signState = Blocks.OAK_WALL_SIGN.defaultBlockState()
+                .setValue(WallSignBlock.FACING, Direction.NORTH);
+        level.setBlock(signWorld, signState, 3);
+        if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
+            if (sign.getLevel() == null) sign.setLevel(level.getLevel());
+            SignText text = new SignText().setMessage(1, Component.literal("~ Apothecary ~"));
+            sign.setText(text, true);
         }
     }
 }

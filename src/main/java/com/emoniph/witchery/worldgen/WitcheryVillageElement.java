@@ -196,7 +196,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
 
     private int[] dims() {
         return switch (building) {
-            case "apothecary"           -> new int[]{9, 8, 6};
+            case "apothecary"           -> new int[]{9, 9, 6};
             case "bookshop"             -> new int[]{10, 8, 9};
             case "witch_hut"            -> new int[]{4, 6, 5};
             case "village_watch_tower"  -> new int[]{8, 23, 8};
