@@ -59,12 +59,13 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState air    = Blocks.AIR.defaultBlockState();
         BlockState fence  = materials.parapet();
         BlockState slab   = materials.roofSlabTop();
-        BlockState stairsN = materials.roofStairs(Direction.NORTH);
-        BlockState stairsS = materials.roofStairs(Direction.SOUTH);
+        // setOrientation(NORTH) flips local Z without rotating block states.
+        BlockState stairsN = materials.roofStairs(Direction.SOUTH);
+        BlockState stairsS = materials.roofStairs(Direction.NORTH);
         BlockState stairsW = materials.roofStairs(Direction.WEST);
         BlockState stairsE = materials.roofStairs(Direction.EAST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
-        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
+        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
 
         // ── Main tower shell (2-6, 0-17, 2-6) ────────────────────────────────
         generateBox(level, box, 2, 0, 2, 6, 17, 6, cobble, cobble, false);
