@@ -306,6 +306,10 @@ public class WitcheryItems {
             id -> new SpiritBucketItem(itemProps(id), WitcheryBlocks.HOLLOW_TEARS));
     public static final DeferredItem<Item> HAND_BOW = ITEMS.register("hand_bow",
             id -> new HandBowItem(itemProps(id)));
+    public static final DeferredItem<Item> CANE_SWORD = ITEMS.register("cane_sword",
+            id -> new CaneSwordItem(itemProps(id), true));
+    public static final DeferredItem<Item> DRAWN_CANE_SWORD = ITEMS.register("drawn_cane_sword",
+            id -> new CaneSwordItem(itemProps(id), false));
     public static final DeferredItem<Item> HUNTSMAN_SPEAR = ITEMS.register("huntsman_spear",
             id -> new HuntsmanSpearItem(itemProps(id)));
     public static final DeferredItem<Item> HUNTSMANS_SPEAR = ITEMS.register("huntsmans_spear",
@@ -624,7 +628,6 @@ public class WitcheryItems {
             "extended_biomes_book",
             "symbology_book",
             "witches_brews_book",
-            "cane_sword",
             "charged_crossbow",
             "cooked_sheep_liver",
             "creative_bat_wolf_token",
@@ -656,7 +659,6 @@ public class WitcheryItems {
             "bound_taglock_kit",
             "crossbow_pistol",
             "deployed_deaths_hand",
-            "drawn_cane_sword",
             "witches_hand",
             "brew_bottle",
             "splash_brew_bottle",

@@ -154,10 +154,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Doesn't accumulate with other Torch type upgrades.
 
 ## Cane Sword
-- **Obtain:** Crafting recipe
-- **Use:** Weapon item.
-- **Stats:** Durability 1562
-- **Notes:** No known uses in crafting.
+- **Obtain:** Crafted from Woven Cruor, a Diamond Sword, and a Gold Ingot.
+- **Use:** Sneak-use to draw or sheathe. Drawn Cane Swords work as the high-damage form; sheathed Cane Swords can extract stored blood into vampire blood power.
+- **Stats:** Durability 1561, rare. Sheathed attack damage is low; drawn attack damage follows the source combo-weapon profile.
+- **Notes:** Vampire kills against villagers or players with the drawn sword fill its internal blood reservoir up to 250.
 
 ## Chalice (Filled)
 - **Obtain:** Crafted from Redstone Soup above an empty Chalice, or by filling a placed empty Chalice with Redstone Soup.

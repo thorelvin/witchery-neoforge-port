@@ -278,6 +278,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BONE_BOLT.get(),
                 WitcheryItems.NULLIFYING_BOLT.get(),
                 WitcheryItems.SPLITTING_BOLT.get(),
+                WitcheryItems.CANE_SWORD.get(),
                 WitcheryItems.WITCHES_HAT.get(),
                 WitcheryItems.WITCHES_ROBE.get(),
                 WitcheryItems.WITCHES_SHOES.get(),
@@ -367,10 +368,10 @@ public class WitcheryCreativeTabs {
                 "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
                 "herbology_book", "biomes_book");
         addLegacy(output, accepted,
-                "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting", "cane_sword",
+                "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting",
                 "charged_crossbow", "duplication_grenade", "staff_of_duplication", "horn_of_the_hunt",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
-                "crossbow_pistol", "deployed_deaths_hand", "drawn_cane_sword", "witches_hand", "hunts_horn");
+                "crossbow_pistol", "deployed_deaths_hand", "witches_hand", "hunts_horn");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
                 "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",

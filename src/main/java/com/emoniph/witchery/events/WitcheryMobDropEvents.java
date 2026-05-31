@@ -13,7 +13,9 @@ import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.CaneSwordItem;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -46,6 +48,9 @@ public class WitcheryMobDropEvents {
         var pos = entity.blockPosition();
         var level = entity.level();
         Player killer = event.getSource().getEntity() instanceof Player player ? player : null;
+        if (killer instanceof ServerPlayer serverPlayer) {
+            CaneSwordItem.tryAbsorbBloodFromKill(serverPlayer, entity);
+        }
         boolean arthana = killer != null && killer.getMainHandItem().is(WitcheryItems.ARTHANA.get());
 
         if (killer != null

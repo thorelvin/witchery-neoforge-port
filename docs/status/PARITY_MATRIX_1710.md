@@ -57,7 +57,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | moon_charm | 🔲 Placeholder | Item registered; no werewolf form-toggle mechanic |
 | horn_of_the_hunt | 🔲 Placeholder | Item registered; no Huntsman-challenge mechanic |
 | wolf_token | 🔲 Placeholder | Creative-only; no mechanic |
-| cane_sword | ❌ Missing | Source: `ItemCaneSword` — combo weapon |
+| cane_sword | Partial | Source: `ItemCaneSword` combo weapon now has sheathed/drawn variants, sneak-use transform, recipe, vampire blood-reservoir capture from villagers/players, and sheathed extraction into blood power. Remaining: exact old sound assets and player-data-backed reserve parity. |
 | dup_staff | ❌ Missing | Source: `ItemDuplicationStaff` |
 | dupgrenade | ❌ Missing | Source: `ItemSunGrenade(1)` — mirror duplication grenade |
 | biome_book / biome_note | ❌ Missing | Source: `ItemBook`, `ItemBiomeNote` — biome scrying |
