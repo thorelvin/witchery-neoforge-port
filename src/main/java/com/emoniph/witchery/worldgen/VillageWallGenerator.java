@@ -4,13 +4,11 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -447,18 +445,20 @@ public final class VillageWallGenerator {
             if (chosen.size() >= MAX_GATES) break;
         }
 
-        // Phase 4: mark each chosen gate and widen it to a 3-cell opening along the wall axis.
+        // Phase 4: mark each chosen gate and widen it to a 7-cell run along the wall axis
+        // (placeGatePillar opens the central 3 cells and builds the outer 2 each side as
+        // gate-tower pillars).
+        final int GATE_HALF = 3; // 7 cells = 2 pillars + 3 opening + 2 pillars
         for (int[] c : chosen) {
             int gx = c[0], gz = c[1];
+            boolean wallEW = (gx > 0 && grid[gx-1][gz] == WALL) || (gx < w-1 && grid[gx+1][gz] == WALL);
             grid[gx][gz] = GATE;
-            boolean wallEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
-                          || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
-            if (wallEW) {
-                if (gx > 0   && grid[gx-1][gz] == WALL) grid[gx-1][gz] = GATE;
-                if (gx < w-1 && grid[gx+1][gz] == WALL) grid[gx+1][gz] = GATE;
-            } else {
-                if (gz > 0   && grid[gx][gz-1] == WALL) grid[gx][gz-1] = GATE;
-                if (gz < d-1 && grid[gx][gz+1] == WALL) grid[gx][gz+1] = GATE;
+            for (int o = -GATE_HALF; o <= GATE_HALF; o++) {
+                if (o == 0) continue;
+                int nx = wallEW ? gx + o : gx;
+                int nz = wallEW ? gz : gz + o;
+                if (nx >= 0 && nz >= 0 && nx < w && nz < d && grid[nx][nz] == WALL)
+                    grid[nx][nz] = GATE;
             }
         }
         WitcheryMod.LOGGER.info("[VillageWalls] {} gate candidate(s) -> {} gate(s) placed.",
@@ -540,32 +540,43 @@ public final class VillageWallGenerator {
     }
 
     /**
-     * Gate opening cell: a 3-deep passage with a fence gate at the outer face and a brick
-     * arch overhead. Every GATE cell is an opening — the gate is 3 cells wide along the wall
-     * axis (set in detectGates) and the normal WALL cells flanking it act as the gate posts,
-     * so no internal brick pillars are placed. The path is laid through and out so the
-     * street visibly leaves the village.
+     * One cell of a 7-wide gate. The central 3 cells (offset |Δ|≤1 from the run centre) are
+     * the OPENING — a 3-deep passage with a brick arch overhead and NO fence. The outer 2
+     * cells on each side are solid brick gate-tower PILLARS, a little taller than the wall.
+     * For opening cells the road is laid along the passage floor and extended both outward
+     * and inward until it meets the existing village road, filling any grass gap.
      */
     private static void placeGatePillar(ServerLevel level, int wx, int sy, int wz,
                                           BlockState wall, BlockState brick, BlockState merlon,
                                           byte[][] grid, int gx, int gz, int w, int d) {
-        // Wall axis (the direction the gate run extends along).
         boolean wallRunsEW = (gx > 0 && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE))
                           || (gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE));
 
         // Inward direction (toward the village interior), perpendicular to the wall axis.
         int inDX = 0, inDZ = 0;
         if (wallRunsEW) {
-            if (gz > 0 && (grid[gx][gz-1] == INTERIOR || grid[gx][gz-1] == GATE)) inDZ = -1;
-            else if (gz < d-1 && (grid[gx][gz+1] == INTERIOR || grid[gx][gz+1] == GATE)) inDZ = 1;
+            if (gz > 0 && grid[gx][gz-1] == INTERIOR) inDZ = -1;
+            else if (gz < d-1 && grid[gx][gz+1] == INTERIOR) inDZ = 1;
         } else {
-            if (gx > 0 && (grid[gx-1][gz] == INTERIOR || grid[gx-1][gz] == GATE)) inDX = -1;
-            else if (gx < w-1 && (grid[gx+1][gz] == INTERIOR || grid[gx+1][gz] == GATE)) inDX = 1;
+            if (gx > 0 && grid[gx-1][gz] == INTERIOR) inDX = -1;
+            else if (gx < w-1 && grid[gx+1][gz] == INTERIOR) inDX = 1;
         }
 
-        Direction facing = gateWallFacing(grid, gx, gz, w, d);
-        BlockState fenceGate = Blocks.OAK_FENCE_GATE.defaultBlockState()
-                .setValue(FenceGateBlock.FACING, facing);
+        boolean opening = Math.abs(gateRunOffset(grid, gx, gz, wallRunsEW, w, d)) <= 1;
+
+        if (!opening) {
+            // Gate-tower pillar: solid brick, 3-deep, 2 blocks taller than the wall.
+            for (int depth = 0; depth < 3; depth++) {
+                int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
+                for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++)
+                    setBlock(level, dwx, sy + dy, dwz, brick);
+                setBlock(level, dwx, sy + WALL_HEIGHT + 2, dwz, merlon);
+                if (depth == 0) fillDown(level, dwx, sy - 1, dwz, wall);
+            }
+            return;
+        }
+
+        // Opening: 3-deep passage with brick arch overhead, no fence.
         for (int depth = 0; depth < 3; depth++) {
             int dwx = wx + inDX * depth, dwz = wz + inDZ * depth;
             for (int dy = 0; dy < 5; dy++) { // clear 5-high passage
@@ -575,25 +586,41 @@ public final class VillageWallGenerator {
             }
             for (int dy = 5; dy < WALL_HEIGHT; dy++) // brick arch ceiling
                 setBlock(level, dwx, sy + dy, dwz, brick);
+            // Passage floor path set DIRECTLY at sy-1. (Using layPath/groundHeight here would
+            // sample the arch roof just placed above and drop dirt on top of the gate.)
+            level.setBlock(new BlockPos(dwx, sy - 1, dwz), Blocks.DIRT_PATH.defaultBlockState(), 3);
         }
-        level.setBlock(new BlockPos(wx, sy, wz), fenceGate, 3);
 
-        // Lay the path straight through the gate and out both faces.
+        // Path outward over open terrain.
         int oDX = -inDX, oDZ = -inDZ;
-        for (int t = 1; t <= 6; t++)            layPath(level, wx + oDX * t, wz + oDZ * t);     // outside
-        for (int depth = 0; depth < 3; depth++) layPath(level, wx + inDX * depth, wz + inDZ * depth); // passage
-        for (int t = 3; t <= 6; t++)            layPath(level, wx + inDX * t, wz + inDZ * t);   // inside to road
+        for (int t = 1; t <= 6; t++) layPath(level, wx + oDX * t, wz + oDZ * t);
+
+        // Path inward until it meets the existing village road — fills the grass gap between
+        // the gate and the road created by the wall sitting well outside the built-up area.
+        for (int t = 3; t <= 40; t++) {
+            int ix = wx + inDX * t, iz = wz + inDZ * t;
+            if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
+            int gy = groundHeight(level, ix, iz);
+            if (level.getBlockState(new BlockPos(ix, gy - 1, iz)).is(Blocks.DIRT_PATH)) break; // reached road
+            layPath(level, ix, iz);
+        }
     }
 
     /**
-     * Returns the fence gate FACING direction based on the wall axis.
-     * If the gate run extends E/W (wall runs E-W), traffic flows N/S → face NORTH.
-     * If the gate run extends N/S (wall runs N-S), traffic flows E/W → face EAST.
+     * Offset of a gate cell from the centre of its contiguous GATE run along the wall axis.
+     * Used to classify the central 3 cells as the opening and the rest as pillars.
      */
-    private static Direction gateWallFacing(byte[][] grid, int gx, int gz, int w, int d) {
-        boolean hasEW = (gx > 0 && (grid[gx-1][gz] == GATE || grid[gx-1][gz] == WALL))
-                     || (gx < w-1 && (grid[gx+1][gz] == GATE || grid[gx+1][gz] == WALL));
-        return hasEW ? Direction.NORTH : Direction.EAST;
+    private static int gateRunOffset(byte[][] grid, int gx, int gz, boolean ew, int w, int d) {
+        int lo = 0, hi = 0;
+        if (ew) {
+            while (gx - lo - 1 >= 0  && grid[gx - lo - 1][gz] == GATE) lo++;
+            while (gx + hi + 1 < w   && grid[gx + hi + 1][gz] == GATE) hi++;
+            return gx - ((gx - lo) + (gx + hi)) / 2;
+        } else {
+            while (gz - lo - 1 >= 0  && grid[gx][gz - lo - 1] == GATE) lo++;
+            while (gz + hi + 1 < d   && grid[gx][gz + hi + 1] == GATE) hi++;
+            return gz - ((gz - lo) + (gz + hi)) / 2;
+        }
     }
 
     // ── Guard spawning ─────────────────────────────────────────────────────────
