@@ -2,12 +2,15 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.BroomEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -19,6 +22,8 @@ import net.minecraft.world.InteractionResult;
  * or re-mounts a nearby one if the player has dismounted.
  */
 public class BroomItem extends Item {
+
+    public static final String TAG_BRUSH_COLOR = "BrushColor";
 
     public BroomItem(Properties props) {
         super(props);
@@ -55,6 +60,11 @@ public class BroomItem extends Item {
                 player.getZ() + look.z * 1.5);
         ItemStack stack = player.getItemInHand(hand);
         broom.setEnchanted(stack.is(WitcheryItems.ENCHANTED_BROOM.get()));
+        broom.setBrushColor(getBrushColor(stack));
+        Component customName = stack.get(DataComponents.CUSTOM_NAME);
+        if (customName != null) {
+            broom.setCustomName(customName);
+        }
         broom.faceYaw(player.getYRot());
         sl.addFreshEntity(broom);
         player.startRiding(broom, true, true);
@@ -65,5 +75,18 @@ public class BroomItem extends Item {
         }
 
         return InteractionResult.SUCCESS_SERVER;
+    }
+
+    public static int getBrushColor(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag()
+                .getIntOr(TAG_BRUSH_COLOR, -1);
+    }
+
+    public static void setBrushColor(ItemStack stack, int brushColor) {
+        if (brushColor < 0 || brushColor > 15) {
+            return;
+        }
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TAG_BRUSH_COLOR, brushColor));
     }
 }

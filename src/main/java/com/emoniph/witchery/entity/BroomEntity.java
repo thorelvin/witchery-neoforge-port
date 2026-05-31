@@ -5,13 +5,17 @@ import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.BroomItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +44,8 @@ public class BroomEntity extends Mob {
 
     private static final EntityDataAccessor<Boolean> DATA_ENCHANTED =
             SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_BRUSH_COLOR =
+            SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.INT);
 
     private double speedMultiplier = BASE_SPEED_MULTIPLIER;
     private boolean riderHasOwlFamiliar;
@@ -66,6 +73,14 @@ public class BroomEntity extends Mob {
 
     public void setEnchanted(boolean value) {
         entityData.set(DATA_ENCHANTED, value);
+    }
+
+    public int getBrushColor() {
+        return entityData.get(DATA_BRUSH_COLOR);
+    }
+
+    public void setBrushColor(int brushColor) {
+        entityData.set(DATA_BRUSH_COLOR, brushColor >= 0 && brushColor <= 15 ? brushColor : -1);
     }
 
     public static BroomEntity create(Level level, double x, double y, double z) {
@@ -261,11 +276,20 @@ public class BroomEntity extends Mob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
+        if (held.getItem() instanceof DyeItem dye) {
+            if (!level().isClientSide()) {
+                setBrushColor(dye.getDyeColor().getId());
+                if (!player.getAbilities().instabuild) {
+                    held.shrink(1);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         if (!level().isClientSide()) {
             if (player.isShiftKeyDown() && !hasPassenger(player)) {
-                ItemStack broomItem = new ItemStack(isEnchanted()
-                        ? WitcheryItems.ENCHANTED_BROOM.get()
-                        : WitcheryItems.BROOM.get());
+                ItemStack broomItem = createDropStack();
                 player.addItem(broomItem);
                 this.discard();
                 return InteractionResult.SUCCESS;
@@ -276,6 +300,17 @@ public class BroomEntity extends Mob {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    private ItemStack createDropStack() {
+        ItemStack broomItem = new ItemStack(isEnchanted()
+                ? WitcheryItems.ENCHANTED_BROOM.get()
+                : WitcheryItems.BROOM.get());
+        BroomItem.setBrushColor(broomItem, getBrushColor());
+        if (hasCustomName()) {
+            broomItem.set(DataComponents.CUSTOM_NAME, getCustomName());
+        }
+        return broomItem;
     }
 
     @Override
@@ -320,6 +355,21 @@ public class BroomEntity extends Mob {
 
     @Override
     public boolean isInvulnerable() {
+        return false;
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (isRemoved() || amount <= 0.0F) {
+            return false;
+        }
+        Entity attacker = source.getEntity();
+        boolean creativePlayer = attacker instanceof Player player && player.getAbilities().instabuild;
+        ejectPassengers();
+        if (!creativePlayer) {
+            spawnAtLocation(level, createDropStack());
+        }
+        discard();
         return true;
     }
 
@@ -337,17 +387,20 @@ public class BroomEntity extends Mob {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ENCHANTED, false);
+        builder.define(DATA_BRUSH_COLOR, -1);
     }
 
     @Override
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Enchanted", isEnchanted());
+        tag.putInt(BroomItem.TAG_BRUSH_COLOR, getBrushColor());
     }
 
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         setEnchanted(tag.getBooleanOr("Enchanted", false));
+        setBrushColor(tag.getIntOr(BroomItem.TAG_BRUSH_COLOR, -1));
     }
 }
