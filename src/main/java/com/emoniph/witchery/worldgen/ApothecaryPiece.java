@@ -52,7 +52,7 @@ public class ApothecaryPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
         BlockState planks = materials.wall();
         BlockState cobble = materials.foundation();
         BlockState air    = Blocks.AIR.defaultBlockState();
@@ -128,12 +128,14 @@ public class ApothecaryPiece extends StructurePiece {
                 boundingBox.minZ());
         BlockState signState = Blocks.OAK_WALL_SIGN.defaultBlockState()
                 .setValue(WallSignBlock.FACING, Direction.SOUTH);
-        level.setBlock(signWorld, signState, 3);
-        if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
-            if (sign.getLevel() == null) sign.setLevel(level.getLevel());
-            SignText text = new SignText();
-            text = text.setMessage(0, Component.literal("~ Apothecary ~"));
-            sign.setText(text, true);
+        if (box.isInside(signWorld)) {
+            level.setBlock(signWorld, signState, 3);
+            if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
+                if (sign.getLevel() == null) sign.setLevel(level.getLevel());
+                SignText text = new SignText();
+                text = text.setMessage(0, Component.literal("~ Apothecary ~"));
+                sign.setText(text, true);
+            }
         }
 
         // ── Coven Witch (apothecary shopkeeper) ───────────────────────────────

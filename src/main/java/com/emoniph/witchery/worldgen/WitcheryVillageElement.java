@@ -172,7 +172,13 @@ public class WitcheryVillageElement extends StructurePoolElement {
         debugLog("Placing {} at {} with element box {} and generation box {}.",
                 building, offset, piece.getBoundingBox(), box);
         ChunkPos chunkPos = new ChunkPos(new BlockPos(box.minX(), 0, box.minZ()));
-        piece.postProcess(level, structureMgr, generator, random, box, chunkPos, pos);
+        try {
+            piece.postProcess(level, structureMgr, generator, random, box, chunkPos, pos);
+            debugLog("Finished placing {} at {} for generation box {}.", building, offset, box);
+        } catch (RuntimeException e) {
+            WitcheryMod.LOGGER.error("[VillageBuildings] Failed to place {} at {} in generation box {}; skipping this slice.",
+                    building, offset, box, e);
+        }
         return true;
     }
 

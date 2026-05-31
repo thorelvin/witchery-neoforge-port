@@ -43,8 +43,24 @@ final class VillageBuildingMaterials {
         this.door = door;
     }
 
+    static VillageBuildingMaterials forVillage(WorldGenLevel level, BoundingBox pieceBox, BoundingBox generationBox) {
+        int minX = Math.max(pieceBox.minX(), generationBox.minX());
+        int maxX = Math.min(pieceBox.maxX(), generationBox.maxX());
+        int minZ = Math.max(pieceBox.minZ(), generationBox.minZ());
+        int maxZ = Math.min(pieceBox.maxZ(), generationBox.maxZ());
+        if (minX <= maxX && minZ <= maxZ) {
+            BlockPos sample = new BlockPos((minX + maxX) / 2, 64, (minZ + maxZ) / 2);
+            return forSample(level, sample);
+        }
+        return forVillage(level, pieceBox);
+    }
+
     static VillageBuildingMaterials forVillage(WorldGenLevel level, BoundingBox box) {
         BlockPos center = new BlockPos((box.minX() + box.maxX()) / 2, 64, (box.minZ() + box.maxZ()) / 2);
+        return forSample(level, center);
+    }
+
+    private static VillageBuildingMaterials forSample(WorldGenLevel level, BlockPos center) {
         var biome = level.getBiome(center);
 
         if (biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS)) {

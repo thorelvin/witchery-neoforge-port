@@ -48,7 +48,7 @@ public class WitchHutPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
         BlockState wall = materials.wall();
         BlockState trim = materials.trim();
         BlockState foundation = materials.floor();
@@ -86,7 +86,7 @@ public class WitchHutPiece extends StructurePiece {
         placeBlock(level, air, 1, 2, 0, box);
         placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.LOWER), 1, 1, 0, box);
         placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.UPPER), 1, 2, 0, box);
-        placeFrontStep(level, materials);
+        placeFrontStep(level, box, materials);
 
         placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 1, 1, 3, box);
         placeBlock(level, rowanLog, 2, 1, 3, box);
@@ -116,8 +116,11 @@ public class WitchHutPiece extends StructurePiece {
         }
     }
 
-    private void placeFrontStep(WorldGenLevel level, VillageBuildingMaterials materials) {
+    private void placeFrontStep(WorldGenLevel level, BoundingBox box, VillageBuildingMaterials materials) {
         BlockPos stepPos = getWorldPos(1, 0, -1);
+        if (!box.isInside(stepPos)) {
+            return;
+        }
         if (level.getBlockState(stepPos).isAir() && !level.getBlockState(stepPos.below()).isAir()) {
             level.setBlock(stepPos, materials.roofStairs(Direction.NORTH), 2);
         }
