@@ -43,6 +43,8 @@ import java.util.Set;
 public final class VillageWallGenerator {
 
     private static final int WALL_HEIGHT   = 6;   // blocks above surface
+    private static final int MIN_BUILD_Y   = -64;
+    private static final int MAX_BUILD_Y   = 319;
     // PADDING must exceed SMOOTH + BLOCK (see step 3c) so the coarse-hull blocks can never
     // reach the grid border; if the INTERIOR touches the edge the flood-fill cannot mark
     // OUTSIDE there and that side is left unwalled.
@@ -54,6 +56,12 @@ public final class VillageWallGenerator {
     private static final int GATE_PATH_OUTWARD_MAX = 10;
     private static final int GATE_PATH_INWARD_MAX = 10;
     private static final int GATE_PATH_SAMPLE_OUTWARD = 4;
+    private static final int TREE_CLEAR_MAX_BLOCKS = 384;
+    private static final int TREE_CLEAR_SCAN_Y_ABOVE = 24;
+    private static final int TREE_CLEAR_SCAN_Y_BELOW = 2;
+    private static final int TREE_CLEAR_WALL_TOUCH_RADIUS = 1;
+    private static final int TREE_CLEAR_PATH_TOUCH_RADIUS = 1;
+    private static final int TREE_CLEAR_TREE_RADIUS = 7;
     // Morphological dilation applied to the village footprint before perimeter detection.
     // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
     // the wall traces a smoother, more regularised contour (see reference: contour
@@ -266,7 +274,7 @@ public final class VillageWallGenerator {
         List<GateDef> gates = detectGates(level, grid, originX, originZ, w, d, desert);
 
         // 8. Pre-sample wall base heights (water-aware). Walls follow terrain.
-        int minBuild = -64; // 1.21 minimum build height
+        int minBuild = MIN_BUILD_Y; // 1.21 minimum build height
         short[][] heights = new short[w][d];
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
@@ -291,6 +299,7 @@ public final class VillageWallGenerator {
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
                 if (sy == 0) continue;
+                clearTouchedTrees(level, wx, sy, wz, WALL_HEIGHT + 5, TREE_CLEAR_WALL_TOUCH_RADIUS);
                 for (int dy = 0; dy < WALL_HEIGHT + 5; dy++) {
                     BlockPos p = new BlockPos(wx, sy + dy, wz);
                     BlockState bs = level.getBlockState(p);
@@ -388,6 +397,63 @@ public final class VillageWallGenerator {
             || state.is(BlockTags.FLOWERS)
             || state.is(BlockTags.SAPLINGS)
             || state.canBeReplaced();
+    }
+
+    private static boolean isTreeBlock(BlockState state) {
+        return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES);
+    }
+
+    /**
+     * If a wall/gate/path corridor touches a tree, remove the nearby connected logs/leaves
+     * so generation does not leave floating canopies or half-cut taiga trunks.
+     */
+    private static void clearTouchedTrees(ServerLevel level, int centerX, int baseY, int centerZ,
+                                          int heightAbove, int touchRadius) {
+        int minY = Math.max(MIN_BUILD_Y, baseY - TREE_CLEAR_SCAN_Y_BELOW);
+        int maxY = Math.min(MAX_BUILD_Y, baseY + heightAbove);
+        for (int dx = -touchRadius; dx <= touchRadius; dx++) {
+            for (int dz = -touchRadius; dz <= touchRadius; dz++) {
+                int x = centerX + dx;
+                int z = centerZ + dz;
+                if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                for (int y = minY; y <= maxY; y++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    if (isTreeBlock(level.getBlockState(pos))) {
+                        clearConnectedTree(level, pos, centerX, centerZ, minY, maxY + TREE_CLEAR_SCAN_Y_ABOVE);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void clearConnectedTree(ServerLevel level, BlockPos seed, int centerX, int centerZ,
+                                           int minY, int maxY) {
+        maxY = Math.min(MAX_BUILD_Y, maxY);
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        Set<BlockPos> seen = new HashSet<>();
+        queue.add(seed.immutable());
+        int cleared = 0;
+        while (!queue.isEmpty() && cleared < TREE_CLEAR_MAX_BLOCKS) {
+            BlockPos pos = queue.poll();
+            if (!seen.add(pos)) continue;
+            if (pos.getY() < minY || pos.getY() > maxY) continue;
+            if (Math.abs(pos.getX() - centerX) > TREE_CLEAR_TREE_RADIUS
+                    || Math.abs(pos.getZ() - centerZ) > TREE_CLEAR_TREE_RADIUS) continue;
+            if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) continue;
+            if (!isTreeBlock(level.getBlockState(pos))) continue;
+
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            cleared++;
+
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        if (dx == 0 && dy == 0 && dz == 0) continue;
+                        queue.add(pos.offset(dx, dy, dz).immutable());
+                    }
+                }
+            }
+        }
     }
 
     // ── Gate detection ─────────────────────────────────────────────────────────
@@ -679,6 +745,7 @@ public final class VillageWallGenerator {
             boolean opening = Math.abs(o) <= 1;
             for (int depth = -1; depth <= 1; depth++) {
                 int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
+                clearTouchedTrees(level, dwx, refY - 1, dwz, WALL_HEIGHT + 4, TREE_CLEAR_WALL_TOUCH_RADIUS);
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
@@ -721,6 +788,7 @@ public final class VillageWallGenerator {
             if (stopAtRoad && isVillageRoad(level.getBlockState(new BlockPos(ix, natural, iz)), desert)) break;
             if (natural > floorY) floorY++;
             else if (natural < floorY) floorY--;
+            clearTouchedTrees(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
             forceSet(level, ix, floorY, iz, pathBlock);                         // path surface
             for (int dy = 1; dy <= 4; dy++) {                                   // cut headroom
                 BlockPos p = new BlockPos(ix, floorY + dy, iz);
