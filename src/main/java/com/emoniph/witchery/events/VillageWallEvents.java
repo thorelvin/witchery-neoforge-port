@@ -66,8 +66,9 @@ public class VillageWallEvents {
         boolean ticketChunks;
         boolean ticketsAdded;
         int ticketCursor;
-        long ticketedAt;
+        long lastProgressAt;
         long lastLogAt;
+        int lastReadyCount;
 
         WallJob(StructureStart start, boolean force, String reason,
                 List<ChunkPos> chunks, PendingTeleport teleport, long queuedAt, boolean ticketChunks) {
@@ -91,7 +92,7 @@ public class VillageWallEvents {
     private static final long WALL_JOB_TIMEOUT_TICKS = 20L * 30L;
     private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
     private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
-    private static final int WALL_JOB_CHUNK_TICKET_BATCH = 8;
+    private static final int WALL_JOB_CHUNK_TICKET_BATCH = 4;
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
@@ -265,7 +266,8 @@ public class VillageWallEvents {
                     job.ticketChunks = true;
                     if (job.ticketsAdded && job.ticketCursor == 0) {
                         job.ticketsAdded = false;
-                        job.ticketedAt = 0L;
+                        job.lastProgressAt = 0L;
+                        job.lastReadyCount = 0;
                     }
                 }
                 if (teleport != null) job.teleports.add(teleport);
@@ -294,7 +296,7 @@ public class VillageWallEvents {
             if (!job.ticketsAdded) {
                 if (!job.ticketChunks) {
                     job.ticketsAdded = true;
-                    job.ticketedAt = now;
+                    job.lastProgressAt = now;
                     job.lastLogAt = now;
                     WitcheryMod.LOGGER.info("[VillageWalls] Using {} naturally loaded wall chunk(s) for {}.",
                             job.chunks.size(), job.start.getBoundingBox());
@@ -302,10 +304,30 @@ public class VillageWallEvents {
                 }
 
                 if (job.ticketCursor == 0) {
-                    job.ticketedAt = now;
+                    job.lastProgressAt = now;
                     job.lastLogAt = now;
                     WitcheryMod.LOGGER.info("[VillageWalls] Requesting {} wall chunk ticket(s) for {} in batches of {}.",
                             job.chunks.size(), job.start.getBoundingBox(), WALL_JOB_CHUNK_TICKET_BATCH);
+                }
+
+                int readyRequested = readyChunkCount(level, job.chunks, 0, job.ticketCursor);
+                if (readyRequested < job.ticketCursor) {
+                    if (readyRequested > job.lastReadyCount) {
+                        job.lastReadyCount = readyRequested;
+                        job.lastProgressAt = now;
+                    }
+                    if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
+                        job.lastLogAt = now;
+                        WitcheryMod.LOGGER.info("[VillageWalls] Waiting for requested wall chunk batch at {}: {}/{} requested ready ({} total).",
+                                job.start.getBoundingBox(), readyRequested, job.ticketCursor, job.chunks.size());
+                    }
+                    if (now - job.lastProgressAt > WALL_JOB_TIMEOUT_TICKS) {
+                        WitcheryMod.LOGGER.error("[VillageWalls] Timed out loading requested wall chunk batch at {}: {}/{} ready.",
+                                job.start.getBoundingBox(), readyRequested, job.ticketCursor);
+                        finishWallJob(level, job, false);
+                        return true;
+                    }
+                    return false;
                 }
 
                 int end = Math.min(job.ticketCursor + WALL_JOB_CHUNK_TICKET_BATCH, job.chunks.size());
@@ -314,6 +336,8 @@ public class VillageWallEvents {
                     level.getChunkSource().updateChunkForced(cp, true);
                     job.ticketCursor++;
                 }
+                job.lastProgressAt = now;
+                job.lastReadyCount = readyRequested;
 
                 if (job.ticketCursor < job.chunks.size()) {
                     if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
@@ -325,20 +349,25 @@ public class VillageWallEvents {
                 }
 
                 job.ticketsAdded = true;
+                job.lastProgressAt = now;
                 job.lastLogAt = now;
-                WitcheryMod.LOGGER.info("[VillageWalls] Requested all {} wall chunk ticket(s) for {}.",
+                WitcheryMod.LOGGER.info("[VillageWalls] Requested all {} wall chunk ticket(s) for {}; waiting for final readiness.",
                         job.chunks.size(), job.start.getBoundingBox());
                 return false;
             }
 
             int ready = readyChunkCount(level, job.chunks);
             if (ready < job.chunks.size()) {
+                if (ready > job.lastReadyCount) {
+                    job.lastReadyCount = ready;
+                    job.lastProgressAt = now;
+                }
                 if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
                     job.lastLogAt = now;
                     WitcheryMod.LOGGER.info("[VillageWalls] Waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
                 }
-                if (job.ticketedAt > 0 && now - job.ticketedAt > WALL_JOB_TIMEOUT_TICKS) {
+                if (job.lastProgressAt > 0 && now - job.lastProgressAt > WALL_JOB_TIMEOUT_TICKS) {
                     WitcheryMod.LOGGER.error("[VillageWalls] Timed out waiting for wall chunks at {}: {}/{} ready.",
                             job.start.getBoundingBox(), ready, job.chunks.size());
                     finishWallJob(level, job, false);
@@ -370,8 +399,14 @@ public class VillageWallEvents {
     }
 
     private static int readyChunkCount(ServerLevel level, List<ChunkPos> chunks) {
+        return readyChunkCount(level, chunks, 0, chunks.size());
+    }
+
+    private static int readyChunkCount(ServerLevel level, List<ChunkPos> chunks, int from, int to) {
         int ready = 0;
-        for (ChunkPos cp : chunks) {
+        int end = Math.min(to, chunks.size());
+        for (int i = Math.max(0, from); i < end; i++) {
+            ChunkPos cp = chunks.get(i);
             if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) ready++;
         }
         return ready;
