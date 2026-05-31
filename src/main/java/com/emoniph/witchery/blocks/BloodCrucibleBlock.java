@@ -67,8 +67,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
         }
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        boolean hasVampireAccess = data.isVampire()
-                && (data.getVampireLevel() >= 10 || player.getAbilities().instabuild);
+        boolean hasVampireAccess = data.isVampire() && data.getVampireLevel() >= 10;
 
         if (!hasVampireAccess) {
             player.displayClientMessage(
@@ -77,7 +76,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
 
-        if (!be.isFull()) {
+        if (!be.isFull() && !player.getAbilities().instabuild) {
             player.displayClientMessage(
                     net.minecraft.network.chat.Component.translatable("witchery.blood_crucible.not_full"),
                     true);
@@ -89,8 +88,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
             chosen = WitcheryPlayerData.VampireUltimate.STORM;
         } else if (stack.is(WitcheryItems.BAT_WOOL.get())) {
             chosen = WitcheryPlayerData.VampireUltimate.SWARM;
-        } else if (stack.is(net.minecraft.world.item.Items.WRITTEN_BOOK)
-                || stack.is(net.minecraft.world.item.Items.WRITABLE_BOOK)) {
+        } else if (stack.is(net.minecraft.world.item.Items.WRITTEN_BOOK)) {
             chosen = WitcheryPlayerData.VampireUltimate.FARM;
         }
 

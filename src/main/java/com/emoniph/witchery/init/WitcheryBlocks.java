@@ -241,7 +241,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<CoffinBlock>      COFFIN         = BLOCKS.registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f).noOcclusion());
     public static final DeferredBlock<com.emoniph.witchery.blocks.BloodCrucibleBlock> BLOOD_CRUCIBLE = BLOCKS.registerBlock("blood_crucible",
             com.emoniph.witchery.blocks.BloodCrucibleBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(1000.0f, 2.5f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
 
     // Mirror World
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorWallBlock> MIRROR_WALL = BLOCKS.registerBlock("mirror_wall",

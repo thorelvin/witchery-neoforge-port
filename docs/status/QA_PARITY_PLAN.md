@@ -28,6 +28,8 @@ Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled
 
 Baseline correction note: local comparison shows `1.7.10-0.24.1` adds 670 files over `1.7.2-0.19.0`, including 346 Java files and 323 assets. The added/expanded areas include the custom brew and Witch's Cauldron system, vampire/werewolf content, Blood Crucible, Silver Vat, Coffin, Beartrap/Wolftrap, Garlic Garland, Mirror/Mirror Wall, Daylight Collector, Shaded Glass, Perpetual Ice, Stockade, Wolf Head/Altar, Mindrake/Garlic/Wolfsbane crops, village/goblin structures, and many new mobs/renderers/assets. Future parity checks should compare the port against 1.7.10 first.
 
+Blood Crucible QA note (2026-05-31): the basic crucible path is live and should be tested in-game before marking Done. Verify the restored stone-brick-stairs/stone-bricks/stone-brick-slab recipe, source-like stone sound/hardness/resistance, vampire/NPC fill path to 20 blood, level-10 vampire use with Artichoke/Bat Wool/written book selecting Storm/Swarm/Farm and draining blood, and creative-mode fullness bypass. Broader Blood Power and late-level gates remain separate parity work.
+
 ## External reference set
 
 Use these as implementation examples when the modern runtime differs from 1.7.10:

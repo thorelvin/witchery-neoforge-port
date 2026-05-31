@@ -141,7 +141,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | crystal_ball | ✅ Done | |
 | dream_catcher | ✅ Done | |
 | circle / circle_glyph / circle_otherwhere / circle_infernal | ✅ Done | |
-| blood_crucible | ❌ Missing | Source: `BlockBloodCrucible` — vampire level-up progression block |
+| blood_crucible | 🔶 Partial | Block/BE/render, vampire fill path, source recipe, and level-10 ultimate selection are live; broader Blood Power/late vampire gates remain under Vampirism |
 | shaded_glass (off/on) | ❌ Missing | Source: `BlockShadedGlass` — light-blocking glass with switch state |
 | decurse_teleport | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaTeleportPullProtect) — area curse protection |
 | decurse_directed | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaCurseProtect) |
@@ -404,7 +404,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Brazier | 🔶 Partial | Ingredient automation restored; hopper QA needed |
 | Silver Vat | 🔶 Partial | 3D model, deposit byproduct, recipes; furnace/hopper QA needed |
 | Sun Collector | 🔶 Partial | Charge loop, power state, item render; in-game verification needed |
-| Blood Crucible | ❌ Missing | Source: `BlockBloodCrucible` — vampire level progression block; entire system absent |
+| Blood Crucible | 🔶 Partial | Source block, BE, renderer, recipe, filling, and level-10 ultimate selection are live; broader Blood Power/late vampire progression remains open |
 | Poppet Shelf | 🔶 Partial | Slot clearing, facing-aware rendering; in-game spacing QA needed |
 | Leech Chest | 🔶 Partial | Storage and player queue; broader parity verify open |
 | Refilling Chest | ✅ Done | Source refill logic, unbreakable, Torment-only |
@@ -433,15 +433,15 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 ### Immediate (blocking other systems)
 
-1. **Blood Crucible block** — gates the entire vampire level progression system
-2. **Dynamic cauldron brew action system** — gates Brew Bag, Leonard summon, ~60 missing brews
-3. **Late vampire progression gates** — Blood Crucible/Blood Power, level storage, conversion/cure, levels 8-10
+1. **Dynamic cauldron brew action system** — gates Brew Bag, Leonard summon, ~60 missing brews
+2. **Late vampire progression gates** — broader Blood Power, level storage, conversion/cure, levels 8-10
+3. **Blood Crucible QA/polish** — block/BE/recipe/ultimate path live; needs in-game fill/use verification and particle/sound exactness
 4. **Wolftrap entity-backed summon/capture** — `WolfmanEntity` exists; trap wiring still needs source behavior
 
 ### High value (large surface area)
 
 5. **Creature Powers + Mystic Branch symbol system** — 14 creature power types, none working
-6. **10-level vampire progression** (Blood Crucible → level storage → ability gates)
+6. **10-level vampire progression** (broader Blood Power → level storage → ability gates)
 7. **10-level werewolf progression** (Wolf Altar quest chain → Moon Charm)
 8. **Leonard summon integration** — `LeonardEntity`/`LostSoulEntity` exist; custom brew summon action still missing
 9. **MobEffect registrations** (PotionMortalCoil, PotionGrotesque, PotionParalysis, etc.)
@@ -452,7 +452,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 11. Perpetual ice/snow block family (11 blocks)
 12. Stockade blocks (2 blocks)
 13. Shaded glass (2 block states)
-14. Blood Crucible item + recipe
+14. Blood Crucible in-game fill/use QA and particle/sound exactness
 15. Baba Yaga boss in-game QA / non-source hut decision
 16. Fresh village structure QA for guards, walls, watch towers, keeps, bookshops, apothecaries, and witch huts
 17. Goblin entity family (`EntityGoblin` base remains; Gulg/Mog bosses are ported)
