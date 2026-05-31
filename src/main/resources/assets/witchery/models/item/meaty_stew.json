@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "witchery:item/raw_meaty_stew"
+    "layer0": "witchery:item/meaty_stew"
   }
 }

@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 258 functional + 146 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 260 functional + 126 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -64,8 +64,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | cauldron_book | ❌ Missing | Source: `ItemMarkupBook(7)` — in-game cauldron guide |
 | vampire_book | ❌ Missing | Source: `ItemMarkupBook(7, [0,9])` — vampire progression book with level callbacks |
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
-| brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; `ItemBrewFuel` remains missing |
-| stew (cooked/raw) | ❌ Missing | Source: `ItemStew` — 12-nutrition witch stew; raw variant |
+| brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
+| stew (cooked/raw) | ✅ Done | `witchery:meaty_stew` / `witchery:raw_meaty_stew` now use source `ItemStew` food values, bowl return, original sprites, raw stew crafting, and smelting |
 | polynesia_charm | ❌ Missing | Source: `ItemPolynesiaCharm` — two variants |
 | devils_tongue_charm | ❌ Missing | (in placeholder list but no mechanic planned yet) |
 

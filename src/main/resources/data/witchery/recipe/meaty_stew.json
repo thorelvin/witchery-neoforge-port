@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "ingredient": "witchery:raw_meaty_stew",
+  "result": {
+    "id": "witchery:meaty_stew"
+  },
+  "experience": 1.0,
+  "cookingtime": 200
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "food",
+  "ingredients": [
+    "witchery:garlic",
+    "minecraft:mutton",
+    "minecraft:potato",
+    "minecraft:carrot",
+    "minecraft:bowl",
+    "minecraft:brown_mushroom"
+  ],
+  "result": {
+    "id": "witchery:raw_meaty_stew"
+  }
+}

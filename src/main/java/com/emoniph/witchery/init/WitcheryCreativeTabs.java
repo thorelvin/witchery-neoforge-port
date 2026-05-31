@@ -230,6 +230,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CLAY_JAR_SOFT.get(),
                 WitcheryItems.CLAY_JAR.get(),
                 WitcheryItems.GLASS_GOBLET.get(),
+                WitcheryItems.RAW_MEATY_STEW.get(),
+                WitcheryItems.MEATY_STEW.get(),
                 WitcheryItems.SPECTRAL_STONE.get(),
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
@@ -378,7 +380,7 @@ public class WitcheryCreativeTabs {
                 "contract_ownership", "contract_torment",
                 "creative_bat_wolf_token", "creative_medallion");
         addLegacy(output, accepted,
-                "meaty_stew", "raw_meaty_stew", "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
+                "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
                 "endless_water_brew");
         addLegacy(output, accepted,
                 "vines_brew", "webs_brew", "thorns_brew", "ink_brew", "sprouting_brew", "erosion_brew",

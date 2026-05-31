@@ -584,6 +584,10 @@ public class WitcheryItems {
 
     public static final DeferredItem<Item> SUN_GRENADE = ITEMS.register("sun_grenade",
             id -> new com.emoniph.witchery.item.SunGrenadeItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> MEATY_STEW = ITEMS.register("meaty_stew",
+            id -> new MeatyStewItem(itemProps(id), 12, 1.0F));
+    public static final DeferredItem<Item> RAW_MEATY_STEW = ITEMS.register("raw_meaty_stew",
+            id -> new MeatyStewItem(itemProps(id), 1, 0.1F));
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
@@ -650,8 +654,6 @@ public class WitcheryItems {
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
             "bound_taglock_kit",
-            "meaty_stew",
-            "raw_meaty_stew",
             "crossbow_pistol",
             "deployed_deaths_hand",
             "drawn_cane_sword",
