@@ -29,12 +29,12 @@ neoForge {
     runs {
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'forge.logging.console.level', 'info'
         }
 
         client {
             client()
-            jvmArguments.addAll '-Xmx4G', '-Xms2G'
+            jvmArguments.addAll '-Xmx6G', '-Xms512M'
         }
 
         server {

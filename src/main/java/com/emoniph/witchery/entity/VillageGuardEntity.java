@@ -78,6 +78,18 @@ public class VillageGuardEntity extends Monster implements RangedAttackMob {
         "entity.witchery.village_guard.shout.hurt.firm",
         "entity.witchery.village_guard.shout.hurt.brothers",
     };
+    private static final String[] Q_GREET = {
+        "entity.witchery.village_guard.greet.move_along",
+        "entity.witchery.village_guard.greet.eyes_open",
+        "entity.witchery.village_guard.greet.trouble",
+        "entity.witchery.village_guard.greet.watch",
+        "entity.witchery.village_guard.greet.safe",
+        "entity.witchery.village_guard.greet.patrol",
+        "entity.witchery.village_guard.greet.stranger",
+        "entity.witchery.village_guard.greet.wall",
+        "entity.witchery.village_guard.greet.night",
+        "entity.witchery.village_guard.greet.business",
+    };
 
     // ── State ─────────────────────────────────────────────────────────────────
 
@@ -255,6 +267,19 @@ public class VillageGuardEntity extends Monster implements RangedAttackMob {
 
     private String pick(String[] pool) {
         return pool[random.nextInt(pool.length)];
+    }
+
+    // ── Greet on right-click ──────────────────────────────────────────────────
+
+    @Override
+    public net.minecraft.world.InteractionResult mobInteract(Player player,
+                                                             net.minecraft.world.InteractionHand hand) {
+        if (hand == net.minecraft.world.InteractionHand.MAIN_HAND
+                && !level().isClientSide()
+                && getTarget() == null) {
+            shout(pick(Q_GREET), 100);
+        }
+        return net.minecraft.world.InteractionResult.SUCCESS;
     }
 
     // ── Sounds ────────────────────────────────────────────────────────────────

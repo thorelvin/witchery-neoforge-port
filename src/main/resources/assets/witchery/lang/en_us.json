@@ -627,6 +627,16 @@
 
   "entity.witchery.village_guard.shout.hurt.firm": "Stand firm, brothers!",
   "entity.witchery.village_guard.shout.hurt.brothers": "I am wounded — to me, guards!",
+  "entity.witchery.village_guard.greet.move_along": "Move along, traveller. Nothing to see here.",
+  "entity.witchery.village_guard.greet.eyes_open": "Keep your eyes open. Strange things stir at dusk.",
+  "entity.witchery.village_guard.greet.trouble": "If you're bringing trouble, bring it somewhere else.",
+  "entity.witchery.village_guard.greet.watch": "We don't sleep. Neither do the things we watch for.",
+  "entity.witchery.village_guard.greet.safe": "Stay within the walls after dark. For your own sake.",
+  "entity.witchery.village_guard.greet.patrol": "Third patrol tonight. It's been a long week.",
+  "entity.witchery.village_guard.greet.stranger": "I don't know your face. State your business.",
+  "entity.witchery.village_guard.greet.wall": "You hear that? ...Never mind. Probably the wind.",
+  "entity.witchery.village_guard.greet.night": "Quiet night. I don't trust quiet nights.",
+  "entity.witchery.village_guard.greet.business": "Aye. What is it?",
 
   "entity.witchery.egassy.fart.0":  "My stomach hurts...",
   "entity.witchery.egassy.fart.1":  "Excuse me.",

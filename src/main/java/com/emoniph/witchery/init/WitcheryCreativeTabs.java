@@ -367,7 +367,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
                 "brew_of_endless_water", "contract_ownership", "contract_torment",
-                "gulgs_girdle", "mogs_quiver", "creative_bat_wolf_token", "creative_medallion");
+                "creative_bat_wolf_token", "creative_medallion");
         addLegacy(output, accepted,
                 "meaty_stew", "raw_meaty_stew", "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
                 "combustion_brew", "endless_water_brew");

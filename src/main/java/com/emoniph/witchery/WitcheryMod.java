@@ -50,6 +50,7 @@ public class WitcheryMod {
         WitcherySoundEvents.SOUND_EVENTS.register(modEventBus);
         WitcheryStructures.STRUCTURE_TYPES.register(modEventBus);
         WitcheryStructures.PIECE_TYPES.register(modEventBus);
+        WitcheryStructures.POOL_ELEMENT_TYPES.register(modEventBus);
         WitcheryChunkGenerators.CHUNK_GENERATORS.register(modEventBus);
         WitcheryPlacementModifiers.PLACEMENT_MODIFIERS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);

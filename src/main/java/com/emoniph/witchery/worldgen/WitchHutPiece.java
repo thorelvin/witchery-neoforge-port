@@ -111,7 +111,7 @@ public class WitchHutPiece extends StructurePiece {
         if (witch != null) {
             witch.setPersistenceRequired();
             witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            witch.finalizeSpawn(level, level.getLevel().getCurrentDifficultyAt(spawnPos), EntitySpawnReason.STRUCTURE, null);
+            witch.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F), EntitySpawnReason.STRUCTURE, null);
             level.addFreshEntityWithPassengers(witch);
         }
     }
