@@ -51,7 +51,7 @@ public class WitchHutPiece extends StructurePiece {
         VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox);
         BlockState wall = materials.wall();
         BlockState trim = materials.trim();
-        BlockState foundation = materials.foundation();
+        BlockState foundation = materials.floor();
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState glassSide = VillageBuildingMaterials.paneNorthSouth();
         BlockState rowanLog = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
@@ -114,7 +114,7 @@ public class WitchHutPiece extends StructurePiece {
     private void placeFrontStep(WorldGenLevel level, VillageBuildingMaterials materials) {
         BlockPos stepPos = getWorldPos(1, 0, -1);
         if (level.getBlockState(stepPos).isAir() && !level.getBlockState(stepPos.below()).isAir()) {
-            level.setBlock(stepPos, materials.stepStairs(Direction.SOUTH), 2);
+            level.setBlock(stepPos, materials.roofStairs(Direction.NORTH), 2);
         }
     }
 }
