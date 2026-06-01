@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.server.level.ServerLevel;
@@ -98,6 +99,7 @@ public final class VillageWallGenerator {
         WitcheryMod.LOGGER.info("[VillageWalls] generate() called: {} pieces, bb={}",
                 pieces.size(), start.getBoundingBox());
         if (pieces.isEmpty()) return GenerationResult.skipped(0, 0);
+        boolean spawnGuards = !isAbandonedVillage(start);
 
         // 1. Village extents
         int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
@@ -351,7 +353,7 @@ public final class VillageWallGenerator {
 
                 WallColumnResult column = placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock,
                         merlonBlock, stairBlock, floorTo, grid, heights, x, z, w, d);
-                if (column.placed() && column.guardPos() != null && ++guardCounter >= GUARD_SPACING) {
+                if (spawnGuards && column.placed() && column.guardPos() != null && ++guardCounter >= GUARD_SPACING) {
                     spawnGuard(level, column.guardPos());
                     guardCounter = 0;
                 }
@@ -359,11 +361,21 @@ public final class VillageWallGenerator {
         }
 
         // 10. Build gatehouses — independent locked 7×3 models that override the wall.
-        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, pathBlock, desert);
+        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, pathBlock, desert, spawnGuards);
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
         return new GenerationResult(true, gateDetection.candidates(), gates.size());
+    }
+
+    private static boolean isAbandonedVillage(StructureStart start) {
+        for (StructurePiece piece : start.getPieces()) {
+            if (piece instanceof PoolElementStructurePiece poolPiece
+                    && poolPiece.getElement().toString().contains("/zombie/")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ── Loop pruning ───────────────────────────────────────────────────────────
@@ -922,7 +934,7 @@ public final class VillageWallGenerator {
      * is laid out and in (meeting the existing road) for the central 3 lanes.
      */
     private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick,
-                                        BlockState pathBlock, boolean desert) {
+                                        BlockState pathBlock, boolean desert, boolean spawnGuards) {
         BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
                 ? Blocks.SANDSTONE_WALL.defaultBlockState()
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
@@ -956,7 +968,7 @@ public final class VillageWallGenerator {
         // Starts from the gate's outer/inner edge cell (depth ±1, floor refY-1) and ramps to
         // the terrain at most 1 block per cell, cutting headroom so there is never a dirt face
         // across the opening. Inward stops when it meets the existing village road.
-        buildGatehouseGuardRampart(level, g, brick, gateCap);
+        buildGatehouseGuardRampart(level, g, brick, gateCap, spawnGuards);
 
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
@@ -982,7 +994,8 @@ public final class VillageWallGenerator {
     }
 
     private static void buildGatehouseGuardRampart(ServerLevel level, GateDef g,
-                                                    BlockState brick, BlockState rail) {
+                                                    BlockState brick, BlockState rail,
+                                                    boolean spawnGuards) {
         int floorY = g.refY() + WALL_HEIGHT - 1;
         int standY = floorY + 1;
         for (int o = -1; o <= 1; o++) {
@@ -995,8 +1008,10 @@ public final class VillageWallGenerator {
             forceSet(level, outsideX, standY, outsideZ, rail);
         }
 
-        BlockPos guardPos = new BlockPos(g.centerWX(), standY, g.centerWZ());
-        if (isSpawnClear(level, guardPos)) spawnGuard(level, guardPos);
+        if (spawnGuards) {
+            BlockPos guardPos = new BlockPos(g.centerWX(), standY, g.centerWZ());
+            if (isSpawnClear(level, guardPos)) spawnGuard(level, guardPos);
+        }
     }
 
     /**

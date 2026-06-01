@@ -3,6 +3,7 @@
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
 **Closed 2026-06-01 / 2026-05-31:**
+- ~~Abandoned village walls spawn living guards~~ - abandoned/zombie villages are dead villages, but the adaptive wall pass still spawned Witchery Village Guards on wall-walk spacing and gatehouse perches. Fixed: wall generation detects vanilla `/zombie/` village pool pieces and skips all guard spawns while still building the walls and gatehouses.
 - ~~Gatehouses can leave old wall/rampart blocks above their footprint~~ - fresh wall QA found old wall blocks still surviving higher above rebuilt gatehouses. Fixed: gatehouses now clear their locked 7x3 footprint up to `WALL_HEIGHT + 10`, six blocks higher than the previous clearance, before rebuilding the opening, side towers, and over-gate guard perch.
 - ~~Wolfman and Were Villager models show transparent holes~~ - fresh entity visual QA found holes from bad renderer/model/texture pairings. Fixed: standalone Wolfman now uses a 1.7.10 `wolfman.png` UV copy dedicated to the old `ModelWolfman`, and Were Villager now uses vanilla villager geometry/texture like source `RenderVillager`.
 - ~~Generated gate paths use stone-brick filler underneath~~ - fresh wall QA called out masonry showing under generated paths. Fixed: the gate opening floor and graded gate paths now fill downward with terrain-style support (`DIRT`, `SAND`, or `RED_SAND`) while gatehouse pillars/walls still use masonry.
