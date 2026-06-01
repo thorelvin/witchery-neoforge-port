@@ -16,6 +16,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Centralized silver damage system.
@@ -31,6 +32,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  */
 @EventBusSubscriber
 public class SilverEvents {
+    private static final float GARLICKED_VAMPIRE_DAMAGE_SCALE = 0.6F;
 
     // ── Silver damage bonus (vampires + werewolves) ───────────────────────────
 
@@ -54,6 +56,27 @@ public class SilverEvents {
         if (!(attacker.level() instanceof ServerLevel sl)) return;
         // Deal 1.0 damage back to the werewolf attacker (source: ItemHunterClothes.getProperties)
         attacker.hurtServer(sl, attacker.damageSources().magic(), 1.0f);
+    }
+
+    @SubscribeEvent
+    public static void onGarlickedHunterArmorHit(LivingDamageEvent.Pre event) {
+        LivingEntity attacker = event.getSource().getEntity() instanceof LivingEntity l ? l : null;
+        if (attacker == null) return;
+        if (!isVampire(attacker)) return;
+        if (!wearsGarlickedArmor(event.getEntity())) return;
+
+        event.setNewDamage(event.getNewDamage() * GARLICKED_VAMPIRE_DAMAGE_SCALE);
+    }
+
+    @SubscribeEvent
+    public static void onGarlickedHunterVampireWearer(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.tickCount % 20 != 2) return;
+        if (player.getAbilities().instabuild) return;
+        if (!WitcheryAttachments.get(player).isVampire()) return;
+        if (!wearsGarlickedArmor(player)) return;
+
+        player.hurt(player.damageSources().cactus(), 1.0F);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -83,6 +106,13 @@ public class SilverEvents {
                 || entity.getType().is(WitcheryEntityTags.VAMPIRES);
     }
 
+    private static boolean isVampire(LivingEntity entity) {
+        if (entity instanceof ServerPlayer sp) {
+            return WitcheryAttachments.get(sp).isVampire();
+        }
+        return entity.getType().is(WitcheryEntityTags.VAMPIRES);
+    }
+
     private static boolean isWerewolf(LivingEntity entity) {
         if (entity instanceof ServerPlayer sp) {
             return WitcheryAttachments.get(sp).isWerewolf();
@@ -92,8 +122,19 @@ public class SilverEvents {
 
     private static boolean wearsSilveredArmor(LivingEntity entity) {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.HUNTER_HELMET_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
                 || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
                 || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.HUNTER_LEGGINGS_SILVERED.get())
-                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.HUNTER_BOOTS_SILVERED.get());
+                || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.HUNTER_BOOTS_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+    }
+
+    private static boolean wearsGarlickedArmor(LivingEntity entity) {
+        return entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
     }
 }

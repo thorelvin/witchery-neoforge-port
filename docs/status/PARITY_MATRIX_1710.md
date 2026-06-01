@@ -80,7 +80,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Earmuffs | ✅ Done | Sound mute, Mandrake/Banshee protection |
 | Hunter set (plain) | ✅ Done | |
 | Hunter set (silvered) | ✅ Done | Silver damage hooks |
-| Hunter set (garlicked) | 🔲 Placeholder | Items registered; no garlic-effect on wear |
+| Hunter set (garlicked) | 🔶 Partial | The port maps source garlicked hunter counterplay onto `witch_hunter_dawn_*`: Dawn pieces now count as silvered, reduce vampire-attacker damage, and hurt vampire wearers once per second. Remaining: exact source garlicked overlay/items, armor model, and full old armor-protection math |
 | Death's Hood/Robe/Shoes | ✅ Done | Fire cancel, water-walk, low-light NV |
 | Death's Hand | ✅ Done | Spectral touch + scythe deploy |
 | Koboldite Helm / Mog's Quiver / Gulg's Gurdle | 🔶 Partial | Koboldite Helm is represented by `witchery:twisting_band`: rare head item, source recipe, and observer-disorientation shell. Mog's Quiver and Gulg's Gurdle now restore the first practical wearable reward mechanics: epic chest/legs armor, limitless fast quiver arrows, airborne mogged-arrow punishment, empty-hand girdle launch hits, and paired Resistance II pulse. Remaining work is exact old armor model/render polish, patron-flow QA, and the inert `gulgs_grudle` alias decision. |
