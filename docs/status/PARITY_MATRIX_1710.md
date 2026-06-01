@@ -79,7 +79,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Icy Slippers / Ruby Slippers / Seeping Shoes | 🔶 Partial | Icy Slippers trigger ice pressure plates and restore the source walking water-to-Ice / lava-to-Obsidian conversion with lava durability damage; Ruby Slippers now have source-style chat activation with bound-Waystone priority, separate persisted waystone/home cooldowns, infusion-energy costs, source tooltip lines, and the rare 1% Void Bramble-style waystone misfire; Seeping Shoes cure Poison/Wither and bonemeal nearby plants. Remaining: armor model polish |
 | Earmuffs | ✅ Done | Sound mute, Mandrake/Banshee protection |
 | Hunter set (plain) | ✅ Done | |
-| Hunter set (silvered) | ✅ Done | Silver damage hooks |
+| Hunter set (silvered) | ✅ Done | Silver damage hooks, werewolf attacker recoil, stronger werewolf-hit protection, and werewolf-wearer self-damage |
 | Hunter set (garlicked) | 🔶 Partial | The port maps source garlicked hunter counterplay onto `witch_hunter_dawn_*`: Dawn pieces now count as silvered, reduce vampire-attacker damage, and hurt vampire wearers once per second. Remaining: exact source garlicked overlay/items, armor model, and full old armor-protection math |
 | Death's Hood/Robe/Shoes | ✅ Done | Fire cancel, water-walk, low-light NV |
 | Death's Hand | ✅ Done | Spectral touch + scythe deploy |

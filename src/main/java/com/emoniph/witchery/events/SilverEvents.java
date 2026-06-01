@@ -33,6 +33,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber
 public class SilverEvents {
     private static final float GARLICKED_VAMPIRE_DAMAGE_SCALE = 0.6F;
+    private static final float SILVERED_WEREWOLF_DAMAGE_SCALE = 0.6F;
 
     // ── Silver damage bonus (vampires + werewolves) ───────────────────────────
 
@@ -66,6 +67,27 @@ public class SilverEvents {
         if (!wearsGarlickedArmor(event.getEntity())) return;
 
         event.setNewDamage(event.getNewDamage() * GARLICKED_VAMPIRE_DAMAGE_SCALE);
+    }
+
+    @SubscribeEvent
+    public static void onSilveredHunterArmorHit(LivingDamageEvent.Pre event) {
+        LivingEntity attacker = event.getSource().getEntity() instanceof LivingEntity l ? l : null;
+        if (attacker == null) return;
+        if (!isWerewolf(attacker)) return;
+        if (!wearsSilveredArmor(event.getEntity())) return;
+
+        event.setNewDamage(event.getNewDamage() * SILVERED_WEREWOLF_DAMAGE_SCALE);
+    }
+
+    @SubscribeEvent
+    public static void onSilveredHunterWerewolfWearer(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.tickCount % 20 != 2) return;
+        if (player.getAbilities().instabuild) return;
+        if (!WitcheryAttachments.get(player).isWerewolf()) return;
+        if (!wearsSilveredArmor(player)) return;
+
+        player.hurt(player.damageSources().cactus(), 1.0F);
     }
 
     @SubscribeEvent
