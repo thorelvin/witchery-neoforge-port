@@ -268,8 +268,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | ~~**EntityBabaYaga**~~ | ✅ Done | `BabaYagaEntity` registered/ported as 500 HP boss with renderer, spawn egg, and spawn command; local 1.7.10 scan found no source hut generator |
 | ~~**EntityVillageGuard**~~ | ✅ Done | `VillageGuardEntity` — 25 HP, iron sword, 4 armour; targets undead/raiders/vampires/witches/demonic mobs and vampire/werewolf players; neutral to normal players; 2 variants |
 | ~~**EntityVampire**~~ | ✅ Done | `VampireEntity` registered/ported; villager conversion/cure/level gates remain in vampire progression |
-| ~~**EntityWolfman**~~ | ✅ Done | `WolfmanEntity` — 40 HP, silver weakness, moon reversion to WereVillager; WolfmanModel (64×64) |
-| ~~**EntityVillagerWere**~~ | ✅ Done | `WereVillagerEntity` — peaceful mob, full-moon transforms to WolfmanEntity |
+| ~~**EntityWolfman**~~ | ✅ Done | `WolfmanEntity` — 40 HP, silver weakness, moon reversion to WereVillager; old `ModelWolfman` 64x64 geometry now paired with a dedicated 1.7.10 wolfman UV texture |
+| ~~**EntityVillagerWere**~~ | ✅ Done | `WereVillagerEntity` — peaceful mob, full-moon transforms to WolfmanEntity; renderer uses vanilla villager model/base texture like source `RenderVillager` |
 | **EntityGoblin** | ❌ Missing | Base trading/labor goblin |
 | ~~**EntityGoblinGulg**~~ | ✅ Done | `GoblinGulgEntity` registered/ported; reward/patron in-game QA remains |
 | ~~**EntityGoblinMog**~~ | ✅ Done | `GoblinMogEntity` registered/ported; reward/patron in-game QA remains |

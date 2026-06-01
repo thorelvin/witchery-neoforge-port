@@ -1,22 +1,23 @@
 package com.emoniph.witchery.client.renderer;
 
-import com.emoniph.witchery.client.model.WitchHunterModel;
 import com.emoniph.witchery.entity.WereVillagerEntity;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.npc.VillagerModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.VillagerRenderState;
 import net.minecraft.resources.Identifier;
 
-/** Renders WereVillagerEntity using the standard biped model with a dedicated texture. */
-public class WereVillagerRenderer extends MobRenderer<WereVillagerEntity, LivingEntityRenderState, WitchHunterModel> {
+/** Source parity: EntityVillagerWere used vanilla RenderVillager, not a Witch Hunter biped. */
+public class WereVillagerRenderer extends MobRenderer<WereVillagerEntity, VillagerRenderState, VillagerModel> {
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/were_villager.png");
+            Identifier.withDefaultNamespace("textures/entity/villager/villager.png");
 
     public WereVillagerRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new WitchHunterModel(ctx.bakeLayer(WitchHunterModel.LAYER_LOCATION)), 0.5F);
+        super(ctx, new VillagerModel(ctx.bakeLayer(ModelLayers.VILLAGER)), 0.5F);
     }
 
-    @Override public LivingEntityRenderState createRenderState() { return new LivingEntityRenderState(); }
-    @Override public Identifier getTextureLocation(LivingEntityRenderState state) { return TEXTURE; }
+    @Override public VillagerRenderState createRenderState() { return new VillagerRenderState(); }
+    @Override public Identifier getTextureLocation(VillagerRenderState state) { return TEXTURE; }
 }

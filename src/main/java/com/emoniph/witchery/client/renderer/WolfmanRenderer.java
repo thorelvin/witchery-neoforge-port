@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 public class WolfmanRenderer extends MobRenderer<WolfmanEntity, WolfmanRenderer.WolfmanRenderState, WolfmanModel> {
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/wolfman.png");
+            Identifier.fromNamespaceAndPath("witchery", "textures/entity/wolfman_entity.png");
 
     public WolfmanRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new WolfmanModel(ctx.bakeLayer(WolfmanModel.LAYER_LOCATION)), 0.7F);
