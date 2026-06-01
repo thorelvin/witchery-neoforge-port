@@ -16,8 +16,15 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 public class SubduedSpiritItem extends Item {
+    private final boolean villageTarget;
+
     public SubduedSpiritItem(Properties properties) {
+        this(properties, false);
+    }
+
+    public SubduedSpiritItem(Properties properties, boolean villageTarget) {
         super(properties);
+        this.villageTarget = villageTarget;
     }
 
     @Override
@@ -48,6 +55,7 @@ public class SubduedSpiritItem extends Item {
         }
 
         spirit.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.MOB_SUMMONED, null);
+        spirit.setVillageTarget(villageTarget);
         spirit.setPersistenceRequired();
         serverLevel.addFreshEntity(spirit);
         serverLevel.sendParticles(ParticleTypes.WITCH,

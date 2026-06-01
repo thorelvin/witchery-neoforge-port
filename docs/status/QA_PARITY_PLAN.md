@@ -23,6 +23,8 @@ Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source
 
 Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.
 
+Spirit item QA note (2026-06-01): `witchery:subdued_village_spirit` is now a real source-identity variant instead of a placeholder. Release normal and village Subdued Spirits, save/reload a village-marked Spirit, kill both variants, and confirm the normal item drops `subdued_spirit` while the village-marked one drops `subdued_village_spirit`. Also confirm both variants transfer back out of the Spirit World inventory. The old nearest-village waypoint flight remains future Spirit AI polish, so do not expect the village variant to navigate to a village yet.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

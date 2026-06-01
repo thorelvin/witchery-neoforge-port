@@ -229,6 +229,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ODOUR_OF_PURITY.get(),
                 WitcheryItems.OIL_OF_VITRIOL.get(),
                 WitcheryItems.REEK_OF_MISFORTUNE.get(),
+                WitcheryItems.SUBDUED_SPIRIT.get(),
+                WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get(),
                 WitcheryItems.ATTUNED_STONE.get(),
                 WitcheryItems.ATTUNED_STONE_CHARGED.get(),
                 WitcheryItems.CLAY_JAR_SOFT.get(),
@@ -371,7 +373,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "odd_porkchop", "cooked_odd_porkchop",
                 "silver_dust", "biome_note",
-                "fanciful_thinking_charm", "subdued_village_spirit", "pentacle", "golden_heart");
+                "fanciful_thinking_charm", "pentacle", "golden_heart");
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
                 "book_biomes", "book_wands", "book_burning", "brews_and_infusions_book",

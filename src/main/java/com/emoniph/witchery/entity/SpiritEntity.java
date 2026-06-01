@@ -15,11 +15,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
- * Spirit — passive flying Spirit World mob. Flees from players; always drops Subdued Spirit.
+ * Spirit - passive flying Spirit World mob. Flees from players and drops its matching subdued item.
  */
 public class SpiritEntity extends Monster {
+    private static final String TAG_SPIRIT_TYPE = "SpiritType";
+    private static final int SPIRIT_TYPE_NORMAL = 0;
+    private static final int SPIRIT_TYPE_VILLAGE = 1;
+
+    private int spiritType = SPIRIT_TYPE_NORMAL;
 
     public SpiritEntity(EntityType<? extends SpiritEntity> type, Level level) {
         super(type, level);
@@ -57,7 +64,33 @@ public class SpiritEntity extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(level, new ItemStack(WitcheryItems.SUBDUED_SPIRIT.get(), 1));
+        this.spawnAtLocation(level, new ItemStack(getSubduedDropItem(), 1));
+    }
+
+    public void setVillageTarget(boolean villageTarget) {
+        this.spiritType = villageTarget ? SPIRIT_TYPE_VILLAGE : SPIRIT_TYPE_NORMAL;
+    }
+
+    public boolean isVillageTarget() {
+        return spiritType == SPIRIT_TYPE_VILLAGE;
+    }
+
+    @Override
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(TAG_SPIRIT_TYPE, spiritType);
+    }
+
+    @Override
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        spiritType = tag.getIntOr(TAG_SPIRIT_TYPE, SPIRIT_TYPE_NORMAL);
+    }
+
+    private net.minecraft.world.item.Item getSubduedDropItem() {
+        return isVillageTarget()
+                ? WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get()
+                : WitcheryItems.SUBDUED_SPIRIT.get();
     }
 
 }

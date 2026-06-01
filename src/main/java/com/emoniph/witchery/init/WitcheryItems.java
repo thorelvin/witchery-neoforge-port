@@ -509,6 +509,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> REFINED_EVIL       = ITEMS.registerSimpleItem("refined_evil");
     public static final DeferredItem<Item> SPECTRAL_DUST      = ITEMS.registerSimpleItem("spectral_dust");
     public static final DeferredItem<Item> SUBDUED_SPIRIT     = ITEMS.register("subdued_spirit", id -> new SubduedSpiritItem(itemProps(id)));
+    public static final DeferredItem<Item> SUBDUED_VILLAGE_SPIRIT = ITEMS.register("subdued_village_spirit", id -> new SubduedSpiritItem(itemProps(id), true));
     public static final DeferredItem<Item> TEAR_OF_GODDESS    = ITEMS.registerSimpleItem("tear_of_goddess");
     public static final DeferredItem<Item> TOE_OF_FROG        = ITEMS.registerSimpleItem("toe_of_frog");
     public static final DeferredItem<Item> TORMENTED_TWINE    = ITEMS.registerSimpleItem("tormented_twine");
@@ -770,7 +771,6 @@ public class WitcheryItems {
             "odd_porkchop",
             "cooked_odd_porkchop",
             "fanciful_thinking_charm",
-            "subdued_village_spirit",
             "pentacle",
             "golden_heart"
     );

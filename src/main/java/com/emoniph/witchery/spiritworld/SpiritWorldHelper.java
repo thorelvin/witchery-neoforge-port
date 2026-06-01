@@ -63,7 +63,8 @@ public final class SpiritWorldHelper {
                 || it == WitcheryItems.DISTURBED_COTTON.get()
                 || it == WitcheryItems.MELLIFLUOUS_HUNGER.get()
                 || it == WitcheryItems.BREW_OF_FLOWING_SPIRIT.get()
-                || it == WitcheryItems.SUBDUED_SPIRIT.get();
+                || it == WitcheryItems.SUBDUED_SPIRIT.get()
+                || it == WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get();
     }
 
     private SpiritWorldHelper() {}

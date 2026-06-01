@@ -37,7 +37,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | glass_goblet / glass_goblet_full | ✅ Done | Blood fill/drink/induction |
 | warm_blood / liliths_blood | ✅ Done | Consumable semantics |
 | observations_of_an_immortal / torn_page | ✅ Done | Book screen, update recipe, source-family kill drops including the current Witchery boss roster |
-| subdued_spirit | ✅ Done | Capture/release loop |
+| subdued_spirit / subdued_village_spirit | ✅/🔶 Done/Partial | Normal capture/release loop is live. The village variant is now a real item that releases a Spirit with source `SpiritType=1`, saves/loads that identity, drops the village item again, and transfers back from Spirit World; old nearest-village waypoint flight remains future Spirit AI polish |
 | parasytic_louse (item) | ✅ Done | Potion bite/hotbar defense |
 | clay_jar / clay_jar_soft | ✅ Done | Smelting route restored |
 | bone_needle, all standard ingredients | ✅ Done | 35+ ingredient items present |
