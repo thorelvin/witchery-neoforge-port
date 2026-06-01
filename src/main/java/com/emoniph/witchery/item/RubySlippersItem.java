@@ -1,25 +1,62 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.data.InfusionType;
+import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.function.Consumer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings({"deprecation", "removal"})
 public class RubySlippersItem extends Item {
-    private static final long COOLDOWN_TICKS = 36000L; // 30 minutes
-    private static final Map<UUID, Long> lastUsedTick = new HashMap<>();
+    private static final long HOME_COOLDOWN_TICKS = 36000L; // 30 minutes
+    private static final long WAYSTONE_COOLDOWN_TICKS = 1200L; // 1 minute
+    private static final int HOME_COST_SAME_DIMENSION = 80;
+    private static final int HOME_COST_CROSS_DIMENSION = 120;
+    private static final int WAYSTONE_COST_SAME_DIMENSION = 40;
+    private static final int WAYSTONE_COST_CROSS_DIMENSION = 80;
+    private static final int WAYSTONE_SEARCH_RADIUS = 3;
+    private static final int WAYSTONE_TELEPORT_RADIUS = 2;
+    private static final Map<UUID, Long> lastHomeUseTick = new HashMap<>();
+    private static final Map<UUID, Long> lastWaystoneUseTick = new HashMap<>();
 
     public RubySlippersItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("item.witchery.ruby_slippers.tip.1")
+                .withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable("item.witchery.ruby_slippers.tip.2")
+                .withStyle(ChatFormatting.RED));
+        tooltip.accept(Component.translatable("item.witchery.ruby_slippers.tip.3")
+                .withStyle(ChatFormatting.RED));
     }
 
     public static boolean tryActivate(ServerPlayer player, String message) {
@@ -27,14 +64,59 @@ public class RubySlippersItem extends Item {
 
         ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
         if (!(feet.getItem() instanceof RubySlippersItem)) return false;
-        if (player.level().dimension().equals(com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD)) return false;
+        if (player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return false;
 
+        Optional<ItemEntity> waystoneEntity = findNearbyBoundWaystone(player);
+        if (waystoneEntity.isPresent()) {
+            return activateWaystone(player, waystoneEntity.get());
+        }
+        return activateHome(player);
+    }
+
+    private static boolean activateWaystone(ServerPlayer player, ItemEntity waystoneEntity) {
         long now = player.level().getGameTime();
-        long last = lastUsedTick.getOrDefault(player.getUUID(), 0L);
-        if (now - last < COOLDOWN_TICKS) {
-            int minutesLeft = (int) Math.max(1, (COOLDOWN_TICKS - (now - last)) / 1200L);
-            player.displayClientMessage(Component.translatable(
-                    "witchery.item.ruby_slippers.cooldown", minutesLeft), false);
+        long last = lastWaystoneUseTick.getOrDefault(player.getUUID(), 0L);
+        if (now - last < WAYSTONE_COOLDOWN_TICKS) {
+            showCooldown(player, WAYSTONE_COOLDOWN_TICKS - (now - last));
+            return true;
+        }
+
+        MinecraftServer server = player.level().getServer();
+        if (server == null) return true;
+        ItemStack waystone = waystoneEntity.getItem();
+        Optional<BlockPos> boundPos = WaystoneItem.getBoundPos(waystone);
+        Optional<net.minecraft.resources.ResourceKey<Level>> boundDim = WaystoneItem.getBoundDim(waystone);
+        if (boundPos.isEmpty() || boundDim.isEmpty()) return true;
+
+        ServerLevel dest = server.getLevel(boundDim.get());
+        if (dest == null) return true;
+
+        int cost = dest.dimension().equals(player.level().dimension())
+                ? WAYSTONE_COST_SAME_DIMENSION
+                : WAYSTONE_COST_CROSS_DIMENSION;
+        if (!spendInfusionEnergy(player, cost)) {
+            return true;
+        }
+
+        waystone.shrink(1);
+        if (waystone.isEmpty()) {
+            waystoneEntity.discard();
+        } else {
+            waystoneEntity.setItem(waystone);
+        }
+
+        lastWaystoneUseTick.put(player.getUUID(), now);
+        BlockPos target = randomNear(player, boundPos.get(), WAYSTONE_TELEPORT_RADIUS);
+        teleportTo(player, dest, findSafePos(dest, target));
+        player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
+        return true;
+    }
+
+    private static boolean activateHome(ServerPlayer player) {
+        long now = player.level().getGameTime();
+        long last = lastHomeUseTick.getOrDefault(player.getUUID(), 0L);
+        if (now - last < HOME_COOLDOWN_TICKS && !player.getAbilities().instabuild) {
+            showCooldown(player, HOME_COOLDOWN_TICKS - (now - last));
             return true;
         }
 
@@ -63,12 +145,25 @@ public class RubySlippersItem extends Item {
             target = new BlockPos(0, 64, 0);
         }
 
-        lastUsedTick.put(player.getUUID(), now);
-        BlockPos safe = findSafePos(dest, target);
-        player.teleportTo(dest, safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5,
-                java.util.Set.of(), player.getYRot(), player.getXRot(), false);
-        player.displayClientMessage(Component.translatable("witchery.item.ruby_slippers.activated"), false);
+        int cost = dest.dimension().equals(player.level().dimension())
+                ? HOME_COST_SAME_DIMENSION
+                : HOME_COST_CROSS_DIMENSION;
+        if (!spendInfusionEnergy(player, cost)) {
+            return true;
+        }
+
+        lastHomeUseTick.put(player.getUUID(), now);
+        teleportTo(player, dest, findSafePos(dest, target));
+        player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
         return true;
+    }
+
+    private static Optional<ItemEntity> findNearbyBoundWaystone(ServerPlayer player) {
+        AABB bounds = player.getBoundingBox().inflate(WAYSTONE_SEARCH_RADIUS);
+        List<ItemEntity> items = player.level().getEntitiesOfClass(ItemEntity.class, bounds,
+                item -> item.getItem().is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(item.getItem()));
+        return items.stream()
+                .min((a, b) -> Double.compare(a.distanceToSqr(player), b.distanceToSqr(player)));
     }
 
     private static BlockPos findSafePos(ServerLevel level, BlockPos start) {
@@ -79,5 +174,51 @@ public class RubySlippersItem extends Item {
             }
         }
         return start.above();
+    }
+
+    private static BlockPos randomNear(ServerPlayer player, BlockPos start, int radius) {
+        int spread = radius * 2 + 1;
+        return start.offset(
+                player.getRandom().nextInt(spread) - radius,
+                0,
+                player.getRandom().nextInt(spread) - radius);
+    }
+
+    private static void teleportTo(ServerPlayer player, ServerLevel dest, BlockPos safe) {
+        dest.playSound(null, safe, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
+        player.teleportTo(dest, safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5,
+                java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+    }
+
+    private static boolean spendInfusionEnergy(ServerPlayer player, int amount) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getInfusionType() == InfusionType.NONE || data.getInfusionMaxEnergy() <= 0) {
+            player.displayClientMessage(Component.translatable("witchery.infuse.infusionrequired")
+                    .withStyle(ChatFormatting.RED), false);
+            failSound(player);
+            return false;
+        }
+        if (!player.getAbilities().instabuild && data.getInfusionEnergy() < amount) {
+            player.displayClientMessage(Component.translatable("witchery.infuse.nocharges")
+                    .withStyle(ChatFormatting.RED), false);
+            failSound(player);
+            return false;
+        }
+        if (!player.getAbilities().instabuild) {
+            data.setInfusionEnergy(data.getInfusionEnergy() - amount, data.getInfusionMaxEnergy());
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        }
+        return true;
+    }
+
+    private static void showCooldown(ServerPlayer player, long ticksLeft) {
+        int minutesLeft = (int) Math.max(1, ticksLeft / 1200L);
+        player.displayClientMessage(Component.translatable(
+                "item.witchery.ruby_slippers.cooldown", minutesLeft), false);
+    }
+
+    private static void failSound(ServerPlayer player) {
+        player.level().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
+                SoundSource.PLAYERS, 0.6F, 0.7F);
     }
 }
