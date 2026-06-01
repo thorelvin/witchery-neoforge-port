@@ -116,8 +116,8 @@ public class WitcheryCommands {
     private static final int SETUP_FORWARD_OFFSET = 5;
     private static final int SETUP_CLEAR_PAD_SIZE = 20;
     private static final int SETUP_SHELL_DROP = 1;
-    private static final int SETUP_RITE_PAD_WIDTH = 31;
-    private static final int SETUP_RITE_PAD_DEPTH = 11;
+    private static final int SETUP_RITE_PAD_WIDTH = 71;
+    private static final int SETUP_RITE_PAD_DEPTH = 17;
     private static final int SETUP_RITE_FORWARD_OFFSET = 5;
     private static final int SETUP_RITE_FOUNDATION_DEPTH = 3;
     private static final int SETUP_RITE_CLEAR_HEIGHT = 5;
@@ -296,6 +296,8 @@ public class WitcheryCommands {
                         .then(Commands.literal("rite")
                                 .executes(ctx -> setupRite(ctx.getSource()))))
                 .then(Commands.literal("ritual")
+                        .then(Commands.literal("circle")
+                                .executes(ctx -> inspectRitualCircle(ctx.getSource())))
                         .then(Commands.literal("hitchcock")
                                 .executes(ctx -> startHitchcockRitual(ctx.getSource()))
                                 .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
@@ -1406,9 +1408,65 @@ public class WitcheryCommands {
         placeSetupRiteCircles(level, layout);
 
         src.sendSuccess(() -> Component.literal(
-                "Cleared a 31x11 pad in front and placed white, golden, otherwhere, and infernal small/medium/large rite rings."),
+                "Cleared a 71x17 pad in front and placed white, golden, otherwhere, and infernal small/medium/large rite rings."),
                 false);
         return 1;
+    }
+
+    private static int inspectRitualCircle(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) return 0;
+
+        BlockPos center = player.blockPosition().below();
+        List<RitualCircleDetector.DetectionResult> rings = RitualCircleDetector.detectPresent(level, center);
+        if (rings.isEmpty()) {
+            BlockPos feet = player.blockPosition();
+            rings = RitualCircleDetector.detectPresent(level, feet);
+            if (!rings.isEmpty()) {
+                center = feet;
+            }
+        }
+
+        if (rings.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "No complete ritual rings found under your feet. Stand on the center block and run /witchery ritual circle."),
+                    false);
+            return 0;
+        }
+
+        BlockPos foundCenter = center;
+        int[] variants = RitualCircleDetector.detectAllVariants(level, foundCenter);
+        src.sendSuccess(() -> Component.literal("Ritual circle at "
+                + foundCenter.getX() + ", " + foundCenter.getY() + ", " + foundCenter.getZ()
+                + ": " + describeDetectedRings(variants)
+                + ". Activate by right-clicking the center floor with an Arthana."), false);
+        return rings.size();
+    }
+
+    private static String describeDetectedRings(int[] variants) {
+        List<String> parts = new ArrayList<>();
+        appendDetectedRing(parts, "small", variants[0]);
+        appendDetectedRing(parts, "medium", variants[1]);
+        appendDetectedRing(parts, "large", variants[2]);
+        return parts.isEmpty() ? "none" : String.join(", ", parts);
+    }
+
+    private static void appendDetectedRing(List<String> parts, String size, int variant) {
+        if (variant == 0) {
+            return;
+        }
+        parts.add(size + " " + chalkVariantName(variant));
+    }
+
+    private static String chalkVariantName(int variant) {
+        return switch (variant) {
+            case 1 -> "ritual";
+            case 2 -> "otherwhere";
+            case 3 -> "infernal";
+            case 4 -> "golden";
+            default -> "mixed";
+        };
     }
 
     private static SetupHouseLayout createSetupHouseLayout(ServerPlayer player) {
@@ -1453,13 +1511,13 @@ public class WitcheryCommands {
 
     private static void placeSetupRiteCircles(ServerLevel level, SetupRiteLayout layout) {
         int centerZ = SETUP_RITE_PAD_DEPTH / 2;
-        placeSetupRiteCircle(level, layout, 3, centerZ,
+        placeSetupRiteCircle(level, layout, 8, centerZ,
                 WitcheryBlocks.CIRCLE_GLYPH.get(), Blocks.CALCITE.defaultBlockState());
-        placeSetupRiteCircle(level, layout, 11, centerZ,
+        placeSetupRiteCircle(level, layout, 26, centerZ,
                 WitcheryBlocks.CIRCLE.get(), Blocks.GOLD_BLOCK.defaultBlockState());
-        placeSetupRiteCircle(level, layout, 19, centerZ,
+        placeSetupRiteCircle(level, layout, 44, centerZ,
                 WitcheryBlocks.CIRCLE_OTHERWHERE.get(), Blocks.PURPLE_CONCRETE.defaultBlockState());
-        placeSetupRiteCircle(level, layout, 27, centerZ,
+        placeSetupRiteCircle(level, layout, 62, centerZ,
                 WitcheryBlocks.CIRCLE_INFERNAL.get(), Blocks.RED_NETHER_BRICKS.defaultBlockState());
     }
 

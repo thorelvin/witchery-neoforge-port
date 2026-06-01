@@ -38,7 +38,7 @@ import java.util.List;
  * within {@link #SWORD_RANGE} blocks.  Shouts Witchery-flavoured war-cries
  * to nearby players when it spots a threat, draws a blade, or takes a hit.
  */
-public class VillageGuardEntity extends Monster implements RangedAttackMob {
+public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob {
 
     private static final float SWORD_RANGE = 3.5F;
     private static final int   SHOUT_RADIUS = 20;
@@ -116,7 +116,7 @@ public class VillageGuardEntity extends Monster implements RangedAttackMob {
     // ── Attributes ────────────────────────────────────────────────────────────
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 25.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.30)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)

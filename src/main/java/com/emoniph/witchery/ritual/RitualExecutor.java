@@ -3,6 +3,7 @@ package com.emoniph.witchery.ritual;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
@@ -35,6 +36,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -104,9 +106,11 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RitualExecutor {
+    private static final int VARIANT_RITUAL = 1;
     private static final int VARIANT_OTHERWHERE = 2;
     private static final int VARIANT_INFERNAL = 3;
-    private static final int VARIANT_RITUAL = 4;
+    private static final double CHARGE_STONE_ITEM_RADIUS = 6.0D;
+    private static final int GRASSPER_OFFERING_RADIUS = 5;
 
     private static final int RITUAL_PULSE_INTERVAL = 30;
     private static final int VOID_BRAMBLE_NULL_RANGE = 32;
@@ -384,12 +388,21 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
         } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack).isPresent()) {
+                return matchedResult(riteOfProtectionBarrier(player, level, center,
+                        ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
+                        RitualCircleDetector.CircleSize.SMALL, 6, 4));
+            }
             return matchedResult(riteOfBanishDemon(player, level, center, true));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)
+                    && findChargeStoneOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfChargeStone(player, level, center));
+            }
             if (findNecromanticStoneOfferings(level, center).isPresent()) {
                 return matchedResult(riteOfNecromanticStone(player, level, center));
             }
-            return matchedResult(riteOfBanishDemon(player, level, center, false));
+            return ActivationResult.NO_MATCH;
         } else if (WaystoneItem.isBlankWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (findBindBloodedWaystoneOfferings(level, center).isPresent()) {
@@ -418,9 +431,17 @@ public class RitualExecutor {
         } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfImprisonment(player, level, center));
         } else if (item.is(Items.OBSIDIAN.asItem()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE)).isEmpty()
+                    && findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())).isPresent()) {
+                return matchedResult(riteOfProtectionBarrier(player, level, center,
+                        ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
+                        RitualCircleDetector.CircleSize.SMALL, 6, 4));
+            }
             return matchedResult(riteOfProtectionBarrier(player, level, center,
                     ActiveRitualType.PROTECTION_BARRIER_MONSTERS,
                     RitualCircleDetector.CircleSize.SMALL, 4, 5));
+        } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            return matchedResult(riteOfBanishDemon(player, level, center, false));
         } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCookItem(player, level, center));
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
@@ -455,14 +476,12 @@ public class RitualExecutor {
             return matchedResult(riteOfInfusionRecharge(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
+                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)
+                && findChargeStoneOfferings(level, center).isPresent()) {
             return matchedResult(riteOfChargeStone(player, level, center));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfProtectionBarrier(player, level, center,
-                    ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
-                    RitualCircleDetector.CircleSize.MEDIUM, 6, 4));
         } else if ((item.is(Items.OBSIDIAN) || item.is(Items.CRYING_OBSIDIAN))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
+                && hasVariant(circleVariant, VARIANT_RITUAL)
+                && findNearbyRitualOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST)).isPresent()) {
             return matchedResult(riteOfProtection(player, level, center));
         } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
@@ -558,6 +577,9 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (shouldLetMediumChargeStoneHandle(level, center)) {
+                return ActivationResult.NO_MATCH;
+            }
             return matchedResult(riteOfClimateChange(player, level, center));
         } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonImp(player, level, center));
@@ -585,6 +607,15 @@ public class RitualExecutor {
         return ((net.minecraft.server.level.ServerLevel) level).getServer().getRecipeManager()
                 .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level)
                 .isPresent();
+    }
+
+    private static boolean shouldLetMediumChargeStoneHandle(Level level, BlockPos center) {
+        if (!hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)
+                || !hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)
+                || findChargeStoneOfferings(level, center).isEmpty()) {
+            return false;
+        }
+        return !(level instanceof ServerLevel sl) || scanClimateChangePlan(sl, center) == null;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -978,7 +1009,7 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired ritual circles. */
+    /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired small and medium ritual circles. */
     private static boolean riteOfChargeStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<ChargeStoneOfferings> offerings = findChargeStoneOfferings(level, center);
@@ -1036,7 +1067,7 @@ public class RitualExecutor {
     /** Rite of Protection Barrier (large) — sustains the broader monster barrier from the medium ritual ring. */
     private static boolean riteOfProtection(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<ItemEntity> glowstone = findNearbyGlowstoneOffering(level, center);
+        Optional<RitualOffering> glowstone = findNearbyRitualOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
         if (glowstone.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.glowstone_support"), false);
@@ -1064,7 +1095,7 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeOfferedItem(glowstone.get());
+        glowstone.get().consumeOne();
         if (relocation.boundWaystone() != null) {
             consumeOfferedItem(relocation.boundWaystone());
         }
@@ -1078,14 +1109,19 @@ public class RitualExecutor {
                                                    ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                                    int radius, int height) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<ItemEntity> supportOffering = switch (type) {
-            case PROTECTION_BARRIER_MONSTERS -> findNearbyRedstoneOffering(level, center);
-            case PROTECTION_BARRIER_PORTABLE -> findNearbyObsidianOffering(level, center);
+        ItemStack trigger = PENDING_RITUAL_INGREDIENT.get();
+        Optional<RitualOffering> supportOffering = switch (type) {
+            case PROTECTION_BARRIER_MONSTERS -> findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
+            case PROTECTION_BARRIER_PORTABLE -> trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                    ? findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack)
+                    : findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
             default -> Optional.empty();
         };
         String supportKey = switch (type) {
             case PROTECTION_BARRIER_MONSTERS -> "witchery.ritual.protection.redstone_support";
-            case PROTECTION_BARRIER_PORTABLE -> "witchery.ritual.protection.obsidian_support";
+            case PROTECTION_BARRIER_PORTABLE -> trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                    ? "witchery.ritual.protection.obsidian_support"
+                    : "witchery.ritual.protection.charged_support";
             default -> null;
         };
         if (supportKey != null && supportOffering.isEmpty()) {
@@ -1128,7 +1164,7 @@ public class RitualExecutor {
             return false;
         }
 
-        supportOffering.ifPresent(RitualExecutor::consumeOfferedItem);
+        supportOffering.ifPresent(RitualOffering::consumeOne);
         if (relocation.boundWaystone() != null) {
             consumeOfferedItem(relocation.boundWaystone());
         }
@@ -1199,12 +1235,20 @@ public class RitualExecutor {
     private static boolean riteOfBanishDemon(Player player, Level level, BlockPos center, boolean portable) {
         final int radius = 9;
         if (!(level instanceof ServerLevel sl)) return false;
+        Optional<BanishDemonOfferings> offerings = findBanishDemonOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.banish_demon.support"), false);
+            return false;
+        }
         if (!portable && !consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.banish_demon.no_power"), false);
             return false;
         }
 
+        offerings.get().blazePowder().consumeOne();
+        offerings.get().waystone().consumeOne();
         level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.4f);
 
         AABB bounds = new AABB(center).inflate(radius);
@@ -1240,7 +1284,7 @@ public class RitualExecutor {
     /** Rite of Sanctity — sustains a repulsive protection circle around the rite. */
     private static boolean riteOfSanctity(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<ItemEntity> redstone = findNearbyRedstoneOffering(level, center);
+        Optional<RitualOffering> redstone = findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
         if (redstone.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
@@ -1256,7 +1300,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        consumeOfferedItem(redstone.get());
+        redstone.get().consumeOne();
         success(player, level, center, "witchery.ritual.sanctity.activated",
                 SoundEvents.BEACON_ACTIVATE, 1.2f, 2, 48);
         return true;
@@ -1265,7 +1309,7 @@ public class RitualExecutor {
     /** Rite of Imprisonment — sustains an attractive circle that keeps creatures penned in. */
     private static boolean riteOfImprisonment(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        Optional<ItemEntity> redstone = findNearbyRedstoneOffering(level, center);
+        Optional<RitualOffering> redstone = findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
         if (redstone.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.redstone_support"), false);
@@ -1281,7 +1325,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        consumeOfferedItem(redstone.get());
+        redstone.get().consumeOne();
         success(player, level, center, "witchery.ritual.imprisonment.activated",
                 SoundEvents.CHAIN_PLACE, 1f, 2, 48);
         return true;
@@ -1811,6 +1855,26 @@ public class RitualExecutor {
 
     private record InventoryConsumption(ServerPlayer player, int slot) {}
 
+    private record RitualOffering(ItemEntity itemEntity, GrassperBlockEntity grassper) {
+        static RitualOffering dropped(ItemEntity itemEntity) {
+            return new RitualOffering(itemEntity, null);
+        }
+
+        static RitualOffering grassper(GrassperBlockEntity grassper) {
+            return new RitualOffering(null, grassper);
+        }
+
+        void consumeOne() {
+            if (itemEntity != null) {
+                consumeOfferedItem(itemEntity);
+                return;
+            }
+            ItemStack stack = grassper.getItem().copy();
+            stack.shrink(1);
+            grassper.setItem(stack);
+        }
+    }
+
     private static final class RitualTransaction {
         private final ServerLevel level;
         private final BlockPos center;
@@ -1818,6 +1882,7 @@ public class RitualExecutor {
         private final int altarPowerCost;
         private final String noPowerMessageKey;
         private final List<ItemEntity> offerings = new ArrayList<>();
+        private final List<RitualOffering> ritualOfferings = new ArrayList<>();
         private final List<InventoryConsumption> inventoryConsumptions = new ArrayList<>();
 
         private RitualTransaction(ServerLevel level, BlockPos center, int altarRadius, int altarPowerCost,
@@ -1836,6 +1901,13 @@ public class RitualExecutor {
             return this;
         }
 
+        private RitualTransaction offer(RitualOffering offering) {
+            if (offering != null) {
+                ritualOfferings.add(offering);
+            }
+            return this;
+        }
+
         private RitualTransaction offerInventory(ServerPlayer player, int slot) {
             inventoryConsumptions.add(new InventoryConsumption(player, slot));
             return this;
@@ -1850,6 +1922,9 @@ public class RitualExecutor {
 
             for (ItemEntity offering : offerings) {
                 consumeOfferedItem(offering);
+            }
+            for (RitualOffering offering : ritualOfferings) {
+                offering.consumeOne();
             }
             for (InventoryConsumption inventoryConsumption : inventoryConsumptions) {
                 consumeInventoryItem(inventoryConsumption.player(), inventoryConsumption.slot());
@@ -1902,14 +1977,7 @@ public class RitualExecutor {
     }
 
     private static AltarBlockEntity findNearbyRitualAltar(Level level, BlockPos center, int radius) {
-        for (BlockPos checkPos : BlockPos.betweenClosed(
-                center.offset(-radius, -radius, -radius),
-                center.offset(radius, radius, radius))) {
-            if (level.getBlockEntity(checkPos) instanceof AltarBlockEntity altar && altar.hasValidStructure()) {
-                return altar;
-            }
-        }
-        return null;
+        return AltarPowerSourceLookup.findClosest(level, center);
     }
 
     private static boolean requireCoven(Player player, Level level, BlockPos center, int requiredSize) {
@@ -1930,7 +1998,9 @@ public class RitualExecutor {
 
         for (int i = rituals.size() - 1; i >= 0; i--) {
             ActiveRitual ritual = rituals.get(i);
-            if (!tickActiveRitual(level, ritual)) {
+            if (tickActiveRitual(level, ritual)) {
+                spawnActiveCenterParticle(level, ritual.center);
+            } else {
                 if (ritual.failedOnStop) {
                     level.playSound(null, ritual.center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
                 }
@@ -1943,6 +2013,13 @@ public class RitualExecutor {
         if (rituals.isEmpty()) {
             ACTIVE_RITUALS.remove(level.dimension());
         }
+    }
+
+    private static void spawnActiveCenterParticle(ServerLevel level, BlockPos center) {
+        double x = center.getX() + 0.4D + level.random.nextDouble() * 0.2D;
+        double y = center.getY() + 1.1D + level.random.nextDouble() * 0.3D;
+        double z = center.getZ() + 0.4D + level.random.nextDouble() * 0.2D;
+        level.sendParticles(DustParticleOptions.REDSTONE, x, y, z, 2, 0.02D, 0.02D, 0.02D, 0.0D);
     }
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2508,6 +2585,52 @@ public class RitualExecutor {
     private static boolean hasActiveRitualAt(ServerLevel level, BlockPos center) {
         List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
         return rituals != null && rituals.stream().anyMatch(active -> active.center.equals(center));
+    }
+
+    public static String describeActiveRitual(Level level, BlockPos center) {
+        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
+        if (rituals == null) {
+            return "active=none";
+        }
+        for (ActiveRitual ritual : rituals) {
+            if (!ritual.center.equals(center)) {
+                continue;
+            }
+            long pulseIn = Math.max(0L, ritual.nextGameTime - level.getGameTime());
+            String effect = ritual.effectCenter.equals(ritual.center)
+                    ? ""
+                    : " effect@" + ritual.effectCenter.toShortString();
+            return "active=" + activeRitualName(ritual.type)
+                    + " sustaining"
+                    + " stage=" + ritual.stage
+                    + " pulseIn=" + pulseIn + "t"
+                    + " upkeep=" + ritual.upkeepCost
+                    + " radius=" + ritual.minRadius
+                    + effect;
+        }
+        return "active=none";
+    }
+
+    private static String activeRitualName(ActiveRitualType type) {
+        return switch (type) {
+            case SANCTITY_CIRCLE -> "Sanctity";
+            case IMPRISONMENT_CIRCLE -> "Imprisonment";
+            case PROTECTION_BARRIER, PROTECTION_BARRIER_MONSTERS, PROTECTION_BARRIER_PORTABLE -> "Barrier";
+            case INFUSION_RECHARGE -> "Infusion Recharge";
+            case WEATHER_CALL_STORM -> "Storm";
+            case ICE_SHELL -> "Ice Shell";
+            case RAIN_OF_TOADS -> "Rain of Toads";
+            case BLINDNESS -> "Blindness";
+            case BLIGHT -> "Blight";
+            case HELL_ON_EARTH -> "Hell on Earth";
+            case CALL_CREATURES -> "Beastial Call";
+            case CLIMATE_CHANGE -> "Climate Change";
+            case NATURES_POWER -> "Nature's Power";
+            case TRANSPOSE_ORES -> "Transpose Ores";
+            case MOVING_EARTH -> "Moving Earth";
+            case RAISE_COLUMN -> "Raise Column";
+            case VOLCANO -> "Volcano";
+        };
     }
 
     private static boolean ensureActiveRitualCenterAvailable(Player player, ServerLevel level, BlockPos center) {
@@ -5076,9 +5199,12 @@ public class RitualExecutor {
 
     // ── Taglock / Waystone helpers ────────────────────────────────────────────
 
-    private record ChargeStoneOfferings(ItemEntity glowstone, ItemEntity redstone, ItemEntity woodAsh, ItemEntity quicklime) {}
+    private record ChargeStoneOfferings(RitualOffering glowstone, RitualOffering redstone,
+                                        RitualOffering woodAsh, RitualOffering quicklime) {}
 
     private record ForestationOfferings(ItemEntity wickerBundle, ItemEntity brewOfSprouting, ItemEntity entTwig) {}
+
+    private record BanishDemonOfferings(RitualOffering blazePowder, RitualOffering waystone) {}
 
     private record CookFoodOfferings(ItemEntity woodAsh, ItemEntity coal) {}
 
@@ -5400,6 +5526,63 @@ public class RitualExecutor {
         return Optional.ofNullable(closest);
     }
 
+    private static Optional<RitualOffering> findNearbyRitualOffering(Level level, BlockPos center,
+                                                                     Predicate<ItemStack> matcher) {
+        Optional<ItemEntity> dropped = findNearbyOffering(level, center, CHARGE_STONE_ITEM_RADIUS, matcher);
+        if (dropped.isPresent()) {
+            return Optional.of(RitualOffering.dropped(dropped.get()));
+        }
+        return findNearbyGrassperOffering(level, center, matcher);
+    }
+
+    private static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, double radius,
+                                                           Predicate<ItemStack> matcher) {
+        Vec3 sourcePoint = new Vec3(center.getX(), center.getY(), center.getZ());
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(sourcePoint, sourcePoint).inflate(radius);
+        ItemEntity closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
+            ItemStack stack = itemEntity.getItem();
+            if (!matcher.test(stack)) {
+                continue;
+            }
+            double distance = itemEntity.position().distanceToSqr(sourcePoint);
+            if (distance > radiusSq || distance > closestDistance) {
+                continue;
+            }
+            closest = itemEntity;
+            closestDistance = distance;
+        }
+        return Optional.ofNullable(closest);
+    }
+
+    private static Optional<RitualOffering> findNearbyGrassperOffering(Level level, BlockPos center,
+                                                                       Predicate<ItemStack> matcher) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        BlockPos grassperLevel = center.above();
+        GrassperBlockEntity closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (int dx = -GRASSPER_OFFERING_RADIUS; dx <= GRASSPER_OFFERING_RADIUS; dx++) {
+            for (int dz = -GRASSPER_OFFERING_RADIUS; dz <= GRASSPER_OFFERING_RADIUS; dz++) {
+                BlockPos pos = grassperLevel.offset(dx, 0, dz);
+                if (!(level.getBlockEntity(pos) instanceof GrassperBlockEntity grassper)) {
+                    continue;
+                }
+                ItemStack stack = grassper.getItem();
+                if (stack.isEmpty() || !matcher.test(stack)) {
+                    continue;
+                }
+                double distance = Vec3.atCenterOf(pos).distanceToSqr(centerPoint);
+                if (distance < closestDistance) {
+                    closest = grassper;
+                    closestDistance = distance;
+                }
+            }
+        }
+        return closest == null ? Optional.empty() : Optional.of(RitualOffering.grassper(closest));
+    }
+
     private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
         return findNearbyOffering(level, center,
                 stack -> bound ? WaystoneItem.isBoundWaystone(stack) : WaystoneItem.isBlankWaystone(stack));
@@ -5453,7 +5636,20 @@ public class RitualExecutor {
     }
 
     private static Optional<ItemEntity> findNearbyObsidianOffering(Level level, BlockPos center) {
-        return findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN));
+        return findNearbyOffering(level, center, RitualExecutor::isObsidianStack);
+    }
+
+    private static boolean isObsidianStack(ItemStack stack) {
+        return stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN);
+    }
+
+    private static Optional<BanishDemonOfferings> findBanishDemonOfferings(Level level, BlockPos center) {
+        Optional<RitualOffering> blazePowder = findNearbyRitualOffering(level, center, stack -> stack.is(Items.BLAZE_POWDER));
+        Optional<RitualOffering> waystone = findNearbyRitualOffering(level, center, WaystoneItem::isBlankWaystone);
+        if (blazePowder.isEmpty() || waystone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BanishDemonOfferings(blazePowder.get(), waystone.get()));
     }
 
     private static Optional<ForestationOfferings> findForestationOfferings(Level level, BlockPos center) {
@@ -6257,10 +6453,10 @@ public class RitualExecutor {
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
-        Optional<ItemEntity> glowstone = findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
-        Optional<ItemEntity> redstone = findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE));
-        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
-        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        Optional<RitualOffering> glowstone = findNearbyRitualOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
+        Optional<RitualOffering> redstone = findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
+        Optional<RitualOffering> woodAsh = findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<RitualOffering> quicklime = findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
         if (glowstone.isEmpty() || redstone.isEmpty() || woodAsh.isEmpty() || quicklime.isEmpty()) {
             return Optional.empty();
         }
@@ -6858,7 +7054,7 @@ public class RitualExecutor {
             double x = center.getX() + 0.5 + radius * Math.cos(angle);
             double z = center.getZ() + 0.5 + radius * Math.sin(angle);
             level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
-                    x, center.getY() + 0.5, z, 1, 0, 0.1, 0, 0.05);
+                    x, center.getY() + 1.1, z, 1, 0, 0.1, 0, 0.05);
         }
     }
 

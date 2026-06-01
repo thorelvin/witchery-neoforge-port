@@ -223,10 +223,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Applied via Rite of Infusion using a Witches Hand.
 
 ## Rite of Banishing
-- **Circle:** Medium
-- **Ingredients:** None specified
+- **Circle:** Small ritual
+- **Ingredients:** Blaze Powder, blank Waystone, and 2000 Altar Power. Portable branch uses a Charged Attuned Stone with Blaze Powder and a blank Waystone instead of altar power.
 - **Effect:** Sends all demons inside the circle back to their summoning point.
-- **Notes:** Requires 2000 Altar power.
+- **Notes:** Activate by right-clicking the golden center glyph. Source recipe uses Blaze Powder and a blank Waystone; a lone Attuned Stone is not enough.
 
 ## Rite of Beastial Call
 - **Circle:** Large (15x15)
@@ -259,10 +259,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No specific timing or power cost mentioned. Does not have restrictions for vampires or werewolves.
 
 ## Rite of Charging
-- **Circle:** Large
-- **Ingredients:** None specified
-- **Effect:** Charges an item or player with Altar power, allowing certain spells to be cast without needing an Altar present.
-- **Notes:** Attuned stones require 2000 Altar power, while players require 4000 Altar power. Does not have restrictions for vampires or werewolves.
+- **Circle:** Small ritual + Medium ritual
+- **Ingredients:** Attuned Stone, Glowstone Dust, Redstone, Wood Ash, Quicklime, and 2000 Altar Power.
+- **Effect:** Charges an Attuned Stone into a Charged Attuned Stone, allowing certain spells to be cast without an altar present.
+- **Notes:** Activate by right-clicking the golden center glyph. The support items may be dropped near the center or held in Grasspers. Extra larger rings do not invalidate the rite if the required small and medium ritual rings are present.
 
 ## Rite of Earth's Wrath
 - **Circle:** Large
@@ -289,16 +289,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires 2 additional coven witches for the base spell. More witches increase the size of the icy expansion. Does not have restrictions for vampires or werewolves.
 
 ## Rite of Imprisonment
-- **Circle:** None specified
-- **Ingredients:** Not provided in the text
-- **Effect:** Not detailed in the provided text.
-- **Notes:** No specific timing, power cost, or restrictions mentioned.
-
-## Rite of Imprisonment
-- **Circle:** Medium
-- **Ingredients:** None specified
+- **Circle:** Small ritual
+- **Ingredients:** Slimeball, Redstone, and 500 Altar Power.
 - **Effect:** Prevents hostile mobs from leaving the spell circle.
-- **Notes:** Similar to the Rite of Sanctity.
+- **Notes:** Sustained rite. Consumes ongoing altar power equivalent to 16 power per second. Redstone support may be dropped or held in a Grassper.
 
 ## Rite of Infusion
 - **Circle:** Large
@@ -337,10 +331,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No altar power required.
 
 ## Rite of Protection
-- **Circle:** Medium (7x7)
-- **Ingredients:** Altar Power: 500 (+24/sec) for a medium circle; Altar Power: 1000 (+28/sec) for a large circle.
-- **Effect:** Converts altar power into a force field surrounding the ritual chalk.
-- **Notes:** No specific ingredients mentioned.
+- **Circle:** Small ritual for the basic barrier, Small ritual for the portable barrier, Medium ritual for the larger barrier.
+- **Ingredients:** Small barrier: Obsidian, Redstone, and 500 Altar Power. Portable barrier: Obsidian and a Charged Attuned Stone. Medium barrier: Obsidian, Glowstone Dust, and 1000 Altar Power.
+- **Effect:** Converts altar power, or a charged stone for the portable branch, into a force field surrounding the ritual chalk.
+- **Notes:** Basic and medium barriers are sustained rites. The small barrier blocks arrows and other non-player entities but lets players pass through. The medium and portable barriers use the player-blocking variant. Optional bound Waystone relocation is source-supported for the powered barrier branches.
 
 ## Rite of Remove Curse
 - **Circle:** Medium (7x7)
@@ -349,10 +343,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Taglock Kits must be bound to the player. Low-level witches may worsen the curse instead.
 
 ## Rite of Sanctity
-- **Circle:** Medium (7x7)
-- **Ingredients:** Altar Power: 500 (+16/second).
+- **Circle:** Small ritual
+- **Ingredients:** Feather, Redstone, and 500 Altar Power.
 - **Effect:** Prevents hostile mobs from entering the spell circle.
-- **Notes:** No specific ingredients mentioned.
+- **Notes:** Sustained rite. Consumes ongoing altar power equivalent to 16 power per second. Redstone support may be dropped or held in a Grassper.
 
 ## Rite of Shifting Seasons
 - **Circle:** Large (15x15)

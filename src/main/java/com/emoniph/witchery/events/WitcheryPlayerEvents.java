@@ -14,6 +14,7 @@ import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.entity.WitchHunterEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
@@ -200,6 +201,12 @@ public class WitcheryPlayerEvents {
 
     @SubscribeEvent
     public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
+        if (event.getEntity() instanceof IronGolem
+                && event.getNewAboutToBeSetTarget() instanceof VillageGuardEntity) {
+            event.setNewAboutToBeSetTarget(null);
+            return;
+        }
+
         if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
 
         if (event.getEntity() instanceof Creeper

@@ -1,5 +1,5 @@
 {
   "render_type": "minecraft:cutout",
-  "parent": "minecraft:block/carpet",
+  "parent": "witchery:block/circle_mark",
   "textures": { "wool": "witchery:block/circleglyph3.12" }
 }

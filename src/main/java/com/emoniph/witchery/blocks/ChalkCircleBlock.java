@@ -1,9 +1,13 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +29,7 @@ public class ChalkCircleBlock extends Block {
     public static final int GLYPH_VARIANTS = 12;
     public static final IntegerProperty GLYPH = IntegerProperty.create("glyph", 0, GLYPH_VARIANTS - 1);
 
-    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
+    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 0.25, 16.0);
 
     public ChalkCircleBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -52,6 +56,22 @@ public class ChalkCircleBlock extends Block {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (state.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())) {
+            spawnAmbientGlyphParticle(level, pos, random, ParticleTypes.PORTAL);
+        } else if (state.is(WitcheryBlocks.CIRCLE_INFERNAL.get())) {
+            spawnAmbientGlyphParticle(level, pos, random, ParticleTypes.FLAME);
+        }
+    }
+
+    private static void spawnAmbientGlyphParticle(Level level, BlockPos pos, RandomSource random, ParticleOptions particle) {
+        double x = pos.getX() + 0.4D + random.nextDouble() * 0.2D;
+        double y = pos.getY() + 0.1D + random.nextDouble() * 0.3D;
+        double z = pos.getZ() + 0.4D + random.nextDouble() * 0.2D;
+        level.addParticle(particle, x, y, z, 0.0D, 0.0D, 0.0D);
     }
 
     @Override
