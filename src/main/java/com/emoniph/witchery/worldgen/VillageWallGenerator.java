@@ -4,12 +4,14 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayDeque;
@@ -270,6 +273,7 @@ public final class VillageWallGenerator {
         BlockState wallBlock   = wallMaterial(level, cx, cz);
         BlockState brickBlock  = brickMaterial(level, cx, cz);
         BlockState merlonBlock = merlonMaterial(level, cx, cz);
+        BlockState stairBlock  = stairMaterial(level, cx, cz);
 
         // 7b. Detect gates as independent definitions (built after the wall, overriding it).
         //     No GATE cells are marked in the grid — the wall ring is solid and each gatehouse
@@ -340,7 +344,8 @@ public final class VillageWallGenerator {
                 if (z > 0   && grid[x][z-1] == WALL && heights[x][z-1] > 0) floorTo = Math.min(floorTo, heights[x][z-1]);
                 if (z < d-1 && grid[x][z+1] == WALL && heights[x][z+1] > 0) floorTo = Math.min(floorTo, heights[x][z+1]);
 
-                placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, floorTo, grid, x, z, w, d);
+                placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, stairBlock,
+                        floorTo, grid, x, z, w, d);
                 if (++guardCounter >= GUARD_SPACING) {
                     spawnGuard(level, wx, wz, sy);
                     guardCounter = 0;
@@ -691,7 +696,7 @@ public final class VillageWallGenerator {
      * so the wall stays connected across steps over cliffs; stone fills the foundation below.
      */
     private static void placeWallColumn(ServerLevel level, int wx, int sy, int wz,
-                                         BlockState wall, BlockState brick, BlockState merlon,
+                                         BlockState wall, BlockState brick, BlockState merlon, BlockState stair,
                                          int floorTo, byte[][] grid, int gx, int gz, int w, int d) {
         boolean corner = isCorner(grid, gx, gz, w, d);
         int extra = corner ? 2 : 0;
@@ -714,10 +719,67 @@ public final class VillageWallGenerator {
             if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
+        placeRampartDetails(level, wx, top, wz, brick, merlon, stair, grid, gx, gz, w, d);
+
         // Extend the curtain down to the lowest neighbour so cliff steps stay connected
         // (stone wherever submerged, via placeWallMat).
         for (int y = sy - 1; y >= floorTo; y--) placeWallMat(level, wx, y, wz, wall);
         fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, brick);
+    }
+
+    /**
+     * Witchery Walls' old curtain used block lips and stair caps on exposed top faces.
+     * Keep the same visual language without widening the whole wall shaft: outer faces
+     * get a stair-capped rampart lip, while the village side gets a narrow wall-walk ledge.
+     */
+    private static void placeRampartDetails(ServerLevel level, int wx, int top, int wz,
+                                             BlockState brick, BlockState merlon, BlockState stair,
+                                             byte[][] grid, int gx, int gz, int w, int d) {
+        boolean northOutside = isGridCell(grid, gx, gz - 1, w, d, EMPTY);
+        boolean southOutside = isGridCell(grid, gx, gz + 1, w, d, EMPTY);
+        boolean eastOutside = isGridCell(grid, gx + 1, gz, w, d, EMPTY);
+        boolean westOutside = isGridCell(grid, gx - 1, gz, w, d, EMPTY);
+
+        if (northOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
+        if (southOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
+        if (eastOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
+        if (westOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
+
+        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR)) setBlock(level, wx, top - 1, wz - 1, brick);
+        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR)) setBlock(level, wx, top - 1, wz + 1, brick);
+        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR)) setBlock(level, wx + 1, top - 1, wz, brick);
+        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR)) setBlock(level, wx - 1, top - 1, wz, brick);
+
+        placeCornerRampart(level, wx, top, wz, brick, merlon, northOutside, eastOutside, 1, -1);
+        placeCornerRampart(level, wx, top, wz, brick, merlon, northOutside, westOutside, -1, -1);
+        placeCornerRampart(level, wx, top, wz, brick, merlon, southOutside, eastOutside, 1, 1);
+        placeCornerRampart(level, wx, top, wz, brick, merlon, southOutside, westOutside, -1, 1);
+    }
+
+    private static void placeRampartFace(ServerLevel level, int wx, int top, int wz,
+                                          BlockState brick, BlockState stair, Direction outward) {
+        int dx = outward.getStepX();
+        int dz = outward.getStepZ();
+        setBlock(level, wx + dx, top - 1, wz + dz, brick);
+        setBlock(level, wx + dx, top, wz + dz, stairFor(stair, outward));
+    }
+
+    private static void placeCornerRampart(ServerLevel level, int wx, int top, int wz,
+                                            BlockState brick, BlockState merlon,
+                                            boolean firstOutside, boolean secondOutside,
+                                            int dx, int dz) {
+        if (!firstOutside || !secondOutside) return;
+        setBlock(level, wx + dx, top - 1, wz + dz, brick);
+        if (Math.floorMod(wx + wz, 2) == 0) setBlock(level, wx + dx, top, wz + dz, merlon);
+    }
+
+    private static boolean isGridCell(byte[][] grid, int x, int z, int w, int d, byte value) {
+        return insideGrid(x, z, w, d) && grid[x][z] == value;
+    }
+
+    private static BlockState stairFor(BlockState base, Direction facing) {
+        return base.setValue(StairBlock.FACING, facing)
+                .setValue(StairBlock.HALF, Half.BOTTOM);
     }
 
     /** True when this wall cell sits at a 90° bend (has wall in both N/S and E/W axes). */
@@ -875,6 +937,13 @@ public final class VillageWallGenerator {
         if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE_WALL.defaultBlockState();
         return Blocks.STONE_BRICK_WALL.defaultBlockState();
+    }
+
+    /** Stair caps used for the Witchery Walls-style rampart lips. */
+    private static BlockState stairMaterial(ServerLevel level, int x, int z) {
+        if (usesSandstoneVillageMaterials(level, x, z))
+            return Blocks.SANDSTONE_STAIRS.defaultBlockState();
+        return Blocks.STONE_BRICK_STAIRS.defaultBlockState();
     }
 
     // ── Block helpers ──────────────────────────────────────────────────────────
