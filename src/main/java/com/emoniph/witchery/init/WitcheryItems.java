@@ -551,6 +551,10 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BONE_BOLT           = ITEMS.registerSimpleItem("bone_bolt");
     public static final DeferredItem<Item> NULLIFYING_BOLT     = ITEMS.registerSimpleItem("nullifying_bolt");
     public static final DeferredItem<Item> SPLITTING_BOLT      = ITEMS.registerSimpleItem("splitting_bolt");
+    public static final DeferredItem<Item> BOLT_STAKE          = ITEMS.registerSimpleItem("bolt_stake");
+    public static final DeferredItem<Item> BOLT_ANTI_MAGIC     = ITEMS.registerSimpleItem("bolt_anti_magic");
+    public static final DeferredItem<Item> BOLT_HOLY           = ITEMS.registerSimpleItem("bolt_holy");
+    public static final DeferredItem<Item> BOLT_SPLITTING      = ITEMS.registerSimpleItem("bolt_splitting");
     public static final DeferredItem<Item> STAKE               = ITEMS.register("stake", id -> new com.emoniph.witchery.item.StakeItem(itemProps(id)));
     public static final DeferredItem<BlockItem> SILVER_VAT     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SILVER_VAT);
     public static final DeferredItem<Item> HUNTER_HELMET_SILVERED     = ITEMS.register("hunter_helmet_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.SILVERED));
@@ -670,10 +674,6 @@ public class WitcheryItems {
             "book_biomes",
             "book_wands",
             "book_burning",
-            "bolt_stake",
-            "bolt_anti_magic",
-            "bolt_holy",
-            "bolt_splitting",
             "brew_of_soul_hunger",
             "brew_of_soul_anguish",
             "brew_of_soul_fear",

@@ -229,10 +229,8 @@ public class HandBowItem extends Item {
     }
 
     private static boolean hasBolt(Player player, int boltId) {
-        Item item = itemForBoltId(boltId);
-        if (item == null) return false;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            if (player.getInventory().getItem(i).is(item)) {
+            if (isBoltStack(player.getInventory().getItem(i), boltId)) {
                 return true;
             }
         }
@@ -240,11 +238,9 @@ public class HandBowItem extends Item {
     }
 
     private static boolean consumeBolt(Player player, int boltId) {
-        Item item = itemForBoltId(boltId);
-        if (item == null) return false;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack inventoryStack = player.getInventory().getItem(i);
-            if (inventoryStack.is(item)) {
+            if (isBoltStack(inventoryStack, boltId)) {
                 inventoryStack.shrink(1);
                 return true;
             }
@@ -253,7 +249,7 @@ public class HandBowItem extends Item {
     }
 
     private static void returnLoadedBolt(Player player, int boltId) {
-        Item item = itemForBoltId(boltId);
+        Item item = primaryItemForBoltId(boltId);
         if (item == null) return;
 
         ItemStack returnedBolt = new ItemStack(item);
@@ -313,7 +309,7 @@ public class HandBowItem extends Item {
         };
     }
 
-    private static Item itemForBoltId(int boltId) {
+    private static Item primaryItemForBoltId(int boltId) {
         return switch (boltId) {
             case BOLT_STAKE -> WitcheryItems.WOODEN_BOLT.get();
             case BOLT_NULLIFYING -> WitcheryItems.NULLIFYING_BOLT.get();
@@ -321,6 +317,21 @@ public class HandBowItem extends Item {
             case BOLT_SPLITTING -> WitcheryItems.SPLITTING_BOLT.get();
             case BOLT_SILVER -> WitcheryItems.SILVER_BOLT.get();
             default -> null;
+        };
+    }
+
+    private static boolean isBoltStack(ItemStack stack, int boltId) {
+        return switch (boltId) {
+            case BOLT_STAKE -> stack.is(WitcheryItems.WOODEN_BOLT.get())
+                    || stack.is(WitcheryItems.BOLT_STAKE.get());
+            case BOLT_NULLIFYING -> stack.is(WitcheryItems.NULLIFYING_BOLT.get())
+                    || stack.is(WitcheryItems.BOLT_ANTI_MAGIC.get());
+            case BOLT_BONE -> stack.is(WitcheryItems.BONE_BOLT.get())
+                    || stack.is(WitcheryItems.BOLT_HOLY.get());
+            case BOLT_SPLITTING -> stack.is(WitcheryItems.SPLITTING_BOLT.get())
+                    || stack.is(WitcheryItems.BOLT_SPLITTING.get());
+            case BOLT_SILVER -> stack.is(WitcheryItems.SILVER_BOLT.get());
+            default -> false;
         };
     }
 

@@ -287,10 +287,14 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.HUNTSMAN_SPEAR.get(),
                 WitcheryItems.HUNTSMANS_SPEAR.get(),
                 WitcheryItems.WOODEN_BOLT.get(),
+                WitcheryItems.BOLT_STAKE.get(),
                 WitcheryItems.SILVER_BOLT.get(),
                 WitcheryItems.BONE_BOLT.get(),
+                WitcheryItems.BOLT_HOLY.get(),
                 WitcheryItems.NULLIFYING_BOLT.get(),
+                WitcheryItems.BOLT_ANTI_MAGIC.get(),
                 WitcheryItems.SPLITTING_BOLT.get(),
+                WitcheryItems.BOLT_SPLITTING.get(),
                 WitcheryItems.CANE_SWORD.get(),
                 WitcheryItems.WITCHES_HAT.get(),
                 WitcheryItems.WITCHES_ROBE.get(),
@@ -381,7 +385,6 @@ public class WitcheryCreativeTabs {
                 "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
                 "herbology_book", "biomes_book");
         addLegacy(output, accepted,
-                "bolt_stake", "bolt_anti_magic", "bolt_holy", "bolt_splitting",
                 "charged_crossbow", "duplication_grenade", "staff_of_duplication",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
                 "crossbow_pistol", "deployed_deaths_hand");

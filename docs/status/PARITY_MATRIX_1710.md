@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 270 functional + 116 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 274 functional + 112 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
