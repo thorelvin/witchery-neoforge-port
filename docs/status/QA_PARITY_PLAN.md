@@ -19,6 +19,8 @@ Debug logging note (2026-05-31): `config/witchery-common.toml` defaults `debug =
 
 Food item QA note (2026-06-01): `witchery:sheep_liver` and `witchery:cooked_sheep_liver` now represent the original Witchery mutton pair under Resurrected IDs. Verify transformed werewolf players and Wolfmen get the adult-sheep drop path, Sheep Liver smelts to Cooked Sheep Liver, both food values feel correct, and Sheep Liver works as the source mutton input in Raw Meaty Stew.
 
+Food item QA note (2026-06-01): `witchery:odd_porkchop_raw` / `witchery:odd_porkchop` should both behave as raw Odd Porkchop with 3 hunger / 0.3 saturation, while `witchery:odd_porkchop_cooked` / `witchery:cooked_odd_porkchop` should both behave as cooked Odd Porkchop with 8 hunger / 0.8 saturation. Verify the canonical raw item still crafts from Rotten Flesh + Mutandis, smelts to the canonical cooked item, and the safe Mutandis conversions around raw/cooked odd porkchops still return vanilla porkchops.
+
 Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
 
 Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.

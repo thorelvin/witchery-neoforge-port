@@ -657,7 +657,13 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ODD_PORKCHOP_RAW = ITEMS.register("odd_porkchop_raw",
             id -> new Item(itemProps(id)
                     .food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final DeferredItem<Item> ODD_PORKCHOP = ITEMS.register("odd_porkchop",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredItem<Item> ODD_PORKCHOP_COOKED = ITEMS.register("odd_porkchop_cooked",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
+    public static final DeferredItem<Item> COOKED_ODD_PORKCHOP = ITEMS.register("cooked_odd_porkchop",
             id -> new Item(itemProps(id)
                     .food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
     public static final DeferredItem<Item> SHEEP_LIVER = ITEMS.register("sheep_liver",
@@ -768,8 +774,6 @@ public class WitcheryItems {
             "dawn_hunter_leggings",
             "dawn_hunter_boots",
             "gulgs_grudle",
-            "odd_porkchop",
-            "cooked_odd_porkchop",
             "fanciful_thinking_charm",
             "pentacle",
             "golden_heart"

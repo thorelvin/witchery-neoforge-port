@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 277 functional + 109 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 279 functional + 107 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -69,7 +69,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water` and the Resurrected `witchery:endless_water_brew` alias; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
 | stew (cooked/raw) | ✅ Done | `witchery:meaty_stew` / `witchery:raw_meaty_stew` now use source `ItemStew` food values, bowl return, original sprites, raw stew crafting, and smelting |
 | universal_antidote | ✅ Done | Source `ItemVanillaPotion.potionAntidote` restored as a four-stack drinkable item that removes Poison and Wither, returns a Glass Bottle, and crafts two from Null Catalyst plus two Poison potions |
-| odd_porkchop_raw / odd_porkchop_cooked | ✅ Done | Source `ItemGeneral.Edible` values restored: raw 3 hunger / 0.3 saturation, cooked 8 hunger / 0.8 saturation, plus safe Mutandis conversions and raw-to-cooked smelting. Resurrected alias IDs remain placeholders pending alias policy |
+| odd_porkchop_raw / odd_porkchop_cooked | ✅ Done | Source `ItemGeneral.Edible` values restored: raw 3 hunger / 0.3 saturation, cooked 8 hunger / 0.8 saturation, plus safe Mutandis conversions and raw-to-cooked smelting. Resurrected aliases `odd_porkchop` and `cooked_odd_porkchop` now share the same food values |
 | sheep_liver / cooked_sheep_liver | ✅ Done | Source Witchery `muttonraw` / `muttoncooked` pair is restored under the Resurrected IDs with 2 hunger / 0.2 saturation and 6 hunger / 0.8 saturation, smelting, Raw Meaty Stew use, and transformed-werewolf sheep drops |
 | polynesia_charm | 🔶 Partial | Source `ItemPolynesiaCharm(false)` shell is live with 50 durability, uncommon rarity, source tooltip, and the old shaped recipe. Remaining: original animal-merchant interaction/trade stock behavior. |
 | devils_tongue_charm | 🔶 Partial | Source `ItemPolynesiaCharm(true)` variant is live with 50 durability, uncommon rarity, source-shaped upgrade recipe, and held Demon protection from targeting/melee/fireballs with the old 5% failure chance. Remaining: exact old demon merchant price/trade behavior and broader imp/demon edge cases. |

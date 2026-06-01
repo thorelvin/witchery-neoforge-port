@@ -242,6 +242,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.UNIVERSAL_ANTIDOTE.get(),
                 WitcheryItems.ODD_PORKCHOP_RAW.get(),
                 WitcheryItems.ODD_PORKCHOP_COOKED.get(),
+                WitcheryItems.ODD_PORKCHOP.get(),
+                WitcheryItems.COOKED_ODD_PORKCHOP.get(),
                 WitcheryItems.SHEEP_LIVER.get(),
                 WitcheryItems.COOKED_SHEEP_LIVER.get(),
                 WitcheryItems.SPECTRAL_STONE.get(),
@@ -375,7 +377,6 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "odd_porkchop", "cooked_odd_porkchop",
                 "silver_dust", "biome_note",
                 "fanciful_thinking_charm", "pentacle", "golden_heart");
         addLegacy(output, accepted,
