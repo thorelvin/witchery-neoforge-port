@@ -6,15 +6,15 @@ This project is focused on restoring the feel and mechanics of original Witchery
 
 ## Current State
 
-The port is playable and well beyond prototype stage, but it is still an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase.
+The port is playable and well beyond prototype stage, but it is still an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused heavily on village generation stability, exact ID promotion, and closing visible parity gaps from the old mod.
 
 High-level estimate:
 
-- Mechanical porting: roughly `70-75%`
-- Release-ready parity/polish: roughly `55-65%`
+- Mechanical porting: roughly `80-85%`
+- Release-ready parity/polish: roughly `60-70%`
 - Best source of truth: [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md)
 
-The long tail is mostly old Witchery edge cases, in-game QA, final visuals, and family-by-family promotion of legacy placeholder items.
+The long tail is mostly old Witchery edge cases, in-game QA, final visuals, custom brew parity, and family-by-family promotion of remaining legacy placeholder items.
 
 ## Feature Highlights
 
@@ -29,18 +29,21 @@ Substantial restored or in-progress systems include:
 - Mirror World work with mirror portal blocks, room generation, reflection guardian flow, and fresh-world/dimension-folder QA caveats.
 - Many mobs and renderers restored or polished toward old Witchery visuals, including ravens, spirits, nightmares, flying monkeys, imps, Ents, Mandrakes, Banshees, Poltergeists, and others.
 - Witches' Primer guidebook coverage for major restored progression paths.
+- Vanilla villages now receive Witchery village buildings and adaptive town walls: apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA.
+- A large exact-ID cleanup pass has promoted many Resurrected/source aliases out of placeholder status, including guidebooks, hunter gear, brews, contracts, waystones, special wearables, utility tools, and several old food/ingredient items.
+- Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are now restored or partially restored with current QA notes in the status docs.
 - JEI and Patchouli are declared optional; dependency wiring may lag current Minecraft/NeoForge availability.
 
 ## Not Done Yet
 
 Important remaining work includes:
 
-- `195` legacy placeholder items are still intentionally inert TODO markers, even though their IDs/models are now visible and tracked.
+- Some legacy placeholder items are still intentionally inert TODO markers, even though their IDs/models are visible and tracked.
 - Some systems marked "Done" in status docs are implementation slices rather than full old-Witchery parity, especially transformations, machines, custom brews, Torment/Mirror World fresh-dimension checks, and armor/equipment feel.
 - Custom Brew parity is still an evolving area: Foulness/Foaming/Poison tier scaling exists, but original dynamic cauldron action composition, generic brew containers, and moving brew dispersals remain open.
 - The latest parity-scan backlog is merged into [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md), with status corrections reflected in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs careful QA around room generation, reflection behavior, stale generated chunks, and player-skin/equipment behavior.
-- Village additions such as bookshops, guards, and walls remain deferred.
+- Village additions are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
 - Ritual execution is powerful but still carries old-queue/refund/edge-case parity risk.
 - Public-release cleanup remains: licensing clarity, asset audit/replacement direction, packaging, balance passes, and broad multiplayer/server QA.
 
@@ -87,7 +90,10 @@ Useful dev runs:
 The mod includes a growing `/witchery` debug command suite. Useful current helpers include:
 
 - `/witchery setup stations` - builds a stocked Rowan QA hut with core machines, altar, traders, chest supplies, kettle setup, Glowglobes, and test layout.
+- `/witchery setup rite` - builds a ritual QA pad with white, golden, otherwhere, and infernal circle sets.
 - `/witchery verify torment` - audits the restored Torment maze footprint and atmosphere server-side.
+- `/witchery goto <structure>` - teleports to Witchery structures and vanilla village variants, with safer ticked village locate/prep behavior for village targets.
+- `/witchery walls` and `/witchery walls reset` - generate or reset adaptive village walls around the nearest loaded village start.
 - `/witchery spawn <entity>` - spawns registered Witchery entities for model/behavior QA.
 - `/witchery spawn wickerman` - places a summon-valid bloodied Wicker Man structure for Horned Huntsman testing.
 - `/witchery ritual hitchcock [count]` - releases a raven flock without consuming a brew.
