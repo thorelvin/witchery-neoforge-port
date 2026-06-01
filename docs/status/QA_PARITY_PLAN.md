@@ -19,6 +19,8 @@ Debug logging note (2026-05-31): `config/witchery-common.toml` defaults `debug =
 
 Food item QA note (2026-06-01): `witchery:sheep_liver` and `witchery:cooked_sheep_liver` now represent the original Witchery mutton pair under Resurrected IDs. Verify transformed werewolf players and Wolfmen get the adult-sheep drop path, Sheep Liver smelts to Cooked Sheep Liver, both food values feel correct, and Sheep Liver works as the source mutton input in Raw Meaty Stew.
 
+Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

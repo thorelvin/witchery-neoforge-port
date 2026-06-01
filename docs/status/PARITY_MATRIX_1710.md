@@ -64,6 +64,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | cauldron_book | ❌ Missing | Source: `ItemMarkupBook(7)` — in-game cauldron guide |
 | vampire_book | ❌ Missing | Source: `ItemMarkupBook(7, [0,9])` — vampire progression book with level callbacks |
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
+| nullified_leather | ✅ Done | Source shaped recipe restored: eight Leather around one Null Catalyst produces three Nullified Leather for Hunter outfit crafting |
 | brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
 | stew (cooked/raw) | ✅ Done | `witchery:meaty_stew` / `witchery:raw_meaty_stew` now use source `ItemStew` food values, bowl return, original sprites, raw stew crafting, and smelting |
 | universal_antidote | ✅ Done | Source `ItemVanillaPotion.potionAntidote` restored as a four-stack drinkable item that removes Poison and Wither, returns a Glass Bottle, and crafts two from Null Catalyst plus two Poison potions |

@@ -499,6 +499,7 @@ public class WitcheryItems {
     public static final DeferredItem<com.emoniph.witchery.item.MutandisItem> MUTANDIS_EXTREMIS =
             ITEMS.register("mutandis_extremis", id -> new com.emoniph.witchery.item.MutandisItem(true, itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> NULL_CATALYST      = ITEMS.registerSimpleItem("null_catalyst");
+    public static final DeferredItem<Item> NULLIFIED_LEATHER  = ITEMS.registerSimpleItem("nullified_leather");
     public static final DeferredItem<Item> ODOUR_OF_PURITY    = ITEMS.registerSimpleItem("odour_of_purity");
     public static final DeferredItem<Item> OIL_OF_VITRIOL     = ITEMS.registerSimpleItem("oil_of_vitriol");
     public static final DeferredItem<Item> OWLETS_WING        = ITEMS.registerSimpleItem("owlets_wing");
@@ -668,7 +669,6 @@ public class WitcheryItems {
             "book_biomes",
             "book_wands",
             "book_burning",
-            "nullified_leather",
             "bolt_stake",
             "bolt_anti_magic",
             "bolt_holy",
