@@ -1,0 +1,21 @@
+﻿{
+    "type":  "minecraft:crafting_shaped",
+    "pattern":  [
+                    "###",
+                    "#R#",
+                    "###"
+                ],
+    "key":  {
+                "#":  "minecraft:light_blue_stained_glass",
+                "R":  "minecraft:redstone"
+            },
+    "result":  {
+                   "id":  "witchery:shaded_glass",
+                   "count":  8,
+                   "components":  {
+                                      "minecraft:block_state":  {
+                                                                    "color":  "light_blue"
+                                                                }
+                                  }
+               }
+}

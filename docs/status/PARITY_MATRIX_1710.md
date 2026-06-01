@@ -152,7 +152,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | dream_catcher | ✅ Done | |
 | circle / circle_glyph / circle_otherwhere / circle_infernal | ✅ Done | Thin glyph block path restored; ritual/otherwhere/infernal glyphs now carry the source-style 12-way visual metadata/state and same-chalk use rerolls the visible symbol |
 | blood_crucible | 🔶 Partial | Block/BE/render, vampire fill path, source recipe, and level-10 ultimate selection are live; broader Blood Power/late vampire gates remain under Vampirism |
-| shaded_glass (off/on) | ❌ Missing | Source: `BlockShadedGlass` — light-blocking glass with switch state |
+| shaded_glass (off/on) | 🔶 Partial | Source `BlockShadedGlass` restored as `witchery:shaded_glass` with 16 color states, old off/on textures, redstone-powered light blocking, no normal drops, creative color stacks, and stained-glass + Redstone recipes. Modern port uses a `powered` blockstate instead of the old hidden active block ID; needs in-game redstone/light QA. |
 | decurse_teleport | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaTeleportPullProtect) — area curse protection |
 | decurse_directed | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaCurseProtect) |
 
@@ -205,7 +205,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | stockade (wood) | 🔶 Partial | `witchery:stockade` restores a first-pass source `BlockStockade(false)` slice with low stockade collision, 25/20 toughness, cactus contact damage, self/Iron Bars/Ice Gate connections, oak-log models, self loot, and the old logs + `Exhale of the Horned One` shaped recipe for 9. Direct Brew of Frost / `brew_of_ice` use on a wooden stockade now converts that block into `witchery:ice_stockade` as part of the first practical single-click Ice World conversion slice. Remaining: per-wood metadata variants and the full old radius/custom-brew Ice World action. |
 | stockade_ice | ✅ Done | Live under Perpetual Ice & Snow Family as `witchery:ice_stockade`; old source produced it through stockade freezing/brew conversion rather than direct crafting |
 | blooded_wool | ⚠️ Wrong | Port has `blood_stained_wool`; verify ID matches original |
-| shaded_glass | ❌ Missing | See 2c above |
+| shaded_glass | 🔶 Partial | See 2c above; block/item/assets/recipes are live, with in-game redstone/light QA still pending |
 | pit_dirt / pit_grass | 🔶 Partial | `witchery:pit_dirt` and `witchery:pit_grass` are now real no-collision camouflage blocks with vanilla dirt/grass visuals, source hardness/sound feel, self loot, creative-tab wiring, and old display names. The old Tormented Twine heated Witch's Cauldron route is restored in practical source form: Dirt + Mandrake Root -> four Pit Dirt, or Dirt + Wheat Seeds + Dandelion -> four Pit Grass, triggered by Tormented Twine with 4000 nearby altar power. Remaining: in-game trap/Torment QA. |
 | infinity_egg | ❌ Missing | Source: `BlockInfinityEgg` — dragon egg variant |
 | disease (block) | ❌ Missing | Source: `BlockDisease` — flowing disease block |

@@ -112,6 +112,15 @@ public class WitcheryBlocks {
                     .isRedstoneConductor(NEVER)
                     .isSuffocating(NEVER)
                     .isViewBlocking(NEVER));
+    public static final DeferredBlock<ShadedGlassBlock> SHADED_GLASS = registerBlock("shaded_glass",
+            props -> new ShadedGlassBlock(props.mapColor(state -> state.getValue(ShadedGlassBlock.COLOR).getMapColor())
+                    .sound(SoundType.GLASS)
+                    .strength(0.3F)
+                    .noOcclusion()
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER)),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<WitcheryWoodStairBlock> ROWAN_STAIRS = registerBlock("rowan_stairs",
             props -> new WitcheryWoodStairBlock(ROWAN_PLANKS.get().defaultBlockState(),
                     props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),

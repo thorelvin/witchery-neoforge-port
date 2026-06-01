@@ -2,10 +2,12 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.ChaliceBlock;
+import com.emoniph.witchery.blocks.ShadedGlassBlock;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ItemLike;
@@ -152,7 +154,11 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BLOODIED_WICKER_BUNDLE.get(),
                 WitcheryItems.BLOOD_STAINED_WOOL.get(),
                 WitcheryItems.PIT_DIRT.get(),
-                WitcheryItems.PIT_GRASS.get(),
+                WitcheryItems.PIT_GRASS.get());
+        for (DyeColor color : DyeColor.values()) {
+            output.accept(ShadedGlassBlock.stackForColor(color));
+        }
+        add(output,
                 WitcheryItems.CRITTER_SNARE.get(),
                 WitcheryItems.BEARTRAP.get(),
                 WitcheryItems.WOLFTRAP.get(),

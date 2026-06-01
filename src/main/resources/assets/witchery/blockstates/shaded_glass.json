@@ -1,0 +1,100 @@
+﻿{
+    "variants":  {
+                     "color=white,powered=false":  {
+                                                       "model":  "witchery:block/shaded_glass_off_white"
+                                                   },
+                     "color=white,powered=true":  {
+                                                      "model":  "witchery:block/shaded_glass_on_white"
+                                                  },
+                     "color=orange,powered=false":  {
+                                                        "model":  "witchery:block/shaded_glass_off_orange"
+                                                    },
+                     "color=orange,powered=true":  {
+                                                       "model":  "witchery:block/shaded_glass_on_orange"
+                                                   },
+                     "color=magenta,powered=false":  {
+                                                         "model":  "witchery:block/shaded_glass_off_magenta"
+                                                     },
+                     "color=magenta,powered=true":  {
+                                                        "model":  "witchery:block/shaded_glass_on_magenta"
+                                                    },
+                     "color=light_blue,powered=false":  {
+                                                            "model":  "witchery:block/shaded_glass_off_light_blue"
+                                                        },
+                     "color=light_blue,powered=true":  {
+                                                           "model":  "witchery:block/shaded_glass_on_light_blue"
+                                                       },
+                     "color=yellow,powered=false":  {
+                                                        "model":  "witchery:block/shaded_glass_off_yellow"
+                                                    },
+                     "color=yellow,powered=true":  {
+                                                       "model":  "witchery:block/shaded_glass_on_yellow"
+                                                   },
+                     "color=lime,powered=false":  {
+                                                      "model":  "witchery:block/shaded_glass_off_lime"
+                                                  },
+                     "color=lime,powered=true":  {
+                                                     "model":  "witchery:block/shaded_glass_on_lime"
+                                                 },
+                     "color=pink,powered=false":  {
+                                                      "model":  "witchery:block/shaded_glass_off_pink"
+                                                  },
+                     "color=pink,powered=true":  {
+                                                     "model":  "witchery:block/shaded_glass_on_pink"
+                                                 },
+                     "color=gray,powered=false":  {
+                                                      "model":  "witchery:block/shaded_glass_off_gray"
+                                                  },
+                     "color=gray,powered=true":  {
+                                                     "model":  "witchery:block/shaded_glass_on_gray"
+                                                 },
+                     "color=light_gray,powered=false":  {
+                                                            "model":  "witchery:block/shaded_glass_off_light_gray"
+                                                        },
+                     "color=light_gray,powered=true":  {
+                                                           "model":  "witchery:block/shaded_glass_on_light_gray"
+                                                       },
+                     "color=cyan,powered=false":  {
+                                                      "model":  "witchery:block/shaded_glass_off_cyan"
+                                                  },
+                     "color=cyan,powered=true":  {
+                                                     "model":  "witchery:block/shaded_glass_on_cyan"
+                                                 },
+                     "color=purple,powered=false":  {
+                                                        "model":  "witchery:block/shaded_glass_off_purple"
+                                                    },
+                     "color=purple,powered=true":  {
+                                                       "model":  "witchery:block/shaded_glass_on_purple"
+                                                   },
+                     "color=blue,powered=false":  {
+                                                      "model":  "witchery:block/shaded_glass_off_blue"
+                                                  },
+                     "color=blue,powered=true":  {
+                                                     "model":  "witchery:block/shaded_glass_on_blue"
+                                                 },
+                     "color=brown,powered=false":  {
+                                                       "model":  "witchery:block/shaded_glass_off_brown"
+                                                   },
+                     "color=brown,powered=true":  {
+                                                      "model":  "witchery:block/shaded_glass_on_brown"
+                                                  },
+                     "color=green,powered=false":  {
+                                                       "model":  "witchery:block/shaded_glass_off_green"
+                                                   },
+                     "color=green,powered=true":  {
+                                                      "model":  "witchery:block/shaded_glass_on_green"
+                                                  },
+                     "color=red,powered=false":  {
+                                                     "model":  "witchery:block/shaded_glass_off_red"
+                                                 },
+                     "color=red,powered=true":  {
+                                                    "model":  "witchery:block/shaded_glass_on_red"
+                                                },
+                     "color=black,powered=false":  {
+                                                       "model":  "witchery:block/shaded_glass_off_black"
+                                                   },
+                     "color=black,powered=true":  {
+                                                      "model":  "witchery:block/shaded_glass_on_black"
+                                                  }
+                 }
+}

@@ -238,6 +238,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> MIRROR               = ITEMS.register("mirror", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.MIRROR.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> PIT_DIRT             = ITEMS.registerSimpleBlockItem(WitcheryBlocks.PIT_DIRT);
     public static final DeferredItem<BlockItem> PIT_GRASS            = ITEMS.registerSimpleBlockItem(WitcheryBlocks.PIT_GRASS);
+    public static final DeferredItem<BlockItem> SHADED_GLASS         = ITEMS.register("shaded_glass",
+            id -> new com.emoniph.witchery.item.ShadedGlassBlockItem(WitcheryBlocks.SHADED_GLASS.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> ROWAN_PLANKS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_PLANKS);
     public static final DeferredItem<BlockItem> BLOOD_STAINED_WOOL   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_STAINED_WOOL);
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
