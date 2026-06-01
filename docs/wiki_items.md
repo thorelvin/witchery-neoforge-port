@@ -106,7 +106,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** None
 
 ## Bound Waystone
-- **Obtain:** Crafting recipe on an altar or using a 3x3 Otherwhere Chalk circle.
+- **Obtain:** Crafting recipe on an altar or using a small Otherwhere Chalk circle.
 - **Use:** Binds locations for spellcasting and copies bound locations to unbound waystones.
 - **Stats:** None
 - **Notes:** None

@@ -2450,33 +2450,72 @@ public class RitualExecutor {
     }
 
     private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {
-        int radiusSq = radius * radius;
-        int innerSq = Math.max(radius - 1, 0);
-        innerSq *= innerSq;
+        BlockPos circlePlaneCenter = center.above();
+        drawBarrierFilledCircle(level, circlePlaneCenter.below(), radius, blocksPlayers);
+        drawBarrierCircleCylinder(level, circlePlaneCenter, radius, height, blocksPlayers);
+        drawBarrierFilledCircle(level, circlePlaneCenter.above(height), radius, blocksPlayers);
+    }
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                int distSq = x * x + z * z;
-                if (distSq > radiusSq) {
-                    continue;
-                }
+    private static void drawBarrierCircleCylinder(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
 
-                BlockPos floorPos = center.offset(x, -1, z);
-                com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, floorPos, 30, blocksPlayers);
+        while (x >= z) {
+            drawBarrierPixelColumn(level, center, x, z, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, z, x, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, -x, z, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, -z, x, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, -x, -z, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, -z, -x, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, x, -z, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, z, -x, height, blocksPlayers);
 
-                BlockPos roofPos = center.offset(x, height, z);
-                com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, roofPos, 30, blocksPlayers);
-
-                if (distSq <= innerSq) {
-                    continue;
-                }
-
-                for (int y = 0; y < height; y++) {
-                    BlockPos wallPos = center.offset(x, y, z);
-                    com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, wallPos, 30, blocksPlayers);
-                }
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
             }
         }
+    }
+
+    private static void drawBarrierPixelColumn(ServerLevel level, BlockPos center, int dx, int dz, int height, boolean blocksPlayers) {
+        for (int dy = 0; dy < height; dy++) {
+            drawBarrierPixel(level, center.offset(dx, dy, dz), blocksPlayers);
+        }
+    }
+
+    private static void drawBarrierFilledCircle(ServerLevel level, BlockPos center, int radius, boolean blocksPlayers) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+
+        while (x >= z) {
+            drawBarrierLine(level, center, -x, x, z, blocksPlayers);
+            drawBarrierLine(level, center, -z, z, x, blocksPlayers);
+            drawBarrierLine(level, center, -x, x, -z, blocksPlayers);
+            drawBarrierLine(level, center, -z, z, -x, blocksPlayers);
+
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void drawBarrierLine(ServerLevel level, BlockPos center, int x1, int x2, int z, boolean blocksPlayers) {
+        for (int x = x1; x <= x2; x++) {
+            drawBarrierPixel(level, center.offset(x, 0, z), blocksPlayers);
+        }
+    }
+
+    private static void drawBarrierPixel(ServerLevel level, BlockPos pos, boolean blocksPlayers) {
+        com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, pos, 30, blocksPlayers);
     }
 
     private static boolean tickSanctityCircleRitual(ServerLevel level, ActiveRitual ritual) {
