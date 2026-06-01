@@ -1,6 +1,8 @@
 # Next Tasks — Witchery NeoForge Port
 
-Current local delta (2026-06-01): Future ritual backlog note. `docs/roadmap/FUTURE_FEATURES.md` now tracks the user-requested future **Ritual of Tracing**: a Spirit World investigative rite that reveals fading traces of all player footsteps as spectral footprints or glyph trails, with retention limits and multiplayer privacy/config toggles called out before implementation. This is a future expansion note, not current parity scope.
+Current local delta (2026-06-01): Gatehouse inside wall-walk ledge. Gatehouses now add a one-block village-facing rampart ledge at wall-walk height, extended one block past each side tower, so guards can move from the adjacent inner wall-walk onto the inside of the gatehouse and across the over-gate perch instead of being blocked by the side towers. Fresh wall QA should inspect both gatehouse ends and confirm guards can path from wall runs onto the gatehouse interior ledge.
+
+Previous local delta (2026-06-01): Future ritual backlog note. `docs/roadmap/FUTURE_FEATURES.md` now tracks the user-requested future **Ritual of Tracing**: a Spirit World investigative rite that reveals fading traces of all player footsteps as spectral footprints or glyph trails, with retention limits and multiplayer privacy/config toggles called out before implementation. This is a future expansion note, not current parity scope.
 
 Previous local delta (2026-06-01): Abandoned village wall guards. Vanilla abandoned/zombie villages are now detected from `/zombie/` jigsaw pool elements, and adaptive walls still generate but skip every Witchery wall guard spawn, including both interval wall-walk guards and the over-gate perch guard. Fresh QA should locate an abandoned village, confirm walls/gatehouses still build, and confirm no Village Guard entities are added on the dead village walls.
 

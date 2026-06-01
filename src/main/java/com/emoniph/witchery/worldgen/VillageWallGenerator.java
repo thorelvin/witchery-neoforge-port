@@ -72,6 +72,7 @@ public final class VillageWallGenerator {
     private static final int GATE_PATH_OUTWARD_MAX = 10;
     private static final int GATE_PATH_INWARD_MAX = 15;
     private static final int GATE_PATH_SAMPLE_OUTWARD = 4;
+    private static final int GATEHOUSE_HALF_WIDTH = 3;
     private static final int TREE_CLEAR_MAX_BLOCKS = 384;
     private static final int TREE_CLEAR_SCAN_Y_ABOVE = 24;
     private static final int TREE_CLEAR_SCAN_Y_BELOW = 2;
@@ -945,7 +946,7 @@ public final class VillageWallGenerator {
 
         // Depth -1..+1 centres the 3-deep gatehouse on the wall line, so the wall meets the
         // gate at the middle of its sides (one block of the gate sits outside the wall).
-        for (int o = -3; o <= 3; o++) {
+        for (int o = -GATEHOUSE_HALF_WIDTH; o <= GATEHOUSE_HALF_WIDTH; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
             boolean opening = Math.abs(o) <= 1;
             for (int depth = -1; depth <= 1; depth++) {
@@ -980,7 +981,7 @@ public final class VillageWallGenerator {
 
     /** Clears old wall and rampart blocks from the locked 7x3 gatehouse footprint. */
     private static void clearGatehouseFootprint(ServerLevel level, GateDef g) {
-        for (int o = -3; o <= 3; o++) {
+        for (int o = -GATEHOUSE_HALF_WIDTH; o <= GATEHOUSE_HALF_WIDTH; o++) {
             int bx = g.centerWX() + g.axisDX() * o;
             int bz = g.centerWZ() + g.axisDZ() * o;
             for (int depth = -1; depth <= 1; depth++) {
@@ -1006,6 +1007,16 @@ public final class VillageWallGenerator {
             int outsideX = walkX - g.inDX();
             int outsideZ = walkZ - g.inDZ();
             forceSet(level, outsideX, standY, outsideZ, rail);
+        }
+
+        int insideDX = g.inDX();
+        int insideDZ = g.inDZ();
+        for (int o = -GATEHOUSE_HALF_WIDTH - 1; o <= GATEHOUSE_HALF_WIDTH + 1; o++) {
+            int walkX = g.centerWX() + g.axisDX() * o + insideDX * 2;
+            int walkZ = g.centerWZ() + g.axisDZ() * o + insideDZ * 2;
+            forceSet(level, walkX, floorY, walkZ, brick);
+            forceSet(level, walkX, standY, walkZ, Blocks.AIR.defaultBlockState());
+            forceSet(level, walkX, standY + 1, walkZ, Blocks.AIR.defaultBlockState());
         }
 
         if (spawnGuards) {
