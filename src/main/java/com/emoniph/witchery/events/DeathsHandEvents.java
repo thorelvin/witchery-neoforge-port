@@ -33,7 +33,7 @@ public final class DeathsHandEvents {
         if (!(event.getTarget() instanceof LivingEntity target)) return;
 
         ItemStack held = player.getMainHandItem();
-        if (!held.is(WitcheryItems.DEATHS_HAND.get())) return;
+        if (!held.is(WitcheryItems.DEATHS_HAND.get()) && !held.is(WitcheryItems.DEPLOYED_DEATHS_HAND.get())) return;
 
         event.setCanceled(true);
         DamageSource damageSource = level.damageSources().source(DEATHS_HAND_DAMAGE, player);

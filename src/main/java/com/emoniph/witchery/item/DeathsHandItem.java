@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -23,14 +24,27 @@ import java.util.function.Consumer;
 public class DeathsHandItem extends Item {
     public static final String TAG_SCYTHE_DEPLOYED = "WITCScytheDeployed";
 
+    private final boolean deployedVariant;
+
     public DeathsHandItem(Properties properties) {
+        this(properties, false);
+    }
+
+    public DeathsHandItem(Properties properties, boolean deployedVariant) {
         super(properties);
+        this.deployedVariant = deployedVariant;
     }
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!DeathsClothingItem.isFullSetWorn(player)) {
+            if (isDeployed(stack)) {
+                if (level.isClientSide()) {
+                    return InteractionResult.SUCCESS;
+                }
+                return InteractionResult.SUCCESS.heldItemTransformedTo(normalCopy(stack));
+            }
             return InteractionResult.PASS;
         }
 
@@ -39,8 +53,10 @@ public class DeathsHandItem extends Item {
         }
 
         boolean deployed = !isDeployed(stack);
-        setDeployed(stack, deployed);
-        player.containerMenu.broadcastChanges();
+        ItemStack transformed = stack.transmuteCopy(
+                deployed ? WitcheryItems.DEPLOYED_DEATHS_HAND.get() : WitcheryItems.DEATHS_HAND.get(),
+                stack.getCount());
+        setDeployed(transformed, false);
 
         if (deployed) {
             level.playSound(null, player.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 1.0F, 2.0F);
@@ -51,7 +67,7 @@ public class DeathsHandItem extends Item {
             }
         }
 
-        return InteractionResult.SUCCESS_SERVER;
+        return InteractionResult.SUCCESS_SERVER.heldItemTransformedTo(transformed);
     }
 
     @Override
@@ -65,8 +81,12 @@ public class DeathsHandItem extends Item {
         }
 
         if (!DeathsClothingItem.isFullSetWorn(player)) {
-            setDeployed(stack, false);
-            player.containerMenu.broadcastChanges();
+            if (isSourceDeployedItem(stack)) {
+                player.setItemSlot(slot, normalCopy(stack));
+            } else {
+                setDeployed(stack, false);
+                player.containerMenu.broadcastChanges();
+            }
             return;
         }
 
@@ -84,9 +104,22 @@ public class DeathsHandItem extends Item {
     }
 
     public static boolean isDeployed(ItemStack stack) {
+        if (isSourceDeployedItem(stack)) {
+            return true;
+        }
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag()
                 .getBooleanOr(TAG_SCYTHE_DEPLOYED, false);
+    }
+
+    public static boolean isSourceDeployedItem(ItemStack stack) {
+        return stack.getItem() instanceof DeathsHandItem hand && hand.deployedVariant;
+    }
+
+    private static ItemStack normalCopy(ItemStack stack) {
+        ItemStack normal = stack.transmuteCopy(WitcheryItems.DEATHS_HAND.get(), stack.getCount());
+        setDeployed(normal, false);
+        return normal;
     }
 
     public static void setDeployed(ItemStack stack, boolean deployed) {

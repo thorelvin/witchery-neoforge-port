@@ -478,8 +478,7 @@ public class WitcheryCreativeTabs {
                 "collecting_fumes_book", "conjuration_and_fetishes_book",
                 "symbology_book", "witches_brews_book");
         addLegacy(output, accepted,
-                "hellhound_head", "wolf_head",
-                "deployed_deaths_hand");
+                "hellhound_head", "wolf_head");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
                 "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",

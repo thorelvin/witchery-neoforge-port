@@ -450,6 +450,8 @@ public class WitcheryItems {
             deathsArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, DeathsClothingItem.Piece.SHOES));
     public static final DeferredItem<Item> DEATHS_HAND = ITEMS.register("deaths_hand", id ->
             new DeathsHandItem(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final DeferredItem<Item> DEPLOYED_DEATHS_HAND = ITEMS.register("deployed_deaths_hand", id ->
+            new DeathsHandItem(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC), true));
 
     // Brew items — all now have implemented effects
     public static final DeferredItem<Item> BREW_OF_RAISING        = ITEMS.register("brew_of_raising", id -> new BrewOfRaisingItem(itemProps(id)));
@@ -840,7 +842,6 @@ public class WitcheryItems {
             "wolf_head",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
-            "deployed_deaths_hand",
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",
