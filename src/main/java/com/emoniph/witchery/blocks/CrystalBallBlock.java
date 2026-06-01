@@ -89,8 +89,9 @@ public class CrystalBallBlock extends BaseEntityBlock {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
         boolean boundWaystone = stack.getItem() instanceof WaystoneItem && WaystoneItem.isBound(stack);
+        boolean bloodedWaystone = WaystoneItem.isEntityBoundWaystone(stack);
         boolean taglockKit = stack.getItem() instanceof TaglockKitItem;
-        if (!boundWaystone && !taglockKit) {
+        if (!boundWaystone && !bloodedWaystone && !taglockKit) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (level.isClientSide()) {

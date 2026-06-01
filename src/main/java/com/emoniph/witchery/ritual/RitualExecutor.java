@@ -391,8 +391,11 @@ public class RitualExecutor {
             return matchedResult(riteOfBanishDemon(player, level, center, false));
         } else if (WaystoneItem.isBlankWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
+            if (findBindBloodedWaystoneOfferings(level, center).isPresent()) {
+                return matchedResult(riteOfBindBloodedWaystone(player, level, center));
+            }
             return matchedResult(riteOfBindWaystone(player, level, center));
-        } else if (WaystoneItem.isBoundWaystone(item)
+        } else if (WaystoneItem.isAnyBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -5058,6 +5061,8 @@ public class RitualExecutor {
 
     private record BindFetishOfferings(ItemEntity attunedStone, ItemEntity necroStone, ItemEntity boline) {}
 
+    private record BindBloodedWaystoneOfferings(ItemEntity enderDew, ItemEntity slimeBall, ItemEntity snowball) {}
+
     private record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
                                           ItemEntity spiderEye, ItemEntity gunpowder,
                                           ItemEntity brewGrotesque) {}
@@ -5250,6 +5255,45 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Rite of Binding (entity) - summons a source-style blooded Waystone bound to a nearby living target. */
+    private static boolean riteOfBindBloodedWaystone(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<BindBloodedWaystoneOfferings> offerings = findBindBloodedWaystoneOfferings(level, center);
+        if (offerings.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_blooded_waystone.support"), false);
+            return false;
+        }
+        Optional<LivingEntity> target = findBloodedWaystoneTarget(level, center);
+        if (target.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_blooded_waystone.no_target"), false);
+            return false;
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
+                "witchery.ritual.bind_blooded_waystone.no_power")
+                .offer(offerings.get().enderDew())
+                .offer(offerings.get().slimeBall())
+                .offer(offerings.get().snowball());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        ItemStack bloodedWaystone = new ItemStack(WitcheryItems.BLOODED_WAYSTONE.get());
+        WaystoneItem.bindToEntity(bloodedWaystone, target.get());
+        ItemEntity entity = new ItemEntity(level,
+                center.getX() + 0.5,
+                center.getY() + 1.5,
+                center.getZ() + 0.5,
+                bloodedWaystone);
+        entity.setDeltaMovement(0.0, 0.3, 0.0);
+        level.addFreshEntity(entity);
+        success(player, level, center, "witchery.ritual.bind_blooded_waystone.success",
+                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+        WitcheryMod.LOGGER.info("Blooded waystone summoned at {} and bound to {} for {}",
+                center, target.get().getName().getString(), player.getName().getString());
+        return true;
+    }
+
     /**
      * Rite of Binding (copy) — restores the original small-circle bound-waystone copy route
      * and duplicates the dropped bound waystone's location onto one extra offered unbound waystone.
@@ -5322,6 +5366,32 @@ public class RitualExecutor {
     private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
         return findNearbyOffering(level, center,
                 stack -> bound ? WaystoneItem.isBoundWaystone(stack) : WaystoneItem.isBlankWaystone(stack));
+    }
+
+    private static Optional<BindBloodedWaystoneOfferings> findBindBloodedWaystoneOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> slimeBall = findNearbyOffering(level, center, stack -> stack.is(Items.SLIME_BALL));
+        Optional<ItemEntity> snowball = findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
+        if (enderDew.isEmpty() || slimeBall.isEmpty() || snowball.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindBloodedWaystoneOfferings(enderDew.get(), slimeBall.get(), snowball.get()));
+    }
+
+    private static Optional<LivingEntity> findBloodedWaystoneTarget(Level level, BlockPos center) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(4.0, 2.0, 4.0);
+        Optional<? extends LivingEntity> playerTarget = level.getEntitiesOfClass(Player.class, bounds,
+                        entity -> entity.position().distanceToSqr(centerPoint) <= 16.0D)
+                .stream()
+                .min((a, b) -> Double.compare(a.distanceToSqr(centerPoint), b.distanceToSqr(centerPoint)));
+        if (playerTarget.isPresent()) {
+            return Optional.of(playerTarget.get());
+        }
+        return level.getEntitiesOfClass(LivingEntity.class, bounds,
+                        entity -> !(entity instanceof Player) && entity.position().distanceToSqr(centerPoint) <= 16.0D)
+                .stream()
+                .min((a, b) -> Double.compare(a.distanceToSqr(centerPoint), b.distanceToSqr(centerPoint)));
     }
 
     private static Optional<ItemEntity> findNearbyFilledTaglockOffering(Level level, BlockPos center) {
@@ -6165,6 +6235,9 @@ public class RitualExecutor {
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
     private static boolean riteOfTranspositionToWaystone(Player player, Level level, BlockPos center, ItemStack waystone) {
         if (!(player instanceof ServerPlayer sp)) return false;
+        if (WaystoneItem.isEntityBoundWaystone(waystone)) {
+            return riteOfTranspositionToBloodedWaystone(sp, level, center, waystone);
+        }
         Optional<BlockPos> dest = WaystoneItem.getBoundPos(waystone);
         Optional<ResourceKey<Level>> dim = WaystoneItem.getBoundDim(waystone);
         if (dest.isEmpty() || dim.isEmpty()) {
@@ -6199,11 +6272,47 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Transposition (pull) — pulls the taglock target to the caster. Costs 3000 altar power. */
+    /** Blooded Waystone transposition targets the live entity stored in the waystone's taglock data. */
+    private static boolean riteOfTranspositionToBloodedWaystone(ServerPlayer player, Level level, BlockPos center, ItemStack waystone) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<LivingEntity> target = WaystoneItem.findBoundEntity(sl.getServer(), waystone);
+        if (target.isEmpty() || !target.get().isAlive() || !(target.get().level() instanceof ServerLevel targetLevel)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
+            return false;
+        }
+
+        LivingEntity living = target.get();
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radius = 3.0;
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        int moved = 0;
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
+            if (entity instanceof ItemEntity itemEntity
+                    && itemEntity.distanceToSqr(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5) <= 3.0) {
+                continue;
+            }
+            if (entity.position().distanceToSqr(centerPoint) >= radiusSq) {
+                continue;
+            }
+            teleportEntityTo(entity, targetLevel, living.getX(), living.getY(), living.getZ());
+            moved++;
+        }
+        success(player, level, center, "witchery.ritual.transposition.success",
+                SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
+        WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to blooded waystone target {}",
+                moved, center, living.getName().getString());
+        return true;
+    }
+
     private static void teleportEntityToWaystone(Entity entity, ServerLevel targetLevel, BlockPos dest) {
         double x = dest.getX() + 0.5;
         double y = dest.getY();
         double z = dest.getZ() + 0.5;
+        teleportEntityTo(entity, targetLevel, x, y, z);
+    }
+
+    private static void teleportEntityTo(Entity entity, ServerLevel targetLevel, double x, double y, double z) {
         if (entity instanceof ServerPlayer player) {
             if (player.level() == targetLevel) {
                 player.teleportTo(x, y, z);

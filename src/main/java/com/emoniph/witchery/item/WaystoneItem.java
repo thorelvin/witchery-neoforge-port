@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Waystone item — blank until bound by the Rite of Binding.
@@ -40,22 +42,39 @@ public class WaystoneItem extends Item {
 
     @Override
     public int getMaxStackSize(ItemStack stack) {
-        return isBound(stack) ? 1 : stack.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
+        return isAnyBoundWaystone(stack) ? 1 : stack.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
     }
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return isBound(stack) ? SCRY_USE_DURATION : super.getUseDuration(stack, entity);
+        return isAnyBoundWaystone(stack) ? SCRY_USE_DURATION : super.getUseDuration(stack, entity);
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        if (level.isClientSide() || !(entity instanceof net.minecraft.world.entity.player.Player player) || !isBound(stack)) {
+        if (level.isClientSide() || !(entity instanceof net.minecraft.world.entity.player.Player player) || !isAnyBoundWaystone(stack)) {
             return;
         }
 
         int elapsedTicks = getUseDuration(stack, entity) - remainingUseDuration;
         if (elapsedTicks % SCRY_FEEDBACK_INTERVAL != 0) {
+            return;
+        }
+
+        if (isEntityBoundWaystone(stack)) {
+            Optional<LivingEntity> target = findBoundEntity(((ServerLevel) level).getServer(), stack);
+            if (target.isEmpty() || !target.get().isAlive() || !target.get().level().dimension().equals(level.dimension())) {
+                player.stopUsingItem();
+                return;
+            }
+            LivingEntity living = target.get();
+            ((ServerLevel) level).sendParticles(ParticleTypes.WITCH,
+                    living.getX(), living.getY() + living.getBbHeight() * 0.5, living.getZ(),
+                    6, 0.35, 0.4, 0.35, 0.02);
+            if (elapsedTicks == 0) {
+                ((ServerLevel) level).playSound(null, living.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                        SoundSource.PLAYERS, 0.4f, 1.35f);
+            }
             return;
         }
 
@@ -78,7 +97,7 @@ public class WaystoneItem extends Item {
 
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
-        if (!level.isClientSide() && entity instanceof net.minecraft.world.entity.player.Player player && isBound(stack)) {
+        if (!level.isClientSide() && entity instanceof net.minecraft.world.entity.player.Player player && isAnyBoundWaystone(stack)) {
             int elapsedTicks = getUseDuration(stack, entity) - timeCharged;
             if (elapsedTicks > 0) {
                 player.displayClientMessage(Component.literal("The waystone vision fades.")
@@ -96,6 +115,9 @@ public class WaystoneItem extends Item {
             String dim = getBoundDim(stack).map(k -> k.identifier().getPath()).orElse("?");
             tooltip.accept(Component.literal(p.getX() + ", " + p.getY() + ", " + p.getZ()
                     + " [" + dim + "]").withStyle(ChatFormatting.GRAY));
+        } else if (isEntityBoundWaystone(stack)) {
+            tooltip.accept(Component.translatable("witchery.waystone.entity_bound", TaglockKitItem.getBoundName(stack))
+                    .withStyle(ChatFormatting.GRAY));
         } else {
             tooltip.accept(Component.translatable("witchery.waystone.unbound")
                     .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
@@ -116,6 +138,14 @@ public class WaystoneItem extends Item {
         return isWaystone(stack) && isBound(stack);
     }
 
+    public static boolean isEntityBoundWaystone(ItemStack stack) {
+        return stack.is(WitcheryItems.BLOODED_WAYSTONE.get()) && TaglockKitItem.isFilled(stack);
+    }
+
+    public static boolean isAnyBoundWaystone(ItemStack stack) {
+        return isBoundWaystone(stack) || isEntityBoundWaystone(stack);
+    }
+
     public static boolean isBlankWaystone(ItemStack stack) {
         return stack.is(WitcheryItems.WAYSTONE.get()) && !isBound(stack);
     }
@@ -128,6 +158,20 @@ public class WaystoneItem extends Item {
             tag.putString(TAG_DIM, dim.identifier().toString());
         });
         stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
+    }
+
+    public static void bindToEntity(ItemStack stack, LivingEntity entity) {
+        if (entity instanceof net.minecraft.world.entity.player.Player player) {
+            TaglockKitItem.bind(stack, player.getUUID(), player.getName().getString());
+        } else {
+            TaglockKitItem.bindEntity(stack, entity);
+        }
+        stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
+    }
+
+    public static Optional<LivingEntity> findBoundEntity(MinecraftServer server, ItemStack stack) {
+        Optional<UUID> uuid = TaglockKitItem.getUUID(stack);
+        return uuid.flatMap(value -> PoppetItem.findLivingEntity(server, value));
     }
 
     public static Optional<BlockPos> getBoundPos(ItemStack stack) {

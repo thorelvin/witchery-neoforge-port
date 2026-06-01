@@ -266,6 +266,7 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.registerSimpleBlockItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON);
     public static final DeferredItem<Item> WAYSTONE = ITEMS.register("waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> BOUND_WAYSTONE = ITEMS.register("bound_waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item> BLOODED_WAYSTONE = ITEMS.register("blooded_waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<BlockItem> WOLF_ALTAR = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WOLF_ALTAR);
     public static final DeferredItem<Item> BOLINE = ITEMS.register("boline", id ->
             new com.emoniph.witchery.item.BolineItem(itemProps(id)
@@ -683,7 +684,6 @@ public class WitcheryItems {
             "contract_torment",
             "silver_dust",
             "biome_note",
-            "blooded_waystone",
             "brews_and_infusions_book",
             "collecting_fumes_book",
             "conjuration_and_fetishes_book",
