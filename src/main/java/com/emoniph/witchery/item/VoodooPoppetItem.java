@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.WitchHunterEntity;
+import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -41,6 +42,10 @@ public class VoodooPoppetItem extends PoppetItem {
             user.displayClientMessage(Component.translatable("witchery.poppet.not_bound"), false);
             return InteractionResult.PASS;
         }
+        if (SilverEvents.wearsFullHunterSet(user)) {
+            user.displayClientMessage(Component.translatable("witchery.poppet.hunter_armor_blocked"), false);
+            return InteractionResult.PASS;
+        }
 
         LivingEntity target = resolveBoundEntity(stack, level);
         if (target == null || target == user) {
@@ -71,6 +76,10 @@ public class VoodooPoppetItem extends PoppetItem {
         ItemStack stack = ctx.getItemInHand();
         if (!isBound(stack)) {
             user.displayClientMessage(Component.translatable("witchery.poppet.not_bound"), false);
+            return InteractionResult.PASS;
+        }
+        if (SilverEvents.wearsFullHunterSet(user)) {
+            user.displayClientMessage(Component.translatable("witchery.poppet.hunter_armor_blocked"), false);
             return InteractionResult.PASS;
         }
 
@@ -133,6 +142,7 @@ public class VoodooPoppetItem extends PoppetItem {
     /** Called from PoppetEvents tick: if the voodoo poppet holder is submerged, hurt the bound entity. */
     public static void tickUnderwaterEffect(ServerPlayer holder, ItemStack stack) {
         if (!PoppetItem.isBound(stack)) return;
+        if (SilverEvents.wearsFullHunterSet(holder)) return;
         if (!holder.isUnderWater()) return;
         if (holder.tickCount % 20 != 0) return;
 

@@ -185,7 +185,7 @@ public class SilverEvents {
                 || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
     }
 
-    private static boolean wearsFullHunterSet(LivingEntity entity) {
+    public static boolean wearsFullHunterSet(LivingEntity entity) {
         return isHunterHead(entity.getItemBySlot(EquipmentSlot.HEAD))
                 && isHunterChest(entity.getItemBySlot(EquipmentSlot.CHEST))
                 && isHunterLegs(entity.getItemBySlot(EquipmentSlot.LEGS))

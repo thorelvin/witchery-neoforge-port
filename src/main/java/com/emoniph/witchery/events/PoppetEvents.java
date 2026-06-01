@@ -346,6 +346,10 @@ public class PoppetEvents {
     }
 
     private static PoppetLocation findFirstBoundPoppet(ServerPlayer player, Predicate<ItemStack> matcher) {
+        if (SilverEvents.wearsFullHunterSet(player)) {
+            return null;
+        }
+
         UUID playerUUID = player.getUUID();
         Inventory inventory = player.getInventory();
 
