@@ -25,6 +25,8 @@ Taglock Kit exact-ID QA note (2026-06-01): empty `witchery:taglock_kit` stacks s
 
 Icy Slippers exact-ID QA note (2026-06-01): the source shaped slipper recipe now produces the exact Resurrected `witchery:icy_slippers` ID, while old `witchery:ice_slippers` stacks remain behavior-compatible. Craft the exact ID, verify it appears with armor gear and has no placeholder suffix, then test both IDs for water-to-Ice walking conversion, lava-to-Obsidian conversion with possible durability loss, Perpetual Ice pressure-plate triggering, Bark Belt clothing capacity counting, and Impregnated Leather repair.
 
+Witches Robes exact-ID QA note (2026-06-01): the source shaped robe recipe now produces exact Resurrected `witchery:witches_robes`, while old `witchery:witches_robe` stacks remain behavior-compatible. Craft the exact ID, verify it appears with armor gear and has no placeholder suffix, check both IDs show the robe tooltip, equip each for creeper target dropping, verify Kettle second-brew eligibility on non-necromantic brews, confirm Bark Belt capacity counts the robe, and repair both IDs with four Impregnated Leather.
+
 Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
 
 Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.

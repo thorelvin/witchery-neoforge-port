@@ -347,7 +347,14 @@ public class WitcheryItems {
 
     // Armour
     public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
-    public static final DeferredItem<Item> WITCHES_ROBE  = ITEMS.register("witches_robe",  id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> WITCHES_ROBE  = ITEMS.register("witches_robe",
+            id -> new WitchesRobeItem(itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> WITCHES_ROBES = ITEMS.register("witches_robes",
+            id -> new WitchesRobeItem(itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.register("witches_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", WitcheryItems::earmuffs);
     public static final DeferredItem<Item> BITING_BELT = ITEMS.register("biting_belt", id ->
@@ -717,6 +724,10 @@ public class WitcheryItems {
         return stack.is(ICE_SLIPPERS.get()) || stack.is(ICY_SLIPPERS.get());
     }
 
+    public static boolean isWitchesRobe(ItemStack stack) {
+        return stack.is(WITCHES_ROBE.get()) || stack.is(WITCHES_ROBES.get());
+    }
+
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "book_oven",
@@ -789,7 +800,6 @@ public class WitcheryItems {
             "distilling_book",
             "circle_magic_book",
             "herbology_book",
-            "witches_robes",
             "hunter_hat",
             "hunter_coat",
             "silvered_hunter_hat",

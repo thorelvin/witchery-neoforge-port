@@ -203,7 +203,7 @@ public class WitcheryPlayerEvents {
         if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
 
         if (event.getEntity() instanceof Creeper
-                && player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCHES_ROBE.get())) {
+                && WitcheryItems.isWitchesRobe(player.getItemBySlot(EquipmentSlot.CHEST))) {
             event.setNewAboutToBeSetTarget(null);
             return;
         }

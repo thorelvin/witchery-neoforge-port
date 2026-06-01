@@ -73,7 +73,7 @@ public class ImpregnatedLeatherRepairRecipe extends CustomRecipe {
     }
 
     private static int repairLeatherRequired(ItemStack stack) {
-        if (stack.is(WitcheryItems.WITCHES_ROBE.get())
+        if (WitcheryItems.isWitchesRobe(stack)
                 || stack.is(WitcheryItems.NECROMANCER_ROBES.get())
                 || stack.is(WitcheryItems.BITING_BELT.get())
                 || stack.is(WitcheryItems.BARK_BELT.get())) {

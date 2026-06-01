@@ -49,7 +49,7 @@ public class BarkBeltItem extends Item {
 
     private static boolean isWitcheryClothing(ItemStack stack) {
         return stack.is(WitcheryItems.WITCHES_HAT.get())
-                || stack.is(WitcheryItems.WITCHES_ROBE.get())
+                || WitcheryItems.isWitchesRobe(stack)
                 || stack.is(WitcheryItems.BABAS_HAT.get())
                 || stack.is(WitcheryItems.NECROMANCER_ROBES.get())
                 || stack.is(WitcheryItems.BITING_BELT.get())

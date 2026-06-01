@@ -78,7 +78,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Family | Status | Notes |
 |---|---|---|
-| Witch's hat/robe/shoes | ✅ Done | |
+| Witch's hat/robe/shoes | ✅ Done | Witches Robes now expose the exact Resurrected `witchery:witches_robes` ID with the old tooltip, source recipe output, creeper avoidance, Kettle second-brew bonus, Bark Belt capacity, and Impregnated Leather repair while keeping existing `witchery:witches_robe` stacks valid. |
 | Baba's hat / Necromancer's Robes | 🔶 Partial | Baba's Hat now has epic rarity, source tooltip, existing kettle double-roll bonus path, and the old infused-player hit-cancel safe-blink outside Torment; Necromancer Robes keep undead avoidance. Remaining: exact Witchery clothing armor model/render polish and in-game reward QA. |
 | Biting Belt / Bark Belt | ✅ Done | Potion-defense / bark-charge mechanics; Bark Belt charge capacity now counts the wider source Witchery-clothing family including Baba's Hat, Necromancer Robes, Ice Slippers, Ruby Slippers, and Seeping Shoes |
 | Icy Slippers / Ruby Slippers / Seeping Shoes | 🔶 Partial | Icy Slippers trigger ice pressure plates and restore the source walking water-to-Ice / lava-to-Obsidian conversion with lava durability damage; the exact Resurrected `witchery:icy_slippers` ID is now live and craftable while existing `witchery:ice_slippers` stacks remain valid for all slipper checks. Ruby Slippers now have source-style chat activation with bound-Waystone priority, separate persisted waystone/home cooldowns, infusion-energy costs, source tooltip lines, and the rare 1% Void Bramble-style waystone misfire; Seeping Shoes cure Poison/Wither and bonemeal nearby plants. Remaining: armor model polish |
