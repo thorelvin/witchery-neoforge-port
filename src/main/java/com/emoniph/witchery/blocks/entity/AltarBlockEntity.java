@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.item.ArthanaItem;
 import com.emoniph.witchery.item.MysticBranchItem;
+import com.emoniph.witchery.item.PentacleItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.Packet;
@@ -343,6 +344,7 @@ public class AltarBlockEntity extends BlockEntity {
         int chalicePowerBonus = 0;
         boolean arthanaFound = false;
         boolean mysticBranchFound = false;
+        boolean pentacleFound = false;
         boolean infinityEggFound = false;
 
         for (BlockPos altarPos : footprint) {
@@ -371,12 +373,17 @@ public class AltarBlockEntity extends BlockEntity {
                     arthanaFound = true;
                 } else if (placedItem.getStack().getItem() instanceof MysticBranchItem) {
                     mysticBranchFound = true;
+                } else if (placedItem.getStack().getItem() instanceof PentacleItem) {
+                    pentacleFound = true;
                 }
             }
         }
 
         int powerScale = 1 + skullPowerBonus + chalicePowerBonus;
         int rechargeScale = 1 + skullRechargeBonus + candleRechargeBonus;
+        if (pentacleFound) {
+            rechargeScale *= 2;
+        }
         if (infinityEggFound) {
             powerScale *= 10;
             rechargeScale *= 10;

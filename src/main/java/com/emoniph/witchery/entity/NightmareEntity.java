@@ -210,7 +210,9 @@ public class NightmareEntity extends Monster {
     private boolean hasCharmOfDisruptedDreams(Player player) {
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
-            if (inventory.getItem(i).is(WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get())) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get())
+                    || stack.is(WitcheryItems.FANCIFUL_THINKING_CHARM.get())) {
                 return true;
             }
         }

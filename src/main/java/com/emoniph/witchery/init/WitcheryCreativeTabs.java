@@ -183,6 +183,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BROOM.get(),
                 WitcheryItems.ENCHANTED_BROOM.get(),
                 WitcheryItems.ARTHANA.get(),
+                WitcheryItems.PENTACLE.get(),
                 WitcheryItems.BOLINE.get(),
                 WitcheryItems.CHALK.get(),
                 WitcheryItems.MYSTIC_BRANCH.get(),
@@ -219,6 +220,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.POPPET_SHELF_COMPASS.get(),
                 WitcheryItems.POLYNESIA_CHARM.get(),
                 WitcheryItems.DEVILS_TONGUE_CHARM.get(),
+                WitcheryItems.FANCIFUL_THINKING_CHARM.get(),
                 WitcheryItems.CHARM_OF_DISRUPTED_DREAMS.get(),
                 WitcheryItems.PARASYTIC_LOUSE.get());
     }
@@ -470,7 +472,7 @@ public class WitcheryCreativeTabs {
 
         addLegacy(output, accepted,
                 "silver_dust",
-                "fanciful_thinking_charm", "pentacle", "golden_heart");
+                "golden_heart");
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
                 "book_wands", "book_burning", "brews_and_infusions_book",

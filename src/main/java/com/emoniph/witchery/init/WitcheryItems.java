@@ -281,6 +281,7 @@ public class WitcheryItems {
 
     // Pure items
     public static final DeferredItem<Item> ARTHANA = ITEMS.register("arthana", id -> new com.emoniph.witchery.item.ArthanaItem(itemProps(id).durability(250)));
+    public static final DeferredItem<Item> PENTACLE = ITEMS.register("pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
     public static final DeferredItem<Item> KOBOLDITE_PENTACLE = ITEMS.register("koboldite_pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
     public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.registerSimpleBlockItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON);
     public static final DeferredItem<Item> WAYSTONE = ITEMS.register("waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(16)));
@@ -335,6 +336,7 @@ public class WitcheryItems {
             id -> new PolynesiaCharmItem(itemProps(id)));
     public static final DeferredItem<Item> DEVILS_TONGUE_CHARM = ITEMS.register("devils_tongue_charm",
             id -> new PolynesiaCharmItem(itemProps(id), true));
+    public static final DeferredItem<Item> FANCIFUL_THINKING_CHARM = ITEMS.registerSimpleItem("fanciful_thinking_charm");
     public static final DeferredItem<Item> CHARM_OF_DISRUPTED_DREAMS = ITEMS.registerSimpleItem("charm_of_disrupted_dreams");
     public static final DeferredItem<Item> MOON_CHARM = ITEMS.register("moon_charm",
             id -> new MoonCharmItem(itemProps(id)));
@@ -846,8 +848,6 @@ public class WitcheryItems {
             "anguish_demon_soul",
             "fear_demon_soul",
             "torment_demon_soul",
-            "fanciful_thinking_charm",
-            "pentacle",
             "golden_heart"
     );
 
