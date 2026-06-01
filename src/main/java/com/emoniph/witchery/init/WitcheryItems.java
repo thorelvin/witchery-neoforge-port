@@ -677,6 +677,8 @@ public class WitcheryItems {
                     .rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CREATIVE_BAT_WOLF_TOKEN = ITEMS.register("creative_bat_wolf_token",
             id -> new CreativeBatWolfTokenItem(itemProps(id)));
+    public static final DeferredItem<Item> CREATIVE_MEDALLION = ITEMS.register("creative_medallion",
+            id -> new CreativeBatWolfTokenItem(itemProps(id)));
     // Koboldite material chain
     public static final DeferredItem<Item> KOBOLDITE_DUST     = ITEMS.registerSimpleItem("koboldite_dust");
     public static final DeferredItem<Item> KOBOLDITE_NUGGET   = ITEMS.registerSimpleItem("koboldite_nugget");
@@ -822,7 +824,6 @@ public class WitcheryItems {
             "symbology_book",
             "witches_brews_book",
             "charged_crossbow",
-            "creative_medallion",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
             "dandelion_of_thorns",

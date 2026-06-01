@@ -283,6 +283,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.DUPLICATION_GRENADE.get(),
                 WitcheryItems.MOON_CHARM.get(),
                 WitcheryItems.CREATIVE_BAT_WOLF_TOKEN.get(),
+                WitcheryItems.CREATIVE_MEDALLION.get(),
                 WitcheryItems.STAKE.get(),
                 WitcheryItems.VAMPIRE_TOP_HAT.get(),
                 WitcheryItems.VAMPIRE_VEIL_HAT.get(),
@@ -488,8 +489,7 @@ public class WitcheryCreativeTabs {
                 "shrub_of_ink", "shrub_of_sprouting", "shrub_of_thorns", "shrub_of_webs", "trapped_plant");
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
-                "contract_ownership", "contract_torment",
-                "creative_medallion");
+                "contract_ownership", "contract_torment");
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
         addLegacy(output, accepted,

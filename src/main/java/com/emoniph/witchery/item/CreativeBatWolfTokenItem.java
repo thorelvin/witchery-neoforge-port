@@ -112,7 +112,10 @@ public class CreativeBatWolfTokenItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.accept(Component.translatable("item.witchery.creative_bat_wolf_token.tip")
+        String tipKey = "item.witchery.creative_medallion".equals(getDescriptionId())
+                ? "item.witchery.creative_medallion.tip"
+                : "item.witchery.creative_bat_wolf_token.tip";
+        tooltip.accept(Component.translatable(tipKey)
                 .withStyle(ChatFormatting.GRAY));
     }
 }
