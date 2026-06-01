@@ -430,6 +430,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_THE_GROTESQUE  = ITEMS.register("brew_of_the_grotesque", id -> new BrewOfTheGrotesqueItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_REVEALING      = ITEMS.register("brew_of_revealing", id -> new BrewOfRevealingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_ENDLESS_WATER  = ITEMS.register("brew_of_endless_water", id -> new BrewOfEndlessWaterItem(itemProps(id)));
+    public static final DeferredItem<Item> ENDLESS_WATER_BREW     = ITEMS.register("endless_water_brew", id -> new BrewOfEndlessWaterItem(itemProps(id)));
     public static final DeferredItem<Item> COMBUSTION_BREW        = ITEMS.register("combustion_brew", id -> new CombustionBrewItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_POISON         = ITEMS.register("brew_of_poison", id -> new BrewOfPoisonItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FOAMING        = ITEMS.register("brew_of_foaming", id -> new BrewOfFoamingItem(itemProps(id)));
@@ -717,7 +718,6 @@ public class WitcheryItems {
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",
-            "endless_water_brew",
             "vines_brew",
             "webs_brew",
             "thorns_brew",

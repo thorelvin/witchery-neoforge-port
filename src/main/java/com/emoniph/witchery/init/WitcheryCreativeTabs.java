@@ -327,6 +327,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BREW_OF_THE_GROTESQUE.get(),
                 WitcheryItems.BREW_OF_REVEALING.get(),
                 WitcheryItems.BREW_OF_ENDLESS_WATER.get(),
+                WitcheryItems.ENDLESS_WATER_BREW.get(),
                 WitcheryItems.COMBUSTION_BREW.get(),
                 WitcheryItems.BREW_OF_POISON.get(),
                 WitcheryItems.BREW_OF_ICE.get(),
@@ -396,8 +397,7 @@ public class WitcheryCreativeTabs {
                 "contract_ownership", "contract_torment",
                 "creative_medallion");
         addLegacy(output, accepted,
-                "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle",
-                "endless_water_brew");
+                "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
         addLegacy(output, accepted,
                 "vines_brew", "webs_brew", "thorns_brew", "ink_brew", "sprouting_brew", "erosion_brew",
                 "raising_brew", "love_brew", "ice_brew", "frogs_tongue_brew", "cursed_leaping_brew",

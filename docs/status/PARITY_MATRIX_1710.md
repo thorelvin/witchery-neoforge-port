@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 276 functional + 110 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 277 functional + 109 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -66,7 +66,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
 | infernal_blood | ✅ Done | Source ID restored for Horned Huntsman drops, bloodied Wicker Bundle crafting/use, Ruby Slippers, and Summon Imp offerings; existing `demonic_blood` bridge remains accepted by Summon Imp |
 | nullified_leather | ✅ Done | Source shaped recipe restored: eight Leather around one Null Catalyst produces three Nullified Leather for Hunter outfit crafting |
-| brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water`; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
+| brew_fuel / brew_endless_water | Partial | `ItemBrewEndlessWater` is restored as `witchery:brew_of_endless_water` and the Resurrected `witchery:endless_water_brew` alias; source `ItemBrewFuel` is represented by the restored `witchery:combustion_brew` fuel item |
 | stew (cooked/raw) | ✅ Done | `witchery:meaty_stew` / `witchery:raw_meaty_stew` now use source `ItemStew` food values, bowl return, original sprites, raw stew crafting, and smelting |
 | universal_antidote | ✅ Done | Source `ItemVanillaPotion.potionAntidote` restored as a four-stack drinkable item that removes Poison and Wither, returns a Glass Bottle, and crafts two from Null Catalyst plus two Poison potions |
 | odd_porkchop_raw / odd_porkchop_cooked | ✅ Done | Source `ItemGeneral.Edible` values restored: raw 3 hunger / 0.3 saturation, cooked 8 hunger / 0.8 saturation, plus safe Mutandis conversions and raw-to-cooked smelting. Resurrected alias IDs remain placeholders pending alias policy |
@@ -304,7 +304,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 | EntityBrew (thrown brew projectile physics) | 🔶 Partial | thrown_brew entity exists; full brew physics incomplete |
 | Brew bottle / splash / lingering / bucket variants | 🔶 Partial | Item-based only; no container conversion |
 | Brew Bag container logic | 🔶 Partial | Eight stored throwable-brew slots and selected-slot throwing are live; exact GUI/radial gesture overlay remains |
-| Brew of Endless Water | Done | Source-style glowing 100-use utility item fills cauldrons or places water source blocks |
+| Brew of Endless Water | Done | Source-style glowing 100-use utility item fills cauldrons or places water source blocks; the Resurrected `endless_water_brew` alias now shares the same behavior |
 | Brew of Combustion | Partial | `witchery:combustion_brew` is now a real glowing stackable furnace/Witches' Oven fuel with the Resurrected `Level` burn tiers (2400/5000/10000/50000 ticks) and a base coal kettle recipe; full dynamic composed-brew creation remains under the custom cauldron backlog |
 
 ### 4b. Brew Effects (as items vs dynamic actions)
