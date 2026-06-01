@@ -318,9 +318,27 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BITING_BELT.get(),
                 WitcheryItems.BARK_BELT.get(),
                 WitcheryItems.HUNTER_HELMET.get(),
+                WitcheryItems.HUNTER_HAT.get(),
                 WitcheryItems.HUNTER_CHESTPLATE.get(),
+                WitcheryItems.HUNTER_COAT.get(),
                 WitcheryItems.HUNTER_LEGGINGS.get(),
                 WitcheryItems.HUNTER_BOOTS.get(),
+                WitcheryItems.HUNTER_HELMET_SILVERED.get(),
+                WitcheryItems.SILVERED_HUNTER_HAT.get(),
+                WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(),
+                WitcheryItems.SILVERED_HUNTER_COAT.get(),
+                WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(),
+                WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
+                WitcheryItems.HUNTER_BOOTS_SILVERED.get(),
+                WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_HAT.get(),
+                WitcheryItems.DAWN_HUNTER_HAT.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_COAT.get(),
+                WitcheryItems.DAWN_HUNTER_COAT.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get(),
+                WitcheryItems.DAWN_HUNTER_LEGGINGS.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get(),
+                WitcheryItems.DAWN_HUNTER_BOOTS.get(),
                 WitcheryItems.DEATHS_HOOD.get(),
                 WitcheryItems.DEATHS_ROBE.get(),
                 WitcheryItems.DEATHS_SHOES.get(),
@@ -433,11 +451,6 @@ public class WitcheryCreativeTabs {
                 "solidifying_stone_brew", "solidifying_dirt_brew", "solidifying_sand_brew",
                 "solidifying_sandstone_brew", "solidifying_erosion_brew", "hunger_demon_soul",
                 "anguish_demon_soul", "fear_demon_soul", "torment_demon_soul");
-        addLegacy(output, accepted,
-                "hunter_hat", "hunter_coat", "silvered_hunter_hat",
-                "silvered_hunter_coat", "silvered_hunter_leggings", "silvered_hunter_boots",
-                "dawn_hunter_hat", "dawn_hunter_coat", "dawn_hunter_leggings", "dawn_hunter_boots");
-
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
             if (accepted.add(id)) {
                 output.accept(item.get());

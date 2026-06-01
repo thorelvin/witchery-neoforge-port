@@ -7,10 +7,10 @@
   "key": {
     "S": "witchery:silver_ingot",
     "L": "witchery:impregnated_leather",
-    "B": "witchery:hunter_boots"
+    "B": "#witchery:silvered_hunter_boots"
   },
   "result": {
-    "id": "witchery:witch_hunter_dawn_boots",
+    "id": "witchery:dawn_hunter_boots",
     "count": 1
   }
 }

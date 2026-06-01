@@ -8,10 +8,10 @@
   "key": {
     "S": "witchery:silver_ingot",
     "L": "witchery:impregnated_leather",
-    "H": "witchery:hunter_helmet"
+    "H": "#witchery:silvered_hunter_hats"
   },
   "result": {
-    "id": "witchery:witch_hunter_dawn_hat",
+    "id": "witchery:dawn_hunter_hat",
     "count": 1
   }
 }

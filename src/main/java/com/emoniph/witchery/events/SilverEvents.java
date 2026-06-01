@@ -169,20 +169,32 @@ public class SilverEvents {
 
     private static boolean wearsSilveredArmor(LivingEntity entity) {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.HUNTER_HELMET_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.SILVERED_HUNTER_HAT.get())
                 || entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                || entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DAWN_HUNTER_HAT.get())
                 || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.SILVERED_HUNTER_COAT.get())
                 || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.DAWN_HUNTER_COAT.get())
                 || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.HUNTER_LEGGINGS_SILVERED.get())
+                || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.SILVERED_HUNTER_LEGGINGS.get())
                 || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.DAWN_HUNTER_LEGGINGS.get())
                 || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.HUNTER_BOOTS_SILVERED.get())
-                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.SILVERED_HUNTER_BOOTS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 
     private static boolean wearsGarlickedArmor(LivingEntity entity) {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                || entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DAWN_HUNTER_HAT.get())
                 || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.DAWN_HUNTER_COAT.get())
                 || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
-                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+                || entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.DAWN_HUNTER_LEGGINGS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get())
+                || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 
     public static boolean wearsFullHunterSet(LivingEntity entity) {
@@ -194,25 +206,35 @@ public class SilverEvents {
 
     private static boolean isHunterHead(ItemStack stack) {
         return stack.is(WitcheryItems.HUNTER_HELMET.get())
+                || stack.is(WitcheryItems.HUNTER_HAT.get())
                 || stack.is(WitcheryItems.HUNTER_HELMET_SILVERED.get())
-                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get());
+                || stack.is(WitcheryItems.SILVERED_HUNTER_HAT.get())
+                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_HAT.get());
     }
 
     private static boolean isHunterChest(ItemStack stack) {
         return stack.is(WitcheryItems.HUNTER_CHESTPLATE.get())
+                || stack.is(WitcheryItems.HUNTER_COAT.get())
                 || stack.is(WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get())
-                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get());
+                || stack.is(WitcheryItems.SILVERED_HUNTER_COAT.get())
+                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_COAT.get());
     }
 
     private static boolean isHunterLegs(ItemStack stack) {
         return stack.is(WitcheryItems.HUNTER_LEGGINGS.get())
                 || stack.is(WitcheryItems.HUNTER_LEGGINGS_SILVERED.get())
-                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get());
+                || stack.is(WitcheryItems.SILVERED_HUNTER_LEGGINGS.get())
+                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_LEGGINGS.get());
     }
 
     private static boolean isHunterFeet(ItemStack stack) {
         return stack.is(WitcheryItems.HUNTER_BOOTS.get())
                 || stack.is(WitcheryItems.HUNTER_BOOTS_SILVERED.get())
-                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+                || stack.is(WitcheryItems.SILVERED_HUNTER_BOOTS.get())
+                || stack.is(WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 }

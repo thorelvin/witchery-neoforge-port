@@ -7,10 +7,10 @@
   ],
   "key": {
     "S": "witchery:silver_ingot",
-    "L": "witchery:hunter_leggings"
+    "L": "#witchery:silvered_hunter_leggings"
   },
   "result": {
-    "id": "witchery:witch_hunter_dawn_trousers",
+    "id": "witchery:dawn_hunter_leggings",
     "count": 1
   }
 }

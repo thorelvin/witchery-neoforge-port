@@ -6,12 +6,12 @@
     "DSD"
   ],
   "key": {
-    "#": "witchery:hunter_chestplate",
+    "#": "#witchery:hunter_coats",
     "D": "witchery:silver_deposits",
     "S": "minecraft:string",
     "W": "witchery:wolfsbane_flower"
   },
   "result": {
-    "id": "witchery:hunter_chestplate_silvered"
+    "id": "witchery:silvered_hunter_coat"
   }
 }

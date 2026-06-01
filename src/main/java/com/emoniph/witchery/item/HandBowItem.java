@@ -338,20 +338,30 @@ public class HandBowItem extends Item {
     private static boolean isFullHunterSet(LivingEntity entity) {
         return isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.HEAD),
                 WitcheryItems.HUNTER_HELMET.get(),
+                WitcheryItems.HUNTER_HAT.get(),
                 WitcheryItems.HUNTER_HELMET_SILVERED.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_HAT.get())
+                WitcheryItems.SILVERED_HUNTER_HAT.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_HAT.get(),
+                WitcheryItems.DAWN_HUNTER_HAT.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.CHEST),
                 WitcheryItems.HUNTER_CHESTPLATE.get(),
+                WitcheryItems.HUNTER_COAT.get(),
                 WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_COAT.get())
+                WitcheryItems.SILVERED_HUNTER_COAT.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_COAT.get(),
+                WitcheryItems.DAWN_HUNTER_COAT.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.LEGS),
                 WitcheryItems.HUNTER_LEGGINGS.get(),
                 WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get())
+                WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get(),
+                WitcheryItems.DAWN_HUNTER_LEGGINGS.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.FEET),
                 WitcheryItems.HUNTER_BOOTS.get(),
                 WitcheryItems.HUNTER_BOOTS_SILVERED.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get());
+                WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
+                WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get(),
+                WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 
     private static boolean isAnyHunterPiece(ItemStack stack, Item... items) {

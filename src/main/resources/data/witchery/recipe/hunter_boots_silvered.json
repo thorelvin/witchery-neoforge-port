@@ -1,11 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "witchery:hunter_boots",
+    "#witchery:hunter_boots",
     "witchery:silver_ingot",
     "witchery:silver_ingot"
   ],
   "result": {
-    "id": "witchery:hunter_boots_silvered"
+    "id": "witchery:silvered_hunter_boots"
   }
 }

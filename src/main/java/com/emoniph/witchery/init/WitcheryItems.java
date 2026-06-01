@@ -419,7 +419,9 @@ public class WitcheryItems {
             vampireArmor(id, net.minecraft.world.item.equipment.ArmorMaterials.IRON,
                     net.minecraft.world.item.equipment.ArmorType.BOOTS, VampireClothingItem.SetType.MEDIUM));
     public static final DeferredItem<Item> HUNTER_HELMET     = ITEMS.register("hunter_helmet",     id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.PLAIN));
+    public static final DeferredItem<Item> HUNTER_HAT        = ITEMS.register("hunter_hat",        id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.PLAIN));
     public static final DeferredItem<Item> HUNTER_CHESTPLATE = ITEMS.register("hunter_chestplate", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.PLAIN));
+    public static final DeferredItem<Item> HUNTER_COAT       = ITEMS.register("hunter_coat",       id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.PLAIN));
     public static final DeferredItem<Item> HUNTER_LEGGINGS   = ITEMS.register("hunter_leggings",   id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.PLAIN));
     public static final DeferredItem<Item> HUNTER_BOOTS      = ITEMS.register("hunter_boots",      id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.PLAIN));
     public static final DeferredItem<Item> DEATHS_HOOD = ITEMS.register("deaths_hood", id ->
@@ -582,9 +584,13 @@ public class WitcheryItems {
     public static final DeferredItem<Item> STAKE               = ITEMS.register("stake", id -> new com.emoniph.witchery.item.StakeItem(itemProps(id)));
     public static final DeferredItem<BlockItem> SILVER_VAT     = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SILVER_VAT);
     public static final DeferredItem<Item> HUNTER_HELMET_SILVERED     = ITEMS.register("hunter_helmet_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.SILVERED));
+    public static final DeferredItem<Item> SILVERED_HUNTER_HAT        = ITEMS.register("silvered_hunter_hat", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> HUNTER_CHESTPLATE_SILVERED = ITEMS.register("hunter_chestplate_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.SILVERED));
+    public static final DeferredItem<Item> SILVERED_HUNTER_COAT       = ITEMS.register("silvered_hunter_coat", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> HUNTER_LEGGINGS_SILVERED   = ITEMS.register("hunter_leggings_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.SILVERED));
+    public static final DeferredItem<Item> SILVERED_HUNTER_LEGGINGS   = ITEMS.register("silvered_hunter_leggings", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> HUNTER_BOOTS_SILVERED      = ITEMS.register("hunter_boots_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.SILVERED));
+    public static final DeferredItem<Item> SILVERED_HUNTER_BOOTS      = ITEMS.register("silvered_hunter_boots", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> DENSE_WEB          = ITEMS.registerSimpleItem("dense_web");
     public static final DeferredItem<Item> INFERNAL_BLOOD     = ITEMS.register("infernal_blood", id -> new DemonicBloodItem(itemProps(id)));
     public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.register("demonic_blood", id -> new DemonicBloodItem(itemProps(id)));
@@ -653,9 +659,13 @@ public class WitcheryItems {
 
     // Witch Hunter Dawn armor set (source garlicked hunter variant)
     public static final DeferredItem<Item> WITCH_HUNTER_DAWN_HAT      = ITEMS.register("witch_hunter_dawn_hat",      id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.DAWN));
+    public static final DeferredItem<Item> DAWN_HUNTER_HAT            = ITEMS.register("dawn_hunter_hat",             id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.HELMET, HunterClothingItem.Variant.DAWN));
     public static final DeferredItem<Item> WITCH_HUNTER_DAWN_COAT     = ITEMS.register("witch_hunter_dawn_coat",     id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.DAWN));
+    public static final DeferredItem<Item> DAWN_HUNTER_COAT           = ITEMS.register("dawn_hunter_coat",            id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE, HunterClothingItem.Variant.DAWN));
     public static final DeferredItem<Item> WITCH_HUNTER_DAWN_TROUSERS = ITEMS.register("witch_hunter_dawn_trousers", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.DAWN));
+    public static final DeferredItem<Item> DAWN_HUNTER_LEGGINGS       = ITEMS.register("dawn_hunter_leggings",        id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.DAWN));
     public static final DeferredItem<Item> WITCH_HUNTER_DAWN_BOOTS    = ITEMS.register("witch_hunter_dawn_boots",    id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.DAWN));
+    public static final DeferredItem<Item> DAWN_HUNTER_BOOTS          = ITEMS.register("dawn_hunter_boots",           id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.DAWN));
 
     // Witches outfit / special armors — wearable
     public static final DeferredItem<Item> BABAS_HAT        = ITEMS.register("babas_hat",
@@ -811,16 +821,6 @@ public class WitcheryItems {
             "distilling_book",
             "circle_magic_book",
             "herbology_book",
-            "hunter_hat",
-            "hunter_coat",
-            "silvered_hunter_hat",
-            "silvered_hunter_coat",
-            "silvered_hunter_leggings",
-            "silvered_hunter_boots",
-            "dawn_hunter_hat",
-            "dawn_hunter_coat",
-            "dawn_hunter_leggings",
-            "dawn_hunter_boots",
             "fanciful_thinking_charm",
             "pentacle",
             "golden_heart"
