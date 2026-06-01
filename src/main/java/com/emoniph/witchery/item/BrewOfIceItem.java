@@ -5,6 +5,7 @@ import com.emoniph.witchery.entity.EntEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.blocks.StockadeBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,7 +26,17 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.SlabType;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -72,7 +83,7 @@ public class BrewOfIceItem extends BrewItem {
         }
 
         BlockPos clicked = context.getClickedPos();
-        if (tryFreezeStockade(serverLevel, clicked) > 0) {
+        if (tryApplyIceWorldConversion(serverLevel, clicked) > 0) {
             consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
             return InteractionResult.SUCCESS;
         }
@@ -135,18 +146,167 @@ public class BrewOfIceItem extends BrewItem {
         return false;
     }
 
-    private static int tryFreezeStockade(ServerLevel level, BlockPos pos) {
+    private static int tryApplyIceWorldConversion(ServerLevel level, BlockPos pos) {
         BlockState current = level.getBlockState(pos);
-        if (current.getBlock() != WitcheryBlocks.STOCKADE.get()) {
+        if (isIceWorldDoor(current)) {
+            return freezeDoor(level, pos, current);
+        }
+        if (current.hasBlockEntity()) {
             return 0;
         }
 
-        level.setBlock(pos, copyStockadeProperties(current, WitcheryBlocks.ICE_STOCKADE.get().defaultBlockState()), 3);
+        BlockState replacement = iceWorldReplacement(current);
+        if (replacement == null || replacement.getBlock() == current.getBlock()) {
+            return 0;
+        }
+
+        level.setBlock(pos, replacement, 3);
+        iceWorldFeedback(level, pos);
+        return 1;
+    }
+
+    private static int freezeDoor(ServerLevel level, BlockPos pos, BlockState clickedState) {
+        BlockPos lowerPos = clickedState.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+        BlockPos upperPos = lowerPos.above();
+        BlockState lower = level.getBlockState(lowerPos);
+        BlockState upper = level.getBlockState(upperPos);
+        if (!isIceWorldDoor(lower) || !isIceWorldDoor(upper)) {
+            return 0;
+        }
+        if (level.getBlockEntity(lowerPos) != null || level.getBlockEntity(upperPos) != null) {
+            return 0;
+        }
+
+        BlockState iceLower = copyDoorProperties(lower, WitcheryBlocks.ICE_DOOR.get().defaultBlockState())
+                .setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER);
+        BlockState iceUpper = iceLower.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
+        level.setBlock(lowerPos, iceLower, 3);
+        level.setBlock(upperPos, iceUpper, 3);
+        iceWorldFeedback(level, upperPos);
+        return 2;
+    }
+
+    private static boolean isIceWorldDoor(BlockState state) {
+        return state.is(Blocks.OAK_DOOR)
+                || state.is(Blocks.SPRUCE_DOOR)
+                || state.is(Blocks.BIRCH_DOOR)
+                || state.is(Blocks.JUNGLE_DOOR)
+                || state.is(Blocks.ACACIA_DOOR)
+                || state.is(Blocks.DARK_OAK_DOOR)
+                || state.is(Blocks.MANGROVE_DOOR)
+                || state.is(Blocks.CHERRY_DOOR)
+                || state.is(Blocks.BAMBOO_DOOR)
+                || state.is(Blocks.CRIMSON_DOOR)
+                || state.is(Blocks.WARPED_DOOR);
+    }
+
+    private static BlockState iceWorldReplacement(BlockState current) {
+        if (current.is(WitcheryBlocks.STOCKADE.get())) {
+            return copyStockadeProperties(current, WitcheryBlocks.ICE_STOCKADE.get().defaultBlockState());
+        }
+        if (isIceWorldOutput(current)) {
+            return null;
+        }
+        if (current.getBlock() instanceof FenceGateBlock) {
+            return copyGateProperties(current, WitcheryBlocks.ICE_GATE.get().defaultBlockState());
+        }
+        if (current.getBlock() instanceof FenceBlock) {
+            return copyFenceProperties(current, WitcheryBlocks.ICE_FENCE.get().defaultBlockState());
+        }
+        if (current.getBlock() instanceof StairBlock) {
+            return copyStairProperties(current, WitcheryBlocks.ICE_STAIRS.get().defaultBlockState());
+        }
+        if (current.getBlock() instanceof SlabBlock) {
+            return copySlabProperties(current, WitcheryBlocks.ICE_SLAB.get().defaultBlockState());
+        }
+        if (current.getBlock() instanceof PressurePlateBlock) {
+            return copyProperty(current, WitcheryBlocks.ICE_PRESSURE_PLATE.get().defaultBlockState(), BlockStateProperties.POWERED);
+        }
+        if (current.is(Blocks.DIRT)
+                || current.is(Blocks.GRASS_BLOCK)
+                || current.is(Blocks.MYCELIUM)
+                || current.is(Blocks.SAND)) {
+            return Blocks.SNOW_BLOCK.defaultBlockState();
+        }
+        if (current.is(Blocks.COBBLESTONE)
+                || current.is(Blocks.STONE_BRICKS)
+                || current.is(BlockTags.LOGS)) {
+            return Blocks.PACKED_ICE.defaultBlockState();
+        }
+        if (current.is(Blocks.STONE)
+                || current.is(Blocks.BRICKS)
+                || current.is(Blocks.SANDSTONE)
+                || current.is(BlockTags.PLANKS)
+                || current.is(BlockTags.LEAVES)) {
+            return WitcheryBlocks.PERPETUAL_ICE.get().defaultBlockState();
+        }
+        return null;
+    }
+
+    private static boolean isIceWorldOutput(BlockState state) {
+        return state.is(WitcheryBlocks.ICE_DOOR.get())
+                || state.is(WitcheryBlocks.ICE_FENCE.get())
+                || state.is(WitcheryBlocks.ICE_GATE.get())
+                || state.is(WitcheryBlocks.ICE_PRESSURE_PLATE.get())
+                || state.is(WitcheryBlocks.ICE_SLAB.get())
+                || state.is(WitcheryBlocks.ICE_STAIRS.get())
+                || state.is(WitcheryBlocks.ICE_STOCKADE.get())
+                || state.is(WitcheryBlocks.PERPETUAL_ICE.get())
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.PACKED_ICE);
+    }
+
+    private static BlockState copyDoorProperties(BlockState from, BlockState to) {
+        BlockState copied = copyProperty(from, to, DoorBlock.FACING);
+        copied = copyProperty(from, copied, DoorBlock.HINGE);
+        copied = copyProperty(from, copied, DoorBlock.OPEN);
+        return copyProperty(from, copied, DoorBlock.POWERED);
+    }
+
+    private static BlockState copyGateProperties(BlockState from, BlockState to) {
+        BlockState copied = copyProperty(from, to, FenceGateBlock.FACING);
+        copied = copyProperty(from, copied, FenceGateBlock.OPEN);
+        copied = copyProperty(from, copied, FenceGateBlock.POWERED);
+        return copyProperty(from, copied, FenceGateBlock.IN_WALL);
+    }
+
+    private static BlockState copyFenceProperties(BlockState from, BlockState to) {
+        BlockState copied = copyProperty(from, to, BlockStateProperties.NORTH);
+        copied = copyProperty(from, copied, BlockStateProperties.EAST);
+        copied = copyProperty(from, copied, BlockStateProperties.SOUTH);
+        copied = copyProperty(from, copied, BlockStateProperties.WEST);
+        return copyProperty(from, copied, BlockStateProperties.WATERLOGGED);
+    }
+
+    private static BlockState copyStairProperties(BlockState from, BlockState to) {
+        BlockState copied = copyProperty(from, to, StairBlock.FACING);
+        copied = copyProperty(from, copied, StairBlock.HALF);
+        copied = copyProperty(from, copied, StairBlock.SHAPE);
+        return copyProperty(from, copied, StairBlock.WATERLOGGED);
+    }
+
+    private static BlockState copySlabProperties(BlockState from, BlockState to) {
+        BlockState copied = copyProperty(from, to, SlabBlock.TYPE);
+        if (copied.hasProperty(SlabBlock.TYPE) && copied.getValue(SlabBlock.TYPE) == SlabType.DOUBLE) {
+            copied = copied.setValue(SlabBlock.WATERLOGGED, false);
+        } else {
+            copied = copyProperty(from, copied, SlabBlock.WATERLOGGED);
+        }
+        return copied;
+    }
+
+    private static <T extends Comparable<T>> BlockState copyProperty(BlockState from, BlockState to, Property<T> property) {
+        if (!from.hasProperty(property) || !to.hasProperty(property)) {
+            return to;
+        }
+        return to.setValue(property, from.getValue(property));
+    }
+
+    private static void iceWorldFeedback(ServerLevel level, BlockPos pos) {
         level.sendParticles(ParticleTypes.POOF,
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                 8, 0.25D, 0.25D, 0.25D, 0.01D);
         level.playSound(null, pos, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 0.8F, 0.6F);
-        return 1;
     }
 
     private static BlockState copyStockadeProperties(BlockState from, BlockState to) {
