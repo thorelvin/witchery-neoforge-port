@@ -71,7 +71,6 @@ public final class VillageWallGenerator {
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     private static final int GATE_PATH_OUTWARD_MAX = 10;
     private static final int GATE_PATH_INWARD_MAX = 15;
-    private static final int GATE_PATH_SAMPLE_OUTWARD = 4;
     private static final int GATEHOUSE_HALF_WIDTH = 3;
     private static final int TREE_CLEAR_MAX_BLOCKS = 384;
     private static final int TREE_CLEAR_SCAN_Y_ABOVE = 24;
@@ -520,7 +519,7 @@ public final class VillageWallGenerator {
      * Phase 2: candidates = the END of a long straight street, traced to the wall cell it
      *          would exit through; keeps the approach dir and the street run length.
      * Phase 3: rank by length, keep up to MAX_GATES spaced >= MIN_SPACING apart, rejecting any
-     *          gate over water or without land on both sides; refY = median path height.
+     *          gate over water or without land on both sides; refY = immediate gate path height.
      */
     private static GateDetection detectGates(ServerLevel level, byte[][] grid,
                                               int ox, int oz, int w, int d, boolean desert) {
@@ -584,7 +583,7 @@ public final class VillageWallGenerator {
                     || isOverWater(level, cwx - ddx, cwz - ddz))  // inside
                 continue;
 
-            int refY = pathCorridorAvgY(level, cwx, cwz, ddx, ddz, desert);
+            int refY = gateThresholdAvgY(level, cwx, cwz, ddx, ddz, desert);
             if (refY < 0) refY = wallBaseHeight(level, cwx, cwz);
 
             int axisDX = (ddx != 0) ? 0 : 1, axisDZ = (ddx != 0) ? 1 : 0; // along the wall
@@ -598,25 +597,33 @@ public final class VillageWallGenerator {
     }
 
     /**
-     * Average ground height along the gate's path corridor: from a few cells outside the wall
-     * (-dir) inward (-dir·t) until the existing village road is reached. This is the ground the
-     * gatehouse and its path actually sit on, so averaging it places the gate at a height that
-     * the path can ramp to from both sides — instead of borrowing a far-away road's elevation.
+     * Average only the immediate 3-wide path strips outside and inside the gate. Longer inward
+     * road runs can pass houses or slopes and pull the threshold down, so the gate height is
+     * anchored to the six terrain/path cells that actually meet the opening.
      */
-    private static int pathCorridorAvgY(ServerLevel level, int cwx, int cwz,
+    private static int gateThresholdAvgY(ServerLevel level, int cwx, int cwz,
                                          int ddx, int ddz, boolean desert) {
-        int idx = -ddx, idz = -ddz; // inward (toward the village)
+        // Keep the gate threshold local: three cells outside plus three cells inside.
+        int axisDX = (ddx != 0) ? 0 : 1;
+        int axisDZ = (ddx != 0) ? 1 : 0;
+        int[][] sides = {
+                {ddx, ddz},   // outside the wall
+                {-ddx, -ddz}  // inside the wall
+        };
         long sum = 0; int n = 0;
-        for (int t = -GATE_PATH_SAMPLE_OUTWARD; t <= GATE_PATH_INWARD_MAX; t++) { // t<0 = outside the wall, t>0 = inside
-            int ix = cwx + idx * t, iz = cwz + idz * t;
-            if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) continue;
-            int gy = groundHeight(level, ix, iz);
-            int surfaceY = gy - 1;
-            if (t > 0 && !isGatePathTerrainColumn(level, ix, surfaceY, iz, surfaceY, desert)) break;
-            sum += gy; n++;
-            if (t > 0 && isVillageRoad(level.getBlockState(new BlockPos(ix, surfaceY, iz)), desert)) break;
+        for (int[] side : sides) {
+            for (int o = -1; o <= 1; o++) {
+                int ix = cwx + side[0] + axisDX * o;
+                int iz = cwz + side[1] + axisDZ * o;
+                if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) continue;
+                int gy = groundHeight(level, ix, iz);
+                if (level.getBlockState(new BlockPos(ix, gy, iz)).liquid()) continue;
+                int surfaceY = gy - 1;
+                if (!isGatePathTerrainColumn(level, ix, surfaceY, iz, surfaceY, desert)) continue;
+                sum += gy; n++;
+            }
         }
-        return n > 0 ? (int) (sum / n) : -1;
+        return n > 0 ? Math.round((float) sum / (float) n) : -1;
     }
 
     /** True if the column at (wx,wz) has water above its solid floor. */
