@@ -284,7 +284,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> VOODOO_POPPET = ITEMS.register("voodoo_poppet", id -> new com.emoniph.witchery.item.VoodooPoppetItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> VAMPIRIC_POPPET = ITEMS.register("vampiric_poppet", id -> new com.emoniph.witchery.item.VampiricPoppetItem(itemProps(id).stacksTo(1)));
     // ── End poppets ────────────────────────────────────────────────────────────
-    public static final DeferredItem<Item> BREW_BAG = ITEMS.registerSimpleItem("brew_bag");
+    public static final DeferredItem<Item> BREW_BAG = ITEMS.register("brew_bag",
+            id -> new BrewBagItem(itemProps(id)));
     public static final DeferredItem<Item> DIVINER = ITEMS.registerSimpleItem("diviner");
     public static final DeferredItem<Item> WATER_DIVINER = ITEMS.register("water_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.WATER, itemProps(id).durability(50)));
     public static final DeferredItem<Item> LAVA_DIVINER = ITEMS.register("lava_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.LAVA, itemProps(id).durability(50)));

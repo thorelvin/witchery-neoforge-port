@@ -52,7 +52,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | player_compass | ✅ Done | Taglock bind, direction report |
 | waystone (blank/bound) | ✅ Done | Scry route, stack cap |
 | circle_talisman | ✅ Done | |
-| brew_bag | 🔲 Placeholder | Item registered; no container logic |
+| brew_bag | 🔶 Partial | Source recipe, one-stack item, eight stored throwable-brew slots, selected-slot cycling, other-hand brew insertion, stored-brew throwing, and tooltip storage view are live. Remaining: exact old GUI/radial gesture overlay, full generic-brew compatibility, and dye recoloring recipes |
 | leonards_urn | 🔶 Partial | Source `ItemLeonardsUrn` now stores current throwable splash/gas brews in source-shaped custom data, shows selected/stored foci in tooltip, cycles focus, and releases the selected stored brew without consuming it. Remaining: old GUI and exact Leonard-symbol cost/cast integration. |
 | moon_charm | Partial | Source: `ItemMoonCharm` now has rare single-stack durability, gold-nugget repair, 60-tick bow-style use, manual werewolf transform/restore toggle, wolfsbane refusal, inventory prevention of forced moon shifting, and Wolf Altar 3-nugget output. Remaining: exact wolf/wolfman split and old level-gate quest semantics. |
 | horn_of_the_hunt / hunts_horn | 🔶 Partial | Source `ItemHornOfTheHunt` / Resurrected alias now use 40-tick bow-style hold, one-use durability, nearby safe Horned Huntsman spawn, 150-tick quarter-health entrance, horn/Wither-spawn feedback, and source-only explosive entrance. Remaining: in-game boss entrance/terrain QA and exact old horn sound asset. |
@@ -298,7 +298,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 | BlockBrewGas (gas brew cloud) | ❌ Missing | |
 | EntityBrew (thrown brew projectile physics) | 🔶 Partial | thrown_brew entity exists; full brew physics incomplete |
 | Brew bottle / splash / lingering / bucket variants | 🔶 Partial | Item-based only; no container conversion |
-| Brew Bag container logic | ❌ Missing | |
+| Brew Bag container logic | 🔶 Partial | Eight stored throwable-brew slots and selected-slot throwing are live; exact GUI/radial gesture overlay remains |
 | Brew of Endless Water | Done | Source-style glowing 100-use utility item fills cauldrons or places water source blocks |
 | Brew of Combustion | Partial | `witchery:combustion_brew` is now a real glowing stackable furnace/Witches' Oven fuel with the Resurrected `Level` burn tiers (2400/5000/10000/50000 ticks) and a base coal kettle recipe; full dynamic composed-brew creation remains under the custom cauldron backlog |
 
