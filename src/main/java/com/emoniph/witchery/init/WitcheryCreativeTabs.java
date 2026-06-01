@@ -237,6 +237,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.NULLIFIED_LEATHER.get(),
                 WitcheryItems.WOOD_ASH.get(),
                 WitcheryItems.SILVER_DEPOSITS.get(),
+                WitcheryItems.GOLDEN_HEART.get(),
                 WitcheryItems.DIAMOND_VAPOUR.get(),
                 WitcheryItems.EXHALE_OF_HORNED_ONE.get(),
                 WitcheryItems.HINT_OF_REBIRTH.get(),
@@ -471,8 +472,6 @@ public class WitcheryCreativeTabs {
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
         Set<String> accepted = new LinkedHashSet<>();
 
-        addLegacy(output, accepted,
-                "golden_heart");
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
                 "book_wands", "book_burning", "brews_and_infusions_book",

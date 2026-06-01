@@ -610,6 +610,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WOLFSBANE_SEEDS    = ITEMS.register("wolfsbane_seeds", id -> new BlockItem(WitcheryBlocks.WOLFSBANE_CROP.get(), itemProps(id)));
     public static final DeferredItem<Item> SILVER_INGOT        = ITEMS.registerSimpleItem("silver_ingot");
     public static final DeferredItem<Item> SILVER_DEPOSITS     = ITEMS.registerSimpleItem("silver_deposits");
+    public static final DeferredItem<Item> GOLDEN_HEART        = ITEMS.registerSimpleItem("golden_heart");
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
     public static final DeferredItem<Item> WOODEN_BOLT         = ITEMS.registerSimpleItem("wooden_bolt");
@@ -846,8 +847,7 @@ public class WitcheryItems {
             "hunger_demon_soul",
             "anguish_demon_soul",
             "fear_demon_soul",
-            "torment_demon_soul",
-            "golden_heart"
+            "torment_demon_soul"
     );
 
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
