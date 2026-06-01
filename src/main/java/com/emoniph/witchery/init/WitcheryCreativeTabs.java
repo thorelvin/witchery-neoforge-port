@@ -480,7 +480,6 @@ public class WitcheryCreativeTabs {
                 "collecting_fumes_book", "conjuration_and_fetishes_book",
                 "symbology_book", "witches_brews_book");
         addLegacy(output, accepted,
-                "charged_crossbow",
                 "hellhound_head", "wolf_head",
                 "deployed_deaths_hand");
         addLegacy(output, accepted,

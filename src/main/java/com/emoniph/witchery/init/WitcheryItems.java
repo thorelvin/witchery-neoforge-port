@@ -823,7 +823,6 @@ public class WitcheryItems {
             "conjuration_and_fetishes_book",
             "symbology_book",
             "witches_brews_book",
-            "charged_crossbow",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
             "dandelion_of_thorns",
