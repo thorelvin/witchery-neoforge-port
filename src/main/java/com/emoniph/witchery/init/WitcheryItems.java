@@ -817,7 +817,6 @@ public class WitcheryItems {
             "brew_of_soul_torment",
             "contract_ownership",
             "contract_torment",
-            "silver_dust",
             "brews_and_infusions_book",
             "collecting_fumes_book",
             "conjuration_and_fetishes_book",

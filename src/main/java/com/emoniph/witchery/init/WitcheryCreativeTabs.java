@@ -472,7 +472,6 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "silver_dust",
                 "golden_heart");
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
