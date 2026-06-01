@@ -57,6 +57,7 @@ public final class VillageWallGenerator {
     }
 
     private static final int WALL_HEIGHT   = 6;   // blocks above surface
+    private static final int GATEHOUSE_CLEAR_ABOVE_WALL = 10;
     private static final int MIN_BUILD_Y   = -64;
     private static final int MAX_BUILD_Y   = 319;
     // PADDING must exceed SMOOTH + BLOCK (see step 3c) so the coarse-hull blocks can never
@@ -937,7 +938,7 @@ public final class VillageWallGenerator {
             boolean opening = Math.abs(o) <= 1;
             for (int depth = -1; depth <= 1; depth++) {
                 int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
-                clearTouchedVegetation(level, dwx, refY - 1, dwz, WALL_HEIGHT + 4, TREE_CLEAR_WALL_TOUCH_RADIUS);
+                clearTouchedVegetation(level, dwx, refY - 1, dwz, WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL, TREE_CLEAR_WALL_TOUCH_RADIUS);
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
@@ -973,7 +974,7 @@ public final class VillageWallGenerator {
             for (int depth = -1; depth <= 1; depth++) {
                 int x = bx + g.inDX() * depth;
                 int z = bz + g.inDZ() * depth;
-                for (int dy = 0; dy <= WALL_HEIGHT + 4; dy++) {
+                for (int dy = 0; dy <= WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL; dy++) {
                     forceSet(level, x, g.refY() + dy, z, Blocks.AIR.defaultBlockState());
                 }
             }
