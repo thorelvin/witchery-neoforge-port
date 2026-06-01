@@ -195,6 +195,11 @@ public class WitchCauldronBlock extends Block {
             return extremisResult;
         }
 
+        InteractionResult pitTrapResult = tryBrewPitTrap(stack, state, level, pos, player);
+        if (pitTrapResult.consumesAction()) {
+            return pitTrapResult;
+        }
+
         InteractionResult mutandisOfferingResult = tryOfferMutandisIngredient(stack, state, level, pos, player);
         if (mutandisOfferingResult.consumesAction()) {
             return mutandisOfferingResult;
@@ -486,6 +491,69 @@ public class WitchCauldronBlock extends Block {
                 .filter(entity -> entity.isAlive())
                 .filter(entity -> entity.getItem().is(item))
                 .findFirst();
+    }
+
+    private InteractionResult tryBrewPitTrap(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!stack.is(WitcheryItems.TORMENTED_TWINE.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        Optional<ItemEntity> dirt = findCauldronOffering(level, pos, Blocks.DIRT.asItem());
+        Optional<ItemEntity> mandrake = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
+        Optional<ItemEntity> wheatSeeds = findCauldronOffering(level, pos, Items.WHEAT_SEEDS);
+        Optional<ItemEntity> dandelion = findCauldronOffering(level, pos, Items.DANDELION);
+
+        ItemStack result;
+        List<ItemEntity> offerings;
+        String successKey;
+        if (dirt.isPresent() && mandrake.isPresent()) {
+            result = new ItemStack(WitcheryItems.PIT_DIRT.get(), 4);
+            offerings = List.of(dirt.get(), mandrake.get());
+            successKey = "witchery.cauldron.pit_dirt.success";
+        } else if (dirt.isPresent() && wheatSeeds.isPresent() && dandelion.isPresent()) {
+            result = new ItemStack(WitcheryItems.PIT_GRASS.get(), 4);
+            offerings = List.of(dirt.get(), wheatSeeds.get(), dandelion.get());
+            successKey = "witchery.cauldron.pit_grass.success";
+        } else {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.pit_trap.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+        if (altar == null || !altar.hasValidStructure() || altar.getPower() < 4000) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.pit_trap.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!altar.consumePower(4000)) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.pit_trap.no_power"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        for (ItemEntity offering : offerings) {
+            ItemStack offeringStack = offering.getItem();
+            offeringStack.shrink(1);
+            if (offeringStack.isEmpty()) {
+                offering.discard();
+            } else {
+                offering.setItem(offeringStack);
+            }
+        }
+        lowerFillLevel(state, level, pos);
+
+        ItemEntity resultEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, result);
+        resultEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(resultEntity);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.85F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable(successKey), false);
+        return InteractionResult.CONSUME;
     }
 
     private InteractionResult tryOfferMutandisIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
