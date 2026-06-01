@@ -2,6 +2,8 @@ package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.QuartPos;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -62,7 +64,9 @@ public class CovenCircleStructure extends Structure {
     private static boolean hasDryLandFootprint(GenerationContext ctx, int x, int z) {
         for (int dx = -TERRAIN_PADDING; dx < FOOTPRINT_WIDTH + TERRAIN_PADDING; dx++) {
             for (int dz = -TERRAIN_PADDING; dz < FOOTPRINT_DEPTH + TERRAIN_PADDING; dz++) {
-                if (isOverWater(ctx, x + dx, z + dz)) {
+                int wx = x + dx;
+                int wz = z + dz;
+                if (isOverWater(ctx, wx, wz) || isWaterBiome(ctx, wx, wz)) {
                     return false;
                 }
             }
@@ -92,5 +96,17 @@ public class CovenCircleStructure extends Structure {
         return ctx.chunkGenerator().getFirstOccupiedHeight(
                 x, z, Heightmap.Types.OCEAN_FLOOR_WG,
                 ctx.heightAccessor(), ctx.randomState());
+    }
+
+    private static boolean isWaterBiome(GenerationContext ctx, int x, int z) {
+        int y = ctx.chunkGenerator().getFirstOccupiedHeight(
+                x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                ctx.heightAccessor(), ctx.randomState());
+        var biome = ctx.chunkGenerator().getBiomeSource().getNoiseBiome(
+                QuartPos.fromBlock(x),
+                QuartPos.fromBlock(y),
+                QuartPos.fromBlock(z),
+                ctx.randomState().sampler());
+        return biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_RIVER);
     }
 }

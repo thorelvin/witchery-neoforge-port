@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
@@ -55,6 +56,7 @@ public class CovenCirclePiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
+        if (!hasAboveWaterFootprint(level)) return;
 
         // ── Clear trees and vegetation in the 11×11 footprint ────────────────────
         // The bounding box height (y=0–3) only covers the structure itself; trees extend
@@ -231,6 +233,44 @@ public class CovenCirclePiece extends StructurePiece {
                 level.addFreshEntityWithPassengers(witch);
             }
         }
+    }
+
+    private boolean hasAboveWaterFootprint(WorldGenLevel level) {
+        int floorY = boundingBox.minY();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+
+        for (int x = 0; x <= 10; x++) {
+            for (int z = 0; z <= 10; z++) {
+                int wx = boundingBox.minX() + x;
+                int wz = boundingBox.minZ() + z;
+                if (isWaterBiome(level, wx, wz)) {
+                    return false;
+                }
+
+                int worldSurface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, wx, wz);
+                int topY = Math.max(worldSurface, floorY + 1);
+                for (int y = floorY - 1; y <= topY; y++) {
+                    cursor.set(wx, y, wz);
+                    BlockState state = level.getBlockState(cursor);
+                    if (!state.getFluidState().isEmpty() || isWaterSurfaceBlock(state)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isWaterSurfaceBlock(BlockState state) {
+        return state.is(Blocks.ICE)
+                || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE)
+                || state.is(Blocks.FROSTED_ICE);
+    }
+
+    private static boolean isWaterBiome(WorldGenLevel level, int x, int z) {
+        net.minecraft.core.Holder<Biome> biome = level.getBiome(new BlockPos(x, 64, z));
+        return biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_RIVER);
     }
 
     private static boolean isDesertBiome(WorldGenLevel level, int x, int z) {
