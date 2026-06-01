@@ -1,6 +1,8 @@
 # Next Tasks — Witchery NeoForge Port
 
-Current local delta (2026-06-01): Gatehouse inner path regression fix. The inside wall-walk ledge is now placed after gate path grading, and stale ledge masonry in the first inward path columns is cleared before grading, so the terrain-only inward gate adjuster no longer mistakes the new high ledge for a building column and stops immediately. Fresh QA should confirm the outside and inside gate approaches both grade terrain again.
+Current local delta (2026-06-01): Stockade ice-brew conversion. Direct Brew of Frost / `brew_of_ice` block use now restores the source Ice World stockade conversion in first practical form: using it on a wooden `witchery:stockade` replaces that block with `witchery:ice_stockade`, preserving the shared connection/waterlogged properties, playing ice feedback, returning the empty bottle, and consuming the brew only on a successful conversion.
+
+Previous local delta (2026-06-01): Gatehouse inner path regression fix. The inside wall-walk ledge is now placed after gate path grading, and stale ledge masonry in the first inward path columns is cleared before grading, so the terrain-only inward gate adjuster no longer mistakes the new high ledge for a building column and stops immediately. Fresh QA should confirm the outside and inside gate approaches both grade terrain again.
 
 Previous local delta (2026-06-01): Gatehouse inside wall-walk ledge. Gatehouses now add a one-block village-facing rampart ledge at wall-walk height, extended one block past each side tower, so guards can move from the adjacent inner wall-walk onto the inside of the gatehouse and across the over-gate perch instead of being blocked by the side towers. Fresh wall QA should inspect both gatehouse ends and confirm guards can path from wall runs onto the gatehouse interior ledge.
 

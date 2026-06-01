@@ -3,6 +3,8 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.EntEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
+import com.emoniph.witchery.blocks.StockadeBlock;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -70,6 +72,11 @@ public class BrewOfIceItem extends BrewItem {
         }
 
         BlockPos clicked = context.getClickedPos();
+        if (tryFreezeStockade(serverLevel, clicked) > 0) {
+            consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
+            return InteractionResult.SUCCESS;
+        }
+
         int placed;
         if (hasAdjacentWater(serverLevel, clicked)) {
             placed = freezeSurroundingWater(serverLevel, clicked, FREEZE_RANGE);
@@ -126,6 +133,28 @@ public class BrewOfIceItem extends BrewItem {
             }
         }
         return false;
+    }
+
+    private static int tryFreezeStockade(ServerLevel level, BlockPos pos) {
+        BlockState current = level.getBlockState(pos);
+        if (current.getBlock() != WitcheryBlocks.STOCKADE.get()) {
+            return 0;
+        }
+
+        level.setBlock(pos, copyStockadeProperties(current, WitcheryBlocks.ICE_STOCKADE.get().defaultBlockState()), 3);
+        level.sendParticles(ParticleTypes.POOF,
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                8, 0.25D, 0.25D, 0.25D, 0.01D);
+        level.playSound(null, pos, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 0.8F, 0.6F);
+        return 1;
+    }
+
+    private static BlockState copyStockadeProperties(BlockState from, BlockState to) {
+        return to.setValue(StockadeBlock.NORTH, from.getValue(StockadeBlock.NORTH))
+                .setValue(StockadeBlock.EAST, from.getValue(StockadeBlock.EAST))
+                .setValue(StockadeBlock.SOUTH, from.getValue(StockadeBlock.SOUTH))
+                .setValue(StockadeBlock.WEST, from.getValue(StockadeBlock.WEST))
+                .setValue(StockadeBlock.WATERLOGGED, from.getValue(StockadeBlock.WATERLOGGED));
     }
 
     private static int freezeSurroundingWater(ServerLevel level, BlockPos origin, int range) {
