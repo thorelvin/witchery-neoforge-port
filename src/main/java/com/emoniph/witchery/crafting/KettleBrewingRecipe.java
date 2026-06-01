@@ -137,9 +137,9 @@ public class KettleBrewingRecipe implements Recipe<KettleRecipeInput> {
             }
 
             ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
-            if (!extracted.is(WitcheryItems.BREW_OF_RAISING.get()) && chest.is(WitcheryItems.WITCHES_ROBE.get())) {
+            if (!WitcheryItems.isBrewOfRaising(extracted) && chest.is(WitcheryItems.WITCHES_ROBE.get())) {
                 bonusChance += 0.35;
-            } else if (extracted.is(WitcheryItems.BREW_OF_RAISING.get()) && chest.is(WitcheryItems.NECROMANCER_ROBES.get())) {
+            } else if (WitcheryItems.isBrewOfRaising(extracted) && chest.is(WitcheryItems.NECROMANCER_ROBES.get())) {
                 bonusChance += 0.35;
             }
 

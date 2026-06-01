@@ -490,7 +490,7 @@ public class RitualExecutor {
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
-        } else if (item.is(WitcheryItems.BREW_OF_SPROUTING.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        } else if (WitcheryItems.isBrewOfSprouting(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfNaturesPower(player, level, center));
         } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfBlight(player, level, center));
@@ -5425,7 +5425,7 @@ public class RitualExecutor {
 
     private static Optional<ForestationOfferings> findForestationOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> wickerBundle = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WICKER_BUNDLE.get()));
-        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_SPROUTING.get()));
+        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, WitcheryItems::isBrewOfSprouting);
         Optional<ItemEntity> entTwig = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENT_TWIG.get()));
         if (wickerBundle.isEmpty() || brewOfSprouting.isEmpty() || entTwig.isEmpty()) {
             return Optional.empty();
@@ -5514,7 +5514,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
-        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, WitcheryItems::isBrewOfLove);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || spiderEye.isEmpty()
                 || gunpowder.isEmpty() || brewOfLove.isEmpty()) {
             return Optional.empty();
@@ -5532,7 +5532,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> goldNugget = findNearbyOffering(level, center, stack -> stack.is(Items.GOLD_NUGGET));
         Optional<ItemEntity> bread = findNearbyOffering(level, center, stack -> stack.is(Items.BREAD));
-        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, WitcheryItems::isBrewOfLove);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || goldNugget.isEmpty()
                 || bread.isEmpty() || brewOfLove.isEmpty()) {
             return Optional.empty();
@@ -5624,7 +5624,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> potato = findNearbyOffering(level, center, stack -> stack.is(Items.POTATO));
         Optional<ItemEntity> sugar = findNearbyOffering(level, center, stack -> stack.is(Items.SUGAR));
-        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, WitcheryItems::isBrewOfLove);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || potato.isEmpty()
                 || sugar.isEmpty() || brewOfLove.isEmpty()) {
             return Optional.empty();
@@ -5678,7 +5678,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> goldenCarrot = findNearbyOffering(level, center, stack -> stack.is(Items.GOLDEN_CARROT));
         Optional<ItemEntity> tormentedTwine = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()));
-        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_LOVE.get()));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, WitcheryItems::isBrewOfLove);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || goldenCarrot.isEmpty()
                 || tormentedTwine.isEmpty() || brewOfLove.isEmpty()) {
             return Optional.empty();
@@ -6069,7 +6069,7 @@ public class RitualExecutor {
         Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
         Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        Optional<ItemEntity> brewOfInk = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_INK.get()));
+        Optional<ItemEntity> brewOfInk = findNearbyOffering(level, center, WitcheryItems::isBrewOfInk);
         Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
         Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
         Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
@@ -6173,7 +6173,7 @@ public class RitualExecutor {
 
     private static Optional<RaiseColumnOfferings> findRaiseColumnOfferings(Level level, BlockPos center,
                                                                            RitualCircleDetector.CircleSize circleSize) {
-        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_SPROUTING.get()));
+        Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, WitcheryItems::isBrewOfSprouting);
         Optional<ItemEntity> cactus = findNearbyOffering(level, center, stack -> stack.is(Blocks.CACTUS.asItem()));
         Optional<ItemEntity> focus = switch (circleSize) {
             case SMALL -> findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));

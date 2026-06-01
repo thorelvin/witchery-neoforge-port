@@ -681,6 +681,22 @@ public class WitcheryItems {
             id -> new Item(itemProps(id)
                     .food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
 
+    public static boolean isBrewOfRaising(ItemStack stack) {
+        return stack.is(BREW_OF_RAISING.get()) || stack.is(RAISING_BREW.get());
+    }
+
+    public static boolean isBrewOfLove(ItemStack stack) {
+        return stack.is(BREW_OF_LOVE.get()) || stack.is(LOVE_BREW.get());
+    }
+
+    public static boolean isBrewOfInk(ItemStack stack) {
+        return stack.is(BREW_OF_INK.get()) || stack.is(INK_BREW.get());
+    }
+
+    public static boolean isBrewOfSprouting(ItemStack stack) {
+        return stack.is(BREW_OF_SPROUTING.get()) || stack.is(SPROUTING_BREW.get());
+    }
+
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "book_oven",

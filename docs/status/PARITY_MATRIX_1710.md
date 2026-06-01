@@ -323,8 +323,8 @@ All currently implemented as fixed items only, not as composable cauldron action
 | Brew of Love | ✅ Item | ❌ No action |
 | Brew of the Grotesque | ✅ Item | ❌ No action |
 | Brew of Revealing | ✅ Item | ❌ No action |
-| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action; Vines/Webs/Thorns/Sprouting Resurrected aliases map to the canonical direct-use items |
-| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action; Ink plus Erosion/Raising/Love Resurrected aliases map to their canonical direct-use items |
+| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action; Vines/Webs/Thorns/Sprouting Resurrected aliases map to the canonical direct-use items, and Sprouting alias works in current rite offering checks |
+| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action; Ink plus Erosion/Raising/Love Resurrected aliases map to their canonical direct-use items, with Ink/Love/Raising accepted by current ritual/kettle family checks |
 | Brew of Cursed Leaping / Depths / Soaring | ✅ Item | ❌ No action |
 | Brew of Hollow Tears / Substitution / Grave | ✅ Item | ❌ No action |
 | Solidifying brews (stone/dirt/sand/etc.) | ✅ Item | ❌ No action |
