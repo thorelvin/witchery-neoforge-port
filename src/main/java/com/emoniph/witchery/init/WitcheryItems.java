@@ -329,6 +329,8 @@ public class WitcheryItems {
             id -> new SpiritBucketItem(itemProps(id), WitcheryBlocks.HOLLOW_TEARS));
     public static final DeferredItem<Item> HAND_BOW = ITEMS.register("hand_bow",
             id -> new HandBowItem(itemProps(id)));
+    public static final DeferredItem<Item> CROSSBOW_PISTOL = ITEMS.register("crossbow_pistol",
+            id -> new HandBowItem(itemProps(id)));
     public static final DeferredItem<Item> CANE_SWORD = ITEMS.register("cane_sword",
             id -> new CaneSwordItem(itemProps(id), true));
     public static final DeferredItem<Item> DRAWN_CANE_SWORD = ITEMS.register("drawn_cane_sword",
@@ -747,7 +749,6 @@ public class WitcheryItems {
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
             "bound_taglock_kit",
-            "crossbow_pistol",
             "deployed_deaths_hand",
             "brew_bottle",
             "splash_brew_bottle",

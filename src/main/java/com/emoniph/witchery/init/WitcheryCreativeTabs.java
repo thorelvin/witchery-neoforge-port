@@ -294,6 +294,7 @@ public class WitcheryCreativeTabs {
     private static void addWeaponsAndArmor(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.HAND_BOW.get(),
+                WitcheryItems.CROSSBOW_PISTOL.get(),
                 WitcheryItems.HUNTSMAN_SPEAR.get(),
                 WitcheryItems.HUNTSMANS_SPEAR.get(),
                 WitcheryItems.WOODEN_BOLT.get(),
@@ -408,7 +409,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "charged_crossbow",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
-                "crossbow_pistol", "deployed_deaths_hand");
+                "deployed_deaths_hand");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
                 "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",
