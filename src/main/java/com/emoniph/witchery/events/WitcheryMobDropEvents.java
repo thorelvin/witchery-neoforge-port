@@ -11,18 +11,23 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.CaneSwordItem;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -70,6 +75,14 @@ public class WitcheryMobDropEvents {
         if (entity instanceof Wolf && rng.nextFloat() < (arthana ? 0.75f : 0.33f)) {
             event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(WitcheryItems.TONGUE_OF_DOG.get())));
+        }
+
+        if (entity instanceof Sheep sheep
+                && !sheep.isBaby()
+                && isSourceWerewolf(event.getSource().getEntity())
+                && rng.nextInt(4) != 0) {
+            event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new ItemStack(WitcheryItems.SHEEP_LIVER.get())));
         }
 
         if (entity instanceof Creeper) {
@@ -131,6 +144,14 @@ public class WitcheryMobDropEvents {
 
     private static float sourceArthanaChance(boolean arthana) {
         return arthana ? SOURCE_ARTHANA_RARE_DROP_CHANCE : SOURCE_RARE_DROP_CHANCE;
+    }
+
+    private static boolean isSourceWerewolf(Entity entity) {
+        if (entity instanceof ServerPlayer player) {
+            var data = WitcheryAttachments.get(player);
+            return data.isWerewolf() && WerewolfShiftUtil.isTransformed(data);
+        }
+        return entity instanceof WolfmanEntity;
     }
 
     private static boolean isAlwaysTornPageTarget(LivingEntity entity) {

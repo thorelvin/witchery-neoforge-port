@@ -650,6 +650,12 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ODD_PORKCHOP_COOKED = ITEMS.register("odd_porkchop_cooked",
             id -> new Item(itemProps(id)
                     .food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
+    public static final DeferredItem<Item> SHEEP_LIVER = ITEMS.register("sheep_liver",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.2F).build())));
+    public static final DeferredItem<Item> COOKED_SHEEP_LIVER = ITEMS.register("cooked_sheep_liver",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
@@ -684,7 +690,6 @@ public class WitcheryItems {
             "symbology_book",
             "witches_brews_book",
             "charged_crossbow",
-            "cooked_sheep_liver",
             "creative_medallion",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
@@ -697,7 +702,6 @@ public class WitcheryItems {
             "poppy_of_thorns",
             "poppy_of_webs",
             "trapped_plant",
-            "sheep_liver",
             "shrub_of_ink",
             "shrub_of_sprouting",
             "shrub_of_thorns",

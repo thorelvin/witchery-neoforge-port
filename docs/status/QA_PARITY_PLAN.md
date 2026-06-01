@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -16,6 +16,8 @@ Current unattended execution note:
 - Behavior-preserving refactors are explicitly allowed when they remove a real parity blocker, reduce ritual/storage renderer duplication, or make the next parity fix safer to land. Avoid broad cleanup that does not improve correctness, traceability, or verification.
 
 Debug logging note (2026-05-31): `config/witchery-common.toml` defaults `debug = true` during the village wall/goto freeze chase. Look for `[VillageWalls:Debug]` lines around queue state, loaded-only reference lookups, safe-locate probes, goto full-chunk prep, forced ticket requests, automatic footprint readiness, and wall-generator entry. If logs become too noisy after the freeze path is settled, set `debug = false` and restart.
+
+Food item QA note (2026-06-01): `witchery:sheep_liver` and `witchery:cooked_sheep_liver` now represent the original Witchery mutton pair under Resurrected IDs. Verify transformed werewolf players and Wolfmen get the adult-sheep drop path, Sheep Liver smelts to Cooked Sheep Liver, both food values feel correct, and Sheep Liver works as the source mutton input in Raw Meaty Stew.
 
 ## Reference hierarchy
 

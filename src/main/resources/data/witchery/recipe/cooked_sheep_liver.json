@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "ingredient": "witchery:sheep_liver",
+  "result": {
+    "id": "witchery:cooked_sheep_liver"
+  },
+  "experience": 0.0,
+  "cookingtime": 200
+}
