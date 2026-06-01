@@ -76,7 +76,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | Witch's hat/robe/shoes | ✅ Done | |
 | Baba's hat / Necromancer's Robes | 🔶 Partial | Baba's Hat now has epic rarity, source tooltip, existing kettle double-roll bonus path, and the old infused-player hit-cancel safe-blink outside Torment; Necromancer Robes keep undead avoidance. Remaining: exact Witchery clothing armor model/render polish and in-game reward QA. |
 | Biting Belt / Bark Belt | ✅ Done | Potion-defense / bark-charge mechanics; Bark Belt charge capacity now counts the wider source Witchery-clothing family including Baba's Hat, Necromancer Robes, Ice Slippers, Ruby Slippers, and Seeping Shoes |
-| Icy Slippers / Ruby Slippers / Seeping Shoes | 🔲 Placeholder | Items registered; effects not hooked |
+| Icy Slippers / Ruby Slippers / Seeping Shoes | 🔶 Partial | Icy Slippers trigger ice pressure plates and now restore the source walking water-to-Ice / lava-to-Obsidian conversion with lava durability damage; Ruby Slippers have a practical home-teleport chat hook; Seeping Shoes cure Poison/Wither and bonemeal nearby plants. Remaining: exact Ruby waystone/infusion-energy route and armor model polish |
 | Earmuffs | ✅ Done | Sound mute, Mandrake/Banshee protection |
 | Hunter set (plain) | ✅ Done | |
 | Hunter set (silvered) | ✅ Done | Silver damage hooks |

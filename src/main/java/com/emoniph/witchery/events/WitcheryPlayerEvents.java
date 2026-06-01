@@ -72,9 +72,11 @@ import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
@@ -101,6 +103,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @EventBusSubscriber
+@SuppressWarnings({"deprecation", "removal"})
 public class WitcheryPlayerEvents {
 
     @SubscribeEvent
@@ -276,6 +279,7 @@ public class WitcheryPlayerEvents {
 
         ServerLevel level = (ServerLevel) player.level();
         tickDeathsFootwearWaterWalk(player);
+        tickIcySlippersEffect(player, level);
 
         if (player.tickCount % 20 != 0) return;
 
@@ -481,6 +485,28 @@ public class WitcheryPlayerEvents {
 
         player.setDeltaMovement(velocity.x, velocity.y + 0.1D, velocity.z);
         player.fallDistance = 0.0F;
+    }
+
+    private static void tickIcySlippersEffect(ServerPlayer player, ServerLevel level) {
+        ItemStack shoes = player.getItemBySlot(EquipmentSlot.FEET);
+        if (!shoes.is(WitcheryItems.ICE_SLIPPERS.get())) return;
+
+        int y = Mth.floor(player.getY() - 1.0D);
+        for (int i = 0; i < 4; i++) {
+            int x = Mth.floor(player.getX() + (double) ((i % 2 * 2 - 1) * 0.5F));
+            int z = Mth.floor(player.getZ() + (double) (((i / 2) % 2 * 2 - 1) * 0.5F));
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = level.getBlockState(pos);
+
+            if (state.is(Blocks.WATER)) {
+                level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+            } else if (state.is(Blocks.LAVA)) {
+                level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+                if (level.random.nextInt(10) == 0) {
+                    shoes.hurtAndBreak(1, player, EquipmentSlot.FEET);
+                }
+            }
+        }
     }
 
     public static void syncToClient(ServerPlayer player) {

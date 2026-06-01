@@ -615,7 +615,10 @@ public class WitcheryItems {
                             net.minecraft.world.item.equipment.ArmorType.HELMET)
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> NECROMANCER_ROBES = ITEMS.register("necromancer_robes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
-    public static final DeferredItem<Item> ICE_SLIPPERS     = ITEMS.register("ice_slippers",     id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> ICE_SLIPPERS     = ITEMS.register("ice_slippers",
+            id -> new IcySlippersItem(itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> RUBY_SLIPPERS    = ITEMS.register("ruby_slippers",    id -> new com.emoniph.witchery.item.RubySlippersItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> SEEPING_SHOES    = ITEMS.register("seeping_shoes",    id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
 
