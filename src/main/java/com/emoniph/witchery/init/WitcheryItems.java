@@ -253,6 +253,11 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      DISTILLING_BOOK      = ITEMS.register("distilling_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      CIRCLE_MAGIC_BOOK    = ITEMS.register("circle_magic_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      HERBOLOGY_BOOK       = ITEMS.register("herbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      COLLECTING_FUMES_BOOK = ITEMS.register("collecting_fumes_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BREWS_AND_INFUSIONS_BOOK = ITEMS.register("brews_and_infusions_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      SYMBOLOGY_BOOK       = ITEMS.register("symbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      CONJURATION_AND_FETISHES_BOOK = ITEMS.register("conjuration_and_fetishes_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      WITCHES_BREWS_BOOK   = ITEMS.register("witches_brews_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
@@ -824,11 +829,6 @@ public class WitcheryItems {
             "brew_of_soul_torment",
             "contract_ownership",
             "contract_torment",
-            "brews_and_infusions_book",
-            "collecting_fumes_book",
-            "conjuration_and_fetishes_book",
-            "symbology_book",
-            "witches_brews_book",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
             "dandelion_of_thorns",

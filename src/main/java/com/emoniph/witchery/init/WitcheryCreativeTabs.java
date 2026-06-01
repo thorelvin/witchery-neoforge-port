@@ -48,6 +48,11 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.DISTILLING_BOOK.get(),
                 WitcheryItems.CIRCLE_MAGIC_BOOK.get(),
                 WitcheryItems.HERBOLOGY_BOOK.get(),
+                WitcheryItems.COLLECTING_FUMES_BOOK.get(),
+                WitcheryItems.BREWS_AND_INFUSIONS_BOOK.get(),
+                WitcheryItems.SYMBOLOGY_BOOK.get(),
+                WitcheryItems.CONJURATION_AND_FETISHES_BOOK.get(),
+                WitcheryItems.WITCHES_BREWS_BOOK.get(),
                 WitcheryItems.BOOK_BIOMES.get(),
                 WitcheryItems.EXTENDED_BIOMES_BOOK.get(),
                 WitcheryItems.BIOMES_BOOK.get());
@@ -478,9 +483,7 @@ public class WitcheryCreativeTabs {
 
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
-                "book_wands", "book_burning", "brews_and_infusions_book",
-                "collecting_fumes_book", "conjuration_and_fetishes_book",
-                "symbology_book", "witches_brews_book");
+                "book_wands", "book_burning");
         addLegacy(output, accepted,
                 "hellhound_head", "wolf_head");
         addLegacy(output, accepted,

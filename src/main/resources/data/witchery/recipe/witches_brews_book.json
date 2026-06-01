@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "D#F"
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "G": "minecraft:dirt",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather"
+  },
+  "result": {
+    "id": "witchery:witches_brews_book",
+    "count": 1
+  }
+}

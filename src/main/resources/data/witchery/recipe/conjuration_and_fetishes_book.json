@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "D#F",
+    " S "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "A": "witchery:wood_ash",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "S": "minecraft:flint_and_steel"
+  },
+  "result": {
+    "id": "witchery:conjuration_and_fetishes_book",
+    "count": 1
+  }
+}

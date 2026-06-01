@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "D#F",
+    " P "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "B": "witchery:belladonna",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "P": "witchery:odour_of_purity"
+  },
+  "result": {
+    "id": "witchery:brews_and_infusions_book",
+    "count": 1
+  }
+}
