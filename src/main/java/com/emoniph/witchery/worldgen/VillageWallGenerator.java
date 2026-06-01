@@ -65,7 +65,7 @@ public final class VillageWallGenerator {
     private static final int PADDING       = 18;  // extra space outside village edge
     private static final int MAX_GRID      = 260; // abort if village is too large
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
-    private static final int GUARD_SPACING = 200; // wall blocks between guard spawns
+    private static final int GUARD_SPACING = 80;  // usable wall-walk blocks between guard spawns
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     private static final int GATE_PATH_OUTWARD_MAX = 10;
     private static final int GATE_PATH_INWARD_MAX = 10;
@@ -716,9 +716,7 @@ public final class VillageWallGenerator {
                                                      BlockState wall, BlockState brick, BlockState merlon, BlockState stair,
                                                      int floorTo, byte[][] grid, short[][] heights,
                                                      int gx, int gz, int w, int d) {
-        boolean corner = isCorner(grid, gx, gz, w, d);
-        int extra = corner ? 2 : 0;
-        int top = sy + WALL_HEIGHT + extra;
+        int top = sy + WALL_HEIGHT;
         if (hasLivingEntityInColumn(level, wx, Math.min(sy, floorTo), wz, top + 1))
             return WallColumnResult.SKIPPED;
 
@@ -726,7 +724,7 @@ public final class VillageWallGenerator {
         placeWallMat(level, wx, sy,     wz, brick);
         placeWallMat(level, wx, sy + 1, wz, brick);
         // Main shaft (stone if submerged)
-        for (int dy = 2; dy < WALL_HEIGHT - 1 + extra; dy++)
+        for (int dy = 2; dy < WALL_HEIGHT - 1; dy++)
             placeWallMat(level, wx, sy + dy, wz, wall);
         // Cap course: stone brick
         setBlock(level, wx, top - 1, wz, brick);
@@ -735,11 +733,10 @@ public final class VillageWallGenerator {
         int phase = Math.floorMod(wx + wz, 2);
         if (phase == 0) {
             setBlock(level, wx, top, wz, merlon);
-            if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
         BlockPos guardPos = null;
-        if (!corner && !hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)) {
+        if (!hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)) {
             guardPos = placeRampartDetails(level, wx, top, wz, brick, stair, grid, gx, gz, w, d);
         }
 
@@ -832,15 +829,6 @@ public final class VillageWallGenerator {
                 .setValue(StairBlock.HALF, Half.BOTTOM);
     }
 
-    /** True when this wall cell sits at a 90° bend (has wall in both N/S and E/W axes). */
-    private static boolean isCorner(byte[][] grid, int gx, int gz, int w, int d) {
-        boolean n = gz > 0   && (grid[gx][gz-1] == WALL || grid[gx][gz-1] == GATE);
-        boolean s = gz < d-1 && (grid[gx][gz+1] == WALL || grid[gx][gz+1] == GATE);
-        boolean e = gx < w-1 && (grid[gx+1][gz] == WALL || grid[gx+1][gz] == GATE);
-        boolean ww = gx > 0  && (grid[gx-1][gz] == WALL || grid[gx-1][gz] == GATE);
-        return (n || s) && (e || ww);
-    }
-
     private static boolean hasLivingEntityInColumn(ServerLevel level, int x, int minY, int z, int maxY) {
         AABB box = new AABB(x, minY, z, x + 1.0, maxY + 1.0, z + 1.0);
         return !level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
@@ -863,6 +851,8 @@ public final class VillageWallGenerator {
                 ? Blocks.SANDSTONE_WALL.defaultBlockState()
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
         int refY = g.refY();
+
+        clearGatehouseFootprint(level, g);
 
         // Depth -1..+1 centres the 3-deep gatehouse on the wall line, so the wall meets the
         // gate at the middle of its sides (one block of the gate sits outside the wall).
@@ -889,12 +879,47 @@ public final class VillageWallGenerator {
         // Starts from the gate's outer/inner edge cell (depth ±1, floor refY-1) and ramps to
         // the terrain at most 1 block per cell, cutting headroom so there is never a dirt face
         // across the opening. Inward stops when it meets the existing village road.
+        buildGatehouseGuardRampart(level, g, brick, gateCap);
+
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
             gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, pathBlock, brick, desert);
             gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, pathBlock, brick, desert);
         }
+    }
+
+    /** Clears old wall and rampart blocks from the locked 7x3 gatehouse footprint. */
+    private static void clearGatehouseFootprint(ServerLevel level, GateDef g) {
+        for (int o = -3; o <= 3; o++) {
+            int bx = g.centerWX() + g.axisDX() * o;
+            int bz = g.centerWZ() + g.axisDZ() * o;
+            for (int depth = -1; depth <= 1; depth++) {
+                int x = bx + g.inDX() * depth;
+                int z = bz + g.inDZ() * depth;
+                for (int dy = 0; dy <= WALL_HEIGHT + 4; dy++) {
+                    forceSet(level, x, g.refY() + dy, z, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+    }
+
+    private static void buildGatehouseGuardRampart(ServerLevel level, GateDef g,
+                                                    BlockState brick, BlockState rail) {
+        int floorY = g.refY() + WALL_HEIGHT - 1;
+        int standY = floorY + 1;
+        for (int o = -1; o <= 1; o++) {
+            int walkX = g.centerWX() + g.axisDX() * o;
+            int walkZ = g.centerWZ() + g.axisDZ() * o;
+            forceSet(level, walkX, floorY, walkZ, brick);
+
+            int outsideX = walkX - g.inDX();
+            int outsideZ = walkZ - g.inDZ();
+            forceSet(level, outsideX, standY, outsideZ, rail);
+        }
+
+        BlockPos guardPos = new BlockPos(g.centerWX(), standY, g.centerWZ());
+        if (isSpawnClear(level, guardPos)) spawnGuard(level, guardPos);
     }
 
     /**

@@ -171,7 +171,7 @@ public class ApothecaryPiece extends StructurePiece {
         if (!box.isInside(signWorld)) return;
 
         BlockState signState = Blocks.OAK_WALL_SIGN.defaultBlockState()
-                .setValue(WallSignBlock.FACING, Direction.NORTH);
+                .setValue(WallSignBlock.FACING, Direction.SOUTH);
         level.setBlock(signWorld, signState, 3);
         if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
             if (sign.getLevel() == null) sign.setLevel(level.getLevel());
