@@ -5,7 +5,7 @@
     "minecraft:blaze_powder"
   ],
   "result": {
-    "id": "witchery:contract_resist_fire",
+    "id": "witchery:fiery_tolerance_contract",
     "count": 1
   }
 }

@@ -215,6 +215,16 @@ public class WitcheryItems {
             ITEMS.register("contract_fiery_touch", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_SMELTING =
             ITEMS.register("contract_smelting", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> LIVING_FLAME_CONTRACT =
+            ITEMS.register("living_flame_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> FIERY_TOLERANCE_CONTRACT =
+            ITEMS.register("fiery_tolerance_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> EVAPORATION_CONTRACT =
+            ITEMS.register("evaporation_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> FIERY_TOUCH_CONTRACT =
+            ITEMS.register("fiery_touch_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> MELTING_TOUCH_CONTRACT =
+            ITEMS.register("melting_touch_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
 
     // ── Lord of Torment drops ──────────────────────────────────────────────────
     public static final DeferredItem<Item> SOUL_OF_TORMENT  = ITEMS.registerSimpleItem("soul_of_torment");

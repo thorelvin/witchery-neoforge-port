@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 287+ functional entries + 68 remaining item placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 292+ functional entries + 68 remaining item placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -74,6 +74,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | sheep_liver / cooked_sheep_liver | ✅ Done | Source Witchery `muttonraw` / `muttoncooked` pair is restored under the Resurrected IDs with 2 hunger / 0.2 saturation and 6 hunger / 0.8 saturation, smelting, Raw Meaty Stew use, and transformed-werewolf sheep drops |
 | polynesia_charm | 🔶 Partial | Source `ItemPolynesiaCharm(false)` shell is live with 50 durability, uncommon rarity, source tooltip, and the old shaped recipe. Remaining: original animal-merchant interaction/trade stock behavior. |
 | devils_tongue_charm | 🔶 Partial | Source `ItemPolynesiaCharm(true)` variant is live with 50 durability, uncommon rarity, source-shaped upgrade recipe, and held Demon protection from targeting/melee/fireballs with the old 5% failure chance. Remaining: exact old demon merchant price/trade behavior and broader imp/demon edge cases. |
+
+| Flame Imp contracts | Partial | The source-facing `contract_blaze`, `contract_resist_fire`, `contract_evaporate`, `contract_fiery_touch`, and `contract_smelting` IDs remain valid, and exact Resurrected aliases `living_flame_contract`, `fiery_tolerance_contract`, `evaporation_contract`, `fiery_touch_contract`, and `melting_touch_contract` are now registered with matching names/models. Current recipes output the exact Resurrected IDs. Remaining: old bound contract data and per-contract Flame Imp ability behavior. |
 
 ### 1b. Armor & Clothing
 

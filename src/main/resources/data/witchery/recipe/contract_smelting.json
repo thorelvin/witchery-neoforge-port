@@ -5,7 +5,7 @@
     "minecraft:lava_bucket"
   ],
   "result": {
-    "id": "witchery:contract_smelting",
+    "id": "witchery:melting_touch_contract",
     "count": 1
   }
 }

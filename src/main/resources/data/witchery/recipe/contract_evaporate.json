@@ -6,7 +6,7 @@
     "minecraft:magma_cream"
   ],
   "result": {
-    "id": "witchery:contract_evaporate",
+    "id": "witchery:evaporation_contract",
     "count": 1
   }
 }
