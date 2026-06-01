@@ -1,6 +1,8 @@
 # Next Tasks — Witchery NeoForge Port
 
-Current local delta (2026-06-01): Gatehouse inside wall-walk ledge. Gatehouses now add a one-block village-facing rampart ledge at wall-walk height, extended one block past each side tower, so guards can move from the adjacent inner wall-walk onto the inside of the gatehouse and across the over-gate perch instead of being blocked by the side towers. Fresh wall QA should inspect both gatehouse ends and confirm guards can path from wall runs onto the gatehouse interior ledge.
+Current local delta (2026-06-01): Gatehouse inner path regression fix. The inside wall-walk ledge is now placed after gate path grading, and stale ledge masonry in the first inward path columns is cleared before grading, so the terrain-only inward gate adjuster no longer mistakes the new high ledge for a building column and stops immediately. Fresh QA should confirm the outside and inside gate approaches both grade terrain again.
+
+Previous local delta (2026-06-01): Gatehouse inside wall-walk ledge. Gatehouses now add a one-block village-facing rampart ledge at wall-walk height, extended one block past each side tower, so guards can move from the adjacent inner wall-walk onto the inside of the gatehouse and across the over-gate perch instead of being blocked by the side towers. Fresh wall QA should inspect both gatehouse ends and confirm guards can path from wall runs onto the gatehouse interior ledge.
 
 Previous local delta (2026-06-01): Future ritual backlog note. `docs/roadmap/FUTURE_FEATURES.md` now tracks the user-requested future **Ritual of Tracing**: a Spirit World investigative rite that reveals fading traces of all player footsteps as spectral footprints or glyph trails, with retention limits and multiplayer privacy/config toggles called out before implementation. This is a future expansion note, not current parity scope.
 

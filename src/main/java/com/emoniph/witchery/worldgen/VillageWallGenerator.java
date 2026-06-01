@@ -943,6 +943,7 @@ public final class VillageWallGenerator {
         int refY = g.refY();
 
         clearGatehouseFootprint(level, g);
+        clearGatehouseInsideLedgeBlocks(level, g, brick);
 
         // Depth -1..+1 centres the 3-deep gatehouse on the wall line, so the wall meets the
         // gate at the middle of its sides (one block of the gate sits outside the wall).
@@ -969,14 +970,16 @@ public final class VillageWallGenerator {
         // Starts from the gate's outer/inner edge cell (depth ±1, floor refY-1) and ramps to
         // the terrain at most 1 block per cell, cutting headroom so there is never a dirt face
         // across the opening. Inward stops when it meets the existing village road.
-        buildGatehouseGuardRampart(level, g, brick, gateCap, spawnGuards);
-
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
             gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false, pathBlock, pathSupport, desert);
             gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, true, pathBlock, pathSupport, desert);
         }
+
+        // Place the high gatehouse walk last so the terrain-only inward path grader sees the
+        // terrain below the ledge, not the ledge itself as a blocking building column.
+        buildGatehouseGuardRampart(level, g, brick, gateCap, spawnGuards);
     }
 
     /** Clears old wall and rampart blocks from the locked 7x3 gatehouse footprint. */
@@ -989,6 +992,25 @@ public final class VillageWallGenerator {
                 int z = bz + g.inDZ() * depth;
                 for (int dy = 0; dy <= WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL; dy++) {
                     forceSet(level, x, g.refY() + dy, z, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+    }
+
+    /** Clears the previous version of the inside ledge before the inward path grades terrain. */
+    private static void clearGatehouseInsideLedgeBlocks(ServerLevel level, GateDef g, BlockState brick) {
+        int minY = Math.max(MIN_BUILD_Y, g.refY() + WALL_HEIGHT - 3);
+        int maxY = Math.min(MAX_BUILD_Y, g.refY() + WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL);
+        int insideDX = g.inDX();
+        int insideDZ = g.inDZ();
+        for (int o = -GATEHOUSE_HALF_WIDTH - 1; o <= GATEHOUSE_HALF_WIDTH + 1; o++) {
+            int x = g.centerWX() + g.axisDX() * o + insideDX * 2;
+            int z = g.centerWZ() + g.axisDZ() * o + insideDZ * 2;
+            if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+            for (int y = minY; y <= maxY; y++) {
+                BlockPos pos = new BlockPos(x, y, z);
+                if (level.getBlockState(pos).is(brick.getBlock())) {
+                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
         }

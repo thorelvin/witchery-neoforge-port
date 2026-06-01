@@ -21,6 +21,8 @@ Village wall rampart QA note (2026-06-01): fresh village walls now add decompile
 
 Gatehouse inside ledge QA note (2026-06-01): gatehouses now add a one-block village-facing ledge at wall-walk height, extended one block past each side tower. Fresh village wall QA should confirm guards can step from both adjoining wall runs onto the gatehouse interior ledge and then onto the over-gate perch without being blocked by tower corners.
 
+Gatehouse inner path QA note (2026-06-01): because the inside wall-walk ledge sits above the first inward path columns, gatehouse grading now runs before the high ledge is placed. Fresh gate QA should confirm both the outside approach and the 15-block terrain-only inside approach are graded, and that the inside grader still stops before houses or furnishing blocks.
+
 Village building sign QA note (2026-06-01): Apothecary front signs now face the generated front wall support. In fresh villages, especially savanna villages where the floating sign was seen, verify the sign over the Apothecary door is attached to the house facade and does not hang in air.
 
 Bookshop replay QA note (2026-06-01): latest logs stopped at `Placing bookshop ...` during a goto-prep chunk load, before the generic `Finished placing bookshop` message. With `debug = true`, Bookshop slices now log shell/chest/frame/foundation/resident phase completion. Retest the same taiga/savanna goto pattern and confirm each placed Bookshop logs every phase plus `Finished placing bookshop`, keeps one rear display-frame row, and does not duplicate frames after replay.
