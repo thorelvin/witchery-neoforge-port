@@ -143,6 +143,24 @@ Move from hardcoded rites to composable ritual definitions:
 
 Do this only after the current hardcoded system is stable.
 
+#### Ritual of Tracing
+
+**Confidence:** speculative user-requested future ritual.
+
+A Spirit World investigative rite that lets the caster see traces of all player footsteps as fading spectral footprints or glyph trails. The core fantasy is that the Spirit World becomes a hidden record of movement through the living world.
+
+Design intent:
+- Cast from a ritual circle, then enter or view through the Spirit World.
+- Reveal recent player footsteps from all players as fading spectral traces.
+- Keep traces visible only in the Spirit World or while under a tracing vision effect, not in ordinary Overworld vision.
+- Use a configurable retention window and multiplayer privacy/server-safety toggle before any public-server release.
+
+Implementation sketch:
+- Record compact per-player footstep samples in world `SavedData` or a chunk-local attachment with age, dimension, position, and player identity display rules.
+- Prune samples by age and density so busy servers do not accumulate unbounded traces.
+- Render traces client-side as ghostly footprints, motes, or chalk-like floor glyphs while the caster has the rite effect.
+- Consider masking exact identity unless the caster has a filled Taglock Kit or stronger offering, so the baseline rite tracks movement while advanced use identifies whose trace it is.
+
 ### 9. Mirror / Identity Expansion
 
 **Confidence:** original late Witchery feature + speculative expansion.
