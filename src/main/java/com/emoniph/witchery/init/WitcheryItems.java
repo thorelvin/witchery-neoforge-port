@@ -642,6 +642,8 @@ public class WitcheryItems {
             id -> new MeatyStewItem(itemProps(id), 12, 1.0F));
     public static final DeferredItem<Item> RAW_MEATY_STEW = ITEMS.register("raw_meaty_stew",
             id -> new MeatyStewItem(itemProps(id), 1, 0.1F));
+    public static final DeferredItem<Item> UNIVERSAL_ANTIDOTE = ITEMS.register("universal_antidote",
+            id -> new UniversalAntidoteItem(itemProps(id)));
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
@@ -697,7 +699,6 @@ public class WitcheryItems {
             "shrub_of_thorns",
             "shrub_of_webs",
             "staff_of_duplication",
-            "universal_antidote",
             "wolf_head",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
