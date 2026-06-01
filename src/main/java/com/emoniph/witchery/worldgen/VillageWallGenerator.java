@@ -68,7 +68,7 @@ public final class VillageWallGenerator {
     private static final int GUARD_SPACING = 80;  // usable wall-walk blocks between guard spawns
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     private static final int GATE_PATH_OUTWARD_MAX = 10;
-    private static final int GATE_PATH_INWARD_MAX = 10;
+    private static final int GATE_PATH_INWARD_MAX = 15;
     private static final int GATE_PATH_SAMPLE_OUTWARD = 4;
     private static final int TREE_CLEAR_MAX_BLOCKS = 384;
     private static final int TREE_CLEAR_SCAN_Y_ABOVE = 24;
@@ -597,8 +597,10 @@ public final class VillageWallGenerator {
             int ix = cwx + idx * t, iz = cwz + idz * t;
             if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) continue;
             int gy = groundHeight(level, ix, iz);
+            int surfaceY = gy - 1;
+            if (t > 0 && !isGatePathTerrainColumn(level, ix, surfaceY, iz, surfaceY, desert)) break;
             sum += gy; n++;
-            if (t > 0 && isVillageRoad(level.getBlockState(new BlockPos(ix, gy - 1, iz)), desert)) break;
+            if (t > 0 && isVillageRoad(level.getBlockState(new BlockPos(ix, surfaceY, iz)), desert)) break;
         }
         return n > 0 ? (int) (sum / n) : -1;
     }
@@ -884,8 +886,8 @@ public final class VillageWallGenerator {
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, pathBlock, brick, desert);
-            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, pathBlock, brick, desert);
+            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false, pathBlock, brick, desert);
+            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, true, pathBlock, brick, desert);
         }
     }
 
@@ -926,10 +928,11 @@ public final class VillageWallGenerator {
      * Lays a graded path from a start cell in direction (dx,dz): the floor ramps toward the
      * natural ground at most 1 block per cell, headroom is cleared above (cutting through
      * rising terrain so a hill can't wall off the gate), and any gap below is filled. If
-     * {@code stopAtRoad}, it ends once it reaches an existing village road.
+     * {@code stopAtRoad}, it ends once it reaches an existing village road. If
+     * {@code terrainOnly}, it stops before touching village/building blocks.
      */
     private static void gradePath(ServerLevel level, int startWX, int startWZ, int dx, int dz,
-                                   int startFloorY, int maxLen, boolean stopAtRoad,
+                                   int startFloorY, int maxLen, boolean stopAtRoad, boolean terrainOnly,
                                    BlockState pathBlock, BlockState supportBlock, boolean desert) {
         int floorY = startFloorY;
         for (int t = 1; t <= maxLen; t++) {
@@ -937,9 +940,13 @@ public final class VillageWallGenerator {
             if (level.getChunkSource().getChunkNow(ix >> 4, iz >> 4) == null) break;
             int natural = groundHeight(level, ix, iz) - 1; // natural surface block Y
             if (stopAtRoad && isVillageRoad(level.getBlockState(new BlockPos(ix, natural, iz)), desert)) break;
-            if (natural > floorY) floorY++;
-            else if (natural < floorY) floorY--;
-            clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
+            int nextFloorY = floorY;
+            if (natural > nextFloorY) nextFloorY++;
+            else if (natural < nextFloorY) nextFloorY--;
+            if (terrainOnly && !isGatePathTerrainColumn(level, ix, nextFloorY, iz, natural, desert)) break;
+            floorY = nextFloorY;
+            if (!terrainOnly)
+                clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
             forceSet(level, ix, floorY, iz, pathBlock);                         // path surface
             for (int dy = 1; dy <= 4; dy++) {                                   // cut headroom
                 BlockPos p = new BlockPos(ix, floorY + dy, iz);
@@ -948,6 +955,54 @@ public final class VillageWallGenerator {
             }
             fillDown(level, ix, floorY - 1, iz, supportBlock); // support if floating
         }
+    }
+
+    private static boolean isGatePathTerrainColumn(ServerLevel level, int x, int floorY, int z,
+                                                    int surfaceY, boolean desert) {
+        int minY = Math.min(floorY, surfaceY);
+        int maxY = Math.max(floorY, surfaceY) + 4;
+        for (int y = minY; y <= maxY; y++) {
+            if (!isGatePathTerrainBlock(level.getBlockState(new BlockPos(x, y, z)), desert)) return false;
+        }
+        return true;
+    }
+
+    private static boolean isGatePathTerrainBlock(BlockState state, boolean desert) {
+        return state.isAir()
+                || state.liquid()
+                || state.canBeReplaced()
+                || state.is(BlockTags.LEAVES)
+                || state.is(BlockTags.FLOWERS)
+                || state.is(BlockTags.SAPLINGS)
+                || isMushroomBlock(state)
+                || isVillageRoad(state, desert)
+                || isNaturalGroundBlock(state);
+    }
+
+    private static boolean isNaturalGroundBlock(BlockState state) {
+        return state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.DIRT)
+                || state.is(Blocks.COARSE_DIRT)
+                || state.is(Blocks.PODZOL)
+                || state.is(Blocks.ROOTED_DIRT)
+                || state.is(Blocks.MUD)
+                || state.is(Blocks.MOSS_BLOCK)
+                || state.is(Blocks.CLAY)
+                || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SAND)
+                || state.is(Blocks.RED_SAND)
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.ICE)
+                || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE)
+                || state.is(Blocks.STONE)
+                || state.is(Blocks.GRANITE)
+                || state.is(Blocks.DIORITE)
+                || state.is(Blocks.ANDESITE)
+                || state.is(Blocks.TUFF)
+                || state.is(Blocks.CALCITE)
+                || state.is(Blocks.DRIPSTONE_BLOCK)
+                || state.is(Blocks.DEEPSLATE);
     }
 
     /** Village street surface: DIRT_PATH everywhere; sandstone family in desert villages. */
