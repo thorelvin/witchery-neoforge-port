@@ -258,6 +258,13 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      SYMBOLOGY_BOOK       = ITEMS.register("symbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      CONJURATION_AND_FETISHES_BOOK = ITEMS.register("conjuration_and_fetishes_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      WITCHES_BREWS_BOOK   = ITEMS.register("witches_brews_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_OVEN            = ITEMS.register("book_oven", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_DISTILLING      = ITEMS.register("book_distilling", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_CIRCLE_MAGIC    = ITEMS.register("book_circle_magic", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_INFUSIONS       = ITEMS.register("book_infusions", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_HERBOLOGY       = ITEMS.register("book_herbology", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_WANDS           = ITEMS.register("book_wands", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_BURNING         = ITEMS.register("book_burning", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
@@ -816,13 +823,6 @@ public class WitcheryItems {
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
-            "book_oven",
-            "book_distilling",
-            "book_circle_magic",
-            "book_infusions",
-            "book_herbology",
-            "book_wands",
-            "book_burning",
             "brew_of_soul_hunger",
             "brew_of_soul_anguish",
             "brew_of_soul_fear",

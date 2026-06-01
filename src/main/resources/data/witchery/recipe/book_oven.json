@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "D#F",
+    " C "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "B": "witchery:belladonna",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "C": "minecraft:charcoal"
+  },
+  "result": {
+    "id": "witchery:book_oven",
+    "count": 1
+  }
+}

@@ -53,6 +53,13 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SYMBOLOGY_BOOK.get(),
                 WitcheryItems.CONJURATION_AND_FETISHES_BOOK.get(),
                 WitcheryItems.WITCHES_BREWS_BOOK.get(),
+                WitcheryItems.BOOK_OVEN.get(),
+                WitcheryItems.BOOK_DISTILLING.get(),
+                WitcheryItems.BOOK_CIRCLE_MAGIC.get(),
+                WitcheryItems.BOOK_INFUSIONS.get(),
+                WitcheryItems.BOOK_HERBOLOGY.get(),
+                WitcheryItems.BOOK_WANDS.get(),
+                WitcheryItems.BOOK_BURNING.get(),
                 WitcheryItems.BOOK_BIOMES.get(),
                 WitcheryItems.EXTENDED_BIOMES_BOOK.get(),
                 WitcheryItems.BIOMES_BOOK.get());
@@ -481,9 +488,6 @@ public class WitcheryCreativeTabs {
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
         Set<String> accepted = new LinkedHashSet<>();
 
-        addLegacy(output, accepted,
-                "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
-                "book_wands", "book_burning");
         addLegacy(output, accepted,
                 "hellhound_head", "wolf_head");
         addLegacy(output, accepted,

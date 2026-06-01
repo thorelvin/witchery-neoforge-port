@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "D#F"
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "T": "witchery:ent_twig",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather"
+  },
+  "result": {
+    "id": "witchery:book_wands",
+    "count": 1
+  }
+}
