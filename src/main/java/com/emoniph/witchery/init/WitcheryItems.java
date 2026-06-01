@@ -644,12 +644,16 @@ public class WitcheryItems {
             id -> new MeatyStewItem(itemProps(id), 1, 0.1F));
     public static final DeferredItem<Item> UNIVERSAL_ANTIDOTE = ITEMS.register("universal_antidote",
             id -> new UniversalAntidoteItem(itemProps(id)));
+    public static final DeferredItem<Item> ODD_PORKCHOP_RAW = ITEMS.register("odd_porkchop_raw",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final DeferredItem<Item> ODD_PORKCHOP_COOKED = ITEMS.register("odd_porkchop_cooked",
+            id -> new Item(itemProps(id)
+                    .food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "infernal_blood",
-            "odd_porkchop_raw",
-            "odd_porkchop_cooked",
             "book_oven",
             "book_distilling",
             "book_circle_magic",

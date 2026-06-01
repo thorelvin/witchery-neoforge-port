@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "food",
+  "ingredients": [
+    "witchery:mutandis",
+    "minecraft:rotten_flesh"
+  ],
+  "result": {
+    "id": "witchery:odd_porkchop_raw"
+  }
+}

@@ -235,6 +235,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.RAW_MEATY_STEW.get(),
                 WitcheryItems.MEATY_STEW.get(),
                 WitcheryItems.UNIVERSAL_ANTIDOTE.get(),
+                WitcheryItems.ODD_PORKCHOP_RAW.get(),
+                WitcheryItems.ODD_PORKCHOP_COOKED.get(),
                 WitcheryItems.SPECTRAL_STONE.get(),
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
@@ -363,7 +365,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "blooded_waystone", "bound_waystone");
         addLegacy(output, accepted,
-                "infernal_blood", "odd_porkchop_raw", "odd_porkchop_cooked", "odd_porkchop", "cooked_odd_porkchop",
+                "infernal_blood", "odd_porkchop", "cooked_odd_porkchop",
                 "nullified_leather", "silver_dust", "biome_note", "cooked_sheep_liver", "sheep_liver",
                 "fanciful_thinking_charm", "subdued_village_spirit", "pentacle", "golden_heart");
         addLegacy(output, accepted,

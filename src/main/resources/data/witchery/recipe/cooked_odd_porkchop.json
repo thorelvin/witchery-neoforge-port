@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "ingredient": "witchery:odd_porkchop_raw",
+  "result": {
+    "id": "witchery:odd_porkchop_cooked"
+  },
+  "experience": 0.0,
+  "cookingtime": 200
+}
