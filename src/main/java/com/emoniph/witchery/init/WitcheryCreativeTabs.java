@@ -262,6 +262,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CHARGED_QUARTZ_SPHERE.get(),
                 WitcheryItems.SUN_COLLECTOR.get(),
                 WitcheryItems.SUN_GRENADE.get(),
+                WitcheryItems.DUPLICATION_GRENADE.get(),
                 WitcheryItems.MOON_CHARM.get(),
                 WitcheryItems.CREATIVE_BAT_WOLF_TOKEN.get(),
                 WitcheryItems.STAKE.get(),
@@ -400,7 +401,7 @@ public class WitcheryCreativeTabs {
                 "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
                 "herbology_book", "biomes_book");
         addLegacy(output, accepted,
-                "charged_crossbow", "duplication_grenade",
+                "charged_crossbow",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
                 "crossbow_pistol", "deployed_deaths_hand");
         addLegacy(output, accepted,

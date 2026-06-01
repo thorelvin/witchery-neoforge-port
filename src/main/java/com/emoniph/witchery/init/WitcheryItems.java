@@ -656,6 +656,8 @@ public class WitcheryItems {
 
     public static final DeferredItem<Item> SUN_GRENADE = ITEMS.register("sun_grenade",
             id -> new com.emoniph.witchery.item.SunGrenadeItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> DUPLICATION_GRENADE = ITEMS.register("duplication_grenade",
+            id -> new com.emoniph.witchery.item.DuplicationGrenadeItem(itemProps(id)));
     public static final DeferredItem<Item> STAFF_OF_DUPLICATION = ITEMS.register("staff_of_duplication",
             id -> new com.emoniph.witchery.item.StaffOfDuplicationItem(itemProps(id)));
     public static final DeferredItem<Item> MEATY_STEW = ITEMS.register("meaty_stew",
@@ -729,7 +731,6 @@ public class WitcheryItems {
             "dandelion_of_sprouting",
             "dandelion_of_thorns",
             "dandelion_of_webs",
-            "duplication_grenade",
             "hellhound_head",
             "poppy_of_ink",
             "poppy_of_sprouting",

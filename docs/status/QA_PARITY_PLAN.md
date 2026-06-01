@@ -37,6 +37,8 @@ Bolt alias QA note (2026-06-01): the source Hand Bow IDs `witchery:bolt_stake`, 
 
 Staff of Duplication QA note (2026-06-01): `witchery:staff_of_duplication` now has the first practical source `ItemDuplicationStaff` loop. Use it on two corner blocks around a small test build and verify it captures only the space between the markers; then place the saved pattern on a target block and confirm placement starts one block above the click, normal uses cycle 90-degree rotations, sneak placement resets to 0 degrees, air cells clear previous blocks, and sneak-use in air clears the stored pattern. Include oriented stairs/logs/doors in the test shape.
 
+Duplication Grenade QA note (2026-06-01): `witchery:duplication_grenade` now has the first practical source `ItemSunGrenade(1)` behavior instead of a placeholder. Throw it in survival near hostile mobs and verify the stack consumes, a Quartz Sphere drops at impact, a Reflection decoy with the thrower's skin/name appears for about 10 seconds, the decoy does not target the thrower or drop copied equipment, and nearby mobs prefer the decoy when their current target is the thrower or empty. Exact mirror charging/binding is still follow-up, so unbound creative/test grenades should use the thrower's reflection.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

@@ -32,6 +32,7 @@ public class ReflectionEntity extends Monster {
 
     private UUID ownerUUID = null;
     private String ownerName = "";
+    private int temporaryTicks;
 
     // Equipment snapshots (updated when owner is nearby, used by renderer)
     private ItemStack[] equipmentSnapshot = new ItemStack[6]; // slots: feet,legs,chest,head,mainhand,offhand
@@ -67,6 +68,15 @@ public class ReflectionEntity extends Monster {
         snapshotEquipment(player);
     }
 
+    public void setOwnerIdentity(UUID ownerUUID, String ownerName) {
+        this.ownerUUID = ownerUUID;
+        this.ownerName = ownerName == null ? "" : ownerName;
+    }
+
+    public void setTemporaryDecoy(int ticks) {
+        this.temporaryTicks = Math.max(1, ticks);
+    }
+
     private void snapshotEquipment(Player player) {
         equipmentSnapshot[0] = player.getItemBySlot(EquipmentSlot.FEET).copy();
         equipmentSnapshot[1] = player.getItemBySlot(EquipmentSlot.LEGS).copy();
@@ -81,8 +91,20 @@ public class ReflectionEntity extends Monster {
     public ItemStack[] getEquipmentSnapshot() { return equipmentSnapshot; }
 
     @Override
+    public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {
+        if (temporaryTicks > 0 && ownerUUID != null && target.getUUID().equals(ownerUUID)) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && temporaryTicks > 0 && --temporaryTicks <= 0) {
+            discard();
+            return;
+        }
         // Refresh equipment snapshot every 20t if owner is in same level
         if (!level().isClientSide() && ownerUUID != null && tickCount % 20 == 0) {
             Player owner = level().getPlayerByUUID(ownerUUID);
@@ -93,7 +115,7 @@ public class ReflectionEntity extends Monster {
     @Override
     public void die(net.minecraft.world.damagesource.DamageSource source) {
         super.die(source);
-        if (!level().isClientSide()) {
+        if (!level().isClientSide() && temporaryTicks <= 0) {
             dropEquipmentCopies();
             notifyMirrorCleared();
         }
@@ -139,6 +161,9 @@ public class ReflectionEntity extends Monster {
             tag.putString("OwnerUUID", ownerUUID.toString());
             tag.putString("OwnerName", ownerName);
         }
+        if (temporaryTicks > 0) {
+            tag.putInt("TemporaryTicks", temporaryTicks);
+        }
     }
 
     @Override
@@ -151,5 +176,6 @@ public class ReflectionEntity extends Monster {
                 ownerName = tag.getStringOr("OwnerName", "");
             } catch (IllegalArgumentException ignored) {}
         }
+        temporaryTicks = tag.getIntOr("TemporaryTicks", 0);
     }
 }
