@@ -334,7 +334,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Circle:** Small ritual for the basic barrier, Small ritual for the portable barrier, Medium ritual for the larger barrier.
 - **Ingredients:** Small barrier: Obsidian, Redstone, and 500 Altar Power. Portable barrier: Obsidian and a Charged Attuned Stone. Medium barrier: Obsidian, Glowstone Dust, and 1000 Altar Power.
 - **Effect:** Converts altar power, or a charged stone for the portable branch, into a force field surrounding the ritual chalk.
-- **Notes:** Basic and medium barriers are sustained rites. The small barrier blocks arrows and other non-player entities but lets players pass through. The medium and portable barriers use the player-blocking variant. Optional bound Waystone relocation is source-supported for the powered barrier branches.
+- **Notes:** Basic and medium barriers are sustained rites. The small barrier blocks arrows and other non-player entities but lets players pass through. The portable barrier lasts about 60 seconds and uses the larger player-blocking variant. The medium barrier is also player-blocking and sustained. Optional bound Waystone relocation is source-supported for the powered barrier branches.
 
 ## Rite of Remove Curse
 - **Circle:** Medium (7x7)
