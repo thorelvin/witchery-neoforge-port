@@ -39,6 +39,8 @@ Staff of Duplication QA note (2026-06-01): `witchery:staff_of_duplication` now h
 
 Duplication Grenade QA note (2026-06-01): `witchery:duplication_grenade` now has the first practical source `ItemSunGrenade(1)` behavior instead of a placeholder. Throw it in survival near hostile mobs and verify the stack consumes, a Quartz Sphere drops at impact, a Reflection decoy with the thrower's skin/name appears for about 10 seconds, the decoy does not target the thrower or drop copied equipment, and nearby mobs prefer the decoy when their current target is the thrower or empty. Exact mirror charging/binding is still follow-up, so unbound creative/test grenades should use the thrower's reflection.
 
+Biome Note QA note (2026-06-01): `witchery:book_biomes`, `witchery:extended_biomes_book`, `witchery:biomes_book`, and `witchery:biome_note` are now real. Craft the basic Book of Biomes from Book + Black Dye + Feather + Oak Sapling + Stone, craft the extended book with four Stone, cycle its page with right-click and sneak-right-click, then craft the extended/alias book with Paper. The output note should be named `Biome <page>`, the book should remain in the grid, and Rite of Shifting Seasons should use that exact noted biome instead of the broad fallback foci. Remaining parity is the old GUI browser/stat page.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

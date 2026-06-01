@@ -233,6 +233,9 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
     public static final DeferredItem<BlockItem> ROWAN_SLAB           = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SLAB);
     public static final DeferredItem<Item>      WITCHES_PRIMER       = ITEMS.register("witches_primer", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
+    public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_DOOR_KEY       = ITEMS.register("rowan_door_key", id -> new com.emoniph.witchery.item.RowanDoorKeyItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_KEYRING        = ITEMS.register("rowan_keyring", id -> new com.emoniph.witchery.item.RowanKeyringItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_DOOR           = ITEMS.register("rowan_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.ROWAN_DOOR.get(), itemProps(id)));
@@ -684,6 +687,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> COOKED_SHEEP_LIVER = ITEMS.register("cooked_sheep_liver",
             id -> new Item(itemProps(id)
                     .food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
+    public static final DeferredItem<Item> BIOME_NOTE = ITEMS.register("biome_note",
+            id -> new com.emoniph.witchery.item.BiomeNoteItem(itemProps(id)));
 
     public static boolean isBrewOfRaising(ItemStack stack) {
         return stack.is(BREW_OF_RAISING.get()) || stack.is(RAISING_BREW.get());
@@ -708,7 +713,6 @@ public class WitcheryItems {
             "book_circle_magic",
             "book_infusions",
             "book_herbology",
-            "book_biomes",
             "book_wands",
             "book_burning",
             "brew_of_soul_hunger",
@@ -718,11 +722,9 @@ public class WitcheryItems {
             "contract_ownership",
             "contract_torment",
             "silver_dust",
-            "biome_note",
             "brews_and_infusions_book",
             "collecting_fumes_book",
             "conjuration_and_fetishes_book",
-            "extended_biomes_book",
             "symbology_book",
             "witches_brews_book",
             "charged_crossbow",
@@ -778,7 +780,6 @@ public class WitcheryItems {
             "distilling_book",
             "circle_magic_book",
             "herbology_book",
-            "biomes_book",
             "witches_robes",
             "icy_slippers",
             "hunter_hat",

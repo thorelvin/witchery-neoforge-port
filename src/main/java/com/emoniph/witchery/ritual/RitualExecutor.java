@@ -24,6 +24,7 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.CircleTalismanItem;
+import com.emoniph.witchery.item.BiomeNoteItem;
 import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
@@ -1457,6 +1458,7 @@ public class RitualExecutor {
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(8.0, 2.0, 8.0));
         ItemEntity selectedFocusEntity = null;
         ClimateFocus selectedFocus = null;
+        ClimateChangePlan selectedPlan = null;
         double bestDistance = Double.MAX_VALUE;
         int glowstone = 0;
         List<ItemEntity> glowstoneEntities = new ArrayList<>();
@@ -1472,8 +1474,9 @@ public class RitualExecutor {
                 continue;
             }
 
-            ClimateFocus focus = climateFocusFromStack(stack);
-            if (focus == null) {
+            ClimateChangePlan notePlan = climatePlanFromBiomeNote(level, stack);
+            ClimateFocus focus = notePlan == null ? climateFocusFromStack(stack) : null;
+            if (notePlan == null && focus == null) {
                 continue;
             }
 
@@ -1483,18 +1486,21 @@ public class RitualExecutor {
                     || (distance == bestDistance && itemEntity.getId() < selectedFocusEntity.getId())) {
                 selectedFocusEntity = itemEntity;
                 selectedFocus = focus;
+                selectedPlan = notePlan;
                 bestDistance = distance;
             }
         }
 
-        if (selectedFocusEntity == null || selectedFocus == null) {
+        if (selectedFocusEntity == null || (selectedFocus == null && selectedPlan == null)) {
             return null;
         }
 
         List<ItemEntity> itemsToConsume = new ArrayList<>(glowstoneEntities.size() + 1);
         itemsToConsume.add(selectedFocusEntity);
         itemsToConsume.addAll(glowstoneEntities);
-        ClimateChangePlan plan = new ClimateChangePlan(resolveClimateBiome(level, selectedFocus, glowstone), weatherForFocus(selectedFocus));
+        ClimateChangePlan plan = selectedPlan != null
+                ? selectedPlan
+                : new ClimateChangePlan(resolveClimateBiome(level, selectedFocus, glowstone), weatherForFocus(selectedFocus));
         return new ClimateChangeScan(plan, List.copyOf(itemsToConsume));
     }
 
@@ -1572,6 +1578,19 @@ public class RitualExecutor {
         return null;
     }
 
+    private static ClimateChangePlan climatePlanFromBiomeNote(ServerLevel level, ItemStack stack) {
+        if (!stack.is(WitcheryItems.BIOME_NOTE.get())) {
+            return null;
+        }
+        Optional<ResourceKey<Biome>> biomeKey = BiomeNoteItem.getBiomeKey(stack);
+        if (biomeKey.isEmpty()) {
+            return null;
+        }
+        var lookup = level.registryAccess().lookupOrThrow(Registries.BIOME);
+        Optional<Holder.Reference<Biome>> biome = lookup.get(biomeKey.get());
+        return biome.map(holder -> new ClimateChangePlan(holder, weatherForBiomeKey(biomeKey.get()))).orElse(null);
+    }
+
     private static Holder<Biome> resolveClimateBiome(ServerLevel level, ClimateFocus focus, int glowstoneCount) {
         return switch (focus) {
             case FOREST -> pickClimateBiome(level, glowstoneCount, Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.FLOWER_FOREST);
@@ -1607,6 +1626,20 @@ public class RitualExecutor {
             case FROZEN -> ClimateWeather.RAIN;
             default -> ClimateWeather.NONE;
         };
+    }
+
+    private static ClimateWeather weatherForBiomeKey(ResourceKey<Biome> key) {
+        if (key.equals(Biomes.DESERT) || key.equals(Biomes.BADLANDS)
+                || key.equals(Biomes.ERODED_BADLANDS) || key.equals(Biomes.WOODED_BADLANDS)) {
+            return ClimateWeather.SUN;
+        }
+        if (key.equals(Biomes.SNOWY_PLAINS) || key.equals(Biomes.ICE_SPIKES)
+                || key.equals(Biomes.SNOWY_TAIGA) || key.equals(Biomes.SNOWY_BEACH)
+                || key.equals(Biomes.FROZEN_PEAKS) || key.equals(Biomes.FROZEN_OCEAN)
+                || key.equals(Biomes.DEEP_FROZEN_OCEAN)) {
+            return ClimateWeather.RAIN;
+        }
+        return ClimateWeather.NONE;
     }
 
     private static void storeClimateChangePlan(ResourceKey<Level> dimension, BlockPos center, ClimateChangePlan plan) {

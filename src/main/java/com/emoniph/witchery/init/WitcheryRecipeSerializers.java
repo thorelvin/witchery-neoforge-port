@@ -5,6 +5,7 @@ import com.emoniph.witchery.crafting.ConcentratedBatBallRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipe;
 import com.emoniph.witchery.crafting.KettleBrewingRecipeSerializer;
 import com.emoniph.witchery.crafting.OvenRecipe;
+import com.emoniph.witchery.crafting.BiomeNoteCopyRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
 import com.emoniph.witchery.crafting.ImpregnatedLeatherRepairRecipe;
 import com.emoniph.witchery.crafting.BitingBeltPotionRecipe;
@@ -63,6 +64,10 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<PlayerCompassBindingRecipe>> PLAYER_COMPASS_BINDING =
             RECIPE_SERIALIZERS.register("player_compass_binding",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(PlayerCompassBindingRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<BiomeNoteCopyRecipe>> BIOME_NOTE_COPY =
+            RECIPE_SERIALIZERS.register("biome_note_copy",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(BiomeNoteCopyRecipe::new));
 
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<UpdateImmortalsObservationsBookRecipe>> UPDATE_IMMORTALS_OBSERVATIONS_BOOK =
             RECIPE_SERIALIZERS.register("update_immortals_observations_book",

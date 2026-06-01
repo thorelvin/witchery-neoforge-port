@@ -41,7 +41,11 @@ public class WitcheryCreativeTabs {
                     .build());
 
     private static void addGuide(CreativeModeTab.Output output) {
-        add(output, WitcheryItems.WITCHES_PRIMER.get());
+        add(output,
+                WitcheryItems.WITCHES_PRIMER.get(),
+                WitcheryItems.BOOK_BIOMES.get(),
+                WitcheryItems.EXTENDED_BIOMES_BOOK.get(),
+                WitcheryItems.BIOMES_BOOK.get());
     }
 
     private static void addTreesAndWood(CreativeModeTab.Output output) {
@@ -247,6 +251,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.COOKED_ODD_PORKCHOP.get(),
                 WitcheryItems.SHEEP_LIVER.get(),
                 WitcheryItems.COOKED_SHEEP_LIVER.get(),
+                WitcheryItems.BIOME_NOTE.get(),
                 WitcheryItems.SPECTRAL_STONE.get(),
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
@@ -392,14 +397,14 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "silver_dust", "biome_note",
+                "silver_dust",
                 "fanciful_thinking_charm", "pentacle", "golden_heart");
         addLegacy(output, accepted,
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
-                "book_biomes", "book_wands", "book_burning", "brews_and_infusions_book",
-                "collecting_fumes_book", "conjuration_and_fetishes_book", "extended_biomes_book",
+                "book_wands", "book_burning", "brews_and_infusions_book",
+                "collecting_fumes_book", "conjuration_and_fetishes_book",
                 "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
-                "herbology_book", "biomes_book");
+                "herbology_book");
         addLegacy(output, accepted,
                 "charged_crossbow",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",

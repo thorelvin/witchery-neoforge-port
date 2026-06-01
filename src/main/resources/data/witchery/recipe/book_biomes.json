@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "DBF",
+    " T "
+  ],
+  "key": {
+    "S": "minecraft:oak_sapling",
+    "D": "minecraft:black_dye",
+    "B": "minecraft:book",
+    "F": "minecraft:feather",
+    "T": "minecraft:stone"
+  },
+  "result": {
+    "id": "witchery:book_biomes"
+  }
+}
