@@ -609,7 +609,11 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WITCH_HUNTER_DAWN_BOOTS    = ITEMS.register("witch_hunter_dawn_boots",    id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
 
     // Witches outfit / special armors — wearable
-    public static final DeferredItem<Item> BABAS_HAT        = ITEMS.register("babas_hat",        id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> BABAS_HAT        = ITEMS.register("babas_hat",
+            id -> new BabasHatItem(itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.HELMET)
+                    .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> NECROMANCER_ROBES = ITEMS.register("necromancer_robes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> ICE_SLIPPERS     = ITEMS.register("ice_slippers",     id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> RUBY_SLIPPERS    = ITEMS.register("ruby_slippers",    id -> new com.emoniph.witchery.item.RubySlippersItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));

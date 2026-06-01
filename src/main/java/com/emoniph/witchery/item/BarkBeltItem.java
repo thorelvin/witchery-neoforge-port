@@ -14,6 +14,7 @@ import net.minecraft.world.item.component.CustomData;
 
 import java.util.function.Consumer;
 
+@SuppressWarnings({"deprecation", "removal"})
 public class BarkBeltItem extends Item {
     private static final String TAG_BARK_PIECES = "witchery_bark_pieces";
     private static final int CHARGE_PER_WITCHERY_CLOTHING_PIECE = 2;
@@ -49,8 +50,13 @@ public class BarkBeltItem extends Item {
     private static boolean isWitcheryClothing(ItemStack stack) {
         return stack.is(WitcheryItems.WITCHES_HAT.get())
                 || stack.is(WitcheryItems.WITCHES_ROBE.get())
+                || stack.is(WitcheryItems.BABAS_HAT.get())
+                || stack.is(WitcheryItems.NECROMANCER_ROBES.get())
                 || stack.is(WitcheryItems.BITING_BELT.get())
                 || stack.is(WitcheryItems.BARK_BELT.get())
+                || stack.is(WitcheryItems.ICE_SLIPPERS.get())
+                || stack.is(WitcheryItems.RUBY_SLIPPERS.get())
+                || stack.is(WitcheryItems.SEEPING_SHOES.get())
                 || stack.is(WitcheryItems.EARMUFFS.get());
     }
 
