@@ -59,11 +59,11 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState air    = Blocks.AIR.defaultBlockState();
         BlockState fence  = materials.parapet();
         BlockState slab   = materials.roofSlabTop();
-        // setOrientation(NORTH) flips local Z without rotating block states.
-        BlockState stairsN = materials.roofStairs(Direction.SOUTH);
-        BlockState stairsS = materials.roofStairs(Direction.NORTH);
-        BlockState stairsW = materials.roofStairs(Direction.WEST);
-        BlockState stairsE = materials.roofStairs(Direction.EAST);
+        // Source roof stair metas 3/2/0/1 map to NORTH/SOUTH/EAST/WEST.
+        BlockState stairsN = materials.roofStairs(Direction.NORTH);
+        BlockState stairsS = materials.roofStairs(Direction.SOUTH);
+        BlockState stairsW = materials.roofStairs(Direction.EAST);
+        BlockState stairsE = materials.roofStairs(Direction.WEST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
         BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
         BlockState upperLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
