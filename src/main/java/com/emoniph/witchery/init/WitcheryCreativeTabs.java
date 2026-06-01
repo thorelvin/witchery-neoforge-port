@@ -250,6 +250,18 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WOOD_ASH.get(),
                 WitcheryItems.SILVER_DEPOSITS.get(),
                 WitcheryItems.GOLDEN_HEART.get(),
+                WitcheryItems.DANDELION_OF_INK.get(),
+                WitcheryItems.DANDELION_OF_SPROUTING.get(),
+                WitcheryItems.DANDELION_OF_THORNS.get(),
+                WitcheryItems.DANDELION_OF_WEBS.get(),
+                WitcheryItems.POPPY_OF_INK.get(),
+                WitcheryItems.POPPY_OF_SPROUTING.get(),
+                WitcheryItems.POPPY_OF_THORNS.get(),
+                WitcheryItems.POPPY_OF_WEBS.get(),
+                WitcheryItems.SHRUB_OF_INK.get(),
+                WitcheryItems.SHRUB_OF_SPROUTING.get(),
+                WitcheryItems.SHRUB_OF_THORNS.get(),
+                WitcheryItems.SHRUB_OF_WEBS.get(),
                 WitcheryItems.DIAMOND_VAPOUR.get(),
                 WitcheryItems.EXHALE_OF_HORNED_ONE.get(),
                 WitcheryItems.HINT_OF_REBIRTH.get(),
@@ -492,11 +504,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "hellhound_head", "wolf_head");
-        addLegacy(output, accepted,
-                "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",
-                "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",
-                "shrub_of_ink", "shrub_of_sprouting", "shrub_of_thorns", "shrub_of_webs", "trapped_plant");
+                "hellhound_head", "wolf_head", "trapped_plant");
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment");
         addLegacy(output, accepted,

@@ -635,6 +635,18 @@ public class WitcheryItems {
     public static final DeferredItem<Item> SILVER_INGOT        = ITEMS.registerSimpleItem("silver_ingot");
     public static final DeferredItem<Item> SILVER_DEPOSITS     = ITEMS.registerSimpleItem("silver_deposits");
     public static final DeferredItem<Item> GOLDEN_HEART        = ITEMS.registerSimpleItem("golden_heart");
+    public static final DeferredItem<Item> DANDELION_OF_INK = ITEMS.registerSimpleItem("dandelion_of_ink");
+    public static final DeferredItem<Item> DANDELION_OF_SPROUTING = ITEMS.registerSimpleItem("dandelion_of_sprouting");
+    public static final DeferredItem<Item> DANDELION_OF_THORNS = ITEMS.registerSimpleItem("dandelion_of_thorns");
+    public static final DeferredItem<Item> DANDELION_OF_WEBS = ITEMS.registerSimpleItem("dandelion_of_webs");
+    public static final DeferredItem<Item> POPPY_OF_INK = ITEMS.registerSimpleItem("poppy_of_ink");
+    public static final DeferredItem<Item> POPPY_OF_SPROUTING = ITEMS.registerSimpleItem("poppy_of_sprouting");
+    public static final DeferredItem<Item> POPPY_OF_THORNS = ITEMS.registerSimpleItem("poppy_of_thorns");
+    public static final DeferredItem<Item> POPPY_OF_WEBS = ITEMS.registerSimpleItem("poppy_of_webs");
+    public static final DeferredItem<Item> SHRUB_OF_INK = ITEMS.registerSimpleItem("shrub_of_ink");
+    public static final DeferredItem<Item> SHRUB_OF_SPROUTING = ITEMS.registerSimpleItem("shrub_of_sprouting");
+    public static final DeferredItem<Item> SHRUB_OF_THORNS = ITEMS.registerSimpleItem("shrub_of_thorns");
+    public static final DeferredItem<Item> SHRUB_OF_WEBS = ITEMS.registerSimpleItem("shrub_of_webs");
     public static final DeferredItem<Item> SILVER_SWORD        = ITEMS.register("silver_sword", id -> new Item(itemProps(id).sword(net.minecraft.world.item.ToolMaterial.GOLD, 3.0f, -2.4f)));
     public static final DeferredItem<Item> SILVER_BOLT         = ITEMS.registerSimpleItem("silver_bolt");
     public static final DeferredItem<Item> WOODEN_BOLT         = ITEMS.registerSimpleItem("wooden_bolt");
@@ -843,20 +855,8 @@ public class WitcheryItems {
             "brew_of_soul_anguish",
             "brew_of_soul_fear",
             "brew_of_soul_torment",
-            "dandelion_of_ink",
-            "dandelion_of_sprouting",
-            "dandelion_of_thorns",
-            "dandelion_of_webs",
             "hellhound_head",
-            "poppy_of_ink",
-            "poppy_of_sprouting",
-            "poppy_of_thorns",
-            "poppy_of_webs",
             "trapped_plant",
-            "shrub_of_ink",
-            "shrub_of_sprouting",
-            "shrub_of_thorns",
-            "shrub_of_webs",
             "wolf_head",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
