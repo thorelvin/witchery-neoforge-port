@@ -27,6 +27,8 @@ Icy Slippers exact-ID QA note (2026-06-01): the source shaped slipper recipe now
 
 Witches Robes exact-ID QA note (2026-06-01): the source shaped robe recipe now produces exact Resurrected `witchery:witches_robes`, while old `witchery:witches_robe` stacks remain behavior-compatible. Craft the exact ID, verify it appears with armor gear and has no placeholder suffix, check both IDs show the robe tooltip, equip each for creeper target dropping, verify Kettle second-brew eligibility on non-necromantic brews, confirm Bark Belt capacity counts the robe, and repair both IDs with four Impregnated Leather.
 
+Gulg's Gurdle exact-ID QA note (2026-06-01): Goblin Gulg now drops the exact Resurrected `witchery:gulgs_grudle` ID, while old `witchery:gulgs_girdle` stacks remain behavior-compatible. Kill Gulg until the 50% reward drops, verify the exact ID has no placeholder suffix and uses Gulg's Gurdle display text, then equip both IDs to verify empty-hand hits force the launch/damage behavior and nearby paired Mog's Quiver wearers still grant Resistance.
+
 Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
 
 Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.

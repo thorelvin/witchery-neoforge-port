@@ -44,7 +44,7 @@ public class GoblinClothesItem extends Item {
     }
 
     public static boolean isGirdleWorn(LivingEntity entity) {
-        return entity.getItemBySlot(EquipmentSlot.LEGS).is(WitcheryItems.GULGS_GIRDLE.get());
+        return WitcheryItems.isGulgsGirdle(entity.getItemBySlot(EquipmentSlot.LEGS));
     }
 
     public enum Piece {

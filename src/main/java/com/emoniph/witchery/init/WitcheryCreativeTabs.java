@@ -395,6 +395,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.LEONARDS_URN.get(),
                 WitcheryItems.TWISTING_BAND.get(),
                 WitcheryItems.GULGS_GIRDLE.get(),
+                WitcheryItems.GULGS_GRUDLE.get(),
                 WitcheryItems.MOGS_QUIVER.get());
     }
 
@@ -435,8 +436,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "hunter_hat", "hunter_coat", "silvered_hunter_hat",
                 "silvered_hunter_coat", "silvered_hunter_leggings", "silvered_hunter_boots",
-                "dawn_hunter_hat", "dawn_hunter_coat", "dawn_hunter_leggings", "dawn_hunter_boots",
-                "gulgs_grudle");
+                "dawn_hunter_hat", "dawn_hunter_coat", "dawn_hunter_leggings", "dawn_hunter_boots");
 
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
             if (accepted.add(id)) {

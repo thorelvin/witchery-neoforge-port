@@ -610,6 +610,13 @@ public class WitcheryItems {
                     .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final DeferredItem<Item> GULGS_GRUDLE       = ITEMS.register("gulgs_grudle",
+            id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
+                    .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
+                            net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
+                    .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.register("mogs_quiver",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.MOGS_QUIVER, itemProps(id)
                     .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
@@ -728,6 +735,10 @@ public class WitcheryItems {
         return stack.is(WITCHES_ROBE.get()) || stack.is(WITCHES_ROBES.get());
     }
 
+    public static boolean isGulgsGirdle(ItemStack stack) {
+        return stack.is(GULGS_GIRDLE.get()) || stack.is(GULGS_GRUDLE.get());
+    }
+
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "book_oven",
@@ -810,7 +821,6 @@ public class WitcheryItems {
             "dawn_hunter_coat",
             "dawn_hunter_leggings",
             "dawn_hunter_boots",
-            "gulgs_grudle",
             "fanciful_thinking_charm",
             "pentacle",
             "golden_heart"
