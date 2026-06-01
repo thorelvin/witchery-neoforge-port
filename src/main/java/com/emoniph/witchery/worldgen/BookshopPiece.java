@@ -1,5 +1,7 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
@@ -7,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -27,6 +30,12 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.storage.loot.LootTable;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 /**
  * Source-shaped 10x8x9 Witchery village bookshop.
  * The old component carried a book loot chest at local 2,1,4 and four book
@@ -37,6 +46,8 @@ public class BookshopPiece extends StructurePiece {
     private static final ResourceKey<LootTable> LOOT_TABLE =
             ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
                     Identifier.fromNamespaceAndPath("witchery", "chests/bookshop"));
+    private static final Map<ServerLevel, Set<BlockPos>> CLAIMED_FRAME_POSITIONS =
+            Collections.synchronizedMap(new WeakHashMap<>());
 
     public BookshopPiece(StructurePieceType type, int x, int y, int z) {
         super(type, 0, new BoundingBox(x, y, z, x + 9, y + 7, z + 8));
@@ -60,6 +71,8 @@ public class BookshopPiece extends StructurePiece {
         BlockState wall = materials.wall();
         BlockState trim = materials.trim();
         BlockState shelf = Blocks.BOOKSHELF.defaultBlockState();
+
+        debugLog("Bookshop shell start at {} for generation box {}.", boundingBox, box);
 
         // Source ComponentVillageBookShop footprint.
         generateBox(level, box, 1, 0, 1, 8, 0, 6, stone, stone, false);
@@ -108,28 +121,40 @@ public class BookshopPiece extends StructurePiece {
             placeBlock(level, materials.roofStairs(Direction.SOUTH), x, 7, 5, box);
         }
 
+        debugLog("Bookshop shell finished at {} for generation box {}.", boundingBox, box);
         createChest(level, box, random, 2, 1, 4, LOOT_TABLE);
-        placeBookFrames(level, box, random, wall);
+        debugLog("Bookshop chest phase finished at {} for generation box {}.", boundingBox, box);
+        int frames = placeBookFrames(level, box, random, wall);
+        debugLog("Bookshop frame phase finished at {} for generation box {} ({} frame(s)).",
+                boundingBox, box, frames);
         for (int x = 1; x <= 8; x++) {
             for (int z = 1; z <= 6; z++) {
                 fillColumnDown(level, stone, x, -1, z, box);
             }
         }
+        debugLog("Bookshop foundation phase finished at {} for generation box {}.", boundingBox, box);
         spawnShopkeeper(level, box);
+        debugLog("Bookshop resident phase finished at {} for generation box {}.", boundingBox, box);
     }
 
-    private void placeBookFrames(WorldGenLevel level, BoundingBox box, RandomSource random, BlockState wall) {
+    private int placeBookFrames(WorldGenLevel level, BoundingBox box, RandomSource random, BlockState wall) {
+        int placed = 0;
         for (int x = 3; x <= 6; x++) {
             placeBlock(level, wall, x, 3, 6, box);
             BlockPos framePos = getWorldPos(x, 3, 5).immutable();
             BlockPos supportPos = getWorldPos(x, 3, 6).immutable();
             if (!box.isInside(framePos) || !box.isInside(supportPos)) continue;
+            BlockState support = level.getBlockState(supportPos);
+            BlockState front = level.getBlockState(framePos);
+            if (!support.isSolid() || (!front.isAir() && !front.canBeReplaced())) continue;
+            if (!claimFramePosition(level.getLevel(), framePos)) continue;
 
             ItemFrame frame = new ItemFrame(level.getLevel(), framePos, Direction.SOUTH);
-            if (!frame.survives()) continue;
-            level.addFreshEntityWithPassengers(frame);
             frame.setItem(randomBookFrameStack(random), false);
+            level.addFreshEntityWithPassengers(frame);
+            placed++;
         }
+        return placed;
     }
 
     private static ItemStack randomBookFrameStack(RandomSource random) {
@@ -153,5 +178,18 @@ public class BookshopPiece extends StructurePiece {
         villager.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                 EntitySpawnReason.STRUCTURE, null);
         level.addFreshEntityWithPassengers(villager);
+    }
+
+    private static boolean claimFramePosition(ServerLevel level, BlockPos pos) {
+        synchronized (CLAIMED_FRAME_POSITIONS) {
+            Set<BlockPos> positions = CLAIMED_FRAME_POSITIONS.computeIfAbsent(level, key -> new HashSet<>());
+            return positions.add(pos.immutable());
+        }
+    }
+
+    private static void debugLog(String message, Object... args) {
+        if (WitcheryConfig.DEBUG.get()) {
+            WitcheryMod.LOGGER.info("[VillageBuildings:Debug] " + message, args);
+        }
     }
 }

@@ -312,7 +312,7 @@ public final class VillageWallGenerator {
         //     the ring. Walls still follow general slopes; fillDown bridges the gap beneath.
         smoothWallDips(grid, heights, w, d);
 
-        // 9a. Pre-clear vegetation/trees in every wall column.
+        // 9a. Pre-clear vegetation/trees/mushrooms in every wall column.
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
                 if (grid[x][z] != WALL) continue;
@@ -320,7 +320,7 @@ public final class VillageWallGenerator {
                 if (level.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) continue;
                 int sy = heights[x][z];
                 if (sy == 0) continue;
-                clearTouchedTrees(level, wx, sy, wz, WALL_HEIGHT + 5, TREE_CLEAR_WALL_TOUCH_RADIUS);
+                clearTouchedVegetation(level, wx, sy, wz, WALL_HEIGHT + 5, TREE_CLEAR_WALL_TOUCH_RADIUS);
                 for (int dy = 0; dy < WALL_HEIGHT + 5; dy++) {
                     BlockPos p = new BlockPos(wx, sy + dy, wz);
                     BlockState bs = level.getBlockState(p);
@@ -419,6 +419,7 @@ public final class VillageWallGenerator {
             || state.is(BlockTags.LOGS)
             || state.is(BlockTags.FLOWERS)
             || state.is(BlockTags.SAPLINGS)
+            || isMushroomBlock(state)
             || state.canBeReplaced();
     }
 
@@ -426,12 +427,24 @@ public final class VillageWallGenerator {
         return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES);
     }
 
+    private static boolean isMushroomBlock(BlockState state) {
+        return state.is(Blocks.BROWN_MUSHROOM)
+                || state.is(Blocks.RED_MUSHROOM)
+                || state.is(Blocks.BROWN_MUSHROOM_BLOCK)
+                || state.is(Blocks.RED_MUSHROOM_BLOCK)
+                || state.is(Blocks.MUSHROOM_STEM);
+    }
+
+    private static boolean isConnectedVegetationBlock(BlockState state) {
+        return isTreeBlock(state) || isMushroomBlock(state);
+    }
+
     /**
-     * If a wall/gate/path corridor touches a tree, remove the nearby connected logs/leaves
-     * so generation does not leave floating canopies or half-cut taiga trunks.
+     * If a wall/gate/path corridor touches a tree or giant mushroom, remove the nearby connected
+     * natural mass so generation does not leave floating canopies, half-cut trunks, or mushroom caps.
      */
-    private static void clearTouchedTrees(ServerLevel level, int centerX, int baseY, int centerZ,
-                                          int heightAbove, int touchRadius) {
+    private static void clearTouchedVegetation(ServerLevel level, int centerX, int baseY, int centerZ,
+                                               int heightAbove, int touchRadius) {
         int minY = Math.max(MIN_BUILD_Y, baseY - TREE_CLEAR_SCAN_Y_BELOW);
         int maxY = Math.min(MAX_BUILD_Y, baseY + heightAbove);
         for (int dx = -touchRadius; dx <= touchRadius; dx++) {
@@ -441,16 +454,16 @@ public final class VillageWallGenerator {
                 if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
                 for (int y = minY; y <= maxY; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (isTreeBlock(level.getBlockState(pos))) {
-                        clearConnectedTree(level, pos, centerX, centerZ, minY, maxY + TREE_CLEAR_SCAN_Y_ABOVE);
+                    if (isConnectedVegetationBlock(level.getBlockState(pos))) {
+                        clearConnectedVegetation(level, pos, centerX, centerZ, minY, maxY + TREE_CLEAR_SCAN_Y_ABOVE);
                     }
                 }
             }
         }
     }
 
-    private static void clearConnectedTree(ServerLevel level, BlockPos seed, int centerX, int centerZ,
-                                           int minY, int maxY) {
+    private static void clearConnectedVegetation(ServerLevel level, BlockPos seed, int centerX, int centerZ,
+                                                 int minY, int maxY) {
         maxY = Math.min(MAX_BUILD_Y, maxY);
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         Set<BlockPos> seen = new HashSet<>();
@@ -463,7 +476,7 @@ public final class VillageWallGenerator {
             if (Math.abs(pos.getX() - centerX) > TREE_CLEAR_TREE_RADIUS
                     || Math.abs(pos.getZ() - centerZ) > TREE_CLEAR_TREE_RADIUS) continue;
             if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) continue;
-            if (!isTreeBlock(level.getBlockState(pos))) continue;
+            if (!isConnectedVegetationBlock(level.getBlockState(pos))) continue;
 
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
             cleared++;
@@ -858,7 +871,7 @@ public final class VillageWallGenerator {
             boolean opening = Math.abs(o) <= 1;
             for (int depth = -1; depth <= 1; depth++) {
                 int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
-                clearTouchedTrees(level, dwx, refY - 1, dwz, WALL_HEIGHT + 4, TREE_CLEAR_WALL_TOUCH_RADIUS);
+                clearTouchedVegetation(level, dwx, refY - 1, dwz, WALL_HEIGHT + 4, TREE_CLEAR_WALL_TOUCH_RADIUS);
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
@@ -901,7 +914,7 @@ public final class VillageWallGenerator {
             if (stopAtRoad && isVillageRoad(level.getBlockState(new BlockPos(ix, natural, iz)), desert)) break;
             if (natural > floorY) floorY++;
             else if (natural < floorY) floorY--;
-            clearTouchedTrees(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
+            clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
             forceSet(level, ix, floorY, iz, pathBlock);                         // path surface
             for (int dy = 1; dy <= 4; dy++) {                                   // cut headroom
                 BlockPos p = new BlockPos(ix, floorY + dy, iz);
@@ -990,7 +1003,7 @@ public final class VillageWallGenerator {
         // Replace air, liquids, replaceable decoration, and natural vegetation.
         // Logs and leaves are solid+non-replaceable in 1.21 but must be cleared for walls.
         if (!existing.isAir() && !existing.liquid() && !existing.canBeReplaced()
-                && !existing.is(BlockTags.LOGS) && !existing.is(BlockTags.LEAVES)) return;
+                && !isConnectedVegetationBlock(existing)) return;
         level.setBlock(pos, state, 3);
     }
 
@@ -1028,7 +1041,7 @@ public final class VillageWallGenerator {
         if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return;
         BlockState ex = level.getBlockState(new BlockPos(x, y, z));
         if (ex.liquid()) { level.setBlock(new BlockPos(x, y, z), Blocks.STONE.defaultBlockState(), 3); return; }
-        if (!ex.isAir() && !ex.canBeReplaced() && !ex.is(BlockTags.LOGS) && !ex.is(BlockTags.LEAVES)) return;
+        if (!ex.isAir() && !ex.canBeReplaced() && !isConnectedVegetationBlock(ex)) return;
         level.setBlock(new BlockPos(x, y, z), wall, 3);
     }
 
