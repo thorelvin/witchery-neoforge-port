@@ -3,6 +3,7 @@
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
 **Closed 2026-06-01 / 2026-05-31:**
+- ~~Generated gate paths use stone-brick filler underneath~~ - fresh wall QA called out masonry showing under generated paths. Fixed: the gate opening floor and graded gate paths now fill downward with terrain-style support (`DIRT`, `SAND`, or `RED_SAND`) while gatehouse pillars/walls still use masonry.
 - ~~Village wall rampart details can generate as isolated one-block nubs~~ - fresh QA found single-block rampart lips/ledges on odd wall stubs and corners. Fixed: rampart lips and inner wall-walk ledges now require a matching parallel neighboring wall column at compatible height, and corner bridges require both adjoining wall runs to be rampart-compatible.
 - ~~Coven Circle can generate with its floor at or below frozen water level~~ - fresh QA found a Stone/Coven Circle intersecting a snowy frozen-water shoreline. Fixed: structure selection now rejects river/ocean biome footprints, and `CovenCirclePiece` aborts before writing blocks if its 11x11 footprint has fluid or ice at the floor/surface band.
 - ~~Village wall rampart corners still block guard traversal~~ - fresh QA showed guards getting stuck at L-corners even after the rampart visual pass. Fixed: wall guards now use 150 usable wall-walk spacing, and any L-corner with two adjacent wall runs around an interior turn gets a flat diagonal inside walk bridge with cleared headroom so guards can pass through the corner.

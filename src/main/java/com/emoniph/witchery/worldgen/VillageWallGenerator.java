@@ -925,6 +925,7 @@ public final class VillageWallGenerator {
         BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
                 ? Blocks.SANDSTONE_WALL.defaultBlockState()
                 : Blocks.STONE_BRICK_WALL.defaultBlockState();
+        BlockState pathSupport = pathSupportMaterial(level, g.centerWX(), g.centerWZ(), desert);
         int refY = g.refY();
 
         clearGatehouseFootprint(level, g);
@@ -941,7 +942,7 @@ public final class VillageWallGenerator {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
                     forceSet(level, dwx, refY - 1, dwz, pathBlock);                                       // floor
-                    fillDown(level, dwx, refY - 2, dwz, brick);
+                    fillDown(level, dwx, refY - 2, dwz, pathSupport);
                 } else {
                     for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++) forceSet(level, dwx, refY + dy, dwz, brick);
                     forceSet(level, dwx, refY + WALL_HEIGHT + 2, dwz, gateCap);
@@ -959,8 +960,8 @@ public final class VillageWallGenerator {
         int oDX = -g.inDX(), oDZ = -g.inDZ();
         for (int o = -1; o <= 1; o++) {
             int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false, pathBlock, brick, desert);
-            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, true, pathBlock, brick, desert);
+            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false, pathBlock, pathSupport, desert);
+            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, true, pathBlock, pathSupport, desert);
         }
     }
 
@@ -1083,6 +1084,13 @@ public final class VillageWallGenerator {
         if (bs.is(Blocks.DIRT_PATH)) return true;
         return desert && (bs.is(Blocks.SMOOTH_SANDSTONE) || bs.is(Blocks.SANDSTONE)
                        || bs.is(Blocks.CUT_SANDSTONE));
+    }
+
+    private static BlockState pathSupportMaterial(ServerLevel level, int x, int z, boolean desert) {
+        if (!desert) return Blocks.DIRT.defaultBlockState();
+        return level.getBiome(new BlockPos(x, 64, z)).is(BiomeTags.IS_BADLANDS)
+                ? Blocks.RED_SAND.defaultBlockState()
+                : Blocks.SAND.defaultBlockState();
     }
 
     private static boolean isDesertLike(ServerLevel level, int x, int z) {
