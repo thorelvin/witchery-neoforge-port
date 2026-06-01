@@ -81,7 +81,7 @@ public class ImpregnatedLeatherRepairRecipe extends CustomRecipe {
         }
         if (stack.is(WitcheryItems.WITCHES_HAT.get())
                 || stack.is(WitcheryItems.BABAS_HAT.get())
-                || stack.is(WitcheryItems.ICE_SLIPPERS.get())
+                || WitcheryItems.isIcySlippers(stack)
                 || stack.is(WitcheryItems.RUBY_SLIPPERS.get())
                 || stack.is(WitcheryItems.SEEPING_SHOES.get())) {
             return 3;

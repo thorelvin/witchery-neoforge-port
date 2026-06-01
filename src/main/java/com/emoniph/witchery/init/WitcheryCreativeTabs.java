@@ -311,6 +311,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WITCHES_HAT.get(),
                 WitcheryItems.WITCHES_ROBE.get(),
                 WitcheryItems.WITCHES_SHOES.get(),
+                WitcheryItems.ICE_SLIPPERS.get(),
+                WitcheryItems.ICY_SLIPPERS.get(),
                 WitcheryItems.EARMUFFS.get(),
                 WitcheryItems.BITING_BELT.get(),
                 WitcheryItems.BARK_BELT.get(),
@@ -430,7 +432,7 @@ public class WitcheryCreativeTabs {
                 "solidifying_sandstone_brew", "solidifying_erosion_brew", "hunger_demon_soul",
                 "anguish_demon_soul", "fear_demon_soul", "torment_demon_soul");
         addLegacy(output, accepted,
-                "witches_robes", "icy_slippers", "hunter_hat", "hunter_coat", "silvered_hunter_hat",
+                "witches_robes", "hunter_hat", "hunter_coat", "silvered_hunter_hat",
                 "silvered_hunter_coat", "silvered_hunter_leggings", "silvered_hunter_boots",
                 "dawn_hunter_hat", "dawn_hunter_coat", "dawn_hunter_leggings", "dawn_hunter_boots",
                 "gulgs_grudle");

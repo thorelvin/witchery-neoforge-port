@@ -489,7 +489,7 @@ public class WitcheryPlayerEvents {
 
     private static void tickIcySlippersEffect(ServerPlayer player, ServerLevel level) {
         ItemStack shoes = player.getItemBySlot(EquipmentSlot.FEET);
-        if (!shoes.is(WitcheryItems.ICE_SLIPPERS.get())) return;
+        if (!WitcheryItems.isIcySlippers(shoes)) return;
 
         int y = Mth.floor(player.getY() - 1.0D);
         for (int i = 0; i < 4; i++) {

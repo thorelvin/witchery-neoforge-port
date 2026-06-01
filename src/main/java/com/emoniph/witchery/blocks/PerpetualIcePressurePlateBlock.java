@@ -42,6 +42,6 @@ public class PerpetualIcePressurePlateBlock extends PressurePlateBlock {
 
     private static boolean wearsIcySlippers(LivingEntity entity) {
         ItemStack boots = entity.getItemBySlot(EquipmentSlot.FEET);
-        return boots.is(WitcheryItems.ICE_SLIPPERS.get());
+        return WitcheryItems.isIcySlippers(boots);
     }
 }

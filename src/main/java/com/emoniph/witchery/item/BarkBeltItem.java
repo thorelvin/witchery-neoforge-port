@@ -54,7 +54,7 @@ public class BarkBeltItem extends Item {
                 || stack.is(WitcheryItems.NECROMANCER_ROBES.get())
                 || stack.is(WitcheryItems.BITING_BELT.get())
                 || stack.is(WitcheryItems.BARK_BELT.get())
-                || stack.is(WitcheryItems.ICE_SLIPPERS.get())
+                || WitcheryItems.isIcySlippers(stack)
                 || stack.is(WitcheryItems.RUBY_SLIPPERS.get())
                 || stack.is(WitcheryItems.SEEPING_SHOES.get())
                 || stack.is(WitcheryItems.EARMUFFS.get());

@@ -654,6 +654,10 @@ public class WitcheryItems {
             id -> new IcySlippersItem(itemProps(id)
                     .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
                             net.minecraft.world.item.equipment.ArmorType.BOOTS)));
+    public static final DeferredItem<Item> ICY_SLIPPERS     = ITEMS.register("icy_slippers",
+            id -> new IcySlippersItem(itemProps(id)
+                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                            net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> RUBY_SLIPPERS    = ITEMS.register("ruby_slippers",    id -> new com.emoniph.witchery.item.RubySlippersItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> SEEPING_SHOES    = ITEMS.register("seeping_shoes",    id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
 
@@ -707,6 +711,10 @@ public class WitcheryItems {
 
     public static boolean isBrewOfSprouting(ItemStack stack) {
         return stack.is(BREW_OF_SPROUTING.get()) || stack.is(SPROUTING_BREW.get());
+    }
+
+    public static boolean isIcySlippers(ItemStack stack) {
+        return stack.is(ICE_SLIPPERS.get()) || stack.is(ICY_SLIPPERS.get());
     }
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
@@ -782,7 +790,6 @@ public class WitcheryItems {
             "circle_magic_book",
             "herbology_book",
             "witches_robes",
-            "icy_slippers",
             "hunter_hat",
             "hunter_coat",
             "silvered_hunter_hat",
