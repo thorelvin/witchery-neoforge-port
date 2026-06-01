@@ -52,6 +52,10 @@ public final class VillageWallGenerator {
 
     private record GateDetection(List<GateDef> gates, int candidates) {}
 
+    private record WallColumnResult(boolean placed, BlockPos guardPos) {
+        private static final WallColumnResult SKIPPED = new WallColumnResult(false, null);
+    }
+
     private static final int WALL_HEIGHT   = 6;   // blocks above surface
     private static final int MIN_BUILD_Y   = -64;
     private static final int MAX_BUILD_Y   = 319;
@@ -344,10 +348,10 @@ public final class VillageWallGenerator {
                 if (z > 0   && grid[x][z-1] == WALL && heights[x][z-1] > 0) floorTo = Math.min(floorTo, heights[x][z-1]);
                 if (z < d-1 && grid[x][z+1] == WALL && heights[x][z+1] > 0) floorTo = Math.min(floorTo, heights[x][z+1]);
 
-                placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock, merlonBlock, stairBlock,
-                        floorTo, grid, x, z, w, d);
-                if (++guardCounter >= GUARD_SPACING) {
-                    spawnGuard(level, wx, wz, sy);
+                WallColumnResult column = placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock,
+                        merlonBlock, stairBlock, floorTo, grid, heights, x, z, w, d);
+                if (column.placed() && column.guardPos() != null && ++guardCounter >= GUARD_SPACING) {
+                    spawnGuard(level, column.guardPos());
                     guardCounter = 0;
                 }
             }
@@ -695,13 +699,15 @@ public final class VillageWallGenerator {
      * The curtain is extended down to {@code floorTo} (the lowest along-wall neighbour base)
      * so the wall stays connected across steps over cliffs; stone fills the foundation below.
      */
-    private static void placeWallColumn(ServerLevel level, int wx, int sy, int wz,
-                                         BlockState wall, BlockState brick, BlockState merlon, BlockState stair,
-                                         int floorTo, byte[][] grid, int gx, int gz, int w, int d) {
+    private static WallColumnResult placeWallColumn(ServerLevel level, int wx, int sy, int wz,
+                                                     BlockState wall, BlockState brick, BlockState merlon, BlockState stair,
+                                                     int floorTo, byte[][] grid, short[][] heights,
+                                                     int gx, int gz, int w, int d) {
         boolean corner = isCorner(grid, gx, gz, w, d);
         int extra = corner ? 2 : 0;
         int top = sy + WALL_HEIGHT + extra;
-        if (hasLivingEntityInColumn(level, wx, Math.min(sy, floorTo), wz, top + 1)) return;
+        if (hasLivingEntityInColumn(level, wx, Math.min(sy, floorTo), wz, top + 1))
+            return WallColumnResult.SKIPPED;
 
         // Base: 2 courses of stone brick (stone if submerged)
         placeWallMat(level, wx, sy,     wz, brick);
@@ -719,12 +725,16 @@ public final class VillageWallGenerator {
             if (corner) setBlock(level, wx, top + 1, wz, merlon);
         }
 
-        placeRampartDetails(level, wx, top, wz, brick, merlon, stair, grid, gx, gz, w, d);
+        BlockPos guardPos = null;
+        if (!corner && !hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)) {
+            guardPos = placeRampartDetails(level, wx, top, wz, brick, stair, grid, gx, gz, w, d);
+        }
 
         // Extend the curtain down to the lowest neighbour so cliff steps stay connected
         // (stone wherever submerged, via placeWallMat).
         for (int y = sy - 1; y >= floorTo; y--) placeWallMat(level, wx, y, wz, wall);
         fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, brick);
+        return new WallColumnResult(true, guardPos);
     }
 
     /**
@@ -732,28 +742,30 @@ public final class VillageWallGenerator {
      * Keep the same visual language without widening the whole wall shaft: outer faces
      * get a stair-capped rampart lip, while the village side gets a narrow wall-walk ledge.
      */
-    private static void placeRampartDetails(ServerLevel level, int wx, int top, int wz,
-                                             BlockState brick, BlockState merlon, BlockState stair,
-                                             byte[][] grid, int gx, int gz, int w, int d) {
+    private static BlockPos placeRampartDetails(ServerLevel level, int wx, int top, int wz,
+                                                 BlockState brick, BlockState stair,
+                                                 byte[][] grid, int gx, int gz, int w, int d) {
         boolean northOutside = isGridCell(grid, gx, gz - 1, w, d, EMPTY);
         boolean southOutside = isGridCell(grid, gx, gz + 1, w, d, EMPTY);
         boolean eastOutside = isGridCell(grid, gx + 1, gz, w, d, EMPTY);
         boolean westOutside = isGridCell(grid, gx - 1, gz, w, d, EMPTY);
+
+        BlockPos guardPos = null;
+        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR))
+            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz - 1, brick));
+        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR))
+            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz + 1, brick));
+        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR))
+            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx + 1, top, wz, brick));
+        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR))
+            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx - 1, top, wz, brick));
 
         if (northOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
         if (southOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
         if (eastOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
         if (westOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
 
-        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR)) setBlock(level, wx, top - 1, wz - 1, brick);
-        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR)) setBlock(level, wx, top - 1, wz + 1, brick);
-        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR)) setBlock(level, wx + 1, top - 1, wz, brick);
-        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR)) setBlock(level, wx - 1, top - 1, wz, brick);
-
-        placeCornerRampart(level, wx, top, wz, brick, merlon, northOutside, eastOutside, 1, -1);
-        placeCornerRampart(level, wx, top, wz, brick, merlon, northOutside, westOutside, -1, -1);
-        placeCornerRampart(level, wx, top, wz, brick, merlon, southOutside, eastOutside, 1, 1);
-        placeCornerRampart(level, wx, top, wz, brick, merlon, southOutside, westOutside, -1, 1);
+        return guardPos;
     }
 
     private static void placeRampartFace(ServerLevel level, int wx, int top, int wz,
@@ -764,17 +776,42 @@ public final class VillageWallGenerator {
         setBlock(level, wx + dx, top, wz + dz, stairFor(stair, outward));
     }
 
-    private static void placeCornerRampart(ServerLevel level, int wx, int top, int wz,
-                                            BlockState brick, BlockState merlon,
-                                            boolean firstOutside, boolean secondOutside,
-                                            int dx, int dz) {
-        if (!firstOutside || !secondOutside) return;
-        setBlock(level, wx + dx, top - 1, wz + dz, brick);
-        if (Math.floorMod(wx + wz, 2) == 0) setBlock(level, wx + dx, top, wz + dz, merlon);
-    }
-
     private static boolean isGridCell(byte[][] grid, int x, int z, int w, int d, byte value) {
         return insideGrid(x, z, w, d) && grid[x][z] == value;
+    }
+
+    private static BlockPos placeWallWalk(ServerLevel level, int x, int top, int z, BlockState brick) {
+        BlockPos floor = new BlockPos(x, top - 1, z);
+        if (level.getChunkSource().getChunkNow(floor.getX() >> 4, floor.getZ() >> 4) == null) return null;
+        setBlock(level, floor.getX(), floor.getY(), floor.getZ(), brick);
+        BlockPos stand = floor.above();
+        if (!level.getBlockState(floor).isSolid() || !isSpawnClear(level, stand)) return null;
+        return stand;
+    }
+
+    private static BlockPos firstGuardPos(BlockPos current, BlockPos candidate) {
+        return current != null ? current : candidate;
+    }
+
+    private static boolean isSpawnClear(ServerLevel level, BlockPos pos) {
+        if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) return false;
+        BlockState feet = level.getBlockState(pos);
+        BlockState head = level.getBlockState(pos.above());
+        return (feet.isAir() || feet.canBeReplaced()) && (head.isAir() || head.canBeReplaced());
+    }
+
+    private static boolean hasSteepRampartStep(byte[][] grid, short[][] heights,
+                                                int gx, int gz, int sy, int w, int d) {
+        return hasSteepWallNeighbor(grid, heights, gx - 1, gz, sy, w, d)
+                || hasSteepWallNeighbor(grid, heights, gx + 1, gz, sy, w, d)
+                || hasSteepWallNeighbor(grid, heights, gx, gz - 1, sy, w, d)
+                || hasSteepWallNeighbor(grid, heights, gx, gz + 1, sy, w, d);
+    }
+
+    private static boolean hasSteepWallNeighbor(byte[][] grid, short[][] heights,
+                                                 int gx, int gz, int sy, int w, int d) {
+        if (!insideGrid(gx, gz, w, d) || grid[gx][gz] != WALL || heights[gx][gz] == 0) return false;
+        return Math.abs(heights[gx][gz] - sy) > 1;
     }
 
     private static BlockState stairFor(BlockState base, Direction facing) {
@@ -899,9 +936,7 @@ public final class VillageWallGenerator {
 
     // ── Guard spawning ─────────────────────────────────────────────────────────
 
-    private static void spawnGuard(ServerLevel level, int wx, int wz, int presampled_sy) {
-        int sy = presampled_sy + WALL_HEIGHT;
-        BlockPos pos = new BlockPos(wx, sy, wz);
+    private static void spawnGuard(ServerLevel level, BlockPos pos) {
         VillageGuardEntity guard = WitcheryEntities.VILLAGE_GUARD.get()
                 .create(level, EntitySpawnReason.STRUCTURE);
         if (guard == null) return;
