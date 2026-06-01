@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.biome.Biomes;
@@ -1049,8 +1050,23 @@ public final class VillageWallGenerator {
         }
 
         if (spawnGuards) {
+            placeGatehouseLanterns(level, g, rail);
             BlockPos guardPos = new BlockPos(g.centerWX(), standY, g.centerWZ());
             if (isSpawnClear(level, guardPos)) spawnGuard(level, guardPos);
+        }
+    }
+
+    private static void placeGatehouseLanterns(ServerLevel level, GateDef g, BlockState bracket) {
+        BlockState lantern = Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
+        int outsideDX = -g.inDX();
+        int outsideDZ = -g.inDZ();
+        int bracketY = g.refY() + 4;
+        int lanternY = bracketY - 1;
+        for (int o : new int[]{-2, 2}) {
+            int x = g.centerWX() + g.axisDX() * o + outsideDX * 2;
+            int z = g.centerWZ() + g.axisDZ() * o + outsideDZ * 2;
+            forceSet(level, x, bracketY, z, bracket);
+            forceSet(level, x, lanternY, z, lantern);
         }
     }
 
