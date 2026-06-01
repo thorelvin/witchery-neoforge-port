@@ -35,6 +35,8 @@ Dropped Waystone QA note (2026-06-01): drop a blank `witchery:waystone` on or be
 
 Bolt alias QA note (2026-06-01): the source Hand Bow IDs `witchery:bolt_stake`, `witchery:bolt_anti_magic`, `witchery:bolt_holy`, and `witchery:bolt_splitting` now load as aliases for Wooden, Nullifying, Bone/Holy, and Splitting bolts. Give each alias directly, crouch-load/cycle the Hand Bow, fire each shot, and confirm behavior matches the canonical bolt family. Replaced loaded bolts and projectile pickup should return the canonical port IDs, not duplicate alias outputs.
 
+Staff of Duplication QA note (2026-06-01): `witchery:staff_of_duplication` now has the first practical source `ItemDuplicationStaff` loop. Use it on two corner blocks around a small test build and verify it captures only the space between the markers; then place the saved pattern on a target block and confirm placement starts one block above the click, normal uses cycle 90-degree rotations, sneak placement resets to 0 degrees, air cells clear previous blocks, and sneak-use in air clears the stored pattern. Include oriented stairs/logs/doors in the test shape.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

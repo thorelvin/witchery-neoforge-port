@@ -656,6 +656,8 @@ public class WitcheryItems {
 
     public static final DeferredItem<Item> SUN_GRENADE = ITEMS.register("sun_grenade",
             id -> new com.emoniph.witchery.item.SunGrenadeItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> STAFF_OF_DUPLICATION = ITEMS.register("staff_of_duplication",
+            id -> new com.emoniph.witchery.item.StaffOfDuplicationItem(itemProps(id)));
     public static final DeferredItem<Item> MEATY_STEW = ITEMS.register("meaty_stew",
             id -> new MeatyStewItem(itemProps(id), 12, 1.0F));
     public static final DeferredItem<Item> RAW_MEATY_STEW = ITEMS.register("raw_meaty_stew",
@@ -738,7 +740,6 @@ public class WitcheryItems {
             "shrub_of_sprouting",
             "shrub_of_thorns",
             "shrub_of_webs",
-            "staff_of_duplication",
             "wolf_head",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.

@@ -178,6 +178,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.LAVA_DIVINER.get(),
                 WitcheryItems.CIRCLE_TALISMAN.get(),
                 WitcheryItems.WITCH_HAND.get(),
+                WitcheryItems.STAFF_OF_DUPLICATION.get(),
                 WitcheryItems.BUCKET_SPIRIT.get(),
                 WitcheryItems.BUCKET_HOLLOW_TEARS.get(),
                 WitcheryItems.DEBUG_DEATH_WARD.get(),
@@ -399,7 +400,7 @@ public class WitcheryCreativeTabs {
                 "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
                 "herbology_book", "biomes_book");
         addLegacy(output, accepted,
-                "charged_crossbow", "duplication_grenade", "staff_of_duplication",
+                "charged_crossbow", "duplication_grenade",
                 "hellhound_head", "wolf_head", "bound_taglock_kit",
                 "crossbow_pistol", "deployed_deaths_hand");
         addLegacy(output, accepted,
