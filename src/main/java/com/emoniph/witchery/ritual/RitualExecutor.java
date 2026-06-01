@@ -18,6 +18,7 @@ import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.events.PoppetEvents;
+import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
@@ -6421,23 +6422,7 @@ public class RitualExecutor {
     }
 
     private static boolean hasCurseProtection(ServerPlayer player) {
-        return isWearingWitchHunterArmor(player) && player.level().random.nextFloat() < 0.9f;
-    }
-
-    private static boolean isWearingWitchHunterArmor(ServerPlayer player) {
-        int pieces = 0;
-        for (var slot : new net.minecraft.world.entity.EquipmentSlot[]{
-                net.minecraft.world.entity.EquipmentSlot.HEAD,
-                net.minecraft.world.entity.EquipmentSlot.CHEST,
-                net.minecraft.world.entity.EquipmentSlot.LEGS,
-                net.minecraft.world.entity.EquipmentSlot.FEET}) {
-            ItemStack s = player.getItemBySlot(slot);
-            if (s.is(WitcheryItems.HUNTER_HELMET.get())
-                    || s.is(WitcheryItems.HUNTER_CHESTPLATE.get())
-                    || s.is(WitcheryItems.HUNTER_LEGGINGS.get())
-                    || s.is(WitcheryItems.HUNTER_BOOTS.get())) pieces++;
-        }
-        return pieces >= 4;
+        return SilverEvents.hasHunterCurseProtection(player);
     }
 
     private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {
