@@ -25,6 +25,14 @@ public class ThrownBrewItem extends Item {
         this.gas = gas;
     }
 
+    public BrewType brewType() {
+        return brewType;
+    }
+
+    public boolean isGas() {
+        return gas;
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

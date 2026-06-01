@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 269 functional + 117 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 270 functional + 116 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -53,7 +53,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | waystone (blank/bound) | ✅ Done | Scry route, stack cap |
 | circle_talisman | ✅ Done | |
 | brew_bag | 🔲 Placeholder | Item registered; no container logic |
-| leonards_urn | 🔲 Placeholder | Item registered; no drop/range-boost mechanic |
+| leonards_urn | 🔶 Partial | Source `ItemLeonardsUrn` now stores current throwable splash/gas brews in source-shaped custom data, shows selected/stored foci in tooltip, cycles focus, and releases the selected stored brew without consuming it. Remaining: old GUI and exact Leonard-symbol cost/cast integration. |
 | moon_charm | Partial | Source: `ItemMoonCharm` now has rare single-stack durability, gold-nugget repair, 60-tick bow-style use, manual werewolf transform/restore toggle, wolfsbane refusal, inventory prevention of forced moon shifting, and Wolf Altar 3-nugget output. Remaining: exact wolf/wolfman split and old level-gate quest semantics. |
 | horn_of_the_hunt / hunts_horn | 🔶 Partial | Source `ItemHornOfTheHunt` / Resurrected alias now use 40-tick bow-style hold, one-use durability, nearby safe Horned Huntsman spawn, 150-tick quarter-health entrance, horn/Wither-spawn feedback, and source-only explosive entrance. Remaining: in-game boss entrance/terrain QA and exact old horn sound asset. |
 | wolf_token / creative_bat_wolf_token | 🔶 Partial | Source creative QA token now maps onto the current port state: normal 20-tick bow-style use cycles werewolf mastery/state through 0-3, sneak-use cycles vampire level/state through 0-10, and both paths sync player data. Remaining: exact old 10-level werewolf progression once the full Wolf Altar chain exists. |

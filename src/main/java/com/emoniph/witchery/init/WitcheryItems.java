@@ -559,7 +559,8 @@ public class WitcheryItems {
             id -> new com.emoniph.witchery.item.VampireBloodItem(com.emoniph.witchery.item.VampireBloodItem.Kind.LILITH,
                     itemProps(id).stacksTo(16).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<Item> CONGEALED_SPIRIT   = ITEMS.registerSimpleItem("congealed_spirit");
-    public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.registerSimpleItem("leonards_urn");
+    public static final DeferredItem<Item> LEONARDS_URN       = ITEMS.register("leonards_urn",
+            id -> new LeonardsUrnItem(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.register("gulgs_girdle",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
                     .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
