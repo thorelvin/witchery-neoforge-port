@@ -94,7 +94,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
 
         // Give a Bound Waystone → store coordinates
         if (isTame() && isOwnedBy(player) && held.is(net.minecraft.world.item.Items.AIR) == false
-                && WaystoneItem.isBound(held)) {
+                && WaystoneItem.isBoundWaystone(held)) {
             if (!level().isClientSide()) {
                 WaystoneItem.getBoundPos(held).ifPresent(pos -> {
                     waystonePos = pos.asLong();

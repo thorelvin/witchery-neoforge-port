@@ -197,6 +197,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.POPPET_PROTECTION_POPPET.get(),
                 WitcheryItems.VOODOO_POPPET.get(),
                 WitcheryItems.VAMPIRIC_POPPET.get(),
+                WitcheryItems.WAYSTONE.get(),
                 WitcheryItems.PLAYER_COMPASS.get(),
                 WitcheryItems.SEER_STONE.get(),
                 WitcheryItems.POPPET_SHELF_COMPASS.get(),
@@ -373,7 +374,7 @@ public class WitcheryCreativeTabs {
         Set<String> accepted = new LinkedHashSet<>();
 
         addLegacy(output, accepted,
-                "blooded_waystone", "bound_waystone");
+                "blooded_waystone");
         addLegacy(output, accepted,
                 "odd_porkchop", "cooked_odd_porkchop",
                 "silver_dust", "biome_note",

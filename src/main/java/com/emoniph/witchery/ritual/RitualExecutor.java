@@ -379,8 +379,7 @@ public class RitualExecutor {
             return matchedResult(riteOfSummonWitch(player, level, center));
         } else if (item.is(WitcheryItems.DROP_OF_LUCK.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfSummonFamiliar(player, level, center));
-        } else if (item.is(WitcheryItems.WAYSTONE.get())
-                && WaystoneItem.isBound(item)
+        } else if (WaystoneItem.isBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
         } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -390,12 +389,10 @@ public class RitualExecutor {
                 return matchedResult(riteOfNecromanticStone(player, level, center));
             }
             return matchedResult(riteOfBanishDemon(player, level, center, false));
-        } else if (item.is(WitcheryItems.WAYSTONE.get())
-                && !WaystoneItem.isBound(item)
+        } else if (WaystoneItem.isBlankWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystone(player, level, center));
-        } else if (item.is(WitcheryItems.WAYSTONE.get())
-                && WaystoneItem.isBound(item)
+        } else if (WaystoneItem.isBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -5238,7 +5235,7 @@ public class RitualExecutor {
             return false;
         }
 
-        ItemStack boundWaystone = new ItemStack(WitcheryItems.WAYSTONE.get());
+        ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
         WaystoneItem.bindTo(boundWaystone, center, level.dimension());
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
@@ -5284,7 +5281,8 @@ public class RitualExecutor {
             return false;
         }
 
-        ItemStack copiedWaystones = sourceWaystone.copyWithCount(2);
+        ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
+                .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
         ItemEntity entity = new ItemEntity(level,
                 center.getX() + 0.5,
                 center.getY() + 1.5,
@@ -5323,7 +5321,7 @@ public class RitualExecutor {
 
     private static Optional<ItemEntity> findNearbyWaystoneOffering(Level level, BlockPos center, boolean bound) {
         return findNearbyOffering(level, center,
-                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(stack) == bound);
+                stack -> bound ? WaystoneItem.isBoundWaystone(stack) : WaystoneItem.isBlankWaystone(stack));
     }
 
     private static Optional<ItemEntity> findNearbyFilledTaglockOffering(Level level, BlockPos center) {
@@ -5752,7 +5750,7 @@ public class RitualExecutor {
 
     private static Optional<EntityTranspositionOfferings> findEntityTranspositionOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> waystone = findNearbyOffering(level, center,
-                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && !WaystoneItem.isBound(stack));
+                WaystoneItem::isBlankWaystone);
         Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
         Optional<ItemEntity> ironAxe = findNearbyOffering(level, center, stack -> stack.is(Items.IRON_AXE));
         if (waystone.isEmpty() || enderDew.isEmpty() || ironAxe.isEmpty()) {
@@ -5927,7 +5925,7 @@ public class RitualExecutor {
         Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
         Optional<ItemEntity> demonHeart = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMON_HEART.get()));
         Optional<ItemEntity> waystone = findNearbyOffering(level, center,
-                stack -> stack.is(WitcheryItems.WAYSTONE.get()) && !WaystoneItem.isBound(stack));
+                WaystoneItem::isBlankWaystone);
         Optional<ItemEntity> netherStar = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_STAR));
         Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
         if (redstoneSoup.isEmpty() || demonHeart.isEmpty() || waystone.isEmpty()

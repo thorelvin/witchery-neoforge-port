@@ -4,7 +4,6 @@ import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
-import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -169,7 +168,7 @@ public class RubySlippersItem extends Item {
     private static Optional<ItemEntity> findNearbyBoundWaystone(ServerPlayer player) {
         AABB bounds = player.getBoundingBox().inflate(WAYSTONE_SEARCH_RADIUS);
         List<ItemEntity> items = player.level().getEntitiesOfClass(ItemEntity.class, bounds,
-                item -> item.getItem().is(WitcheryItems.WAYSTONE.get()) && WaystoneItem.isBound(item.getItem()));
+                item -> WaystoneItem.isBoundWaystone(item.getItem()));
         return items.stream()
                 .min((a, b) -> Double.compare(a.distanceToSqr(player), b.distanceToSqr(player)));
     }

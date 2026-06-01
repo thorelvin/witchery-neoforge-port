@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -105,6 +106,18 @@ public class WaystoneItem extends Item {
 
     public static boolean isBound(ItemStack stack) {
         return hasCompleteBinding(getTag(stack));
+    }
+
+    public static boolean isWaystone(ItemStack stack) {
+        return stack.getItem() instanceof WaystoneItem;
+    }
+
+    public static boolean isBoundWaystone(ItemStack stack) {
+        return isWaystone(stack) && isBound(stack);
+    }
+
+    public static boolean isBlankWaystone(ItemStack stack) {
+        return stack.is(WitcheryItems.WAYSTONE.get()) && !isBound(stack);
     }
 
     public static void bindTo(ItemStack stack, BlockPos pos, ResourceKey<Level> dim) {

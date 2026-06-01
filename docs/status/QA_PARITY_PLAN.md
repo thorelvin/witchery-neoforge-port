@@ -25,6 +25,8 @@ Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the sourc
 
 Spirit item QA note (2026-06-01): `witchery:subdued_village_spirit` is now a real source-identity variant instead of a placeholder. Release normal and village Subdued Spirits, save/reload a village-marked Spirit, kill both variants, and confirm the normal item drops `subdued_spirit` while the village-marked one drops `subdued_village_spirit`. Also confirm both variants transfer back out of the Spirit World inventory. The old nearest-village waypoint flight remains future Spirit AI polish, so do not expect the village variant to navigate to a village yet.
 
+Bound Waystone QA note (2026-06-01): `witchery:bound_waystone` is now the source-style bound Waystone item identity rather than a placeholder. Bind a blank Waystone, copy it with another blank Waystone, and verify the spawned item ID is `witchery:bound_waystone`; then use it with Transposition to Waystone, Crystal Ball scrying, Ruby Slippers, Flying Monkey carry, and optional rite relocation. Also test an old saved bound `witchery:waystone` stack if available; it should still be accepted as a bound Waystone, but new blank offerings should require an unbound `witchery:waystone`.
+
 Bolt alias QA note (2026-06-01): the source Hand Bow IDs `witchery:bolt_stake`, `witchery:bolt_anti_magic`, `witchery:bolt_holy`, and `witchery:bolt_splitting` now load as aliases for Wooden, Nullifying, Bone/Holy, and Splitting bolts. Give each alias directly, crouch-load/cycle the Hand Bow, fire each shot, and confirm behavior matches the canonical bolt family. Replaced loaded bolts and projectile pickup should return the canonical port IDs, not duplicate alias outputs.
 
 ## Reference hierarchy
