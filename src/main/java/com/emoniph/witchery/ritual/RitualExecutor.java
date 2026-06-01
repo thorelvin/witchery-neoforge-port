@@ -5061,7 +5061,8 @@ public class RitualExecutor {
 
     private record BindFetishOfferings(ItemEntity attunedStone, ItemEntity necroStone, ItemEntity boline) {}
 
-    private record BindBloodedWaystoneOfferings(ItemEntity enderDew, ItemEntity slimeBall, ItemEntity snowball) {}
+    private record BindBloodedWaystoneOfferings(ItemEntity enderDew, ItemEntity slimeBall, ItemEntity snowball,
+                                                ItemEntity icyNeedle, ItemEntity chargedStone, boolean needsPower) {}
 
     private record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
                                           ItemEntity spiderEye, ItemEntity gunpowder,
@@ -5269,11 +5270,14 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
-                "witchery.ritual.bind_blooded_waystone.no_power")
-                .offer(offerings.get().enderDew())
-                .offer(offerings.get().slimeBall())
-                .offer(offerings.get().snowball());
+        BindBloodedWaystoneOfferings support = offerings.get();
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, support.needsPower() ? 500 : 0,
+                support.needsPower() ? "witchery.ritual.bind_blooded_waystone.no_power" : null)
+                .offer(support.enderDew())
+                .offer(support.slimeBall())
+                .offer(support.snowball())
+                .offer(support.icyNeedle())
+                .offer(support.chargedStone());
         if (!transaction.commit(player)) {
             return false;
         }
@@ -5371,11 +5375,19 @@ public class RitualExecutor {
     private static Optional<BindBloodedWaystoneOfferings> findBindBloodedWaystoneOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
         Optional<ItemEntity> slimeBall = findNearbyOffering(level, center, stack -> stack.is(Items.SLIME_BALL));
+        Optional<ItemEntity> icyNeedle = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (enderDew.isPresent() && slimeBall.isPresent() && icyNeedle.isPresent() && chargedStone.isPresent()) {
+            return Optional.of(new BindBloodedWaystoneOfferings(
+                    enderDew.get(), slimeBall.get(), null, icyNeedle.get(), chargedStone.get(), false));
+        }
+
         Optional<ItemEntity> snowball = findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
         if (enderDew.isEmpty() || slimeBall.isEmpty() || snowball.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new BindBloodedWaystoneOfferings(enderDew.get(), slimeBall.get(), snowball.get()));
+        return Optional.of(new BindBloodedWaystoneOfferings(
+                enderDew.get(), slimeBall.get(), snowball.get(), null, null, true));
     }
 
     private static Optional<LivingEntity> findBloodedWaystoneTarget(Level level, BlockPos center) {

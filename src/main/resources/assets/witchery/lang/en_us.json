@@ -958,7 +958,7 @@
   "witchery.ritual.bind_waystone_copy.none": "No unbound waystone offered for copying.",
   "witchery.ritual.bind_waystone_copy.support": "Ender Dew and a diamond must be offered for copying.",
   "witchery.ritual.bind_blooded_waystone.success": "Blooded Waystone bound.",
-  "witchery.ritual.bind_blooded_waystone.support": "Ender Dew, a slimeball, and a snowball must be offered for blooded binding.",
+  "witchery.ritual.bind_blooded_waystone.support": "Ender Dew and a slimeball must be offered with either a snowball or an Icy Needle and Charged Attuned Stone.",
   "witchery.ritual.bind_blooded_waystone.no_target": "No living target stands close enough to bind.",
   "witchery.ritual.bind_blooded_waystone.no_power": "A nearby altar lacks the power to blood-bind the waystone.",
   "witchery.waystone.entity_bound": "Bound to %s",
