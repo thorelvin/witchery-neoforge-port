@@ -26,16 +26,15 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.function.Consumer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @SuppressWarnings({"deprecation", "removal"})
 public class RubySlippersItem extends Item {
-    private static final long HOME_COOLDOWN_TICKS = 36000L; // 30 minutes
-    private static final long WAYSTONE_COOLDOWN_TICKS = 1200L; // 1 minute
+    private static final String HOME_COOLDOWN_TAG = "WITCLastRubySlipperTime";
+    private static final String WAYSTONE_COOLDOWN_TAG = "WITCLastRubySlipperWayTime";
+    private static final long HOME_COOLDOWN_MILLIS = 30L * 60L * 1000L;
+    private static final long WAYSTONE_COOLDOWN_MILLIS = 60L * 1000L;
     private static final int HOME_COST_SAME_DIMENSION = 80;
     private static final int HOME_COST_CROSS_DIMENSION = 120;
     private static final int WAYSTONE_COST_SAME_DIMENSION = 40;
@@ -45,8 +44,6 @@ public class RubySlippersItem extends Item {
     private static final double WAYSTONE_RANDOM_MISFIRE_CHANCE = 0.01D;
     private static final int WAYSTONE_RANDOM_MISFIRE_DISTANCE = 500;
     private static final int RANDOM_TELEPORT_ATTEMPTS = 16;
-    private static final Map<UUID, Long> lastHomeUseTick = new HashMap<>();
-    private static final Map<UUID, Long> lastWaystoneUseTick = new HashMap<>();
 
     public RubySlippersItem(Properties properties) {
         super(properties);
@@ -79,10 +76,10 @@ public class RubySlippersItem extends Item {
     }
 
     private static boolean activateWaystone(ServerPlayer player, ItemEntity waystoneEntity) {
-        long now = player.level().getGameTime();
-        long last = lastWaystoneUseTick.getOrDefault(player.getUUID(), 0L);
-        if (now - last < WAYSTONE_COOLDOWN_TICKS) {
-            showCooldown(player, WAYSTONE_COOLDOWN_TICKS - (now - last));
+        long now = System.currentTimeMillis();
+        long last = getLastUseTick(player, WAYSTONE_COOLDOWN_TAG);
+        if (now - last < WAYSTONE_COOLDOWN_MILLIS) {
+            showCooldown(player, WAYSTONE_COOLDOWN_MILLIS - (now - last));
             return true;
         }
 
@@ -110,7 +107,7 @@ public class RubySlippersItem extends Item {
             waystoneEntity.setItem(waystone);
         }
 
-        lastWaystoneUseTick.put(player.getUUID(), now);
+        setLastUseTick(player, WAYSTONE_COOLDOWN_TAG, now);
         if (player.getRandom().nextDouble() < WAYSTONE_RANDOM_MISFIRE_CHANCE
                 && teleportRandomlyLikeVoidBramble(player, (ServerLevel) player.level(), WAYSTONE_RANDOM_MISFIRE_DISTANCE)) {
             player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
@@ -124,10 +121,10 @@ public class RubySlippersItem extends Item {
     }
 
     private static boolean activateHome(ServerPlayer player) {
-        long now = player.level().getGameTime();
-        long last = lastHomeUseTick.getOrDefault(player.getUUID(), 0L);
-        if (now - last < HOME_COOLDOWN_TICKS && !player.getAbilities().instabuild) {
-            showCooldown(player, HOME_COOLDOWN_TICKS - (now - last));
+        long now = System.currentTimeMillis();
+        long last = getLastUseTick(player, HOME_COOLDOWN_TAG);
+        if (now - last < HOME_COOLDOWN_MILLIS && !player.getAbilities().instabuild) {
+            showCooldown(player, HOME_COOLDOWN_MILLIS - (now - last));
             return true;
         }
 
@@ -163,7 +160,7 @@ public class RubySlippersItem extends Item {
             return true;
         }
 
-        lastHomeUseTick.put(player.getUUID(), now);
+        setLastUseTick(player, HOME_COOLDOWN_TAG, now);
         teleportTo(player, dest, findSafePos(dest, target));
         player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
         return true;
@@ -209,6 +206,14 @@ public class RubySlippersItem extends Item {
             }
         }
         return false;
+    }
+
+    private static long getLastUseTick(ServerPlayer player, String tag) {
+        return player.getPersistentData().getLong(tag).orElse(0L);
+    }
+
+    private static void setLastUseTick(ServerPlayer player, String tag, long tick) {
+        player.getPersistentData().putLong(tag, tick);
     }
 
     private static boolean isSafeLanding(ServerLevel level, BlockPos feet) {
@@ -262,8 +267,8 @@ public class RubySlippersItem extends Item {
         return true;
     }
 
-    private static void showCooldown(ServerPlayer player, long ticksLeft) {
-        int minutesLeft = (int) Math.max(1, ticksLeft / 1200L);
+    private static void showCooldown(ServerPlayer player, long millisLeft) {
+        int minutesLeft = (int) Math.max(1, millisLeft / 60000L);
         player.displayClientMessage(Component.translatable(
                 "item.witchery.ruby_slippers.cooldown", minutesLeft), false);
     }
