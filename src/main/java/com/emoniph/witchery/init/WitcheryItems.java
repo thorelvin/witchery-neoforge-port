@@ -557,6 +557,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HUNTER_LEGGINGS_SILVERED   = ITEMS.register("hunter_leggings_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.LEGGINGS, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> HUNTER_BOOTS_SILVERED      = ITEMS.register("hunter_boots_silvered", id -> hunterArmor(id, net.minecraft.world.item.equipment.ArmorType.BOOTS, HunterClothingItem.Variant.SILVERED));
     public static final DeferredItem<Item> DENSE_WEB          = ITEMS.registerSimpleItem("dense_web");
+    public static final DeferredItem<Item> INFERNAL_BLOOD     = ITEMS.register("infernal_blood", id -> new DemonicBloodItem(itemProps(id)));
     public static final DeferredItem<Item> DEMONIC_BLOOD      = ITEMS.register("demonic_blood", id -> new DemonicBloodItem(itemProps(id)));
     public static final DeferredItem<Item> GLASS_GOBLET       = ITEMS.register("glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), false));
     public static final DeferredItem<Item> GLASS_GOBLET_FULL  = ITEMS.register("glass_goblet_full", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
@@ -660,7 +661,6 @@ public class WitcheryItems {
 
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
-            "infernal_blood",
             "book_oven",
             "book_distilling",
             "book_circle_magic",

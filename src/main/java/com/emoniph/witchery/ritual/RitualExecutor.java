@@ -5838,7 +5838,8 @@ public class RitualExecutor {
 
     private static Optional<SummonImpOfferings> findSummonImpOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
-        Optional<ItemEntity> infernalBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> infernalBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFERNAL_BLOOD.get())
+                || stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
         Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
         Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
         if (refinedEvil.isEmpty() || infernalBlood.isEmpty() || enderPearl.isEmpty() || attunedStone.isEmpty()) {

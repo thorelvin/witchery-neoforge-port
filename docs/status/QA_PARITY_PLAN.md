@@ -21,6 +21,8 @@ Food item QA note (2026-06-01): `witchery:sheep_liver` and `witchery:cooked_shee
 
 Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
 
+Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.
+
 ## Reference hierarchy
 
 Use `docs/reference/DECOMPILED_SOURCES.md` as the canonical guide for decompiled source roles and priority. In short:

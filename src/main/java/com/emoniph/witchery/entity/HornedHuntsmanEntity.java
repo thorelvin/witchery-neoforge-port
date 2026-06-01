@@ -211,7 +211,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         this.spawnAtLocation(level, new ItemStack(Items.WITHER_SKELETON_SKULL, random.nextInt(3) == 0 ? 3 : 2));
         this.spawnAtLocation(level, createSourceEnchantedBook(level));
-        this.spawnAtLocation(level, new ItemStack(WitcheryItems.DEMONIC_BLOOD.get()));
+        this.spawnAtLocation(level, new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()));
         if (random.nextInt(4) == 0) {
             this.spawnAtLocation(level, new ItemStack(WitcheryItems.HUNTSMANS_SPEAR.get()));
         }
