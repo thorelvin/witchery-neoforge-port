@@ -62,6 +62,27 @@
           "name": "witchery:immortals_observations_book"
         }
       ]
+    },
+    {
+      "name": "witchcraft_guide",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "witchery:distilling_book",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:circle_magic_book",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:herbology_book",
+          "weight": 1
+        }
+      ]
     }
   ]
 }

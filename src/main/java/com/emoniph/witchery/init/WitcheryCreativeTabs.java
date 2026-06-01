@@ -43,6 +43,9 @@ public class WitcheryCreativeTabs {
     private static void addGuide(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.WITCHES_PRIMER.get(),
+                WitcheryItems.DISTILLING_BOOK.get(),
+                WitcheryItems.CIRCLE_MAGIC_BOOK.get(),
+                WitcheryItems.HERBOLOGY_BOOK.get(),
                 WitcheryItems.BOOK_BIOMES.get(),
                 WitcheryItems.EXTENDED_BIOMES_BOOK.get(),
                 WitcheryItems.BIOMES_BOOK.get());
@@ -427,8 +430,7 @@ public class WitcheryCreativeTabs {
                 "book_oven", "book_distilling", "book_circle_magic", "book_infusions", "book_herbology",
                 "book_wands", "book_burning", "brews_and_infusions_book",
                 "collecting_fumes_book", "conjuration_and_fetishes_book",
-                "symbology_book", "witches_brews_book", "distilling_book", "circle_magic_book",
-                "herbology_book");
+                "symbology_book", "witches_brews_book");
         addLegacy(output, accepted,
                 "charged_crossbow",
                 "hellhound_head", "wolf_head",

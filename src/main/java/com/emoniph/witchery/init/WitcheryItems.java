@@ -233,6 +233,9 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
     public static final DeferredItem<BlockItem> ROWAN_SLAB           = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SLAB);
     public static final DeferredItem<Item>      WITCHES_PRIMER       = ITEMS.register("witches_primer", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      DISTILLING_BOOK      = ITEMS.register("distilling_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      CIRCLE_MAGIC_BOOK    = ITEMS.register("circle_magic_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      HERBOLOGY_BOOK       = ITEMS.register("herbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
@@ -818,9 +821,6 @@ public class WitcheryItems {
             "anguish_demon_soul",
             "fear_demon_soul",
             "torment_demon_soul",
-            "distilling_book",
-            "circle_magic_book",
-            "herbology_book",
             "fanciful_thinking_charm",
             "pentacle",
             "golden_heart"

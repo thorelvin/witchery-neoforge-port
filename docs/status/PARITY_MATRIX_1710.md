@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 287 functional + 92 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 287+ functional entries + 68 remaining item placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -61,6 +61,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | dup_staff / staff_of_duplication | 🔶 Partial | Source `ItemDuplicationStaff` is live under `witchery:staff_of_duplication` as a one-stack epic schematic utility: marker capture, exclusive-cuboid custom-data storage, rotated placement, air clearing, and sneak clear/reset are restored in practical form. Remaining: in-game oriented-block QA and exact old template export/config support |
 | dupgrenade / duplication_grenade | Partial | Source `ItemSunGrenade(1)` path restored as a throwable uncommon `witchery:duplication_grenade`: consumes on throw, plays the grenade throw sound, returns a Quartz Sphere, and spawns a 10-second owner-skinned Reflection decoy that attracts nearby mob attention without becoming a full Mirror World guardian. Remaining: exact Mirror charging/binding route and in-game decoy tuning. |
 | biome_book / biome_note | Partial | Source `ItemBook` / `ItemBiomeNote` route restored in practical form: basic and extended Biome books are real, the extended/alias book stores a selected page, book + Paper copies that page into a named `witchery:biome_note` while returning the book, and Shifting Seasons accepts exact Biome Notes. Remaining: exact old GUI page browser/details. |
+| distilling_book / circle_magic_book / herbology_book | Partial | Exact Resurrected Witchcraft guidebook IDs are live one-stack Witches' Primer-opening books with source/Resurrected names, shaped recipes, guide-tab placement, and Bookshop loot. Remaining: exact old separate markup book screens, if that path is desired later. |
 | cauldron_book | ❌ Missing | Source: `ItemMarkupBook(7)` — in-game cauldron guide |
 | vampire_book | ❌ Missing | Source: `ItemMarkupBook(7, [0,9])` — vampire progression book with level callbacks |
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |

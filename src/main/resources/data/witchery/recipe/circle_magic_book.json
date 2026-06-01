@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "D#F",
+    " W "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "B": "witchery:belladonna",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "W": "witchery:whiff_of_magic"
+  },
+  "result": {
+    "id": "witchery:circle_magic_book",
+    "count": 1
+  }
+}
