@@ -461,6 +461,10 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FIERY_TOUCH_CONTRACT.get(),
                 WitcheryItems.MELTING_TOUCH_CONTRACT.get(),
                 WitcheryItems.SOUL_OF_TORMENT.get(),
+                WitcheryItems.HUNGER_DEMON_SOUL.get(),
+                WitcheryItems.ANGUISH_DEMON_SOUL.get(),
+                WitcheryItems.FEAR_DEMON_SOUL.get(),
+                WitcheryItems.TORMENT_DEMON_SOUL.get(),
                 WitcheryItems.TORMENT_SCROLL.get(),
                 WitcheryItems.LEONARDS_URN.get(),
                 WitcheryItems.TWISTING_BAND.get(),
@@ -488,8 +492,6 @@ public class WitcheryCreativeTabs {
                 "contract_ownership", "contract_torment");
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
-        addLegacy(output, accepted,
-                "hunger_demon_soul", "anguish_demon_soul", "fear_demon_soul", "torment_demon_soul");
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
             if (accepted.add(id)) {
                 output.accept(item.get());

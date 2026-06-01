@@ -228,6 +228,10 @@ public class WitcheryItems {
 
     // ── Lord of Torment drops ──────────────────────────────────────────────────
     public static final DeferredItem<Item> SOUL_OF_TORMENT  = ITEMS.registerSimpleItem("soul_of_torment");
+    public static final DeferredItem<Item> HUNGER_DEMON_SOUL = ITEMS.registerSimpleItem("hunger_demon_soul");
+    public static final DeferredItem<Item> ANGUISH_DEMON_SOUL = ITEMS.registerSimpleItem("anguish_demon_soul");
+    public static final DeferredItem<Item> FEAR_DEMON_SOUL = ITEMS.registerSimpleItem("fear_demon_soul");
+    public static final DeferredItem<Item> TORMENT_DEMON_SOUL = ITEMS.registerSimpleItem("torment_demon_soul");
     public static final DeferredItem<Item> TORMENT_SCROLL   = ITEMS.registerSimpleItem("torment_scroll");
 
     public static final DeferredItem<BlockItem> ALLURING_SKULL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALLURING_SKULL);
@@ -844,11 +848,7 @@ public class WitcheryItems {
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
             "brew_bottle",
             "splash_brew_bottle",
-            "lingering_brew_bottle",
-            "hunger_demon_soul",
-            "anguish_demon_soul",
-            "fear_demon_soul",
-            "torment_demon_soul"
+            "lingering_brew_bottle"
     );
 
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
