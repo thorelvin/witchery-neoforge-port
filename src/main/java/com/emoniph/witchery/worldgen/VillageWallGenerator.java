@@ -738,8 +738,9 @@ public final class VillageWallGenerator {
         }
 
         BlockPos guardPos = null;
-        if (!hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)) {
-            guardPos = placeRampartDetails(level, wx, top, wz, brick, stair, grid, gx, gz, w, d);
+        if (canPlaceRampartDetails(grid, heights, gx, gz, sy, w, d)) {
+            guardPos = placeRampartDetails(level, wx, top, wz, brick, stair,
+                    grid, heights, gx, gz, sy, w, d);
         }
 
         // Extend the curtain down to the lowest neighbour so cliff steps stay connected
@@ -756,41 +757,51 @@ public final class VillageWallGenerator {
      */
     private static BlockPos placeRampartDetails(ServerLevel level, int wx, int top, int wz,
                                                  BlockState brick, BlockState stair,
-                                                 byte[][] grid, int gx, int gz, int w, int d) {
+                                                 byte[][] grid, short[][] heights,
+                                                 int gx, int gz, int sy, int w, int d) {
         boolean northOutside = isGridCell(grid, gx, gz - 1, w, d, EMPTY);
         boolean southOutside = isGridCell(grid, gx, gz + 1, w, d, EMPTY);
         boolean eastOutside = isGridCell(grid, gx + 1, gz, w, d, EMPTY);
         boolean westOutside = isGridCell(grid, gx - 1, gz, w, d, EMPTY);
 
         BlockPos guardPos = null;
-        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR))
+        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR)
+                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.NORTH, INTERIOR))
             guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz - 1, brick));
-        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR))
+        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR)
+                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.SOUTH, INTERIOR))
             guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz + 1, brick));
-        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR))
+        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR)
+                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.EAST, INTERIOR))
             guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx + 1, top, wz, brick));
-        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR))
+        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR)
+                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.WEST, INTERIOR))
             guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx - 1, top, wz, brick));
 
-        guardPos = placeCornerWallWalks(level, wx, top, wz, brick, grid, gx, gz, w, d, guardPos);
+        guardPos = placeCornerWallWalks(level, wx, top, wz, brick,
+                grid, heights, gx, gz, sy, w, d, guardPos);
 
-        if (northOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
-        if (southOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
-        if (eastOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
-        if (westOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
+        if (northOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.NORTH, EMPTY))
+            placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
+        if (southOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.SOUTH, EMPTY))
+            placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
+        if (eastOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.EAST, EMPTY))
+            placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
+        if (westOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.WEST, EMPTY))
+            placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
 
         return guardPos;
     }
 
     private static BlockPos placeCornerWallWalks(ServerLevel level, int wx, int top, int wz,
-                                                  BlockState brick, byte[][] grid,
-                                                  int gx, int gz, int w, int d,
+                                                  BlockState brick, byte[][] grid, short[][] heights,
+                                                  int gx, int gz, int sy, int w, int d,
                                                   BlockPos guardPos) {
         for (int dx : new int[]{-1, 1}) {
             for (int dz : new int[]{-1, 1}) {
                 if (!isGridCell(grid, gx + dx, gz + dz, w, d, INTERIOR)) continue;
-                if (!isGridCell(grid, gx + dx, gz, w, d, WALL)) continue;
-                if (!isGridCell(grid, gx, gz + dz, w, d, WALL)) continue;
+                if (!isRampartCompatibleNeighbor(grid, heights, gx + dx, gz, sy, w, d)) continue;
+                if (!isRampartCompatibleNeighbor(grid, heights, gx, gz + dz, sy, w, d)) continue;
                 guardPos = firstGuardPos(guardPos, placeCornerWallWalk(level, wx + dx, top, wz + dz, brick));
             }
         }
@@ -807,6 +818,40 @@ public final class VillageWallGenerator {
 
     private static boolean isGridCell(byte[][] grid, int x, int z, int w, int d, byte value) {
         return insideGrid(x, z, w, d) && grid[x][z] == value;
+    }
+
+    private static boolean canPlaceRampartDetails(byte[][] grid, short[][] heights,
+                                                   int gx, int gz, int sy, int w, int d) {
+        return !hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)
+                && (isRampartCompatibleNeighbor(grid, heights, gx - 1, gz, sy, w, d)
+                || isRampartCompatibleNeighbor(grid, heights, gx + 1, gz, sy, w, d)
+                || isRampartCompatibleNeighbor(grid, heights, gx, gz - 1, sy, w, d)
+                || isRampartCompatibleNeighbor(grid, heights, gx, gz + 1, sy, w, d));
+    }
+
+    private static boolean hasMatchingSideRampartNeighbor(byte[][] grid, short[][] heights,
+                                                           int gx, int gz, int sy, int w, int d,
+                                                           Direction side, byte sideValue) {
+        if (side.getAxis() == Direction.Axis.Z) {
+            return isMatchingSideRampartNeighbor(grid, heights, gx - 1, gz, sy, w, d, side, sideValue)
+                    || isMatchingSideRampartNeighbor(grid, heights, gx + 1, gz, sy, w, d, side, sideValue);
+        }
+        return isMatchingSideRampartNeighbor(grid, heights, gx, gz - 1, sy, w, d, side, sideValue)
+                || isMatchingSideRampartNeighbor(grid, heights, gx, gz + 1, sy, w, d, side, sideValue);
+    }
+
+    private static boolean isMatchingSideRampartNeighbor(byte[][] grid, short[][] heights,
+                                                          int gx, int gz, int sy, int w, int d,
+                                                          Direction side, byte sideValue) {
+        return isRampartCompatibleNeighbor(grid, heights, gx, gz, sy, w, d)
+                && isGridCell(grid, gx + side.getStepX(), gz + side.getStepZ(), w, d, sideValue);
+    }
+
+    private static boolean isRampartCompatibleNeighbor(byte[][] grid, short[][] heights,
+                                                        int gx, int gz, int sy, int w, int d) {
+        if (!insideGrid(gx, gz, w, d) || grid[gx][gz] != WALL || heights[gx][gz] == 0) return false;
+        return Math.abs(heights[gx][gz] - sy) <= 1
+                && !hasSteepRampartStep(grid, heights, gx, gz, heights[gx][gz], w, d);
     }
 
     private static BlockPos placeWallWalk(ServerLevel level, int x, int top, int z, BlockState brick) {
