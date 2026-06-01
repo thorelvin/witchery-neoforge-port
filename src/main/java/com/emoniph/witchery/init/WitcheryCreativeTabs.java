@@ -159,6 +159,7 @@ public class WitcheryCreativeTabs {
             output.accept(ShadedGlassBlock.stackForColor(color));
         }
         add(output,
+                WitcheryItems.INFINITY_EGG.get(),
                 WitcheryItems.CRITTER_SNARE.get(),
                 WitcheryItems.BEARTRAP.get(),
                 WitcheryItems.WOLFTRAP.get(),

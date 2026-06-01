@@ -207,7 +207,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | blooded_wool | ⚠️ Wrong | Port has `blood_stained_wool`; verify ID matches original |
 | shaded_glass | 🔶 Partial | See 2c above; block/item/assets/recipes are live, with in-game redstone/light QA still pending |
 | pit_dirt / pit_grass | 🔶 Partial | `witchery:pit_dirt` and `witchery:pit_grass` are now real no-collision camouflage blocks with vanilla dirt/grass visuals, source hardness/sound feel, self loot, creative-tab wiring, and old display names. The old Tormented Twine heated Witch's Cauldron route is restored in practical source form: Dirt + Mandrake Root -> four Pit Dirt, or Dirt + Wheat Seeds + Dandelion -> four Pit Grass, triggered by Tormented Twine with 4000 nearby altar power. Remaining: in-game trap/Torment QA. |
-| infinity_egg | ❌ Missing | Source: `BlockInfinityEgg` — dragon egg variant |
+| infinity_egg | 🔶 Partial | Source `BlockInfinityEgg` restored as a Dragon Egg-shaped falling block with old texture/name, 3.0 hardness, 15.0 resistance, faint light, no click teleport, item/assets/loot/creative wiring, 1000 nearby altar power, and x10 altar top power/recharge upgrade. Needs in-game altar readout and falling/break QA. |
 | disease (block) | ❌ Missing | Source: `BlockDisease` — flowing disease block |
 | brew / brew_gas / brew_liquid (as placed blocks) | 🔶 Partial | Hollow Tears stand-in only; full moving brew gas/liquid blocks not ported |
 

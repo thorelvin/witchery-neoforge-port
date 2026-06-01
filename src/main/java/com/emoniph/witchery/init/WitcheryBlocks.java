@@ -121,6 +121,11 @@ public class WitcheryBlocks {
                     .isSuffocating(NEVER)
                     .isViewBlocking(NEVER)),
             BlockBehaviour.Properties.of());
+    public static final DeferredBlock<InfinityEggBlock> INFINITY_EGG = registerBlock("infinity_egg",
+            InfinityEggBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DRAGON_EGG)
+                    .strength(3.0F, 15.0F)
+                    .lightLevel(state -> 2));
     public static final DeferredBlock<WitcheryWoodStairBlock> ROWAN_STAIRS = registerBlock("rowan_stairs",
             props -> new WitcheryWoodStairBlock(ROWAN_PLANKS.get().defaultBlockState(),
                     props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),

@@ -120,6 +120,7 @@ public class AltarBlockEntity extends BlockEntity {
         BLOOD_ROSE("blood_rose", 2, 10),
         CRITTER_SNARE("critter_snare", 2, 10),
         DEMON_HEART("demon_heart", 100, 2),
+        INFINITY_EGG("infinity_egg", 1000, 1),
         DRAGON_EGG("dragon_egg", 250, 1);
 
         final String groupKey;
@@ -211,6 +212,7 @@ public class AltarBlockEntity extends BlockEntity {
         if (state.is(WitcheryBlocks.BLOOD_ROSE.get())) return Cat.BLOOD_ROSE;
         if (state.is(WitcheryBlocks.CRITTER_SNARE.get())) return Cat.CRITTER_SNARE;
         if (state.is(WitcheryBlocks.DEMON_HEART.get())) return Cat.DEMON_HEART;
+        if (state.is(WitcheryBlocks.INFINITY_EGG.get())) return Cat.INFINITY_EGG;
         if (state.is(Blocks.DRAGON_EGG)) return Cat.DRAGON_EGG;
 
         return null;
@@ -341,6 +343,7 @@ public class AltarBlockEntity extends BlockEntity {
         int chalicePowerBonus = 0;
         boolean arthanaFound = false;
         boolean mysticBranchFound = false;
+        boolean infinityEggFound = false;
 
         for (BlockPos altarPos : footprint) {
             BlockState above = level.getBlockState(altarPos.above());
@@ -360,6 +363,8 @@ public class AltarBlockEntity extends BlockEntity {
                 candleRechargeBonus = Math.max(candleRechargeBonus, 1);
             } else if (above.is(WitcheryBlocks.CHALICE.get())) {
                 chalicePowerBonus = Math.max(chalicePowerBonus, above.getValue(ChaliceBlock.FILLED) ? 2 : 1);
+            } else if (above.is(WitcheryBlocks.INFINITY_EGG.get())) {
+                infinityEggFound = true;
             } else if (above.getBlock() instanceof PlacedItemBlock
                     && level.getBlockEntity(altarPos.above()) instanceof PlacedItemBlockEntity placedItem) {
                 if (placedItem.getStack().getItem() instanceof ArthanaItem) {
@@ -370,9 +375,16 @@ public class AltarBlockEntity extends BlockEntity {
             }
         }
 
+        int powerScale = 1 + skullPowerBonus + chalicePowerBonus;
+        int rechargeScale = 1 + skullRechargeBonus + candleRechargeBonus;
+        if (infinityEggFound) {
+            powerScale *= 10;
+            rechargeScale *= 10;
+        }
+
         return new UpgradeInfo(
-                1 + skullPowerBonus + chalicePowerBonus,
-                1 + skullRechargeBonus + candleRechargeBonus,
+                powerScale,
+                rechargeScale,
                 arthanaFound ? 2 : 1,
                 mysticBranchFound ? 1 : 0
         );
