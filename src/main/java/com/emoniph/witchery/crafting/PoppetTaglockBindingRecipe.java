@@ -68,7 +68,7 @@ public class PoppetTaglockBindingRecipe extends CustomRecipe {
                 poppet = stack;
                 continue;
             }
-            if (stack.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(stack)) {
+            if (TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isFilled(stack)) {
                 taglocks.add(stack);
                 continue;
             }

@@ -1,7 +1,6 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.HawthornDoorBlockEntity;
-import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.TaglockKitItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -45,7 +44,7 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(WitcheryItems.TAGLOCK_KIT.get())) {
+        if (!TaglockKitItem.isTaglockKit(stack)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (level.isClientSide()) {
@@ -64,7 +63,7 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
 
         HawthornDoorBlockEntity.DrainResult result = door.drainStoredPlayerExcept(player);
         if (result.player() != null) {
-            bindSinglePlayerTaglock(player, stack, result.player());
+            bindSinglePlayerTaglock(player, hand, stack, result.player());
             player.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_hawthorn_door",
                     result.player().name()).withStyle(ChatFormatting.GREEN), false);
             return openDoorAfterTaglock(state, level, pos, player, hit);
@@ -106,18 +105,9 @@ public class HawthornDoorBlock extends DoorBlock implements EntityBlock {
         return super.useWithoutItem(state, level, pos, player, hit);
     }
 
-    private static void bindSinglePlayerTaglock(Player user, ItemStack sourceStack,
+    private static void bindSinglePlayerTaglock(Player user, InteractionHand hand, ItemStack sourceStack,
                                                 HawthornDoorBlockEntity.StoredPlayer player) {
-        if (sourceStack.getCount() == 1) {
-            TaglockKitItem.bind(sourceStack, player.uuid(), player.name());
-            return;
-        }
-
-        ItemStack filledStack = sourceStack.copyWithCount(1);
-        TaglockKitItem.bind(filledStack, player.uuid(), player.name());
-        sourceStack.shrink(1);
-        if (!user.getInventory().add(filledStack)) {
-            user.drop(filledStack, false);
-        }
+        ItemStack filledStack = TaglockKitItem.filledPlayerTaglock(player.uuid(), player.name());
+        TaglockKitItem.replaceOneWithFilled(user, hand, sourceStack, filledStack);
     }
 }

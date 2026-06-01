@@ -55,7 +55,7 @@ public class PlayerCompassBindingRecipe extends CustomRecipe {
                 compass = stack;
                 continue;
             }
-            if (stack.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isPlayerTaglock(stack)) {
+            if (TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isPlayerTaglock(stack)) {
                 if (!taglock.isEmpty()) {
                     return null;
                 }

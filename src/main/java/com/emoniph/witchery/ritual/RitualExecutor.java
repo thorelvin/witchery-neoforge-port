@@ -364,7 +364,7 @@ public class RitualExecutor {
                 return matchedResult(riteOfPortableFertility(player, level, center));
             }
             return matchedResult(riteOfFertility(player, level, center));
-        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+        } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && (findCureMisfortuneOfferings(level, center).isPresent()
@@ -497,7 +497,7 @@ public class RitualExecutor {
             return matchedResult(riteOfBlight(player, level, center));
         } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCorruptPoppet(player, level, center));
-        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+        } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             if (findCurseCreatureOfferings(level, center).isPresent()) {
@@ -513,7 +513,7 @@ public class RitualExecutor {
                 return matchedResult(riteOfCurseInsanity(player, level, center));
             }
             return ActivationResult.NO_MATCH;
-        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+        } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionEntity(player, level, center, item));
@@ -553,7 +553,7 @@ public class RitualExecutor {
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
-        } else if (item.is(WitcheryItems.TAGLOCK_KIT.get())
+        } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseWakingNightmare(player, level, center));
@@ -5441,7 +5441,7 @@ public class RitualExecutor {
 
     private static Optional<ItemEntity> findNearbyFilledTaglockOffering(Level level, BlockPos center) {
         return findNearbyOffering(level, center,
-                stack -> stack.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(stack));
+                stack -> TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isFilled(stack));
     }
 
     private static Optional<ItemEntity> findNearbyRedstoneOffering(Level level, BlockPos center) {
@@ -5525,7 +5525,7 @@ public class RitualExecutor {
     }
 
     private static Optional<CurseCreatureOfferings> findCurseCreatureOfferings(Level level, BlockPos center) {
-        Optional<ItemEntity> taglockKit = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TAGLOCK_KIT.get()));
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));

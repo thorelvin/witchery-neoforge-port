@@ -7,6 +7,7 @@ import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.FlyingMonkeyEntity;
 import com.emoniph.witchery.entity.TreefydEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -142,14 +143,14 @@ public class TaglockKitItem extends Item {
                 return InteractionResult.CONSUME;
             }
 
-            bindSinglePlayerTaglock(user, stack, targetPlayer.getUUID(), targetPlayer.getName().getString());
+            bindSinglePlayerTaglock(user, hand, stack, targetPlayer.getUUID(), targetPlayer.getName().getString());
 
             user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected",
                     targetPlayer.getName()).withStyle(ChatFormatting.GREEN), false);
             return InteractionResult.CONSUME;
         }
 
-        bindSingleEntityTaglock(user, stack, target);
+        bindSingleEntityTaglock(user, hand, stack, target);
         user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected",
                 target.getDisplayName()).withStyle(ChatFormatting.GREEN), false);
         return InteractionResult.CONSUME;
@@ -183,7 +184,7 @@ public class TaglockKitItem extends Item {
             BlockPos headPos = getBedHeadPos(clickedState, ctx.getClickedPos());
             Optional<BedTaglockSavedData.BedTaglockEntry> entry = BedTaglockSavedData.getEntry(ctx.getLevel(), headPos);
             if (entry.isPresent()) {
-                bindSinglePlayerTaglock(user, stack, entry.get().uuid(), entry.get().name());
+                bindSinglePlayerTaglock(user, ctx.getHand(), stack, entry.get().uuid(), entry.get().name());
                 BedTaglockSavedData.clearEntry(ctx.getLevel(), headPos);
                 user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_bed",
                         entry.get().name()).withStyle(ChatFormatting.GREEN), false);
@@ -202,7 +203,7 @@ public class TaglockKitItem extends Item {
 
             BloodRoseBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
             if (drainResult.player() != null) {
-                bindSinglePlayerTaglock(user, stack, drainResult.player().uuid(), drainResult.player().name());
+                bindSinglePlayerTaglock(user, ctx.getHand(), stack, drainResult.player().uuid(), drainResult.player().name());
                 user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_rose",
                         drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
                 return InteractionResult.CONSUME;
@@ -230,7 +231,7 @@ public class TaglockKitItem extends Item {
 
         LeechChestBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
         if (drainResult.player() != null) {
-            bindSinglePlayerTaglock(user, stack, drainResult.player().uuid(), drainResult.player().name());
+            bindSinglePlayerTaglock(user, ctx.getHand(), stack, drainResult.player().uuid(), drainResult.player().name());
             user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_leech_chest",
                     drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
             return InteractionResult.CONSUME;
@@ -267,6 +268,10 @@ public class TaglockKitItem extends Item {
 
     public static boolean isFilled(ItemStack stack) {
         return getTag(stack).contains(TAG_UUID);
+    }
+
+    public static boolean isTaglockKit(ItemStack stack) {
+        return stack.getItem() instanceof TaglockKitItem;
     }
 
     public static Optional<UUID> getUUID(ItemStack stack) {
@@ -322,14 +327,24 @@ public class TaglockKitItem extends Item {
         });
     }
 
-    private static void bindSinglePlayerTaglock(Player user, ItemStack sourceStack, UUID uuid, String name) {
+    public static ItemStack filledPlayerTaglock(UUID uuid, String name) {
+        ItemStack filledStack = new ItemStack(WitcheryItems.BOUND_TAGLOCK_KIT.get());
+        bind(filledStack, uuid, name);
+        return filledStack;
+    }
+
+    public static ItemStack filledEntityTaglock(LivingEntity entity) {
+        ItemStack filledStack = new ItemStack(WitcheryItems.BOUND_TAGLOCK_KIT.get());
+        bindEntity(filledStack, entity);
+        return filledStack;
+    }
+
+    public static void replaceOneWithFilled(Player user, InteractionHand hand, ItemStack sourceStack, ItemStack filledStack) {
         if (sourceStack.getCount() == 1) {
-            bind(sourceStack, uuid, name);
+            user.setItemInHand(hand, filledStack);
             return;
         }
 
-        ItemStack filledStack = sourceStack.copyWithCount(1);
-        bind(filledStack, uuid, name);
         sourceStack.shrink(1);
 
         if (!user.getInventory().add(filledStack)) {
@@ -337,19 +352,12 @@ public class TaglockKitItem extends Item {
         }
     }
 
-    private static void bindSingleEntityTaglock(Player user, ItemStack sourceStack, LivingEntity entity) {
-        if (sourceStack.getCount() == 1) {
-            bindEntity(sourceStack, entity);
-            return;
-        }
+    private static void bindSinglePlayerTaglock(Player user, InteractionHand hand, ItemStack sourceStack, UUID uuid, String name) {
+        replaceOneWithFilled(user, hand, sourceStack, filledPlayerTaglock(uuid, name));
+    }
 
-        ItemStack filledStack = sourceStack.copyWithCount(1);
-        bindEntity(filledStack, entity);
-        sourceStack.shrink(1);
-
-        if (!user.getInventory().add(filledStack)) {
-            user.drop(filledStack, false);
-        }
+    private static void bindSingleEntityTaglock(Player user, InteractionHand hand, ItemStack sourceStack, LivingEntity entity) {
+        replaceOneWithFilled(user, hand, sourceStack, filledEntityTaglock(entity));
     }
 
     private static boolean playerTaglockAttemptFails(Player user, Player target) {

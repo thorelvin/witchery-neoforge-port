@@ -32,7 +32,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 |---|---|---|
 | All 35+ brewing ingredients (bat_wool, rowan_berries, etc.) | ✅ Done | Registered and in creative tab |
 | anointing_paste | ✅ Done | Recipe + cauldron route restored |
-| taglock_kit | ✅ Done | Fill, creature/player variants, crafting |
+| taglock_kit / bound_taglock_kit | ✅ Done | Fill, creature/player variants, exact bound item output, crafting |
 | poppets (9 types) | ✅ Done | Voodoo, Vampiric, Protection families |
 | glass_goblet / glass_goblet_full | ✅ Done | Blood fill/drink/induction |
 | warm_blood / liliths_blood | ✅ Done | Consumable semantics |

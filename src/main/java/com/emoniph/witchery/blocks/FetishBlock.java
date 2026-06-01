@@ -116,7 +116,7 @@ public class FetishBlock extends BaseEntityBlock {
         FetishBlockEntity be = getEntity(level, pos);
         if (be == null) return InteractionResult.PASS;
         ItemStack held = player.getMainHandItem();
-        if (held.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(held)) {
+        if (TaglockKitItem.isTaglockKit(held) && TaglockKitItem.isFilled(held)) {
             String name = TaglockKitItem.getBoundName(held);
             if (name != null && !name.isEmpty()) {
                 be.toggleKnownPlayer(name);

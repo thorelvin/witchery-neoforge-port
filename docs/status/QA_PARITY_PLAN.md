@@ -21,6 +21,8 @@ Food item QA note (2026-06-01): `witchery:sheep_liver` and `witchery:cooked_shee
 
 Food item QA note (2026-06-01): `witchery:odd_porkchop_raw` / `witchery:odd_porkchop` should both behave as raw Odd Porkchop with 3 hunger / 0.3 saturation, while `witchery:odd_porkchop_cooked` / `witchery:cooked_odd_porkchop` should both behave as cooked Odd Porkchop with 8 hunger / 0.8 saturation. Verify the canonical raw item still crafts from Rotten Flesh + Mutandis, smelts to the canonical cooked item, and the safe Mutandis conversions around raw/cooked odd porkchops still return vanilla porkchops.
 
+Taglock Kit exact-ID QA note (2026-06-01): empty `witchery:taglock_kit` stacks should fill into one-count `witchery:bound_taglock_kit` items when sampling players, mobs, beds, Blood Roses, Leech Chests, and Hawthorn Doors. Verify the bound item has no placeholder suffix, keeps the target tooltip, and still works for Player Compass binding, poppet binding, Crystal Ball scrying, fetish known-player editing, Treefyd ignore commands, and taglock-targeted rites.
+
 Ingredient QA note (2026-06-01): `witchery:nullified_leather` now has the source recipe: eight Leather around one Null Catalyst yields three. Verify recipe-book unlock/crafting, then use the output in the Hunter hat/coat/trousers/boots recipes.
 
 Ingredient QA note (2026-06-01): `witchery:infernal_blood` now carries the source ID path. Verify Horned Huntsman drops it, right-clicking Wicker Bundles bloodies up to five nearby blocks, the bloodied Wicker Bundle recipe uses Infernal Blood, Ruby Slippers craft from Infernal Blood, and Summon Imp accepts Infernal Blood while still accepting `witchery:demonic_blood`.

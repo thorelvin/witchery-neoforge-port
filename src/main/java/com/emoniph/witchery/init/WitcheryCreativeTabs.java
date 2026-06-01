@@ -192,6 +192,7 @@ public class WitcheryCreativeTabs {
     private static void addPoppetsTaglocksAndScrying(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.TAGLOCK_KIT.get(),
+                WitcheryItems.BOUND_TAGLOCK_KIT.get(),
                 WitcheryItems.POPPET.get(),
                 WitcheryItems.DEATH_PROTECTION_POPPET.get(),
                 WitcheryItems.EARTH_PROTECTION_POPPET.get(),
@@ -408,7 +409,7 @@ public class WitcheryCreativeTabs {
                 "herbology_book");
         addLegacy(output, accepted,
                 "charged_crossbow",
-                "hellhound_head", "wolf_head", "bound_taglock_kit",
+                "hellhound_head", "wolf_head",
                 "deployed_deaths_hand");
         addLegacy(output, accepted,
                 "dandelion_of_ink", "dandelion_of_sprouting", "dandelion_of_thorns", "dandelion_of_webs",

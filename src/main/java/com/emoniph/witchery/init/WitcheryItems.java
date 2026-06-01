@@ -284,6 +284,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> DEBUG_INSPECTOR =
             ITEMS.register("debug_inspector", id -> new com.emoniph.witchery.item.DebugInspectorItem(itemProps(id)));
     public static final DeferredItem<Item> TAGLOCK_KIT = ITEMS.register("taglock_kit", id -> new com.emoniph.witchery.item.TaglockKitItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> BOUND_TAGLOCK_KIT = ITEMS.register("bound_taglock_kit", id -> new com.emoniph.witchery.item.TaglockKitItem(itemProps(id).stacksTo(1)));
 
     // ── Poppets ────────────────────────────────────────────────────────────────
     public static final DeferredItem<Item> POPPET = ITEMS.register("poppet", id -> new com.emoniph.witchery.item.PoppetItem(itemProps(id).stacksTo(1)));
@@ -748,7 +749,6 @@ public class WitcheryItems {
             "wolf_head",
 
             // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
-            "bound_taglock_kit",
             "deployed_deaths_hand",
             "brew_bottle",
             "splash_brew_bottle",

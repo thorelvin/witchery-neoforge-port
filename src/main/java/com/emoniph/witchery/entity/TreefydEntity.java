@@ -159,7 +159,7 @@ public class TreefydEntity extends Monster {
             return InteractionResult.SUCCESS;
         }
 
-        if (stack.is(WitcheryItems.TAGLOCK_KIT.get()) && TaglockKitItem.isFilled(stack)) {
+        if (TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isFilled(stack)) {
             if (level().isClientSide()) {
                 return InteractionResult.SUCCESS;
             }

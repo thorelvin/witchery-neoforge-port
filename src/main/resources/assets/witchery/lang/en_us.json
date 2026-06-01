@@ -1317,7 +1317,7 @@
   "item.witchery.leonards_urn.tooltip.selected": "Focus %s/%s",
   "item.witchery.leonards_urn.tooltip.empty": "Empty",
   "item.witchery.leonards_urn.tooltip.slot": "%s: %s",
-  "item.witchery.bound_taglock_kit": "Bound Taglock Kit (Placeholder)",
+  "item.witchery.bound_taglock_kit": "Bound Taglock Kit",
   "item.witchery.meaty_stew": "Meaty Stew",
   "item.witchery.raw_meaty_stew": "Raw Meaty Stew",
   "item.witchery.huntsmans_spear": "Spear of the Huntsman",
