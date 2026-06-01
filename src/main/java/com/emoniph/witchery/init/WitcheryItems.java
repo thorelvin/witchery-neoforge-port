@@ -450,16 +450,22 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_RAISING        = ITEMS.register("brew_of_raising", id -> new BrewOfRaisingItem(itemProps(id)));
     public static final DeferredItem<Item> RAISING_BREW           = ITEMS.register("raising_brew", id -> new BrewOfRaisingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SLEEPING       = ITEMS.register("brew_of_sleeping", id -> new BrewOfSleepingItem(itemProps(id)));
+    public static final DeferredItem<Item> SLEEPING_BREW          = ITEMS.register("sleeping_brew", id -> new BrewOfSleepingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FLOWING_SPIRIT = ITEMS.register("brew_of_flowing_spirit", id -> new BrewOfFlowingSpiritItem(itemProps(id)));
+    public static final DeferredItem<Item> FLOWING_SPIRIT_BREW    = ITEMS.register("flowing_spirit_brew", id -> new BrewOfFlowingSpiritItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_WASTING        = ITEMS.register("brew_of_wasting", id -> new BrewOfWastingItem(itemProps(id)));
+    public static final DeferredItem<Item> WASTING_BREW           = ITEMS.register("wasting_brew", id -> new BrewOfWastingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_EROSION        = ITEMS.register("brew_of_erosion", id -> new BrewOfErosionItem(itemProps(id)));
     public static final DeferredItem<Item> EROSION_BREW           = ITEMS.register("erosion_brew", id -> new BrewOfErosionItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FOULNESS       = ITEMS.register("brew_of_foulness", id -> new BrewOfFoulnessItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_INFECTION      = ITEMS.register("brew_of_infection", id -> new BrewOfInfectionItem(itemProps(id)));
+    public static final DeferredItem<Item> INFECTION_BREW         = ITEMS.register("infection_brew", id -> new BrewOfInfectionItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_LOVE           = ITEMS.register("brew_of_love", id -> new BrewOfLoveItem(itemProps(id)));
     public static final DeferredItem<Item> LOVE_BREW              = ITEMS.register("love_brew", id -> new BrewOfLoveItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_THE_GROTESQUE  = ITEMS.register("brew_of_the_grotesque", id -> new BrewOfTheGrotesqueItem(itemProps(id)));
+    public static final DeferredItem<Item> GROTESQUE_BREW         = ITEMS.register("grotesque_brew", id -> new BrewOfTheGrotesqueItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_REVEALING      = ITEMS.register("brew_of_revealing", id -> new BrewOfRevealingItem(itemProps(id)));
+    public static final DeferredItem<Item> REVEALING_BREW         = ITEMS.register("revealing_brew", id -> new BrewOfRevealingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_ENDLESS_WATER  = ITEMS.register("brew_of_endless_water", id -> new BrewOfEndlessWaterItem(itemProps(id)));
     public static final DeferredItem<Item> ENDLESS_WATER_BREW     = ITEMS.register("endless_water_brew", id -> new BrewOfEndlessWaterItem(itemProps(id)));
     public static final DeferredItem<Item> COMBUSTION_BREW        = ITEMS.register("combustion_brew", id -> new CombustionBrewItem(itemProps(id)));
@@ -488,20 +494,33 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_SPROUTING      = ITEMS.register("brew_of_sprouting", id -> new com.emoniph.witchery.item.BrewOfSproutingItem(itemProps(id)));
     public static final DeferredItem<Item> SPROUTING_BREW         = ITEMS.register("sprouting_brew", id -> new com.emoniph.witchery.item.BrewOfSproutingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_ICE            = ITEMS.register("brew_of_ice", id -> new com.emoniph.witchery.item.BrewOfIceItem(itemProps(id)));
+    public static final DeferredItem<Item> ICE_BREW               = ITEMS.register("ice_brew", id -> new com.emoniph.witchery.item.BrewOfIceItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_THE_DEPTHS     = ITEMS.register("brew_of_the_depths", id -> new com.emoniph.witchery.item.BrewOfTheDepthsItem(itemProps(id)));
+    public static final DeferredItem<Item> DEPTHS_BREW            = ITEMS.register("depths_brew", id -> new com.emoniph.witchery.item.BrewOfTheDepthsItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FROGS_TONGUE   = ITEMS.register("brew_of_frogs_tongue", id -> new com.emoniph.witchery.item.BrewOfFrogsTongueItem(itemProps(id)));
+    public static final DeferredItem<Item> FROGS_TONGUE_BREW      = ITEMS.register("frogs_tongue_brew", id -> new com.emoniph.witchery.item.BrewOfFrogsTongueItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_CURSED_LEAPING = ITEMS.register("brew_of_cursed_leaping", id -> new com.emoniph.witchery.item.BrewOfCursedLeapingItem(itemProps(id)));
+    public static final DeferredItem<Item> CURSED_LEAPING_BREW    = ITEMS.register("cursed_leaping_brew", id -> new com.emoniph.witchery.item.BrewOfCursedLeapingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_HITCHCOCK      = ITEMS.register("brew_of_hitchcock", id -> new com.emoniph.witchery.item.BrewOfHitchcockItem(itemProps(id)));
+    public static final DeferredItem<Item> HITCHCOCK_BREW         = ITEMS.register("hitchcock_brew", id -> new com.emoniph.witchery.item.BrewOfHitchcockItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_BATS           = ITEMS.register("brew_of_bats", id -> new com.emoniph.witchery.item.BrewOfBatsItem(itemProps(id)));
+    public static final DeferredItem<Item> BATS_BREW              = ITEMS.register("bats_brew", id -> new com.emoniph.witchery.item.BrewOfBatsItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_HOLLOW_TEARS   = ITEMS.register("brew_of_hollow_tears", id -> new com.emoniph.witchery.item.BrewOfHollowTearsItem(itemProps(id)));
+    public static final DeferredItem<Item> HOLLOW_TEARS_BREW      = ITEMS.register("hollow_tears_brew", id -> new com.emoniph.witchery.item.BrewOfHollowTearsItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_STONE    = ITEMS.register("brew_of_solid_stone", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Stone(itemProps(id)));
+    public static final DeferredItem<Item> SOLIDIFYING_STONE_BREW = ITEMS.register("solidifying_stone_brew", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Stone(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_DIRT     = ITEMS.register("brew_of_solid_dirt", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Dirt(itemProps(id)));
+    public static final DeferredItem<Item> SOLIDIFYING_DIRT_BREW  = ITEMS.register("solidifying_dirt_brew", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Dirt(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_SAND     = ITEMS.register("brew_of_solid_sand", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sand(itemProps(id)));
+    public static final DeferredItem<Item> SOLIDIFYING_SAND_BREW  = ITEMS.register("solidifying_sand_brew", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sand(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_SANDSTONE = ITEMS.register("brew_of_solid_sandstone", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sandstone(itemProps(id)));
+    public static final DeferredItem<Item> SOLIDIFYING_SANDSTONE_BREW = ITEMS.register("solidifying_sandstone_brew", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sandstone(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_EROSION  = ITEMS.register("brew_of_solid_erosion", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Erosion(itemProps(id)));
+    public static final DeferredItem<Item> SOLIDIFYING_EROSION_BREW = ITEMS.register("solidifying_erosion_brew", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Erosion(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOARING        = ITEMS.register("brew_of_soaring", id -> new com.emoniph.witchery.item.BrewOfSoaringItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_GRAVE          = ITEMS.register("brew_of_grave", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SUBSTITUTION   = ITEMS.register("brew_of_substitution", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
+    public static final DeferredItem<Item> SUBSTITUTION_BREW      = ITEMS.register("substitution_brew", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
 
     // ── Infusion brew bases (M19) ─────────────────────────────────────────────
     public static final DeferredItem<Item> GHOST_OF_THE_LIGHT   = ITEMS.registerSimpleItem("ghost_of_the_light");
@@ -742,12 +761,24 @@ public class WitcheryItems {
         return stack.is(BREW_OF_LOVE.get()) || stack.is(LOVE_BREW.get());
     }
 
+    public static boolean isBrewOfFlowingSpirit(ItemStack stack) {
+        return stack.is(BREW_OF_FLOWING_SPIRIT.get()) || stack.is(FLOWING_SPIRIT_BREW.get());
+    }
+
     public static boolean isBrewOfInk(ItemStack stack) {
         return stack.is(BREW_OF_INK.get()) || stack.is(INK_BREW.get());
     }
 
     public static boolean isBrewOfSprouting(ItemStack stack) {
         return stack.is(BREW_OF_SPROUTING.get()) || stack.is(SPROUTING_BREW.get());
+    }
+
+    public static boolean isBrewOfTheGrotesque(ItemStack stack) {
+        return stack.is(BREW_OF_THE_GROTESQUE.get()) || stack.is(GROTESQUE_BREW.get());
+    }
+
+    public static boolean isBrewOfTheDepths(ItemStack stack) {
+        return stack.is(BREW_OF_THE_DEPTHS.get()) || stack.is(DEPTHS_BREW.get());
     }
 
     public static boolean isIcySlippers(ItemStack stack) {
@@ -806,27 +837,8 @@ public class WitcheryItems {
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",
-            "ice_brew",
-            "frogs_tongue_brew",
-            "cursed_leaping_brew",
-            "hitchcock_brew",
-            "infection_brew",
-            "flowing_spirit_brew",
-            "hollow_tears_brew",
-            "wasting_brew",
-            "bats_brew",
-            "revealing_brew",
-            "substitution_brew",
-            "grotesque_brew",
-            "depths_brew",
-            "sleeping_brew",
             "infused_soaring_brew",
             "infused_grave_brew",
-            "solidifying_stone_brew",
-            "solidifying_dirt_brew",
-            "solidifying_sand_brew",
-            "solidifying_sandstone_brew",
-            "solidifying_erosion_brew",
             "hunger_demon_soul",
             "anguish_demon_soul",
             "fear_demon_soul",

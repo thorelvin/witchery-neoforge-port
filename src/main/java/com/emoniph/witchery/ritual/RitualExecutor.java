@@ -5529,7 +5529,7 @@ public class RitualExecutor {
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
         Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
-        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
+        Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, WitcheryItems::isBrewOfTheGrotesque);
         if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || spiderEye.isEmpty()
                 || gunpowder.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
@@ -5675,7 +5675,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> boneMeal = findNearbyOffering(level, center, stack -> stack.is(Items.BONE_MEAL));
         Optional<ItemEntity> netherWart = findNearbyOffering(level, center, stack -> stack.is(Items.NETHER_WART));
-        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_DEPTHS.get()));
+        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, WitcheryItems::isBrewOfTheDepths);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || boneMeal.isEmpty()
                 || netherWart.isEmpty() || brewOfTheDepths.isEmpty()) {
             return Optional.empty();
@@ -5693,7 +5693,7 @@ public class RitualExecutor {
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
         Optional<ItemEntity> icyNeedle = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()));
         Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
-        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_DEPTHS.get()));
+        Optional<ItemEntity> brewOfTheDepths = findNearbyOffering(level, center, WitcheryItems::isBrewOfTheDepths);
         if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || icyNeedle.isEmpty()
                 || blazeRod.isEmpty() || brewOfTheDepths.isEmpty()) {
             return Optional.empty();

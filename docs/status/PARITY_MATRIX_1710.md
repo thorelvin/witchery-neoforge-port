@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 292+ functional entries + 68 remaining item placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 311+ functional entries + 49 remaining item placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -317,20 +317,20 @@ All currently implemented as fixed items only, not as composable cauldron action
 | Brew | Item status | Dynamic action |
 |---|---|---|
 | Brew of Raising | ✅ Item | ❌ No action |
-| Brew of Sleeping | ✅ Item | ❌ No action |
-| Brew of Flowing Spirit | ✅ Item | ❌ No action |
-| Brew of Wasting | ✅ Item | ❌ No action |
+| Brew of Sleeping | ✅ Item | ❌ No action; Resurrected `sleeping_brew` alias maps to the canonical direct-use item |
+| Brew of Flowing Spirit | ✅ Item | ❌ No action; Resurrected `flowing_spirit_brew` alias maps to the canonical direct-use item and transfers back from Spirit World |
+| Brew of Wasting | ✅ Item | ❌ No action; Resurrected `wasting_brew` alias maps to the canonical direct-use item |
 | Brew of Erosion | ✅ Item | ❌ No action |
 | Brew of Foulness / Foaming / Poison | ✅ Item + splash + gas | ❌ No action |
-| Brew of Infection | ✅ Item | ❌ No action |
+| Brew of Infection | ✅ Item | ❌ No action; Resurrected `infection_brew` alias maps to the canonical direct-use item |
 | Brew of Love | ✅ Item | ❌ No action |
-| Brew of the Grotesque | ✅ Item | ❌ No action |
-| Brew of Revealing | ✅ Item | ❌ No action |
-| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action; Vines/Webs/Thorns/Sprouting Resurrected aliases map to the canonical direct-use items, and Sprouting alias works in current rite offering checks |
-| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action; Ink plus Erosion/Raising/Love Resurrected aliases map to their canonical direct-use items, with Ink/Love/Raising accepted by current ritual/kettle family checks |
-| Brew of Cursed Leaping / Depths / Soaring | ✅ Item | ❌ No action |
-| Brew of Hollow Tears / Substitution / Grave | ✅ Item | ❌ No action |
-| Solidifying brews (stone/dirt/sand/etc.) | ✅ Item | ❌ No action |
+| Brew of the Grotesque | ✅ Item | ❌ No action; Resurrected `grotesque_brew` alias maps to the canonical direct-use item and works in current curse rites |
+| Brew of Revealing | ✅ Item | ❌ No action; Resurrected `revealing_brew` alias maps to the canonical direct-use item |
+| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action; Vines/Webs/Thorns/Ice/Sprouting Resurrected aliases map to the canonical direct-use items, and Sprouting alias works in current rite offering checks |
+| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action; Ink/Hitchcock/Bats/Frog's Tongue plus Erosion/Raising/Love Resurrected aliases map to their canonical direct-use items, with Ink/Love/Raising accepted by current ritual/kettle family checks |
+| Brew of Cursed Leaping / Depths / Soaring | ✅ Item | ❌ No action; Cursed Leaping and Depths Resurrected aliases map to the canonical direct-use items, and Depths works in current curse-removal rites |
+| Brew of Hollow Tears / Substitution / Grave | ✅ Item | ❌ No action; Hollow Tears and Substitution Resurrected aliases map to the canonical direct-use items |
+| Solidifying brews (stone/dirt/sand/etc.) | ✅ Item | ❌ No action; all five Resurrected `solidifying_*_brew` aliases map to the canonical solidifying items |
 | Infused brew variants (soaring/grave) | ✅ Item | ❌ No action |
 | **~60 brew effects from source not yet as items** | ❌ Missing | Missing brews include: Snow Trail, Swimming, Ender Inhibition, Moonshine, Harm Undead/Insects/Werewolves/Demons, Weaken Vampires, Drain Magic, Steal Buffs, Seasons, Tree-growing family, Blight (brew form), Transpose/Transpose Ore, Volatility, Levelling, Raise Land, Tidehold, Lilify, Fertilization/Harvesting/Tilling/Planting/Pruning, Bodega (bird summon), Air Hike, Reincarnate, Resizing, Fortune, Keep Inventory, Keep Effects on Death, Hellgate, Blast, Ice World, Ice Shell (brew form), Extinguish, Dissipate, Pulverisation, Frog Tongue (brew form), Poison Toad |
 
