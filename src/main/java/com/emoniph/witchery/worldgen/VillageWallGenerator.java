@@ -41,7 +41,7 @@ import java.util.Set;
  *  5. Detect gate positions by scanning for DIRT_PATH blocks.
  *  6. Place cobblestone walls 8 high with merlon caps on perimeter cells.
  *  7. Carve 5-wide gate arches at gate positions.
- *  8. Spawn guards on wall-top every ~200 wall blocks.
+ *  8. Spawn guards on wall-top every ~150 usable wall-walk blocks.
  */
 public final class VillageWallGenerator {
     public record GenerationResult(boolean generated, int gateCandidates, int gates) {
@@ -65,7 +65,7 @@ public final class VillageWallGenerator {
     private static final int PADDING       = 18;  // extra space outside village edge
     private static final int MAX_GRID      = 260; // abort if village is too large
     private static final int GAP_FILL      = 4;   // max gap to bridge between structures
-    private static final int GUARD_SPACING = 80;  // usable wall-walk blocks between guard spawns
+    private static final int GUARD_SPACING = 150; // usable wall-walk blocks between guard spawns
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     private static final int GATE_PATH_OUTWARD_MAX = 10;
     private static final int GATE_PATH_INWARD_MAX = 15;
@@ -772,11 +772,28 @@ public final class VillageWallGenerator {
         if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR))
             guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx - 1, top, wz, brick));
 
+        guardPos = placeCornerWallWalks(level, wx, top, wz, brick, grid, gx, gz, w, d, guardPos);
+
         if (northOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
         if (southOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
         if (eastOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
         if (westOutside) placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
 
+        return guardPos;
+    }
+
+    private static BlockPos placeCornerWallWalks(ServerLevel level, int wx, int top, int wz,
+                                                  BlockState brick, byte[][] grid,
+                                                  int gx, int gz, int w, int d,
+                                                  BlockPos guardPos) {
+        for (int dx : new int[]{-1, 1}) {
+            for (int dz : new int[]{-1, 1}) {
+                if (!isGridCell(grid, gx + dx, gz + dz, w, d, INTERIOR)) continue;
+                if (!isGridCell(grid, gx + dx, gz, w, d, WALL)) continue;
+                if (!isGridCell(grid, gx, gz + dz, w, d, WALL)) continue;
+                guardPos = firstGuardPos(guardPos, placeCornerWallWalk(level, wx + dx, top, wz + dz, brick));
+            }
+        }
         return guardPos;
     }
 
@@ -796,6 +813,17 @@ public final class VillageWallGenerator {
         BlockPos floor = new BlockPos(x, top - 1, z);
         if (level.getChunkSource().getChunkNow(floor.getX() >> 4, floor.getZ() >> 4) == null) return null;
         setBlock(level, floor.getX(), floor.getY(), floor.getZ(), brick);
+        BlockPos stand = floor.above();
+        if (!level.getBlockState(floor).isSolid() || !isSpawnClear(level, stand)) return null;
+        return stand;
+    }
+
+    private static BlockPos placeCornerWallWalk(ServerLevel level, int x, int top, int z, BlockState brick) {
+        if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return null;
+        forceSet(level, x, top - 1, z, brick);
+        forceSet(level, x, top, z, Blocks.AIR.defaultBlockState());
+        forceSet(level, x, top + 1, z, Blocks.AIR.defaultBlockState());
+        BlockPos floor = new BlockPos(x, top - 1, z);
         BlockPos stand = floor.above();
         if (!level.getBlockState(floor).isSolid() || !isSpawnClear(level, stand)) return null;
         return stand;

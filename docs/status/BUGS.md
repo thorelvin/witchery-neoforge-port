@@ -1,8 +1,9 @@
 # Active Bugs
 
-Last reconciled: 2026-05-31. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
-**Closed 2026-05-31:**
+**Closed 2026-06-01 / 2026-05-31:**
+- ~~Village wall rampart corners still block guard traversal~~ - fresh QA showed guards getting stuck at L-corners even after the rampart visual pass. Fixed: wall guards now use 150 usable wall-walk spacing, and any L-corner with two adjacent wall runs around an interior turn gets a flat diagonal inside walk bridge with cleared headroom so guards can pass through the corner.
 - ~~Coven Circle and Straw Man can sit on a one-block raised dirt plinth~~ - fresh structure QA showed Stone/Coven Circles, and potentially Straw Men, visibly lifted onto a flat dirt/grass layer instead of blending into surrounding terrain. Fixed: both structure selectors now evaluate a one-block padded dry-land footprint, reject rough sites above two blocks of variance, and anchor to the lowest accepted surface instead of a center-only height.
 - ~~Village Watch Tower still misses the last three ladder blocks and chest is too high~~ - fresh QA found Watch Towers still lacked the final three ladder blocks needed to descend cleanly, and the loot chest sat too high on the upper deck. Fixed: the tower keeps the supported center shaft, restores the old three-block upper handoff ladder beside the deck support column, and lowers the chest from local `y=13` to local `y=10` on the mid platform.
 - ~~Village Keep is still not appearing in fresh village QA~~ - after the first density pass, Watch Towers and other Witchery buildings were seen but no Keep had appeared. Fixed: all five village house pools now weight `village_keep` at `32` instead of `8`, preserving the one-per-village cap, and `[VillageBuildings:Debug]` logs now show Keep jigsaw offers, claims, duplicate skips, and placements while `debug = true`.
