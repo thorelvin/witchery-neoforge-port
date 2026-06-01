@@ -20,6 +20,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -40,6 +42,9 @@ public class RubySlippersItem extends Item {
     private static final int WAYSTONE_COST_CROSS_DIMENSION = 80;
     private static final int WAYSTONE_SEARCH_RADIUS = 3;
     private static final int WAYSTONE_TELEPORT_RADIUS = 2;
+    private static final double WAYSTONE_RANDOM_MISFIRE_CHANCE = 0.01D;
+    private static final int WAYSTONE_RANDOM_MISFIRE_DISTANCE = 500;
+    private static final int RANDOM_TELEPORT_ATTEMPTS = 16;
     private static final Map<UUID, Long> lastHomeUseTick = new HashMap<>();
     private static final Map<UUID, Long> lastWaystoneUseTick = new HashMap<>();
 
@@ -106,6 +111,12 @@ public class RubySlippersItem extends Item {
         }
 
         lastWaystoneUseTick.put(player.getUUID(), now);
+        if (player.getRandom().nextDouble() < WAYSTONE_RANDOM_MISFIRE_CHANCE
+                && teleportRandomlyLikeVoidBramble(player, (ServerLevel) player.level(), WAYSTONE_RANDOM_MISFIRE_DISTANCE)) {
+            player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
+            return true;
+        }
+
         BlockPos target = randomNear(player, boundPos.get(), WAYSTONE_TELEPORT_RADIUS);
         teleportTo(player, dest, findSafePos(dest, target));
         player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
@@ -167,13 +178,53 @@ public class RubySlippersItem extends Item {
     }
 
     private static BlockPos findSafePos(ServerLevel level, BlockPos start) {
-        for (int dy = 0; dy <= 3; dy++) {
-            BlockPos candidate = start.above(dy);
-            if (level.getBlockState(candidate).isAir() && level.getBlockState(candidate.above()).isAir()) {
-                return candidate;
+        for (int dy = 0; dy <= 4; dy++) {
+            BlockPos above = start.above(dy);
+            if (isSafeLanding(level, above)) {
+                return above;
+            }
+
+            if (dy > 0) {
+                BlockPos below = start.below(dy);
+                if (isSafeLanding(level, below)) {
+                    return below;
+                }
             }
         }
         return start.above();
+    }
+
+    private static boolean teleportRandomlyLikeVoidBramble(ServerPlayer player, ServerLevel level, int distance) {
+        BlockPos origin = player.blockPosition();
+        int doubleDistance = distance * 2;
+        for (int attempt = 0; attempt < RANDOM_TELEPORT_ATTEMPTS; attempt++) {
+            int targetX = origin.getX() + player.getRandom().nextInt(doubleDistance) - distance;
+            int targetZ = origin.getZ() + player.getRandom().nextInt(doubleDistance) - distance;
+            BlockPos heightmapPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    new BlockPos(targetX, origin.getY(), targetZ));
+            BlockPos safe = findSafePos(level, heightmapPos.above());
+            if (isSafeLanding(level, safe)) {
+                teleportTo(player, level, safe);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isSafeLanding(ServerLevel level, BlockPos feet) {
+        if (!level.getWorldBorder().isWithinBounds(feet)) {
+            return false;
+        }
+        BlockState floor = level.getBlockState(feet.below());
+        return !floor.isAir()
+                && !floor.liquid()
+                && floor.isSolid()
+                && isOpenForPlayer(level.getBlockState(feet))
+                && isOpenForPlayer(level.getBlockState(feet.above()));
+    }
+
+    private static boolean isOpenForPlayer(BlockState state) {
+        return state.isAir() || (state.canBeReplaced() && !state.liquid());
     }
 
     private static BlockPos randomNear(ServerPlayer player, BlockPos start, int radius) {
