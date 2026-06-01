@@ -3492,7 +3492,7 @@ public class RitualExecutor {
 
             ItemEntity drop = new ItemEntity(sl,
                     center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-                    new ItemStack(WitcheryItems.BREW_OF_SOARING.get()));
+                    new ItemStack(WitcheryItems.INFUSED_SOARING_BREW.get()));
             drop.setDeltaMovement(0.0, 0.25, 0.0);
             sl.addFreshEntity(drop);
 
@@ -3519,7 +3519,7 @@ public class RitualExecutor {
 
             ItemEntity drop = new ItemEntity(sl,
                     center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-                    new ItemStack(WitcheryItems.BREW_OF_GRAVE.get()));
+                    new ItemStack(WitcheryItems.INFUSED_GRAVE_BREW.get()));
             drop.setDeltaMovement(0.0, 0.25, 0.0);
             sl.addFreshEntity(drop);
 

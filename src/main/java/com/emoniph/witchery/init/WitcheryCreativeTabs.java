@@ -425,6 +425,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FLYING_OINTMENT.get(),
                 WitcheryItems.HAPPENSTANCE_OIL.get(),
                 WitcheryItems.INFUSED_BREW_BASE.get(),
+                WitcheryItems.INFUSED_SOARING_BREW.get(),
+                WitcheryItems.INFUSED_GRAVE_BREW.get(),
                 WitcheryItems.INFUSED_BREW_OF_SOARING.get(),
                 WitcheryItems.INFUSED_BREW_OF_THE_GRAVE.get());
     }
@@ -482,8 +484,7 @@ public class WitcheryCreativeTabs {
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
         addLegacy(output, accepted,
-                "infused_soaring_brew", "infused_grave_brew", "hunger_demon_soul",
-                "anguish_demon_soul", "fear_demon_soul", "torment_demon_soul");
+                "hunger_demon_soul", "anguish_demon_soul", "fear_demon_soul", "torment_demon_soul");
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
             if (accepted.add(id)) {
                 output.accept(item.get());

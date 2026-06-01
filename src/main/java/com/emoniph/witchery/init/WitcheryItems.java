@@ -521,6 +521,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_GRAVE          = ITEMS.register("brew_of_grave", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SUBSTITUTION   = ITEMS.register("brew_of_substitution", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
     public static final DeferredItem<Item> SUBSTITUTION_BREW      = ITEMS.register("substitution_brew", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
+    public static final DeferredItem<Item> INFUSED_SOARING_BREW   = ITEMS.register("infused_soaring_brew", id -> new com.emoniph.witchery.item.BrewOfSoaringItem(itemProps(id)));
+    public static final DeferredItem<Item> INFUSED_GRAVE_BREW     = ITEMS.register("infused_grave_brew", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
 
     // ── Infusion brew bases (M19) ─────────────────────────────────────────────
     public static final DeferredItem<Item> GHOST_OF_THE_LIGHT   = ITEMS.registerSimpleItem("ghost_of_the_light");
@@ -837,8 +839,6 @@ public class WitcheryItems {
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",
-            "infused_soaring_brew",
-            "infused_grave_brew",
             "hunger_demon_soul",
             "anguish_demon_soul",
             "fear_demon_soul",

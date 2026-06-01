@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 311+ functional entries + 49 remaining item placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 313+ functional entries + 47 remaining item placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -331,7 +331,7 @@ All currently implemented as fixed items only, not as composable cauldron action
 | Brew of Cursed Leaping / Depths / Soaring | ✅ Item | ❌ No action; Cursed Leaping and Depths Resurrected aliases map to the canonical direct-use items, and Depths works in current curse-removal rites |
 | Brew of Hollow Tears / Substitution / Grave | ✅ Item | ❌ No action; Hollow Tears and Substitution Resurrected aliases map to the canonical direct-use items |
 | Solidifying brews (stone/dirt/sand/etc.) | ✅ Item | ❌ No action; all five Resurrected `solidifying_*_brew` aliases map to the canonical solidifying items |
-| Infused brew variants (soaring/grave) | ✅ Item | ❌ No action |
+| Infused brew variants (soaring/grave) | ✅ Item | Partial - exact `infused_soaring_brew` and `infused_grave_brew` IDs are live rite outputs, while older `brew_of_soaring` / `brew_of_grave` stacks remain valid; Grave behavior still needs deeper effect parity |
 | **~60 brew effects from source not yet as items** | ❌ Missing | Missing brews include: Snow Trail, Swimming, Ender Inhibition, Moonshine, Harm Undead/Insects/Werewolves/Demons, Weaken Vampires, Drain Magic, Steal Buffs, Seasons, Tree-growing family, Blight (brew form), Transpose/Transpose Ore, Volatility, Levelling, Raise Land, Tidehold, Lilify, Fertilization/Harvesting/Tilling/Planting/Pruning, Bodega (bird summon), Air Hike, Reincarnate, Resizing, Fortune, Keep Inventory, Keep Effects on Death, Hellgate, Blast, Ice World, Ice Shell (brew form), Extinguish, Dissipate, Pulverisation, Frog Tongue (brew form), Poison Toad |
 
 ### 4c. Potion Effects (MC effect registry)
