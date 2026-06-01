@@ -233,6 +233,10 @@ public class WitcheryItems {
     public static final DeferredItem<Item> FEAR_DEMON_SOUL = ITEMS.registerSimpleItem("fear_demon_soul");
     public static final DeferredItem<Item> TORMENT_DEMON_SOUL = ITEMS.registerSimpleItem("torment_demon_soul");
     public static final DeferredItem<Item> TORMENT_SCROLL   = ITEMS.registerSimpleItem("torment_scroll");
+    public static final DeferredItem<Item> CONTRACT_TORMENT =
+            ITEMS.register("contract_torment", id -> new TormentContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<Item> TORMENT_CONTRACT =
+            ITEMS.register("torment_contract", id -> new TormentContractItem(itemProps(id).stacksTo(16)));
 
     public static final DeferredItem<BlockItem> ALLURING_SKULL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ALLURING_SKULL);
     public static final DeferredItem<BlockItem> DEMON_HEART = ITEMS.registerSimpleBlockItem(WitcheryBlocks.DEMON_HEART);
@@ -821,6 +825,12 @@ public class WitcheryItems {
         return stack.is(GULGS_GIRDLE.get()) || stack.is(GULGS_GRUDLE.get());
     }
 
+    public static boolean isTormentContract(ItemStack stack) {
+        return stack.is(TORMENT_SCROLL.get())
+                || stack.is(CONTRACT_TORMENT.get())
+                || stack.is(TORMENT_CONTRACT.get());
+    }
+
     // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
     public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
             "brew_of_soul_hunger",
@@ -828,7 +838,6 @@ public class WitcheryItems {
             "brew_of_soul_fear",
             "brew_of_soul_torment",
             "contract_ownership",
-            "contract_torment",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
             "dandelion_of_thorns",

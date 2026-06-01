@@ -567,7 +567,7 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonWither(player, level, center));
-        } else if (item.is(WitcheryItems.TORMENT_SCROLL.get())) {
+        } else if (WitcheryItems.isTormentContract(item)) {
             return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
         } else {
             return ActivationResult.NO_MATCH;

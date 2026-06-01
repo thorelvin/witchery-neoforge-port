@@ -478,6 +478,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FEAR_DEMON_SOUL.get(),
                 WitcheryItems.TORMENT_DEMON_SOUL.get(),
                 WitcheryItems.TORMENT_SCROLL.get(),
+                WitcheryItems.CONTRACT_TORMENT.get(),
+                WitcheryItems.TORMENT_CONTRACT.get(),
                 WitcheryItems.LEONARDS_URN.get(),
                 WitcheryItems.TWISTING_BAND.get(),
                 WitcheryItems.GULGS_GIRDLE.get(),
@@ -496,7 +498,7 @@ public class WitcheryCreativeTabs {
                 "shrub_of_ink", "shrub_of_sprouting", "shrub_of_thorns", "shrub_of_webs", "trapped_plant");
         addLegacy(output, accepted,
                 "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
-                "contract_ownership", "contract_torment");
+                "contract_ownership");
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
