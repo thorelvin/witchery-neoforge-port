@@ -50,7 +50,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | quartz_sphere / charged_quartz_sphere | ✅ Done | Sun Collector chain |
 | sun_grenade | ✅ Done | Throw/return |
 | player_compass | ✅ Done | Taglock bind, direction report |
-| waystone (blank/bound/blooded) | ✅ Done | Blank, location-bound, and entity-bound source IDs live; bind/copy rites output `bound_waystone`, both blooded binding support sets output `blooded_waystone`, old saved bound blank stacks still work; scry route, transposition route, and stack caps restored. Remaining polish is exact old item-entity auto-binding |
+| waystone (blank/bound/blooded) | ✅ Done | Blank, location-bound, and entity-bound source IDs live; bind/copy rites output `bound_waystone`, both blooded binding support sets output `blooded_waystone`, old saved bound blank stacks still work; scry route, transposition route, stack caps, and dropped blank Waystone Otherwhere auto-binding restored. Remaining polish is the old dropped bound/Blooded Waystone transposition item path |
 | circle_talisman | ✅ Done | |
 | brew_bag | 🔶 Partial | Source recipe, one-stack item, eight stored throwable-brew slots, selected-slot cycling, other-hand brew insertion, stored-brew throwing, and tooltip storage view are live. Remaining: exact old GUI/radial gesture overlay, full generic-brew compatibility, and dye recoloring recipes |
 | leonards_urn | 🔶 Partial | Source `ItemLeonardsUrn` now stores current throwable splash/gas brews in source-shaped custom data, shows selected/stored foci in tooltip, cycles focus, and releases the selected stored brew without consuming it. Remaining: old GUI and exact Leonard-symbol cost/cast integration. |
