@@ -205,6 +205,8 @@ public class WitcheryItems {
     // ── Flame Imp items ────────────────────────────────────────────────────────
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> DEMONIC_CONTRACT =
             ITEMS.register("demonic_contract", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
+    public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_OWNERSHIP =
+            ITEMS.register("contract_ownership", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_BLAZE =
             ITEMS.register("contract_blaze", id -> new com.emoniph.witchery.item.DemonicContractItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<com.emoniph.witchery.item.DemonicContractItem> CONTRACT_RESIST_FIRE =
@@ -825,6 +827,10 @@ public class WitcheryItems {
         return stack.is(GULGS_GIRDLE.get()) || stack.is(GULGS_GRUDLE.get());
     }
 
+    public static boolean isDemonicContract(ItemStack stack) {
+        return stack.is(DEMONIC_CONTRACT.get()) || stack.is(CONTRACT_OWNERSHIP.get());
+    }
+
     public static boolean isTormentContract(ItemStack stack) {
         return stack.is(TORMENT_SCROLL.get())
                 || stack.is(CONTRACT_TORMENT.get())
@@ -837,7 +843,6 @@ public class WitcheryItems {
             "brew_of_soul_anguish",
             "brew_of_soul_fear",
             "brew_of_soul_torment",
-            "contract_ownership",
             "dandelion_of_ink",
             "dandelion_of_sprouting",
             "dandelion_of_thorns",

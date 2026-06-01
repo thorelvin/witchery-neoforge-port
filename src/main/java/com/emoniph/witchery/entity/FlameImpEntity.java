@@ -175,7 +175,7 @@ public class FlameImpEntity extends Monster {
         ItemStack stack = player.getItemInHand(hand);
 
         // ── Taming with Demonic Contract ──
-        if (!isOwned() && stack.is(WitcheryItems.DEMONIC_CONTRACT.get())) {
+        if (!isOwned() && WitcheryItems.isDemonicContract(stack)) {
             if (player.experienceLevel < 25 && !player.isCreative()) {
                 player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.noxp", getDisplayName())
                         .withStyle(s -> s.withColor(0xAA0000)), false);

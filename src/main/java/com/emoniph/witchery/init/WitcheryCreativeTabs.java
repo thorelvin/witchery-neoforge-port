@@ -462,6 +462,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WEAVE_NIGHTMARES.get(),
                 WitcheryItems.WEAVE_INTENSITY.get(),
                 WitcheryItems.DEMONIC_CONTRACT.get(),
+                WitcheryItems.CONTRACT_OWNERSHIP.get(),
                 WitcheryItems.CONTRACT_BLAZE.get(),
                 WitcheryItems.CONTRACT_RESIST_FIRE.get(),
                 WitcheryItems.CONTRACT_EVAPORATE.get(),
@@ -497,8 +498,7 @@ public class WitcheryCreativeTabs {
                 "poppy_of_ink", "poppy_of_sprouting", "poppy_of_thorns", "poppy_of_webs",
                 "shrub_of_ink", "shrub_of_sprouting", "shrub_of_thorns", "shrub_of_webs", "trapped_plant");
         addLegacy(output, accepted,
-                "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment",
-                "contract_ownership");
+                "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment");
         addLegacy(output, accepted,
                 "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
