@@ -447,9 +447,13 @@ public class WitcheryItems {
 
     // ── Brews — implemented ───────────────────────────────────────────────────
     public static final DeferredItem<Item> BREW_OF_VINES          = ITEMS.register("brew_of_vines", id -> new com.emoniph.witchery.item.BrewOfVinesItem(itemProps(id)));
+    public static final DeferredItem<Item> VINES_BREW             = ITEMS.register("vines_brew", id -> new com.emoniph.witchery.item.BrewOfVinesItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_WEBS           = ITEMS.register("brew_of_webs", id -> new com.emoniph.witchery.item.BrewOfWebsItem(itemProps(id)));
+    public static final DeferredItem<Item> WEBS_BREW              = ITEMS.register("webs_brew", id -> new com.emoniph.witchery.item.BrewOfWebsItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_THORNS         = ITEMS.register("brew_of_thorns", id -> new com.emoniph.witchery.item.BrewOfThornsItem(itemProps(id)));
+    public static final DeferredItem<Item> THORNS_BREW            = ITEMS.register("thorns_brew", id -> new com.emoniph.witchery.item.BrewOfThornsItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_INK            = ITEMS.register("brew_of_ink", id -> new com.emoniph.witchery.item.BrewOfInkItem(itemProps(id)));
+    public static final DeferredItem<Item> INK_BREW               = ITEMS.register("ink_brew", id -> new com.emoniph.witchery.item.BrewOfInkItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SPROUTING      = ITEMS.register("brew_of_sprouting", id -> new com.emoniph.witchery.item.BrewOfSproutingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_ICE            = ITEMS.register("brew_of_ice", id -> new com.emoniph.witchery.item.BrewOfIceItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_THE_DEPTHS     = ITEMS.register("brew_of_the_depths", id -> new com.emoniph.witchery.item.BrewOfTheDepthsItem(itemProps(id)));
@@ -724,10 +728,6 @@ public class WitcheryItems {
             "brew_bottle",
             "splash_brew_bottle",
             "lingering_brew_bottle",
-            "vines_brew",
-            "webs_brew",
-            "thorns_brew",
-            "ink_brew",
             "sprouting_brew",
             "erosion_brew",
             "raising_brew",

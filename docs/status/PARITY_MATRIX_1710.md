@@ -12,7 +12,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 
 | Category | Source count | Port status |
 |---|---|---|
-| Items (classes) | ~55 item classes (~120+ variants) | 279 functional + 107 placeholders |
+| Items (classes) | ~55 item classes (~120+ variants) | 283 functional + 96 placeholders |
 | Blocks | ~98 distinct types | ~99 registered; ~12 families missing |
 | Entities | 56 | 26 registered; 18+ missing |
 | Brew actions/effects | ~95 brew effects | ~35 items; dynamic action system missing |
@@ -323,8 +323,8 @@ All currently implemented as fixed items only, not as composable cauldron action
 | Brew of Love | ✅ Item | ❌ No action |
 | Brew of the Grotesque | ✅ Item | ❌ No action |
 | Brew of Revealing | ✅ Item | ❌ No action |
-| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action |
-| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action |
+| Brew of Vines / Webs / Thorns / Ice / Sprouting | ✅ Item | ❌ No action; Vines/Webs/Thorns Resurrected aliases map to the canonical direct-use items |
+| Brew of Ink / Hitchcock / Bats / Frogs Tongue | ✅ Item | ❌ No action; Ink Resurrected alias maps to the canonical direct-use item |
 | Brew of Cursed Leaping / Depths / Soaring | ✅ Item | ❌ No action |
 | Brew of Hollow Tears / Substitution / Grave | ✅ Item | ❌ No action |
 | Solidifying brews (stone/dirt/sand/etc.) | ✅ Item | ❌ No action |
