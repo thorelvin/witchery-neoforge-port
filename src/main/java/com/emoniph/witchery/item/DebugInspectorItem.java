@@ -10,6 +10,7 @@ import com.emoniph.witchery.ritual.RitualCircleDetector;
 import com.emoniph.witchery.ritual.RitualExecutor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +104,8 @@ public class DebugInspectorItem extends Item {
         if (level.isClientSide() || player == null) return InteractionResult.PASS;
 
         // Altar inspection
-        if (level.getBlockState(pos).is(WitcheryBlocks.ALTAR.get())
+        BlockState state = level.getBlockState(pos);
+        if (state.is(WitcheryBlocks.ALTAR.get())
                 && level.getBlockEntity(pos) instanceof AltarBlockEntity altar) {
             String msg = "[Inspector] Altar @ " + pos.toShortString() + "\n"
                     + "  power=" + altar.getPower() + "/" + altar.getEffectiveMaxPower()
@@ -111,6 +114,15 @@ public class DebugInspectorItem extends Item {
                     + "  range=" + altar.getRange()
                     + "  enhancement=" + altar.getEnhancementLevel() + "\n"
                     + "  validStructure=" + altar.hasValidStructure();
+            player.displayClientMessage(Component.literal(msg), false);
+            return InteractionResult.SUCCESS_SERVER;
+        }
+
+        if (!state.is(WitcheryBlockTags.CHALK_CIRCLES)) {
+            String msg = "[Inspector] Block @ " + pos.toShortString() + "\n"
+                    + "  block=" + BuiltInRegistries.BLOCK.getKey(state.getBlock())
+                    + "\n"
+                    + "  no ritual glyph selected";
             player.displayClientMessage(Component.literal(msg), false);
             return InteractionResult.SUCCESS_SERVER;
         }
