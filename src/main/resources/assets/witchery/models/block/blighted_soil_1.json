@@ -1,10 +1,9 @@
 {
-  "render_type": "minecraft:cutout_mipped",
-  "parent": "witchery:block/blighted_soil",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
     "bottom": "witchery:block/blighted_soil_bottom_1",
-    "blight_side": "witchery:block/blighted_soil_side_overlay_1",
-    "blight_top": "witchery:block/blighted_soil_top_overlay_1",
-    "particle": "witchery:block/blighted_soil_bottom_1"
+    "side": "witchery:block/blighted_soil_side_1",
+    "top": "witchery:block/blighted_soil_top_1",
+    "particle": "witchery:block/blighted_soil_side_1"
   }
 }

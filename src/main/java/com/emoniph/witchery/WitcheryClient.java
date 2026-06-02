@@ -142,9 +142,6 @@ public class WitcheryClient {
         event.register((state, level, pos, tintIndex) ->
                 tintIndex == 0 ? (level != null && pos != null ? 0x208030 : 0x71C35C) : -1,
                 WitcheryBlocks.LEAPING_LILY.get());
-        event.register((state, level, pos, tintIndex) ->
-                tintIndex == 0 ? (level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : 0x71C35C) : -1,
-                WitcheryBlocks.BLIGHTED_SOIL.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {

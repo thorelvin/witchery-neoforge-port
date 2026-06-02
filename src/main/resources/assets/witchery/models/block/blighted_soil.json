@@ -1,48 +1,9 @@
 {
-  "render_type": "minecraft:cutout_mipped",
-  "parent": "minecraft:block/block",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
     "bottom": "witchery:block/blighted_soil_bottom_0",
-    "side": "minecraft:block/grass_block_side",
-    "grass_overlay": "minecraft:block/grass_block_side_overlay",
-    "top": "minecraft:block/grass_block_top",
-    "blight_side": "witchery:block/blighted_soil_side_overlay_0",
-    "blight_top": "witchery:block/blighted_soil_top_overlay_0",
-    "particle": "witchery:block/blighted_soil_bottom_0"
-  },
-  "elements": [
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "down": { "uv": [0, 0, 16, 16], "texture": "#bottom", "cullface": "down" },
-        "up": { "uv": [0, 0, 16, 16], "texture": "#top", "cullface": "up", "tintindex": 0 },
-        "north": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "north" },
-        "south": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south" },
-        "west": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west" },
-        "east": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east" }
-      }
-    },
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "north": { "uv": [0, 0, 16, 16], "texture": "#grass_overlay", "tintindex": 0, "cullface": "north" },
-        "south": { "uv": [0, 0, 16, 16], "texture": "#grass_overlay", "tintindex": 0, "cullface": "south" },
-        "west": { "uv": [0, 0, 16, 16], "texture": "#grass_overlay", "tintindex": 0, "cullface": "west" },
-        "east": { "uv": [0, 0, 16, 16], "texture": "#grass_overlay", "tintindex": 0, "cullface": "east" }
-      }
-    },
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "up": { "uv": [0, 0, 16, 16], "texture": "#blight_top", "cullface": "up" },
-        "north": { "uv": [0, 0, 16, 16], "texture": "#blight_side", "cullface": "north" },
-        "south": { "uv": [0, 0, 16, 16], "texture": "#blight_side", "cullface": "south" },
-        "west": { "uv": [0, 0, 16, 16], "texture": "#blight_side", "cullface": "west" },
-        "east": { "uv": [0, 0, 16, 16], "texture": "#blight_side", "cullface": "east" }
-      }
-    }
-  ]
+    "side": "witchery:block/blighted_soil_side_0",
+    "top": "witchery:block/blighted_soil_top_0",
+    "particle": "witchery:block/blighted_soil_side_0"
+  }
 }
