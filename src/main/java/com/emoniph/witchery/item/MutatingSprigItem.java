@@ -77,7 +77,7 @@ public class MutatingSprigItem extends Item {
         if (tryCreateWildBramble(level, pos, state)
                 || tryCreateVoidBramble(level, pos, state)
                 || tryCreateWormwood(level, pos, state)) {
-            return finishUse(ctx, pos, true);
+            return finishUse(ctx, pos, false);
         }
 
         if (tryMutate(level, pos, state)) {
@@ -350,6 +350,7 @@ public class MutatingSprigItem extends Item {
 
         clearHorizontalRing(level, pos);
         clearDiagonalGrasspers(level, pos);
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         transformVerticalColumn(level, pos, Blocks.CACTUS, WitcheryBlocks.BRAMBLE.get(), 5);
         return true;
     }
@@ -364,6 +365,7 @@ public class MutatingSprigItem extends Item {
 
         clearHorizontalRing(level, pos);
         clearDiagonalGrasspers(level, pos);
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         transformVerticalColumn(level, pos, Blocks.SUGAR_CANE, WitcheryBlocks.VOID_BRAMBLE.get(), 16);
         return true;
     }
@@ -390,6 +392,7 @@ public class MutatingSprigItem extends Item {
 
         clearHorizontalRing(level, pos);
         level.setBlock(pos, WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), 3);
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -564,6 +567,7 @@ public class MutatingSprigItem extends Item {
             BlockPos cursor = pos.above(offset);
             if (level.getBlockState(cursor).is(original)) {
                 level.setBlock(cursor, replacement.defaultBlockState(), 3);
+                spawnSilentSlimeColumnEffects(level, cursor);
             }
         }
     }
@@ -596,6 +600,16 @@ public class MutatingSprigItem extends Item {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, x, y, z, 8,
                     horizontalSpread, 1.0D, horizontalSpread, 0.1D);
+        }
+    }
+
+    private static void spawnSilentSlimeColumnEffects(Level level, BlockPos pos) {
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY();
+        double z = pos.getZ() + 0.5D;
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, x, y, z, 16,
+                    0.5D, 0.5D, 0.5D, 0.1D);
         }
     }
 
