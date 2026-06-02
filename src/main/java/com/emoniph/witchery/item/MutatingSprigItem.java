@@ -71,9 +71,8 @@ public class MutatingSprigItem extends Item {
             return finishUse(ctx, pos, true);
         }
 
-        MutationResult mutationResult = tryMutate(level, pos, state);
-        if (mutationResult.mutated()) {
-            return finishUse(ctx, pos, mutationResult.playDefaultEffects());
+        if (tryMutate(level, pos, state)) {
+            return finishUse(ctx, pos, false);
         }
         return InteractionResult.PASS;
     }
@@ -90,14 +89,16 @@ public class MutatingSprigItem extends Item {
         return InteractionResult.CONSUME;
     }
 
-    private static MutationResult tryMutate(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryMutate(Level level, BlockPos pos, BlockState state) {
         if (state.is(Blocks.GRASS_BLOCK)) {
             level.setBlock(pos, Blocks.MYCELIUM.defaultBlockState(), 3);
-            return MutationResult.DEFAULT_EFFECTS;
+            spawnBasicMutationEffects(level, pos);
+            return true;
         }
         if (state.is(Blocks.MYCELIUM)) {
             level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
-            return MutationResult.DEFAULT_EFFECTS;
+            spawnBasicMutationEffects(level, pos);
+            return true;
         }
         if (state.is(Blocks.DIRT) && hasWaterAbove(level, pos)) {
             setBlockToClay(level, pos);
@@ -105,9 +106,9 @@ public class MutatingSprigItem extends Item {
             setBlockToClay(level, pos.west());
             setBlockToClay(level, pos.south());
             setBlockToClay(level, pos.north());
-            return MutationResult.SOURCE_EFFECTS;
+            return true;
         }
-        return MutationResult.NONE;
+        return false;
     }
 
     private static boolean tryCreateGrasspers(Level level, BlockPos pos, BlockState state) {
@@ -567,14 +568,22 @@ public class MutatingSprigItem extends Item {
         return level.getBlockState(pos.above()).is(Blocks.WATER);
     }
 
+    private static void spawnBasicMutationEffects(Level level, BlockPos pos) {
+        spawnInstantSpellEffects(level, pos, 1.0D, 8);
+    }
+
     private static void spawnClayEffects(Level level, BlockPos pos) {
+        spawnInstantSpellEffects(level, pos, 1.5D, 16);
+    }
+
+    private static void spawnInstantSpellEffects(Level level, BlockPos pos, double yOffset, int count) {
         double x = pos.getX() + 0.5D;
-        double y = pos.getY() + 1.5D;
+        double y = pos.getY() + yOffset;
         double z = pos.getZ() + 0.5D;
         level.playSound(null, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0F),
-                    x, y, z, 16, 0.5D, 0.5D, 0.5D, 0.0D);
+                    x, y, z, count, 0.5D, 0.5D, 0.5D, 0.0D);
         }
     }
 
@@ -594,23 +603,4 @@ public class MutatingSprigItem extends Item {
         }
     }
 
-    private enum MutationResult {
-        NONE(false),
-        DEFAULT_EFFECTS(true),
-        SOURCE_EFFECTS(false);
-
-        private final boolean playDefaultEffects;
-
-        MutationResult(boolean playDefaultEffects) {
-            this.playDefaultEffects = playDefaultEffects;
-        }
-
-        private boolean mutated() {
-            return this != NONE;
-        }
-
-        private boolean playDefaultEffects() {
-            return playDefaultEffects;
-        }
-    }
 }
