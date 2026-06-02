@@ -34,8 +34,12 @@ public class LeapingLilyBlock extends WaterlilyBlock {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                              InsideBlockEffectApplier _effectApplier, boolean _isMoved) {
         if (!level.isClientSide() && entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.SPEED, 10, 0, true, false));
-            living.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, 10, 4, true, false));
+            if (!living.hasEffect(MobEffects.SPEED)) {
+                living.addEffect(new MobEffectInstance(MobEffects.SPEED, 10, 0, true, false));
+            }
+            if (!living.hasEffect(MobEffects.JUMP_BOOST)) {
+                living.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, 10, 4, true, false));
+            }
         }
     }
 }
