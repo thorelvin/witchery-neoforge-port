@@ -130,10 +130,14 @@ public class RubySlippersItem extends Item {
         // Try bed/respawn position via 1.21.1 API
         ServerPlayer.RespawnConfig respawnConfig = player.getRespawnConfig();
         if (respawnConfig != null && respawnConfig.respawnData() != null) {
-            ServerLevel respawnDim = server.getLevel(respawnConfig.respawnData().dimension());
-            if (respawnDim != null) {
-                dest = respawnDim;
-                target = respawnConfig.respawnData().pos();
+            var respawnData = respawnConfig.respawnData();
+            var respawnDimension = respawnData.dimension();
+            if (respawnDimension.equals(player.level().dimension()) || respawnDimension.equals(Level.OVERWORLD)) {
+                ServerLevel respawnDim = server.getLevel(respawnDimension);
+                if (respawnDim != null) {
+                    dest = respawnDim;
+                    target = respawnData.pos();
+                }
             }
         }
 
