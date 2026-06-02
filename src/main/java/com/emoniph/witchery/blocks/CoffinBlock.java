@@ -89,11 +89,18 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
 
     @Nullable @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        if (ctx.getClickedFace() != Direction.UP) {
+            return null;
+        }
         Direction facing = ctx.getHorizontalDirection();
         BlockPos foot = ctx.getClickedPos();
         BlockPos head = foot.relative(facing);
         Level level = ctx.getLevel();
-        if (level.getBlockState(head).canBeReplaced(ctx) && level.getWorldBorder().isWithinBounds(head)) {
+        if (level.getBlockState(foot).isAir()
+                && level.getBlockState(head).isAir()
+                && Block.canSupportCenter(level, foot.below(), Direction.UP)
+                && Block.canSupportCenter(level, head.below(), Direction.UP)
+                && level.getWorldBorder().isWithinBounds(head)) {
             return defaultBlockState().setValue(FACING, facing);
         }
         return null; // not enough space

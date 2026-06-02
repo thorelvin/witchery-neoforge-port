@@ -370,7 +370,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f));
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
     public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
-    public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f).noOcclusion());
+    public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
     public static final DeferredBlock<com.emoniph.witchery.blocks.BloodCrucibleBlock> BLOOD_CRUCIBLE = registerBlock("blood_crucible",
             com.emoniph.witchery.blocks.BloodCrucibleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
