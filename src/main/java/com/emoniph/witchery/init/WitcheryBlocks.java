@@ -424,6 +424,18 @@ public class WitcheryBlocks {
                     .isRedstoneConductor((state, level, pos) -> false)
                     .isSuffocating((state, level, pos) -> false)
                     .isViewBlocking((state, level, pos) -> false));
+    public static final DeferredBlock<LightBlock> LIGHT = registerBlock("light", LightBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE)
+                    .replaceable()
+                    .air()
+                    .lightLevel(s -> 15)
+                    .noCollision()
+                    .noOcclusion()
+                    .noLootTable()
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER));
     public static final DeferredBlock<FlowingSpiritBlock> FLOWING_SPIRIT = registerBlock("flowing_spirit",
             FlowingSpiritBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());

@@ -48,7 +48,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | boline, arthana | ✅ Done | Ritual tools |
 | attuned_stone / charged | ✅ Done | |
 | quartz_sphere / charged_quartz_sphere | ✅ Done | Sun Collector chain |
-| sun_grenade | ✅ Done | Throw/return |
+| sun_grenade | ✅ Done | Throw, sustained hidden-light release, undead fire, final Nausea burst, Quartz Sphere return |
 | player_compass | ✅ Done | Taglock bind, direction report |
 | waystone (blank/bound/blooded) | ✅ Done | Blank, location-bound, and entity-bound source IDs live; bind/copy rites output `bound_waystone`, both blooded binding support sets output `blooded_waystone`, old saved bound blank stacks still work; scry route, transposition route, stack caps, and dropped blank Waystone Otherwhere auto-binding restored. Remaining polish is the old dropped bound/Blooded Waystone transposition item path |
 | circle_talisman | ✅ Done | |
@@ -261,7 +261,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | egassy | ✅ Done | Custom NPC, wart layer, quotes |
 | soulfire (projectile) | ✅ Done | |
 | thrown_brew (projectile) | ✅ Done | |
-| sun_grenade (projectile) | ✅ Done | |
+| sun_grenade (projectile) | ✅ Done | Source-style 200-tick release window with hidden `witchery:light` block, active undead fire, final undead/Nausea burst, and cleanup |
 | ~~**EntityLilith**~~ | ✅ Done | `LilithEntity` + `ElleEntity` are registered/ported; remaining late vampire gates belong to the progression lane, not missing entity parity |
 | ~~**EntityLeonard**~~ | ✅ Done | `LeonardEntity` registered/ported with custom boss behavior; exact brew summon wiring remains in the dynamic cauldron lane |
 | ~~**EntityLostSoul**~~ | ✅ Done | `LostSoulEntity` registered/ported as Leonard's immunity-phase mob |
