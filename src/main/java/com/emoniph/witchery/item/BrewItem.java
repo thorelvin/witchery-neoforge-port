@@ -1,13 +1,14 @@
 package com.emoniph.witchery.item;
 
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.InteractionResult;
 
 /**
  * Base class for drinkable Witchery brews.
@@ -43,8 +44,25 @@ public abstract class BrewItem extends Item {
     public ItemUseAnimation getUseAnimation(ItemStack stack) { return ItemUseAnimation.DRINK; }
 
     @Override
-    public net.minecraft.world.InteractionResult use(Level level, Player player, net.minecraft.world.InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         return net.minecraft.world.item.ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    protected static void consumeBrewBottle(Player player, InteractionHand hand, ItemStack stack) {
+        if (player != null && player.getAbilities().instabuild) {
+            return;
+        }
+
+        stack.shrink(1);
+        ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
+        if (player == null || !player.getInventory().add(bottle)) {
+            if (player != null) {
+                player.drop(bottle, false);
+            }
+        }
+        if (player != null) {
+            player.setItemInHand(hand, stack);
+        }
     }
 
     protected void applyEffect(Player player, Level level) { }

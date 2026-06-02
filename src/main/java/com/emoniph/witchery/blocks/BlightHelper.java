@@ -101,23 +101,28 @@ public final class BlightHelper {
                 random.nextInt(3) - 1,
                 random.nextInt(LOCAL_SPREAD * 2 + 1) - LOCAL_SPREAD);
         if (!target.equals(origin) && hasAdjacentBlight(level, target)) {
-            convertTarget(level, target, random);
+            convertTarget(level, target);
         }
     }
 
-    public static boolean convertTarget(ServerLevel level, BlockPos pos, RandomSource random) {
-        return convertTarget(level, pos, random, true);
+    public static boolean convertTarget(ServerLevel level, BlockPos pos) {
+        return convertTarget(level, pos, true);
     }
 
-    public static boolean seedBlight(ServerLevel level, BlockPos pos, RandomSource random) {
-        return convertTarget(level, pos, random, false);
+    public static boolean seedBlight(ServerLevel level, BlockPos pos) {
+        return convertTarget(level, pos, false);
+    }
+
+    public static boolean canPlaceHeartAt(LevelReader level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.canBeReplaced() && !state.hasBlockEntity();
     }
 
     public static void placeHeart(ServerLevel level, BlockPos heartPos, boolean seedAdjacent) {
         level.setBlock(heartPos, WitcheryBlocks.BLIGHT_HEART.get().defaultBlockState(), Block.UPDATE_ALL);
         if (seedAdjacent) {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                seedBlight(level, heartPos.relative(direction), level.random);
+                seedBlight(level, heartPos.relative(direction));
             }
         }
         level.playSound(null, heartPos, SoundEvents.WITCH_THROW, SoundSource.BLOCKS,
@@ -132,7 +137,7 @@ public final class BlightHelper {
                 22, 0.45D, 0.45D, 0.45D, 0.02D);
     }
 
-    private static boolean convertTarget(ServerLevel level, BlockPos pos, RandomSource random, boolean requireAdjacentBlight) {
+    private static boolean convertTarget(ServerLevel level, BlockPos pos, boolean requireAdjacentBlight) {
         if (isProtected(level, pos)) {
             return false;
         }

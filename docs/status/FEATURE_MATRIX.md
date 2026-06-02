@@ -468,6 +468,15 @@ Custom brew plant-target brews now obtainable: Foulness, Foaming, Poison (see Cu
 
 ---
 
+## Experimental Branch: Blight / Taint Prototype
+
+| Feature | Status | Notes |
+|---|---:|---|
+| Blight blocks and spread | Prototype | `test/blight-taint` only. Blight Heart, Blight Fibre, Blighted Soil, Blighted Stone, and Blighted Log are live, with heart-radius spread, rowan/chalk/quartz/concrete-style barriers, orphan decay, smoke/witch placement FX, and cleansing support. Blight Heart now drops itself with Silk Touch and otherwise drops Blight Ichor. Needs in-game QA for spread pacing, barrier readability, Silk Touch harvesting, and multiplayer chunk-edge behavior. |
+| Rite and brew seeding | Prototype | Rite of Blight places a Blight Heart at a random valid surface location within 150 blocks, with a center fallback. Brew of Blight is a purple glinting brew with a kettle recipe and places a Blight Heart where poured or, when drunk, at/above the player if replaceable. Shared placement checks now keep rite and brew heart targets aligned. Needs in-game QA for surface selection, bottle return, visual distinctness, and cleanup balance against Brew of Cleansing. |
+
+---
+
 ## Open / deferred
 
 | Item | Priority | Notes |

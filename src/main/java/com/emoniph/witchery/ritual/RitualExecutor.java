@@ -2851,7 +2851,7 @@ public class RitualExecutor {
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE,
                     new BlockPos(center.getX() + dx, center.getY(), center.getZ() + dz));
             BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-            if (level.getBlockState(heartPos).canBeReplaced()) {
+            if (BlightHelper.canPlaceHeartAt(level, heartPos)) {
                 return Optional.of(heartPos);
             }
         }
@@ -2861,7 +2861,7 @@ public class RitualExecutor {
     private static BlockPos fallbackBlightHeartPos(ServerLevel level, BlockPos center) {
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
         BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-        if (!level.getBlockState(heartPos).canBeReplaced()) {
+        if (!BlightHelper.canPlaceHeartAt(level, heartPos)) {
             return null;
         }
         return heartPos;
@@ -2907,8 +2907,8 @@ public class RitualExecutor {
             level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
         }
 
-        if (BlightHelper.seedBlight(level, abovePos, level.random)
-                || BlightHelper.seedBlight(level, groundPos, level.random)) {
+        if (BlightHelper.seedBlight(level, abovePos)
+                || BlightHelper.seedBlight(level, groundPos)) {
             return;
         }
 
