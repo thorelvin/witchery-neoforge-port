@@ -352,7 +352,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
     public static final DeferredBlock<AlluringSkullBlock> ALLURING_SKULL = registerBlock("alluring_skull",
             AlluringSkullBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(1.0f, 1000.0f).lightLevel(state -> 8).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0f, 1000.0f).lightLevel(state -> 8).noOcclusion());
     public static final DeferredBlock<DemonHeartBlock> DEMON_HEART = registerBlock("demon_heart",
             DemonHeartBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(1.0f).lightLevel(state -> 3).noOcclusion());
