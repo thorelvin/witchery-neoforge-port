@@ -2,8 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "bottom": "witchery:block/blighted_soil_bottom_0",
-    "side": "minecraft:block/dirt",
-    "side_blight": "witchery:block/blighted_soil_side_blight_0",
+    "side": "witchery:block/blighted_soil_side_0",
     "top": "witchery:block/blighted_soil_top_0",
     "particle": "minecraft:block/dirt"
   },
@@ -18,16 +17,6 @@
         "south": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south", "tintindex": 0 },
         "west": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west", "tintindex": 0 },
         "east": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east", "tintindex": 0 }
-      }
-    },
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "north": { "uv": [0, 0, 16, 16], "texture": "#side_blight", "cullface": "north" },
-        "south": { "uv": [0, 0, 16, 16], "texture": "#side_blight", "cullface": "south" },
-        "west": { "uv": [0, 0, 16, 16], "texture": "#side_blight", "cullface": "west" },
-        "east": { "uv": [0, 0, 16, 16], "texture": "#side_blight", "cullface": "east" }
       }
     }
   ]
