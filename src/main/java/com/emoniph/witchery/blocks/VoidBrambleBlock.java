@@ -13,11 +13,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -87,21 +87,44 @@ public class VoidBrambleBlock extends BaseEntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                              InsideBlockEffectApplier _effectApplier, boolean _isMoved) {
-        if (level.isClientSide() || !(entity instanceof LivingEntity living)) {
+        if (level.isClientSide() || !(entity instanceof LivingEntity)) {
             return;
         }
 
-        for (int i = 0; i < 16; i++) {
-            int targetX = pos.getX() + level.random.nextInt(TELEPORT_DISTANCE * 2) - TELEPORT_DISTANCE;
-            int targetZ = pos.getZ() + level.random.nextInt(TELEPORT_DISTANCE * 2) - TELEPORT_DISTANCE;
-            BlockPos top = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(targetX, pos.getY(), targetZ));
-            double x = targetX + 0.5;
-            double y = top.getY() + 1.0;
-            double z = targetZ + 0.5;
-            if (living.randomTeleport(x, y, z, true)) {
-                return;
-            }
+        teleportRandomly(level, pos, entity, TELEPORT_DISTANCE);
+    }
+
+    private static void teleportRandomly(Level level, BlockPos origin, Entity entity, int distance) {
+        int targetX = origin.getX() + level.random.nextInt(distance * 2) - distance;
+        int targetZ = origin.getZ() + level.random.nextInt(distance * 2) - distance;
+        int y = origin.getY();
+        int minY = level.getMinY();
+        int maxY = Math.min(Math.min(origin.getY() + 64, 250), level.getMaxY() - 4);
+
+        while (y >= minY && !isSolidAt(level, targetX, y, targetZ)) {
+            y--;
         }
+
+        while (y < maxY && !isValidLandingBase(level, targetX, y, targetZ)) {
+            y++;
+        }
+
+        if (y > minY && y < maxY) {
+            entity.teleportTo(targetX + 0.5, y + 1.0, targetZ + 0.5);
+        }
+    }
+
+    private static boolean isValidLandingBase(Level level, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        return level.getBlockState(pos).isSolid()
+                && !level.getBlockState(pos).is(Blocks.BEDROCK)
+                && level.isEmptyBlock(pos.above())
+                && level.isEmptyBlock(pos.above(2))
+                && level.isEmptyBlock(pos.above(3));
+    }
+
+    private static boolean isSolidAt(Level level, int x, int y, int z) {
+        return level.getBlockState(new BlockPos(x, y, z)).isSolid();
     }
 
     @Override
