@@ -12,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -42,6 +44,9 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     private static final float SWORD_RANGE = 3.5F;
     private static final int   SHOUT_RADIUS = 20;
+    private static final int MAX_BLOOD = 500;
+    private static final int LOW_BLOOD = 250;
+    private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
 
     // ── Quote pools ───────────────────────────────────────────────────────────
 
@@ -95,6 +100,8 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     private static final EntityDataAccessor<Integer> GUARD_TYPE =
             SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> BLOOD_LEVEL =
+            SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.INT);
 
     private RangedBowAttackGoal<VillageGuardEntity> bowGoal;
     private MeleeAttackGoal                         swordGoal;
@@ -130,10 +137,34 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(GUARD_TYPE, 0);
+        builder.define(BLOOD_LEVEL, MAX_BLOOD);
     }
 
     public int getGuardType() { return entityData.get(GUARD_TYPE); }
     public void setGuardType(int type) { entityData.set(GUARD_TYPE, Math.floorMod(type, 2)); }
+    public int getBlood() { return entityData.get(BLOOD_LEVEL); }
+    public void setBlood(int blood) { entityData.set(BLOOD_LEVEL, Math.clamp(blood, 0, MAX_BLOOD)); }
+
+    public int takeBlood(int quantity, LivingEntity attacker) {
+        MobEffectInstance slowness = getEffect(MobEffects.SLOWNESS);
+        boolean transfixed = slowness != null && slowness.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER;
+        int blood = getBlood();
+        int adjustedQuantity = (int) Math.ceil(quantity * 0.66F);
+        int remaining = Math.max(blood - adjustedQuantity, 0);
+        int taken = blood - remaining;
+        setBlood(remaining);
+        if (level() instanceof ServerLevel sl) {
+            DamageSource source = attacker instanceof Player player
+                    ? attacker.damageSources().playerAttack(player)
+                    : attacker.damageSources().mobAttack(attacker);
+            if (blood < LOW_BLOOD) {
+                hurtServer(sl, source, 2.0F);
+            } else if (!transfixed) {
+                hurtServer(sl, source, 0.5F);
+            }
+        }
+        return taken;
+    }
 
     // ── Goals ─────────────────────────────────────────────────────────────────
 
@@ -312,11 +343,13 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("GuardType", getGuardType());
+        tag.putInt("BloodLevel", getBlood());
     }
 
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         setGuardType(tag.getIntOr("GuardType", 0));
+        setBlood(tag.getIntOr("BloodLevel", MAX_BLOOD));
     }
 }

@@ -295,7 +295,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** In the NeoForge port, a level 9+ vampire can spend 125 Blood Power with an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
 - **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current port's starting blood.
 - **Stats:** N/A
-- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path is present in practical form, and vampire-blood goblets can convert transfixed, fully drained Villagers near Coffins into Vampire mobs. Village Guard conversion is still follow-up work.
+- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path is present in practical form, and vampire-blood goblets can convert transfixed, fully drained Villagers or Village Guards near Coffins into Vampire mobs.
 
 ## Glass Goblet
 - **Obtain:** Craft from three Glass Bottles and one Glass using the Resurrected goblet recipe shape.
@@ -319,7 +319,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Be a vampire in the current NeoForge port and empty-hand interact with a living target.
 - **Use:** Living targets restore vampire blood; villagers now track a persisted 500-blood store. Awake villagers yield a reduced drain, while sleeping or mesmerised villagers yield the full drain and can be depleted.
 - **Stats:** Villager blood cap 500; low-blood harm begins below 250 stored blood.
-- **Notes:** The old level quest counters, guard reactions, villager conversion, and full 10-level progression are still follow-up work.
+- **Notes:** The old level quest counters, broader guard reactions/AI polish, and full 10-level progression are still follow-up work.
 
 ## Observations of an Immortal
 - **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.

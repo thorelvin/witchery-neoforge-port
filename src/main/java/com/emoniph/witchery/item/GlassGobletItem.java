@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.ElleEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
@@ -113,13 +114,21 @@ public class GlassGobletItem extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity target, InteractionHand hand) {
-        if (!full || hasChickenBlood(stack) || !(target instanceof Villager villager)) {
+        if (!full || hasChickenBlood(stack)) {
             return super.interactLivingEntity(stack, user, target, hand);
         }
         if (!(user instanceof ServerPlayer player) || !(user.level() instanceof ServerLevel level)) {
             return InteractionResult.SUCCESS;
         }
-        if (tryUseOnVillagerForConversion(stack, level, player, villager)) {
+        boolean converted;
+        if (target instanceof Villager villager) {
+            converted = tryUseOnTargetForConversion(stack, level, player, villager, getVillagerBlood(villager));
+        } else if (target instanceof VillageGuardEntity guard) {
+            converted = tryUseOnTargetForConversion(stack, level, player, guard, guard.getBlood());
+        } else {
+            return super.interactLivingEntity(stack, user, target, hand);
+        }
+        if (converted) {
             player.setItemInHand(hand, new ItemStack(WitcheryItems.GLASS_GOBLET.get()));
         }
         return InteractionResult.SUCCESS_SERVER;
@@ -256,52 +265,53 @@ public class GlassGobletItem extends Item {
         return -1;
     }
 
-    private static boolean tryUseOnVillagerForConversion(ItemStack stack, ServerLevel level, ServerPlayer player, Villager villager) {
+    private static boolean tryUseOnTargetForConversion(ItemStack stack, ServerLevel level, ServerPlayer player,
+                                                       LivingEntity target, int blood) {
         if (!hasBloodOwner(stack)) {
             fail(player, "item.witchery.glass_goblet.failed");
             return false;
         }
-        if (!isMesmerised(villager)) {
+        if (!isMesmerised(target)) {
             fail(player, "item.witchery.glass_goblet.victim_not_transfixed");
             return false;
         }
-        if (getVillagerBlood(villager) > 0) {
+        if (blood > 0) {
             fail(player, "item.witchery.glass_goblet.victim_has_blood");
             return false;
         }
-        if (!isCoffinNear(level, villager.blockPosition())) {
+        if (!isCoffinNear(level, target.blockPosition())) {
             fail(player, "item.witchery.glass_goblet.needs_coffin");
             return false;
         }
 
-        if (!convertVillagerToVampire(level, villager)) {
+        if (!convertToVampire(level, target)) {
             fail(player, "item.witchery.glass_goblet.failed");
             return false;
         }
         maybeAdvanceVampireConversionOwner(stack, level, player);
-        level.playSound(null, villager.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
+        level.playSound(null, target.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
                 level.random.nextFloat() * 0.1F + 0.9F);
         level.sendParticles(DustParticleOptions.REDSTONE,
-                villager.getX(),
-                villager.getY() + villager.getBbHeight() * 0.5D,
-                villager.getZ(),
-                16, villager.getBbWidth() * 0.5D, villager.getBbHeight() * 0.5D,
-                villager.getBbWidth() * 0.5D, 0.0D);
+                target.getX(),
+                target.getY() + target.getBbHeight() * 0.5D,
+                target.getZ(),
+                16, target.getBbWidth() * 0.5D, target.getBbHeight() * 0.5D,
+                target.getBbWidth() * 0.5D, 0.0D);
         return true;
     }
 
-    private static boolean convertVillagerToVampire(ServerLevel level, Villager villager) {
+    private static boolean convertToVampire(ServerLevel level, LivingEntity target) {
         var vampire = WitcheryEntities.VAMPIRE.get().create(level, EntitySpawnReason.CONVERSION);
         if (vampire == null) {
             return false;
         }
-        vampire.setPos(villager.getX(), villager.getY(), villager.getZ());
-        vampire.setYRot(villager.getYRot());
-        vampire.setXRot(villager.getXRot());
+        vampire.setPos(target.getX(), target.getY(), target.getZ());
+        vampire.setYRot(target.getYRot());
+        vampire.setXRot(target.getXRot());
         vampire.setPersistenceRequired();
         vampire.finalizeSpawn(level, level.getCurrentDifficultyAt(vampire.blockPosition()),
                 EntitySpawnReason.CONVERSION, null);
-        villager.discard();
+        target.discard();
         level.addFreshEntity(vampire);
         level.levelEvent(null, 1017, vampire.blockPosition(), 0);
         return true;

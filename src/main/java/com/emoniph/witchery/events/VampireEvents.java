@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.blocks.entity.BloodCrucibleBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
@@ -277,9 +278,20 @@ public class VampireEvents {
         if (target instanceof Villager villager) {
             return drainVillagerBlood(vampire, villager);
         }
+        if (target instanceof VillageGuardEntity guard) {
+            return drainGuardBlood(vampire, guard);
+        }
         int gained = bloodValue(vampire, target);
         target.hurt(vampire.damageSources().playerAttack(vampire), 2f);
         return gained;
+    }
+
+    private static int drainGuardBlood(ServerPlayer vampire, VillageGuardEntity guard) {
+        int desired = VILLAGER_BLOOD_DRAIN;
+        if (VampireClothingUtil.isDrinkBoostActive(vampire)) {
+            desired = (desired * 3 + 1) / 2;
+        }
+        return guard.takeBlood(desired, vampire);
     }
 
     private static int drainVillagerBlood(ServerPlayer vampire, Villager villager) {
@@ -309,7 +321,7 @@ public class VampireEvents {
 
     /** Blood power gained per bite. Source: GenericEvents.java (EntityInteract handler). */
     private static int bloodPowerGain(ServerPlayer vampire, LivingEntity target, int bloodTaken) {
-        if (target instanceof Villager) {
+        if (target instanceof Villager || target instanceof VillageGuardEntity) {
             return VampireClothingUtil.isDrinkBoostActive(vampire) ? BP_GAIN_VILLAGER_BOOST : BP_GAIN_VILLAGER_BASE;
         }
         if (target instanceof Animal) {
@@ -391,7 +403,7 @@ public class VampireEvents {
 
     private static boolean canMesmerise(LivingEntity target, WitcheryPlayerData data) {
         if (data.getVampireLevel() < MESMERISE_MIN_LEVEL) return false;
-        return target instanceof Villager || target instanceof Player;
+        return target instanceof Villager || target instanceof Player || target instanceof VillageGuardEntity;
     }
 
     private static void playMesmeriseFailure(ServerPlayer vampire) {
