@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import com.emoniph.witchery.entity.WereVillagerEntity;
+import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +41,7 @@ public class WerewolfEvents {
     private static final int EFFECT_DURATION = 140;
     private static final int SYNC_INTERVAL   = 200;
     private static final float VILLAGER_INFECTION_CHANCE = 0.10F;
+    private static final float WOLFMAN_INFECTION_HEALTH_FRACTION = 0.25F;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -94,6 +96,23 @@ public class WerewolfEvents {
     // Silver damage bonus is now handled centrally in SilverEvents.onSilverDamage
 
     @SubscribeEvent
+    public static void onInfectiousWolfmanDamage(LivingDamageEvent.Pre event) {
+        if (event.getNewDamage() <= 0.0F) return;
+        if (!(event.getEntity() instanceof Villager villager)) return;
+        if (!(event.getSource().getEntity() instanceof WolfmanEntity wolfman)) return;
+        if (!wolfman.isInfectious()) return;
+        if (!(villager.level() instanceof ServerLevel level)) return;
+
+        float healthAfterDamage = villager.getHealth() - event.getNewDamage();
+        if (healthAfterDamage >= villager.getMaxHealth() * WOLFMAN_INFECTION_HEALTH_FRACTION) return;
+
+        if (spawnWereVillager(level, villager)) {
+            event.setNewDamage(0.0F);
+            villager.discard();
+        }
+    }
+
+    @SubscribeEvent
     public static void onWerewolfVillagerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Villager villager)) return;
         if (!(villager.level() instanceof ServerLevel level)) return;
@@ -102,7 +121,7 @@ public class WerewolfEvents {
         if (!isFullMoonNight(level)) return;
         if (level.random.nextFloat() >= VILLAGER_INFECTION_CHANCE) return;
 
-        if (spawnWereVillagerPlaceholder(level, villager, player)) {
+        if (spawnWereVillager(level, villager)) {
             event.setCanceled(true);
             villager.discard();
         }
@@ -121,7 +140,7 @@ public class WerewolfEvents {
         return entity.getType().is(WitcheryEntityTags.VAMPIRES);
     }
 
-    private static boolean spawnWereVillagerPlaceholder(ServerLevel level, Villager villager, ServerPlayer target) {
+    private static boolean spawnWereVillager(ServerLevel level, Villager villager) {
         WereVillagerEntity were = WitcheryEntities.WERE_VILLAGER.get()
                 .create(level, EntitySpawnReason.TRIGGERED);
         if (were == null) return false;
@@ -133,7 +152,7 @@ public class WerewolfEvents {
         were.setPersistenceRequired();
         if (villager.hasCustomName()) were.setCustomName(villager.getCustomName());
         level.addFreshEntity(were);
-        level.levelEvent(null, 1016, were.blockPosition(), 0);
+        level.levelEvent(null, 1017, were.blockPosition(), 0);
         return true;
     }
 

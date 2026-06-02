@@ -1,6 +1,8 @@
 # Next Tasks — Witchery NeoForge Port
 
-Current local delta (2026-06-02): Hobgoblin out-of-world damage immunity parity. A 1.7.10 `GenericEvents` / Resurrected `CommonEvents` comparison showed old `EntityGoblin` cancels `DamageSource.outOfWorld` in the non-player hurt branch. The port now restores that hook for `HobgoblinEntity` through `HobgoblinEvents`, while leaving `GoblinGulgEntity` and `GoblinMogEntity` out because the old boss classes do not extend `EntityGoblin`. Fresh QA should use a controlled out-of-world damage source against a Hobgoblin and confirm it survives, then confirm ordinary damage still affects it.
+Current local delta (2026-06-02): Infectious Wolfman villager-bite parity. A 1.7.10 `GenericEvents` + `Shapeshift` comparison showed infectious `EntityWolfman` bites convert Villagers into `EntityVillagerWere` once the incoming damage would drop them below 25% health, without needing the victim to die. The port now runs that source low-health damage hook for `WolfmanEntity`, spawns the existing `WereVillagerEntity`, preserves the infectious flag, cancels the old damage on conversion, and uses the source conversion level event. Fresh QA should spawn an infectious Wolfman, damage a Villager below the threshold, and confirm the Villager becomes a Were Villager immediately instead of waiting for a full-moon death roll.
+
+Previous local delta (2026-06-02): Hobgoblin out-of-world damage immunity parity. A 1.7.10 `GenericEvents` / Resurrected `CommonEvents` comparison showed old `EntityGoblin` cancels `DamageSource.outOfWorld` in the non-player hurt branch. The port now restores that hook for `HobgoblinEntity` through `HobgoblinEvents`, while leaving `GoblinGulgEntity` and `GoblinMogEntity` out because the old boss classes do not extend `EntityGoblin`. Fresh QA should use a controlled out-of-world damage source against a Hobgoblin and confirm it survives, then confirm ordinary damage still affects it.
 
 Previous local delta (2026-06-02): Player target-screening parity in the Witchery target hook. A 1.7.10 `Infusion` / Resurrected `CommonEvents` comparison showed player target changes first honor vanilla-style invisibility by clearing the target unless the invisible player is still the nearest player within 16 blocks, then clear player targets from blinded attackers before checking Witch Robes, Zombie Respect, or Necromancer Robes. The port now restores that order in `WitcheryPlayerEvents.onLivingChangeTarget`. Fresh QA should have a mob target an invisible player with and without another visible player nearby, then apply Blindness to a hostile mob and confirm it drops its player target before clothing/vampire checks matter.
 
@@ -513,7 +515,7 @@ This goal is not about one file; it is a cross-cutting vertical slice. Track eac
 | Ritual sacrifice — villager offering | Needs verify | Hell on Earth, Wither summoning, and Demon summoning already specify `VillagerEntity` sacrifice. Test each rite with a caged villager on-site. |
 | Curse rite targeting villager via taglock | Needs verify | `Curse Creature` resolves taglock UUID via `ServerLevel.getEntity`. Test: fill taglock from villager, place it in medium infernal circle, verify villager receives Wither/Slowness/Weakness. |
 | Blight villager zombification | Needs verify | Blight rite's expand loop zombifies villagers. Test: cast medium infernal Blight near a village, verify villagers turn to zombie villagers as the annulus grows. |
-| Werewolf infection of villagers | Patched - placeholder | Full-moon-night villager deaths caused by a werewolf player now roll 10% to cancel the death and spawn a marked zombie-villager placeholder with the original villager data, baby/name state, persistence, and the werewolf as its target. Decompiled Resurrected uses a true `EntityWereVillager`/`EntityWerewolf` conversion path for the final behavior; that entity/renderer remains a separate larger task. |
+| Werewolf infection of villagers | Partial - source Wolfman bite branch restored | Infectious `WolfmanEntity` damage now follows source `Shapeshift.processWolfInfection`: if the bite would leave a Villager below 25% health, the Villager is immediately replaced by the existing `WereVillagerEntity` and the damage is suppressed. The earlier full-moon-night werewolf-player kill shortcut still exists as a first-pass bridge, but exact source parity remains the level-10 transformed player bite branch, old profession/trade transfer, and a deliberate decision on the source `AllowVampireWerewolfHybrids` / current no-hybrid policy. |
 | Player Compass — scry to named villager | Deferred | Player Compass only binds to players currently. Villager support would need a non-player name resolution path. Defer unless requested. |
 
 #### Why this matters
@@ -524,7 +526,7 @@ Vanilla villages are a rich social target that the original Witchery treated as 
 
 1. Verify the three "needs verify" rows first (no code, just QA) — they may already work.
 2. Retest vampiric villager feeding now that persisted source-style drain is live.
-3. Retest werewolf villager infection in-game on a full-moon night now that the small `LivingDeathEvent` hook is live.
+3. Retest werewolf villager infection in-game: first use an infectious Wolfman bite to push a Villager below 25% health and confirm immediate Were Villager conversion, then separately retest the existing full-moon werewolf-player kill bridge until the level-10 source player-bite branch is restored.
 4. Were-Villager mob is a separate larger entity task; add it to the entities backlog if requested.
 
 ---
