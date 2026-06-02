@@ -1,12 +1,14 @@
 # QA Parity Plan
 
-Last updated: 2026-06-01
+Last updated: 2026-06-02
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
 `docs/status/NEXT_FIXES_PLAN.md` stays the ordered implementation roadmap. This file is the parity and verification harness used while working through that roadmap.
 
 Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, Spirit World feel verification, machine/storage GUI cleanup, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap. Use Witchery Resurrected layouts/assets when they preserve the original result more faithfully on NeoForge, but keep original 1.7.10 mechanics and feel as the final judge.
+
+Hobgoblin damage QA note (2026-06-02): old `EntityGoblin` cancels out-of-world damage, and the port now applies that source hook to `HobgoblinEntity` only. Use a controlled `minecraft:out_of_world` damage source or void setup on a Hobgoblin and confirm it survives unchanged, then hit it with ordinary player, mob, fall, and fire damage to confirm only the old out-of-world branch is cancelled. Do not expect Gulg or Mog to share this immunity; the old boss classes do not extend `EntityGoblin`.
 
 Circle magic QA note (2026-06-01): the current ritual playtest findings are tracked in `docs/status/RITUAL_QA_PROGRESS.md`. Confirmed in game: golden center glyph activation, source-scale small/medium/large detection, Charging with dropped items and Grassper-held offerings, Sanctity repelling a Banshee, small Protection blocking arrows/projectiles while letting players pass, portable Protection creating the larger player-blocking short-lived barrier, active ritual inspector output, upgraded altar range lookup, and the approved green protection ring pulse. Source-backed fixes from the pass also corrected portable Protection back onto the small ring, made medium Charging/Protection stop claiming incomplete larger setups, restored Banish Demon support sacrifices, restored the source translucent barrier render path, and source-shaped the Protection barrier geometry after medium player-blocking QA exposed a pass-through gap. Remaining risk is the representative-item dispatcher: source `SacrificeItem` matched unordered dropped/Grassper sacrifices, while this port still has many per-rite `ItemEntity` offering records that need a deliberate transaction refactor before universal Grassper parity is safe.
 
