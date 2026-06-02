@@ -5,14 +5,18 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -138,13 +142,27 @@ public class GrassperBlock extends BaseEntityBlock {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof GrassperBlockEntity be) {
-            ItemStack stored = be.getItem();
-            if (!stored.isEmpty()) {
-                level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stored.copy()));
-            }
+    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        if (level instanceof Level realLevel) {
+            dropStoredItem(realLevel, pos);
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.destroy(level, pos, state);
+    }
+
+    @Override
+    public void wasExploded(ServerLevel level, BlockPos pos, Explosion explosion) {
+        dropStoredItem(level, pos);
+        super.wasExploded(level, pos, explosion);
+    }
+
+    private void dropStoredItem(Level level, BlockPos pos) {
+        if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof GrassperBlockEntity be)) {
+            return;
+        }
+        ItemStack stored = be.takeItem();
+        if (!stored.isEmpty()) {
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stored);
+        }
+        level.updateNeighbourForOutputSignal(pos, this);
     }
 }
