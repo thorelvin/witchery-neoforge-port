@@ -2867,18 +2867,14 @@ public class RitualExecutor {
         return true;
     }
 
-    private static void seedBlightHeart(ServerLevel level, BlockPos center) {
-        BlockPos heartPos = randomSurfaceBlightHeartPos(level, center).orElseGet(() -> fallbackBlightHeartPos(level, center));
-        if (heartPos == null) {
-            return;
-        }
-
-        BlightHelper.placeHeart(level, heartPos, true);
+    private static Optional<BlockPos> findBlightHeartPos(ServerLevel level, BlockPos center) {
+        return randomEmbeddedBlightHeartPos(level, center)
+                .or(() -> fallbackEmbeddedBlightHeartPos(level, center));
     }
 
-    private static Optional<BlockPos> randomSurfaceBlightHeartPos(ServerLevel level, BlockPos center) {
+    private static Optional<BlockPos> randomEmbeddedBlightHeartPos(ServerLevel level, BlockPos center) {
         int radiusSq = BLIGHT_HEART_RANDOM_RADIUS * BLIGHT_HEART_RANDOM_RADIUS;
-        for (int attempt = 0; attempt < 48; attempt++) {
+        for (int attempt = 0; attempt < 96; attempt++) {
             int dx = level.random.nextInt(BLIGHT_HEART_RANDOM_RADIUS * 2 + 1) - BLIGHT_HEART_RANDOM_RADIUS;
             int dz = level.random.nextInt(BLIGHT_HEART_RANDOM_RADIUS * 2 + 1) - BLIGHT_HEART_RANDOM_RADIUS;
             if (dx * dx + dz * dz > radiusSq) {
@@ -2887,21 +2883,25 @@ public class RitualExecutor {
 
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE,
                     new BlockPos(center.getX() + dx, center.getY(), center.getZ() + dz));
-            BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-            if (BlightHelper.canPlaceHeartAt(level, heartPos)) {
+            BlockPos heartPos = embeddedHeartPosFromSurface(level, surface);
+            if (heartPos != null) {
                 return Optional.of(heartPos);
             }
         }
         return Optional.empty();
     }
 
-    private static BlockPos fallbackBlightHeartPos(ServerLevel level, BlockPos center) {
-        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
-        BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-        if (!BlightHelper.canPlaceHeartAt(level, heartPos)) {
-            return null;
+    private static Optional<BlockPos> fallbackEmbeddedBlightHeartPos(ServerLevel level, BlockPos center) {
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, center);
+        return Optional.ofNullable(embeddedHeartPosFromSurface(level, surface));
+    }
+
+    private static BlockPos embeddedHeartPosFromSurface(ServerLevel level, BlockPos surface) {
+        BlockPos heartPos = surface.below();
+        while (heartPos.getY() > level.getMinY() && level.getBlockState(heartPos).canBeReplaced()) {
+            heartPos = heartPos.below();
         }
-        return heartPos;
+        return BlightHelper.canPlaceEmbeddedHeartAt(level, heartPos) ? heartPos : null;
     }
 
     private static void spreadBlightRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {
@@ -2942,11 +2942,6 @@ public class RitualExecutor {
             level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
         } else if (isBlightPlant(aboveState)) {
             level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
-        }
-
-        if (BlightHelper.seedBlight(level, abovePos)
-                || BlightHelper.seedBlight(level, groundPos)) {
-            return;
         }
 
         if (state.is(Blocks.FARMLAND)) {
@@ -3396,6 +3391,30 @@ public class RitualExecutor {
         }
         if (level instanceof ServerLevel sl) {
             spawnRingParticles(sl, center, particleRadius, particleCount);
+        }
+    }
+
+    private static void spawnBlightRiteBurst(ServerLevel level, BlockPos center) {
+        double x = center.getX() + 0.5D;
+        double y = center.getY() + 1.0D;
+        double z = center.getZ() + 0.5D;
+        level.sendParticles(ParticleTypes.PORTAL, x, y, z,
+                60, 1.8D, 0.25D, 1.8D, 0.06D);
+        level.sendParticles(ParticleTypes.WITCH, x, y + 0.15D, z,
+                80, 2.2D, 0.35D, 2.2D, 0.08D);
+        level.sendParticles(ParticleTypes.SMOKE, x, y, z,
+                36, 1.1D, 0.2D, 1.1D, 0.04D);
+
+        for (int radius = 1; radius <= 5; radius++) {
+            int count = radius * 10;
+            for (int i = 0; i < count; i++) {
+                double angle = 2 * Math.PI * i / count;
+                level.sendParticles(ParticleTypes.WITCH,
+                        x + radius * Math.cos(angle),
+                        y + 0.05D,
+                        z + radius * Math.sin(angle),
+                        1, 0.0D, 0.03D, 0.0D, 0.02D);
+            }
         }
     }
 
@@ -3975,8 +3994,12 @@ public class RitualExecutor {
             return false;
         }
         if (!(level instanceof ServerLevel sl)) return false;
-        int covenSize = countNearbyCovenWitches(level, center);
-        boolean enhanced = player instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp);
+        Optional<BlockPos> heartPos = findBlightHeartPos(sl, center);
+        if (heartPos.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.blight.no_ground"), false);
+            return false;
+        }
         if (hasActiveRitualAt(sl, center)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
@@ -3985,20 +4008,6 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.blight.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.BLIGHT, RitualCircleDetector.CircleSize.MEDIUM,
-                center, center, 0, 80, 77, 5, covenSize, 0.0f, 0, List.of(), enhanced)) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
-            return false;
-        }
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
-        if (rituals != null) {
-            for (ActiveRitual ritual : rituals) {
-                if (ritual.center.equals(center) && ritual.type == ActiveRitualType.BLIGHT) {
-                    ritual.nextGameTime = sl.getGameTime() + 20L;
-                    break;
-                }
-            }
-        }
         consumeOfferedItem(offerings.get().chargedStone());
         consumeOfferedItem(offerings.get().redstoneSoup());
         consumeOfferedItem(offerings.get().reekOfMisfortune());
@@ -4006,9 +4015,10 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().poisonousPotato());
         consumeOfferedItem(offerings.get().rottenFlesh());
         consumeOfferedItem(offerings.get().diamond());
-        seedBlightHeart(sl, center);
-        success(player, level, center, "witchery.ritual.blight.success",
-                SoundEvents.WITHER_SPAWN, 0.5f, 2, 40);
+        BlightHelper.placeHeart(sl, heartPos.get(), true);
+        level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 1.0f, 0.5f);
+        spawnBlightRiteBurst(sl, center);
+        player.displayClientMessage(Component.translatable("witchery.ritual.blight.success"), false);
         return true;
     }
 

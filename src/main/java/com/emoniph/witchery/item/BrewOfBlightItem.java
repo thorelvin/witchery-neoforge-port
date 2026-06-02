@@ -39,11 +39,8 @@ public class BrewOfBlightItem extends BrewItem {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        BlockPos heartPos = player.blockPosition();
-        if (!serverLevel.getBlockState(heartPos).canBeReplaced()) {
-            heartPos = heartPos.above();
-        }
-        if (BlightHelper.canPlaceHeartAt(serverLevel, heartPos)) {
+        BlockPos heartPos = embeddedHeartPos(level, player.blockPosition());
+        if (heartPos != null) {
             BlightHelper.placeHeart(serverLevel, heartPos, true);
         }
     }
@@ -55,7 +52,20 @@ public class BrewOfBlightItem extends BrewItem {
 
     private static BlockPos pouredHeartPos(Level level, BlockPos clickedPos, net.minecraft.core.Direction face) {
         BlockState clicked = level.getBlockState(clickedPos);
-        BlockPos candidate = clicked.canBeReplaced() ? clickedPos : clickedPos.relative(face);
-        return BlightHelper.canPlaceHeartAt(level, candidate) ? candidate : null;
+        BlockPos candidate = clicked.canBeReplaced() ? clickedPos.below() : clickedPos;
+        if (BlightHelper.canPlaceEmbeddedHeartAt(level, candidate)) {
+            return candidate;
+        }
+
+        BlockPos side = clickedPos.relative(face);
+        return embeddedHeartPos(level, side);
+    }
+
+    private static BlockPos embeddedHeartPos(Level level, BlockPos pos) {
+        BlockPos candidate = level.getBlockState(pos).canBeReplaced() ? pos.below() : pos;
+        while (candidate.getY() > level.getMinY() && level.getBlockState(candidate).canBeReplaced()) {
+            candidate = candidate.below();
+        }
+        return BlightHelper.canPlaceEmbeddedHeartAt(level, candidate) ? candidate : null;
     }
 }

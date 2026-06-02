@@ -1,7 +1,17 @@
 {
   "render_type": "minecraft:cutout",
-  "parent": "minecraft:block/cross",
+  "ambientocclusion": false,
   "textures": {
-    "cross": "witchery:block/blight_fibre"
-  }
+    "particle": "witchery:block/blight_fibre",
+    "fibre": "witchery:block/blight_fibre"
+  },
+  "elements": [
+    {
+      "from": [0, 0.02, 0],
+      "to": [16, 0.02, 16],
+      "faces": {
+        "up": { "uv": [0, 0, 16, 16], "texture": "#fibre" }
+      }
+    }
+  ]
 }

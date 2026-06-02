@@ -1,5 +1,28 @@
 {
-  "variants": {
-    "": { "model": "witchery:block/blight_fibre" }
-  }
+  "multipart": [
+    {
+      "when": { "down": true },
+      "apply": { "model": "witchery:block/blight_fibre" }
+    },
+    {
+      "when": { "up": true },
+      "apply": { "model": "witchery:block/blight_fibre", "x": 180 }
+    },
+    {
+      "when": { "north": true },
+      "apply": { "model": "witchery:block/blight_fibre", "x": 90, "y": 180 }
+    },
+    {
+      "when": { "south": true },
+      "apply": { "model": "witchery:block/blight_fibre", "x": 90 }
+    },
+    {
+      "when": { "west": true },
+      "apply": { "model": "witchery:block/blight_fibre", "x": 90, "y": 90 }
+    },
+    {
+      "when": { "east": true },
+      "apply": { "model": "witchery:block/blight_fibre", "x": 90, "y": 270 }
+    }
+  ]
 }

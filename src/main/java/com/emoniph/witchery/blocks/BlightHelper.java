@@ -45,18 +45,7 @@ public final class BlightHelper {
     }
 
     public static boolean canBlightSurvive(LevelReader level, BlockPos pos) {
-        return hasAdjacentSolid(level, pos) && !isProtected(level, pos);
-    }
-
-    public static boolean hasAdjacentSolid(LevelReader level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            BlockPos neighborPos = pos.relative(direction);
-            BlockState neighbor = level.getBlockState(neighborPos);
-            if (neighbor.isFaceSturdy(level, neighborPos, direction.getOpposite()) || isBlight(neighbor)) {
-                return true;
-            }
-        }
-        return false;
+        return BlightFibreBlock.hasAttachableFace(level, pos) && !isProtected(level, pos);
     }
 
     public static boolean isProtected(LevelReader level, BlockPos pos) {
@@ -113,17 +102,32 @@ public final class BlightHelper {
         return convertTarget(level, pos, false);
     }
 
-    public static boolean canPlaceHeartAt(LevelReader level, BlockPos pos) {
+    public static boolean canPlaceEmbeddedHeartAt(LevelReader level, BlockPos pos) {
+        if (isProtected(level, pos) || isProtected(level, pos.above())) {
+            return false;
+        }
+
         BlockState state = level.getBlockState(pos);
-        return state.canBeReplaced() && !state.hasBlockEntity();
+        BlockState above = level.getBlockState(pos.above());
+        if (isBlight(state) || state.hasBlockEntity() || state.liquid() || state.canBeReplaced()
+                || !above.canBeReplaced() || above.liquid()) {
+            return false;
+        }
+
+        float hardness = state.getDestroySpeed(level, pos);
+        return hardness >= 0.0F
+                && hardness <= 10.0F
+                && state.isFaceSturdy(level, pos, Direction.UP);
     }
 
     public static void placeHeart(ServerLevel level, BlockPos heartPos, boolean seedAdjacent) {
+        BlockPos above = heartPos.above();
+        if (level.getBlockState(above).canBeReplaced()) {
+            level.removeBlock(above, false);
+        }
         level.setBlock(heartPos, WitcheryBlocks.BLIGHT_HEART.get().defaultBlockState(), Block.UPDATE_ALL);
         if (seedAdjacent) {
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
-                seedBlight(level, heartPos.relative(direction));
-            }
+            seedHeartFibres(level, heartPos);
         }
         level.playSound(null, heartPos, SoundEvents.WITCH_THROW, SoundSource.BLOCKS,
                 0.8F, 0.55F + level.random.nextFloat() * 0.2F);
@@ -135,6 +139,26 @@ public final class BlightHelper {
         level.sendParticles(ParticleTypes.WITCH,
                 heartPos.getX() + 0.5D, heartPos.getY() + 0.8D, heartPos.getZ() + 0.5D,
                 22, 0.45D, 0.45D, 0.45D, 0.02D);
+    }
+
+    public static boolean seedFibreOnly(ServerLevel level, BlockPos pos) {
+        if (isProtected(level, pos)) {
+            return false;
+        }
+
+        BlockState state = level.getBlockState(pos);
+        if (isBlight(state) || state.hasBlockEntity() || state.liquid() || !canBecomeFibre(level, pos, state)) {
+            return false;
+        }
+
+        BlockState fibre = BlightFibreBlock.withAttachments(WitcheryBlocks.BLIGHT_FIBRE.get().defaultBlockState(), level, pos);
+        if (!BlightFibreBlock.hasAnyAttachment(fibre)) {
+            return false;
+        }
+
+        level.setBlock(pos, fibre, Block.UPDATE_ALL);
+        blightFeedback(level, pos, 3);
+        return true;
     }
 
     private static boolean convertTarget(ServerLevel level, BlockPos pos, boolean requireAdjacentBlight) {
@@ -153,7 +177,8 @@ public final class BlightHelper {
         }
 
         if (canBecomeFibre(level, pos, state)) {
-            level.setBlock(pos, WitcheryBlocks.BLIGHT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
+            BlockState fibre = BlightFibreBlock.withAttachments(WitcheryBlocks.BLIGHT_FIBRE.get().defaultBlockState(), level, pos);
+            level.setBlock(pos, fibre, Block.UPDATE_ALL);
             blightFeedback(level, pos, 4);
             return true;
         }
@@ -241,6 +266,26 @@ public final class BlightHelper {
         level.sendParticles(ParticleTypes.WITCH,
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                 particles, 0.25D, 0.25D, 0.25D, 0.01D);
+    }
+
+    private static void seedHeartFibres(ServerLevel level, BlockPos heartPos) {
+        int placed = 0;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (level.random.nextBoolean() && seedFibreOnly(level, heartPos.relative(direction).above())) {
+                placed++;
+            }
+        }
+
+        for (int attempt = 0; attempt < 10 && placed < 6; attempt++) {
+            int dx = level.random.nextInt(5) - 2;
+            int dz = level.random.nextInt(5) - 2;
+            if (dx == 0 && dz == 0) {
+                continue;
+            }
+            if (seedFibreOnly(level, heartPos.offset(dx, 1, dz))) {
+                placed++;
+            }
+        }
     }
 
     private static boolean hasAdjacentBlight(LevelReader level, BlockPos pos) {
