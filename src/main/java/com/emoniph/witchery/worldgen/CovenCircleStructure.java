@@ -39,11 +39,15 @@ public class CovenCircleStructure extends Structure {
             return Optional.empty();
         }
 
+        // getFirstOccupiedHeight returns the air block above terrain here, so anchoring
+        // at groundY put the circle floor one block above the real surface (a raised
+        // dirt/grass plinth, with the standing stones one higher still). Drop the anchor
+        // by one so the floor lands flush and the stones rest on the ground.
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
             int x = cx - 5;
             int z = cz - 5;
             builder.addPiece(new CovenCirclePiece(
-                    WitcheryStructures.COVEN_CIRCLE_PIECE.get(), x, groundY.getAsInt(), z));
+                    WitcheryStructures.COVEN_CIRCLE_PIECE.get(), x, groundY.getAsInt() - 1, z));
         });
     }
 

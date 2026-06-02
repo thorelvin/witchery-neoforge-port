@@ -169,6 +169,12 @@ public class WitcheryEntities {
                             .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "sun_grenade"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.SpellEffectEntity>> SPELL_EFFECT =
+            ENTITY_TYPES.register("spell_effect", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.SpellEffectEntity>of(com.emoniph.witchery.entity.SpellEffectEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spell_effect"))));
+
     // ── Flying Monkey (M10) ───────────────────────────────────────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.FlyingMonkeyEntity>> FLYING_MONKEY =

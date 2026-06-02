@@ -118,8 +118,13 @@ public class StrawManPiece extends StructurePiece {
                 int wx = boundingBox.minX() + x;
                 int wz = boundingBox.minZ() + z;
                 int worldSurface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, wx, wz);
-                int oceanFloor = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, wx, wz);
-                if (worldSurface > oceanFloor) return false;
+                // NOTE: do NOT reject on `worldSurface > oceanFloor`. That is true over any
+                // non-motion-blocking surface block (snow layer, grass, flowers), so it
+                // silently aborts the whole effigy on perfectly dry land that the
+                // structure-level findGenerationPoint already approved — leaving a located
+                // but empty Straw Man (the `/witchery goto straw_man` "nothing there" bug).
+                // The explicit fluid checks below, plus the structure's water/biome guards,
+                // are what actually keep the Straw Man off water.
 
                 int baseY = boundingBox.minY();
                 for (int y = baseY - 1; y <= baseY + 1; y++) {

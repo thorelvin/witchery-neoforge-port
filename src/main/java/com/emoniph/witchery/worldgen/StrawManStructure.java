@@ -39,9 +39,12 @@ public class StrawManStructure extends Structure {
             return Optional.empty();
         }
 
+        // getFirstOccupiedHeight returns the air block above terrain here, so anchoring
+        // at groundY put the effigy's ground layer one block above the real surface
+        // (a raised dirt pedestal). Drop the anchor by one so the model sits flush.
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
             builder.addPiece(new StrawManPiece(
-                    WitcheryStructures.STRAW_MAN_PIECE.get(), x, groundY.getAsInt(), z));
+                    WitcheryStructures.STRAW_MAN_PIECE.get(), x, groundY.getAsInt() - 1, z));
         });
     }
 

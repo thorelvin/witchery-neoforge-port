@@ -333,10 +333,11 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SpinningWheelBlock> SPINNING_WHEEL = registerBlock("spinning_wheel", SpinningWheelBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f).noOcclusion());
     public static final DeferredBlock<WitchesOvenBlock> WITCHES_OVEN  = registerBlock("witches_oven",   WitchesOvenBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).lightLevel(state -> state.getValue(WitchesOvenBlock.LIT) ? 13 : 0).noOcclusion());
     public static final DeferredBlock<AltarBlock>       ALTAR         = registerBlock("altar",          AltarBlock::new,        BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(5.0f));
-    public static final DeferredBlock<FumeFunnelBlock>  FUME_FUNNEL   = registerBlock("fume_funnel",    FumeFunnelBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).noOcclusion());
+    // 1.7.10 BlockFumeFunnel: Material.iron, metal sound, setHardness(3.5F).
+    public static final DeferredBlock<FumeFunnelBlock>  FUME_FUNNEL   = registerBlock("fume_funnel",    FumeFunnelBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).noOcclusion());
     public static final DeferredBlock<FumeFunnelBlock>  FILTERED_FUME_FUNNEL = registerBlock("filtered_fume_funnel",
             props -> new FumeFunnelBlock(props, true),
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).noOcclusion());
     public static final DeferredBlock<BrazierBlock>     BRAZIER       = registerBlock("brazier",        BrazierBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).noOcclusion());
 
     // Storage / Containers
@@ -369,7 +370,8 @@ public class WitcheryBlocks {
     public static final DeferredBlock<PlacedItemBlock>  PLACED_ITEM    = registerBlock("placed_item",   PlacedItemBlock::new,   BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f));
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
-    public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
+    // 1.7.10 BlockSilverVat: Material.iron, setHardness(8.0F) -> resistance 8*5=40 (auto), metal sound.
+    public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(8.0f, 40.0f).noOcclusion());
     public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
     public static final DeferredBlock<com.emoniph.witchery.blocks.BloodCrucibleBlock> BLOOD_CRUCIBLE = registerBlock("blood_crucible",
             com.emoniph.witchery.blocks.BloodCrucibleBlock::new,

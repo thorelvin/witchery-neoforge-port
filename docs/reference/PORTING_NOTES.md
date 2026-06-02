@@ -9,6 +9,55 @@ Current target:
 
 ---
 
+## 2026-06-02 Mystic Branch air-glyph symbol magic (port of the symbols system)
+
+Ported `ItemMysticBranch` + `infusion.infusions.symbols.*` into a new
+`com.emoniph.witchery.symbol` package (`StrokeSet`, `SymbolEffect`,
+`SymbolEffectProjectile`, `EffectRegistry`) plus `entity.SpellEffectEntity`,
+`network.SpellPreparedPayload`, and client `SymbolDrawState`.
+
+Key mechanism + gotchas:
+- **Stroke detection is client-only** (it watches local look deltas), so it lives in a
+  client class driven from `WitcheryClientEvents.onClientTick` (`ClientTickEvent.Post`), NOT
+  in the common `Item`. The recognised symbol is sent to the server via a C2S payload; the
+  server stores it in transient `WitcheryPlayerData` fields (`preparedSpellId/Level`, not in
+  the CODEC) and casts it on `releaseUsing`.
+- **Stroke bytes** match source exactly: pitchDiff>=7 -> 0 (up), pitchDiff<=-7 -> 1 (down),
+  yawDiff<=-7 -> 2, yawDiff>=7 -> 3. `Mth.wrapDegrees` the yaw delta. The first int of each
+  source `StrokeSet(level, ...)` is the spell level; copy sequences verbatim. Once a symbol
+  matches (`contains`), stop appending — the shortest matching prefix wins (faithful).
+- **Cost curve**: `floor(2^(level-1) * baseCost)` infused energy, spent on release.
+- **Static-init registry**: `EffectRegistry`'s `static final SymbolEffect` fields call
+  `instance().add(...)` during class init; `INSTANCE` must be declared first. Call
+  `EffectRegistry.bootstrap()` in `commonSetup` so it is populated before first use.
+- **Deliberate port simplifications**: no Worship-potion level cap (drawn length picks the
+  level), no Beast-infusion-gated unforgivable curses (not registered yet), no persistent
+  spellbook/cooldown (only knowledge-free spells registered this slice).
+- **Sound API**: `SoundEvents.AMETHYST_BLOCK_CHIME` is a plain `SoundEvent` (no `.value()`),
+  while e.g. `SoundEvents.NOTE_BLOCK_*` are `Holder<SoundEvent>` (need `.value()` for
+  `player.playSound(SoundEvent,...)`). `level.playSound(...)` accepts the Holder overload, so
+  passing a `Holder<SoundEvent>` there works without `.value()`.
+
+---
+
+## 2026-06-02 1.7.10 setHardness auto-raises resistance (block strength parity)
+
+1.7.10 `Block.func_149711_c(float h)` (setHardness) is not just hardness — it also does
+`if (resistance < h*5) resistance = h*5`. So any source block that called only
+`setHardness(h)` (no `setResistance`) effectively has blast resistance `h*5`.
+
+Modern `.strength(float)` sets destroyTime AND explosionResistance to the *same* value, so
+a single-arg `.strength(h)` port silently lowers blast resistance from `h*5` to `h`. To match
+source exactly for such blocks, use `.strength(h, h*5)`. Example fixed this pass:
+`BlockSilverVat` was `setHardness(8.0F)` → resistance 40; port had `strength(3.0f)`, now
+`strength(8.0f, 40.0f)`. When a source block *did* call `setResistance(r)`, use that explicit
+`r` instead (e.g. Statue Goddess `2.5/1000`, Leech Chest `25/1000`).
+
+Also re-confirmed source `Material.iron` blocks should use `SoundType.METAL` (+ metal map
+color): `BlockFumeFunnel` was ported with `STONE` sound and is now `METAL`.
+
+---
+
 ## 2026-05-30 VillageWallGenerator / goto command bugs
 
 **`/witchery goto` underground**: `Level.getHeight(MOTION_BLOCKING, x, z)` returns `0` (not `-64`) for cold/unloaded chunks. Old threshold `<= -59` missed it, sending the player to Y=0. Fixed: threshold is now `< 10`.

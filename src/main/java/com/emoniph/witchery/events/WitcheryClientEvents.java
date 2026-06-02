@@ -39,6 +39,11 @@ public class WitcheryClientEvents {
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
 
     @SubscribeEvent
+    public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+        com.emoniph.witchery.client.SymbolDrawState.clientTick();
+    }
+
+    @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
         tryHowl(event.getEntity(), event.getHand());
     }

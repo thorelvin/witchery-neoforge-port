@@ -230,6 +230,8 @@ public class WitcheryClient {
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SUN_GRENADE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.SPELL_EFFECT.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.EGASSY.get(),            EgassyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.HOBGOBLIN.get(),        HobgoblinRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);

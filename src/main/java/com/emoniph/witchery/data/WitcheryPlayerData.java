@@ -179,6 +179,10 @@ public class WitcheryPlayerData {
     private int soaringTicks = 0;
     private int depthsTicks = 0;
     private int grotesqueTicks = 0; // transient — not persisted via CODEC
+    // Mystic Branch symbol magic — transient server-side scratch for the spell the
+    // player has drawn during the current use. -1 = nothing prepared. Not in the CODEC.
+    private int preparedSpellId = -1;
+    private int preparedSpellLevel = 1;
     private boolean ghostWalkerActive = false;
     private int tormentPortalCooldown = 0;
     private boolean demonicNightmare = false;
@@ -418,6 +422,10 @@ public class WitcheryPlayerData {
     public void clearCreaturePower() { creaturePowerType = ""; creaturePowerCharges = 0; }
     public int getHowlCooldown() { return howlCooldown; }
     public void setHowlCooldown(int v) { howlCooldown = Math.max(0, v); }
+    public int getPreparedSpellId() { return preparedSpellId; }
+    public int getPreparedSpellLevel() { return preparedSpellLevel; }
+    public void setPreparedSpell(int id, int level) { this.preparedSpellId = id; this.preparedSpellLevel = level; }
+    public void clearPreparedSpell() { this.preparedSpellId = -1; this.preparedSpellLevel = 1; }
     public int getWolfMastery() { return wolfMastery; }
     public void setWolfMastery(int v) { wolfMastery = Math.clamp(v, 0, 3); }
     public int getSoaringTicks() { return soaringTicks; }

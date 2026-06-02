@@ -67,7 +67,10 @@ public class WitcheryMod {
         }
     }
 
-    private void commonSetup(FMLCommonSetupEvent event) {}
+    private void commonSetup(FMLCommonSetupEvent event) {
+        // Force the symbol-spell registry to initialise so Mystic Branch glyphs are recognised.
+        com.emoniph.witchery.symbol.EffectRegistry.bootstrap();
+    }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("1")
@@ -82,6 +85,10 @@ public class WitcheryMod {
                 .playToServer(
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,
-                        HowlPayload::handleOnServer);
+                        HowlPayload::handleOnServer)
+                .playToServer(
+                        com.emoniph.witchery.network.SpellPreparedPayload.TYPE,
+                        com.emoniph.witchery.network.SpellPreparedPayload.STREAM_CODEC,
+                        com.emoniph.witchery.network.SpellPreparedPayload::handleOnServer);
     }
 }

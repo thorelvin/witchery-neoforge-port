@@ -2,6 +2,10 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-02 (goto QA):**
+- ~~`/witchery goto straw_man` teleports but no Straw Man is there~~ - `StrawManPiece.hasDryLandFootprint` aborted the whole effigy whenever `WORLD_SURFACE > OCEAN_FLOOR` (true over any snow layer / grass / flower) even on dry land the structure-level `findGenerationPoint` had already approved, leaving a located-but-empty structure. Fixed: removed that redundant guard; the explicit fluid checks plus the structure water/biome guards still keep it off water.
+- ~~Coven/Stone Circle generates one block too high (raised dirt/grass plinth)~~ and ~~Straw Man sits on a one-block dirt pedestal~~ - `getFirstOccupiedHeight` returns the air block above terrain in this runtime (confirmed by the old CovenCirclePiece "stones appear to float" comment), but both pieces anchored their floor/ground layer at that Y. Fixed: `CovenCircleStructure` and `StrawManStructure` now anchor the piece at `groundY - 1`, so the floor lands flush and the standing stones/effigy rest on the surface.
+
 **Closed 2026-06-01 / 2026-05-31:**
 - ~~Gatehouse inner path often lands one block too low~~ - the gate reference height still sampled along the longer inward grading corridor, so nearby slopes or house-adjacent path runs could pull the threshold below the opening. Fixed: gatehouses now sample only the immediate 3-wide outside strip and 3-wide inside strip, ignore water/building columns, and round that local average before the longer 15-block terrain-only grading pass starts.
 - ~~Gatehouse inner terrain adjuster stops while the outside path still grades~~ - the new inside wall-walk ledge occupied the first inward grading column at a high Y, so the terrain-only safety check treated it as a building block and aborted the inner approach immediately. Fixed: gatehouse path grading now runs before the high ledge is placed, and stale ledge masonry in that narrow inside strip is cleared before grading.
