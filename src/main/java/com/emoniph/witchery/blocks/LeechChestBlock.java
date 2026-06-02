@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.LeechChestBlockEntity;
+import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.SpectralFamiliarEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
@@ -11,8 +13,8 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -137,12 +139,25 @@ public class LeechChestBlock extends BaseEntityBlock {
                 pos.getX(), pos.getY() + 1, pos.getZ(),
                 pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1
         );
-        for (TamableAnimal tameable : level.getEntitiesOfClass(TamableAnimal.class, catBox)) {
-            if (tameable.isInSittingPose()) {
+        return hasSittingFeline(level, catBox);
+    }
+
+    private static boolean hasSittingFeline(Level level, AABB catBox) {
+        for (Cat cat : level.getEntitiesOfClass(Cat.class, catBox)) {
+            if (cat.isInSittingPose()) {
                 return true;
             }
         }
-
+        for (CatFamiliarEntity cat : level.getEntitiesOfClass(CatFamiliarEntity.class, catBox)) {
+            if (cat.isInSittingPose()) {
+                return true;
+            }
+        }
+        for (SpectralFamiliarEntity familiar : level.getEntitiesOfClass(SpectralFamiliarEntity.class, catBox)) {
+            if (familiar.isInSittingPose()) {
+                return true;
+            }
+        }
         return false;
     }
 
