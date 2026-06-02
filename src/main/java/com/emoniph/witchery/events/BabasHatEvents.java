@@ -2,9 +2,11 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.blocks.VoidBrambleBlock;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.BoltEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -36,6 +38,11 @@ public final class BabasHatEvents {
             return;
         }
 
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (WerewolfShiftUtil.isTransformed(data)) {
+            return;
+        }
+
         ItemStack hat = player.getItemBySlot(EquipmentSlot.HEAD);
         if (!hat.is(WitcheryItems.BABAS_HAT.get()) || !isEligibleDamage(event.getSource())) {
             return;
@@ -44,7 +51,7 @@ public final class BabasHatEvents {
             return;
         }
 
-        if (!spendInfusionEnergy(player)) {
+        if (!spendInfusionEnergy(player, data)) {
             return;
         }
 
@@ -53,18 +60,19 @@ public final class BabasHatEvents {
     }
 
     private static boolean isEligibleDamage(DamageSource source) {
+        if (source.getDirectEntity() instanceof BoltEntity bolt && bolt.isPoweredDraining()) {
+            return false;
+        }
         return source.getEntity() != null
                 || source.getDirectEntity() != null
-                || source.is(DamageTypeTags.IS_PROJECTILE)
-                || source.is(DamageTypeTags.BYPASSES_ARMOR);
+                || source.is(DamageTypeTags.IS_PROJECTILE);
     }
 
-    private static boolean spendInfusionEnergy(ServerPlayer player) {
+    private static boolean spendInfusionEnergy(ServerPlayer player, WitcheryPlayerData data) {
         if (player.getAbilities().instabuild) {
             return true;
         }
 
-        WitcheryPlayerData data = WitcheryAttachments.get(player);
         int current = data.getInfusionEnergy();
         if (current < TELEPORT_COST) {
             return false;
