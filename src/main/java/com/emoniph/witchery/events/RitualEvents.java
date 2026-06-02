@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 @EventBusSubscriber
 public class RitualEvents {
     private static final int VARIANT_RITUAL = 1;
+    private static final int VARIANT_INFERNAL = 3;
     private static final double CHARGE_STONE_ITEM_RADIUS = 6.0D;
     private static final int GRASSPER_OFFERING_RADIUS = 5;
 
@@ -128,6 +129,14 @@ public class RitualEvents {
             }
         }
 
+        if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
+            IngredientSource blightSource = nearestOfferingSource(level, floorCenter, nearbyItems,
+                    stack -> stack.is(Items.WITHER_ROSE));
+            if (blightSource != null) {
+                return blightSource;
+            }
+        }
+
         ItemEntity nearest = nearestDroppedItem(floorCenter, nearbyItems, item -> true);
         if (nearest != null) {
             return new IngredientSource(nearest, null);
@@ -164,8 +173,12 @@ public class RitualEvents {
     }
 
     private static boolean isRitualRing(Level level, BlockPos floorCenter, RitualCircleDetector.CircleSize size) {
+        return isVariantRing(level, floorCenter, size, VARIANT_RITUAL);
+    }
+
+    private static boolean isVariantRing(Level level, BlockPos floorCenter, RitualCircleDetector.CircleSize size, int variant) {
         return RitualCircleDetector.hasRing(level, floorCenter, size)
-                && RitualCircleDetector.detectVariant(level, floorCenter, size) == VARIANT_RITUAL;
+                && RitualCircleDetector.detectVariant(level, floorCenter, size) == variant;
     }
 
     private static boolean isObsidianStack(ItemStack stack) {

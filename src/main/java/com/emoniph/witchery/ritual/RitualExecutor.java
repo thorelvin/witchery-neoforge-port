@@ -3953,6 +3953,7 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().chargedStone());
         consumeOfferedItem(offerings.get().redstoneSoup());
         consumeOfferedItem(offerings.get().reekOfMisfortune());
+        consumeOfferedItem(offerings.get().fermentedSpiderEye());
         consumeOfferedItem(offerings.get().poisonousPotato());
         consumeOfferedItem(offerings.get().rottenFlesh());
         consumeOfferedItem(offerings.get().diamond());
