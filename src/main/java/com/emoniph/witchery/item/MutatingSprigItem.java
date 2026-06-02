@@ -149,6 +149,10 @@ public class MutatingSprigItem extends Item {
 
         BlockState resultState = WitcheryBlocks.LEECH_CHEST.get().defaultBlockState()
                 .setValue(com.emoniph.witchery.blocks.LeechChestBlock.FACING, state.getValue(ChestBlock.FACING));
+        level.removeBlock(pos, false);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            level.removeBlock(pos.relative(direction), false);
+        }
         level.setBlock(pos, resultState, 3);
         return true;
     }
