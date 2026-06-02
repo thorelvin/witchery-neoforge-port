@@ -170,10 +170,13 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
 
         // Shift-right-click: toggle lid
         if (player.isShiftKeyDown()) {
+            BlockPos footPos = pos.relative(state.getValue(FACING).getOpposite());
+            if (hasSolidBlockAbove(level, pos) || hasSolidBlockAbove(level, footPos)) {
+                return InteractionResult.SUCCESS;
+            }
             boolean nowOpen = !state.getValue(OPEN);
             level.setBlock(pos, state.setValue(OPEN, nowOpen), 3);
             // Also sync foot half's open state for rendering consistency
-            BlockPos footPos = pos.relative(state.getValue(FACING).getOpposite());
             BlockState footState = level.getBlockState(footPos);
             if (footState.is(this) && footState.getValue(PART) == BedPart.FOOT) {
                 level.setBlock(footPos, footState.setValue(OPEN, nowOpen), 3);
@@ -268,5 +271,10 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
     public static BlockPos getHeadPos(BlockState state, BlockPos pos) {
         if (state.getValue(PART) == BedPart.HEAD) return pos;
         return pos.relative(state.getValue(FACING));
+    }
+
+    private static boolean hasSolidBlockAbove(Level level, BlockPos pos) {
+        BlockPos above = pos.above();
+        return level.getBlockState(above).isFaceSturdy(level, above, Direction.DOWN);
     }
 }
