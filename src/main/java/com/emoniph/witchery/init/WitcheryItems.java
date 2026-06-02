@@ -271,6 +271,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      BOOK_HERBOLOGY       = ITEMS.register("book_herbology", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_WANDS           = ITEMS.register("book_wands", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_BURNING         = ITEMS.register("book_burning", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip"));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));

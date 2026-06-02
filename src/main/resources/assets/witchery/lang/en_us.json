@@ -1156,6 +1156,8 @@
   "item.witchery.book_biomes": "Book of Biomes",
   "item.witchery.book_wands": "Witchcraft: Symbology",
   "item.witchery.book_burning": "Witchcraft: Conjuration & Fetishes",
+  "item.witchery.cauldron_book": "Witches' Brews",
+  "item.witchery.cauldron_book.tip": "The definitive guide to cauldrons and potion brewing.",
   "item.witchery.nullified_leather": "Nullified Leather",
   "item.witchery.bolt_stake": "Stake Bolt",
   "item.witchery.bolt_anti_magic": "Anti-Magic Bolt",

@@ -60,6 +60,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BOOK_HERBOLOGY.get(),
                 WitcheryItems.BOOK_WANDS.get(),
                 WitcheryItems.BOOK_BURNING.get(),
+                WitcheryItems.CAULDRON_BOOK.get(),
                 WitcheryItems.BOOK_BIOMES.get(),
                 WitcheryItems.EXTENDED_BIOMES_BOOK.get(),
                 WitcheryItems.BIOMES_BOOK.get());
