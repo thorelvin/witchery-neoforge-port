@@ -4,6 +4,9 @@ import com.emoniph.witchery.blocks.entity.VoidBrambleBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
@@ -94,7 +97,7 @@ public class VoidBrambleBlock extends BaseEntityBlock {
         teleportRandomly(level, pos, entity, TELEPORT_DISTANCE);
     }
 
-    private static void teleportRandomly(Level level, BlockPos origin, Entity entity, int distance) {
+    public static boolean teleportRandomly(Level level, BlockPos origin, Entity entity, int distance) {
         int targetX = origin.getX() + level.random.nextInt(distance * 2) - distance;
         int targetZ = origin.getZ() + level.random.nextInt(distance * 2) - distance;
         int y = origin.getY();
@@ -110,8 +113,30 @@ public class VoidBrambleBlock extends BaseEntityBlock {
         }
 
         if (y > minY && y < maxY) {
-            entity.teleportTo(targetX + 0.5, y + 1.0, targetZ + 0.5);
+            teleportToLocation(level, entity, targetX + 0.5, y + 1.0, targetZ + 0.5);
+            return true;
         }
+        return false;
+    }
+
+    private static void teleportToLocation(Level level, Entity entity, double x, double y, double z) {
+        sendTeleportFeedback(level, entity);
+        entity.teleportTo(x, y, z);
+        sendTeleportFeedback(level, entity);
+    }
+
+    private static void sendTeleportFeedback(Level level, Entity entity) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        double x = entity.getX();
+        double y = entity.getY();
+        double z = entity.getZ();
+        serverLevel.sendParticles(ParticleTypes.PORTAL, x, y + 1.0D, z,
+                20, 0.5D, 1.0D, 0.5D, 0.02D);
+        float pitch = 0.4F / (level.random.nextFloat() * 0.4F + 0.8F);
+        SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.NEUTRAL;
+        serverLevel.playSound(null, x, y, z, SoundEvents.ENDERMAN_TELEPORT, source, 0.5F, pitch);
     }
 
     private static boolean isValidLandingBase(Level level, int x, int y, int z) {

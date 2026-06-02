@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.VoidBrambleBlock;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -42,7 +42,6 @@ public class RubySlippersItem extends Item {
     private static final int WAYSTONE_TELEPORT_RADIUS = 2;
     private static final double WAYSTONE_RANDOM_MISFIRE_CHANCE = 0.01D;
     private static final int WAYSTONE_RANDOM_MISFIRE_DISTANCE = 500;
-    private static final int RANDOM_TELEPORT_ATTEMPTS = 16;
 
     public RubySlippersItem(Properties properties) {
         super(properties);
@@ -107,8 +106,8 @@ public class RubySlippersItem extends Item {
         }
 
         setLastUseTick(player, WAYSTONE_COOLDOWN_TAG, now);
-        if (player.getRandom().nextDouble() < WAYSTONE_RANDOM_MISFIRE_CHANCE
-                && teleportRandomlyLikeVoidBramble(player, (ServerLevel) player.level(), WAYSTONE_RANDOM_MISFIRE_DISTANCE)) {
+        if (player.getRandom().nextDouble() < WAYSTONE_RANDOM_MISFIRE_CHANCE) {
+            VoidBrambleBlock.teleportRandomly(player.level(), player.blockPosition(), player, WAYSTONE_RANDOM_MISFIRE_DISTANCE);
             player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
             return true;
         }
@@ -188,23 +187,6 @@ public class RubySlippersItem extends Item {
             }
         }
         return start.above();
-    }
-
-    private static boolean teleportRandomlyLikeVoidBramble(ServerPlayer player, ServerLevel level, int distance) {
-        BlockPos origin = player.blockPosition();
-        int doubleDistance = distance * 2;
-        for (int attempt = 0; attempt < RANDOM_TELEPORT_ATTEMPTS; attempt++) {
-            int targetX = origin.getX() + player.getRandom().nextInt(doubleDistance) - distance;
-            int targetZ = origin.getZ() + player.getRandom().nextInt(doubleDistance) - distance;
-            BlockPos heightmapPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                    new BlockPos(targetX, origin.getY(), targetZ));
-            BlockPos safe = findSafePos(level, heightmapPos.above());
-            if (isSafeLanding(level, safe)) {
-                teleportTo(player, level, safe);
-                return true;
-            }
-        }
-        return false;
     }
 
     private static long getLastUseTick(ServerPlayer player, String tag) {
