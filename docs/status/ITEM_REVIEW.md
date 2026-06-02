@@ -274,6 +274,8 @@ These 10 items are now registered through `WitcheryItems.LEGACY_PLACEHOLDER_ITEM
 
 The roster covers the remaining source/wiki/decompiled IDs plus exact 1.12 Resurrected item registry aliases from the old item init classes. The icon/model passes point the remaining entries at non-shared source/wiki-backed item models or clear alias models. They intentionally have no recipes, custom classes, block behavior, equipment behavior, fluid handling, rite integration, or alias-remap decisions yet; each row below is a TODO marker rather than a parity claim.
 
+> **Live inert placeholders remaining: 0 — `LEGACY_PLACEHOLDER_ITEMS` is now empty.** The old "107 placeholders" figure was always a count of this entire review roster (most already promoted), NOT the live registry. The final set was resolved as follows: `wolf_head` and `hellhound_head` are now **real mounted-head blocks** (`WolfHeadBlock`/`HellhoundHeadBlock` + `WolfHeadBlockEntity` + BESR), ported from 1.7.10 `BlockWolfHead`. `brew_bottle` / `splash_brew_bottle` / `lingering_brew_bottle` were **removed** (Resurrected generic NBT custom-brew containers; the port uses individual `brew_of_*` items instead). `trapped_plant` was **removed** (invented ID with no source item). The four `brew_of_soul_*` were earlier removed as duplicates of the `*_demon_soul` ingredients.
+
 Promoted out of the placeholder roster:
 
 | Item | Status | Notes |

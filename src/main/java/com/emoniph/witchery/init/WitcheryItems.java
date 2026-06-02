@@ -854,21 +854,23 @@ public class WitcheryItems {
                 || stack.is(TORMENT_CONTRACT.get());
     }
 
-    // Source/wikilist placeholders: registered so the remaining item roster is visible in-game and review docs.
-    public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS = registerLegacyPlaceholderItems(
-            "brew_of_soul_hunger",
-            "brew_of_soul_anguish",
-            "brew_of_soul_fear",
-            "brew_of_soul_torment",
-            "hellhound_head",
-            "trapped_plant",
-            "wolf_head",
+    // No inert placeholders remain. The last six were resolved:
+    //   * wolf_head / hellhound_head -> real mounted-head BLOCKS (see WitcheryBlocks +
+    //     WolfHeadBlock / HellhoundHeadBlock), registered as block items just below.
+    //   * brew_bottle / splash_brew_bottle / lingering_brew_bottle -> removed; these are the
+    //     Resurrected generic NBT custom-brew CONTAINERS, which the port deliberately replaces
+    //     with individual brew_of_* items, so they have no role in this architecture.
+    //   * trapped_plant -> removed; it was an invented ID with no source item ("trapped plants"
+    //     is only a generic Boline-tooltip phrase; the real trap plants are the already-promoted
+    //     pit_dirt / pit_grass / plant_mine blocks and Poppy/Dandelion/Shrub derivatives).
+    //   * The four brew_of_soul_* were earlier removed as duplicates of *_demon_soul.
+    public static final Map<String, DeferredItem<Item>> LEGACY_PLACEHOLDER_ITEMS =
+            registerLegacyPlaceholderItems();
 
-            // Exact 1.12 Resurrected registry IDs that differ from the current/source-backed names.
-            "brew_bottle",
-            "splash_brew_bottle",
-            "lingering_brew_bottle"
-    );
+    public static final DeferredItem<Item> WOLF_HEAD = ITEMS.register("wolf_head",
+            id -> new BlockItem(WitcheryBlocks.WOLF_HEAD.get(), itemProps(id)));
+    public static final DeferredItem<Item> HELLHOUND_HEAD = ITEMS.register("hellhound_head",
+            id -> new BlockItem(WitcheryBlocks.HELLHOUND_HEAD.get(), itemProps(id)));
 
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
         LinkedHashMap<String, DeferredItem<Item>> placeholders = new LinkedHashMap<>();

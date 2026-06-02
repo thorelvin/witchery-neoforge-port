@@ -70,6 +70,9 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("void_bramble", () -> new BlockEntityType<>(VoidBrambleBlockEntity::new, Set.of(WitcheryBlocks.VOID_BRAMBLE.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AlluringSkullBlockEntity>> ALLURING_SKULL =
             BLOCK_ENTITIES.register("alluring_skull", () -> new BlockEntityType<>(AlluringSkullBlockEntity::new, Set.of(WitcheryBlocks.ALLURING_SKULL.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.WolfHeadBlockEntity>> WOLF_HEAD =
+            BLOCK_ENTITIES.register("wolf_head", () -> new BlockEntityType<>(com.emoniph.witchery.blocks.entity.WolfHeadBlockEntity::new,
+                    Set.of(WitcheryBlocks.WOLF_HEAD.get(), WitcheryBlocks.HELLHOUND_HEAD.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DemonHeartBlockEntity>> DEMON_HEART =
             BLOCK_ENTITIES.register("demon_heart", () -> new BlockEntityType<>(DemonHeartBlockEntity::new, Set.of(WitcheryBlocks.DEMON_HEART.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity>> REFILLING_CHEST =

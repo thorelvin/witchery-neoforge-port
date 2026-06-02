@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "witchery:block/hellhound_head" },
+    "facing=down":  { "model": "witchery:block/hellhound_head" },
+    "facing=north": { "model": "witchery:block/hellhound_head" },
+    "facing=south": { "model": "witchery:block/hellhound_head" },
+    "facing=east":  { "model": "witchery:block/hellhound_head" },
+    "facing=west":  { "model": "witchery:block/hellhound_head" }
+  }
+}

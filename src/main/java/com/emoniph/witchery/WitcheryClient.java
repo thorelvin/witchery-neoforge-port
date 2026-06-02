@@ -84,6 +84,7 @@ public class WitcheryClient {
         Map.entry(CoffinModel.BOTTOM_LAYER_LOCATION,   CoffinModel::createBottomLayer),
         Map.entry(DemonHeartModel.LAYER_LOCATION,      DemonHeartModel::createBodyLayer),
         Map.entry(AlluringSkullModel.LAYER_LOCATION,   AlluringSkullModel::createBodyLayer),
+        Map.entry(com.emoniph.witchery.client.model.WolfHeadModel.LAYER_LOCATION, com.emoniph.witchery.client.model.WolfHeadModel::createBodyLayer),
         Map.entry(StatueGoddessModel.LAYER_LOCATION,   StatueGoddessModel::createBodyLayer),
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
         Map.entry(RavenModel.LAYER_LOCATION,           RavenModel::createBodyLayer),
@@ -198,6 +199,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.DEMON_HEART.get(),     DemonHeartRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.ALLURING_SKULL.get(),  AlluringSkullRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.WOLF_HEAD.get(),       com.emoniph.witchery.client.renderer.WolfHeadRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.SUN_COLLECTOR.get(),   SunCollectorRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.BLOOD_CRUCIBLE.get(),
                 com.emoniph.witchery.client.renderer.BloodCrucibleRenderer::new);

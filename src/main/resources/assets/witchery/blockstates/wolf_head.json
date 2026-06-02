@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "witchery:block/wolf_head" },
+    "facing=down":  { "model": "witchery:block/wolf_head" },
+    "facing=north": { "model": "witchery:block/wolf_head" },
+    "facing=south": { "model": "witchery:block/wolf_head" },
+    "facing=east":  { "model": "witchery:block/wolf_head" },
+    "facing=west":  { "model": "witchery:block/wolf_head" }
+  }
+}

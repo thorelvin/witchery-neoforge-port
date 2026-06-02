@@ -507,14 +507,13 @@ public class WitcheryCreativeTabs {
     }
 
     private static void addLegacyPlaceholders(CreativeModeTab.Output output) {
-        Set<String> accepted = new LinkedHashSet<>();
+        // The mounted trophy heads are the last former-placeholders to become real blocks.
+        add(output,
+                WitcheryItems.WOLF_HEAD.get(),
+                WitcheryItems.HELLHOUND_HEAD.get());
 
-        addLegacy(output, accepted,
-                "hellhound_head", "wolf_head", "trapped_plant");
-        addLegacy(output, accepted,
-                "brew_of_soul_hunger", "brew_of_soul_anguish", "brew_of_soul_fear", "brew_of_soul_torment");
-        addLegacy(output, accepted,
-                "brew_bottle", "splash_brew_bottle", "lingering_brew_bottle");
+        // Any future inert placeholders would still surface here.
+        Set<String> accepted = new LinkedHashSet<>();
         WitcheryItems.LEGACY_PLACEHOLDER_ITEMS.forEach((id, item) -> {
             if (accepted.add(id)) {
                 output.accept(item.get());
