@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.CoffinBlock;
 import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.DreamCatcherBlockEntity;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.BedTaglockSavedData;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.data.InfusionType;
@@ -203,6 +204,12 @@ public class WitcheryPlayerEvents {
     public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
         if (event.getEntity() instanceof IronGolem
                 && event.getNewAboutToBeSetTarget() instanceof VillageGuardEntity) {
+            event.setNewAboutToBeSetTarget(null);
+            return;
+        }
+        if (WitcheryConfig.TOWN_ZOMBIE_ATTACK_REDUCTION_MODE.get() >= 2
+                && event.getEntity() instanceof Zombie
+                && event.getNewAboutToBeSetTarget() instanceof Villager) {
             event.setNewAboutToBeSetTarget(null);
             return;
         }

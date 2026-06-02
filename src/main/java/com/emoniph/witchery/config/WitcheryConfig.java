@@ -12,6 +12,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue DEBUG;
+    public static final ModConfigSpec.IntValue TOWN_ZOMBIE_ATTACK_REDUCTION_MODE;
 
     // ── Vampire ───────────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue VAMPIRE_BLOOD_DRAIN_INTERVAL;
@@ -41,6 +42,12 @@ public class WitcheryConfig {
         DEBUG = BUILDER
                 .comment("Enable extra Witchery diagnostic logging for QA. Default: true")
                 .define("debug", true);
+
+        BUILDER.push("general");
+        TOWN_ZOMBIE_ATTACK_REDUCTION_MODE = BUILDER
+                .comment("Source TownZombieAttackReductionMode: 0 disables village zombie protection, 1 reduces zombie damage to villagers, 2 also clears zombie villager targets. Default: 1")
+                .defineInRange("TownZombieAttackReductionMode", 1, 0, 2);
+        BUILDER.pop();
 
         BUILDER.push("vampire");
         VAMPIRE_BLOOD_DRAIN_INTERVAL = BUILDER
