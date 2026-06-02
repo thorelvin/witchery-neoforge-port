@@ -58,14 +58,23 @@ public class MutatingSprigItem extends Item {
         BlockState state = level.getBlockState(pos);
 
         if (tryCreateGrasspers(level, pos, state)
-                || tryCreateLeechChest(level, pos, state)
-                || tryCreateCritterSnare(level, pos, state)
+                || tryCreateLeechChest(level, pos, state)) {
+            return finishUse(ctx, pos, false);
+        }
+
+        if (tryCreateCritterSnare(level, pos, state)
                 || tryCreateFlyingMonkey(level, pos, state)
                 || tryCreateOwls(level, pos, state)
                 || tryCreateToads(level, pos, state)
-                || tryCreateParasyticLouse(level, pos, state)
-                || tryCreateBloodRoses(level, pos, state)
-                || tryCreateWildBramble(level, pos, state)
+                || tryCreateParasyticLouse(level, pos, state)) {
+            return finishUse(ctx, pos, true);
+        }
+
+        if (tryCreateBloodRoses(level, pos, state)) {
+            return finishUse(ctx, pos, false);
+        }
+
+        if (tryCreateWildBramble(level, pos, state)
                 || tryCreateVoidBramble(level, pos, state)
                 || tryCreateWormwood(level, pos, state)) {
             return finishUse(ctx, pos, true);
@@ -132,6 +141,7 @@ public class MutatingSprigItem extends Item {
             BlockPos grassPos = pos.relative(direction);
             level.setBlock(grassPos, WitcheryBlocks.GRASSPER.get().defaultBlockState().setValue(GrassperBlock.FACING, direction), 3);
         }
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -159,6 +169,7 @@ public class MutatingSprigItem extends Item {
             level.removeBlock(pos.relative(direction), false);
         }
         level.setBlock(pos, resultState, 3);
+        spawnSlimeMutationEffects(level, pos, 0.5D);
         return true;
     }
 
@@ -324,6 +335,7 @@ public class MutatingSprigItem extends Item {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             level.setBlock(pos.relative(direction), WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState(), 3);
         }
+        spawnSlimeMutationEffects(level, pos, 0.5D);
         return true;
     }
 
@@ -574,6 +586,17 @@ public class MutatingSprigItem extends Item {
 
     private static void spawnClayEffects(Level level, BlockPos pos) {
         spawnInstantSpellEffects(level, pos, 1.5D, 16);
+    }
+
+    private static void spawnSlimeMutationEffects(Level level, BlockPos pos, double horizontalSpread) {
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY();
+        double z = pos.getZ() + 0.5D;
+        level.playSound(null, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, x, y, z, 8,
+                    horizontalSpread, 1.0D, horizontalSpread, 0.1D);
+        }
     }
 
     private static void spawnInstantSpellEffects(Level level, BlockPos pos, double yOffset, int count) {
