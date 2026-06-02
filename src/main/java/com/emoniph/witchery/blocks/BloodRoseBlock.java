@@ -19,10 +19,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Blood Rose stores a fresh blood sample from the last player who brushed
@@ -57,6 +60,11 @@ public class BloodRoseBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
+    }
+
+    @Override
+    public List<net.minecraft.world.item.ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        return List.of();
     }
 
     @Override
