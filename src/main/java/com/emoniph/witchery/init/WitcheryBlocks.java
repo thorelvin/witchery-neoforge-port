@@ -88,12 +88,18 @@ public class WitcheryBlocks {
 
     private static final BlockBehaviour.StatePredicate NEVER = (state, level, pos) -> false;
 
+    private static BlockBehaviour.Properties bloodedWoolProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WHITE_WOOL)
+                .mapColor(MapColor.COLOR_RED);
+    }
+
     // Wood & Rowan family
     public static final DeferredBlock<Block> ROWAN_PLANKS = registerSimpleBlock("rowan_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 3.0f));
+    public static final DeferredBlock<Block> BLOODED_WOOL = registerSimpleBlock("bloodedwool",
+            WitcheryBlocks::bloodedWoolProperties);
     public static final DeferredBlock<Block> BLOOD_STAINED_WOOL = registerSimpleBlock("blood_stained_wool",
-            BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WHITE_WOOL)
-                    .mapColor(MapColor.COLOR_RED));
+            WitcheryBlocks::bloodedWoolProperties);
     public static final DeferredBlock<Block> PIT_DIRT = registerSimpleBlock("pit_dirt",
             BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DIRT)
                     .mapColor(MapColor.DIRT)

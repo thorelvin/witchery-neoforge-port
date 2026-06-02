@@ -53,7 +53,7 @@ public class BoneNeedleItem extends Item {
                 PacketDistributor.sendToPlayer(serverPlayer, SyncPlayerDataPayload.from(serverPlayer, data));
             }
 
-            level.setBlock(pos, WitcheryBlocks.BLOOD_STAINED_WOOL.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(pos, WitcheryBlocks.BLOODED_WOOL.get().defaultBlockState(), Block.UPDATE_ALL);
             playStainEffects((ServerLevel) level, pos);
             return InteractionResult.SUCCESS;
         }

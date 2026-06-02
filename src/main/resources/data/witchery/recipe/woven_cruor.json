@@ -1,6 +1,6 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": "witchery:blood_stained_wool",
+  "ingredient": "witchery:bloodedwool",
   "result": {
     "id": "witchery:woven_cruor"
   },

@@ -252,6 +252,7 @@ public class WitcheryItems {
             id -> new com.emoniph.witchery.item.ShadedGlassBlockItem(WitcheryBlocks.SHADED_GLASS.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> INFINITY_EGG         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.INFINITY_EGG);
     public static final DeferredItem<BlockItem> ROWAN_PLANKS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_PLANKS);
+    public static final DeferredItem<BlockItem> BLOODED_WOOL         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOODED_WOOL);
     public static final DeferredItem<BlockItem> BLOOD_STAINED_WOOL   = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLOOD_STAINED_WOOL);
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
     public static final DeferredItem<BlockItem> ROWAN_SLAB           = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SLAB);

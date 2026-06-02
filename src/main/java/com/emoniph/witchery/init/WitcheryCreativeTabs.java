@@ -165,7 +165,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.STATUE_GODDESS.get(),
                 WitcheryItems.WICKER_BUNDLE.get(),
                 WitcheryItems.BLOODIED_WICKER_BUNDLE.get(),
-                WitcheryItems.BLOOD_STAINED_WOOL.get(),
+                WitcheryItems.BLOODED_WOOL.get(),
                 WitcheryItems.PIT_DIRT.get(),
                 WitcheryItems.PIT_GRASS.get());
         for (DyeColor color : DyeColor.values()) {
