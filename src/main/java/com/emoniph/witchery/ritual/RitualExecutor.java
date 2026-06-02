@@ -274,11 +274,14 @@ public class RitualExecutor {
 
             for (RitualCircleDetector.DetectionResult result : presentCircles) {
                 int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
-                ActivationResult activation = switch (result.size()) {
-                    case SMALL -> dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
-                    case MEDIUM -> dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
-                    case LARGE -> dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
-                };
+                ActivationResult activation;
+                if (result.size() == RitualCircleDetector.CircleSize.SMALL) {
+                    activation = dispatchSmall(player, level, floorCenter, ingredient, circleVariant);
+                } else if (result.size() == RitualCircleDetector.CircleSize.MEDIUM) {
+                    activation = dispatchMedium(player, level, floorCenter, ingredient, circleVariant);
+                } else {
+                    activation = dispatchLarge(player, level, floorCenter, ingredient, circleVariant);
+                }
                 if (activation.matched()) {
                     return activation;
                 }
@@ -309,6 +312,31 @@ public class RitualExecutor {
     private static boolean hasCompanionRing(Level level, BlockPos center, RitualCircleDetector.CircleSize size, int requiredVariant) {
         return RitualCircleDetector.hasRing(level, center, size)
                 && RitualCircleDetector.detectVariant(level, center, size) == requiredVariant;
+    }
+
+    private static Optional<RitualOffering> protectionSupportOffering(ActiveRitualType type, ItemStack trigger,
+                                                                      Level level, BlockPos center) {
+        if (type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS) {
+            return findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
+        }
+        if (type != ActiveRitualType.PROTECTION_BARRIER_PORTABLE) {
+            return Optional.empty();
+        }
+        return trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                ? findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack)
+                : findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+    }
+
+    private static String protectionSupportKey(ActiveRitualType type, ItemStack trigger) {
+        if (type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS) {
+            return "witchery.ritual.protection.redstone_support";
+        }
+        if (type != ActiveRitualType.PROTECTION_BARRIER_PORTABLE) {
+            return null;
+        }
+        return trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                ? "witchery.ritual.protection.obsidian_support"
+                : "witchery.ritual.protection.charged_support";
     }
 
     private static boolean isGlyphicTransformationChalk(ItemStack stack) {
@@ -630,11 +658,10 @@ public class RitualExecutor {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
 
-        int startupCost = switch (type) {
-            case LIGHT -> 2000;
-            case OVERWORLD, OTHERWHERE, INFERNAL -> 4000;
-            default -> 0;
-        };
+        int startupCost = type == InfusionType.LIGHT ? 2000
+                : (type == InfusionType.OVERWORLD || type == InfusionType.OTHERWHERE || type == InfusionType.INFERNAL)
+                ? 4000
+                : 0;
         if (startupCost > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupCost)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             sp.displayClientMessage(Component.translatable("witchery.ritual.infusion.no_power"), false);
@@ -645,18 +672,27 @@ public class RitualExecutor {
         data.setInfusionType(type);
         data.setInfusionEnergy(200, 200);
 
-        String msgKey = switch (type) {
-            case LIGHT      -> "witchery.ritual.infusion.light.success";
-            case OVERWORLD  -> "witchery.ritual.infusion.overworld.success";
-            case OTHERWHERE -> "witchery.ritual.infusion.otherwhere.success";
-            case INFERNAL   -> "witchery.ritual.infusion.infernal.success";
-            default         -> "witchery.ritual.infusion.success";
-        };
+        String msgKey = infusionSuccessKey(type);
 
         PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
         success(player, level, center, msgKey, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
         return true;
+    }
+
+    private static String infusionSuccessKey(InfusionType type) {
+        if (type == InfusionType.LIGHT) {
+            return "witchery.ritual.infusion.light.success";
+        }
+        if (type == InfusionType.OVERWORLD) {
+            return "witchery.ritual.infusion.overworld.success";
+        }
+        if (type == InfusionType.OTHERWHERE) {
+            return "witchery.ritual.infusion.otherwhere.success";
+        }
+        return type == InfusionType.INFERNAL
+                ? "witchery.ritual.infusion.infernal.success"
+                : "witchery.ritual.infusion.success";
     }
 
     /** Rite of Bind Familiar — binds nearby tamed familiar-capable creatures instead of spawning a new one. */
@@ -1113,20 +1149,8 @@ public class RitualExecutor {
                                                    int radius, int height) {
         if (!(level instanceof ServerLevel sl)) return false;
         ItemStack trigger = PENDING_RITUAL_INGREDIENT.get();
-        Optional<RitualOffering> supportOffering = switch (type) {
-            case PROTECTION_BARRIER_MONSTERS -> findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE));
-            case PROTECTION_BARRIER_PORTABLE -> trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
-                    ? findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack)
-                    : findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
-            default -> Optional.empty();
-        };
-        String supportKey = switch (type) {
-            case PROTECTION_BARRIER_MONSTERS -> "witchery.ritual.protection.redstone_support";
-            case PROTECTION_BARRIER_PORTABLE -> trigger.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
-                    ? "witchery.ritual.protection.obsidian_support"
-                    : "witchery.ritual.protection.charged_support";
-            default -> null;
-        };
+        Optional<RitualOffering> supportOffering = protectionSupportOffering(type, trigger, level, center);
+        String supportKey = protectionSupportKey(type, trigger);
         if (supportKey != null && supportOffering.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable(supportKey), false);
@@ -1143,15 +1167,8 @@ public class RitualExecutor {
         }
 
         int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
-        int startupPower = switch (type) {
-            case PROTECTION_BARRIER_MONSTERS -> 500;
-            default -> 0;
-        };
-        float upkeepCost = switch (type) {
-            case PROTECTION_BARRIER_MONSTERS -> 1.2f;
-            case PROTECTION_BARRIER_PORTABLE -> 0.0f;
-            default -> 0.0f;
-        };
+        int startupPower = type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS ? 500 : 0;
+        float upkeepCost = type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS ? 1.2f : 0.0f;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (startupPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupPower)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -1639,21 +1656,43 @@ public class RitualExecutor {
     }
 
     private static Holder<Biome> resolveClimateBiome(ServerLevel level, ClimateFocus focus, int glowstoneCount) {
-        return switch (focus) {
-            case FOREST -> pickClimateBiome(level, glowstoneCount, Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.FLOWER_FOREST);
-            case PLAINS -> pickClimateBiome(level, glowstoneCount, Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.MEADOW);
-            case MOUNTAIN -> pickClimateBiome(level, glowstoneCount, Biomes.JAGGED_PEAKS, Biomes.STONY_PEAKS, Biomes.FROZEN_PEAKS);
-            case HILLS -> pickClimateBiome(level, glowstoneCount, Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_FOREST);
-            case SWAMP -> pickClimateBiome(level, glowstoneCount, Biomes.SWAMP, Biomes.MANGROVE_SWAMP);
-            case WATER -> pickClimateBiome(level, glowstoneCount, Biomes.OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.DEEP_OCEAN);
-            case DESERT -> pickClimateBiome(level, glowstoneCount, Biomes.DESERT);
-            case FROZEN -> pickClimateBiome(level, glowstoneCount, Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.FROZEN_PEAKS);
-            case JUNGLE -> pickClimateBiome(level, glowstoneCount, Biomes.JUNGLE, Biomes.BAMBOO_JUNGLE, Biomes.SPARSE_JUNGLE);
-            case WASTELAND -> pickClimateBiome(level, glowstoneCount, Biomes.BADLANDS, Biomes.ERODED_BADLANDS, Biomes.WOODED_BADLANDS);
-            case BEACH -> pickClimateBiome(level, glowstoneCount, Biomes.BEACH, Biomes.SNOWY_BEACH, Biomes.STONY_SHORE);
-            case MUSHROOM -> pickClimateBiome(level, glowstoneCount, Biomes.MUSHROOM_FIELDS);
-            case MAGICAL -> pickClimateBiome(level, glowstoneCount, Biomes.CHERRY_GROVE, Biomes.FLOWER_FOREST, Biomes.DARK_FOREST);
-        };
+        if (focus == ClimateFocus.FOREST) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.FLOWER_FOREST);
+        }
+        if (focus == ClimateFocus.PLAINS) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.MEADOW);
+        }
+        if (focus == ClimateFocus.MOUNTAIN) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.JAGGED_PEAKS, Biomes.STONY_PEAKS, Biomes.FROZEN_PEAKS);
+        }
+        if (focus == ClimateFocus.HILLS) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_FOREST);
+        }
+        if (focus == ClimateFocus.SWAMP) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.SWAMP, Biomes.MANGROVE_SWAMP);
+        }
+        if (focus == ClimateFocus.WATER) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.DEEP_OCEAN);
+        }
+        if (focus == ClimateFocus.DESERT) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.DESERT);
+        }
+        if (focus == ClimateFocus.FROZEN) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.FROZEN_PEAKS);
+        }
+        if (focus == ClimateFocus.JUNGLE) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.JUNGLE, Biomes.BAMBOO_JUNGLE, Biomes.SPARSE_JUNGLE);
+        }
+        if (focus == ClimateFocus.WASTELAND) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.BADLANDS, Biomes.ERODED_BADLANDS, Biomes.WOODED_BADLANDS);
+        }
+        if (focus == ClimateFocus.BEACH) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.BEACH, Biomes.SNOWY_BEACH, Biomes.STONY_SHORE);
+        }
+        if (focus == ClimateFocus.MUSHROOM) {
+            return pickClimateBiome(level, glowstoneCount, Biomes.MUSHROOM_FIELDS);
+        }
+        return pickClimateBiome(level, glowstoneCount, Biomes.CHERRY_GROVE, Biomes.FLOWER_FOREST, Biomes.DARK_FOREST);
     }
 
     @SafeVarargs
@@ -1668,11 +1707,10 @@ public class RitualExecutor {
     }
 
     private static ClimateWeather weatherForFocus(ClimateFocus focus) {
-        return switch (focus) {
-            case DESERT -> ClimateWeather.SUN;
-            case FROZEN -> ClimateWeather.RAIN;
-            default -> ClimateWeather.NONE;
-        };
+        if (focus == ClimateFocus.DESERT) {
+            return ClimateWeather.SUN;
+        }
+        return focus == ClimateFocus.FROZEN ? ClimateWeather.RAIN : ClimateWeather.NONE;
     }
 
     private static ClimateWeather weatherForBiomeKey(ResourceKey<Biome> key) {
@@ -1748,21 +1786,14 @@ public class RitualExecutor {
     }
 
     private static void applyClimateChangeWeather(ServerLevel level, BlockPos center, int radius, ClimateWeather weather) {
-        switch (weather) {
-            case SUN -> {
-                if (level.isRaining() || level.isThundering()) {
-                    level.setWeatherParameters(0, 0, false, false);
-                }
-                clearClimateSnow(level, center, radius);
+        if (weather == ClimateWeather.SUN) {
+            if (level.isRaining() || level.isThundering()) {
+                level.setWeatherParameters(0, 0, false, false);
             }
-            case RAIN -> {
-                if (!level.isRaining() && !level.isThundering()) {
-                    int rainTicks = (300 + level.random.nextInt(600)) * 20;
-                    level.setWeatherParameters(0, rainTicks, true, false);
-                }
-            }
-            case NONE -> {
-            }
+            clearClimateSnow(level, center, radius);
+        } else if (weather == ClimateWeather.RAIN && !level.isRaining() && !level.isThundering()) {
+            int rainTicks = (300 + level.random.nextInt(600)) * 20;
+            level.setWeatherParameters(0, rainTicks, true, false);
         }
     }
 
@@ -2039,27 +2070,30 @@ public class RitualExecutor {
         }
 
         ritual.nextGameTime = gameTime + ritual.pulseInterval;
-        return switch (ritual.type) {
-            case WEATHER_CALL_STORM -> tickStormRitual(level, ritual);
-            case ICE_SHELL -> tickIceShellRitual(level, ritual);
-            case RAIN_OF_TOADS -> tickRainOfToadsRitual(level, ritual);
-            case BLINDNESS -> tickBlindnessRitual(level, ritual);
-            case BLIGHT -> tickBlightRitual(level, ritual);
-            case HELL_ON_EARTH -> tickHellOnEarthRitual(level, ritual);
-            case CALL_CREATURES -> tickCallCreaturesRitual(level, ritual);
-            case CLIMATE_CHANGE -> tickClimateChangeRitual(level, ritual);
-            case NATURES_POWER -> tickNaturesPowerRitual(level, ritual);
-            case TRANSPOSE_ORES -> tickTransposeOresRitual(level, ritual);
-            case MOVING_EARTH -> tickMovingEarthRitual(level, ritual);
-            case RAISE_COLUMN -> tickRaiseColumnRitual(level, ritual);
-            case VOLCANO -> tickVolcanoRitual(level, ritual);
-            case PROTECTION_BARRIER_MONSTERS -> tickProtectionBarrierMonstersRitual(level, ritual);
-            case PROTECTION_BARRIER_PORTABLE -> tickProtectionBarrierPortableRitual(level, ritual);
-            case PROTECTION_BARRIER -> tickProtectionBarrierRitual(level, ritual);
-            case INFUSION_RECHARGE -> tickInfusionRechargeRitual(level, ritual);
-            case SANCTITY_CIRCLE -> tickSanctityCircleRitual(level, ritual);
-            case IMPRISONMENT_CIRCLE -> tickImprisonmentCircleRitual(level, ritual);
-        };
+        return tickActiveRitualByType(level, ritual);
+    }
+
+    private static boolean tickActiveRitualByType(ServerLevel level, ActiveRitual ritual) {
+        ActiveRitualType type = ritual.type;
+        if (type == ActiveRitualType.WEATHER_CALL_STORM) return tickStormRitual(level, ritual);
+        if (type == ActiveRitualType.ICE_SHELL) return tickIceShellRitual(level, ritual);
+        if (type == ActiveRitualType.RAIN_OF_TOADS) return tickRainOfToadsRitual(level, ritual);
+        if (type == ActiveRitualType.BLINDNESS) return tickBlindnessRitual(level, ritual);
+        if (type == ActiveRitualType.BLIGHT) return tickBlightRitual(level, ritual);
+        if (type == ActiveRitualType.HELL_ON_EARTH) return tickHellOnEarthRitual(level, ritual);
+        if (type == ActiveRitualType.CALL_CREATURES) return tickCallCreaturesRitual(level, ritual);
+        if (type == ActiveRitualType.CLIMATE_CHANGE) return tickClimateChangeRitual(level, ritual);
+        if (type == ActiveRitualType.NATURES_POWER) return tickNaturesPowerRitual(level, ritual);
+        if (type == ActiveRitualType.TRANSPOSE_ORES) return tickTransposeOresRitual(level, ritual);
+        if (type == ActiveRitualType.MOVING_EARTH) return tickMovingEarthRitual(level, ritual);
+        if (type == ActiveRitualType.RAISE_COLUMN) return tickRaiseColumnRitual(level, ritual);
+        if (type == ActiveRitualType.VOLCANO) return tickVolcanoRitual(level, ritual);
+        if (type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS) return tickProtectionBarrierMonstersRitual(level, ritual);
+        if (type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE) return tickProtectionBarrierPortableRitual(level, ritual);
+        if (type == ActiveRitualType.PROTECTION_BARRIER) return tickProtectionBarrierRitual(level, ritual);
+        if (type == ActiveRitualType.INFUSION_RECHARGE) return tickInfusionRechargeRitual(level, ritual);
+        if (type == ActiveRitualType.SANCTITY_CIRCLE) return tickSanctityCircleRitual(level, ritual);
+        return tickImprisonmentCircleRitual(level, ritual);
     }
 
     private static boolean tickStormRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2654,25 +2688,27 @@ public class RitualExecutor {
     }
 
     private static String activeRitualName(ActiveRitualType type) {
-        return switch (type) {
-            case SANCTITY_CIRCLE -> "Sanctity";
-            case IMPRISONMENT_CIRCLE -> "Imprisonment";
-            case PROTECTION_BARRIER, PROTECTION_BARRIER_MONSTERS, PROTECTION_BARRIER_PORTABLE -> "Barrier";
-            case INFUSION_RECHARGE -> "Infusion Recharge";
-            case WEATHER_CALL_STORM -> "Storm";
-            case ICE_SHELL -> "Ice Shell";
-            case RAIN_OF_TOADS -> "Rain of Toads";
-            case BLINDNESS -> "Blindness";
-            case BLIGHT -> "Blight";
-            case HELL_ON_EARTH -> "Hell on Earth";
-            case CALL_CREATURES -> "Beastial Call";
-            case CLIMATE_CHANGE -> "Climate Change";
-            case NATURES_POWER -> "Nature's Power";
-            case TRANSPOSE_ORES -> "Transpose Ores";
-            case MOVING_EARTH -> "Moving Earth";
-            case RAISE_COLUMN -> "Raise Column";
-            case VOLCANO -> "Volcano";
-        };
+        if (type == ActiveRitualType.SANCTITY_CIRCLE) return "Sanctity";
+        if (type == ActiveRitualType.IMPRISONMENT_CIRCLE) return "Imprisonment";
+        if (type == ActiveRitualType.PROTECTION_BARRIER
+                || type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS
+                || type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE) {
+            return "Barrier";
+        }
+        if (type == ActiveRitualType.INFUSION_RECHARGE) return "Infusion Recharge";
+        if (type == ActiveRitualType.WEATHER_CALL_STORM) return "Storm";
+        if (type == ActiveRitualType.ICE_SHELL) return "Ice Shell";
+        if (type == ActiveRitualType.RAIN_OF_TOADS) return "Rain of Toads";
+        if (type == ActiveRitualType.BLINDNESS) return "Blindness";
+        if (type == ActiveRitualType.BLIGHT) return "Blight";
+        if (type == ActiveRitualType.HELL_ON_EARTH) return "Hell on Earth";
+        if (type == ActiveRitualType.CALL_CREATURES) return "Beastial Call";
+        if (type == ActiveRitualType.CLIMATE_CHANGE) return "Climate Change";
+        if (type == ActiveRitualType.NATURES_POWER) return "Nature's Power";
+        if (type == ActiveRitualType.TRANSPOSE_ORES) return "Transpose Ores";
+        if (type == ActiveRitualType.MOVING_EARTH) return "Moving Earth";
+        if (type == ActiveRitualType.RAISE_COLUMN) return "Raise Column";
+        return "Volcano";
     }
 
     private static boolean ensureActiveRitualCenterAvailable(Player player, ServerLevel level, BlockPos center) {
@@ -3820,12 +3856,16 @@ public class RitualExecutor {
 
     private static List<Entity> findNearbySpectralCreatures(ServerLevel level, BlockPos center, SpectralStoneItem.StoredType type,
                                                             double radius, int maxCount) {
-        return switch (type) {
-            case SPECTRE -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.SpectreEntity.class, center, radius, maxCount));
-            case BANSHEE -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.BansheeEntity.class, center, radius, maxCount));
-            case POLTERGEIST -> new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.PoltergeistEntity.class, center, radius, maxCount));
-            default -> List.of();
-        };
+        if (type == SpectralStoneItem.StoredType.SPECTRE) {
+            return new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.SpectreEntity.class, center, radius, maxCount));
+        }
+        if (type == SpectralStoneItem.StoredType.BANSHEE) {
+            return new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.BansheeEntity.class, center, radius, maxCount));
+        }
+        if (type == SpectralStoneItem.StoredType.POLTERGEIST) {
+            return new ArrayList<>(findNearestEntities(level, com.emoniph.witchery.entity.PoltergeistEntity.class, center, radius, maxCount));
+        }
+        return List.of();
     }
 
     private static int consumeCapturedEntities(ServerLevel level, List<? extends Entity> capturedEntities) {
@@ -4077,20 +4117,12 @@ public class RitualExecutor {
         Optional<RaiseColumnOfferings> offerings = findRaiseColumnOfferings(level, center, circleSize);
         if (offerings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            String supportKey = switch (circleSize) {
-                case SMALL -> "witchery.ritual.raise_column.small_support";
-                case MEDIUM -> "witchery.ritual.raise_column.medium_support";
-                case LARGE -> "witchery.ritual.raise_column.large_support";
-            };
+            String supportKey = raiseColumnSupportKey(circleSize);
             player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
 
-        int baseRadius = switch (circleSize) {
-            case SMALL -> 4;
-            case MEDIUM -> 6;
-            case LARGE -> 9;
-        };
+        int baseRadius = raiseColumnBaseRadius(circleSize);
         int height = 8;
         int covenSize = countNearbyCovenWitches(level, center);
         OptionalWaystoneRelocation relocation = circleSize == RitualCircleDetector.CircleSize.SMALL
@@ -4121,6 +4153,22 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.raise_column.success",
                 SoundEvents.STONE_BREAK, 0.8f, 3, 32);
         return true;
+    }
+
+    private static String raiseColumnSupportKey(RitualCircleDetector.CircleSize circleSize) {
+        if (circleSize == RitualCircleDetector.CircleSize.SMALL) {
+            return "witchery.ritual.raise_column.small_support";
+        }
+        return circleSize == RitualCircleDetector.CircleSize.MEDIUM
+                ? "witchery.ritual.raise_column.medium_support"
+                : "witchery.ritual.raise_column.large_support";
+    }
+
+    private static int raiseColumnBaseRadius(RitualCircleDetector.CircleSize circleSize) {
+        if (circleSize == RitualCircleDetector.CircleSize.SMALL) {
+            return 4;
+        }
+        return circleSize == RitualCircleDetector.CircleSize.MEDIUM ? 6 : 9;
     }
 
     /** Rite of Earth's Wrath — raises a volcano if a lava pool lies below the circle. */
@@ -6498,15 +6546,21 @@ public class RitualExecutor {
                                                                            RitualCircleDetector.CircleSize circleSize) {
         Optional<ItemEntity> brewOfSprouting = findNearbyOffering(level, center, WitcheryItems::isBrewOfSprouting);
         Optional<ItemEntity> cactus = findNearbyOffering(level, center, stack -> stack.is(Blocks.CACTUS.asItem()));
-        Optional<ItemEntity> focus = switch (circleSize) {
-            case SMALL -> findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
-            case MEDIUM -> findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE));
-            case LARGE -> findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
-        };
+        Optional<ItemEntity> focus = findRaiseColumnFocus(level, center, circleSize);
         if (brewOfSprouting.isEmpty() || cactus.isEmpty() || focus.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new RaiseColumnOfferings(brewOfSprouting.get(), cactus.get(), focus.get()));
+    }
+
+    private static Optional<ItemEntity> findRaiseColumnFocus(Level level, BlockPos center,
+                                                             RitualCircleDetector.CircleSize circleSize) {
+        if (circleSize == RitualCircleDetector.CircleSize.SMALL) {
+            return findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+        }
+        return circleSize == RitualCircleDetector.CircleSize.MEDIUM
+                ? findNearbyOffering(level, center, stack -> stack.is(Items.REDSTONE))
+                : findNearbyOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST));
     }
 
     private static OptionalWaystoneRelocation findOptionalWaystoneRelocation(Level level, BlockPos center, int covenSize) {
@@ -6528,11 +6582,7 @@ public class RitualExecutor {
     }
 
     private static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant, int covenSize) {
-        Optional<ItemEntity> weatherFocus = switch (variant) {
-            case BASE -> findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
-            case LARGE -> findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET));
-            case PORTABLE -> findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
-        };
+        Optional<ItemEntity> weatherFocus = findStormWeatherFocus(level, center, variant);
         Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
         Optional<ItemEntity> chargedStone = variant == StormRiteVariant.PORTABLE
                 ? findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
@@ -6544,6 +6594,15 @@ public class RitualExecutor {
         OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null),
                 relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
+    }
+
+    private static Optional<ItemEntity> findStormWeatherFocus(Level level, BlockPos center, StormRiteVariant variant) {
+        if (variant == StormRiteVariant.BASE) {
+            return findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
+        }
+        return variant == StormRiteVariant.LARGE
+                ? findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET))
+                : findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
     }
 
     private static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {
