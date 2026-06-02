@@ -8,7 +8,6 @@ import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -35,7 +34,7 @@ public class BloodRoseBlock extends BaseEntityBlock {
 
     public static final MapCodec<BloodRoseBlock> CODEC = simpleCodec(BloodRoseBlock::new);
     public static final BooleanProperty FULL = BooleanProperty.create("full");
-    private static final VoxelShape SHAPE = Block.box(4.8, 0.0, 4.8, 11.2, 9.6, 11.2);
+    private static final VoxelShape SHAPE = Block.box(5.8, 0.0, 5.8, 10.2, 8.6, 10.2);
 
     public BloodRoseBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -70,11 +69,6 @@ public class BloodRoseBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !level.getBlockState(pos.below()).isAir();
     }
 
     @Nullable
