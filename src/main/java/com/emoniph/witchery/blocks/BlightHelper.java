@@ -113,6 +113,25 @@ public final class BlightHelper {
         return convertTarget(level, pos, random, false);
     }
 
+    public static void placeHeart(ServerLevel level, BlockPos heartPos, boolean seedAdjacent) {
+        level.setBlock(heartPos, WitcheryBlocks.BLIGHT_HEART.get().defaultBlockState(), Block.UPDATE_ALL);
+        if (seedAdjacent) {
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                seedBlight(level, heartPos.relative(direction), level.random);
+            }
+        }
+        level.playSound(null, heartPos, SoundEvents.WITCH_THROW, SoundSource.BLOCKS,
+                0.8F, 0.55F + level.random.nextFloat() * 0.2F);
+        level.playSound(null, heartPos, SoundEvents.ROOTED_DIRT_BREAK, SoundSource.BLOCKS,
+                0.8F, 0.65F + level.random.nextFloat() * 0.25F);
+        level.sendParticles(ParticleTypes.SMOKE,
+                heartPos.getX() + 0.5D, heartPos.getY() + 0.65D, heartPos.getZ() + 0.5D,
+                28, 0.55D, 0.35D, 0.55D, 0.04D);
+        level.sendParticles(ParticleTypes.WITCH,
+                heartPos.getX() + 0.5D, heartPos.getY() + 0.8D, heartPos.getZ() + 0.5D,
+                22, 0.45D, 0.45D, 0.45D, 0.02D);
+    }
+
     private static boolean convertTarget(ServerLevel level, BlockPos pos, RandomSource random, boolean requireAdjacentBlight) {
         if (isProtected(level, pos)) {
             return false;

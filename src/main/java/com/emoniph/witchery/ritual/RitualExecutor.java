@@ -116,6 +116,7 @@ public class RitualExecutor {
     private static final int RITUAL_PULSE_INTERVAL = 30;
     private static final int VOID_BRAMBLE_NULL_RANGE = 32;
     private static final int VOID_BRAMBLE_NULL_RANGE_SQ = VOID_BRAMBLE_NULL_RANGE * VOID_BRAMBLE_NULL_RANGE;
+    private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
@@ -2830,16 +2831,40 @@ public class RitualExecutor {
     }
 
     private static void seedBlightHeart(ServerLevel level, BlockPos center) {
-        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
-        BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-        if (!level.getBlockState(heartPos).canBeReplaced()) {
+        BlockPos heartPos = randomSurfaceBlightHeartPos(level, center).orElseGet(() -> fallbackBlightHeartPos(level, center));
+        if (heartPos == null) {
             return;
         }
 
-        level.setBlock(heartPos, WitcheryBlocks.BLIGHT_HEART.get().defaultBlockState(), Block.UPDATE_ALL);
-        for (net.minecraft.core.Direction direction : net.minecraft.core.Direction.Plane.HORIZONTAL) {
-            BlightHelper.seedBlight(level, heartPos.relative(direction), level.random);
+        BlightHelper.placeHeart(level, heartPos, true);
+    }
+
+    private static Optional<BlockPos> randomSurfaceBlightHeartPos(ServerLevel level, BlockPos center) {
+        int radiusSq = BLIGHT_HEART_RANDOM_RADIUS * BLIGHT_HEART_RANDOM_RADIUS;
+        for (int attempt = 0; attempt < 48; attempt++) {
+            int dx = level.random.nextInt(BLIGHT_HEART_RANDOM_RADIUS * 2 + 1) - BLIGHT_HEART_RANDOM_RADIUS;
+            int dz = level.random.nextInt(BLIGHT_HEART_RANDOM_RADIUS * 2 + 1) - BLIGHT_HEART_RANDOM_RADIUS;
+            if (dx * dx + dz * dz > radiusSq) {
+                continue;
+            }
+
+            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE,
+                    new BlockPos(center.getX() + dx, center.getY(), center.getZ() + dz));
+            BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
+            if (level.getBlockState(heartPos).canBeReplaced()) {
+                return Optional.of(heartPos);
+            }
         }
+        return Optional.empty();
+    }
+
+    private static BlockPos fallbackBlightHeartPos(ServerLevel level, BlockPos center) {
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
+        BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
+        if (!level.getBlockState(heartPos).canBeReplaced()) {
+            return null;
+        }
+        return heartPos;
     }
 
     private static void spreadBlightRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {

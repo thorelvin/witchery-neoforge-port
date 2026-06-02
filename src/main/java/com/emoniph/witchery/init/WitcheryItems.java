@@ -496,6 +496,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_FOULNESS       = ITEMS.register("brew_of_foulness", id -> new BrewOfFoulnessItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_INFECTION      = ITEMS.register("brew_of_infection", id -> new BrewOfInfectionItem(itemProps(id)));
     public static final DeferredItem<Item> INFECTION_BREW         = ITEMS.register("infection_brew", id -> new BrewOfInfectionItem(itemProps(id)));
+    public static final DeferredItem<Item> BREW_OF_BLIGHT         = ITEMS.register("brew_of_blight", id -> new BrewOfBlightItem(itemProps(id)));
+    public static final DeferredItem<Item> BLIGHT_BREW            = ITEMS.register("blight_brew", id -> new BrewOfBlightItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_CLEANSING      = ITEMS.register("brew_of_cleansing", id -> new BrewOfCleansingItem(itemProps(id)));
     public static final DeferredItem<Item> CLEANSING_BREW         = ITEMS.register("cleansing_brew", id -> new BrewOfCleansingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_LOVE           = ITEMS.register("brew_of_love", id -> new BrewOfLoveItem(itemProps(id)));

@@ -1,0 +1,15 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:blight_ichor"},
+    {"id": "witchery:reek_of_misfortune"},
+    {"id": "witchery:refined_evil"},
+    {"id": "witchery:mutandis_extremis"},
+    {"id": "minecraft:poisonous_potato"},
+    {"id": "minecraft:fermented_spider_eye"}
+  ],
+  "result": {"id": "witchery:brew_of_blight", "count": 3},
+  "power": 2000.0,
+  "color": -9161324,
+  "hatBonus": 1
+}
