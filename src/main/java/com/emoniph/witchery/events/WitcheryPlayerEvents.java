@@ -216,6 +216,18 @@ public class WitcheryPlayerEvents {
 
         if (!(event.getNewAboutToBeSetTarget() instanceof Player player)) return;
 
+        if (player.isInvisible()) {
+            if (event.getEntity().level().getNearestPlayer(event.getEntity(), 16.0D) != player) {
+                event.setNewAboutToBeSetTarget(null);
+            }
+            return;
+        }
+
+        if (event.getEntity().hasEffect(MobEffects.BLINDNESS)) {
+            event.setNewAboutToBeSetTarget(null);
+            return;
+        }
+
         if (event.getEntity() instanceof Creeper
                 && WitcheryItems.isWitchesRobe(player.getItemBySlot(EquipmentSlot.CHEST))) {
             event.setNewAboutToBeSetTarget(null);
