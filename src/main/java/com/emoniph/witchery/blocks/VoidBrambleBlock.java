@@ -3,6 +3,8 @@ package com.emoniph.witchery.blocks;
 import com.emoniph.witchery.blocks.entity.VoidBrambleBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,6 +61,17 @@ public class VoidBrambleBlock extends BaseEntityBlock {
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (random.nextInt(2) != 0) {
+            return;
+        }
+        double x = pos.getX() + random.nextFloat();
+        double y = pos.getY() + 0.65F + random.nextFloat() * 0.3F;
+        double z = pos.getZ() + random.nextFloat();
+        level.addParticle(ParticleTypes.PORTAL, x, y, z, 0.0, -1.2, 0.0);
     }
 
     @Override
