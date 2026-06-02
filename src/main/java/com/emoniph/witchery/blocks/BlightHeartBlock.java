@@ -29,6 +29,16 @@ public class BlightHeartBlock extends Block {
     }
 
     @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return SHAPE;
+    }
+
+    @Override
     protected boolean isRandomlyTicking(BlockState state) {
         return true;
     }
