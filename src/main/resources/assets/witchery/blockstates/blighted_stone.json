@@ -1,5 +1,18 @@
 {
   "variants": {
-    "": { "model": "witchery:block/blighted_stone" }
+    "": [
+      { "model": "witchery:block/blighted_stone", "weight": 8 },
+      { "model": "witchery:block/blighted_stone", "weight": 8, "x": 90 },
+      { "model": "witchery:block/blighted_stone", "weight": 8, "y": 90 },
+      { "model": "witchery:block/blighted_stone", "weight": 8, "x": 90, "y": 90 },
+      { "model": "witchery:block/blighted_stone_1", "weight": 2 },
+      { "model": "witchery:block/blighted_stone_1", "weight": 2, "x": 90 },
+      { "model": "witchery:block/blighted_stone_1", "weight": 2, "y": 90 },
+      { "model": "witchery:block/blighted_stone_1", "weight": 2, "x": 90, "y": 90 },
+      { "model": "witchery:block/blighted_stone_2", "weight": 2 },
+      { "model": "witchery:block/blighted_stone_2", "weight": 2, "x": 90 },
+      { "model": "witchery:block/blighted_stone_2", "weight": 2, "y": 90 },
+      { "model": "witchery:block/blighted_stone_2", "weight": 2, "x": 90, "y": 90 }
+    ]
   }
 }

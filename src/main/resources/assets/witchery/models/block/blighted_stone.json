@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "witchery:block/blighted_stone"
+    "all": "witchery:block/blighted_stone_0"
   }
 }

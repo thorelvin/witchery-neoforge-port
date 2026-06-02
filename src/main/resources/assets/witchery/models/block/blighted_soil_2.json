@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "witchery:block/blighted_soil_bottom_2",
+    "side": "witchery:block/blighted_soil_side_2",
+    "top": "witchery:block/blighted_soil_top_2",
+    "particle": "witchery:block/blighted_soil_side_2"
+  }
+}

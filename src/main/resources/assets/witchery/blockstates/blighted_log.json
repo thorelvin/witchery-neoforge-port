@@ -1,7 +1,28 @@
 {
   "variants": {
-    "axis=x": { "model": "witchery:block/blighted_log_horizontal", "x": 90, "y": 90 },
-    "axis=y": { "model": "witchery:block/blighted_log" },
-    "axis=z": { "model": "witchery:block/blighted_log_horizontal", "x": 90 }
+    "axis=x": [
+      { "model": "witchery:block/blighted_log_horizontal", "weight": 8, "x": 90, "y": 90 },
+      { "model": "witchery:block/blighted_log_horizontal", "weight": 8, "x": 90, "y": 270 },
+      { "model": "witchery:block/blighted_log_horizontal_1", "weight": 2, "x": 90, "y": 90 },
+      { "model": "witchery:block/blighted_log_horizontal_1", "weight": 2, "x": 90, "y": 270 },
+      { "model": "witchery:block/blighted_log_horizontal_2", "weight": 2, "x": 90, "y": 90 },
+      { "model": "witchery:block/blighted_log_horizontal_2", "weight": 2, "x": 90, "y": 270 }
+    ],
+    "axis=y": [
+      { "model": "witchery:block/blighted_log", "weight": 8 },
+      { "model": "witchery:block/blighted_log", "weight": 8, "y": 90 },
+      { "model": "witchery:block/blighted_log_1", "weight": 2 },
+      { "model": "witchery:block/blighted_log_1", "weight": 2, "y": 90 },
+      { "model": "witchery:block/blighted_log_2", "weight": 2 },
+      { "model": "witchery:block/blighted_log_2", "weight": 2, "y": 90 }
+    ],
+    "axis=z": [
+      { "model": "witchery:block/blighted_log_horizontal", "weight": 8, "x": 90 },
+      { "model": "witchery:block/blighted_log_horizontal", "weight": 8, "x": 90, "y": 180 },
+      { "model": "witchery:block/blighted_log_horizontal_1", "weight": 2, "x": 90 },
+      { "model": "witchery:block/blighted_log_horizontal_1", "weight": 2, "x": 90, "y": 180 },
+      { "model": "witchery:block/blighted_log_horizontal_2", "weight": 2, "x": 90 },
+      { "model": "witchery:block/blighted_log_horizontal_2", "weight": 2, "x": 90, "y": 180 }
+    ]
   }
 }

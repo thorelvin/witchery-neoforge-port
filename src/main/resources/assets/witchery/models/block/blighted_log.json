@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cube_column",
   "textures": {
     "end": "witchery:block/blighted_log_top",
-    "side": "witchery:block/blighted_log"
+    "side": "witchery:block/blighted_log_0"
   }
 }

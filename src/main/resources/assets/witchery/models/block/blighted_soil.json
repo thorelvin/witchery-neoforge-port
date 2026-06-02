@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "witchery:block/blighted_soil"
+    "bottom": "witchery:block/blighted_soil_bottom_0",
+    "side": "witchery:block/blighted_soil_side_0",
+    "top": "witchery:block/blighted_soil_top_0",
+    "particle": "witchery:block/blighted_soil_side_0"
   }
 }
