@@ -8,6 +8,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SpellParticleOption;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -66,15 +67,21 @@ public class MutatingSprigItem extends Item {
                 || tryCreateBloodRoses(level, pos, state)
                 || tryCreateWildBramble(level, pos, state)
                 || tryCreateVoidBramble(level, pos, state)
-                || tryCreateWormwood(level, pos, state)
-                || tryMutate(level, pos, state)) {
-            return finishUse(ctx, pos);
+                || tryCreateWormwood(level, pos, state)) {
+            return finishUse(ctx, pos, true);
+        }
+
+        MutationResult mutationResult = tryMutate(level, pos, state);
+        if (mutationResult.mutated()) {
+            return finishUse(ctx, pos, mutationResult.playDefaultEffects());
         }
         return InteractionResult.PASS;
     }
 
-    private static InteractionResult finishUse(UseOnContext ctx, BlockPos pos) {
-        spawnEffects(ctx.getLevel(), pos);
+    private static InteractionResult finishUse(UseOnContext ctx, BlockPos pos, boolean playDefaultEffects) {
+        if (playDefaultEffects) {
+            spawnEffects(ctx.getLevel(), pos);
+        }
         if (ctx.getPlayer() != null) {
             EquipmentSlot slot = ctx.getHand() == InteractionHand.MAIN_HAND
                     ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
@@ -83,27 +90,24 @@ public class MutatingSprigItem extends Item {
         return InteractionResult.CONSUME;
     }
 
-    private static boolean tryMutate(Level level, BlockPos pos, BlockState state) {
+    private static MutationResult tryMutate(Level level, BlockPos pos, BlockState state) {
         if (state.is(Blocks.GRASS_BLOCK)) {
             level.setBlock(pos, Blocks.MYCELIUM.defaultBlockState(), 3);
-            return true;
+            return MutationResult.DEFAULT_EFFECTS;
         }
         if (state.is(Blocks.MYCELIUM)) {
             level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
-            return true;
+            return MutationResult.DEFAULT_EFFECTS;
         }
-        if (!hasWaterOrIceAbove(level, pos)) {
-            return false;
+        if (state.is(Blocks.DIRT) && hasWaterAbove(level, pos)) {
+            setBlockToClay(level, pos);
+            setBlockToClay(level, pos.east());
+            setBlockToClay(level, pos.west());
+            setBlockToClay(level, pos.south());
+            setBlockToClay(level, pos.north());
+            return MutationResult.SOURCE_EFFECTS;
         }
-        if (state.is(Blocks.DIRT)) {
-            level.setBlock(pos, Blocks.CLAY.defaultBlockState(), 3);
-            return true;
-        }
-        if (state.is(Blocks.CLAY)) {
-            level.setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
-            return true;
-        }
-        return false;
+        return MutationResult.NONE;
     }
 
     private static boolean tryCreateGrasspers(Level level, BlockPos pos, BlockState state) {
@@ -551,9 +555,27 @@ public class MutatingSprigItem extends Item {
         }
     }
 
-    private static boolean hasWaterOrIceAbove(Level level, BlockPos pos) {
-        BlockState aboveState = level.getBlockState(pos.above());
-        return aboveState.is(Blocks.WATER) || aboveState.is(Blocks.ICE);
+    private static void setBlockToClay(Level level, BlockPos pos) {
+        if (!level.getBlockState(pos).is(Blocks.DIRT) || !hasWaterAbove(level, pos)) {
+            return;
+        }
+        level.setBlock(pos, Blocks.CLAY.defaultBlockState(), 3);
+        spawnClayEffects(level, pos);
+    }
+
+    private static boolean hasWaterAbove(Level level, BlockPos pos) {
+        return level.getBlockState(pos.above()).is(Blocks.WATER);
+    }
+
+    private static void spawnClayEffects(Level level, BlockPos pos) {
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY() + 1.5D;
+        double z = pos.getZ() + 0.5D;
+        level.playSound(null, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0F),
+                    x, y, z, 16, 0.5D, 0.5D, 0.5D, 0.0D);
+        }
     }
 
     private static void spawnEffects(Level level, BlockPos pos) {
@@ -569,6 +591,26 @@ public class MutatingSprigItem extends Item {
                     0.3,
                     0.3,
                     0.1);
+        }
+    }
+
+    private enum MutationResult {
+        NONE(false),
+        DEFAULT_EFFECTS(true),
+        SOURCE_EFFECTS(false);
+
+        private final boolean playDefaultEffects;
+
+        MutationResult(boolean playDefaultEffects) {
+            this.playDefaultEffects = playDefaultEffects;
+        }
+
+        private boolean mutated() {
+            return this != NONE;
+        }
+
+        private boolean playDefaultEffects() {
+            return playDefaultEffects;
         }
     }
 }
