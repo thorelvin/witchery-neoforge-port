@@ -10,6 +10,7 @@ import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -39,7 +40,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.function.Consumer;
 
 public class GlassGobletItem extends Item {
-    private static final int FILL_BLOOD_COST = 125;
+    private static final int FILL_MIN_VAMPIRE_LEVEL = 9;
+    private static final int FILL_BLOOD_POWER_COST = 125;
     private static final int STARTING_VAMPIRE_BLOOD = 250;
     private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
     private static final int VILLAGER_MAX_BLOOD = 500;
@@ -154,19 +156,28 @@ public class GlassGobletItem extends Item {
             fail(player, "item.witchery.glass_goblet.failed");
             return stack;
         }
-        if (data.getBloodLevel() < FILL_BLOOD_COST) {
-            fail(player, "item.witchery.glass_goblet.needs_blood");
+        if (data.getVampireLevel() < FILL_MIN_VAMPIRE_LEVEL) {
+            fail(player, "item.witchery.glass_goblet.not_high_enough");
             return stack;
         }
 
-        data.addBlood(-FILL_BLOOD_COST);
-        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        boolean spentPower = false;
+        if (!player.getAbilities().instabuild) {
+            if (!data.spendBloodPower(FILL_BLOOD_POWER_COST)) {
+                fail(player, "item.witchery.glass_goblet.needs_blood");
+                return stack;
+            }
+            spentPower = true;
+        }
+        if (spentPower) {
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        }
         level.playSound(null, player.getX(), player.getY() + player.getBbHeight() * 0.85D, player.getZ(),
-                SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.5F,
-                0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
-        level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, player.getX(), player.getY() + player.getBbHeight() * 0.85D,
+                SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
+                level.random.nextFloat() * 0.1F + 0.9F);
+        level.sendParticles(DustParticleOptions.REDSTONE, player.getX(), player.getY() + player.getBbHeight() * 0.85D,
                 player.getZ(), 8, player.getBbWidth() * 0.35D, player.getBbHeight() * 0.15D,
-                player.getBbWidth() * 0.35D, 0.02D);
+                player.getBbWidth() * 0.35D, 0.0D);
 
         return withBloodOwner(new ItemStack(WitcheryItems.FULL_GLASS_GOBLET.get()), player);
     }
