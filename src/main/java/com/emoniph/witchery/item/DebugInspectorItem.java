@@ -47,6 +47,7 @@ import java.util.function.Predicate;
  */
 public class DebugInspectorItem extends Item {
     private static final int VARIANT_INFERNAL = 3;
+    private static final int BLIGHT_RITE_POWER = 3000;
 
     public DebugInspectorItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -251,6 +252,9 @@ public class DebugInspectorItem extends Item {
                 stack -> stack.is(Items.ROTTEN_FLESH));
         appendMissingOffering(missing, "Diamond", level, center,
                 stack -> stack.is(Items.DIAMOND));
+        if (!hasBlightAltarPower(level, center)) {
+            missing.add(BLIGHT_RITE_POWER + " altar power");
+        }
         return missing.isEmpty() ? "blight=ready" : "blight missing=" + String.join(", ", missing);
     }
 
@@ -271,6 +275,11 @@ public class DebugInspectorItem extends Item {
             }
         }
         return false;
+    }
+
+    private static boolean hasBlightAltarPower(Level level, BlockPos center) {
+        AltarBlockEntity altar = AltarPowerSourceLookup.findClosest(level, center);
+        return altar != null && altar.hasValidStructure() && altar.getPower() >= BLIGHT_RITE_POWER;
     }
 
     private static void appendDetectedRing(List<String> parts, String size, int variant) {

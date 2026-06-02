@@ -117,6 +117,7 @@ public class RitualExecutor {
     private static final int VOID_BRAMBLE_NULL_RANGE = 32;
     private static final int VOID_BRAMBLE_NULL_RANGE_SQ = VOID_BRAMBLE_NULL_RANGE * VOID_BRAMBLE_NULL_RANGE;
     private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
+    private static final int BLIGHT_RITE_POWER = 3000;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
     private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
@@ -3936,6 +3937,14 @@ public class RitualExecutor {
         if (!(level instanceof ServerLevel sl)) return false;
         int covenSize = countNearbyCovenWitches(level, center);
         boolean enhanced = player instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp);
+        if (hasActiveRitualAt(sl, center)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, BLIGHT_RITE_POWER)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.blight.no_power"), false);
+            return false;
+        }
         if (!queueActiveRitual(sl, ActiveRitualType.BLIGHT, RitualCircleDetector.CircleSize.MEDIUM,
                 center, center, 0, 80, 77, 5, covenSize, 0.0f, 0, List.of(), enhanced)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
