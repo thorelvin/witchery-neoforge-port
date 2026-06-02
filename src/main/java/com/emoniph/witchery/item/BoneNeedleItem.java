@@ -6,7 +6,6 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,7 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BoneNeedleItem extends Item {
-    private static final int BLOOD_COST = 125;
+    private static final int MIN_VAMPIRE_LEVEL = 4;
+    private static final int BLOOD_POWER_COST = 125;
 
     public BoneNeedleItem(Properties properties) {
         super(properties);
@@ -47,9 +47,16 @@ public class BoneNeedleItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        if (state.is(Blocks.WHITE_WOOL) && data.getBloodLevel() >= BLOOD_COST) {
-            data.addBlood(-BLOOD_COST);
-            if (player instanceof ServerPlayer serverPlayer) {
+        if (state.is(Blocks.WHITE_WOOL) && data.getVampireLevel() >= MIN_VAMPIRE_LEVEL) {
+            boolean spentPower = false;
+            if (!player.getAbilities().instabuild) {
+                if (!data.spendBloodPower(BLOOD_POWER_COST)) {
+                    level.playSound(null, pos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 0.6F);
+                    return InteractionResult.SUCCESS;
+                }
+                spentPower = true;
+            }
+            if (spentPower && player instanceof ServerPlayer serverPlayer) {
                 PacketDistributor.sendToPlayer(serverPlayer, SyncPlayerDataPayload.from(serverPlayer, data));
             }
 
@@ -59,9 +66,6 @@ public class BoneNeedleItem extends Item {
         }
 
         level.playSound(null, pos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 0.6F);
-        if (state.is(Blocks.WHITE_WOOL) && data.getBloodLevel() < BLOOD_COST) {
-            player.displayClientMessage(Component.translatable("witchery.bone_needle.not_enough_blood", BLOOD_COST), true);
-        }
         return InteractionResult.SUCCESS;
     }
 
