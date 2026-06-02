@@ -56,7 +56,7 @@ public class WereVillagerEntity extends Monster {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide() && tickCount % 100 == 7 && isFullMoonNight()) {
+        if (!level().isClientSide() && tickCount % 100 == 3 && isFullMoonNight()) {
             convertToWolfman();
         }
     }

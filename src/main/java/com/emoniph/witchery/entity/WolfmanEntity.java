@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -77,10 +78,11 @@ public class WolfmanEntity extends Monster {
     public void tick() {
         super.tick();
         if (attackTimer > 0) attackTimer--;
-        if (!level().isClientSide() && tickCount % 100 == 3) {
-            // Revert to were-villager form when the full moon ends
-            if (formerProfession >= 0 && !isFullMoonNight() && !hasEffect(net.minecraft.world.effect.MobEffects.POISON)) {
+        if (!level().isClientSide()) {
+            if (tickCount % 100 == 3 && formerProfession >= 0 && !isFullMoonNight() && !hasEffect(MobEffects.POISON)) {
                 convertToWereVillager();
+            } else if (tickCount % 40 == 4 && hasEffect(MobEffects.WEAKNESS)) {
+                removeEffect(MobEffects.WEAKNESS);
             }
         }
     }
