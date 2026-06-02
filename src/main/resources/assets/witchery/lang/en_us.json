@@ -857,6 +857,7 @@
   "witchery.ritual.blindness.support": "The rite needs a Charged Attuned Stone, Redstone Soup, Reek of Misfortune, Exhale of the Horned One, Brew of Ink, a poisonous potato, a spider eye, and a diamond.",
   "witchery.ritual.blight.success": "The circle drinks deep. Somewhere nearby, a Blight Heart wakes beneath the open sky.",
   "witchery.ritual.blight.support": "The rite needs a Charged Attuned Stone, Redstone Soup, Reek of Misfortune, a fermented spider eye, a poisonous potato, rotten flesh, and a diamond.",
+  "witchery.ritual.blight.trigger": "The Blight rite needs a Wither Rose dropped at the circle's heart.",
   "witchery.ritual.rain_of_toads.success": "The sky opens and toads pour down!",
   "witchery.ritual.rain_of_toads.support": "The rite needs Charged Attuned Stone, Redstone Soup, Reek of Misfortune, Toe of Frog, a water bucket, and Belladonna.",
   "witchery.ritual.storm.success": "Thunder answers your call!",

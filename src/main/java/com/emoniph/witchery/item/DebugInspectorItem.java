@@ -5,6 +5,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockTags;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.ritual.AltarPowerSourceLookup;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import com.emoniph.witchery.ritual.RitualExecutor;
@@ -15,20 +16,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Debug Inspector — a QA wand that prints Witchery state to chat or the action bar.
@@ -40,6 +46,7 @@ import java.util.function.Consumer;
  * Use on air          → own active brew timers and any center underfoot in the action bar.
  */
 public class DebugInspectorItem extends Item {
+    private static final int VARIANT_INFERNAL = 3;
 
     public DebugInspectorItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -168,15 +175,17 @@ public class DebugInspectorItem extends Item {
         String origin = center.equals(clicked) ? "" : " (clicked glyph @ " + clicked.toShortString() + ")";
         String altar = describeAvailableRitualAltar(level, center);
         String active = RitualExecutor.describeActiveRitual(level, center);
+        String blight = describeBlightReadiness(level, center, variants);
+        String blightLine = blight.isEmpty() ? "" : "\n  " + blight;
         if (rings.isEmpty()) {
             return "[Inspector] Ritual center @ " + center.toShortString() + origin + "\n"
                     + "  no complete rings\n"
-                    + "  " + active + "\n"
+                    + "  " + active + blightLine + "\n"
                     + "  " + altar;
         }
         return "[Inspector] Ritual center @ " + center.toShortString() + origin + "\n"
                 + "  rings=" + rings + "\n"
-                + "  " + active + "\n"
+                + "  " + active + blightLine + "\n"
                 + "  " + altar;
     }
 
@@ -219,6 +228,49 @@ public class DebugInspectorItem extends Item {
         appendDetectedRing(parts, "medium", variants[1]);
         appendDetectedRing(parts, "large", variants[2]);
         return String.join(", ", parts);
+    }
+
+    private static String describeBlightReadiness(Level level, BlockPos center, int[] variants) {
+        if (variants.length < 2 || variants[1] != VARIANT_INFERNAL) {
+            return "";
+        }
+
+        List<String> missing = new ArrayList<>();
+        appendMissingOffering(missing, "Wither Rose", level, center, stack -> stack.is(Items.WITHER_ROSE));
+        appendMissingOffering(missing, "Charged Attuned Stone", level, center,
+                stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        appendMissingOffering(missing, "Redstone Soup", level, center,
+                stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
+        appendMissingOffering(missing, "Reek of Misfortune", level, center,
+                stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
+        appendMissingOffering(missing, "Fermented Spider Eye", level, center,
+                stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
+        appendMissingOffering(missing, "Poisonous Potato", level, center,
+                stack -> stack.is(Items.POISONOUS_POTATO));
+        appendMissingOffering(missing, "Rotten Flesh", level, center,
+                stack -> stack.is(Items.ROTTEN_FLESH));
+        appendMissingOffering(missing, "Diamond", level, center,
+                stack -> stack.is(Items.DIAMOND));
+        return missing.isEmpty() ? "blight=ready" : "blight missing=" + String.join(", ", missing);
+    }
+
+    private static void appendMissingOffering(List<String> missing, String name, Level level, BlockPos center,
+                                              Predicate<ItemStack> matcher) {
+        if (!hasDroppedOffering(level, center, matcher)) {
+            missing.add(name);
+        }
+    }
+
+    private static boolean hasDroppedOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radiusSq = 1.5D * 1.5D;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(1.5D);
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
+            if (matcher.test(itemEntity.getItem()) && itemEntity.position().distanceToSqr(centerPoint) < radiusSq) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void appendDetectedRing(List<String> parts, String size, int variant) {

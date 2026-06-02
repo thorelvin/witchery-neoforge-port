@@ -80,6 +80,12 @@ public class RitualEvents {
         RitualExecutor.ActivationResult activation = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
         if (activation == RitualExecutor.ActivationResult.NO_MATCH) {
             level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)
+                    && hasBlightSupportOfferings(level, floorCenter)
+                    && !hasBlightTrigger(floorCenter, nearbyItems)) {
+                player.displayClientMessage(Component.translatable("witchery.ritual.blight.trigger"), false);
+                return;
+            }
             player.displayClientMessage(Component.translatable("witchery.rite.unknownritual"), false);
             return;
         }
@@ -183,6 +189,32 @@ public class RitualEvents {
 
     private static boolean isObsidianStack(ItemStack stack) {
         return stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN);
+    }
+
+    private static boolean hasBlightTrigger(BlockPos floorCenter, List<ItemEntity> nearbyItems) {
+        return nearestDroppedItem(floorCenter, nearbyItems, item -> item.getItem().is(Items.WITHER_ROSE)) != null;
+    }
+
+    private static boolean hasBlightSupportOfferings(Level level, BlockPos floorCenter) {
+        return hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.POISONOUS_POTATO))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.ROTTEN_FLESH))
+                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.DIAMOND));
+    }
+
+    private static boolean hasNearbyOffering(Level level, BlockPos floorCenter, Predicate<ItemStack> matcher) {
+        Vec3 centerPoint = Vec3.atCenterOf(floorCenter);
+        double radiusSq = 1.5D * 1.5D;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(1.5D);
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
+            if (matcher.test(itemEntity.getItem()) && itemEntity.position().distanceToSqr(centerPoint) < radiusSq) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ItemEntity nearestDroppedItem(BlockPos floorCenter, List<ItemEntity> nearbyItems,
