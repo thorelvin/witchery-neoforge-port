@@ -10,6 +10,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -74,7 +75,7 @@ public class BrambleBlock extends Block {
         for (int y = origin.getY() - 1; y <= origin.getY() + 1; y++) {
             BlockPos candidate = new BlockPos(origin.getX(), y, origin.getZ());
             BlockState state = level.getBlockState(candidate);
-            if (!state.isAir() && !state.canBeReplaced()) {
+            if (!canBrambleReplace(state)) {
                 continue;
             }
             if (level.getBlockState(candidate.below()).isAir()) {
@@ -87,5 +88,12 @@ public class BrambleBlock extends Block {
                 }
             }
         }
+    }
+
+    private boolean canBrambleReplace(BlockState state) {
+        return state.isAir()
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.SHORT_GRASS)
+                || state.is(Blocks.FERN);
     }
 }
