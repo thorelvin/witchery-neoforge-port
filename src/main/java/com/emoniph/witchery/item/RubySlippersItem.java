@@ -154,11 +154,11 @@ public class RubySlippersItem extends Item {
         int cost = dest.dimension().equals(player.level().dimension())
                 ? HOME_COST_SAME_DIMENSION
                 : HOME_COST_CROSS_DIMENSION;
+        setLastUseTick(player, HOME_COOLDOWN_TAG, now);
         if (!spendInfusionEnergy(player, cost)) {
             return true;
         }
 
-        setLastUseTick(player, HOME_COOLDOWN_TAG, now);
         teleportTo(player, dest, findSafePos(dest, target));
         player.displayClientMessage(Component.translatable("item.witchery.ruby_slippers.activated"), false);
         return true;
