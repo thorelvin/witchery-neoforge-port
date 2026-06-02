@@ -14,9 +14,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wild bramble hurts entities that push through it and can spread into nearby
@@ -43,6 +45,16 @@ public class BrambleBlock extends Block {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return !level.getBlockState(pos.below()).isAir();
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
+                                @Nullable Orientation orientation, boolean movedByPiston) {
+        if (!canSurvive(state, level, pos)) {
+            level.destroyBlock(pos, true);
+            return;
+        }
+        super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
     }
 
     @Override
