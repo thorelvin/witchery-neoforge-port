@@ -21,4 +21,12 @@ public class WitcheryDataComponents {
                             .persistent(Codec.INT)
                             .networkSynchronized(ByteBufCodecs.INT)
                             .build());
+
+    /** Composed contents of a custom brew (the ordered ingredient items stirred into the cauldron). */
+    public static final Supplier<DataComponentType<com.emoniph.witchery.brewing.BrewContents>> BREW_CONTENTS =
+            DATA_COMPONENTS.register("brew_contents", () ->
+                    DataComponentType.<com.emoniph.witchery.brewing.BrewContents>builder()
+                            .persistent(com.emoniph.witchery.brewing.BrewContents.CODEC)
+                            .networkSynchronized(com.emoniph.witchery.brewing.BrewContents.STREAM_CODEC)
+                            .build());
 }

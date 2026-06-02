@@ -9,6 +9,36 @@ Current target:
 
 ---
 
+## 2026-06-03 Custom brew composition system + NeoForge 21.11 gotchas
+
+Built `com.emoniph.witchery.brewing` (`Brews`, `BrewContents`) + `WitchCauldronBlockEntity`,
+re-added `brew_bottle`/`splash_brew_bottle`/`lingering_brew_bottle` as composable items.
+Faithful to Resurrected `BrewActionList`/`ModifiersEffect`: brew = ordered ingredient list;
+modifier ingredients accumulate strength/duration/invert/dispersal, each effect ingredient
+then applies its potion at the accumulated values and resets.
+
+API gotchas hit this pass (1.21.11 / NeoForge 21.11):
+- **Item colours are data-driven now** — `RegisterColorHandlersEvent.Item` no longer exists
+  (only `.Block`). Put a `tints` array in the item-model definition (`items/<id>.json` under
+  `model`) using a tint source. To tint from a custom value, stash the colour in the
+  `CUSTOM_MODEL_DATA` component's `colors` list and read it with
+  `{"type":"minecraft:custom_model_data","index":0,"default":<int>}`. layer0 = tintIndex 0.
+- **`BaseEntityBlock.getTicker` must be `public`** (overriding a public `EntityBlock` method);
+  `protected` fails with "weaker access privileges".
+- **`BaseEntityBlock` default `getRenderShape` is `INVISIBLE`** — override to
+  `RenderShape.MODEL` when converting a normally-modelled block (e.g. the Witch's Cauldron) to
+  an EntityBlock, or it vanishes in-world.
+- **`MobEffects` use plain names**: `JUMP_BOOST` (not `JUMP`), `SPEED`, `SLOWNESS`, `STRENGTH`,
+  `WEAKNESS`, `HEALTH_BOOST`, `SLOW_FALLING`, etc.
+- **Codec-backed entity/BE NBT**: `ValueOutput.store(key, Codec, value)` /
+  `ValueInput.read(key, Codec) -> Optional<T>` are the clean way to persist a record via its
+  Codec (used for `BrewContents` on the thrown entity and cauldron BE).
+- A `DataComponentType` holding a record value needs both `.persistent(CODEC)` and
+  `.networkSynchronized(STREAM_CODEC)`; build the StreamCodec via
+  `ByteBufCodecs.registry(Registries.ITEM).apply(ByteBufCodecs.list()).map(...)`.
+
+---
+
 ## 2026-06-02 Mystic Branch air-glyph symbol magic (port of the symbols system)
 
 Ported `ItemMysticBranch` + `infusion.infusions.symbols.*` into a new

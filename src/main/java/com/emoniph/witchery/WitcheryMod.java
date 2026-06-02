@@ -70,6 +70,8 @@ public class WitcheryMod {
     private void commonSetup(FMLCommonSetupEvent event) {
         // Force the symbol-spell registry to initialise so Mystic Branch glyphs are recognised.
         com.emoniph.witchery.symbol.EffectRegistry.bootstrap();
+        // Build the custom-brew ingredient table.
+        com.emoniph.witchery.brewing.Brews.bootstrap();
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

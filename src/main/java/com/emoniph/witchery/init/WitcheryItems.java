@@ -882,6 +882,14 @@ public class WitcheryItems {
     public static final DeferredItem<Item> HELLHOUND_HEAD = ITEMS.register("hellhound_head",
             id -> new BlockItem(WitcheryBlocks.HELLHOUND_HEAD.get(), itemProps(id)));
 
+    // Custom brew containers — composed in the Witch's Cauldron (see com.emoniph.witchery.brewing).
+    public static final DeferredItem<Item> BREW_BOTTLE = ITEMS.register("brew_bottle",
+            id -> new com.emoniph.witchery.item.CustomBrewItem(itemProps(id)));
+    public static final DeferredItem<Item> SPLASH_BREW_BOTTLE = ITEMS.register("splash_brew_bottle",
+            id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), false));
+    public static final DeferredItem<Item> LINGERING_BREW_BOTTLE = ITEMS.register("lingering_brew_bottle",
+            id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), true));
+
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
         LinkedHashMap<String, DeferredItem<Item>> placeholders = new LinkedHashMap<>();
         for (String id : ids) {

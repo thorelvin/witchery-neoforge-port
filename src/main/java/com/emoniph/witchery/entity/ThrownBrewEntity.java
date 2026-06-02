@@ -1,17 +1,24 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.item.BrewType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class ThrownBrewEntity extends ThrowableProjectile {
 
@@ -21,6 +28,9 @@ public class ThrownBrewEntity extends ThrowableProjectile {
             SynchedEntityData.defineId(ThrownBrewEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> POWER =
             SynchedEntityData.defineId(ThrownBrewEntity.class, EntityDataSerializers.INT);
+
+    /** Non-empty when carrying a composed custom brew (overrides the fixed BrewType path). */
+    private BrewContents composed = BrewContents.EMPTY;
 
     public ThrownBrewEntity(EntityType<? extends ThrownBrewEntity> type, Level level) {
         super(type, level);
@@ -32,6 +42,15 @@ public class ThrownBrewEntity extends ThrowableProjectile {
         setBrewType(brewType.ordinal());
         setGas(gas);
         setPower(power);
+    }
+
+    public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, boolean gas) {
+        super(WitcheryEntities.THROWN_BREW.get(), owner.getX(), owner.getEyeY() - 0.1, owner.getZ(), level);
+        setOwner(owner);
+        this.composed = contents;
+        setBrewType(0);
+        setGas(gas);
+        setPower(contents.power());
     }
 
     @Override
@@ -71,16 +90,35 @@ public class ThrownBrewEntity extends ThrowableProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!level().isClientSide()) {
+        if (level() instanceof ServerLevel serverLevel) {
             Vec3 pos = result.getLocation();
-            BrewType type = getBrewType();
-            int tier = getPower();
-            if (isGas()) {
-                type.applyGas(level(), pos, tier);
+            if (!composed.isEmpty()) {
+                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH);
             } else {
-                type.applySplash(level(), pos, tier);
+                BrewType type = getBrewType();
+                int tier = getPower();
+                if (isGas()) {
+                    type.applyGas(serverLevel, pos, tier);
+                } else {
+                    type.applySplash(serverLevel, pos, tier);
+                }
             }
             discard();
         }
     }
+
+    @Override
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (!composed.isEmpty()) {
+            tag.store("Composed", BrewContents.CODEC, composed);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
+    }
 }
+

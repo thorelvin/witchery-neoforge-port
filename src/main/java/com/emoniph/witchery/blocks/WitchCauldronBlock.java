@@ -31,9 +31,14 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -51,7 +56,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class WitchCauldronBlock extends Block {
+public class WitchCauldronBlock extends BaseEntityBlock {
 
     public static final MapCodec<WitchCauldronBlock> CODEC = simpleCodec(WitchCauldronBlock::new);
     public static final int MAX_FILL_LEVEL = 3;
@@ -93,13 +98,31 @@ public class WitchCauldronBlock extends Block {
     }
 
     @Override
-    protected MapCodec<? extends Block> codec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LEVEL);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity(pos, state);
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide() ? null
+                : createTickerHelper(type, com.emoniph.witchery.init.WitcheryBlockEntities.WITCH_CAULDRON.get(),
+                        com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity::serverTick);
     }
 
     @Override
@@ -157,6 +180,15 @@ public class WitchCauldronBlock extends Block {
         if (stack.is(Items.GLASS_BOTTLE)) {
             if (fillLevel <= 0) {
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
+            }
+            // A composed brew bottles out before plain water does.
+            if (level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity brewBe
+                    && !brewBe.isEmpty()
+                    && isHeated(level.getBlockState(pos.below()))) {
+                if (!level.isClientSide()) {
+                    collectComposedBrew(brewBe, state, level, pos, player, hand, stack);
+                }
+                return InteractionResult.SUCCESS;
             }
             if (!level.isClientSide()) {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
@@ -280,6 +312,36 @@ public class WitchCauldronBlock extends Block {
         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(nextState));
     }
 
+    private void collectComposedBrew(com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity be, BlockState state,
+                                     Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+        com.emoniph.witchery.brewing.BrewContents contents =
+                new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
+        Item resultItem = switch (contents.dispersal()) {
+            case SPLASH -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
+            case GAS -> WitcheryItems.LINGERING_BREW_BOTTLE.get();
+            default -> WitcheryItems.BREW_BOTTLE.get();
+        };
+        ItemStack result = new ItemStack(resultItem);
+        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), contents);
+        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_POWER.get(), contents.power());
+        // Carry the contents colour for the data-driven model tint (custom_model_data source).
+        result.set(DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(
+                List.of(), List.of(), List.of(), List.of(contents.color())));
+
+        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
+        player.awardStat(Stats.USE_CAULDRON);
+
+        int newLevel = Math.max(0, state.getValue(LEVEL) - 1);
+        lowerFillLevel(state, level, pos);
+        if (newLevel <= 0) {
+            be.clear();
+        }
+
+        level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.2F);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 1.0F);
+        level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+    }
+
     private double getContentHeight(BlockState state) {
         int level = state.getValue(LEVEL);
         return switch (level) {
@@ -294,7 +356,7 @@ public class WitchCauldronBlock extends Block {
         return entity.getY() < pos.getY() + getContentHeight(state) && entity.getBoundingBox().maxY > pos.getY() + 0.25;
     }
 
-    private static boolean isHeated(BlockState state) {
+    public static boolean isHeated(BlockState state) {
         if (state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) || state.is(Blocks.LAVA) || state.is(Blocks.MAGMA_BLOCK)) {
             return true;
         }

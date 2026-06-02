@@ -398,6 +398,9 @@ public class WitcheryCreativeTabs {
     private static void addBrewsAndInfusions(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.BREW_BAG.get(),
+                WitcheryItems.BREW_BOTTLE.get(),
+                WitcheryItems.SPLASH_BREW_BOTTLE.get(),
+                WitcheryItems.LINGERING_BREW_BOTTLE.get(),
                 WitcheryItems.BREW_OF_RAISING.get(),
                 WitcheryItems.RAISING_BREW.get(),
                 WitcheryItems.BREW_OF_SLEEPING.get(),
