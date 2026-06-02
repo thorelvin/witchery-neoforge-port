@@ -222,9 +222,15 @@ public class WitcheryPlayerEvents {
             return;
         }
 
-        if (event.getEntity().getType().is(EntityTypeTags.UNDEAD)
-                && player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.NECROMANCER_ROBES.get())) {
-            event.setNewAboutToBeSetTarget(null);
+        if (event.getEntity().getType().is(EntityTypeTags.UNDEAD)) {
+            if (event.getEntity() instanceof Zombie
+                    && WitcheryAttachments.get(player).getVampireLevel() >= 10) {
+                event.setNewAboutToBeSetTarget(null);
+                return;
+            }
+            if (player.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.NECROMANCER_ROBES.get())) {
+                event.setNewAboutToBeSetTarget(null);
+            }
         }
     }
 
