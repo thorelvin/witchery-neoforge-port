@@ -148,7 +148,7 @@ public class RubySlippersItem extends Item {
             ServerLevel overworld = server.getLevel(Level.OVERWORLD);
             if (overworld == null) return true;
             dest = overworld;
-            target = new BlockPos(0, 64, 0);
+            target = overworld.getLevelData().getRespawnData().pos();
         }
 
         int cost = dest.dimension().equals(player.level().dimension())
