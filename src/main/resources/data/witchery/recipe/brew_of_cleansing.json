@@ -1,0 +1,15 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:odour_of_purity"},
+    {"id": "witchery:quicklime"},
+    {"id": "witchery:rowan_berries"},
+    {"id": "witchery:mandrake_root"},
+    {"id": "minecraft:glowstone_dust"},
+    {"id": "minecraft:glass_bottle"}
+  ],
+  "result": {"id": "witchery:brew_of_cleansing", "count": 3},
+  "power": 0.0,
+  "color": -3483210,
+  "hatBonus": 1
+}

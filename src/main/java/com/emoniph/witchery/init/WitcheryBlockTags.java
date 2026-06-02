@@ -10,4 +10,9 @@ public class WitcheryBlockTags {
     public static final TagKey<Block> CHALK_CIRCLES = TagKey.create(
             Registries.BLOCK,
             Identifier.fromNamespaceAndPath("witchery", "chalk_circles"));
+
+    /** Blocks that repel Blight spread when placed in or beside a target cell. */
+    public static final TagKey<Block> BLIGHT_BARRIERS = TagKey.create(
+            Registries.BLOCK,
+            Identifier.fromNamespaceAndPath("witchery", "blight_barriers"));
 }

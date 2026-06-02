@@ -141,6 +141,11 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> SPANISH_MOSS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.SPANISH_MOSS);
     public static final DeferredItem<BlockItem> BRAMBLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BRAMBLE);
     public static final DeferredItem<BlockItem> VOID_BRAMBLE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.VOID_BRAMBLE);
+    public static final DeferredItem<BlockItem> BLIGHT_HEART = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHT_HEART);
+    public static final DeferredItem<BlockItem> BLIGHT_FIBRE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHT_FIBRE);
+    public static final DeferredItem<BlockItem> BLIGHTED_SOIL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_SOIL);
+    public static final DeferredItem<BlockItem> BLIGHTED_STONE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_STONE);
+    public static final DeferredItem<BlockItem> BLIGHTED_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_LOG);
     public static final DeferredItem<BlockItem> LEAPING_LILY = ITEMS.registerSimpleBlockItem(WitcheryBlocks.LEAPING_LILY);
     public static final DeferredItem<BlockItem> GRASSPER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GRASSPER);
     public static final DeferredItem<BlockItem> GLOWGLOBE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GLOWGLOBE);
@@ -491,6 +496,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_FOULNESS       = ITEMS.register("brew_of_foulness", id -> new BrewOfFoulnessItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_INFECTION      = ITEMS.register("brew_of_infection", id -> new BrewOfInfectionItem(itemProps(id)));
     public static final DeferredItem<Item> INFECTION_BREW         = ITEMS.register("infection_brew", id -> new BrewOfInfectionItem(itemProps(id)));
+    public static final DeferredItem<Item> BREW_OF_CLEANSING      = ITEMS.register("brew_of_cleansing", id -> new BrewOfCleansingItem(itemProps(id)));
+    public static final DeferredItem<Item> CLEANSING_BREW         = ITEMS.register("cleansing_brew", id -> new BrewOfCleansingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_LOVE           = ITEMS.register("brew_of_love", id -> new BrewOfLoveItem(itemProps(id)));
     public static final DeferredItem<Item> LOVE_BREW              = ITEMS.register("love_brew", id -> new BrewOfLoveItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_THE_GROTESQUE  = ITEMS.register("brew_of_the_grotesque", id -> new BrewOfTheGrotesqueItem(itemProps(id)));
@@ -592,6 +599,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> NULL_CATALYST      = ITEMS.registerSimpleItem("null_catalyst");
     public static final DeferredItem<Item> NULLIFIED_LEATHER  = ITEMS.registerSimpleItem("nullified_leather");
     public static final DeferredItem<Item> ODOUR_OF_PURITY    = ITEMS.registerSimpleItem("odour_of_purity");
+    public static final DeferredItem<Item> BLIGHT_ICHOR       = ITEMS.registerSimpleItem("blight_ichor");
     public static final DeferredItem<Item> OIL_OF_VITRIOL     = ITEMS.registerSimpleItem("oil_of_vitriol");
     public static final DeferredItem<Item> OWLETS_WING        = ITEMS.registerSimpleItem("owlets_wing");
     public static final DeferredItem<Item> PURIFIED_MILK      = ITEMS.registerSimpleItem("purified_milk");

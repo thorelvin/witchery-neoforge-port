@@ -312,6 +312,26 @@ public class WitcheryBlocks {
     public static final DeferredBlock<VoidBrambleBlock> VOID_BRAMBLE = registerBlock("void_bramble",
             VoidBrambleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(-1.0f, 1000.0f).noOcclusion().noCollision().lightLevel(s -> 2));
+    public static final DeferredBlock<BlightHeartBlock> BLIGHT_HEART = registerBlock("blight_heart",
+            BlightHeartBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WART_BLOCK)
+                    .strength(6.0f, 12.0f).randomTicks().noOcclusion());
+    public static final DeferredBlock<BlightFibreBlock> BLIGHT_FIBRE = registerBlock("blight_fibre",
+            BlightFibreBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WART_BLOCK)
+                    .strength(1.0f).randomTicks().noOcclusion().noCollision().noLootTable());
+    public static final DeferredBlock<BlightedTerrainBlock> BLIGHTED_SOIL = registerBlock("blighted_soil",
+            BlightedTerrainBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.ROOTED_DIRT)
+                    .strength(1.0f, 2.0f).randomTicks());
+    public static final DeferredBlock<BlightedTerrainBlock> BLIGHTED_STONE = registerBlock("blighted_stone",
+            BlightedTerrainBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.STONE)
+                    .strength(2.0f, 6.0f).randomTicks());
+    public static final DeferredBlock<BlightedLogBlock> BLIGHTED_LOG = registerBlock("blighted_log",
+            BlightedLogBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WOOD)
+                    .strength(2.0f, 4.0f).randomTicks());
     public static final DeferredBlock<LeapingLilyBlock> LEAPING_LILY = registerBlock("leaping_lily",
             LeapingLilyBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)

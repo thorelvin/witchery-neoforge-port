@@ -1,6 +1,7 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.BlightHelper;
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
@@ -2828,6 +2829,19 @@ public class RitualExecutor {
         return true;
     }
 
+    private static void seedBlightHeart(ServerLevel level, BlockPos center) {
+        BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
+        BlockPos heartPos = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
+        if (!level.getBlockState(heartPos).canBeReplaced()) {
+            return;
+        }
+
+        level.setBlock(heartPos, WitcheryBlocks.BLIGHT_HEART.get().defaultBlockState(), Block.UPDATE_ALL);
+        for (net.minecraft.core.Direction direction : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+            BlightHelper.seedBlight(level, heartPos.relative(direction), level.random);
+        }
+    }
+
     private static void spreadBlightRing(ServerLevel level, BlockPos center, int radius, boolean enhanced) {
         int x = radius;
         int z = 0;
@@ -2865,7 +2879,12 @@ public class RitualExecutor {
         if (aboveState.is(Blocks.SNOW) || aboveState.is(Blocks.SNOW_BLOCK)) {
             level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
         } else if (isBlightPlant(aboveState)) {
-            level.setBlockAndUpdate(abovePos, Blocks.DEAD_BUSH.defaultBlockState());
+            level.setBlockAndUpdate(abovePos, Blocks.AIR.defaultBlockState());
+        }
+
+        if (BlightHelper.seedBlight(level, abovePos, level.random)
+                || BlightHelper.seedBlight(level, groundPos, level.random)) {
+            return;
         }
 
         if (state.is(Blocks.FARMLAND)) {
@@ -3912,6 +3931,7 @@ public class RitualExecutor {
         consumeOfferedItem(offerings.get().poisonousPotato());
         consumeOfferedItem(offerings.get().rottenFlesh());
         consumeOfferedItem(offerings.get().diamond());
+        seedBlightHeart(sl, center);
         success(player, level, center, "witchery.ritual.blight.success",
                 SoundEvents.WITHER_SPAWN, 0.5f, 2, 40);
         return true;
