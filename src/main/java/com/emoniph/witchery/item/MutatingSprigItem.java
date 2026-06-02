@@ -7,9 +7,12 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SpellParticleOption;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -44,6 +47,11 @@ import java.util.Comparator;
  * chest/chest-plant/familiar bridges remains follow-up work.
  */
 public class MutatingSprigItem extends Item {
+    private static final Identifier SOURCE_WOLF_DEATH_ID =
+            Identifier.fromNamespaceAndPath("minecraft", "entity.wolf.death");
+    private static final SoundEvent SOURCE_WOLF_DEATH = BuiltInRegistries.SOUND_EVENT
+            .getOptional(SOURCE_WOLF_DEATH_ID)
+            .orElseGet(() -> SoundEvent.createVariableRangeEvent(SOURCE_WOLF_DEATH_ID));
 
     public MutatingSprigItem(Properties props) {
         super(props);
@@ -67,7 +75,7 @@ public class MutatingSprigItem extends Item {
                 || tryCreateOwls(level, pos, state)
                 || tryCreateToads(level, pos, state)
                 || tryCreateParasyticLouse(level, pos, state)) {
-            return finishUse(ctx, pos, true);
+            return finishUse(ctx, pos, false);
         }
 
         if (tryCreateBloodRoses(level, pos, state)) {
@@ -189,12 +197,13 @@ public class MutatingSprigItem extends Item {
             }
         }
 
-        playZombieMutationFeedback(level, zombie);
+        spawnEntitySlimeMutationEffects(level, zombie, SoundEvents.ZOMBIE_DEATH);
         zombie.discard();
         level.removeBlock(pos, false);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             level.setBlock(pos.relative(direction), WitcheryBlocks.CRITTER_SNARE.get().defaultBlockState(), 3);
         }
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -222,16 +231,20 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
-        level.removeBlock(pos, false);
-        clearDiagonalGrasspers(level, pos);
-        wolf.discard();
+        spawnEntitySlimeMutationEffects(level, owl, SoundEvents.CREEPER_DEATH);
         owl.discard();
+        spawnEntitySlimeMutationEffects(level, wolf, SoundEvents.GHAST_DEATH);
+        wolf.discard();
+        level.removeBlock(pos, false);
+        clearHorizontalRing(level, pos);
+        clearDiagonalGrasspers(level, pos);
         monkey.snapTo(pos.getX() + 0.5D, pos.getY() + 0.001D, pos.getZ() + 0.5D,
                 level.random.nextFloat() * 360.0F, 0.0F);
         monkey.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos),
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         monkey.setPersistenceRequired();
         serverLevel.addFreshEntity(monkey);
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -256,9 +269,11 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
+        spawnEntitySlimeMutationEffects(level, wolf, SOURCE_WOLF_DEATH);
         level.removeBlock(pos, false);
         clearDiagonalGrasspers(level, pos);
         wolf.discard();
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -283,9 +298,11 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
+        spawnEntitySlimeMutationEffects(level, ocelot, SoundEvents.OCELOT_DEATH);
         level.removeBlock(pos, false);
         clearDiagonalGrasspers(level, pos);
         ocelot.discard();
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -309,6 +326,7 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
+        clearHorizontalRing(level, pos);
         level.removeBlock(pos, false);
         clearDiagonalGrasspers(level, pos);
         louse.snapTo(pos.getX() + 0.5D, pos.getY() + 0.001D, pos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
@@ -316,6 +334,7 @@ public class MutatingSprigItem extends Item {
                 net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
         louse.setPersistenceRequired();
         serverLevel.addFreshEntity(louse);
+        spawnSlimeMutationEffects(level, pos, 1.5D);
         return true;
     }
 
@@ -413,19 +432,12 @@ public class MutatingSprigItem extends Item {
                 .orElse(null);
     }
 
-    private static void playZombieMutationFeedback(Level level, Zombie zombie) {
-        level.playSound(null, zombie.blockPosition(), SoundEvents.ZOMBIE_DEATH, SoundSource.HOSTILE, 1.0F, 1.0F);
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME,
-                    zombie.getX(),
-                    zombie.getY() + zombie.getBbHeight() * 0.5D,
-                    zombie.getZ(),
-                    8,
-                    1.5D,
-                    1.0D,
-                    1.5D,
-                    0.1D);
-        }
+    private static void spawnEntitySlimeMutationEffects(Level level, Mob mob, SoundEvent sound) {
+        double x = mob.getX();
+        double y = mob.getY();
+        double z = mob.getZ();
+        playSourceSlimeSound(level, x, y, z, sound, SoundSource.HOSTILE);
+        spawnSourceSlimeParticles(level, x, y, z, 3.0D, 2.0D);
     }
 
     private static Mob findNearbyCreature(Level level, BlockPos pos, EntityType<?> entityType) {
@@ -596,20 +608,34 @@ public class MutatingSprigItem extends Item {
         double x = pos.getX() + 0.5D;
         double y = pos.getY();
         double z = pos.getZ() + 0.5D;
-        level.playSound(null, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, x, y, z, 8,
-                    horizontalSpread, 1.0D, horizontalSpread, 0.1D);
-        }
+        playSourceSlimeSound(level, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.BLOCKS);
+        spawnSourceSlimeParticles(level, x, y, z, horizontalSpread * 2.0D, 2.0D);
     }
 
     private static void spawnSilentSlimeColumnEffects(Level level, BlockPos pos) {
         double x = pos.getX() + 0.5D;
         double y = pos.getY();
         double z = pos.getZ() + 0.5D;
+        spawnSourceSlimeParticles(level, x, y, z, 1.0D, 1.0D);
+    }
+
+    private static void playSourceSlimeSound(Level level, double x, double y, double z,
+                                             SoundEvent sound, SoundSource source) {
+        float pitch = 0.4F / (level.random.nextFloat() * 0.4F + 0.8F);
+        level.playSound(null, x, y, z, sound, source, 0.5F, pitch);
+    }
+
+    private static void spawnSourceSlimeParticles(Level level, double x, double y, double z,
+                                                  double width, double height) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, x, y, z, 16,
-                    0.5D, 0.5D, 0.5D, 0.1D);
+            int count = Math.min((int) Math.ceil(Math.max(width, 1.0D) * 20.0D), 300);
+            for (int i = 0; i < count; i++) {
+                double particleX = x + level.random.nextDouble() * width * 2.0D - width;
+                double particleY = y + level.random.nextDouble() * height;
+                double particleZ = z + level.random.nextDouble() * width * 2.0D - width;
+                serverLevel.sendParticles(ParticleTypes.ITEM_SLIME,
+                        particleX, particleY, particleZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
         }
     }
 
