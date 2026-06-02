@@ -1,6 +1,21 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
   "textures": {
-    "all": "witchery:block/blight_heart"
-  }
+    "heart": "witchery:block/blight_heart",
+    "particle": "witchery:block/blight_heart"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 9, 14],
+      "faces": {
+        "down": { "uv": [2, 2, 14, 14], "texture": "#heart" },
+        "up": { "uv": [2, 2, 14, 14], "texture": "#heart" },
+        "north": { "uv": [2, 7, 14, 16], "texture": "#heart" },
+        "south": { "uv": [2, 7, 14, 16], "texture": "#heart" },
+        "west": { "uv": [2, 7, 14, 16], "texture": "#heart" },
+        "east": { "uv": [2, 7, 14, 16], "texture": "#heart" }
+      }
+    }
+  ]
 }
