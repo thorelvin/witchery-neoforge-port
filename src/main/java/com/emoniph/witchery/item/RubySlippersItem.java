@@ -98,12 +98,7 @@ public class RubySlippersItem extends Item {
             return true;
         }
 
-        waystone.shrink(1);
-        if (waystone.isEmpty()) {
-            waystoneEntity.discard();
-        } else {
-            waystoneEntity.setItem(waystone);
-        }
+        waystoneEntity.discard();
 
         setLastUseTick(player, WAYSTONE_COOLDOWN_TAG, now);
         if (player.getRandom().nextDouble() < WAYSTONE_RANDOM_MISFIRE_CHANCE) {
