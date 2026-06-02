@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,10 +40,10 @@ public class DreamCatcherBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Map.of(
-        Direction.NORTH, Block.box( 1, 0, 13, 15, 14, 16),
-        Direction.SOUTH, Block.box( 1, 0,  0, 15, 14,  3),
-        Direction.EAST,  Block.box( 0, 0,  1,  3, 14, 15),
-        Direction.WEST,  Block.box(13, 0,  1, 16, 14, 15)
+        Direction.NORTH, Block.box( 4.0, 0.0, 14.72, 12.0, 13.92, 16.0),
+        Direction.SOUTH, Block.box( 4.0, 0.0,  0.0, 12.0, 13.92,  1.28),
+        Direction.EAST,  Block.box( 0.0, 0.0,  4.0,  1.28, 13.92, 12.0),
+        Direction.WEST,  Block.box(14.72, 0.0,  4.0, 16.0, 13.92, 12.0)
     ));
 
     public static final MapCodec<DreamCatcherBlock> CODEC = simpleCodec(DreamCatcherBlock::new);
@@ -65,7 +66,7 @@ public class DreamCatcherBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return SHAPES.get(state.getValue(FACING));
+        return Shapes.empty();
     }
 
     @Override
