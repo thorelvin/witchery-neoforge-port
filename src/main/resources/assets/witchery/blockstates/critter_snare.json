@@ -4,6 +4,11 @@
     "caught=1": { "model": "witchery:block/critter_snare_bat" },
     "caught=2": { "model": "witchery:block/critter_snare_silverfish" },
     "caught=3": { "model": "witchery:block/critter_snare_slime" },
-    "caught=4": { "model": "witchery:block/critter_snare_magmacube" }
+    "caught=4": { "model": "witchery:block/critter_snare_magmacube" },
+    "caught=5": { "model": "witchery:block/critter_snare_empty" },
+    "caught=6": { "model": "witchery:block/critter_snare_empty" },
+    "caught=7": { "model": "witchery:block/critter_snare_empty" },
+    "caught=8": { "model": "witchery:block/critter_snare_empty" },
+    "caught=9": { "model": "witchery:block/critter_snare_bat" }
   }
 }

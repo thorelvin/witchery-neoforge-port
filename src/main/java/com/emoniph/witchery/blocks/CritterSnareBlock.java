@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.item.PolynesiaCharmItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -46,7 +47,7 @@ import java.util.List;
  * block state so the existing caught textures can represent it in-world.
  */
 public class CritterSnareBlock extends Block {
-    public static final IntegerProperty CAUGHT = IntegerProperty.create("caught", 0, 4);
+    public static final IntegerProperty CAUGHT = IntegerProperty.create("caught", 0, 9);
 
     private static final String CAUGHT_TAG = "Caught";
     private static final int EMPTY = 0;
@@ -54,6 +55,8 @@ public class CritterSnareBlock extends Block {
     private static final int SILVERFISH = 2;
     private static final int SLIME = 3;
     private static final int MAGMA_CUBE = 4;
+    private static final int STOCK_FLAG = 8;
+    private static final int STOCKED_BAT = STOCK_FLAG | BAT;
     private static final VoxelShape SHAPE = box(0.8, 0.0, 0.8, 15.2, 16.0, 15.2);
 
     public CritterSnareBlock(BlockBehaviour.Properties properties) {
@@ -166,8 +169,8 @@ public class CritterSnareBlock extends Block {
     }
 
     private static int caughtType(Entity entity) {
-        if (entity instanceof Bat) {
-            return BAT;
+        if (entity instanceof Bat bat) {
+            return PolynesiaCharmItem.hasStockInventory(bat) ? STOCKED_BAT : BAT;
         }
         if (entity instanceof Silverfish) {
             return SILVERFISH;
@@ -182,7 +185,8 @@ public class CritterSnareBlock extends Block {
     }
 
     private static void releaseCritter(Level level, BlockPos pos, Player player, int caught) {
-        Entity entity = switch (caught) {
+        int critter = critterFromCaught(caught);
+        Entity entity = switch (critter) {
             case BAT -> EntityType.BAT.create(level, EntitySpawnReason.TRIGGERED);
             case SILVERFISH -> EntityType.SILVERFISH.create(level, EntitySpawnReason.TRIGGERED);
             case SLIME -> EntityType.SLIME.create(level, EntitySpawnReason.TRIGGERED);
@@ -193,7 +197,11 @@ public class CritterSnareBlock extends Block {
             return;
         }
 
-        if (caught == BAT) {
+        if (caught == STOCKED_BAT && entity instanceof Bat bat) {
+            PolynesiaCharmItem.setEmptyStockInventory(level, bat);
+        }
+
+        if (critter == BAT) {
             entity.setPos(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
         } else {
             double x = player.getX() < pos.getX() ? pos.getX() - 0.5 : pos.getX() + 1.5;
@@ -205,7 +213,7 @@ public class CritterSnareBlock extends Block {
     }
 
     private static SoundEvent caughtSound(int caught) {
-        return switch (caught) {
+        return switch (critterFromCaught(caught)) {
             case BAT -> SoundEvents.BAT_AMBIENT;
             case SILVERFISH -> SoundEvents.SILVERFISH_AMBIENT;
             case SLIME -> SoundEvents.SLIME_SQUISH_SMALL;
@@ -216,6 +224,15 @@ public class CritterSnareBlock extends Block {
 
     private static float soundPitch(RandomSource random) {
         return 0.4F / (random.nextFloat() * 0.4F + 0.8F);
+    }
+
+    private static int critterFromCaught(int caught) {
+        int critter = caught & 7;
+        return critter >= EMPTY && critter <= MAGMA_CUBE ? critter : EMPTY;
+    }
+
+    private static boolean isValidCaught(int caught) {
+        return caught >= EMPTY && caught <= MAGMA_CUBE || caught == STOCKED_BAT;
     }
 
     private ItemStack createStackForState(BlockState state) {
@@ -230,6 +247,6 @@ public class CritterSnareBlock extends Block {
     private static int caughtFromStack(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         int caught = tag.getIntOr(CAUGHT_TAG, EMPTY);
-        return caught >= EMPTY && caught <= MAGMA_CUBE ? caught : EMPTY;
+        return isValidCaught(caught) ? caught : EMPTY;
     }
 }
