@@ -1,0 +1,25 @@
+{
+  "name": "Brewing in the Cauldron",
+  "icon": "witchery:brew_bottle",
+  "category": "witchery:brewing",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "witchery:brew_bottle",
+      "text": "A heated cauldron full of water is a patient thing. It will take whatever you give it, in the order you give it, and remember.$(br2)Light a fire beneath it, fill the bowl, then drop your reagents in one at a time and watch them dissolve. When the brew suits you, dip an empty bottle and draw it off."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Some things you add are not the brew itself, but a hand laid upon it.$(br2)$(l)Glowstone dust$() stiffens the next working, making it stronger. $(l)Redstone$() draws it out, making it last. A $(l)fermented spider eye$() turns a kindness into a cruelty, or a cruelty back into a kindness.$(br2)Add these $(o)before$() the reagent they should shape, for the cauldron remembers only forward."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The reagent itself decides the gift. A spider's eye gives poison, sugar gives swiftness, a ghast's tear gives mending, wormwood gives unseeing, and many more besides.$(br2)Toss in $(l)gunpowder$() and the bottle will burst where it lands, sharing its work with all who stand near. A breath of $(l)dragon's breath$() and it will hang in the air as a slow, drifting fog. With neither, the draught is yours alone to drink."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "A single cauldron holds only so much intent — eight reagents at most before the water grows too muddled to take more.$(br2)So pour off what you have made, rinse the bowl with fresh water, and begin the next working. A careful witch keeps her bottles labelled; the brew will tell you its true name if you but read it."
+    }
+  ]
+}
