@@ -43,16 +43,6 @@ public class CandelabraBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, net.minecraft.world.level.ScheduledTickAccess scheduledTickAccess,
-                                     BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState,
-                                     RandomSource random) {
-        if (!canSurvive(state, level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
-        }
-        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
-    }
-
-    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
                                 @Nullable Orientation orientation, boolean movedByPiston) {
         if (!canSurvive(state, level, pos)) {

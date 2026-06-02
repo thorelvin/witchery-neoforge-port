@@ -25,9 +25,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -79,16 +77,6 @@ public class CritterSnareBlock extends Block {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return Block.canSupportCenter(level, pos.below(), Direction.UP)
                 || level.getFluidState(pos.below()).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER);
-    }
-
-    @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
-                                     BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState,
-                                     RandomSource random) {
-        if (!canSurvive(state, level, pos)) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override

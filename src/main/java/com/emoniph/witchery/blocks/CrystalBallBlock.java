@@ -7,7 +7,6 @@ import com.emoniph.witchery.item.WaystoneItem;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -47,16 +46,6 @@ public class CrystalBallBlock extends BaseEntityBlock {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return Block.canSupportCenter(level, pos.below(), Direction.UP);
-    }
-
-    @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, net.minecraft.world.level.ScheduledTickAccess scheduledTickAccess,
-                                     BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState,
-                                     RandomSource random) {
-        if (!canSurvive(state, level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
-        }
-        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
