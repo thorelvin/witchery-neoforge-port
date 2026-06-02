@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -35,9 +34,7 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Mutating Sprig - a controlled mutation tool for a few specific block changes.
@@ -166,20 +163,18 @@ public class MutatingSprigItem extends Item {
             return false;
         }
 
-        List<ItemEntity> saplings = new ArrayList<>();
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            ItemEntity sapling = findDroppedAlderSapling(level, pos.relative(direction), saplings);
-            if (sapling == null) {
+            if (!level.getBlockState(pos.relative(direction)).is(WitcheryBlocks.ALDER_SAPLING.get())) {
                 return false;
             }
-            saplings.add(sapling);
         }
 
-        for (ItemEntity sapling : saplings) {
-            consumeOne(sapling);
-        }
+        playZombieMutationFeedback(level, zombie);
         zombie.discard();
-        level.setBlock(pos, WitcheryBlocks.CRITTER_SNARE.get().defaultBlockState(), 3);
+        level.removeBlock(pos, false);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            level.setBlock(pos.relative(direction), WitcheryBlocks.CRITTER_SNARE.get().defaultBlockState(), 3);
+        }
         return true;
     }
 
@@ -378,13 +373,35 @@ public class MutatingSprigItem extends Item {
     }
 
     private static Zombie findSnaredZombie(Level level, BlockPos pos) {
-        return level.getEntitiesOfClass(Zombie.class, new AABB(pos), zombie -> zombie.isAlive() && !zombie.isRemoved())
+        AABB sourceBox = new AABB(
+                pos.getX() - 1.0D,
+                pos.getY() - 1.0D,
+                pos.getZ() - 1.0D,
+                pos.getX() + 1.0D,
+                pos.getY() + 2.0D,
+                pos.getZ() + 1.0D);
+        return level.getEntitiesOfClass(Zombie.class, sourceBox, zombie -> zombie.isAlive() && !zombie.isRemoved())
                 .stream()
                 .min(Comparator.comparingDouble(zombie -> zombie.distanceToSqr(
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5)))
                 .orElse(null);
+    }
+
+    private static void playZombieMutationFeedback(Level level, Zombie zombie) {
+        level.playSound(null, zombie.blockPosition(), SoundEvents.ZOMBIE_DEATH, SoundSource.HOSTILE, 1.0F, 1.0F);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.ITEM_SLIME,
+                    zombie.getX(),
+                    zombie.getY() + zombie.getBbHeight() * 0.5D,
+                    zombie.getZ(),
+                    8,
+                    1.5D,
+                    1.0D,
+                    1.5D,
+                    0.1D);
+        }
     }
 
     private static Mob findNearbyCreature(Level level, BlockPos pos, EntityType<?> entityType) {
@@ -396,30 +413,6 @@ public class MutatingSprigItem extends Item {
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5)))
                 .orElse(null);
-    }
-
-    private static ItemEntity findDroppedAlderSapling(Level level, BlockPos pos, List<ItemEntity> excluded) {
-        return level.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(0.35, 0.25, 0.35), itemEntity ->
-                        itemEntity.isAlive()
-                                && !itemEntity.isRemoved()
-                                && !excluded.contains(itemEntity)
-                                && itemEntity.getItem().is(WitcheryItems.ALDER_SAPLING.get()))
-                .stream()
-                .min(Comparator.comparingDouble(itemEntity -> itemEntity.distanceToSqr(
-                        pos.getX() + 0.5,
-                        pos.getY() + 0.5,
-                        pos.getZ() + 0.5)))
-                .orElse(null);
-    }
-
-    private static void consumeOne(ItemEntity entity) {
-        ItemStack stack = entity.getItem();
-        stack.shrink(1);
-        if (stack.isEmpty()) {
-            entity.discard();
-            return;
-        }
-        entity.setItem(stack);
     }
 
     private static boolean hasSpanishMossWaterRing(Level level, BlockPos pos) {
