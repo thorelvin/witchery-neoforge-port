@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlightHeartBlock extends Block {
-    private static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 9.0, 14.0);
+    private static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 14.0, 15.0);
 
     public BlightHeartBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -55,7 +55,7 @@ public class BlightHeartBlock extends Block {
         }
         level.addParticle(ParticleTypes.WITCH,
                 pos.getX() + 0.2D + random.nextDouble() * 0.6D,
-                pos.getY() + 0.2D + random.nextDouble() * 0.35D,
+                pos.getY() + 0.5D + random.nextDouble() * 0.5D,
                 pos.getZ() + 0.2D + random.nextDouble() * 0.6D,
                 0.0D, 0.02D, 0.0D);
     }
