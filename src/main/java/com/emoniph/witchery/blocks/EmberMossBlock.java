@@ -131,8 +131,8 @@ public class EmberMossBlock extends BushBlock {
     private boolean canSpreadOver(BlockState state) {
         return state.is(Blocks.DIRT)
                 || state.is(Blocks.GRASS_BLOCK)
-                || state.is(Blocks.STONE)
+                || state.is(Blocks.MYCELIUM)
                 || state.is(Blocks.SAND)
-                || state.is(Blocks.SOUL_SAND);
+                || state.is(Blocks.FARMLAND);
     }
 }
