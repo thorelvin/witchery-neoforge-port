@@ -9,6 +9,32 @@ Current target:
 
 ---
 
+## 2026-06-03 Headless unit tests (ModDevGradle unitTest)
+
+You can verify game-registry-dependent logic WITHOUT launching the client/server. The project
+uses `net.neoforged.moddev` (MDG), which has built-in JUnit support that bootstraps the game in
+a plain JVM:
+
+```gradle
+neoForge { ... unitTest { enable(); testedMod = mods."${mod_id}" } }
+dependencies {
+    testImplementation platform("org.junit:junit-bom:5.11.3")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+test { useJUnitPlatform() }
+```
+
+Put tests in `src/test/java`; `Items`/`MobEffects`/etc. holders resolve after bootstrap. Run
+`./gradlew test` (NOT a Minecraft launch — no VRAM, Ollama-safe). `BrewLogicTest` is the first
+example (5 brew-engine assertions). This is the right tool for the NEXT_FIXES_PLAN #11 test
+backlog (ritual dispatch, circle detection, no-consume-on-failure, etc.). The GameTest framework
+in 21.11.42 is the heavier data-driven `GameTestInstance`/`TestData`/`TestEnvironmentDefinition`
+path (needs a TEST_FUNCTION registry entry + environment + structure NBT) — prefer plain unit
+tests for pure logic.
+
+---
+
 ## 2026-06-03 Custom brew composition system + NeoForge 21.11 gotchas
 
 Built `com.emoniph.witchery.brewing` (`Brews`, `BrewContents`) + `WitchCauldronBlockEntity`,
