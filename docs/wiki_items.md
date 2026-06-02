@@ -295,7 +295,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** In the NeoForge port, a level 9+ vampire can spend 125 Blood Power with an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
 - **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current port's starting blood.
 - **Stats:** N/A
-- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path is present in practical form; actual vampire villager/entity conversion is still follow-up work.
+- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path is present in practical form, and vampire-blood goblets can convert transfixed, fully drained Villagers near Coffins into Vampire mobs. Village Guard conversion is still follow-up work.
 
 ## Glass Goblet
 - **Obtain:** Craft from three Glass Bottles and one Glass using the Resurrected goblet recipe shape.

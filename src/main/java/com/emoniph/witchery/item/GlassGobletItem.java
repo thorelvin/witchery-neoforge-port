@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -118,7 +119,9 @@ public class GlassGobletItem extends Item {
         if (!(user instanceof ServerPlayer player) || !(user.level() instanceof ServerLevel level)) {
             return InteractionResult.SUCCESS;
         }
-        tryUseOnVillagerForConversion(stack, level, player, villager);
+        if (tryUseOnVillagerForConversion(stack, level, player, villager)) {
+            player.setItemInHand(hand, new ItemStack(WitcheryItems.GLASS_GOBLET.get()));
+        }
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -253,34 +256,67 @@ public class GlassGobletItem extends Item {
         return -1;
     }
 
-    private static void tryUseOnVillagerForConversion(ItemStack stack, ServerLevel level, ServerPlayer player, Villager villager) {
+    private static boolean tryUseOnVillagerForConversion(ItemStack stack, ServerLevel level, ServerPlayer player, Villager villager) {
         if (!hasBloodOwner(stack)) {
             fail(player, "item.witchery.glass_goblet.failed");
-            return;
+            return false;
         }
         if (!isMesmerised(villager)) {
             fail(player, "item.witchery.glass_goblet.victim_not_transfixed");
-            return;
+            return false;
         }
         if (getVillagerBlood(villager) > 0) {
             fail(player, "item.witchery.glass_goblet.victim_has_blood");
-            return;
+            return false;
         }
         if (!isCoffinNear(level, villager.blockPosition())) {
             fail(player, "item.witchery.glass_goblet.needs_coffin");
-            return;
+            return false;
         }
 
-        player.displayClientMessage(Component.translatable("item.witchery.glass_goblet.villager_pending",
-                villager.getDisplayName()).withStyle(ChatFormatting.DARK_RED), true);
-        level.playSound(null, villager.blockPosition(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.5F,
-                0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
-        level.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+        if (!convertVillagerToVampire(level, villager)) {
+            fail(player, "item.witchery.glass_goblet.failed");
+            return false;
+        }
+        maybeAdvanceVampireConversionOwner(stack, level, player);
+        level.playSound(null, villager.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
+                level.random.nextFloat() * 0.1F + 0.9F);
+        level.sendParticles(DustParticleOptions.REDSTONE,
                 villager.getX(),
-                villager.getY() + villager.getBbHeight() * 0.85D,
+                villager.getY() + villager.getBbHeight() * 0.5D,
                 villager.getZ(),
-                8, villager.getBbWidth() * 0.35D, villager.getBbHeight() * 0.15D,
-                villager.getBbWidth() * 0.35D, 0.02D);
+                16, villager.getBbWidth() * 0.5D, villager.getBbHeight() * 0.5D,
+                villager.getBbWidth() * 0.5D, 0.0D);
+        return true;
+    }
+
+    private static boolean convertVillagerToVampire(ServerLevel level, Villager villager) {
+        var vampire = WitcheryEntities.VAMPIRE.get().create(level, EntitySpawnReason.CONVERSION);
+        if (vampire == null) {
+            return false;
+        }
+        vampire.setPos(villager.getX(), villager.getY(), villager.getZ());
+        vampire.setYRot(villager.getYRot());
+        vampire.setXRot(villager.getXRot());
+        vampire.setPersistenceRequired();
+        vampire.finalizeSpawn(level, level.getCurrentDifficultyAt(vampire.blockPosition()),
+                EntitySpawnReason.CONVERSION, null);
+        villager.discard();
+        level.addFreshEntity(vampire);
+        level.levelEvent(null, 1017, vampire.blockPosition(), 0);
+        return true;
+    }
+
+    private static void maybeAdvanceVampireConversionOwner(ItemStack stack, ServerLevel level, ServerPlayer player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getVampireLevel() != 9 || !data.canIncreaseVampireLevel()
+                || !player.getStringUUID().equals(getBloodUuid(stack))) {
+            return;
+        }
+        data.setVampireLevel(10);
+        level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.75F, 1.0F);
+        player.displayClientMessage(Component.translatable("witchery.vampire.level_up", data.getVampireLevel()), false);
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
     }
 
     private static boolean isMesmerised(LivingEntity target) {
@@ -370,6 +406,10 @@ public class GlassGobletItem extends Item {
 
     private static String getBloodName(ItemStack stack) {
         return getTag(stack).getStringOr(TAG_BLOOD_NAME, "");
+    }
+
+    private static String getBloodUuid(ItemStack stack) {
+        return getTag(stack).getStringOr(TAG_BLOOD_UUID, "");
     }
 
     private static CompoundTag getTag(ItemStack stack) {

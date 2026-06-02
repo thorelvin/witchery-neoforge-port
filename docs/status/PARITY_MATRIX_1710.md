@@ -34,7 +34,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | anointing_paste | ✅ Done | Recipe + cauldron route restored |
 | taglock_kit / bound_taglock_kit | ✅ Done | Fill, creature/player variants, exact bound item output, crafting |
 | poppets (9 types) | ✅ Done | Voodoo, Vampiric, Protection families |
-| glass_goblet / glass_goblet_full | ✅ Done | Source level-9 Blood Power fill gate, source failure messages, red-dust/drink cue, drink/induction/chicken-blood validation live; villager entity handoff remains pending under Vampirism |
+| glass_goblet / glass_goblet_full | ✅ Done | Source level-9 Blood Power fill gate, source failure messages, red-dust/drink cue, drink/induction/chicken-blood validation live, drained-villager -> Vampire mob conversion plus own-blood level-9 handoff; Village Guard conversion remains pending under Vampirism |
 | warm_blood / liliths_blood | ✅ Done | Consumable semantics |
 | observations_of_an_immortal / vampire_book / torn_page | ✅ Done | Book screen, source-facing `vampire_book` alias, update recipe, source-family kill drops including the current Witchery boss roster |
 | subdued_spirit / subdued_village_spirit | ✅/🔶 Done/Partial | Normal capture/release loop is live. The village variant is now a real item that releases a Spirit with source `SpiritType=1`, saves/loads that identity, drops the village item again, and transfers back from Spirit World; old nearest-village waypoint flight remains future Spirit AI polish |
