@@ -60,6 +60,12 @@ neoForge {
             sourceSet sourceSets.main
         }
     }
+
+    // Plain-JVM unit tests with the game registries bootstrapped (no client/server launch).
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
+    }
 }
 
 configurations {
@@ -75,6 +81,14 @@ dependencies {
     // compileOnly "mezz.jei:jei-1.21.11-common-api:..."
     // compileOnly "mezz.jei:jei-1.21.11-neoforge-api:..."
     // localRuntime "mezz.jei:jei-1.21.11-neoforge:..."
+
+    testImplementation platform("org.junit:junit-bom:5.11.3")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 tasks.withType(ProcessResources).configureEach {
