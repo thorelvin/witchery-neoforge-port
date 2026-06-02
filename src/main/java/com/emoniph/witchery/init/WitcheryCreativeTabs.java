@@ -297,7 +297,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SPECTRAL_STONE.get(),
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
-                WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get());
+                WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get(),
+                WitcheryItems.VAMPIRE_BOOK.get());
+        output.accept(vampireBookStack(9));
     }
 
     private static void addVampireAndWerewolfItems(CreativeModeTab.Output output) {
@@ -576,6 +578,13 @@ public class WitcheryCreativeTabs {
     private static ItemStack filledChaliceStack() {
         ItemStack stack = WitcheryItems.CHALICE.get().getDefaultInstance();
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean(ChaliceBlock.FILLED_TAG, true));
+        return stack;
+    }
+
+    private static ItemStack vampireBookStack(int level) {
+        ItemStack stack = WitcheryItems.VAMPIRE_BOOK.get().getDefaultInstance();
+        CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                tag -> tag.putInt(com.emoniph.witchery.item.ImmortalsObservationsBookItem.TAG_LEVEL, level));
         return stack;
     }
 }

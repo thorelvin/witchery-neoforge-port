@@ -54,12 +54,12 @@
       ]
     },
     {
-      "name": "immortals_observations_book",
+      "name": "vampire_book",
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "witchery:immortals_observations_book"
+          "name": "witchery:vampire_book"
         }
       ]
     },

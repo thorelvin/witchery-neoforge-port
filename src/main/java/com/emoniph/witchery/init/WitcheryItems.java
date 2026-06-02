@@ -677,6 +677,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> TORN_PAGE          = ITEMS.registerSimpleItem("torn_page");
     public static final DeferredItem<Item> IMMORTALS_OBSERVATIONS_BOOK = ITEMS.register("immortals_observations_book",
             id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item> VAMPIRE_BOOK = ITEMS.register("vampire_book",
+            id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1),
+                    "item.witchery.vampire_book.tip"));
     public static final DeferredItem<Item> WARM_BLOOD = ITEMS.register("warm_blood",
             id -> new com.emoniph.witchery.item.VampireBloodItem(com.emoniph.witchery.item.VampireBloodItem.Kind.WARM,
                     itemProps(id).stacksTo(16)));

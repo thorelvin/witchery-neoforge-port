@@ -1203,6 +1203,8 @@
   "item.witchery.immortals_observations_book": "Observations of an Immortal",
   "item.witchery.immortals_observations_book.tip": "A doomed scholar's account of discourse with the undead",
   "item.witchery.immortals_observations_book.pages": "Pages revealed: %s/%s",
+  "item.witchery.vampire_book": "Observations of an Immortal",
+  "item.witchery.vampire_book.tip": "A doomed scholar's account of discourse with the undead.",
   "item.witchery.immortals_observations_book.page_1": "The first pages warn that the author studied an immortal predator and wrote for those who would survive the lesson.",
   "item.witchery.immortals_observations_book.page_2": "A chicken, a skull, a boline, and a glass goblet begin the old blood rite.",
   "item.witchery.immortals_observations_book.page_3": "A night rite calls string, red dust, torches, and a skull beneath open stars.",

@@ -36,7 +36,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | poppets (9 types) | ✅ Done | Voodoo, Vampiric, Protection families |
 | glass_goblet / glass_goblet_full | ✅ Done | Blood fill/drink/induction |
 | warm_blood / liliths_blood | ✅ Done | Consumable semantics |
-| observations_of_an_immortal / torn_page | ✅ Done | Book screen, update recipe, source-family kill drops including the current Witchery boss roster |
+| observations_of_an_immortal / vampire_book / torn_page | ✅ Done | Book screen, source-facing `vampire_book` alias, update recipe, source-family kill drops including the current Witchery boss roster |
 | subdued_spirit / subdued_village_spirit | ✅/🔶 Done/Partial | Normal capture/release loop is live. The village variant is now a real item that releases a Spirit with source `SpiritType=1`, saves/loads that identity, drops the village item again, and transfers back from Spirit World; old nearest-village waypoint flight remains future Spirit AI polish |
 | parasytic_louse (item) | ✅ Done | Potion bite/hotbar defense |
 | clay_jar / clay_jar_soft | ✅ Done | Smelting route restored |
@@ -63,7 +63,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | biome_book / biome_note | Partial | Source `ItemBook` / `ItemBiomeNote` route restored in practical form: basic and extended Biome books are real, the extended/alias book stores a selected page, book + Paper copies that page into a named `witchery:biome_note` while returning the book, and Shifting Seasons accepts exact Biome Notes. Remaining: exact old GUI page browser/details. |
 | distilling_book / circle_magic_book / herbology_book | Partial | Exact Resurrected Witchcraft guidebook IDs are live one-stack Witches' Primer-opening books with source/Resurrected names, shaped recipes, guide-tab placement, and Bookshop loot. Remaining: exact old separate markup book screens, if that path is desired later. |
 | cauldron_book | Partial | Source `ItemMarkupBook(7)` source-facing guide ID is live as a one-stack Primer-opening book with the original `bookcauldron` art, old Witches' Brews name/tip text, guide-tab placement, and source-shaped Book + Black Dye + Feather + Dirt recipe. Remaining: exact old markup book screen/content if that UI path is rebuilt later. |
-| vampire_book | ❌ Missing | Source: `ItemMarkupBook(7, [0,9])` — vampire progression book with level callbacks |
+| vampire_book | Partial | Source `ItemMarkupBook(7, [0,9])` is live as the source-facing Observations item with old `vbook` art, source tooltip, base + level-9 creative stacks, source-shaped crafting output, Bookshop loot output, Torn Page upgrades, and the level-cap read callback via the existing Observations data. Remaining: exact old markup screen/page-position UI and any decision to make complete books keep rolling extra pages like source `hasVampireBook()`. |
 | bucket_brew | ❌ Missing | Source: `ItemBrewBucket` — brew bucket container |
 | infernal_blood | ✅ Done | Source ID restored for Horned Huntsman drops, bloodied Wicker Bundle crafting/use, Ruby Slippers, and Summon Imp offerings; existing `demonic_blood` bridge remains accepted by Summon Imp |
 | nullified_leather | ✅ Done | Source shaped recipe restored: eight Leather around one Null Catalyst produces three Nullified Leather for Hunter outfit crafting |

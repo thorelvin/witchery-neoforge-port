@@ -46,7 +46,7 @@ public class UpdateImmortalsObservationsBookRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.is(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get())) {
+            if (ImmortalsObservationsBookItem.canAddTornPage(stack)) {
                 if (!book.isEmpty() || !ImmortalsObservationsBookItem.canAddTornPage(stack)) {
                     return null;
                 }

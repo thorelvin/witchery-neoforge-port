@@ -31,9 +31,15 @@ public class ImmortalsObservationsBookItem extends Item {
     public static final int BASE_VISIBLE_PAGES = 6;
     public static final int TOTAL_PAGES = 16;
     private static final String PAGE_KEY_PREFIX = "item.witchery.immortals_observations_book.page_";
+    private final String tooltipKey;
 
     public ImmortalsObservationsBookItem(Properties properties) {
+        this(properties, "item.witchery.immortals_observations_book.tip");
+    }
+
+    public ImmortalsObservationsBookItem(Properties properties, String tooltipKey) {
         super(properties);
+        this.tooltipKey = tooltipKey;
     }
 
     @Override
@@ -59,14 +65,19 @@ public class ImmortalsObservationsBookItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.accept(Component.translatable("item.witchery.immortals_observations_book.tip")
+        tooltip.accept(Component.translatable(tooltipKey)
                 .withStyle(ChatFormatting.GRAY));
         tooltip.accept(Component.translatable("item.witchery.immortals_observations_book.pages",
                 getVisiblePages(stack), TOTAL_PAGES).withStyle(ChatFormatting.DARK_PURPLE));
     }
 
     public static boolean canAddTornPage(ItemStack stack) {
-        return stack.is(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get()) && getResearchLevel(stack) < MAX_LEVEL;
+        return isObservationsBook(stack) && getResearchLevel(stack) < MAX_LEVEL;
+    }
+
+    public static boolean isObservationsBook(ItemStack stack) {
+        return stack.is(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get())
+                || stack.is(WitcheryItems.VAMPIRE_BOOK.get());
     }
 
     public static boolean addTornPage(ItemStack stack) {
