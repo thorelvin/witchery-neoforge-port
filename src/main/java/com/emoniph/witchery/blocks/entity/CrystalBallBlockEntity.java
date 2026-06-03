@@ -31,26 +31,6 @@ public class CrystalBallBlockEntity extends BlockEntity {
     private static final int POWER_COST     = 500;
     private static final int ALTAR_RADIUS   = 16;
     private static final double WAYSTONE_SCRY_MAX_DISTANCE_SQR = 22500.0D; // original 150-block same-dimension limit
-    private static final PredictionReading[] PREDICTION_ROSTER = {
-            new PredictionReading("witchery.prediction.zombie", 13),
-            new PredictionReading("witchery.prediction.arrowhit", 13),
-            new PredictionReading("witchery.prediction.ent", 3),
-            new PredictionReading("witchery.prediction.fall", 13),
-            new PredictionReading("witchery.prediction.iron", 8),
-            new PredictionReading("witchery.prediction.diamond", 3),
-            new PredictionReading("witchery.prediction.emerald", 3),
-            new PredictionReading("witchery.prediction.treasure", 2),
-            new PredictionReading("witchery.prediction.love", 2),
-            new PredictionReading("witchery.prediction.bababad", 2),
-            new PredictionReading("witchery.prediction.babagood", 2),
-            new PredictionReading("witchery.prediction.friend", 3),
-            new PredictionReading("witchery.prediction.rescued", 13),
-            new PredictionReading("witchery.prediction.rescued", 13),
-            new PredictionReading("witchery.prediction.wet", 13),
-            new PredictionReading("witchery.prediction.tothenether", 3),
-            new PredictionReading("witchery.prediction.coal", 13)
-    };
-    private static final int PREDICTION_TOTAL_WEIGHT = totalPredictionWeight();
 
     private long lastUsedTime = 0L;
 
@@ -91,7 +71,10 @@ public class CrystalBallBlockEntity extends BlockEntity {
                     + subject.getName().getString() + ".").withStyle(ChatFormatting.DARK_PURPLE), false);
         }
 
-        player.displayClientMessage(getPrediction(subject, sl), false);
+        // Store (or re-read) the subject's prophecy; it will come true later via PredictionEvents.
+        if (subject instanceof net.minecraft.server.level.ServerPlayer subjectPlayer) {
+            com.emoniph.witchery.predictions.Predictions.makePrediction(sl, subjectPlayer);
+        }
         sl.sendParticles(ParticleTypes.EXPLOSION,
                 worldPosition.getX() + 0.5,
                 worldPosition.getY() + 0.2,
@@ -194,6 +177,9 @@ public class CrystalBallBlockEntity extends BlockEntity {
     }
 
     private boolean tryCheckReady(Player player, ServerLevel level) {
+        if (player.getAbilities().instabuild) {
+            return true; // creative players ignore the recharge cooldown
+        }
         if (getCooldown(level) > 0) {
             fail(player, level, Component.translatable("witchery.crystal_ball.cooldown"));
             return false;
@@ -202,6 +188,9 @@ public class CrystalBallBlockEntity extends BlockEntity {
     }
 
     private boolean tryConsumePower(Player player, ServerLevel level) {
+        if (player.getAbilities().instabuild) {
+            return true; // creative players scry for free — no altar power required
+        }
         Optional<AltarBlockEntity> altar = findAltar(level);
         if (altar.isEmpty()) {
             fail(player, level, Component.translatable("witchery.crystal_ball.no_power"));
@@ -252,42 +241,6 @@ public class CrystalBallBlockEntity extends BlockEntity {
         }
         return subject;
     }
-
-    private Component getPrediction(Player player, ServerLevel level) {
-        PredictionReading reading = choosePrediction(level.random);
-        return Component.translatable(reading.translationKey(), player.getName().getString())
-                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC);
-    }
-
-    private static PredictionReading choosePrediction(net.minecraft.util.RandomSource random) {
-        int roll = random.nextInt(PREDICTION_TOTAL_WEIGHT);
-        for (PredictionReading reading : PREDICTION_ROSTER) {
-            roll -= reading.weight();
-            if (roll < 0) {
-                return reading;
-            }
-        }
-        return PREDICTION_ROSTER[PREDICTION_ROSTER.length - 1];
-    }
-
-    // ── Test hooks (package-private) ────────────────────────────────────────
-    static int predictionRosterSize() {
-        return PREDICTION_ROSTER.length;
-    }
-
-    static String chooseTestPredictionKey(net.minecraft.util.RandomSource random) {
-        return choosePrediction(random).translationKey();
-    }
-
-    private static int totalPredictionWeight() {
-        int total = 0;
-        for (PredictionReading reading : PREDICTION_ROSTER) {
-            total += reading.weight();
-        }
-        return total;
-    }
-
-    private record PredictionReading(String translationKey, int weight) {}
 
     public boolean isReady() { return level == null || getCooldown(level) == 0; }
     public int getCooldown()  { return level == null ? 0 : getCooldown(level); }
