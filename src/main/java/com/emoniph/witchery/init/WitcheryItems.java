@@ -919,6 +919,9 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> WOLFMAN_SPAWN_EGG =
             ITEMS.register("wolfman_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.WOLFMAN.get())));
+    public static final DeferredItem<SpawnEggItem> HELLHOUND_SPAWN_EGG =
+            ITEMS.register("hellhound_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.HELLHOUND.get())));
     public static final DeferredItem<SpawnEggItem> WERE_VILLAGER_SPAWN_EGG =
             ITEMS.register("were_villager_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.WERE_VILLAGER.get())));

@@ -260,7 +260,7 @@ The 1.7.10 decompiled source has 46+ entity classes. This tracking table lists t
 | `EntityGoblin` | Base goblin | Partial — `HobgoblinEntity` exists with trading/hut support and source out-of-world damage immunity; old labor/village chain remains |
 | ~~`EntityGoblinGulg`~~ | ~~Gulg goblin boss~~ | ✅ Done — `GoblinGulgEntity` ported |
 | ~~`EntityGoblinMog`~~ | ~~Mog goblin boss~~ | ✅ Done — `GoblinMogEntity` ported |
-| `EntityHellhound` | Hell hound | Medium — infernal lane |
+| ~~`EntityHellhound`~~ | ~~Hell hound~~ | ✅ Done — `HellhoundEntity` + `HellhoundModel`/`HellhoundRenderer` ported; fire-immune, ignites targets, flame trail, golden-apple→Wolf cure, drops Tongue of Dog + rare Hellhound Head; spawn egg only (no worldgen spawn) |
 | `EntityMindrake` | Mindrake mob | Low–medium |
 | `EntityIllusionCreeper` / `Spider` / `Zombie` | Illusion mob variants | Low |
 | `EntitySummonedUndead` | Summoned undead via brew | Low — custom brew dep |

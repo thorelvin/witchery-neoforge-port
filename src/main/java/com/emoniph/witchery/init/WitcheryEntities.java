@@ -108,6 +108,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(EntEntity::new, MobCategory.CREATURE)
                             .sized(1.2F, 3.0F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "ent"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.HellhoundEntity>> HELLHOUND =
+            ENTITY_TYPES.register("hellhound", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.HellhoundEntity::new, MobCategory.MONSTER)
+                            .sized(0.9F, 0.9F).fireImmune().clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "hellhound"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
             ENTITY_TYPES.register("mandrake_mob", () ->
                     EntityType.Builder.of(MandrakeEntity::new, MobCategory.MONSTER)
@@ -344,6 +349,7 @@ public class WitcheryEntities {
         event.register(WITCH_HUNTER.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(TREEFYD.get(),       SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(ENT.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(HELLHOUND.get(),     SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
         // Familiars — creature-category animals
         event.register(OWL.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,   RegisterSpawnPlacementsEvent.Operation.OR);
@@ -369,6 +375,7 @@ public class WitcheryEntities {
         event.put(POLTERGEIST.get(),   PoltergeistEntity.createAttributes().build());
         event.put(TREEFYD.get(),       TreefydEntity.createAttributes().build());
         event.put(ENT.get(),           EntEntity.createAttributes().build());
+        event.put(HELLHOUND.get(),     com.emoniph.witchery.entity.HellhoundEntity.createAttributes().build());
         event.put(MANDRAKE_MOB.get(),  MandrakeEntity.createAttributes().build());
         event.put(DEMON.get(),         DemonEntity.createAttributes().build());
         event.put(NIGHTMARE.get(),        NightmareEntity.createAttributes().build());

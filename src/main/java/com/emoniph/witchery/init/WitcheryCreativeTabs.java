@@ -542,6 +542,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.GOBLIN_MOG_SPAWN_EGG.get(),
                 WitcheryItems.BABA_YAGA_SPAWN_EGG.get(),
                 WitcheryItems.WOLFMAN_SPAWN_EGG.get(),
+                WitcheryItems.HELLHOUND_SPAWN_EGG.get(),
                 WitcheryItems.WERE_VILLAGER_SPAWN_EGG.get(),
                 WitcheryItems.VILLAGE_GUARD_SPAWN_EGG.get(),
                 WitcheryItems.WITCH_HUNTER_SPAWN_EGG.get(),
