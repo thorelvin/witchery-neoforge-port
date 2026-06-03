@@ -272,6 +272,7 @@ public class WitcheryBlocks {
     }
     public static final DeferredBlock<BelladonnaBlock>  BELLADONNA      = registerBlock("belladonna",  BelladonnaBlock::new,  () -> cropProps());
     public static final DeferredBlock<MandrakeBlock>    MANDRAKE        = registerBlock("mandrake",    MandrakeBlock::new,    () -> cropProps());
+    public static final DeferredBlock<MindrakeBlock>    MINDRAKE        = registerBlock("mindrake",    MindrakeBlock::new,    () -> cropProps());
     public static final DeferredBlock<ArtichokeBlock>   ARTICHOKE       = registerBlock("artichoke",   ArtichokeBlock::new,   () -> cropProps());
     public static final DeferredBlock<CottonBlock>      COTTON_CROP     = registerBlock("cotton",      CottonBlock::new,      () -> cropProps());
     public static final DeferredBlock<SnowbellBlock>    SNOWBELL        = registerBlock("snowbell",    SnowbellBlock::new,    () -> cropProps());

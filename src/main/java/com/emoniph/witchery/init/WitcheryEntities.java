@@ -113,6 +113,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(com.emoniph.witchery.entity.HellhoundEntity::new, MobCategory.MONSTER)
                             .sized(0.9F, 0.9F).fireImmune().clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "hellhound"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.MindrakeEntity>> MINDRAKE =
+            ENTITY_TYPES.register("mindrake", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.MindrakeEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mindrake"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
             ENTITY_TYPES.register("mandrake_mob", () ->
                     EntityType.Builder.of(MandrakeEntity::new, MobCategory.MONSTER)
@@ -376,6 +381,7 @@ public class WitcheryEntities {
         event.put(TREEFYD.get(),       TreefydEntity.createAttributes().build());
         event.put(ENT.get(),           EntEntity.createAttributes().build());
         event.put(HELLHOUND.get(),     com.emoniph.witchery.entity.HellhoundEntity.createAttributes().build());
+        event.put(MINDRAKE.get(),      com.emoniph.witchery.entity.MindrakeEntity.createAttributes().build());
         event.put(MANDRAKE_MOB.get(),  MandrakeEntity.createAttributes().build());
         event.put(DEMON.get(),         DemonEntity.createAttributes().build());
         event.put(NIGHTMARE.get(),        NightmareEntity.createAttributes().build());

@@ -261,7 +261,7 @@ The 1.7.10 decompiled source has 46+ entity classes. This tracking table lists t
 | ~~`EntityGoblinGulg`~~ | ~~Gulg goblin boss~~ | ✅ Done — `GoblinGulgEntity` ported |
 | ~~`EntityGoblinMog`~~ | ~~Mog goblin boss~~ | ✅ Done — `GoblinMogEntity` ported |
 | ~~`EntityHellhound`~~ | ~~Hell hound~~ | ✅ Done — `HellhoundEntity` + `HellhoundModel`/`HellhoundRenderer` ported; fire-immune, ignites targets, flame trail, golden-apple→Wolf cure, drops Tongue of Dog + rare Hellhound Head; spawn egg only (no worldgen spawn) |
-| `EntityMindrake` | Mindrake mob | Low–medium |
+| ~~`EntityMindrake`~~ | ~~Mindrake mob~~ | ✅ Done — `MindrakeEntity` (TamableAnimal living-bomb) + `MindrakeModel`/`MindrakeRenderer` + `MindrakeBlock` (crop) + `mindrakebulb` seed + `MindrakeEvents` (bulb tossed on ground hatches into a tamed Mindrake). Detonates on contact, bursts on death, drops Mandrake Seeds |
 | `EntityIllusionCreeper` / `Spider` / `Zombie` | Illusion mob variants | Low |
 | `EntitySummonedUndead` | Summoned undead via brew | Low — custom brew dep |
 | `EntityMirrorFace` | Mirror World guardian variant | Low — mirror dep |
