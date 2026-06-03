@@ -245,6 +245,32 @@ The original game documents 14 Crystal Ball predictions. The following 11 additi
 
 Implementation note: predictions are dispatched from a single random-pick handler. Adding new entries is a matter of registering the message string and a consequence lambda — low effort once the base system is stable.
 
+### 13. Dried Branch — Altar Power Tell
+
+**Confidence:** speculative; user-requested future altar-room polish, not confirmed original Witchery content.
+
+A wall-attached dried branch that behaves like a quiet visual indicator for the nearest linked altar. It should read as a natural witch-room ornament first and a power gauge second.
+
+Design intent:
+- Attaches to walls as a small twig/branch model.
+- Searches for the nearest valid altar using the same altar lookup conventions as other altar-aware blocks.
+- Points upward when the nearby altar is full or nearly full.
+- Hangs level or half-raised at medium power.
+- Droops downward when altar power is low or empty.
+- Updates slowly or with interpolation so it feels like a living twig responding to power rather than a redstone needle.
+
+Implementation notes:
+- Treat as a decorative utility block, not an altar power contributor unless a separate balance pass approves it.
+- Prefer a small blockstate set such as `pose=low,mid,high` driven by server-side altar power ratio and synced to clients.
+- Keep the model wall-facing, with north/east/south/west variants and a compact outline.
+- Consider faint leaf-rustle or creak particles only for transitions; no constant noise.
+- If no altar is found, default to drooped.
+
+Minimum viable version:
+1. One craftable wall-mounted Dried Branch block.
+2. Three poses based on nearest altar current-power / max-power ratio.
+3. No altar bonus, no GUI, no redstone output.
+
 ## Recommended order after port
 
 1. Stabilize port + replace placeholder assets.
@@ -254,3 +280,4 @@ Implementation note: predictions are dispatched from a single random-pick handle
 5. Possession MVP.
 6. Deity alpha.
 7. World-spirit regional effects.
+8. Altar-room feedback ornaments such as Dried Branch.
