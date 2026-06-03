@@ -123,6 +123,8 @@ public class WitcheryClient {
                   com.emoniph.witchery.client.model.HellhoundModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.MindrakeModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.MindrakeModel::createBodyLayer),
+        Map.entry(com.emoniph.witchery.client.model.DarkMarkModel.LAYER_LOCATION,
+                  com.emoniph.witchery.client.model.DarkMarkModel::createBodyLayer),
         Map.entry(VillageGuardModel.LAYER_LOCATION,    VillageGuardModel::createBodyLayer),
         Map.entry(VillageGuardModel.ARMOR_HEAD_LAYER,  VillageGuardModel::createArmorHeadLayer),
         Map.entry(LeonardModel.LAYER_LOCATION,    LeonardModel::createBodyLayer),
@@ -259,6 +261,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.WOLFMAN.get(),          WolfmanRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.HELLHOUND.get(),        com.emoniph.witchery.client.renderer.HellhoundRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.MINDRAKE.get(),         com.emoniph.witchery.client.renderer.MindrakeRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.DARK_MARK.get(),        com.emoniph.witchery.client.renderer.DarkMarkRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.WERE_VILLAGER.get(),   WereVillagerRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.VILLAGE_GUARD.get(),   VillageGuardRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LEONARD.get(),         LeonardRenderer::new);

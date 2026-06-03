@@ -957,6 +957,9 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> MINDRAKE_SPAWN_EGG =
             ITEMS.register("mindrake_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.MINDRAKE.get())));
+    public static final DeferredItem<SpawnEggItem> DARK_MARK_SPAWN_EGG =
+            ITEMS.register("dark_mark_spawn_egg", id ->
+                    new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.DARK_MARK.get())));
     public static final DeferredItem<SpawnEggItem> DEMON_SPAWN_EGG =
             ITEMS.register("demon_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.DEMON.get())));

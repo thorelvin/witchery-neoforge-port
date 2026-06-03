@@ -265,10 +265,10 @@ The 1.7.10 decompiled source has 46+ entity classes. This tracking table lists t
 | `EntityIllusionCreeper` / `Spider` / `Zombie` | Illusion mob variants | Low |
 | `EntitySummonedUndead` | Summoned undead via brew | Low — custom brew dep |
 | `EntityMirrorFace` | Mirror World guardian variant | Low — mirror dep |
-| `EntityDarkMark` | Dark Mark projectile/effect | Low |
-| `EntityEye` | Eye mob | Low |
-| `EntitySpellEffect` | Spell visual projectile | Low |
-| `EntityWitchCat` (wild) | Wild witch cat variant | Low |
+| ~~`EntityDarkMark`~~ | ~~Dark Mark projectile/effect~~ | ✅ Done — `DarkMarkEntity` + `DarkMarkModel`/`DarkMarkRenderer`, conjured by the new **Morsmordre** symbol spell (`EffectRegistry.MORSMORDRE`). 2×2 floating skull-cloud: smoke trail, cackle, wards mobs outward within 10 blocks, despawns after 5 min |
+| ~~`EntityEye`~~ | ~~Eye mob~~ | ⛔ Skipped — invisible 0×0 marker that only serves as the camera anchor for the Taglock Kit's `PacketCamPos` remote-camera scry. No standalone value; revisit only if/when the sustained remote-camera view is ported |
+| `EntitySpellEffect` | Spell visual projectile | ✅ Done earlier — `SpellEffectEntity` (Mystic Branch symbol projectile) |
+| ~~`EntityWitchCat` (wild)~~ | ~~Wild witch cat variant~~ | ✅ Covered — `EntityWitchCat` is the cat familiar; the port implements it as `entity/familiar/CatFamiliarEntity` on the `FamiliarEntity` system. The source's wild-ocelot raw-fish taming is superseded by the port's familiar-binding flow |
 
 Implementation order: ~~Lilith~~ ✅ → ~~Leonard/Lost Souls~~ ✅ → ~~Village Guard~~ ✅ → ~~Wolfman/WereVillager~~ ✅ → Goblin/Gulg/Mog → remainder.
 Each entity needs: registration, attributes, AI goals, renderer, loot table, and spawn placement.

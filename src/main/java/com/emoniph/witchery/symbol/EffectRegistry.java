@@ -1,7 +1,10 @@
 package com.emoniph.witchery.symbol;
 
+import com.emoniph.witchery.entity.DarkMarkEntity;
 import com.emoniph.witchery.entity.SpellEffectEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryEntities;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -387,4 +390,24 @@ public final class EffectRegistry {
             new StrokeSet(1, 2, 2, 2, 0, 3, 3, 0, 2, 2),
             new StrokeSet(2, 2, 2, 0, 0, 3, 0, 0, 2),
             new StrokeSet(2, 2, 2, 2, 0, 0, 3, 3, 0, 0, 2, 2));
+
+    /** Morsmordre — conjures a Dark Mark: a floating skull-cloud that wards mobs for 5 minutes. */
+    public static final SymbolEffect MORSMORDRE = instance().add(
+            new SymbolEffectProjectile(41, "witchery.pott.morsmordre", 20, false, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    DarkMarkEntity mark = WitcheryEntities.DARK_MARK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+                    if (mark != null) {
+                        mark.snapTo(spell.getX(), spell.getY(), spell.getZ(), 0.0F, 0.0F);
+                        mark.setPersistenceRequired();
+                        level.addFreshEntity(mark);
+                    }
+                }
+            }.setColor(0x000000).setSize(3.0F).setTimeToLive(8),
+            new StrokeSet(0, 0, 3, 2, 2),
+            new StrokeSet(0, 0, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(0, 0, 0, 3, 2, 2),
+            new StrokeSet(0, 0, 0, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(0, 0, 0, 0, 3, 2, 2),
+            new StrokeSet(0, 0, 0, 0, 3, 3, 2, 2, 2, 2));
 }

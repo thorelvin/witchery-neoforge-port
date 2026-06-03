@@ -557,6 +557,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ENT_SPAWN_EGG.get(),
                 WitcheryItems.MANDRAKE_MOB_SPAWN_EGG.get(),
                 WitcheryItems.MINDRAKE_SPAWN_EGG.get(),
+                WitcheryItems.DARK_MARK_SPAWN_EGG.get(),
                 WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get(),
                 WitcheryItems.BANSHEE_SPAWN_EGG.get(),
                 WitcheryItems.SPECTRE_SPAWN_EGG.get(),
