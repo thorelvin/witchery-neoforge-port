@@ -1,8 +1,0 @@
-{
-  "type": "witchery:torment_chamber",
-  "biomes": "witchery:torment",
-  "spawn_overrides": {},
-  "step": "underground_structures",
-  "terrain_adaptation": "none",
-  "max_distance_from_center": 80
-}

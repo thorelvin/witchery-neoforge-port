@@ -101,7 +101,7 @@ import java.util.List;
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
  * /witchery setup rite              - place a QA pad with ritual circle rings
- * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / torment_chamber / coven_circle / straw_man)
+ * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man)
  *                                   village buildings (apothecary / witch_hut / keep / watchtower) are now inside vanilla villages — use /locate structure minecraft:village_plains etc.
  */
 @EventBusSubscriber
@@ -370,7 +370,6 @@ public class WitcheryCommands {
                         .executes(ctx -> summonReflection(ctx.getSource())))
                 .then(Commands.literal("goto")
                         .then(Commands.literal("hobgoblin_hut")   .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "hobgoblin_hut")))
-                        .then(Commands.literal("torment_chamber") .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "torment_chamber")))
                         .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("stone_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("straw_man")       .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "straw_man")))

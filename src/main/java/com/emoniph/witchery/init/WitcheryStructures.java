@@ -9,8 +9,6 @@ import com.emoniph.witchery.worldgen.HobgoblinHutPiece;
 import com.emoniph.witchery.worldgen.HobgoblinHutStructure;
 import com.emoniph.witchery.worldgen.StrawManPiece;
 import com.emoniph.witchery.worldgen.StrawManStructure;
-import com.emoniph.witchery.worldgen.TormentChamberPiece;
-import com.emoniph.witchery.worldgen.TormentChamberStructure;
 import com.emoniph.witchery.worldgen.VillageKeepPiece;
 import com.emoniph.witchery.worldgen.VillageWatchTowerPiece;
 import com.emoniph.witchery.worldgen.WitchHutPiece;
@@ -52,12 +50,6 @@ public class WitcheryStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> HOBGOBLIN_HUT_PIECE =
             PIECE_TYPES.register("hobgoblin_hut", () -> HobgoblinHutPiece::new);
-
-    public static final DeferredHolder<StructureType<?>, StructureType<TormentChamberStructure>> TORMENT_CHAMBER_TYPE =
-            STRUCTURE_TYPES.register("torment_chamber", () -> () -> TormentChamberStructure.CODEC);
-
-    public static final DeferredHolder<StructurePieceType, StructurePieceType> TORMENT_CHAMBER_PIECE =
-            PIECE_TYPES.register("torment_chamber", () -> TormentChamberPiece::new);
 
     // ── Village pool pieces (injected via WitcheryVillageElement) ─────────────
     // Piece types remain registered so saved worlds can deserialize them.
