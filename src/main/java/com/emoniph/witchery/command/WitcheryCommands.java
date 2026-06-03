@@ -27,6 +27,7 @@ import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
+import com.emoniph.witchery.predictions.Predictions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -266,6 +267,23 @@ public class WitcheryCommands {
                                 .executes(ctx -> showBrewDebug(ctx.getSource(), ctx.getSource().getPlayerOrException()))
                                 .then(Commands.argument("target", EntityArgument.player())
                                         .executes(ctx -> showBrewDebug(ctx.getSource(),
+                                                EntityArgument.getPlayer(ctx, "target"))))))
+
+                // Debug: force a specific crystal-ball prophecy to come true immediately.
+                // /witchery crystal <prophecy> [target]   (use "all" to fire every prophecy)
+                .then(Commands.literal("crystal")
+                        .then(Commands.argument("prophecy", StringArgumentType.word())
+                                .suggests((ctx, b) -> {
+                                    java.util.List<String> names = new java.util.ArrayList<>(Predictions.DEBUG_NAMES.keySet());
+                                    names.add("all");
+                                    return SharedSuggestionProvider.suggest(names, b);
+                                })
+                                .executes(ctx -> triggerProphecy(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "prophecy"),
+                                        ctx.getSource().getPlayerOrException()))
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(ctx -> triggerProphecy(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "prophecy"),
                                                 EntityArgument.getPlayer(ctx, "target"))))))
 
                 .then(Commands.literal("give")
@@ -625,6 +643,40 @@ public class WitcheryCommands {
 
         src.sendSuccess(() -> Component.literal(out), false);
         return 1;
+    }
+
+    /** Force a named crystal-ball prophecy (or "all") to come true on {@code target} right now. */
+    private static int triggerProphecy(CommandSourceStack src, String name, ServerPlayer target) {
+        if (!(target.level() instanceof ServerLevel level)) {
+            src.sendFailure(Component.literal("Target must be in a server level."));
+            return 0;
+        }
+
+        if (name.equalsIgnoreCase("all")) {
+            int fired = 0;
+            for (int id : Predictions.DEBUG_NAMES.values()) {
+                if (Predictions.debugForce(level, target, id)) {
+                    fired++;
+                }
+            }
+            final int total = fired;
+            src.sendSuccess(() -> Component.literal("[Crystal] Forced all prophecies on "
+                    + target.getName().getString() + " (" + total + "/" + Predictions.DEBUG_NAMES.size()
+                    + " fired)."), false);
+            return fired;
+        }
+
+        Integer id = Predictions.DEBUG_NAMES.get(name.toLowerCase(java.util.Locale.ROOT));
+        if (id == null) {
+            src.sendFailure(Component.literal("Unknown prophecy '" + name + "'. Options: "
+                    + String.join(", ", Predictions.DEBUG_NAMES.keySet()) + ", all"));
+            return 0;
+        }
+
+        boolean fired = Predictions.debugForce(level, target, id);
+        src.sendSuccess(() -> Component.literal("[Crystal] '" + name + "' on "
+                + target.getName().getString() + (fired ? "" : " (no open ground for the effect — try elsewhere)")), false);
+        return fired ? 1 : 0;
     }
 
     private static int showBrewDebug(CommandSourceStack src, ServerPlayer target)

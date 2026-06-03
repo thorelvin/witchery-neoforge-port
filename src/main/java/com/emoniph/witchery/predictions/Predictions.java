@@ -68,6 +68,31 @@ public final class Predictions {
     public static final int WITCH_VISITOR = 20;
     public static final int FLAMES = 21;
 
+    /** Debug command name → prophecy id (insertion-ordered for suggestions). See {@code /witchery crystal}. */
+    public static final java.util.LinkedHashMap<String, Integer> DEBUG_NAMES = new java.util.LinkedHashMap<>();
+    static {
+        DEBUG_NAMES.put("zombie", ZOMBIE);
+        DEBUG_NAMES.put("arrow", ARROW);
+        DEBUG_NAMES.put("ent", ENT);
+        DEBUG_NAMES.put("fall", FALL);
+        DEBUG_NAMES.put("iron", IRON);
+        DEBUG_NAMES.put("diamond", DIAMOND);
+        DEBUG_NAMES.put("emerald", EMERALD);
+        DEBUG_NAMES.put("treasure", TREASURE);
+        DEBUG_NAMES.put("love", LOVE);
+        DEBUG_NAMES.put("baba_bad", BABA_BAD);
+        DEBUG_NAMES.put("baba_good", BABA_GOOD);
+        DEBUG_NAMES.put("friend", FRIEND);
+        DEBUG_NAMES.put("rescue", RESCUE);
+        DEBUG_NAMES.put("wet", WET);
+        DEBUG_NAMES.put("nether", NETHER);
+        DEBUG_NAMES.put("coal", COAL);
+        DEBUG_NAMES.put("lightning", LIGHTNING);
+        DEBUG_NAMES.put("serpent", SERPENT);
+        DEBUG_NAMES.put("witch_visitor", WITCH_VISITOR);
+        DEBUG_NAMES.put("flames", FLAMES);
+    }
+
     /** Once a prophecy is this old without coming true, the ball starts forcing it. */
     private static final long PAST_DUE_TICKS = 1200L;        // 1 minute
     /** Per-second chance to force-fulfill once past-due (tick handler runs once a second). */
@@ -156,6 +181,26 @@ public final class Predictions {
         }
         subject.displayClientMessage(Component.translatable(reading.key(), subject.getName().getString())
                 .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC), false);
+    }
+
+    /**
+     * Debug: give {@code player} the prophecy with the given id, show its reading, and force it to
+     * come true immediately (the force-fulfilment path). Returns whether the event actually fired
+     * (some need open ground nearby). Used by {@code /witchery crystal <prophecy>}.
+     */
+    public static boolean debugForce(ServerLevel level, ServerPlayer player, int id) {
+        Reading reading = byId(id);
+        if (reading == null) {
+            return false;
+        }
+        PredictionData.get(level).set(player.getUUID(), new PredictionData.Active(id, now(level)));
+        player.displayClientMessage(Component.translatable(reading.key(), player.getName().getString())
+                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC), false);
+        boolean fired = forceFulfill(level, player, id);
+        if (fired) {
+            fulfilled(level, player);
+        }
+        return fired;
     }
 
     private static long now(ServerLevel level) {
