@@ -73,12 +73,28 @@ The 2026-05-31 village fixes now cover thirteen observed stall/false-success pat
 - ~~Session-only active state~~ — `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` static maps replaced by per-level `RitualExecutor.RitualSavedData` (a `SavedData` with a Codec for `ActiveRitual` + climate plans). Staged rites and their consumed sacrifices now survive a server restart/crash. Round-trip verified by `RitualPersistenceTest` (headless unit test).
 - ~~`RitualTransaction` lacks a true rollback path~~ — added `commit(player, BooleanSupplier effect)`: validate (peek altar power, never half-consume) → apply effect → consume power + offerings **only on success**. `commit(player)` now also peeks before consuming. Migrated `riteOfBindFamiliar` (which previously spent 8000 power + 5 sacrifices then could return false on a finalize failure) to the rollback-safe form.
 
-Remaining gap:
+**Audited 2026-06-03 (multi-sacrifice matching):** A rite-by-rite audit against the source
+`RiteRegistry.addRecipe` sacrifice lists (1.7.10-0.24.1) found that the port **already validates and
+consumes the full ingredient set** for the rites checked — each dispatch branch keys on a
+representative trigger item and then gates on a `find*Offerings` helper that requires every
+sacrifice (e.g. Imprisonment = Slimeball **+ Redstone** + power; Sanctity/repulsive protection =
+Feather **+ Redstone** + power; Barrier = Obsidian + Redstone; Storm/CookItem/RaiseColumn/Blindness/
+SeerStone/SpectralStone all gate on their full offering sets — 369 offering-finder call sites). The
+literal "one representative ingredient" concern does **not** hold; the offerings are matched in full.
 
-- **Representative-trigger gap.** All rite routes use one representative dropped ingredient instead of the full original multi-sacrifice recipe registry. Functionally correct but not full 1.7.10 parity. (Part of the larger `RitualExecutor` → `RitualDefinition` registry decomposition.)
+Remaining gap (architectural only):
+
+- **No declarative recipe registry.** Dispatch + validation are hand-coded per rite rather than
+  driven by a single data table. First step landed: `RitualRecipe` captures a rite's complete
+  sacrifice set as data with the canonical distinct-stack `matches()` rule, and
+  `RitualRecipeMatchTest` regression-locks a few transcribed recipes (incomplete offerings are
+  rejected; duplicate requirements need distinct stacks). Fully consuming this from dispatch is the
+  larger `RitualExecutor` → `RitualDefinition` decomposition (deferred — see NEXT_TASKS 4d).
 
 Files:
 - `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
+- `src/main/java/com/emoniph/witchery/ritual/RitualRecipe.java`
+- `src/test/java/com/emoniph/witchery/ritual/RitualRecipeMatchTest.java`
 - `src/main/java/com/emoniph/witchery/events/RitualEvents.java`
 
 See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
