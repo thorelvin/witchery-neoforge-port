@@ -668,6 +668,23 @@ public final class EffectRegistry {
             }.setColor(0x33FF33).setSize(2.0F),
             new StrokeSet(1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2));
 
+    /**
+     * Protego — a warding shield on the caster. The source raises a light-barrier block (which the
+     * port has no equivalent for), so this grants a short Resistance + Absorption ward instead.
+     */
+    public static final SymbolEffect PROTEGO = instance().add(
+            new SymbolEffect(31, "witchery.pott.protego") {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    caster.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 200, 1, false, true));
+                    caster.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 600, 1, false, true));
+                    level.sendParticles(ParticleTypes.ENCHANT, caster.getX(), caster.getEyeY(), caster.getZ(),
+                            24, 0.6, 0.6, 0.6, 0.5);
+                }
+            },
+            new StrokeSet(1, 1, 1, 0, 0),
+            new StrokeSet(1, 1, 1, 1, 0, 0, 0));
+
     private static boolean isDiggable(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM)
                 || state.is(Blocks.PODZOL) || state.is(Blocks.COARSE_DIRT) || state.is(Blocks.ROOTED_DIRT)

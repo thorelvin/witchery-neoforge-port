@@ -56,6 +56,7 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.crucio",      1, 1, 3, 1, 1, 2);        // D L D D R
         assertGlyph("witchery.pott.imperio",     1, 2, 1, 1, 1, 1);        // R D D D D
         assertGlyph("witchery.pott.avadakedavra", 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2);
+        assertGlyph("witchery.pott.protego",     1, 1, 1, 0, 0);              // D D U U
     }
 
     @Test
