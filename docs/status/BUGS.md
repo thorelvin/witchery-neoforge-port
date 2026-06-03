@@ -99,6 +99,38 @@ Files:
 
 See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
+### 3. Hellhound → Wolf cure does not fire (in-game QA 2026-06-03)
+
+Hitting a Hellhound with a Splash Potion of Weakness then right-clicking it with a plain Golden
+Apple should start the conversion to a Wolf — tested, **nothing happens** (tried both potion
+strengths). Suspects to check in `HellhoundEntity.mobInteract`: the Weakness effect may have expired
+between the splash and the click (splash durations are short — retest with `/effect give @e[type=witchery:hellhound] minecraft:weakness 60 0`), or `Monster.mobInteract` may be short-circuiting
+before our override branch, or the `Items.GOLDEN_APPLE` / `hasEffect(MobEffects.WEAKNESS)` / `conversionTime < 0` guard order. File: `entity/HellhoundEntity.java`.
+
+### 4. Morsmordre glyph cannot be drawn — symbol recognition (in-game QA 2026-06-03)
+
+Trying to draw the new Morsmordre glyph on the Mystic Branch only ever casts **Expelliarmus**. The
+Dark Mark entity itself is fine (spawn egg works); the gap is stroke recognition. Likely the
+recogniser resolves a spell as soon as the running stroke sequence matches any registered set, so a
+shorter spell whose strokes are an early sub-match wins before the longer Morsmordre sequence
+completes (Expelliarmus = `1,0,0,1…`; Morsmordre = `0,0,3,2,2…`). Audit `symbol` recognition for
+prefix/sub-sequence collisions and the longest-match rule. Files: `symbol/EffectRegistry.java`,
+`client/SymbolDrawState.java` (stroke detection), `symbol/StrokeSet.java`.
+
+### Minor / parity polish (in-game QA 2026-06-03)
+
+- **Love prophecy** spawns a plain Villager with no interaction. Source "love" had animal/villager
+  birth + player-enslaved-zombie branches; the port's force path just spawns a villager. Low priority.
+- **Good Baba Yaga** spawns but has no dialogue/interaction (the "babagood" omen). The friendly
+  variant currently behaves like the hostile one minus targeting. Low priority.
+- **Arrow-prophecy skeleton** burns up in daytime sun before it can shoot (vanilla undead behaviour).
+  Acceptable, but a fire-resistant or shaded spawn would read better. Cosmetic.
+- ~~Mindrake Bulb showed the raw `item.witchery.mindrakebulb` key~~ — fixed (added the item lang key).
+
+All 20 crystal-ball prophecies were confirmed firing in-game (arrow/creative-bypass/lightning/
+flames/serpent/nether/ent/rescue/coal/baba-good+bad/diamond/emerald/fall/friend/iron/love/treasure/
+wet/witch_visitor/zombie). Hellhound visuals, Mindrake bulb-hatch + detonation, all verified good.
+
 ---
 
 ## Backlog
