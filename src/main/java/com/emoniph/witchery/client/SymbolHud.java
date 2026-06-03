@@ -50,14 +50,8 @@ public final class SymbolHud {
         if (!prepared) {
             float dxDeg = Mth.wrapDegrees(player.getViewYRot(partialTick) - SymbolDrawState.anchorYaw());
             float dyDeg = player.getViewXRot(partialTick) - SymbolDrawState.anchorPitch();
-            float mag;
-            if (Math.abs(dyDeg) >= Math.abs(dxDeg)) {
-                pendingDir = dyDeg < 0 ? 0 : 1; // up / down (look up = smaller pitch)
-                mag = Math.abs(dyDeg);
-            } else {
-                pendingDir = dxDeg > 0 ? 2 : 3; // right / left
-                mag = Math.abs(dxDeg);
-            }
+            pendingDir = pendingDir(dxDeg, dyDeg);
+            float mag = Math.max(Math.abs(dxDeg), Math.abs(dyDeg));
             pendingProgress = Mth.clamp(mag / SymbolDrawState.THRESHOLD, 0.0f, 1.0f);
             if (pendingProgress < 0.18f) {
                 pendingDir = -1; // too small to show — avoids flicker at rest
@@ -89,6 +83,18 @@ public final class SymbolHud {
             int w = mc.font.width(name);
             g.drawString(mc.font, name, cx - w / 2, rowY + ARROW + 6, PREPARED, true);
         }
+    }
+
+    /**
+     * Which stroke the in-progress flick points at, by dominant axis. {@code dxDeg} = look yaw
+     * minus anchor (turning right is +); {@code dyDeg} = look pitch minus anchor (looking up is −).
+     * Returns 0=up, 1=down, 2=right, 3=left — the same convention {@link SymbolDrawState} commits.
+     */
+    static int pendingDir(float dxDeg, float dyDeg) {
+        if (Math.abs(dyDeg) >= Math.abs(dxDeg)) {
+            return dyDeg < 0 ? 0 : 1; // up (looked up → pitch decreased) / down
+        }
+        return dxDeg > 0 ? 2 : 3;     // right (turned right → yaw increased) / left
     }
 
     /** Solid triangle pointing in {@code dir} (0=up,1=down,2=right,3=left), centred at (cx,cy). */
