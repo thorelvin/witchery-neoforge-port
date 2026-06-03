@@ -1091,8 +1091,9 @@ public final class VillageWallGenerator {
             else if (natural < nextFloorY) nextFloorY--;
             if (terrainOnly && !isGatePathTerrainColumn(level, ix, nextFloorY, iz, natural, desert)) break;
             floorY = nextFloorY;
-            if (!terrainOnly)
-                clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
+            // Cut down any tree in the gate path on both lanes (clears connected logs/leaves only,
+            // so houses are never demolished — only regular trees in the way are removed).
+            clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);
             forceSet(level, ix, floorY, iz, pathBlock);                         // path surface
             for (int dy = 1; dy <= 4; dy++) {                                   // cut headroom
                 BlockPos p = new BlockPos(ix, floorY + dy, iz);
@@ -1108,7 +1109,13 @@ public final class VillageWallGenerator {
         int minY = Math.min(floorY, surfaceY);
         int maxY = Math.max(floorY, surfaceY) + 4;
         for (int y = minY; y <= maxY; y++) {
-            if (!isGatePathTerrainBlock(level.getBlockState(new BlockPos(x, y, z)), desert)) return false;
+            BlockState state = level.getBlockState(new BlockPos(x, y, z));
+            if (isGatePathTerrainBlock(state, desert)) continue;
+            // A bare tree trunk is passable: the path grader cuts it down (clearTouchedVegetation).
+            // House materials (planks/cobblestone/glass/etc.) are not terrain and are not logs, so
+            // they still fail here and the grader stops — the building is left untouched.
+            if (state.is(BlockTags.LOGS)) continue;
+            return false;
         }
         return true;
     }
