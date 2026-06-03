@@ -1,0 +1,18 @@
+{
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "witchery:block/blight_fibre",
+    "fibre": "witchery:block/blight_fibre"
+  },
+  "elements": [
+    {
+      "from": [0, 0.125, 0],
+      "to": [16, 0.125, 16],
+      "shade": false,
+      "faces": {
+        "up": { "uv": [0, 0, 16, 16], "texture": "#fibre" }
+      }
+    }
+  ]
+}

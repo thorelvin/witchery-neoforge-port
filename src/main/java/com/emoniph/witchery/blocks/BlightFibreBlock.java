@@ -15,16 +15,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class BlightFibreBlock extends VineBlock {
@@ -33,10 +40,17 @@ public class BlightFibreBlock extends VineBlock {
     public static final BooleanProperty SOUTH = VineBlock.SOUTH;
     public static final BooleanProperty WEST = VineBlock.WEST;
     public static final BooleanProperty UP = VineBlock.UP;
+    public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
 
     private static final Direction[] ATTACHMENT_DIRECTIONS = {
-            Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+            Direction.DOWN, Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
+    private static final VoxelShape DOWN_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
+    private static final VoxelShape UP_SHAPE = Block.box(0.0, 15.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 1.0);
+    private static final VoxelShape EAST_SHAPE = Block.box(15.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 15.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape WEST_SHAPE = Block.box(0.0, 0.0, 0.0, 1.0, 16.0, 16.0);
 
     public BlightFibreBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -44,13 +58,29 @@ public class BlightFibreBlock extends VineBlock {
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !BlightHelper.isProtected(level, pos) && super.canSurvive(state, level, pos);
+        return !BlightHelper.isProtected(level, pos)
+                && hasAnyAttachment(withAttachments(state, level, pos));
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape shape = Shapes.empty();
+        if (state.getValue(DOWN)) shape = Shapes.or(shape, DOWN_SHAPE);
+        if (state.getValue(UP)) shape = Shapes.or(shape, UP_SHAPE);
+        if (state.getValue(NORTH)) shape = Shapes.or(shape, NORTH_SHAPE);
+        if (state.getValue(EAST)) shape = Shapes.or(shape, EAST_SHAPE);
+        if (state.getValue(SOUTH)) shape = Shapes.or(shape, SOUTH_SHAPE);
+        if (state.getValue(WEST)) shape = Shapes.or(shape, WEST_SHAPE);
+        return shape.isEmpty() ? Shapes.block() : shape;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        return state != null && !BlightHelper.isProtected(context.getLevel(), context.getClickedPos()) ? state : null;
+        if (BlightHelper.isProtected(context.getLevel(), context.getClickedPos())) {
+            return null;
+        }
+        BlockState state = withAttachments(defaultBlockState(), context.getLevel(), context.getClickedPos());
+        return hasAnyAttachment(state) ? state : null;
     }
 
     @Override
@@ -74,8 +104,8 @@ public class BlightFibreBlock extends VineBlock {
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
                                      BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState,
                                      RandomSource random) {
-        BlockState updated = super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
-        if (!updated.is(this) || BlightHelper.isProtected(level, pos)) {
+        BlockState updated = withAttachments(state, level, pos);
+        if (!hasAnyAttachment(updated) || BlightHelper.isProtected(level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
         return updated;
@@ -104,12 +134,17 @@ public class BlightFibreBlock extends VineBlock {
         if (random.nextInt(12) != 0) {
             return;
         }
-        double y = 0.25D + random.nextDouble() * 0.5D;
+        double y = state.getValue(DOWN) ? 0.06D : 0.25D + random.nextDouble() * 0.5D;
         level.addParticle(ParticleTypes.WITCH,
                 pos.getX() + random.nextDouble(),
                 pos.getY() + y,
                 pos.getZ() + random.nextDouble(),
                 0.0D, 0.01D, 0.0D);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(UP, NORTH, EAST, SOUTH, WEST, DOWN);
     }
 
     public static boolean hasAttachableFace(LevelReader level, BlockPos pos) {
@@ -123,14 +158,14 @@ public class BlightFibreBlock extends VineBlock {
 
     public static BlockState withAttachments(BlockState state, LevelReader level, BlockPos pos) {
         for (Direction direction : ATTACHMENT_DIRECTIONS) {
-            state = state.setValue(VineBlock.getPropertyForFace(direction), canAttachTo(level, pos, direction));
+            state = state.setValue(propertyForFace(direction), canAttachTo(level, pos, direction));
         }
         return state;
     }
 
     public static boolean hasAnyAttachment(BlockState state) {
         for (Direction direction : ATTACHMENT_DIRECTIONS) {
-            if (state.getValue(VineBlock.getPropertyForFace(direction))) {
+            if (state.getValue(propertyForFace(direction))) {
                 return true;
             }
         }
@@ -138,9 +173,30 @@ public class BlightFibreBlock extends VineBlock {
     }
 
     private static boolean canAttachTo(LevelReader level, BlockPos pos, Direction direction) {
+        if (direction == Direction.DOWN) {
+            BlockPos supportPos = pos.below();
+            BlockState support = level.getBlockState(supportPos);
+            return !support.is(WitcheryBlocks.BLIGHT_FIBRE.get())
+                    && VineBlock.isAcceptableNeighbour(level, supportPos, Direction.DOWN);
+        }
+
         BlockPos supportPos = pos.relative(direction);
         BlockState support = level.getBlockState(supportPos);
-        return !support.is(WitcheryBlocks.BLIGHT_FIBRE.get())
-                && VineBlock.isAcceptableNeighbour(level, supportPos, direction);
+        if (!support.is(WitcheryBlocks.BLIGHT_FIBRE.get())
+                && VineBlock.isAcceptableNeighbour(level, supportPos, direction)) {
+            return true;
+        }
+
+        if (direction.getAxis().isHorizontal()) {
+            BlockState above = level.getBlockState(pos.above());
+            return above.is(WitcheryBlocks.BLIGHT_FIBRE.get())
+                    && above.getValue(propertyForFace(direction));
+        }
+
+        return false;
+    }
+
+    private static BooleanProperty propertyForFace(Direction direction) {
+        return direction == Direction.DOWN ? DOWN : VineBlock.getPropertyForFace(direction);
     }
 }

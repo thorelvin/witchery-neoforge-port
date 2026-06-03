@@ -1,6 +1,15 @@
 {
   "multipart": [
     {
+      "when": { "down": true },
+      "apply": [
+        { "model": "witchery:block/blight_fibre_floor" },
+        { "model": "witchery:block/blight_fibre_floor_90" },
+        { "model": "witchery:block/blight_fibre_floor_180" },
+        { "model": "witchery:block/blight_fibre_floor_270" }
+      ]
+    },
+    {
       "when": { "north": true },
       "apply": [
         { "model": "witchery:block/blight_fibre" },

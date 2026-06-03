@@ -1,0 +1,13 @@
+{
+  "parent": "witchery:block/blight_fibre_floor",
+  "elements": [
+    {
+      "from": [0, 0.125, 0],
+      "to": [16, 0.125, 16],
+      "shade": false,
+      "faces": {
+        "up": { "uv": [0, 0, 16, 16], "texture": "#fibre", "rotation": 90 }
+      }
+    }
+  ]
+}
