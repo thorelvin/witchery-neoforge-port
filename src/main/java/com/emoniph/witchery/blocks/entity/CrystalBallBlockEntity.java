@@ -254,13 +254,13 @@ public class CrystalBallBlockEntity extends BlockEntity {
     }
 
     private Component getPrediction(Player player, ServerLevel level) {
-        PredictionReading reading = choosePrediction(level);
+        PredictionReading reading = choosePrediction(level.random);
         return Component.translatable(reading.translationKey(), player.getName().getString())
                 .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC);
     }
 
-    private static PredictionReading choosePrediction(ServerLevel level) {
-        int roll = level.random.nextInt(PREDICTION_TOTAL_WEIGHT);
+    private static PredictionReading choosePrediction(net.minecraft.util.RandomSource random) {
+        int roll = random.nextInt(PREDICTION_TOTAL_WEIGHT);
         for (PredictionReading reading : PREDICTION_ROSTER) {
             roll -= reading.weight();
             if (roll < 0) {
@@ -268,6 +268,15 @@ public class CrystalBallBlockEntity extends BlockEntity {
             }
         }
         return PREDICTION_ROSTER[PREDICTION_ROSTER.length - 1];
+    }
+
+    // ── Test hooks (package-private) ────────────────────────────────────────
+    static int predictionRosterSize() {
+        return PREDICTION_ROSTER.length;
+    }
+
+    static String chooseTestPredictionKey(net.minecraft.util.RandomSource random) {
+        return choosePrediction(random).translationKey();
     }
 
     private static int totalPredictionWeight() {
