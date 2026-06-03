@@ -14,9 +14,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.wolf.Wolf;
@@ -60,6 +62,11 @@ public final class Predictions {
     public static final int WET = 15;
     public static final int NETHER = 16;
     public static final int COAL = 17;
+    // Port additions (source stopped at 17; 14 was unused). Sky/venom/visitor/fire omens.
+    public static final int LIGHTNING = 18;
+    public static final int SERPENT = 19;
+    public static final int WITCH_VISITOR = 20;
+    public static final int FLAMES = 21;
 
     /** Once a prophecy is this old without coming true, the ball starts forcing it. */
     private static final long PAST_DUE_TICKS = 1200L;        // 1 minute
@@ -87,6 +94,10 @@ public final class Predictions {
             new Reading(WET, 13, "witchery.prediction.wet"),
             new Reading(NETHER, 3, "witchery.prediction.tothenether"),
             new Reading(COAL, 13, "witchery.prediction.coal"),
+            new Reading(LIGHTNING, 3, "witchery.prediction.lightning"),
+            new Reading(SERPENT, 6, "witchery.prediction.serpent"),
+            new Reading(WITCH_VISITOR, 3, "witchery.prediction.witch_visitor"),
+            new Reading(FLAMES, 6, "witchery.prediction.flames"),
     };
     private static final int TOTAL_WEIGHT;
 
@@ -170,6 +181,11 @@ public final class Predictions {
             fulfilled(level, player);
             return;
         }
+        if (active.id() == SERPENT && player.hasEffect(MobEffects.POISON)) {
+            // The serpent's venom courses through them — by any source.
+            fulfilled(level, player);
+            return;
+        }
         if (now(level) - active.time() >= PAST_DUE_TICKS && level.random.nextDouble() < FORCE_CHANCE_PER_SECOND) {
             if (forceFulfill(level, player, active.id())) {
                 fulfilled(level, player);
@@ -189,6 +205,11 @@ public final class Predictions {
         if (active.id() == ARROW && source.is(DamageTypes.ARROW)) {
             fulfilled(level, player);
         } else if (active.id() == FALL && source.is(DamageTypes.FALL)) {
+            fulfilled(level, player);
+        } else if (active.id() == LIGHTNING && source.is(DamageTypes.LIGHTNING_BOLT)) {
+            fulfilled(level, player);
+        } else if (active.id() == FLAMES
+                && (source.is(DamageTypes.ON_FIRE) || source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.LAVA))) {
             fulfilled(level, player);
         } else if (active.id() == RESCUE && source.getEntity() instanceof LivingEntity) {
             // A stranger comes to the rescue.
@@ -255,6 +276,12 @@ public final class Predictions {
             case NETHER -> spawnHostile(level, player, EntityType.ZOMBIFIED_PIGLIN);
             case FALL -> digPit(level, player);
             case WET -> floodAround(level, player);
+            case LIGHTNING -> summonLightning(level, player);
+            case SERPENT -> spawnHostile(level, player, EntityType.CAVE_SPIDER);
+            case WITCH_VISITOR -> level.random.nextBoolean()
+                    ? spawnHostile(level, player, WitcheryEntities.COVEN_WITCH.get())
+                    : spawnNeutral(level, player, WitcheryEntities.COVEN_WITCH.get());
+            case FLAMES -> igniteRing(level, player);
             // Ore/treasure prophecies were mining-only; once past-due, just gift the reward.
             case IRON -> giftAt(level, player, new ItemStack(Items.RAW_IRON, 8 + level.random.nextInt(13)));
             case COAL -> giftAt(level, player, new ItemStack(Items.COAL, 10 + level.random.nextInt(11)));
@@ -372,6 +399,52 @@ public final class Predictions {
                 level.setBlock(p, Blocks.WATER.defaultBlockState(), 3);
                 placed = true;
             }
+        }
+        return placed;
+    }
+
+    /** The sky's wrath: a bolt cracks down a few blocks away (near, not point-blank). */
+    private static boolean summonLightning(ServerLevel level, ServerPlayer player) {
+        BlockPos origin = player.blockPosition();
+        for (int attempt = 0; attempt < 12; attempt++) {
+            int dx = Mth.nextInt(level.random, -SPAWN_MAX, SPAWN_MAX);
+            int dz = Mth.nextInt(level.random, -SPAWN_MAX, SPAWN_MAX);
+            if (Math.abs(dx) < SPAWN_MIN && Math.abs(dz) < SPAWN_MIN) {
+                continue;
+            }
+            BlockPos floor = findFloor(level, origin.getX() + dx, origin.getZ() + dz, origin.getY());
+            if (floor == null) {
+                continue;
+            }
+            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT);
+            if (bolt == null) {
+                return false;
+            }
+            bolt.snapTo(floor.getX() + 0.5, floor.getY(), floor.getZ() + 0.5);
+            level.addFreshEntity(bolt);
+            return true;
+        }
+        return false;
+    }
+
+    /** Flames at your heels: a ring of fire flares up around the player (not under them). */
+    private static boolean igniteRing(ServerLevel level, ServerPlayer player) {
+        BlockPos feet = player.blockPosition();
+        boolean placed = false;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) {
+                    continue;
+                }
+                BlockPos p = feet.offset(dx, 0, dz);
+                if (level.getBlockState(p).canBeReplaced() && level.getBlockState(p.below()).blocksMotion()) {
+                    level.setBlock(p, Blocks.FIRE.defaultBlockState(), 3);
+                    placed = true;
+                }
+            }
+        }
+        if (placed) {
+            level.playSound(null, feet, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.8F, 1.0F);
         }
         return placed;
     }
