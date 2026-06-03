@@ -17,6 +17,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -595,6 +596,77 @@ public final class EffectRegistry {
                 }
             }.setColor(0x222222).setSize(4.0F),
             new StrokeSet(1, 1, 1, 3, 2, 2));
+
+    // ── Unforgivable curses (Phase C) ────────────────────────────────────────
+    // curse + no knowledge key → "unforgivable": castable only in creative until a Beast infusion
+    // exists (see SymbolEffect.hasValidInfusion / isUnforgivable).
+
+    /** Crucio — torment the struck creature with demonic pain. */
+    public static final SymbolEffect CRUCIO = instance().add(
+            new SymbolEffectProjectile(9, "witchery.pott.crucio", 5, true, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (hit instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity t && t != caster) {
+                        float dmg = t instanceof Player ? 4.0f + 4.0f * (spell.getEffectLevel() - 1) : 4.0f;
+                        t.hurtServer(level, level.damageSources().indirectMagic(spell, caster), dmg);
+                    }
+                }
+            }.setColor(0x66007F).setSize(2.0F),
+            new StrokeSet(1, 1, 3, 1, 1, 2),
+            new StrokeSet(1, 1, 3, 3, 1, 1, 2, 2),
+            new StrokeSet(2, 1, 3, 1, 1, 1, 2),
+            new StrokeSet(2, 1, 3, 3, 1, 1, 1, 2, 2),
+            new StrokeSet(3, 1, 3, 3, 3, 1, 1, 1, 1, 2, 2, 2));
+
+    /** Imperio — bend the struck creature's will, turning it on its nearest neighbour. */
+    public static final SymbolEffect IMPERIO = instance().add(
+            new SymbolEffectProjectile(20, "witchery.pott.imperio", 10, true, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (caster == null || !(hit instanceof EntityHitResult ehr) || !(ehr.getEntity() instanceof Mob mob)) {
+                        return;
+                    }
+                    Mob nearest = null;
+                    double best = Double.MAX_VALUE;
+                    for (Mob other : level.getEntitiesOfClass(Mob.class, mob.getBoundingBox().inflate(12.0))) {
+                        if (other == mob || other == caster) {
+                            continue;
+                        }
+                        double d = other.distanceToSqr(mob);
+                        if (d < best) {
+                            best = d;
+                            nearest = other;
+                        }
+                    }
+                    if (nearest != null) {
+                        mob.setTarget(nearest);
+                        level.sendParticles(ParticleTypes.WITCH, mob.getX(), mob.getEyeY(), mob.getZ(),
+                                12, 0.3, 0.3, 0.3, 0.05);
+                    }
+                }
+            }.setColor(0xA3F0FF).setSize(1.5F),
+            new StrokeSet(1, 2, 1, 1, 1, 1));
+
+    /** Avada Kedavra — the killing curse. Slays a struck player outright; fells lesser creatures. */
+    public static final SymbolEffect AVADA_KEDAVRA = instance().add(
+            new SymbolEffectProjectile(4, "witchery.pott.avadakedavra", 101, true, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (!(hit instanceof EntityHitResult ehr) || !(ehr.getEntity() instanceof LivingEntity t) || t == caster) {
+                        return;
+                    }
+                    boolean creative = caster instanceof Player p && p.getAbilities().instabuild;
+                    var source = level.damageSources().indirectMagic(spell, caster);
+                    if (t instanceof Player || creative) {
+                        t.hurtServer(level, source, 1000.0f);
+                    } else if (t.getMaxHealth() <= 200.0f) {
+                        t.hurtServer(level, source, 200.0f);
+                    } else {
+                        t.hurtServer(level, source, 25.0f);
+                    }
+                }
+            }.setColor(0x33FF33).setSize(2.0F),
+            new StrokeSet(1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2));
 
     private static boolean isDiggable(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM)

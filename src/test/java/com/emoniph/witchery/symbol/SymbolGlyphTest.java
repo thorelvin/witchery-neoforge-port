@@ -52,6 +52,10 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.ignianima",   1, 3, 3, 0, 1, 1);        // L L U D D
         assertGlyph("witchery.pott.carnosadiem", 1, 2, 2, 0, 1, 1);        // R R U D D
         assertGlyph("witchery.pott.tormentum",   1, 1, 1, 3, 2, 2);        // D D L R R
+        // Phase C unforgivable curses.
+        assertGlyph("witchery.pott.crucio",      1, 1, 3, 1, 1, 2);        // D L D D R
+        assertGlyph("witchery.pott.imperio",     1, 2, 1, 1, 1, 1);        // R D D D D
+        assertGlyph("witchery.pott.avadakedavra", 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2);
     }
 
     @Test
