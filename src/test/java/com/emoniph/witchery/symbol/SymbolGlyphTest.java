@@ -40,6 +40,14 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.nox",          1, 0, 0, 2, 1, 2, 0);     // U U R D R U
         assertGlyph("witchery.pott.stupefy",      1, 2, 2, 0, 3, 0, 2);     // R R U L U R
         assertGlyph("witchery.pott.morsmordre",   1, 0, 0, 3, 2, 2);        // U U L R R
+        // Phase A utility spells.
+        assertGlyph("witchery.pott.aguamenti",    1, 0, 0, 2, 2, 1);        // U U R R D
+        assertGlyph("witchery.pott.alohomora",    1, 2, 0, 2, 2, 1);        // R U R R D
+        assertGlyph("witchery.pott.defodio",      1, 0, 0, 3, 1);           // U U L D
+        assertGlyph("witchery.pott.ennervate",    1, 0, 3, 0, 2, 3, 0, 2);  // U L U R L U R
+        assertGlyph("witchery.pott.attraho",      1, 0, 0, 0, 2, 2, 1, 3);  // U U U R R D L
+        assertGlyph("witchery.pott.caveinimicum", 1, 0, 3, 0, 0, 2);        // U L U U R
+        assertGlyph("witchery.pott.meteolojinxrecanto", 1, 0, 0, 0, 2, 2, 1, 0, 2, 2, 1, 1);
     }
 
     @Test

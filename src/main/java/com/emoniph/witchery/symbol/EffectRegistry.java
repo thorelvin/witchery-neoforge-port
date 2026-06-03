@@ -17,8 +17,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -413,4 +415,152 @@ public final class EffectRegistry {
             new StrokeSet(1, 0, 0, 0, 3, 3, 2, 2, 2, 2),
             new StrokeSet(1, 0, 0, 0, 0, 3, 2, 2),
             new StrokeSet(1, 0, 0, 0, 0, 3, 3, 2, 2, 2, 2));
+
+    // ── Utility spells (Phase A) ─────────────────────────────────────────────
+
+    /** Aguamenti — conjure a water source against the struck block face (steams away in the Nether). */
+    public static final SymbolEffect AGUAMENTI = instance().add(
+            new SymbolEffectProjectile(2, "witchery.pott.aguamenti") {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (level.dimension() == net.minecraft.world.level.Level.NETHER) {
+                        return;
+                    }
+                    BlockPos pos = hit instanceof BlockHitResult bhr ? faceAdjacent(bhr)
+                            : (hit instanceof EntityHitResult ehr ? ehr.getEntity().blockPosition() : null);
+                    if (pos != null && level.getBlockState(pos).canBeReplaced()) {
+                        level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+                    }
+                }
+            }.setColor(0x4C7BFF).setSize(0.5F),
+            new StrokeSet(1, 0, 0, 2, 2, 1));
+
+    /** Alohomora — force a door open, even a locked Rowan door. */
+    public static final SymbolEffect ALOHOMORA = instance().add(
+            new SymbolEffectProjectile(3, "witchery.pott.alohomora") {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (hit instanceof BlockHitResult bhr
+                            && level.getBlockState(bhr.getBlockPos()).getBlock() instanceof DoorBlock door) {
+                        BlockState state = level.getBlockState(bhr.getBlockPos());
+                        if (!door.isOpen(state)) {
+                            door.setOpen(caster, level, state, bhr.getBlockPos(), true);
+                        }
+                    }
+                }
+            }.setColor(0x513726).setSize(0.5F),
+            new StrokeSet(1, 2, 0, 2, 2, 1));
+
+    /** Defodio — dig out a soft block and drop it. */
+    public static final SymbolEffect DEFODIO = instance().add(
+            new SymbolEffectProjectile(10, "witchery.pott.defodio", 3, false, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (hit instanceof BlockHitResult bhr) {
+                        BlockPos pos = bhr.getBlockPos();
+                        BlockState state = level.getBlockState(pos);
+                        if (isDiggable(state) && state.getDestroySpeed(level, pos) >= 0.0F) {
+                            Block.dropResources(state, level, pos);
+                            level.removeBlock(pos, false);
+                        }
+                    }
+                }
+            }.setColor(0x3D2A1C).setSize(2.5F),
+            new StrokeSet(1, 0, 0, 3, 1));
+
+    /** Ennervate — strip Slowness, Weakness and Nausea from the struck creature. */
+    public static final SymbolEffect ENNERVATE = instance().add(
+            new SymbolEffectProjectile(12, "witchery.pott.ennervate", 1, false, true, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    applyEntityEffect(level, caster, hit, spell.position(), 0.0, (l, c, t) -> {
+                        t.removeEffect(MobEffects.SLOWNESS);
+                        t.removeEffect(MobEffects.WEAKNESS);
+                        t.removeEffect(MobEffects.NAUSEA);
+                    });
+                }
+            }.setColor(0xFF18BB).setSize(1.5F),
+            new StrokeSet(1, 0, 3, 0, 2, 3, 0, 2));
+
+    /** Attraho — drag nearby creatures toward the caster. */
+    public static final SymbolEffect ATTRAHO = instance().add(
+            new SymbolEffectProjectile(47, "witchery.pott.attraho") {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (caster == null) {
+                        return;
+                    }
+                    int lvl = spell.getEffectLevel();
+                    double r = lvl <= 1 ? 4.0 : (lvl == 2 ? 6.0 : 9.0);
+                    AABB box = spell.getBoundingBox().inflate(r);
+                    for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, box)) {
+                        if (e == caster || e.distanceToSqr(spell) > r * r) {
+                            continue;
+                        }
+                        Vec3 dir = caster.position().subtract(e.position());
+                        if (dir.length() > 0.8) {
+                            Vec3 v = dir.normalize().scale(0.55);
+                            e.setDeltaMovement(v.x, v.y * 0.5 + 0.12, v.z);
+                            e.hurtMarked = true;
+                        }
+                    }
+                }
+            }.setColor(0x513726).setSize(1.0F),
+            new StrokeSet(1, 0, 0, 0, 2, 2, 1, 3));
+
+    /** Cave Inimicum — fortify terrain, turning soft blocks to stone around the strike. */
+    public static final SymbolEffect CAVE_INIMICUM = instance().add(
+            new SymbolEffectProjectile(5, "witchery.pott.caveinimicum") {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (!(hit instanceof BlockHitResult bhr)) {
+                        return;
+                    }
+                    int lvl = spell.getEffectLevel();
+                    int rad = lvl <= 1 ? 1 : (lvl == 2 ? 2 : 3);
+                    BlockPos center = bhr.getBlockPos();
+                    for (BlockPos p : BlockPos.betweenClosed(center.offset(-rad, -rad, -rad), center.offset(rad, rad, rad))) {
+                        BlockState hardened = fortify(level.getBlockState(p));
+                        if (hardened != null) {
+                            level.setBlock(p.immutable(), hardened, 3);
+                        }
+                    }
+                }
+            }.setColor(0x8A8A8A).setSize(2.0F),
+            new StrokeSet(1, 0, 3, 0, 0, 2));
+
+    /** Meteolojinx Recanto — clear the rain (very costly). */
+    public static final SymbolEffect METEOLOJINX_RECANTO = instance().add(
+            new SymbolEffect(23, "witchery.pott.meteolojinxrecanto", 100, false, false, null, 0) {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    if (level.isRaining() || level.isThundering()) {
+                        level.setWeatherParameters(6000, 0, false, false);
+                    }
+                }
+            },
+            new StrokeSet(1, 0, 0, 0, 2, 2, 1, 0, 2, 2, 1, 1));
+
+    private static boolean isDiggable(BlockState state) {
+        return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM)
+                || state.is(Blocks.PODZOL) || state.is(Blocks.COARSE_DIRT) || state.is(Blocks.ROOTED_DIRT)
+                || state.is(Blocks.MUD) || state.is(Blocks.MOSS_BLOCK) || state.is(Blocks.CLAY)
+                || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SNOW_BLOCK) || state.is(Blocks.SNOW)
+                || state.is(Blocks.STONE) || state.is(Blocks.COBBLESTONE)
+                || state.is(Blocks.SANDSTONE) || state.is(Blocks.RED_SANDSTONE);
+    }
+
+    private static BlockState fortify(BlockState state) {
+        if (state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.CLAY)
+                || state.is(Blocks.COARSE_DIRT) || state.is(Blocks.PODZOL) || state.is(Blocks.MYCELIUM)
+                || state.is(BlockTags.PLANKS)) {
+            return Blocks.STONE.defaultBlockState();
+        }
+        if (state.is(Blocks.COBBLESTONE) || state.is(Blocks.STONE)) {
+            return Blocks.STONE_BRICKS.defaultBlockState();
+        }
+        return null;
+    }
 }
