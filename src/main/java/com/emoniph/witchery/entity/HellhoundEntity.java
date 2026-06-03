@@ -177,9 +177,11 @@ public class HellhoundEntity extends Monster {
     }
 
     /**
-     * Cure speed (timer reduction per tick). Iron bars / beds nearby accelerate it sharply, like the
-     * zombie-villager cure: bare ground takes the full ~3 minutes, a small pen of iron bars cures in
-     * well under a minute. Scanned over a small box each tick (the hound is rare, so this is cheap).
+     * Cure speed (timer reduction per tick). Iron bars / beds nearby accelerate it, like the
+     * zombie-villager cure, but never make it instant: bare ground takes the source ~3 minutes, and
+     * a full pen (14 counted fixtures) brings it down to roughly 25 seconds — long enough that you
+     * still have to keep the changing hound penned. Scanned over a small box each tick (the hound is
+     * rare, so this is cheap).
      */
     private int conversionBoost() {
         BlockPos base = blockPosition();
@@ -192,7 +194,7 @@ public class HellhoundEntity extends Monster {
                 }
             }
         }
-        return 1 + fixtures * 6;
+        return 1 + (fixtures + 1) / 2;
     }
 
     private void convertToWolf() {
