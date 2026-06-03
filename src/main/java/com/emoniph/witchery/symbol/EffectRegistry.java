@@ -1,9 +1,12 @@
 package com.emoniph.witchery.symbol;
 
+import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.DarkMarkEntity;
 import com.emoniph.witchery.entity.SpellEffectEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.world.TormentHelper;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -540,6 +543,58 @@ public final class EffectRegistry {
                 }
             },
             new StrokeSet(1, 0, 0, 0, 2, 2, 1, 0, 2, 2, 1, 1));
+
+    // ── Demon-soul spells (Phase B) ──────────────────────────────────────────
+    // Curse spells with a knowledge key; the source learns them from Demon souls. The port has no
+    // learning system, so any active infusion suffices (knowledge key kept for future gating).
+
+    /** Ignianima — strike for demonic damage that grows as the caster's own health falls. */
+    public static final SymbolEffect IGNIANIMA = instance().add(
+            new SymbolEffectProjectile(39, "witchery.pott.ignianima", 2, true, false, "ignianima", 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    float health = caster != null ? 20.0f * (caster.getHealth() / caster.getMaxHealth()) : 20.0f;
+                    final float damage = health > 19.0f ? 2.0f
+                            : health > 15.0f ? 3.0f
+                            : health > 10.0f ? 5.0f
+                            : 6.0f + (12.0f - health) / 2.0f;
+                    applyEntityEffect(level, caster, hit, spell.position(), 1.5, (l, c, t) -> {
+                        if (t != c) {
+                            t.hurtServer(l, l.damageSources().indirectMagic(spell, c), damage);
+                        }
+                    });
+                }
+            }.setColor(0xFFCB20).setSize(3.0F),
+            new StrokeSet(1, 3, 3, 0, 1, 1));
+
+    /** Carnosa Diem — bleed the caster to refill a little infusion power. */
+    public static final SymbolEffect CARNOSA_DIEM = instance().add(
+            new SymbolEffect(40, "witchery.pott.carnosadiem", 1, true, false, "carnosadiem", 0) {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    caster.hurtServer(level, level.damageSources().magic(), caster.getMaxHealth() * 0.1f);
+                    WitcheryPlayerData data = WitcheryAttachments.get(caster);
+                    data.setInfusionEnergy(Math.min(data.getInfusionEnergy() + 10, data.getInfusionMaxEnergy()),
+                            data.getInfusionMaxEnergy());
+                    level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, caster.getX(), caster.getEyeY(), caster.getZ(),
+                            6, 0.3, 0.3, 0.3, 0.0);
+                }
+            },
+            new StrokeSet(1, 2, 2, 0, 1, 1));
+
+    /** Tormentum — cast the struck player into the Torment dimension (30-minute cooldown). */
+    public static final SymbolEffect TORMENTUM = instance().add(
+            new SymbolEffectProjectile(42, "witchery.pott.tormentum", 25, true, true, "tormentum", 36000) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    applyEntityEffect(level, caster, hit, spell.position(), 2.0, (l, c, t) -> {
+                        if (t instanceof ServerPlayer victim) {
+                            TormentHelper.sendToTorment(victim, 0);
+                        }
+                    });
+                }
+            }.setColor(0x222222).setSize(4.0F),
+            new StrokeSet(1, 1, 1, 3, 2, 2));
 
     private static boolean isDiggable(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM)

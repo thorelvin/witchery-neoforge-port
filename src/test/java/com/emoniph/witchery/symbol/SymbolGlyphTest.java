@@ -48,6 +48,10 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.attraho",      1, 0, 0, 0, 2, 2, 1, 3);  // U U U R R D L
         assertGlyph("witchery.pott.caveinimicum", 1, 0, 3, 0, 0, 2);        // U L U U R
         assertGlyph("witchery.pott.meteolojinxrecanto", 1, 0, 0, 0, 2, 2, 1, 0, 2, 2, 1, 1);
+        // Phase B demon-soul spells.
+        assertGlyph("witchery.pott.ignianima",   1, 3, 3, 0, 1, 1);        // L L U D D
+        assertGlyph("witchery.pott.carnosadiem", 1, 2, 2, 0, 1, 1);        // R R U D D
+        assertGlyph("witchery.pott.tormentum",   1, 1, 1, 3, 2, 2);        // D D L R R
     }
 
     @Test
