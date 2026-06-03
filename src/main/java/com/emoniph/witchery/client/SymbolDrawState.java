@@ -96,9 +96,10 @@ public final class SymbolDrawState {
         strokes[strokes.length - 1] = (byte) stroke;
         anchorYaw = yaw;
         anchorPitch = pitch;
-        // A soft swish per stroke, rising in pitch as the glyph builds — each "swish" of the branch.
-        float swishPitch = 1.2F + Math.min(strokes.length, 8) * 0.05F;
-        player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 0.45F, swishPitch);
+        // A soft swish per stroke, rising slightly as the glyph builds — each "swish" of the branch.
+        // Pitched below 1.0 so the sweep plays slower/longer (it felt clipped at higher pitch).
+        float swishPitch = 0.8F + Math.min(strokes.length, 8) * 0.04F;
+        player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 0.5F, swishPitch);
 
         SymbolEffect effect = EffectRegistry.instance().getEffect(strokes);
         if (effect != null) {
