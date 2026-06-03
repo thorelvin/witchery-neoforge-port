@@ -416,7 +416,6 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BREW_OF_INFECTION.get(),
                 WitcheryItems.INFECTION_BREW.get(),
                 WitcheryItems.BREW_OF_BLIGHT.get(),
-                WitcheryItems.BLIGHT_BREW.get(),
                 WitcheryItems.BREW_OF_CLEANSING.get(),
                 WitcheryItems.CLEANSING_BREW.get(),
                 WitcheryItems.BREW_OF_LOVE.get(),
