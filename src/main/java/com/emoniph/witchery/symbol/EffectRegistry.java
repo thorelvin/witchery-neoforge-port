@@ -404,10 +404,13 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0x000000).setSize(3.0F).setTimeToLive(8),
-            new StrokeSet(0, 0, 3, 2, 2),
-            new StrokeSet(0, 0, 3, 3, 2, 2, 2, 2),
-            new StrokeSet(0, 0, 0, 3, 2, 2),
-            new StrokeSet(0, 0, 0, 3, 3, 2, 2, 2, 2),
-            new StrokeSet(0, 0, 0, 0, 3, 2, 2),
-            new StrokeSet(0, 0, 0, 0, 3, 3, 2, 2, 2, 2));
+            // Glyph: up, up, left, right, right. Source used StrokeSet's no-level constructor here,
+            // so the leading stroke is part of the sequence — level 1 is prepended (as the port's
+            // StrokeSet is always level-first, like every other spell above).
+            new StrokeSet(1, 0, 0, 3, 2, 2),
+            new StrokeSet(1, 0, 0, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(1, 0, 0, 0, 3, 2, 2),
+            new StrokeSet(1, 0, 0, 0, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(1, 0, 0, 0, 0, 3, 2, 2),
+            new StrokeSet(1, 0, 0, 0, 0, 3, 3, 2, 2, 2, 2));
 }

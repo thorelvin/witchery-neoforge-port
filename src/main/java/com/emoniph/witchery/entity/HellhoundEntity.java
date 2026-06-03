@@ -2,9 +2,12 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -143,12 +146,23 @@ public class HellhoundEntity extends Monster {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(Items.GOLDEN_APPLE) && hasEffect(MobEffects.WEAKNESS) && conversionTime < 0) {
+        if (stack.is(Items.GOLDEN_APPLE) && conversionTime < 0) {
+            // Must be weakened first — guide the player instead of silently eating the apple.
+            if (!hasEffect(MobEffects.WEAKNESS)) {
+                if (!level().isClientSide()) {
+                    player.displayClientMessage(Component.translatable("witchery.hellhound.needs_weakness"), true);
+                }
+                return InteractionResult.SUCCESS;
+            }
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            if (!level().isClientSide()) {
+            if (level() instanceof ServerLevel sl) {
                 startConversion(random.nextInt(1000) + 3600);
+                sl.sendParticles(ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 0.6, getZ(),
+                        16, 0.3, 0.4, 0.3, 0.0);
+                sl.playSound(null, blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+                player.displayClientMessage(Component.translatable("witchery.hellhound.curing"), true);
             }
             return InteractionResult.SUCCESS;
         }
@@ -162,25 +176,23 @@ public class HellhoundEntity extends Monster {
                 Math.max(0, level().getDifficulty().getId() - 1)));
     }
 
-    /** Cure goes faster surrounded by iron bars or beds, mirroring the zombie-cure boost. */
+    /**
+     * Cure speed (timer reduction per tick). Iron bars / beds nearby accelerate it sharply, like the
+     * zombie-villager cure: bare ground takes the full ~3 minutes, a small pen of iron bars cures in
+     * well under a minute. Scanned over a small box each tick (the hound is rare, so this is cheap).
+     */
     private int conversionBoost() {
-        int boost = 1;
-        if (random.nextFloat() < 0.01F) {
-            BlockPos base = blockPosition();
-            int counted = 0;
-            for (BlockPos p : BlockPos.betweenClosed(base.offset(-4, -4, -4), base.offset(3, 3, 3))) {
-                BlockState s = level().getBlockState(p);
-                if (s.is(Blocks.IRON_BARS) || s.is(BlockTags.BEDS)) {
-                    if (random.nextFloat() < 0.3F) {
-                        boost++;
-                    }
-                    if (++counted >= 14) {
-                        break;
-                    }
+        BlockPos base = blockPosition();
+        int fixtures = 0;
+        for (BlockPos p : BlockPos.betweenClosed(base.offset(-2, -2, -2), base.offset(2, 2, 2))) {
+            BlockState s = level().getBlockState(p);
+            if (s.is(Blocks.IRON_BARS) || s.is(BlockTags.BEDS)) {
+                if (++fixtures >= 14) {
+                    break;
                 }
             }
         }
-        return boost;
+        return 1 + fixtures * 6;
     }
 
     private void convertToWolf() {

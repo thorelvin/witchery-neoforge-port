@@ -99,23 +99,27 @@ Files:
 
 See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
 
-### 3. Hellhound → Wolf cure does not fire (in-game QA 2026-06-03)
+### 3. Hellhound → Wolf cure does not fire (in-game QA 2026-06-03) — FIXED 2026-06-03
 
-Hitting a Hellhound with a Splash Potion of Weakness then right-clicking it with a plain Golden
-Apple should start the conversion to a Wolf — tested, **nothing happens** (tried both potion
-strengths). Suspects to check in `HellhoundEntity.mobInteract`: the Weakness effect may have expired
-between the splash and the click (splash durations are short — retest with `/effect give @e[type=witchery:hellhound] minecraft:weakness 60 0`), or `Monster.mobInteract` may be short-circuiting
-before our override branch, or the `Items.GOLDEN_APPLE` / `hasEffect(MobEffects.WEAKNESS)` / `conversionTime < 0` guard order. File: `entity/HellhoundEntity.java`.
+The cure logic was actually correct; the failure was that it was invisible and slow (Weakness from a
+splash can expire before the click, and conversion takes ~3 minutes with no start feedback, so it
+read as "nothing happened"). Fixed in `HellhoundEntity.mobInteract`: golden-apple-on-an-unweakened
+hellhound now shows a "must be weakened first" hint (and does not eat the apple), and a successful
+cure gives immediate feedback (happy-villager particles + drink sound + message). `conversionBoost`
+is now deterministic and strong near iron bars / beds (each fixture −6/tick), so a small iron-bar pen
+cures in well under a minute (bare ground still takes the source ~3 min). QA: `/effect give @e[type=witchery:hellhound] minecraft:weakness 60 0`, then right-click with a plain Golden Apple.
 
-### 4. Morsmordre glyph cannot be drawn — symbol recognition (in-game QA 2026-06-03)
+### 4. Morsmordre glyph cannot be drawn — symbol recognition (in-game QA 2026-06-03) — FIXED 2026-06-03
 
-Trying to draw the new Morsmordre glyph on the Mystic Branch only ever casts **Expelliarmus**. The
-Dark Mark entity itself is fine (spawn egg works); the gap is stroke recognition. Likely the
-recogniser resolves a spell as soon as the running stroke sequence matches any registered set, so a
-shorter spell whose strokes are an early sub-match wins before the longer Morsmordre sequence
-completes (Expelliarmus = `1,0,0,1…`; Morsmordre = `0,0,3,2,2…`). Audit `symbol` recognition for
-prefix/sub-sequence collisions and the longest-match rule. Files: `symbol/EffectRegistry.java`,
-`client/SymbolDrawState.java` (stroke detection), `symbol/StrokeSet.java`.
+Root cause was a transcription bug, not the recogniser. The source `StrokeSet` has two constructors —
+`(int level, byte... strokes)` and `(byte... strokes)`; Morsmordre used the no-level one, so
+`new StrokeSet(0, 0, 3, 2, 2)` is the full sequence `[0,0,3,2,2]`. Copied verbatim into the port
+(whose `StrokeSet` is always level-first), the leading `0` became **level 0** and the strokes became
+`[0,3,2,2]` — so drawing up-up-… landed on Expelliarmus's `[0,0,1]`. Fixed by prepending the level
+(`new StrokeSet(1, 0,0,3,2,2)` …) so Morsmordre is level 1 with the correct glyph **up, up, left,
+right, right**. Verified via script that no spell's stroke sequence is a prefix/duplicate of another
+across the whole roster (41 sets), so the freeze-on-first-match recogniser is safe as-is.
+File: `symbol/EffectRegistry.java`.
 
 ### Minor / parity polish (in-game QA 2026-06-03)
 

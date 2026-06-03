@@ -754,6 +754,8 @@
   "item.witchery.baba_yaga_spawn_egg": "Baba Yaga Spawn Egg",
   "entity.witchery.wolfman": "Wolfman",
   "entity.witchery.hellhound": "Hellhound",
+  "witchery.hellhound.needs_weakness": "The hellhound snarls — it must be weakened before it will take the apple.",
+  "witchery.hellhound.curing": "The hellhound whimpers and begins to change... (faster near iron bars or beds)",
   "entity.witchery.were_villager": "Were-Villager",
   "item.witchery.wolfman_spawn_egg": "Wolfman Spawn Egg",
   "item.witchery.hellhound_spawn_egg": "Hellhound Spawn Egg",
