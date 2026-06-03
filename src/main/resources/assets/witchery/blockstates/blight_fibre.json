@@ -1,7 +1,7 @@
 {
   "multipart": [
     {
-      "when": { "down": true },
+      "when": { "north": true },
       "apply": [
         { "model": "witchery:block/blight_fibre" },
         { "model": "witchery:block/blight_fibre_90" },
@@ -10,48 +10,39 @@
       ]
     },
     {
-      "when": { "up": true },
+      "when": { "east": true },
       "apply": [
-        { "model": "witchery:block/blight_fibre", "x": 180 },
-        { "model": "witchery:block/blight_fibre_90", "x": 180 },
-        { "model": "witchery:block/blight_fibre_180", "x": 180 },
-        { "model": "witchery:block/blight_fibre_270", "x": 180 }
-      ]
-    },
-    {
-      "when": { "north": true },
-      "apply": [
-        { "model": "witchery:block/blight_fibre", "x": 90, "y": 180 },
-        { "model": "witchery:block/blight_fibre_90", "x": 90, "y": 180 },
-        { "model": "witchery:block/blight_fibre_180", "x": 90, "y": 180 },
-        { "model": "witchery:block/blight_fibre_270", "x": 90, "y": 180 }
+        { "model": "witchery:block/blight_fibre", "uvlock": true, "y": 90 },
+        { "model": "witchery:block/blight_fibre_90", "uvlock": true, "y": 90 },
+        { "model": "witchery:block/blight_fibre_180", "uvlock": true, "y": 90 },
+        { "model": "witchery:block/blight_fibre_270", "uvlock": true, "y": 90 }
       ]
     },
     {
       "when": { "south": true },
       "apply": [
-        { "model": "witchery:block/blight_fibre", "x": 90 },
-        { "model": "witchery:block/blight_fibre_90", "x": 90 },
-        { "model": "witchery:block/blight_fibre_180", "x": 90 },
-        { "model": "witchery:block/blight_fibre_270", "x": 90 }
+        { "model": "witchery:block/blight_fibre", "uvlock": true, "y": 180 },
+        { "model": "witchery:block/blight_fibre_90", "uvlock": true, "y": 180 },
+        { "model": "witchery:block/blight_fibre_180", "uvlock": true, "y": 180 },
+        { "model": "witchery:block/blight_fibre_270", "uvlock": true, "y": 180 }
       ]
     },
     {
       "when": { "west": true },
       "apply": [
-        { "model": "witchery:block/blight_fibre", "x": 90, "y": 90 },
-        { "model": "witchery:block/blight_fibre_90", "x": 90, "y": 90 },
-        { "model": "witchery:block/blight_fibre_180", "x": 90, "y": 90 },
-        { "model": "witchery:block/blight_fibre_270", "x": 90, "y": 90 }
+        { "model": "witchery:block/blight_fibre", "uvlock": true, "y": 270 },
+        { "model": "witchery:block/blight_fibre_90", "uvlock": true, "y": 270 },
+        { "model": "witchery:block/blight_fibre_180", "uvlock": true, "y": 270 },
+        { "model": "witchery:block/blight_fibre_270", "uvlock": true, "y": 270 }
       ]
     },
     {
-      "when": { "east": true },
+      "when": { "up": true },
       "apply": [
-        { "model": "witchery:block/blight_fibre", "x": 90, "y": 270 },
-        { "model": "witchery:block/blight_fibre_90", "x": 90, "y": 270 },
-        { "model": "witchery:block/blight_fibre_180", "x": 90, "y": 270 },
-        { "model": "witchery:block/blight_fibre_270", "x": 90, "y": 270 }
+        { "model": "witchery:block/blight_fibre", "uvlock": true, "x": 270 },
+        { "model": "witchery:block/blight_fibre_90", "uvlock": true, "x": 270 },
+        { "model": "witchery:block/blight_fibre_180", "uvlock": true, "x": 270 },
+        { "model": "witchery:block/blight_fibre_270", "uvlock": true, "x": 270 }
       ]
     }
   ]
