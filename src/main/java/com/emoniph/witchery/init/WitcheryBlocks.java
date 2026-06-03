@@ -315,7 +315,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<BlightHeartBlock> BLIGHT_HEART = registerBlock("blight_heart",
             BlightHeartBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WART_BLOCK)
-                    .strength(6.0f, 12.0f).randomTicks().noOcclusion());
+                    .strength(6.0f, 12.0f).randomTicks().lightLevel(s -> 2).noOcclusion());
     public static final DeferredBlock<BlightFibreBlock> BLIGHT_FIBRE = registerBlock("blight_fibre",
             BlightFibreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WART_BLOCK)
