@@ -96,6 +96,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,6 +110,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class RitualExecutor {
@@ -119,8 +126,6 @@ public class RitualExecutor {
     private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
     private static final int BLIGHT_RITE_POWER = 3000;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
-    private static final Map<ResourceKey<Level>, List<ActiveRitual>> ACTIVE_RITUALS = new HashMap<>();
-    private static final Map<ResourceKey<Level>, Map<BlockPos, ClimateChangePlan>> CLIMATE_CHANGE_PLANS = new HashMap<>();
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 
     public enum ActivationResult {
@@ -238,6 +243,125 @@ public class RitualExecutor {
             this.sacrificedIngredient = sacrificedIngredient;
             this.supplementalSacrifices = supplementalSacrifices;
         }
+    }
+
+    // ── Persistence ─────────────────────────────────────────────────────────
+    // Active rituals and climate-change plans live in per-level SavedData so staged rites
+    // (and their consumed sacrifices) survive a server restart or crash instead of vanishing.
+
+    private static <E extends Enum<E>> Codec<E> enumCodec(Class<E> clazz) {
+        return Codec.STRING.xmap(s -> Enum.valueOf(clazz, s), Enum::name);
+    }
+
+    private record RitualGeometry(int circleVariant, int minRadius, int maxRadius, int targetStage,
+                                  int pulseInterval, int covenSize, int heading) {
+        private static final Codec<RitualGeometry> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.INT.fieldOf("variant").forGetter(RitualGeometry::circleVariant),
+                Codec.INT.fieldOf("min_radius").forGetter(RitualGeometry::minRadius),
+                Codec.INT.fieldOf("max_radius").forGetter(RitualGeometry::maxRadius),
+                Codec.INT.fieldOf("target_stage").forGetter(RitualGeometry::targetStage),
+                Codec.INT.fieldOf("pulse_interval").forGetter(RitualGeometry::pulseInterval),
+                Codec.INT.fieldOf("coven_size").forGetter(RitualGeometry::covenSize),
+                Codec.INT.fieldOf("heading").forGetter(RitualGeometry::heading)
+        ).apply(i, RitualGeometry::new));
+    }
+
+    private static final Codec<ActiveRitual> ACTIVE_RITUAL_CODEC = RecordCodecBuilder.create(i -> i.group(
+            enumCodec(ActiveRitualType.class).fieldOf("type").forGetter(r -> r.type),
+            BlockPos.CODEC.fieldOf("center").forGetter(r -> r.center),
+            BlockPos.CODEC.fieldOf("effect_center").forGetter(r -> r.effectCenter),
+            enumCodec(RitualCircleDetector.CircleSize.class).fieldOf("circle_size").forGetter(r -> r.circleSize),
+            RitualGeometry.CODEC.fieldOf("geometry").forGetter(r -> new RitualGeometry(
+                    r.circleVariant, r.minRadius, r.maxRadius, r.targetStage, r.pulseInterval, r.covenSize, r.heading)),
+            Codec.FLOAT.fieldOf("upkeep_cost").forGetter(r -> r.upkeepCost),
+            Codec.BOOL.fieldOf("enhanced").forGetter(r -> r.enhanced),
+            Codec.LONG.fieldOf("next_game_time").forGetter(r -> r.nextGameTime),
+            ItemStack.OPTIONAL_CODEC.fieldOf("sacrificed").forGetter(r -> r.sacrificedIngredient),
+            ItemStack.CODEC.listOf().fieldOf("supplemental").forGetter(r -> r.supplementalSacrifices),
+            BlockPos.CODEC.listOf().fieldOf("path").forGetter(r -> r.path),
+            Codec.INT.fieldOf("stage").forGetter(r -> r.stage),
+            Codec.FLOAT.fieldOf("upkeep_debt").forGetter(r -> r.upkeepDebt)
+    ).apply(i, RitualExecutor::activeRitualFromCodec));
+
+    private static ActiveRitual activeRitualFromCodec(ActiveRitualType type, BlockPos center, BlockPos effectCenter,
+            RitualCircleDetector.CircleSize circleSize, RitualGeometry geom, float upkeepCost, boolean enhanced,
+            long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, List<BlockPos> path,
+            int stage, float upkeepDebt) {
+        ActiveRitual r = new ActiveRitual(type, center, circleSize, effectCenter, geom.circleVariant(),
+                geom.minRadius(), geom.maxRadius(), geom.targetStage(), geom.pulseInterval(), geom.covenSize(),
+                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental));
+        r.stage = stage;
+        r.upkeepDebt = upkeepDebt;
+        r.path.addAll(path);
+        return r;
+    }
+
+    private static final Codec<ClimateChangePlan> CLIMATE_PLAN_CODEC = RecordCodecBuilder.create(i -> i.group(
+            RegistryFixedCodec.create(Registries.BIOME).fieldOf("biome").forGetter(ClimateChangePlan::biomeHolder),
+            enumCodec(ClimateWeather.class).fieldOf("weather").forGetter(ClimateChangePlan::weather)
+    ).apply(i, ClimateChangePlan::new));
+
+    private record ClimatePlanEntry(BlockPos pos, ClimateChangePlan plan) {
+        private static final Codec<ClimatePlanEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
+                BlockPos.CODEC.fieldOf("pos").forGetter(ClimatePlanEntry::pos),
+                CLIMATE_PLAN_CODEC.fieldOf("plan").forGetter(ClimatePlanEntry::plan)
+        ).apply(i, ClimatePlanEntry::new));
+    }
+
+    public static final class RitualSavedData extends SavedData {
+        private final List<ActiveRitual> activeRituals = new ArrayList<>();
+        private final Map<BlockPos, ClimateChangePlan> climatePlans = new HashMap<>();
+
+        public static final Codec<RitualSavedData> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ACTIVE_RITUAL_CODEC.listOf().optionalFieldOf("active_rituals", List.of()).forGetter(d -> d.activeRituals),
+                ClimatePlanEntry.CODEC.listOf().optionalFieldOf("climate_plans", List.of()).forGetter(d ->
+                        d.climatePlans.entrySet().stream()
+                                .map(e -> new ClimatePlanEntry(e.getKey(), e.getValue())).toList())
+        ).apply(i, RitualSavedData::fromCodec));
+
+        public static final SavedDataType<RitualSavedData> TYPE = new SavedDataType<>(
+                "witchery_rituals", RitualSavedData::new, CODEC, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
+
+        public RitualSavedData() {}
+
+        private static RitualSavedData fromCodec(List<ActiveRitual> rituals, List<ClimatePlanEntry> plans) {
+            RitualSavedData d = new RitualSavedData();
+            d.activeRituals.addAll(rituals);
+            for (ClimatePlanEntry entry : plans) {
+                d.climatePlans.put(entry.pos(), entry.plan());
+            }
+            return d;
+        }
+
+        private static RitualSavedData get(ServerLevel level) {
+            return level.getDataStorage().computeIfAbsent(TYPE);
+        }
+
+        /** Test accessor. */
+        int activeRitualCount() {
+            return activeRituals.size();
+        }
+    }
+
+    /** Test hook: a sample SavedData with one staged ritual (for codec round-trip verification). */
+    static RitualSavedData buildTestSavedData() {
+        RitualSavedData data = new RitualSavedData();
+        data.activeRituals.add(new ActiveRitual(ActiveRitualType.SANCTITY_CIRCLE, BlockPos.ZERO,
+                RitualCircleDetector.CircleSize.SMALL, BlockPos.ZERO, 1, 0, 4, 0, 20, 2, 0.8f, false, 0,
+                100L, new ItemStack(Items.DIAMOND), List.of(new ItemStack(Items.REDSTONE, 3))));
+        return data;
+    }
+
+    private static List<ActiveRitual> activeRituals(ServerLevel level) {
+        return RitualSavedData.get(level).activeRituals;
+    }
+
+    private static Map<BlockPos, ClimateChangePlan> climatePlans(ServerLevel level) {
+        return RitualSavedData.get(level).climatePlans;
+    }
+
+    private static void markRitualsDirty(ServerLevel level) {
+        RitualSavedData.get(level).setDirty();
     }
 
     /**
@@ -734,25 +858,27 @@ public class RitualExecutor {
                 .offer(offerings.get().whiffOfMagic())
                 .offer(offerings.get().diamond())
                 .offer(offerings.get().demonicBlood());
-        if (!transaction.commit(player)) {
-            return false;
-        }
-
-        boolean boundAny = false;
-        for (FamiliarBindTarget bindTarget : bindTargets) {
-            TamableAnimal familiar = bindFamiliarToPlayer(bindTarget.player(), sl, bindTarget.candidate());
-            if (familiar == null) {
-                continue;
+        // Rollback-safe: bind the familiars as the committed effect; if none could actually be
+        // bound, the transaction consumes nothing. Previously this consumed 8000 altar power and
+        // five sacrifices BEFORE binding, then returned false on a finalize failure — losing them.
+        boolean[] boundAny = {false};
+        if (!transaction.commit(player, () -> {
+            for (FamiliarBindTarget bindTarget : bindTargets) {
+                TamableAnimal familiar = bindFamiliarToPlayer(bindTarget.player(), sl, bindTarget.candidate());
+                if (familiar == null) {
+                    continue;
+                }
+                familiar.setOrderedToSit(false);
+                sl.sendParticles(ParticleTypes.HEART,
+                        familiar.getX(), familiar.getY() + 0.8, familiar.getZ(),
+                        6, 0.25, 0.25, 0.25, 0.02);
+                boundAny[0] = true;
             }
-
-            familiar.setOrderedToSit(false);
-            sl.sendParticles(ParticleTypes.HEART,
-                    familiar.getX(), familiar.getY() + 0.8, familiar.getZ(),
-                    6, 0.25, 0.25, 0.25, 0.02);
-            boundAny = true;
-        }
-        if (!boundAny) {
-            WitcheryMod.LOGGER.warn("Rite of Bind Familiar committed at {} but no familiar could be finalized.", center);
+            if (!boundAny[0]) {
+                WitcheryMod.LOGGER.warn("Rite of Bind Familiar at {} found candidates but bound none; nothing consumed.", center);
+            }
+            return boundAny[0];
+        })) {
             return false;
         }
 
@@ -1502,11 +1628,11 @@ public class RitualExecutor {
 
         int covenSize = countNearbyCovenWitches(level, center);
         int radius = 16 * (covenSize - 3);
-        storeClimateChangePlan(sl.dimension(), center, scan.plan());
+        storeClimateChangePlan(sl, center, scan.plan());
         List<ItemStack> supplementalSacrifices = copyConsumedItemStacks(scan.itemsToConsume());
         if (!queueActiveRitual(sl, ActiveRitualType.CLIMATE_CHANGE, RitualCircleDetector.CircleSize.LARGE,
                 center, radius, 0, 5, 20, covenSize, 0.0f, 0, supplementalSacrifices)) {
-            clearClimateChangePlan(sl.dimension(), center);
+            clearClimateChangePlan(sl, center);
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1727,24 +1853,18 @@ public class RitualExecutor {
         return ClimateWeather.NONE;
     }
 
-    private static void storeClimateChangePlan(ResourceKey<Level> dimension, BlockPos center, ClimateChangePlan plan) {
-        CLIMATE_CHANGE_PLANS.computeIfAbsent(dimension, key -> new HashMap<>()).put(center.immutable(), plan);
+    private static void storeClimateChangePlan(ServerLevel level, BlockPos center, ClimateChangePlan plan) {
+        climatePlans(level).put(center.immutable(), plan);
+        markRitualsDirty(level);
     }
 
-    private static ClimateChangePlan getClimateChangePlan(ResourceKey<Level> dimension, BlockPos center) {
-        Map<BlockPos, ClimateChangePlan> plans = CLIMATE_CHANGE_PLANS.get(dimension);
-        return plans != null ? plans.get(center) : null;
+    private static ClimateChangePlan getClimateChangePlan(ServerLevel level, BlockPos center) {
+        return climatePlans(level).get(center);
     }
 
-    private static void clearClimateChangePlan(ResourceKey<Level> dimension, BlockPos center) {
-        Map<BlockPos, ClimateChangePlan> plans = CLIMATE_CHANGE_PLANS.get(dimension);
-        if (plans == null) {
-            return;
-        }
-
-        plans.remove(center);
-        if (plans.isEmpty()) {
-            CLIMATE_CHANGE_PLANS.remove(dimension);
+    private static void clearClimateChangePlan(ServerLevel level, BlockPos center) {
+        if (climatePlans(level).remove(center) != null) {
+            markRitualsDirty(level);
         }
     }
 
@@ -1947,13 +2067,27 @@ public class RitualExecutor {
             return this;
         }
 
-        private boolean commit(Player player) {
-            if (altarPowerCost > 0 && !consumeNearbyRitualAltarPower(level, center, altarRadius, altarPowerCost)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                player.displayClientMessage(Component.translatable(noPowerMessageKey), false);
-                return false;
+        /** Peek whether the altar can pay this rite's startup power, without consuming anything. */
+        private boolean hasSufficientPower() {
+            if (altarPowerCost <= 0) {
+                return true;
             }
+            AltarBlockEntity altar = findNearbyRitualAltar(level, center, altarRadius);
+            return altar != null && altar.hasValidStructure()
+                    && altar.getPower() >= scaleRitualPowerCost(altarPowerCost);
+        }
 
+        private boolean reportNoPower(Player player) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable(noPowerMessageKey), false);
+            return false;
+        }
+
+        /** Actually spend power + offerings. Only called once a rite is committed to succeeding. */
+        private void consumeAll() {
+            if (altarPowerCost > 0) {
+                consumeNearbyRitualAltarPower(level, center, altarRadius, altarPowerCost);
+            }
             for (ItemEntity offering : offerings) {
                 consumeOfferedItem(offering);
             }
@@ -1963,6 +2097,35 @@ public class RitualExecutor {
             for (InventoryConsumption inventoryConsumption : inventoryConsumptions) {
                 consumeInventoryItem(inventoryConsumption.player(), inventoryConsumption.slot());
             }
+        }
+
+        /**
+         * Validate, then consume. Use for rites whose effect cannot fail after this point.
+         * (Power is now peeked before any offering is consumed, so a no-power result never
+         * leaves a half-consumed offering.)
+         */
+        private boolean commit(Player player) {
+            if (!hasSufficientPower()) {
+                return reportNoPower(player);
+            }
+            consumeAll();
+            return true;
+        }
+
+        /**
+         * Rollback-safe commit: validate → applyEffect → consume only on success. If {@code effect}
+         * returns false (or the altar cannot pay), NOTHING is consumed, so a post-validation effect
+         * failure can no longer silently eat altar power or sacrifices. This is the target pattern
+         * for any rite whose effect can fail.
+         */
+        private boolean commit(Player player, BooleanSupplier effect) {
+            if (!hasSufficientPower()) {
+                return reportNoPower(player);
+            }
+            if (!effect.getAsBoolean()) {
+                return false;
+            }
+            consumeAll();
             return true;
         }
     }
@@ -2025,8 +2188,8 @@ public class RitualExecutor {
     }
 
     public static void tickActiveRituals(ServerLevel level) {
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
-        if (rituals == null || rituals.isEmpty()) {
+        List<ActiveRitual> rituals = activeRituals(level);
+        if (rituals.isEmpty()) {
             return;
         }
 
@@ -2044,9 +2207,8 @@ public class RitualExecutor {
                 rituals.remove(i);
             }
         }
-        if (rituals.isEmpty()) {
-            ACTIVE_RITUALS.remove(level.dimension());
-        }
+        // Rituals advanced their stage/timers this pass — persist the change.
+        markRitualsDirty(level);
     }
 
     private static void spawnActiveCenterParticle(ServerLevel level, BlockPos center) {
@@ -2058,7 +2220,7 @@ public class RitualExecutor {
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
         if (!hasSustainingCircle(level, ritual)) {
-            clearClimateChangePlan(level.dimension(), ritual.center);
+            clearClimateChangePlan(level, ritual.center);
             ritual.failedOnStop = true;
             ritual.refundOnStop = true;
             return false;
@@ -2242,7 +2404,7 @@ public class RitualExecutor {
     }
 
     private static boolean tickClimateChangeRitual(ServerLevel level, ActiveRitual ritual) {
-        ClimateChangePlan plan = getClimateChangePlan(level.dimension(), ritual.center);
+        ClimateChangePlan plan = getClimateChangePlan(level, ritual.center);
         if (plan == null) {
             ritual.failedOnStop = true;
             ritual.refundOnStop = true;
@@ -2264,7 +2426,7 @@ public class RitualExecutor {
                 ritual.center.getX() + 0.5, ritual.center.getY() + 1.0, ritual.center.getZ() + 0.5,
                 1, 0.0, 0.0, 0.0, 0.0);
         applyClimateChange(level, ritual.center, ritual.minRadius, plan);
-        clearClimateChangePlan(level.dimension(), ritual.center);
+        clearClimateChangePlan(level, ritual.center);
         return false;
     }
 
@@ -2643,7 +2805,7 @@ public class RitualExecutor {
                                              BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices, boolean enhanced) {
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.computeIfAbsent(level.dimension(), key -> new ArrayList<>());
+        List<ActiveRitual> rituals = activeRituals(level);
         if (hasActiveRitualAt(level, center)) {
             return false;
         }
@@ -2655,19 +2817,19 @@ public class RitualExecutor {
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
                 List.copyOf(supplementalSacrifices)));
+        markRitualsDirty(level);
         return true;
     }
 
     private static boolean hasActiveRitualAt(ServerLevel level, BlockPos center) {
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
-        return rituals != null && rituals.stream().anyMatch(active -> active.center.equals(center));
+        return activeRituals(level).stream().anyMatch(active -> active.center.equals(center));
     }
 
     public static String describeActiveRitual(Level level, BlockPos center) {
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(level.dimension());
-        if (rituals == null) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return "active=none";
         }
+        List<ActiveRitual> rituals = activeRituals(serverLevel);
         for (ActiveRitual ritual : rituals) {
             if (!ritual.center.equals(center)) {
                 continue;
@@ -3963,7 +4125,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
+        List<ActiveRitual> rituals = activeRituals(sl);
         if (rituals != null) {
             for (ActiveRitual ritual : rituals) {
                 if (ritual.center.equals(center) && ritual.type == ActiveRitualType.BLINDNESS) {
@@ -4106,7 +4268,7 @@ public class RitualExecutor {
             return false;
         }
 
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.get(sl.dimension());
+        List<ActiveRitual> rituals = activeRituals(sl);
         if (rituals != null) {
             for (ActiveRitual ritual : rituals) {
                 if (ritual.center.equals(center) && ritual.type == ActiveRitualType.ICE_SHELL) {
@@ -7228,12 +7390,12 @@ public class RitualExecutor {
      * silently lose consumed resources across server restarts.
      */
     public static void cancelAllWithRefund(ServerLevel level) {
-        List<ActiveRitual> rituals = ACTIVE_RITUALS.remove(level.dimension());
-        if (rituals != null) {
-            for (ActiveRitual ritual : rituals) {
-                refundRitualIngredient(level, ritual);
-            }
+        RitualSavedData data = RitualSavedData.get(level);
+        for (ActiveRitual ritual : data.activeRituals) {
+            refundRitualIngredient(level, ritual);
         }
-        CLIMATE_CHANGE_PLANS.remove(level.dimension());
+        data.activeRituals.clear();
+        data.climatePlans.clear();
+        data.setDirty();
     }
 }

@@ -69,11 +69,13 @@ The 2026-05-31 village fixes now cover thirteen observed stall/false-success pat
 
 ### 2. Ritual queue parity is still partial
 
-Current gaps:
+**Closed 2026-06-03:**
+- ~~Session-only active state~~ — `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` static maps replaced by per-level `RitualExecutor.RitualSavedData` (a `SavedData` with a Codec for `ActiveRitual` + climate plans). Staged rites and their consumed sacrifices now survive a server restart/crash. Round-trip verified by `RitualPersistenceTest` (headless unit test).
+- ~~`RitualTransaction` lacks a true rollback path~~ — added `commit(player, BooleanSupplier effect)`: validate (peek altar power, never half-consume) → apply effect → consume power + offerings **only on success**. `commit(player)` now also peeks before consuming. Migrated `riteOfBindFamiliar` (which previously spent 8000 power + 5 sacrifices then could return false on a finalize failure) to the rollback-safe form.
 
-- **Session-only active state.** `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` are static maps keyed by dimension — session memory, not saved world state. Long-running rites can vanish on server crash after consuming resources. A clean-shutdown refund path exists (`RitualExecutor.cancelAllWithRefund` + `RitualEvents.onServerStopping`) but crash loss is still possible. Fix: migrate to level `SavedData`, a dimension attachment, or a ritual-anchor block entity.
-- **`RitualTransaction` lacks a true rollback path.** It currently commits altar power first, then offerings, with no undo. A post-commit failure can silently lose resources. Target pattern: `validate → prepareEffect → commit → applyEffect`.
-- **Representative-trigger gap.** All rite routes use one representative dropped ingredient instead of the full original multi-sacrifice recipe registry. Functionally correct but not full 1.7.10 parity.
+Remaining gap:
+
+- **Representative-trigger gap.** All rite routes use one representative dropped ingredient instead of the full original multi-sacrifice recipe registry. Functionally correct but not full 1.7.10 parity. (Part of the larger `RitualExecutor` → `RitualDefinition` registry decomposition.)
 
 Files:
 - `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
