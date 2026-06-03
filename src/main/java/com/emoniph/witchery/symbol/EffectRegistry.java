@@ -184,10 +184,10 @@ public final class EffectRegistry {
                     });
                 }
             }.setColor(0xFFE640).setSize(1.5F),
-            new StrokeSet(1, 1, 3, 3, 0, 0, 2),
-            new StrokeSet(1, 1, 3, 3, 3, 0, 0, 2, 2),
-            new StrokeSet(2, 1, 3, 3, 3, 0, 0, 0, 2, 2),
-            new StrokeSet(3, 1, 3, 3, 3, 3, 0, 0, 0, 0, 2, 2, 2));
+            new StrokeSet(1, 3, 3, 0, 0, 2),
+            new StrokeSet(1, 3, 3, 3, 0, 0, 2, 2),
+            new StrokeSet(2, 3, 3, 3, 0, 0, 0, 2, 2),
+            new StrokeSet(3, 3, 3, 3, 3, 0, 0, 0, 0, 2, 2, 2));
 
     /** Episkey — heal the caster (and nearby allies at higher levels) by spending food. */
     public static final SymbolEffect EPISKEY = instance().add(
@@ -348,7 +348,7 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0xFFFFFA).setSize(0.5F),
-            new StrokeSet(1, 1, 1, 2));
+            new StrokeSet(1, 1, 1, 1, 2));
 
     /** Nox — extinguish bright blocks (including Glow Globes) around the caster. */
     public static final SymbolEffect NOX = instance().add(
@@ -373,7 +373,7 @@ public final class EffectRegistry {
                     }
                 }
             },
-            new StrokeSet(1, 0, 2, 1, 2, 0));
+            new StrokeSet(1, 0, 0, 2, 1, 2, 0));
 
     /** Stupefy — stun the struck creature (heavy slowness). */
     public static final SymbolEffect STUPEFY = instance().add(

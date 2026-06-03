@@ -4,7 +4,9 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
 import com.emoniph.witchery.symbol.SymbolEffectProjectile;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -24,6 +26,10 @@ import net.minecraft.world.phys.HitResult;
  */
 public class SpellEffectEntity extends ThrowableProjectile {
 
+    private static final EntityDataAccessor<Integer> DATA_COLOR =
+            SynchedEntityData.defineId(SpellEffectEntity.class, EntityDataSerializers.INT);
+    private static final int DEFAULT_COLOR = 0xB388E8;
+
     private int effectId = -1;
     private int effectLevel = 1;
     private int lifeTime = 80;
@@ -37,8 +43,13 @@ public class SpellEffectEntity extends ThrowableProjectile {
         setOwner(owner);
         this.effectId = effect.getEffectId();
         this.effectLevel = effectLevel;
-        if (effect instanceof SymbolEffectProjectile projectile && projectile.getTimeToLive() > 0) {
-            this.lifeTime = projectile.getTimeToLive();
+        if (effect instanceof SymbolEffectProjectile projectile) {
+            if (projectile.getTimeToLive() > 0) {
+                this.lifeTime = projectile.getTimeToLive();
+            }
+            // colour 0 (e.g. Morsmordre's black) reads as invisible — fall back to the default tint.
+            int c = projectile.getColor();
+            this.entityData.set(DATA_COLOR, c == 0 ? DEFAULT_COLOR : (c & 0xFFFFFF));
         }
         setNoGravity(!effect.fallsToEarth());
     }
@@ -47,9 +58,13 @@ public class SpellEffectEntity extends ThrowableProjectile {
         return effectLevel;
     }
 
+    private int trailColor() {
+        return entityData.get(DATA_COLOR);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        // No synched data; the client trail is generic.
+        builder.define(DATA_COLOR, DEFAULT_COLOR);
     }
 
     @Override
@@ -66,7 +81,8 @@ public class SpellEffectEntity extends ThrowableProjectile {
                 // A misbehaving spell effect must never crash the projectile tick.
             }
         }
-        serverLevel.sendParticles(ParticleTypes.WITCH, getX(), getY(), getZ(), 12, 0.2, 0.2, 0.2, 0.0);
+        serverLevel.sendParticles(new DustParticleOptions(trailColor(), 1.6F),
+                getX(), getY(), getZ(), 18, 0.25, 0.25, 0.25, 0.0);
         discard();
     }
 
@@ -74,9 +90,10 @@ public class SpellEffectEntity extends ThrowableProjectile {
     public void tick() {
         super.tick();
         if (level().isClientSide()) {
+            DustParticleOptions dust = new DustParticleOptions(trailColor(), 1.3F);
+            level().addParticle(dust, getX(), getY() + 0.1, getZ(), 0.0, 0.0, 0.0);
             if (level().random.nextInt(2) == 0) {
-                level().addParticle(ParticleTypes.WITCH,
-                        getX(), getY() + 0.1, getZ(), 0.0, 0.0, 0.0);
+                level().addParticle(dust, getX(), getY() + 0.1, getZ(), 0.0, 0.0, 0.0);
             }
             return;
         }

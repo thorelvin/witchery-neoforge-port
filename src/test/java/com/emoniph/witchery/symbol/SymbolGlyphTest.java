@@ -1,0 +1,51 @@
+package com.emoniph.witchery.symbol;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+/**
+ * Locks the Mystic Branch glyph → spell mapping against the source {@code StrokeSet} registrations
+ * (1.7.10-0.24.1), keyed by the canonical level-1 stroke sequence. Stroke bytes: 0=up, 1=down,
+ * 2=right, 3=left. This guards the level-vs-stroke transcription that broke Morsmordre/Nox/Lumos/
+ * Confundus. Pure logic over {@link EffectRegistry}; runs headlessly.
+ */
+class SymbolGlyphTest {
+
+    private static void assertGlyph(String nameKey, int level, int... strokes) {
+        byte[] bytes = new byte[strokes.length];
+        for (int i = 0; i < strokes.length; i++) {
+            bytes[i] = (byte) strokes[i];
+        }
+        SymbolEffect effect = EffectRegistry.instance().getEffect(bytes);
+        assertNotNull(effect, "glyph should resolve to a spell: " + java.util.Arrays.toString(strokes));
+        assertEquals(nameKey, effect.getNameKey(), "wrong spell for glyph " + java.util.Arrays.toString(strokes));
+        assertEquals(level, EffectRegistry.instance().getLevel(bytes), "wrong level for glyph");
+    }
+
+    @Test
+    void knownGlyphsResolveToTheCorrectSpell() {
+        EffectRegistry.bootstrap();
+        // Level-1 sequences, transcribed from the source RiteRegistry/EffectRegistry.
+        assertGlyph("witchery.pott.accio",        1, 3, 0, 2, 2, 1);        // L U R R D
+        assertGlyph("witchery.pott.confundus",    1, 3, 3, 0, 0, 2);        // L L U U R
+        assertGlyph("witchery.pott.episkey",      1, 2, 0, 3, 1, 1, 2);     // R U L D D R
+        assertGlyph("witchery.pott.expelliarmus", 1, 0, 0, 1);              // U U D
+        assertGlyph("witchery.pott.flipendo",     1, 2, 2, 3);              // R R L
+        assertGlyph("witchery.pott.impedimenta",  1, 3, 3, 2);              // L L R
+        assertGlyph("witchery.pott.incendio",     1, 3, 0, 0, 1, 1);        // L U U D D
+        assertGlyph("witchery.pott.lumos",        1, 1, 1, 1, 2);           // D D D R
+        assertGlyph("witchery.pott.nox",          1, 0, 0, 2, 1, 2, 0);     // U U R D R U
+        assertGlyph("witchery.pott.stupefy",      1, 2, 2, 0, 3, 0, 2);     // R R U L U R
+        assertGlyph("witchery.pott.morsmordre",   1, 0, 0, 3, 2, 2);        // U U L R R
+    }
+
+    @Test
+    void unknownGlyphResolvesToNothing() {
+        EffectRegistry.bootstrap();
+        assertNull(EffectRegistry.instance().getEffect(new byte[]{0}), "a single up is not a spell");
+        assertNull(EffectRegistry.instance().getEffect(new byte[]{0, 1}), "up-down is not a spell");
+    }
+}
