@@ -1,9 +1,795 @@
 {
-  "parent": "witchery:block/blighted_soil_tinted_side",
+  "parent": "minecraft:block/block",
   "textures": {
-    "bottom": "witchery:block/blighted_soil_bottom_1",
-    "side": "witchery:block/blighted_soil_side_1",
-    "top": "witchery:block/blighted_soil_top_1",
-    "particle": "minecraft:block/dirt"
-  }
+    "particle": "minecraft:block/dirt",
+    "bottom": "minecraft:block/dirt",
+    "top": "minecraft:block/grass_block_top",
+    "side": "minecraft:block/grass_block_side",
+    "grass_overlay": "minecraft:block/grass_block_side_overlay",
+    "top_blight": "witchery:block/blighted_soil_top_1",
+    "side_blight": "witchery:block/blighted_soil_side_1"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#top",
+          "cullface": "up",
+          "tintindex": 0
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#side",
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#side",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#grass_overlay",
+          "tintindex": 0,
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#grass_overlay",
+          "tintindex": 0,
+          "cullface": "south"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#grass_overlay",
+          "tintindex": 0,
+          "cullface": "west"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#grass_overlay",
+          "tintindex": 0,
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        16,
+        2
+      ],
+      "to": [
+        9,
+        16.01,
+        3
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            8,
+            2,
+            9,
+            3
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        16,
+        4
+      ],
+      "to": [
+        7,
+        16.01,
+        5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        16,
+        8
+      ],
+      "to": [
+        14,
+        16.01,
+        9
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            13,
+            8,
+            14,
+            9
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        16,
+        11
+      ],
+      "to": [
+        11,
+        16.01,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            10,
+            11,
+            11,
+            12
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        16,
+        13
+      ],
+      "to": [
+        8,
+        16.01,
+        14
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            6,
+            13,
+            8,
+            14
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        16,
+        14
+      ],
+      "to": [
+        2,
+        16.01,
+        15
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            14,
+            2,
+            15
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        16,
+        14
+      ],
+      "to": [
+        10,
+        16.01,
+        15
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            9,
+            14,
+            10,
+            15
+          ],
+          "texture": "#top_blight",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        8,
+        -0.01
+      ],
+      "to": [
+        11,
+        9,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            7,
+            11,
+            8
+          ],
+          "texture": "#side_blight",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        8,
+        16
+      ],
+      "to": [
+        11,
+        9,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            9,
+            7,
+            11,
+            8
+          ],
+          "texture": "#side_blight",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        8,
+        9
+      ],
+      "to": [
+        0,
+        9,
+        11
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            9,
+            7,
+            11,
+            8
+          ],
+          "texture": "#side_blight",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        8,
+        9
+      ],
+      "to": [
+        16.01,
+        9,
+        11
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            9,
+            7,
+            11,
+            8
+          ],
+          "texture": "#side_blight",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        7,
+        -0.01
+      ],
+      "to": [
+        10,
+        8,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            8,
+            10,
+            9
+          ],
+          "texture": "#side_blight",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        7,
+        16
+      ],
+      "to": [
+        10,
+        8,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            9,
+            8,
+            10,
+            9
+          ],
+          "texture": "#side_blight",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        7,
+        9
+      ],
+      "to": [
+        0,
+        8,
+        10
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            9,
+            8,
+            10,
+            9
+          ],
+          "texture": "#side_blight",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        7,
+        9
+      ],
+      "to": [
+        16.01,
+        8,
+        10
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            9,
+            8,
+            10,
+            9
+          ],
+          "texture": "#side_blight",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        -0.01
+      ],
+      "to": [
+        6,
+        5,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            11,
+            6,
+            12
+          ],
+          "texture": "#side_blight",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        16
+      ],
+      "to": [
+        6,
+        5,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            4,
+            11,
+            6,
+            12
+          ],
+          "texture": "#side_blight",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        4,
+        4
+      ],
+      "to": [
+        0,
+        5,
+        6
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            4,
+            11,
+            6,
+            12
+          ],
+          "texture": "#side_blight",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        4,
+        4
+      ],
+      "to": [
+        16.01,
+        5,
+        6
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            4,
+            11,
+            6,
+            12
+          ],
+          "texture": "#side_blight",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        2,
+        -0.01
+      ],
+      "to": [
+        14,
+        3,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            13,
+            14,
+            14
+          ],
+          "texture": "#side_blight",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        2,
+        16
+      ],
+      "to": [
+        14,
+        3,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            13,
+            13,
+            14,
+            14
+          ],
+          "texture": "#side_blight",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        2,
+        13
+      ],
+      "to": [
+        0,
+        3,
+        14
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            13,
+            13,
+            14,
+            14
+          ],
+          "texture": "#side_blight",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        2,
+        13
+      ],
+      "to": [
+        16.01,
+        3,
+        14
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            13,
+            13,
+            14,
+            14
+          ],
+          "texture": "#side_blight",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        1,
+        -0.01
+      ],
+      "to": [
+        3,
+        2,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            14,
+            3,
+            15
+          ],
+          "texture": "#side_blight",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        1,
+        16
+      ],
+      "to": [
+        3,
+        2,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            2,
+            14,
+            3,
+            15
+          ],
+          "texture": "#side_blight",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        1,
+        2
+      ],
+      "to": [
+        0,
+        2,
+        3
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            2,
+            14,
+            3,
+            15
+          ],
+          "texture": "#side_blight",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        1,
+        2
+      ],
+      "to": [
+        16.01,
+        2,
+        3
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            2,
+            14,
+            3,
+            15
+          ],
+          "texture": "#side_blight",
+          "cullface": "east"
+        }
+      }
+    }
+  ]
 }
