@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout_mipped",
   "textures": {
     "bottom": "witchery:block/blighted_soil_bottom_2",
     "side": "witchery:block/blighted_soil_side_2",
