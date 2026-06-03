@@ -6,11 +6,6 @@
       }
     },
     {
-      "apply": {
-        "model": "witchery:block/blighted_soil_grass_edge"
-      }
-    },
-    {
       "apply": [
         {
           "model": "witchery:block/blighted_soil_overlay",
