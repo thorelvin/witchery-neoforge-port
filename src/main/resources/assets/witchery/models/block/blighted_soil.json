@@ -5,7 +5,7 @@
     "particle": "minecraft:block/dirt",
     "bottom": "minecraft:block/dirt",
     "top": "minecraft:block/grass_block_top",
-    "side": "minecraft:block/grass_block_side",
+    "side": "minecraft:block/dirt",
     "grass_overlay": "minecraft:block/grass_block_side_overlay"
   },
   "elements": [
@@ -38,9 +38,8 @@
             16,
             16
           ],
-          "texture": "#top",
-          "cullface": "up",
-          "tintindex": 0
+          "texture": "#side",
+          "cullface": "up"
         },
         "north": {
           "uv": [
@@ -81,6 +80,31 @@
           ],
           "texture": "#side",
           "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16,
+        0
+      ],
+      "to": [
+        16,
+        16.005,
+        16
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#top",
+          "cullface": "up",
+          "tintindex": 0
         }
       }
     },

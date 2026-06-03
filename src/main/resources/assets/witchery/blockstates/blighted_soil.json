@@ -1,23 +1,9 @@
 {
   "multipart": [
     {
-      "apply": [
-        {
-          "model": "witchery:block/blighted_soil"
-        },
-        {
-          "model": "witchery:block/blighted_soil",
-          "y": 90
-        },
-        {
-          "model": "witchery:block/blighted_soil",
-          "y": 180
-        },
-        {
-          "model": "witchery:block/blighted_soil",
-          "y": 270
-        }
-      ]
+      "apply": {
+        "model": "witchery:block/blighted_soil"
+      }
     },
     {
       "apply": [
