@@ -207,6 +207,7 @@ public class HellhoundEntity extends Monster {
         wolf.snapTo(getX(), getY(), getZ(), getYRot(), getXRot());
         wolf.finalizeSpawn(sl, sl.getCurrentDifficultyAt(blockPosition()), EntitySpawnReason.CONVERSION, null);
         wolf.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200, 0));
+        sl.addFreshEntity(wolf); // without this the hellhound just vanishes and no wolf appears
         sl.levelEvent(null, 1017, blockPosition(), 0); // zombie-villager-cure finish effect
         discard();
     }

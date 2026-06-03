@@ -108,6 +108,7 @@ hellhound now shows a "must be weakened first" hint (and does not eat the apple)
 cure gives immediate feedback (happy-villager particles + drink sound + message). `conversionBoost`
 is now deterministic and strong near iron bars / beds (each fixture −6/tick), so a small iron-bar pen
 cures in well under a minute (bare ground still takes the source ~3 min). QA: `/effect give @e[type=witchery:hellhound] minecraft:weakness 60 0`, then right-click with a plain Golden Apple.
+- **Follow-up (2026-06-03):** in-game the cure started but the hellhound just vanished after the timer with no wolf — `convertToWolf` created and finalized the Wolf but never called `sl.addFreshEntity(wolf)`. Fixed.
 
 ### 4. Morsmordre glyph cannot be drawn — symbol recognition (in-game QA 2026-06-03) — FIXED 2026-06-03
 
@@ -120,6 +121,12 @@ Root cause was a transcription bug, not the recogniser. The source `StrokeSet` h
 right, right**. Verified via script that no spell's stroke sequence is a prefix/duplicate of another
 across the whole roster (41 sets), so the freeze-on-first-match recogniser is safe as-is.
 File: `symbol/EffectRegistry.java`.
+- **Follow-up (2026-06-03):** glyphs still wouldn't chain — "up then down" cast Expelliarmus. The
+  stroke detector (faithful to source `ItemMysticBranch.onUsingTick`) appended a stroke *every tick*
+  the cumulative move exceeded 7°, so one fast up-flick became `[0,0]`, then a down gave `[0,0,1]` =
+  Expelliarmus. Reworked `client/SymbolDrawState` to debounce: after a stroke it waits for the look
+  to settle (per-tick move < 2.5°) before arming the next, so **one flick = one stroke** and multi-
+  stroke glyphs chain (flick, pause briefly, flick…).
 
 ### Minor / parity polish (in-game QA 2026-06-03)
 

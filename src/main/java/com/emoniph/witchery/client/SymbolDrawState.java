@@ -24,11 +24,17 @@ import java.util.Arrays;
 public final class SymbolDrawState {
 
     private static final float THRESHOLD = 7.0F;
+    /** Per-tick movement below this counts as "the flick has stopped", re-arming the next stroke. */
+    private static final float SETTLE = 2.5F;
     private static final int MAX_STROKES = 15;
 
     private static boolean active;
     private static float anchorYaw;
     private static float anchorPitch;
+    private static float prevYaw;
+    private static float prevPitch;
+    /** True after a stroke until the look settles, so one flick = one stroke (and glyphs chain). */
+    private static boolean awaitingSettle;
     private static byte[] strokes = new byte[0];
     private static int lastSentId = -1;
     private static int lastSentLevel = -1;
@@ -56,13 +62,35 @@ public final class SymbolDrawState {
             return;
         }
 
+        float pitch = player.getXRot();
+        float yaw = player.getYRot();
+
+        // How much the look moved this tick — used to tell when a flick has ended.
+        float tickPitch = Math.abs(pitch - prevPitch);
+        float tickYaw = Math.abs(Mth.wrapDegrees(yaw - prevYaw));
+        boolean moving = tickPitch > SETTLE || tickYaw > SETTLE;
+        prevPitch = pitch;
+        prevYaw = yaw;
+
         // Stop appending once a full symbol matches or the stroke budget is spent.
         if (strokes.length >= MAX_STROKES || EffectRegistry.instance().contains(strokes)) {
             return;
         }
 
-        float pitchDiff = anchorPitch - player.getXRot();
-        float yawDiff = Mth.wrapDegrees(anchorYaw - player.getYRot());
+        // After a stroke, wait for the flick to stop before arming the next one. This makes one
+        // flick = exactly one stroke (a fast/large flick no longer counts as several), so the
+        // player can chain a multi-stroke glyph instead of an early short spell firing.
+        if (awaitingSettle) {
+            if (!moving) {
+                awaitingSettle = false;
+                anchorPitch = pitch;
+                anchorYaw = yaw;
+            }
+            return;
+        }
+
+        float pitchDiff = anchorPitch - pitch;
+        float yawDiff = Mth.wrapDegrees(anchorYaw - yaw);
 
         int stroke = -1;
         if (pitchDiff >= THRESHOLD) {
@@ -81,8 +109,9 @@ public final class SymbolDrawState {
 
         strokes = Arrays.copyOf(strokes, strokes.length + 1);
         strokes[strokes.length - 1] = (byte) stroke;
-        anchorYaw = player.getYRot();
-        anchorPitch = player.getXRot();
+        anchorYaw = yaw;
+        anchorPitch = pitch;
+        awaitingSettle = true;
 
         SymbolEffect effect = EffectRegistry.instance().getEffect(strokes);
         if (effect != null) {
@@ -103,6 +132,9 @@ public final class SymbolDrawState {
         strokes = new byte[0];
         anchorYaw = player.getYRot();
         anchorPitch = player.getXRot();
+        prevYaw = player.getYRot();
+        prevPitch = player.getXRot();
+        awaitingSettle = false;
         lastSentId = -1;
         lastSentLevel = -1;
     }
@@ -110,6 +142,7 @@ public final class SymbolDrawState {
     private static void reset() {
         active = false;
         strokes = new byte[0];
+        awaitingSettle = false;
         lastSentId = -1;
         lastSentLevel = -1;
     }
