@@ -259,17 +259,24 @@ Design intent:
 - Droops downward when altar power is low or empty.
 - Updates slowly or with interpolation so it feels like a living twig responding to power rather than a redstone needle.
 
+Recipe concept:
+- 2x2 inventory crafting, shapeless: `Stick` + `Arthana` -> `Dried Branch`.
+- The Arthana is returned as the crafting remainder; the stick is ritually cut/whittled into the branch.
+- Keep the recipe intentionally small and natural so the item feels like an altar-room tool made by hand, not a machine component.
+
 Implementation notes:
 - Treat as a decorative utility block, not an altar power contributor unless a separate balance pass approves it.
 - Prefer a small blockstate set such as `pose=low,mid,high` driven by server-side altar power ratio and synced to clients.
 - Keep the model wall-facing, with north/east/south/west variants and a compact outline.
 - Consider faint leaf-rustle or creak particles only for transitions; no constant noise.
 - If no altar is found, default to drooped.
+- Implement the recipe with a custom crafting serializer or remainder hook so the Arthana is never consumed.
 
 Minimum viable version:
 1. One craftable wall-mounted Dried Branch block.
-2. Three poses based on nearest altar current-power / max-power ratio.
-3. No altar bonus, no GUI, no redstone output.
+2. Inventory recipe: Stick plus Arthana, returning the Arthana.
+3. Three poses based on nearest altar current-power / max-power ratio.
+4. No altar bonus, no GUI, no redstone output.
 
 ## Recommended order after port
 
