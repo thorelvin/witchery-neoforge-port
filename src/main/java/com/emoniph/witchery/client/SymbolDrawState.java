@@ -24,17 +24,15 @@ import java.util.Arrays;
 public final class SymbolDrawState {
 
     private static final float THRESHOLD = 7.0F;
-    /** Per-tick movement below this counts as "the flick has stopped", re-arming the next stroke. */
-    private static final float SETTLE = 2.5F;
+    /** Ticks to ignore after a stroke, so one quick flick can't register as several strokes. */
+    private static final int STROKE_COOLDOWN = 4;
     private static final int MAX_STROKES = 15;
 
     private static boolean active;
     private static float anchorYaw;
     private static float anchorPitch;
-    private static float prevYaw;
-    private static float prevPitch;
-    /** True after a stroke until the look settles, so one flick = one stroke (and glyphs chain). */
-    private static boolean awaitingSettle;
+    /** Counts down after each stroke; the look anchor is re-taken when it reaches zero. */
+    private static int cooldown;
     private static byte[] strokes = new byte[0];
     private static int lastSentId = -1;
     private static int lastSentLevel = -1;
@@ -65,24 +63,18 @@ public final class SymbolDrawState {
         float pitch = player.getXRot();
         float yaw = player.getYRot();
 
-        // How much the look moved this tick — used to tell when a flick has ended.
-        float tickPitch = Math.abs(pitch - prevPitch);
-        float tickYaw = Math.abs(Mth.wrapDegrees(yaw - prevYaw));
-        boolean moving = tickPitch > SETTLE || tickYaw > SETTLE;
-        prevPitch = pitch;
-        prevYaw = yaw;
-
         // Stop appending once a full symbol matches or the stroke budget is spent.
         if (strokes.length >= MAX_STROKES || EffectRegistry.instance().contains(strokes)) {
             return;
         }
 
-        // After a stroke, wait for the flick to stop before arming the next one. This makes one
-        // flick = exactly one stroke (a fast/large flick no longer counts as several), so the
-        // player can chain a multi-stroke glyph instead of an early short spell firing.
-        if (awaitingSettle) {
-            if (!moving) {
-                awaitingSettle = false;
+        // Brief cooldown after each stroke so a single quick flick can't count several times.
+        // When it ends, re-take the anchor at the current look so detection restarts fresh — this
+        // is what lets a multi-stroke glyph chain (flick, flick, flick) instead of one fast flick
+        // firing a short spell early.
+        if (cooldown > 0) {
+            cooldown--;
+            if (cooldown == 0) {
                 anchorPitch = pitch;
                 anchorYaw = yaw;
             }
@@ -111,7 +103,7 @@ public final class SymbolDrawState {
         strokes[strokes.length - 1] = (byte) stroke;
         anchorYaw = yaw;
         anchorPitch = pitch;
-        awaitingSettle = true;
+        cooldown = STROKE_COOLDOWN;
 
         SymbolEffect effect = EffectRegistry.instance().getEffect(strokes);
         if (effect != null) {
@@ -132,9 +124,7 @@ public final class SymbolDrawState {
         strokes = new byte[0];
         anchorYaw = player.getYRot();
         anchorPitch = player.getXRot();
-        prevYaw = player.getYRot();
-        prevPitch = player.getXRot();
-        awaitingSettle = false;
+        cooldown = 0;
         lastSentId = -1;
         lastSentLevel = -1;
     }
@@ -142,7 +132,7 @@ public final class SymbolDrawState {
     private static void reset() {
         active = false;
         strokes = new byte[0];
-        awaitingSettle = false;
+        cooldown = 0;
         lastSentId = -1;
         lastSentLevel = -1;
     }
