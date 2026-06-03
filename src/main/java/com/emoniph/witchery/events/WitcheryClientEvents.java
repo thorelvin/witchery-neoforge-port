@@ -44,6 +44,12 @@ public class WitcheryClientEvents {
     }
 
     @SubscribeEvent
+    public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
+        com.emoniph.witchery.client.SymbolHud.render(event.getGuiGraphics(),
+                event.getPartialTick().getGameTimeDeltaPartialTick(false));
+    }
+
+    @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
         tryHowl(event.getEntity(), event.getHand());
     }

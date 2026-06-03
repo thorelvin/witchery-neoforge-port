@@ -4,10 +4,8 @@ import com.emoniph.witchery.item.MysticBranchItem;
 import com.emoniph.witchery.network.SpellPreparedPayload;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -15,27 +13,30 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import java.util.Arrays;
 
 /**
- * Client-side air-glyph recognition for the Mystic Branch. Run once per client tick while the
- * local player is channelling the branch: it watches the look deltas, appends strokes, and tells
- * the server which symbol has been drawn so it can be cast on release.
+ * Client-side air-glyph recognition for the Mystic Branch. Runs once per client tick while the local
+ * player channels the branch: it watches the look deltas, appends strokes, and tells the server which
+ * symbol has been drawn so it can be cast on release.
  *
- * Source parity: {@code ItemMysticBranch.onUsingTick} (1.7.10-0.24.1).
+ * <p>Detection is anchor-relative (as in {@code ItemMysticBranch.onUsingTick}, 1.7.10-0.24.1, and
+ * Witchery Resurrected): each tick the look's offset from a moving anchor is measured; once the
+ * dominant axis passes {@link #THRESHOLD} a stroke is recorded and the anchor is re-taken at the
+ * current look. Drawing a glyph is therefore a single continuous sweep — a longer sweep in one
+ * direction simply yields more strokes. {@link SymbolHud} draws the glyph live on screen so the
+ * count is always visible (this is what makes the gesture reliable).</p>
  */
 public final class SymbolDrawState {
 
-    private static final float THRESHOLD = 7.0F;
-    /** Ticks to ignore after a stroke, so one quick flick can't register as several strokes. */
-    private static final int STROKE_COOLDOWN = 4;
+    /** Degrees of look movement that commit one stroke. Also the on-screen length of a stroke. */
+    public static final float THRESHOLD = 8.0F;
     private static final int MAX_STROKES = 15;
 
     private static boolean active;
     private static float anchorYaw;
     private static float anchorPitch;
-    /** Counts down after each stroke; the look anchor is re-taken when it reaches zero. */
-    private static int cooldown;
     private static byte[] strokes = new byte[0];
     private static int lastSentId = -1;
     private static int lastSentLevel = -1;
+    private static String preparedNameKey;
 
     private SymbolDrawState() {
     }
@@ -60,39 +61,31 @@ public final class SymbolDrawState {
             return;
         }
 
-        float pitch = player.getXRot();
-        float yaw = player.getYRot();
-
-        // Stop appending once a full symbol matches or the stroke budget is spent.
+        // Once a full symbol matches, lock it in (the anchor stops moving; the HUD keeps the glyph).
         if (strokes.length >= MAX_STROKES || EffectRegistry.instance().contains(strokes)) {
             return;
         }
 
-        // Brief cooldown after each stroke so a single quick flick can't count several times.
-        // When it ends, re-take the anchor at the current look so detection restarts fresh — this
-        // is what lets a multi-stroke glyph chain (flick, flick, flick) instead of one fast flick
-        // firing a short spell early.
-        if (cooldown > 0) {
-            cooldown--;
-            if (cooldown == 0) {
-                anchorPitch = pitch;
-                anchorYaw = yaw;
-            }
-            return;
-        }
+        float pitch = player.getXRot();
+        float yaw = player.getYRot();
+        float pitchDiff = anchorPitch - pitch;                 // + = looked up
+        float yawDiff = Mth.wrapDegrees(anchorYaw - yaw);      // - = turned right, + = turned left
 
-        float pitchDiff = anchorPitch - pitch;
-        float yawDiff = Mth.wrapDegrees(anchorYaw - yaw);
-
+        // Pick the axis that moved furthest, so a clean cardinal flick is never mis-read as the
+        // other axis (the old pitch-first ordering turned diagonals into spurious up/down strokes).
         int stroke = -1;
-        if (pitchDiff >= THRESHOLD) {
-            stroke = 0; // up
-        } else if (pitchDiff <= -THRESHOLD) {
-            stroke = 1; // down
-        } else if (yawDiff <= -THRESHOLD) {
-            stroke = 2;
-        } else if (yawDiff >= THRESHOLD) {
-            stroke = 3;
+        if (Math.abs(pitchDiff) >= Math.abs(yawDiff)) {
+            if (pitchDiff >= THRESHOLD) {
+                stroke = 0; // up
+            } else if (pitchDiff <= -THRESHOLD) {
+                stroke = 1; // down
+            }
+        } else {
+            if (yawDiff <= -THRESHOLD) {
+                stroke = 2; // right
+            } else if (yawDiff >= THRESHOLD) {
+                stroke = 3; // left
+            }
         }
 
         if (stroke < 0) {
@@ -103,20 +96,43 @@ public final class SymbolDrawState {
         strokes[strokes.length - 1] = (byte) stroke;
         anchorYaw = yaw;
         anchorPitch = pitch;
-        cooldown = STROKE_COOLDOWN;
+        player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.35F, 1.7F);
 
         SymbolEffect effect = EffectRegistry.instance().getEffect(strokes);
         if (effect != null) {
             int level = EffectRegistry.instance().getLevel(strokes);
+            preparedNameKey = effect.getNameKey();
             if (effect.getEffectId() != lastSentId || level != lastSentLevel) {
                 lastSentId = effect.getEffectId();
                 lastSentLevel = level;
                 ClientPacketDistributor.sendToServer(new SpellPreparedPayload(effect.getEffectId(), level));
-                player.displayClientMessage(Component.translatable("witchery.symbol.prepared",
-                        Component.translatable(effect.getNameKey())).withStyle(ChatFormatting.LIGHT_PURPLE), true);
-                player.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 0.4F, 1.5F);
+                player.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 0.5F, 1.5F);
             }
+        } else {
+            preparedNameKey = null;
         }
+    }
+
+    // ── State exposed to the HUD ──────────────────────────────────────────────
+
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static byte[] strokesView() {
+        return strokes;
+    }
+
+    public static float anchorYaw() {
+        return anchorYaw;
+    }
+
+    public static float anchorPitch() {
+        return anchorPitch;
+    }
+
+    public static String preparedNameKey() {
+        return preparedNameKey;
     }
 
     private static void begin(LocalPlayer player) {
@@ -124,16 +140,16 @@ public final class SymbolDrawState {
         strokes = new byte[0];
         anchorYaw = player.getYRot();
         anchorPitch = player.getXRot();
-        cooldown = 0;
         lastSentId = -1;
         lastSentLevel = -1;
+        preparedNameKey = null;
     }
 
     private static void reset() {
         active = false;
         strokes = new byte[0];
-        cooldown = 0;
         lastSentId = -1;
         lastSentLevel = -1;
+        preparedNameKey = null;
     }
 }
