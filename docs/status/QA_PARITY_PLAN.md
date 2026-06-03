@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-06-02
+Last updated: 2026-06-03
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -11,6 +11,8 @@ Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and
 Blighted Soil biome-tint QA note (2026-06-03): the Blight prototype's placed soil now uses a dirt-side multipart model rather than the vanilla `grass_block_side` base. `witchery:block/blighted_soil` renders one base cube whose real top face is biome-tinted `grass_block_top`, while the side and bottom faces are vanilla Dirt; it then layers only the side grass fringe from near-flush `grass_block_side_overlay` mask faces, tightened to a 0.001-0.002 model-unit offset so the fringe hugs the dirt without z-fighting. Separate weighted `blighted_soil_overlay*` models draw the raised opaque Blight fleck mask faces sampled from the approved art. The dirt/grass base is no longer randomly rotated; only the Blight fleck overlays rotate for variety. The inventory item keeps a combined flecked model because item models do not use blockstate multipart composition. Retest Blighted Soil beside vanilla Grass Blocks in plains, savanna, swamp/mangrove, taiga, dark forest, and snowy-edge grass; the top green and circled side strip should now be vanilla-adjacent without the previous hidden bright-green side layer or raised-top dirt edge, the Blight flecks should stay visible and match Blight Fibre's purple family without overwhelming the grass, and the side should keep visible purple flecks in the dirt body without altering the vanilla grass strip.
 
 Blight Fibre carpet/vine QA note (2026-06-03): Blight Fibre now subclasses vanilla `VineBlock` for side/up vine behavior but restores a dedicated `down` face for floor carpets. Side faces keep vanilla-style hanging support from matching side faces above, the block is tagged `minecraft:climbable`, and the floor model uses a tiny raised cutout plane instead of sharing Blighted Soil's top face. Retest new heart seeding and natural spread on grass, cliffs, trunks, stone walls, and ceiling undersides; flat patches should read as carpet-like fibre without z-fighting Blighted Soil flecks, while wall/trunk patches should climb like vines and remain removable/harvestable through the existing shears-to-Blight-Ichor path.
+
+Blight Heart underside QA note (2026-06-03): embedded Blight Hearts now keep their normal witch-mote ambience and also emit vanilla crying-obsidian-style purple drip particles from the underside when the block below is no longer sturdy. Retest by digging out the block directly under a heart placed by the rite or brew; buried hearts should stay quiet from below, while unearthed hearts should visibly weep downward.
 
 Alluring Skull QA note (2026-06-02): old `BlockAlluringSkull` calls the unbreakable setter, keeps `1000.0F` blast resistance, and relies on Necromantic Stone interaction to toggle the skull on and then remove/drop it. Place floor and wall skulls, confirm ordinary survival mining does not break them, use a Necromantic Stone once to light/activate one, use it again to remove/drop the item, and verify the undead allure tick plus scale/lighting/shape still feel correct.
 

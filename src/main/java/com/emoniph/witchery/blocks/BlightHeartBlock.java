@@ -1,8 +1,10 @@
 package com.emoniph.witchery.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
@@ -60,6 +62,10 @@ public class BlightHeartBlock extends Block {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (isUndersideExposed(level, pos) && random.nextInt(3) == 0) {
+            ParticleUtils.spawnParticleBelow(level, pos, random, ParticleTypes.DRIPPING_OBSIDIAN_TEAR);
+        }
+
         if (random.nextInt(6) != 0) {
             return;
         }
@@ -68,5 +74,10 @@ public class BlightHeartBlock extends Block {
                 pos.getY() + 0.5D + random.nextDouble() * 0.5D,
                 pos.getZ() + 0.2D + random.nextDouble() * 0.6D,
                 0.0D, 0.02D, 0.0D);
+    }
+
+    private static boolean isUndersideExposed(Level level, BlockPos pos) {
+        BlockPos below = pos.below();
+        return !level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 }
