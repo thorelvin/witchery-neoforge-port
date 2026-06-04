@@ -369,9 +369,9 @@ public class WitcheryBlocks {
 
     // Decorative / Ritual
     public static final DeferredBlock<CandelabraBlock>  CANDELABRA    = registerBlock("candelabra",     CandelabraBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f, 10.0f).lightLevel(s -> 15).noOcclusion());
-    public static final DeferredBlock<ChaliceBlock>     CHALICE       = registerBlock("chalice",        ChaliceBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f).noOcclusion());
-    public static final DeferredBlock<CrystalBallBlock> CRYSTAL_BALL  = registerBlock("crystal_ball",   CrystalBallBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(2.0f).noOcclusion());
-    public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
+    public static final DeferredBlock<ChaliceBlock>     CHALICE       = registerBlock("chalice",        ChaliceBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0f, 15.0f).noOcclusion());
+    public static final DeferredBlock<CrystalBallBlock> CRYSTAL_BALL  = registerBlock("crystal_ball",   CrystalBallBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(2.0f, 10.0f).noOcclusion());
+    public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f, 5.0f).noOcclusion());
     public static final DeferredBlock<AlluringSkullBlock> ALLURING_SKULL = registerBlock("alluring_skull",
             AlluringSkullBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0f, 1000.0f).lightLevel(state -> 8).noOcclusion());
