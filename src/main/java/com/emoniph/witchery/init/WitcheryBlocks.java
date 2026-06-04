@@ -392,10 +392,10 @@ public class WitcheryBlocks {
     public static final DeferredBlock<StatueGoddessBlock> STATUE_GODDESS      = registerBlock("statue_goddess",       StatueGoddessBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
     public static final DeferredBlock<WickerBundleBlock> WICKER_BUNDLE = registerBlock("wicker_bundle",
             WickerBundleBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f, 2.5f).noOcclusion());
     public static final DeferredBlock<WickerBundleBlock> BLOODIED_WICKER_BUNDLE = registerBlock("bloodied_wicker_bundle",
             props -> new WickerBundleBlock(props, true),
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f, 2.5f).noOcclusion());
     public static final DeferredBlock<PlacedItemBlock>  PLACED_ITEM    = registerBlock("placed_item",   PlacedItemBlock::new,   BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f));
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
