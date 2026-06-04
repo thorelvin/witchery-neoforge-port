@@ -62,6 +62,11 @@ public abstract class SymbolEffect {
         return curse && knowledgeKey == null;
     }
 
+    /** A spell learned from a Demon soul has a knowledge key; {@code null} means it needs no learning. */
+    public String getKnowledgeKey() {
+        return knowledgeKey;
+    }
+
     public boolean fallsToEarth() {
         return fallsToEarth;
     }

@@ -109,6 +109,14 @@ public class MysticBranchItem extends Item {
             return true;
         }
 
+        // Demonic glyphs must be learned from a Demon soul before they will answer.
+        String knowledge = effect.getKnowledgeKey();
+        if (!creative && knowledge != null
+                && !com.emoniph.witchery.init.WitcheryAttachments.learned(player).keys.contains(knowledge)) {
+            fail(serverLevel, serverPlayer, "witchery.infuse.branch.unknownknowledge");
+            return true;
+        }
+
         int cost = effect.getChargeCost(spellLevel);
         if (!creative && data.getInfusionEnergy() < cost) {
             fail(serverLevel, serverPlayer, "witchery.infuse.branch.nocharges");

@@ -400,7 +400,7 @@ public final class EffectRegistry {
 
     /** Morsmordre — conjures a Dark Mark: a floating skull-cloud that wards mobs for 5 minutes. */
     public static final SymbolEffect MORSMORDRE = instance().add(
-            new SymbolEffectProjectile(41, "witchery.pott.morsmordre", 20, false, false, null, 0) {
+            new SymbolEffectProjectile(41, "witchery.pott.morsmordre", 20, true, false, "morsmordre", 0) {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
                     DarkMarkEntity mark = WitcheryEntities.DARK_MARK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
