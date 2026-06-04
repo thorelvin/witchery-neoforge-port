@@ -217,7 +217,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
     public static final DeferredBlock<RowanLeavesBlock> ROWAN_LEAVES = registerBlock("rowan_leaves",
             RowanLeavesBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f, 1.0f).noOcclusion().randomTicks());
     public static final DeferredBlock<SaplingBlock> ROWAN_SAPLING = registerBlock("rowan_sapling",
             props -> new SaplingBlock(ROWAN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
@@ -237,7 +237,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> ALDER_LEAVES = registerBlock("alder_leaves",
             RowanLeavesBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f, 1.0f).noOcclusion().randomTicks());
     public static final DeferredBlock<SaplingBlock> ALDER_SAPLING = registerBlock("alder_sapling",
             props -> new SaplingBlock(ALDER_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
@@ -257,7 +257,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> HAWTHORN_LEAVES = registerBlock("hawthorn_leaves",
             RowanLeavesBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f).noOcclusion().randomTicks());
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.2f, 1.0f).noOcclusion().randomTicks());
     public static final DeferredBlock<SaplingBlock> HAWTHORN_SAPLING = registerBlock("hawthorn_sapling",
             props -> new SaplingBlock(HAWTHORN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
