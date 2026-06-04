@@ -104,7 +104,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<Block> PIT_DIRT = registerSimpleBlock("pit_dirt",
             BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DIRT)
                     .mapColor(MapColor.DIRT)
-                    .strength(0.5f)
+                    .strength(0.5f, 2.5f)
                     .noCollision()
                     .noOcclusion()
                     .isRedstoneConductor(NEVER)
@@ -113,7 +113,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<Block> PIT_GRASS = registerSimpleBlock("pit_grass",
             BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
                     .mapColor(MapColor.GRASS)
-                    .strength(0.6f)
+                    .strength(0.6f, 3.0f)
                     .noCollision()
                     .noOcclusion()
                     .isRedstoneConductor(NEVER)
