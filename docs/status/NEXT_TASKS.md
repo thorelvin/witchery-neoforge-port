@@ -6,6 +6,8 @@
 
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
+Current local delta (2026-06-04): Candelabra toughness parity restored. Original 1.7.10 `BlockCandelabra` only calls `setHardness(2.0F)`, which also raises blast resistance to `10.0F` through the old Block setter. The Candelabra registration now uses source hardness and resistance again without changing full light output, support-required placement/drop behavior, five-point flame/smoke ambience, footprint, item special renderer, or altar contribution behavior. Fresh QA: compare survival break feel against the old 2.0F target, try ordinary blast cleanup near a Candelabra, and confirm support-loss drops plus flame/smoke particles still behave as before.
+
 Current local delta (2026-06-04): Poppet Shelf toughness parity restored. Original 1.7.10 `BlockPoppetShelf` only calls `setHardness(2.5F)`, which also raises blast resistance to `12.5F` through the old Block setter. The Poppet Shelf registration now uses source hardness and resistance again without changing restored storage, bound-poppet chunk loading, comparator behavior, facing, footprint, top/item rendering, or client slot sync. Fresh QA: compare survival break feel against the old 2.5F target, try ordinary blast cleanup near a shelf, and confirm filled-shelf drops, comparator updates, and shelf poppet rendering still behave as before.
 
 Current local delta (2026-06-04): Brazier toughness parity restored. Original 1.7.10 `BlockBrazier` only calls `setHardness(3.5F)`, which also raises blast resistance to `17.5F` through the old Block setter. The Brazier registration now uses source hardness and resistance again without changing its restored ingredient storage, ignition, redstone/comparator behavior, player-break drops, water-bottle reset, footprint, renderer, or sided automation. Fresh QA: compare survival break feel against the old 3.5F target, try ordinary blast cleanup near a Brazier, and confirm idle/burning break drops plus water-bottle reset still behave as before.
@@ -144,6 +146,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | Item | Issue | Effort |
 |---|---|---|
 | `altar` | Original 1.7 cube texture/model rollback is in; verify 2x3 connected top/side orientation plus item/drop presentation | Low |
+| `candelabra` | Source toughness restored; verify break/blast feel, support-loss drops, flame/smoke particles, and final model/light feel in-game | Low |
 | `distillery` | Retest machine GUI after explicit source-region blit fix | Low |
 | `spinning_wheel` | Retest machine GUI after explicit source-region blit fix | Low |
 | `witches_oven` | Retest machine GUI after explicit source-region blit fix, and confirm placed ovens now face the player after the custom-renderer yaw fix | Low |
