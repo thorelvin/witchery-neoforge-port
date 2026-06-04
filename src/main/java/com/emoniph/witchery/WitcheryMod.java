@@ -56,6 +56,7 @@ public class WitcheryMod {
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
+        modEventBus.addListener(com.emoniph.witchery.datagen.WitcheryDataGenerators::onGatherData);
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             modEventBus.addListener(WitcheryClient::registerRangeSelectItemModelProperties);
             modEventBus.addListener(WitcheryClient::registerLayerDefinitions);

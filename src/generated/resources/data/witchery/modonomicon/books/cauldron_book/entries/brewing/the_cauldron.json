@@ -1,0 +1,108 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brewing",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_bottle"
+  },
+  "name": "Brewing in the Cauldron",
+  "pages": [
+    {
+      "type": "modonomicon:image",
+      "anchor": "",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "witchery:textures/patchouli/brewing.png"
+      ],
+      "text": "[#](53341a)The heart of every working — a cauldron of water over a steady fire.[#]()",
+      "title": "",
+      "use_legacy_rendering": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A heated cauldron full of water is a patient thing. It takes whatever you give it, in the order you give it, and remembers.[#]()",
+      "title": "Brewing in the Cauldron",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time. When the brew suits you, dip an empty bottle and draw it off.[#]()",
+      "title": "",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Some things you add are not the brew, but a hand laid upon it. **Glowstone** makes the next working stronger; **redstone** makes it last.[#]()",
+      "title": "A Hand Upon the Brew",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again. Lay these *before* the reagent they shape — the cauldron remembers only forward.[#]()",
+      "title": "",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's tear for mending, wormwood for unseeing.[#]()",
+      "title": "The Gift of the Reagent",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby. **Dragon's breath** leaves a slow, drifting fog. With neither, the draught is yours alone.[#]()",
+      "title": "",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Eight reagents at most before the water grows too muddled. Pour off what you have made, rinse with fresh water, and begin the next working.[#]()",
+      "title": "Knowing When to Stop",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

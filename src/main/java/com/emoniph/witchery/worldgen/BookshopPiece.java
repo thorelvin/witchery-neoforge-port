@@ -161,7 +161,7 @@ public class BookshopPiece extends StructurePiece {
         return switch (random.nextInt(6)) {
             case 0, 1 -> new ItemStack(Items.BOOK);
             case 2, 3, 4 -> new ItemStack(WitcheryItems.TORN_PAGE.get());
-            default -> new ItemStack(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get());
+            default -> new ItemStack(WitcheryItems.VAMPIRE_BOOK.get());
         };
     }
 

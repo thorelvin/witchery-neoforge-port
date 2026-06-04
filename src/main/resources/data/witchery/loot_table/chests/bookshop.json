@@ -69,42 +69,42 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "witchery:distilling_book",
+          "name": "witchery:book_distilling",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:circle_magic_book",
+          "name": "witchery:book_circle_magic",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:herbology_book",
+          "name": "witchery:book_herbology",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:collecting_fumes_book",
+          "name": "witchery:book_oven",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:brews_and_infusions_book",
+          "name": "witchery:book_infusions",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:symbology_book",
+          "name": "witchery:book_wands",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:conjuration_and_fetishes_book",
+          "name": "witchery:book_burning",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:witches_brews_book",
+          "name": "witchery:cauldron_book",
           "weight": 1
         }
       ]

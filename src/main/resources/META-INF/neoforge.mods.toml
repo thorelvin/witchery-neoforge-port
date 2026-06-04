@@ -97,10 +97,10 @@ Adds witchcraft, brews, rituals, familiars, vampires, werewolves, and more.
     ordering="NONE"
     side="CLIENT"
 
-# Optional Patchouli dependency for the Witches' Primer guidebook
+# Modonomicon backs the Witches' Primer guidebook (Book of Shadows).
 [[dependencies.${mod_id}]]
-    modId="patchouli"
-    type="optional"
+    modId="modonomicon"
+    type="required"
     versionRange="*"
     ordering="AFTER"
     side="BOTH"

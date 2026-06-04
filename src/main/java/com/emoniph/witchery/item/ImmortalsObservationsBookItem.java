@@ -2,7 +2,6 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
-import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.ChatFormatting;
@@ -45,10 +44,15 @@ public class ImmortalsObservationsBookItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new OpenObservationsBookPayload(getVisiblePages(stack)));
+        // Client: open the native Modonomicon "Observations of an Immortal" book (datapack-synced).
+        if (level.isClientSide()) {
+            com.emoniph.witchery.client.WitcheryBookOpener.open(com.emoniph.witchery.book.WitcheryBooks.OBSERVATIONS);
+            return InteractionResult.SUCCESS;
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(this));
-            // Unlocks the next vampire level cap when a vampire reads this book
+            // Unlocks the next vampire level cap when a vampire reads this book (preserved from the
+            // old level-gated reader; Torn Pages still raise the research level that drives the cap).
             var data = WitcheryAttachments.get(serverPlayer);
             if (data.isVampire()) {
                 int newCap = getResearchLevel(stack) + 1;
@@ -58,7 +62,7 @@ public class ImmortalsObservationsBookItem extends Item {
                 }
             }
         }
-        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
@@ -67,8 +71,6 @@ public class ImmortalsObservationsBookItem extends Item {
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.accept(Component.translatable(tooltipKey)
                 .withStyle(ChatFormatting.GRAY));
-        tooltip.accept(Component.translatable("item.witchery.immortals_observations_book.pages",
-                getVisiblePages(stack), TOTAL_PAGES).withStyle(ChatFormatting.DARK_PURPLE));
     }
 
     public static boolean canAddTornPage(ItemStack stack) {
@@ -76,8 +78,7 @@ public class ImmortalsObservationsBookItem extends Item {
     }
 
     public static boolean isObservationsBook(ItemStack stack) {
-        return stack.is(WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get())
-                || stack.is(WitcheryItems.VAMPIRE_BOOK.get());
+        return stack.is(WitcheryItems.VAMPIRE_BOOK.get());
     }
 
     public static boolean addTornPage(ItemStack stack) {

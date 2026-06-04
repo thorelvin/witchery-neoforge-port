@@ -47,7 +47,9 @@ neoForge {
         }
 
         data {
-            data()
+            // NeoForge 21.11 / MDG split GatherDataEvent into clientData + serverData. The Witchery
+            // datagen (Modonomicon book) registers on GatherDataEvent.Client, so it runs here.
+            clientData()
             programArguments.addAll '--mod', project.mod_id,
                     '--all',
                     '--output', file('src/generated/resources/').absolutePath,
@@ -72,8 +74,24 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+repositories {
+    // Modonomicon (in-game guidebook library) is published to klikli-dev's Cloudsmith maven.
+    maven {
+        name = 'Klikli Cloudsmith'
+        url = 'https://dl.cloudsmith.io/public/klikli-dev/mods/maven/'
+    }
+}
+
 dependencies {
-    // Patchouli — disabled until a 1.21.11 build is available
+    // Modonomicon — backs the Witches' Primer guidebook. Compile-time (datagen + open-book API)
+    // and runtime (hard dependency). transitive=false: it only needs NeoForge, already on the
+    // classpath. Coordinate is assembled from minecraft_version + modonomicon_version.
+    implementation("com.klikli_dev:modonomicon-${minecraft_version}-neoforge:${modonomicon_version}") {
+        transitive = false
+    }
+
+    // Patchouli — superseded by Modonomicon; left here for reference. The legacy
+    // assets/witchery/patchouli_books/ content is kept until the Modonomicon migration is verified.
     // compileOnly "vazkii.patchouli:Patchouli:1.21.11-NEOFORGE:api"
     // localRuntime "vazkii.patchouli:Patchouli:1.21.11-NEOFORGE"
 

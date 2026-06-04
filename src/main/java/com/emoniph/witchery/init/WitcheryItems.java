@@ -263,14 +263,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> ROWAN_STAIRS         = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_STAIRS);
     public static final DeferredItem<BlockItem> ROWAN_SLAB           = ITEMS.registerSimpleBlockItem(WitcheryBlocks.ROWAN_SLAB);
     public static final DeferredItem<Item>      WITCHES_PRIMER       = ITEMS.register("witches_primer", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      DISTILLING_BOOK      = ITEMS.register("distilling_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      CIRCLE_MAGIC_BOOK    = ITEMS.register("circle_magic_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      HERBOLOGY_BOOK       = ITEMS.register("herbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      COLLECTING_FUMES_BOOK = ITEMS.register("collecting_fumes_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BREWS_AND_INFUSIONS_BOOK = ITEMS.register("brews_and_infusions_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      SYMBOLOGY_BOOK       = ITEMS.register("symbology_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      CONJURATION_AND_FETISHES_BOOK = ITEMS.register("conjuration_and_fetishes_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      WITCHES_BREWS_BOOK   = ITEMS.register("witches_brews_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    // Resurrected duplicate guide-book ids removed 2026-06-04 (kept the source-faithful book_* ids
+    // below; their recipes/bookshop loot were migrated onto the book_* / cauldron_book ids).
     public static final DeferredItem<Item>      BOOK_OVEN            = ITEMS.register("book_oven", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_DISTILLING      = ITEMS.register("book_distilling", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_CIRCLE_MAGIC    = ITEMS.register("book_circle_magic", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
@@ -278,7 +272,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      BOOK_HERBOLOGY       = ITEMS.register("book_herbology", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_WANDS           = ITEMS.register("book_wands", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      BOOK_BURNING         = ITEMS.register("book_burning", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip"));
+    public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip", com.emoniph.witchery.book.WitcheryBooks.CAULDRON));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
@@ -687,8 +681,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> GLASS_GOBLET_FULL  = ITEMS.register("glass_goblet_full", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
     public static final DeferredItem<Item> FULL_GLASS_GOBLET  = ITEMS.register("full_glass_goblet", id -> new com.emoniph.witchery.item.GlassGobletItem(itemProps(id), true));
     public static final DeferredItem<Item> TORN_PAGE          = ITEMS.registerSimpleItem("torn_page");
-    public static final DeferredItem<Item> IMMORTALS_OBSERVATIONS_BOOK = ITEMS.register("immortals_observations_book",
-            id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1)));
+    // immortals_observations_book duplicate removed 2026-06-04; vampire_book (old `vbook`) is the
+    // single source-faithful "Observations of an Immortal" item.
     public static final DeferredItem<Item> VAMPIRE_BOOK = ITEMS.register("vampire_book",
             id -> new com.emoniph.witchery.item.ImmortalsObservationsBookItem(itemProps(id).stacksTo(1),
                     "item.witchery.vampire_book.tip"));

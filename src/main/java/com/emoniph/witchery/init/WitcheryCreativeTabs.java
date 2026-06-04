@@ -45,14 +45,6 @@ public class WitcheryCreativeTabs {
     private static void addGuide(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.WITCHES_PRIMER.get(),
-                WitcheryItems.DISTILLING_BOOK.get(),
-                WitcheryItems.CIRCLE_MAGIC_BOOK.get(),
-                WitcheryItems.HERBOLOGY_BOOK.get(),
-                WitcheryItems.COLLECTING_FUMES_BOOK.get(),
-                WitcheryItems.BREWS_AND_INFUSIONS_BOOK.get(),
-                WitcheryItems.SYMBOLOGY_BOOK.get(),
-                WitcheryItems.CONJURATION_AND_FETISHES_BOOK.get(),
-                WitcheryItems.WITCHES_BREWS_BOOK.get(),
                 WitcheryItems.BOOK_OVEN.get(),
                 WitcheryItems.BOOK_DISTILLING.get(),
                 WitcheryItems.BOOK_CIRCLE_MAGIC.get(),
@@ -304,7 +296,6 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SPECTRAL_STONE.get(),
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
-                WitcheryItems.IMMORTALS_OBSERVATIONS_BOOK.get(),
                 WitcheryItems.VAMPIRE_BOOK.get());
         output.accept(vampireBookStack(9));
     }

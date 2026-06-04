@@ -9,6 +9,53 @@ Current target:
 
 ---
 
+## 2026-06-04 Modonomicon guidebook — Patchouli → Modonomicon migration (Phase 1)
+
+Began replacing the (dead) Patchouli "Witches' Primer" with a native **Modonomicon** book.
+Patchouli has no 1.21.11 build, so the old `assets/witchery/patchouli_books/witches_primer`
+book never opened in-game; `WitchesPrimerItem` only printed a "patchouli_missing" message.
+
+Decisions: Cloudsmith maven dependency; keep the legacy Patchouli JSON in parallel as the
+conversion source (delete in a later phase); Phase 1 = minimal one-category/one-entry book.
+
+Key facts + gotchas (NeoForge 21.11.42 / MDG 2.0.141 / Modonomicon 1.121.0):
+- **Dependency**: repo `https://dl.cloudsmith.io/public/klikli-dev/mods/maven/`, coord
+  `com.klikli_dev:modonomicon-${minecraft_version}-neoforge:${modonomicon_version}` with
+  `{ transitive = false }`. Use plain `implementation` (compile API + runtime mod). MIT-licensed.
+- **GatherDataEvent is split** in 21.11: `GatherDataEvent.Client` (assets) and `.Server` (data).
+  The old combined `data()` run type is GONE — MDG run types are now
+  `[client, clientData, serverData, gameTestServer, server, junit]`. The `data {}` run block in
+  `build.gradle` must call `clientData()` (not `data()`), else `prepareDataRun` fails with
+  "Trying to prepare unknown run: data". Task name stays `runData` (matches the block name).
+- **Modonomicon registers books on `GatherDataEvent.Client`** (not Server) even though book JSON
+  lands in `data/<modid>/modonomicon/books/...` — confirmed by decompiling its own
+  `DataGenerators`. So our `WitcheryDataGenerators.onGatherData(GatherDataEvent.Client)` runs under
+  `runData`/`clientData`.
+- **Datagen API** lives in `com.klikli_dev.modonomicon.api.datagen` (providers) and
+  `...api.datagen.book[.page]` (models). Low-level path: implement `BookSubProvider` (functional:
+  `generate(BiConsumer<Identifier,BookModel>, HolderLookup.Provider)`), build with
+  `BookModel.create(id, nameKey)` / `BookCategoryModel.create` / `BookEntryModel.create` / page
+  models (`BookTextPageModel`, `BookSpotlightPageModel`, etc.), register via
+  `NeoBookProvider.of(event, subProviders...)` → `generator.addProvider(true, provider)`.
+- **Page types map 1:1** from the old book: patchouli text/spotlight/crafting/image/entity →
+  Modonomicon `BookTextPageModel`/`BookSpotlightPageModel`/`BookCraftingRecipePageModel`/
+  `BookImagePageModel`/`BookEntityPageModel`. No custom page types needed for current content.
+- **Text format is Markdown**, not Patchouli `$()`. A converter ($()→Markdown) is Phase 2.
+- **Lang collision avoidance**: Modonomicon's high-level `SingleBookSubProvider`/`EntryProvider`
+  auto-generate lang into a `LanguageProviderCache` that an `AbstractModonomiconLanguageProvider`
+  then writes to `assets/<modid>/lang/en_us.json` — which would COLLIDE with the hand-maintained
+  `en_us.json`. Phase 1 sidesteps this entirely: page text is authored as literal `Component`s
+  (`withText(Component.literal(...))`, rendered verbatim, no key), and book/category/entry names
+  reuse EXISTING `witchery.book.*` keys (names are resolved as translation keys). Establishing the
+  real lang strategy is a Phase-3 task.
+- **Opening the book**: client-only `BookGuiManager.get().openBook(BookAddress.defaultFor(bookId))`.
+  Book data is datapack-synced, so no server round-trip — open directly on the logical client behind
+  a `level.isClientSide()` guard, from a client-only class (`WitchesPrimerScreenOpener`) so the GUI
+  types never load on a dedicated server.
+
+Verified: `compileJava`, `runData` (writes book/category/entry JSON), and `build` (incl. tests) all
+green. In-game open is QA-pending (needs a client launch).
+
 ## 2026-06-03 Headless unit tests (ModDevGradle unitTest)
 
 You can verify game-registry-dependent logic WITHOUT launching the client/server. The project
