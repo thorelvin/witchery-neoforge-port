@@ -141,7 +141,7 @@ public class WitcheryBlocks {
             props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanDoorBlock> ROWAN_DOOR = registerBlock("rowan_door",
-            props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f).noOcclusion()),
+            props -> new RowanDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 25.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
 
     public static final DeferredBlock<StockadeBlock> STOCKADE = registerBlock("stockade",
@@ -233,7 +233,7 @@ public class WitcheryBlocks {
             props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<AlderDoorBlock> ALDER_DOOR = registerBlock("alder_door",
-            props -> new AlderDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
+            props -> new AlderDoorBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f, 15.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RowanLeavesBlock> ALDER_LEAVES = registerBlock("alder_leaves",
             RowanLeavesBlock::new,
