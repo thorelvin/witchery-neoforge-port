@@ -281,7 +281,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<WolfsbaneCropBlock> WOLFSBANE_CROP  = registerBlock("wolfsbane_crop", WolfsbaneCropBlock::new, () -> cropProps());
     public static final DeferredBlock<GarlicGarlandBlock> GARLIC_GARLAND = registerBlock("garlic_garland",
             GarlicGarlandBlock::new, () -> BlockBehaviour.Properties.of().sound(net.minecraft.world.level.block.SoundType.GRASS)
-                    .noOcclusion().noCollision().strength(0.2f));
+                    .noOcclusion().noCollision().strength(0.2f, 1.0f));
 
     // Spirit World plants
     public static final DeferredBlock<CottonBlock> WISPY_COTTON = registerBlock("wispy_cotton",
