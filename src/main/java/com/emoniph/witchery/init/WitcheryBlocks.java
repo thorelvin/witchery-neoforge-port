@@ -442,7 +442,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision().instabreak().mapColor(MapColor.COLOR_RED));
     public static final DeferredBlock<CritterSnareBlock> CRITTER_SNARE = registerBlock("critter_snare",
             CritterSnareBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.5f).noOcclusion().noCollision());
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<BeartrapBlock> BEARTRAP = registerBlock("beartrap",
             BeartrapBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 10.0f).noOcclusion().noCollision());
