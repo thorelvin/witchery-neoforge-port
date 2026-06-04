@@ -359,7 +359,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<FumeFunnelBlock>  FILTERED_FUME_FUNNEL = registerBlock("filtered_fume_funnel",
             props -> new FumeFunnelBlock(props, true),
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f, 17.5f).noOcclusion());
-    public static final DeferredBlock<BrazierBlock>     BRAZIER       = registerBlock("brazier",        BrazierBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).noOcclusion());
+    public static final DeferredBlock<BrazierBlock>     BRAZIER       = registerBlock("brazier",        BrazierBlock::new,      BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f, 17.5f).noOcclusion());
 
     // Storage / Containers
     public static final DeferredBlock<PoppetShelfBlock> POPPET_SHELF  = registerBlock("poppet_shelf",   PoppetShelfBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f).noOcclusion());
