@@ -382,10 +382,10 @@ public class WitcheryBlocks {
     // floor/wall placed, BESR-rendered (RenderShape.INVISIBLE).
     public static final DeferredBlock<WolfHeadBlock> WOLF_HEAD = registerBlock("wolf_head",
             WolfHeadBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).sound(SoundType.WOOD).strength(0.0f).noOcclusion());
     public static final DeferredBlock<HellhoundHeadBlock> HELLHOUND_HEAD = registerBlock("hellhound_head",
             HellhoundHeadBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.WOOD).strength(0.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_SCARECROW      = registerBlock("fetish_scarecrow",     FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_TRENT_EFFIGY   = registerBlock("fetish_trent_effigy",  FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_WITCHS_LADDER  = registerBlock("fetish_witchs_ladder", FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());

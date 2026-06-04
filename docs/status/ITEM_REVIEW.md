@@ -274,7 +274,7 @@ These 10 items are now registered through `WitcheryItems.LEGACY_PLACEHOLDER_ITEM
 
 The roster covers the remaining source/wiki/decompiled IDs plus exact 1.12 Resurrected item registry aliases from the old item init classes. The icon/model passes point the remaining entries at non-shared source/wiki-backed item models or clear alias models. They intentionally have no recipes, custom classes, block behavior, equipment behavior, fluid handling, rite integration, or alias-remap decisions yet; each row below is a TODO marker rather than a parity claim.
 
-> **Live inert placeholders remaining: 0 — `LEGACY_PLACEHOLDER_ITEMS` is now empty.** The old "107 placeholders" figure was always a count of this entire review roster (most already promoted), NOT the live registry. The final set was resolved as follows: `wolf_head` and `hellhound_head` are now **real mounted-head blocks** (`WolfHeadBlock`/`HellhoundHeadBlock` + `WolfHeadBlockEntity` + BESR), ported from 1.7.10 `BlockWolfHead`. `brew_bottle` / `splash_brew_bottle` / `lingering_brew_bottle` were **removed** (Resurrected generic NBT custom-brew containers; the port uses individual `brew_of_*` items instead). `trapped_plant` was **removed** (invented ID with no source item). The four `brew_of_soul_*` were earlier removed as duplicates of the `*_demon_soul` ingredients.
+> **Live inert placeholders remaining: 0 — `LEGACY_PLACEHOLDER_ITEMS` is now empty.** The old "107 placeholders" figure was always a count of this entire review roster (most already promoted), NOT the live registry. The final set was resolved as follows: `wolf_head` and `hellhound_head` are now **real mounted-head blocks** (`WolfHeadBlock`/`HellhoundHeadBlock` + `WolfHeadBlockEntity` + BESR), ported from 1.7.10 `BlockWolfHead` and now using that source block's default `0.0F` toughness profile. `brew_bottle` / `splash_brew_bottle` / `lingering_brew_bottle` were **removed** (Resurrected generic NBT custom-brew containers; the port uses individual `brew_of_*` items instead). `trapped_plant` was **removed** (invented ID with no source item). The four `brew_of_soul_*` were earlier removed as duplicates of the `*_demon_soul` ingredients.
 
 Promoted out of the placeholder roster:
 
@@ -349,10 +349,10 @@ Merged parity-scan TODO notes for promoted groups and remaining placeholders:
 
 | Group | Placeholder item IDs |
 |---|---|
-| Bolts, weapons, and utility tools | `witchery:hellhound_head`, `witchery:wolf_head` |
-| Plants and custom-brew derivatives | `witchery:trapped_plant` |
-| Soul brews | `witchery:brew_of_soul_hunger`, `witchery:brew_of_soul_anguish`, `witchery:brew_of_soul_fear`, `witchery:brew_of_soul_torment` |
-| Exact Resurrected general/tool aliases | `witchery:brew_bottle`, `witchery:splash_brew_bottle`, `witchery:lingering_brew_bottle` |
+| Bolts, weapons, and utility tools | None currently listed |
+| Plants and custom-brew derivatives | None currently listed |
+| Soul brews | None currently listed |
+| Exact Resurrected general/tool aliases | None currently listed |
 | Exact Resurrected equipment aliases | None currently listed; the Hunter/silvered/Dawn alias family was promoted in the current pass. |
 
 Visual note: the Resurrected brew alias models that still referenced legacy `items/potion_bottle_splash` or `items/potion_bottle_drinkable` now use modern `minecraft:item/splash_potion` or `minecraft:item/potion` bottle layers, covering the Vines/Webs/Thorns through Sleeping brew alias set. The four `brew_of_soul_*` placeholders layer the source `ingredient.brew_soul_*` art under the vanilla glass potion bottle overlay, while the promoted Hunger/Anguish/Fear/Torment Demon Soul aliases use the bare source soul art as normal ingredients.
