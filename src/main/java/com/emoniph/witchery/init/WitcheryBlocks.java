@@ -90,7 +90,8 @@ public class WitcheryBlocks {
 
     private static BlockBehaviour.Properties bloodedWoolProperties() {
         return BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WHITE_WOOL)
-                .mapColor(MapColor.COLOR_RED);
+                .mapColor(MapColor.COLOR_RED)
+                .strength(0.8f, 4.0f);
     }
 
     // Wood & Rowan family

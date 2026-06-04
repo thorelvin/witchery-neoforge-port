@@ -84,7 +84,7 @@ Mechanical parity is not enough if the in-game book or player-facing guidance st
 Use this order when choosing book/completeness work instead of another renderer or rite patch:
 
 1. Equipment and minor completeness next.
-   Vampire clothing now has first-pass recipe/armor/acquisition coverage, source `bloodedwool` acquisition/smelting and level-4/Blood-Power gate parity, exact Resurrected clothing alias promotion, drink-boost/mesmerise/lethal-fire set-bonus hooks, and source-style set-bonus tooltips, so the remaining equipment gap is polish-focused: full old ability-selection/timing/paralysis parity, in-game armor/fire QA, and armor model polish.
+   Vampire clothing now has first-pass recipe/armor/acquisition coverage, source `bloodedwool` acquisition/smelting/toughness and level-4/Blood-Power gate parity, exact Resurrected clothing alias promotion, drink-boost/mesmerise/lethal-fire set-bonus hooks, and source-style set-bonus tooltips, so the remaining equipment gap is polish-focused: full old ability-selection/timing/paralysis parity, in-game break/blast/armor/fire QA, and armor model polish.
 
 ## Highest-priority structural fixes
 
