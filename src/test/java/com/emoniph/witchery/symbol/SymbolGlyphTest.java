@@ -57,6 +57,11 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.imperio",     1, 2, 1, 1, 1, 1);        // R D D D D
         assertGlyph("witchery.pott.avadakedavra", 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2);
         assertGlyph("witchery.pott.protego",     1, 1, 1, 0, 0);              // D D U U
+        // Higher-level variants (bigger effect).
+        assertGlyph("witchery.pott.aguamenti",    2, 0, 0, 0, 2, 2, 1, 1);
+        assertGlyph("witchery.pott.defodio",      3, 0, 0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2);
+        assertGlyph("witchery.pott.ennervate",    3, 0, 3, 3, 3, 0, 2, 2, 2, 3, 3, 3, 0, 2, 2, 2);
+        assertGlyph("witchery.pott.caveinimicum", 2, 0, 3, 3, 0, 0, 0, 2, 2);
     }
 
     @Test

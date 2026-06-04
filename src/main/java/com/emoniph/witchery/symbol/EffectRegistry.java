@@ -427,8 +427,8 @@ public final class EffectRegistry {
             new SymbolEffectProjectile(2, "witchery.pott.aguamenti") {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    if (level.dimension() == net.minecraft.world.level.Level.NETHER) {
-                        return;
+                    if (level.dimension() == net.minecraft.world.level.Level.NETHER && spell.getEffectLevel() < 3) {
+                        return; // only the strongest casting holds water in the Nether
                     }
                     BlockPos pos = hit instanceof BlockHitResult bhr ? faceAdjacent(bhr)
                             : (hit instanceof EntityHitResult ehr ? ehr.getEntity().blockPosition() : null);
@@ -437,7 +437,9 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0x4C7BFF).setSize(0.5F),
-            new StrokeSet(1, 0, 0, 2, 2, 1));
+            new StrokeSet(1, 0, 0, 2, 2, 1),
+            new StrokeSet(2, 0, 0, 0, 2, 2, 1, 1),
+            new StrokeSet(3, 0, 0, 0, 0, 2, 2, 1, 1, 1));
 
     /** Alohomora — force a door open, even a locked Rowan door. */
     public static final SymbolEffect ALOHOMORA = instance().add(
@@ -460,31 +462,41 @@ public final class EffectRegistry {
             new SymbolEffectProjectile(10, "witchery.pott.defodio", 3, false, false, null, 0) {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    if (hit instanceof BlockHitResult bhr) {
-                        BlockPos pos = bhr.getBlockPos();
-                        BlockState state = level.getBlockState(pos);
-                        if (isDiggable(state) && state.getDestroySpeed(level, pos) >= 0.0F) {
+                    if (!(hit instanceof BlockHitResult bhr)) {
+                        return;
+                    }
+                    int rad = spell.getEffectLevel() - 1; // 0 / 1 / 2 → single, 3×3×3, 5×5×5
+                    BlockPos center = bhr.getBlockPos();
+                    for (BlockPos p : BlockPos.betweenClosed(center.offset(-rad, -rad, -rad), center.offset(rad, rad, rad))) {
+                        BlockState state = level.getBlockState(p);
+                        if (isDiggable(state) && state.getDestroySpeed(level, p) >= 0.0F) {
+                            BlockPos pos = p.immutable();
                             Block.dropResources(state, level, pos);
                             level.removeBlock(pos, false);
                         }
                     }
                 }
             }.setColor(0x3D2A1C).setSize(2.5F),
-            new StrokeSet(1, 0, 0, 3, 1));
+            new StrokeSet(1, 0, 0, 3, 1),
+            new StrokeSet(2, 0, 0, 0, 3, 3, 1, 1, 2),
+            new StrokeSet(3, 0, 0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2));
 
     /** Ennervate — strip Slowness, Weakness and Nausea from the struck creature. */
     public static final SymbolEffect ENNERVATE = instance().add(
             new SymbolEffectProjectile(12, "witchery.pott.ennervate", 1, false, true, null, 0) {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    applyEntityEffect(level, caster, hit, spell.position(), 0.0, (l, c, t) -> {
+                    double radius = spell.getEffectLevel() <= 1 ? 0.0 : (spell.getEffectLevel() == 2 ? 2.0 : 4.0);
+                    applyEntityEffect(level, caster, hit, spell.position(), radius, (l, c, t) -> {
                         t.removeEffect(MobEffects.SLOWNESS);
                         t.removeEffect(MobEffects.WEAKNESS);
                         t.removeEffect(MobEffects.NAUSEA);
                     });
                 }
             }.setColor(0xFF18BB).setSize(1.5F),
-            new StrokeSet(1, 0, 3, 0, 2, 3, 0, 2));
+            new StrokeSet(1, 0, 3, 0, 2, 3, 0, 2),
+            new StrokeSet(2, 0, 3, 3, 0, 2, 2, 3, 3, 0, 2, 2),
+            new StrokeSet(3, 0, 3, 3, 3, 0, 2, 2, 2, 3, 3, 3, 0, 2, 2, 2));
 
     /** Attraho — drag nearby creatures toward the caster. */
     public static final SymbolEffect ATTRAHO = instance().add(
@@ -531,7 +543,9 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0x8A8A8A).setSize(2.0F),
-            new StrokeSet(1, 0, 3, 0, 0, 2));
+            new StrokeSet(1, 0, 3, 0, 0, 2),
+            new StrokeSet(2, 0, 3, 3, 0, 0, 0, 2, 2),
+            new StrokeSet(3, 0, 3, 3, 3, 0, 0, 0, 0, 2, 2, 2));
 
     /** Meteolojinx Recanto — clear the rain (very costly). */
     public static final SymbolEffect METEOLOJINX_RECANTO = instance().add(

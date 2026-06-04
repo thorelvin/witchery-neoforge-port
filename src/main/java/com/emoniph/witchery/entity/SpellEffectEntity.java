@@ -68,6 +68,31 @@ public class SpellEffectEntity extends ThrowableProjectile {
     }
 
     @Override
+    public boolean isPickable() {
+        return true; // so a player can swat it out of the air to deflect it
+    }
+
+    /**
+     * Deflect — a player who swings the Mystic Branch at the flying orb sends it back along their
+     * own look direction, and it becomes theirs (it will now resolve on whatever they aim it at).
+     * Source parity: {@code EntitySpellEffect.attackEntityFrom} (1.7.10-0.24.1). Cave Inimicum
+     * (effect 5) cannot be deflected.
+     */
+    @Override
+    public boolean hurtServer(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (effectId != 5 && source.getEntity() instanceof net.minecraft.world.entity.player.Player player
+                && player.getMainHandItem().getItem() instanceof com.emoniph.witchery.item.MysticBranchItem) {
+            net.minecraft.world.phys.Vec3 look = player.getLookAngle();
+            setDeltaMovement(look.scale(1.2));
+            setOwner(player);
+            level.playSound(null, blockPosition(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
+                    net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 0.8F);
+            return true;
+        }
+        return super.hurtServer(level, source, amount);
+    }
+
+    @Override
     protected void onHit(HitResult result) {
         if (level().isClientSide() || !(level() instanceof ServerLevel serverLevel) || isRemoved()) {
             return;
