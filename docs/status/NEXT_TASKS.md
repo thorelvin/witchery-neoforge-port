@@ -6,6 +6,8 @@
 
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
+Current local delta (2026-06-04): Grassper default toughness parity restored. Original 1.7.10 `BlockGrassper` never calls `setHardness`, and its `BlockBaseContainer` parent does not set hardness or blast resistance, so the block keeps the old default `0.0F` profile. The Grassper registration now uses that source default toughness without changing no-collision/no-occlusion, the one-slot stash, comparator output, source removal drops, facing-aware model, or held-item cup render. Fresh QA: compare survival break feel against the old instant/default profile, try ordinary blast cleanup, and confirm filled Grasspers still drop the held stack exactly once through right-click, break, replacement, and explosion paths.
+
 Current local delta (2026-06-04): Demon Heart toughness parity restored. Original 1.7.10 `BlockDemonHeart` calls `setHardness(1.0F)`, which also implies `5.0F` blast resistance through the old Block setter. The Demon Heart registration now uses that source hardness/resistance pair without changing the custom model, no-cull face-fill work, low light, facing, flame/smoke ambience, heartbeat pulse, compact footprint, or Blight prototype's separate Blight Heart behavior. Fresh QA: compare Demon Heart survival break feel against the old `1.0F` target, try ordinary blast cleanup against the old `5.0F` resistance target, and confirm the heartbeat/model face-fill still behaves as before.
 
 Current local delta (2026-06-04): Chalice, Crystal Ball, and Dream Catcher toughness parity restored. Original 1.7.10 constructors call only `setHardness(3.0F)`, `setHardness(2.0F)`, and `setHardness(1.0F)` respectively, which also imply blast resistance `15.0F`, `10.0F`, and `5.0F` through the old Block setter. Their registrations now use those source hardness/resistance pairs without changing Chalice filled-state/pick-block/altar bonus, Crystal Ball support/scrying/prediction behavior, or Dream Catcher wall placement/no-collision/weave storage. Fresh QA: compare break/blast feel for all three, then retest filled Chalice persistence, Crystal Ball readings/taglock scrying, and Dream Catcher support-loss weave drops.
@@ -167,7 +169,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `kettle` | Original texture/model path restored for all live blockstates; verify side/ceiling support, filled liquid, and bottle visuals in-game | Low |
 | `poppet_shelf` | ✅ Source toughness, client slot clearing, and source 3x3 top centers now rotate with shelf facing; verify break/blast feel, creative-slot height, and shelf-top spacing in-game | Low |
 | `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
-| `grassper` | Source transform order/scale restored for the held item; verify held-item cup pose and Fancy/Fabulous spin in-game | Low |
+| `grassper` | Source default toughness and transform order/scale restored; verify break/blast feel, held-item cup pose, and Fancy/Fabulous spin in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement restored; verify lock/unlock feel in-game | Low |
 | `leaping_lily` | Old lily-pad texture/display model restored with Witchery tinting; needs in-game verification only | Low |

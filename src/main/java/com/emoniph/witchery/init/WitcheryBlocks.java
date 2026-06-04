@@ -340,7 +340,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<GrassperBlock> GRASSPER = registerBlock("grassper",
             GrassperBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
-                    .strength(0.5f).noOcclusion().noCollision());
+                    .strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<GlowGlobeBlock> GLOWGLOBE = registerBlock("glowglobe",
             GlowGlobeBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
