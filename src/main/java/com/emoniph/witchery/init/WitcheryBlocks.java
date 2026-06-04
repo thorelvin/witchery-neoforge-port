@@ -377,7 +377,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0f, 1000.0f).lightLevel(state -> 8).noOcclusion());
     public static final DeferredBlock<DemonHeartBlock> DEMON_HEART = registerBlock("demon_heart",
             DemonHeartBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(1.0f).lightLevel(state -> 3).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(1.0f, 5.0f).lightLevel(state -> 3).noOcclusion());
     // Mounted trophy heads (1.7.10 BlockWolfHead, skullType 0=wolf / 1=hellhound) — directional,
     // floor/wall placed, BESR-rendered (RenderShape.INVISIBLE).
     public static final DeferredBlock<WolfHeadBlock> WOLF_HEAD = registerBlock("wolf_head",
