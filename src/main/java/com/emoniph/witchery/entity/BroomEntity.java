@@ -41,11 +41,18 @@ public class BroomEntity extends Mob {
     private static final double BASE_SPEED_LIMIT = 0.9;
     private static final double ENCHANTED_SPEED_BONUS = 0.15;
     private static final double SIDEWAYS_CONTROL = 0.25;
+    private static final float BREAK_DAMAGE_THRESHOLD = 40.0F;
 
     private static final EntityDataAccessor<Boolean> DATA_ENCHANTED =
             SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BRUSH_COLOR =
             SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_TIME_SINCE_HIT =
+            SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_FORWARD_DIRECTION =
+            SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_DAMAGE_TAKEN =
+            SynchedEntityData.defineId(BroomEntity.class, EntityDataSerializers.FLOAT);
 
     private double speedMultiplier = BASE_SPEED_MULTIPLIER;
     private boolean riderHasOwlFamiliar;
@@ -83,6 +90,30 @@ public class BroomEntity extends Mob {
         entityData.set(DATA_BRUSH_COLOR, brushColor >= 0 && brushColor <= 15 ? brushColor : -1);
     }
 
+    public int getTimeSinceHit() {
+        return entityData.get(DATA_TIME_SINCE_HIT);
+    }
+
+    public void setTimeSinceHit(int ticks) {
+        entityData.set(DATA_TIME_SINCE_HIT, ticks);
+    }
+
+    public int getForwardDirection() {
+        return entityData.get(DATA_FORWARD_DIRECTION);
+    }
+
+    public void setForwardDirection(int direction) {
+        entityData.set(DATA_FORWARD_DIRECTION, direction);
+    }
+
+    public float getDamageTaken() {
+        return entityData.get(DATA_DAMAGE_TAKEN);
+    }
+
+    public void setDamageTaken(float damage) {
+        entityData.set(DATA_DAMAGE_TAKEN, Math.max(0.0F, damage));
+    }
+
     public static BroomEntity create(Level level, double x, double y, double z) {
         BroomEntity broom = new BroomEntity(WitcheryEntities.BROOM.get(), level);
         broom.setPos(x, y, z);
@@ -97,6 +128,7 @@ public class BroomEntity extends Mob {
     @Override
     public void tick() {
         super.tick();
+        decayHitState();
 
         Entity passenger = getFirstPassenger();
         LivingEntity rider = passenger instanceof LivingEntity living ? living : null;
@@ -121,6 +153,15 @@ public class BroomEntity extends Mob {
             } else {
                 setDeltaMovement(Vec3.ZERO);
             }
+        }
+    }
+
+    private void decayHitState() {
+        if (getTimeSinceHit() > 0) {
+            setTimeSinceHit(getTimeSinceHit() - 1);
+        }
+        if (getDamageTaken() > 0.0F) {
+            setDamageTaken(getDamageTaken() - 1.0F);
         }
     }
 
@@ -360,16 +401,25 @@ public class BroomEntity extends Mob {
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        if (isRemoved() || amount <= 0.0F) {
+        if (isRemoved() || amount <= 0.0F || isInvulnerableTo(level, source)) {
             return false;
         }
         Entity attacker = source.getEntity();
         boolean creativePlayer = attacker instanceof Player player && player.getAbilities().instabuild;
-        ejectPassengers();
-        if (!creativePlayer) {
-            spawnAtLocation(level, createDropStack());
+
+        setForwardDirection(-getForwardDirection());
+        setTimeSinceHit(10);
+        float accumulatedDamage = getDamageTaken() + amount * 10.0F;
+        setDamageTaken(accumulatedDamage);
+        hurtMarked = true;
+
+        if (creativePlayer || accumulatedDamage > BREAK_DAMAGE_THRESHOLD) {
+            ejectPassengers();
+            if (!creativePlayer) {
+                spawnAtLocation(level, createDropStack());
+            }
+            discard();
         }
-        discard();
         return true;
     }
 
@@ -388,6 +438,9 @@ public class BroomEntity extends Mob {
         super.defineSynchedData(builder);
         builder.define(DATA_ENCHANTED, false);
         builder.define(DATA_BRUSH_COLOR, -1);
+        builder.define(DATA_TIME_SINCE_HIT, 0);
+        builder.define(DATA_FORWARD_DIRECTION, 1);
+        builder.define(DATA_DAMAGE_TAKEN, 0.0F);
     }
 
     @Override

@@ -11,6 +11,7 @@ Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA che
 3. Reintroduce rite preconditions from 1.7.10 consistently: coven size, time-of-day, weather, dimension, and obstructed-circle checks.
 4. Break the `RitualExecutor` monolith into data-driven dispatch helpers so parity fixes stop piling into one file.
 5. Restore broom behavior closer to the original entity: placement, mounting, acceleration, pitch-based lift, glide, and fall handling.
+   Source damage lifecycle is now restored: small hits accumulate/decay through the old `damageTaken` counter and only threshold/creative breaks drop/remove the broom. Remaining value is in-game flight, yaw, pickup/drop, and visual verification rather than another immediate break/drop rewrite.
 6. Finish mandrake parity around the now-restored harvest loop.
    Crop-side summon-vs-drop behavior and the awakened mob's root-plus-seed death drops are back closer to source; the remaining value is in-game loot/audio feel verification and any later custom scream work rather than another harvest-logic rewrite.
 7. Replace the current cotton placeholder behavior with mechanics that match the Dream World plant flow more closely.
