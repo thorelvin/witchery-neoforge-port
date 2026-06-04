@@ -6,7 +6,7 @@
 
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
-Current local delta (2026-06-04): Altar hardness parity restored. Original 1.7.10 `BlockAltar` sets hardness to `2.0F`; the port had drifted to `5.0f`. The Altar registration now uses source hardness again without changing the restored strict 2x3 validation, power scan, contributor bonuses, renderer/model path, or altar-top placed-item behavior. Fresh QA: compare survival break feel against the old 2.0F target, then build a 2x3 altar and confirm connected-state orientation and power readout still behave as before.
+Current local delta (2026-06-04): Altar toughness parity restored. Original 1.7.10 `BlockAltar` only calls `setHardness(2.0F)`, which also raises blast resistance to `10.0F` through the old Block setter. The Altar registration now uses source hardness and resistance again without changing the restored strict 2x3 validation, power scan, contributor bonuses, renderer/model path, or altar-top placed-item behavior. Fresh QA: compare survival break feel against the old 2.0F target, try ordinary blast cleanup near an altar, then build a 2x3 altar and confirm connected-state orientation and power readout still behave as before.
 
 Current local delta (2026-06-04): Kettle hardness parity restored. Original 1.7.10 `BlockKettle` sets hardness to `2.0F`; the port had drifted to `3.0f` during the renderer/support work. The Kettle registration now uses source hardness again without changing the restored side/ceiling support, renderer, recipes, bucket handling, or sided automation. Fresh QA: compare survival break feel against the old 2.0F target while confirming side-supported and ceiling-supported Kettles still survive.
 
