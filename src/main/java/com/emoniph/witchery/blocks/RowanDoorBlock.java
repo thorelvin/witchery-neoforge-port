@@ -11,7 +11,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +40,14 @@ public class RowanDoorBlock extends DoorBlock implements EntityBlock {
         super(BlockSetType.OAK, props);
     }
 
-    // ── Block entity — only LOWER half gets one ───────────────────────────────
+    // ── Placement and block entity ────────────────────────────────────────────
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
+        return state == null ? null : state.setValue(POWERED, false).setValue(OPEN, false);
+    }
 
     @Nullable @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -91,6 +101,31 @@ public class RowanDoorBlock extends DoorBlock implements EntityBlock {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
+                                   @Nullable Orientation orientation, boolean isMoving) {
+        if (this.defaultBlockState().is(block)) {
+            return;
+        }
+
+        BlockPos otherHalfPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        boolean powered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(otherHalfPos);
+        if (powered == state.getValue(POWERED)) {
+            return;
+        }
+
+        BlockState updated = state.setValue(POWERED, powered);
+        if (powered) {
+            level.setBlock(pos, updated, 2);
+            return;
+        }
+
+        level.setBlock(pos, updated, 2);
+        if (state.getValue(OPEN)) {
+            this.setOpen(null, level, updated, pos, false);
+        }
+    }
 
     @Nullable
     private static UUID getDoorUUID(Level level, BlockPos lowerPos) {

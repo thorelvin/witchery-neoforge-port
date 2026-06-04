@@ -2,6 +2,9 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-04 (Rowan Door QA):**
+- ~~Redstone can open a locked Rowan Door~~ - live QA found vanilla neighbor-power handling could still flip a locked Rowan Door open. Source comparison against 1.7.10 `BlockWitchDoor` showed Rowan refuses the redstone-open path through its `func_150014_a(..., true)` override, while still allowing the redstone-off close path. Fixed: modern Rowan Doors now place closed even beside power, track neighbor power without setting `OPEN=true`, and only use redstone-off updates to close an already-open door. Needs in-game retest with a locked door, lever/button/pressure plate, and a key/keyring holder.
+
 **Closed 2026-06-04 (apothecary QA):**
 - ~~Village Apothecary interior is missing source apothecary furnishings~~ - live QA found the sparse interior reading as only skull, two stairs, and an empty clay pot. Source comparison showed `ComponentVillageApothecary` places a full vanilla Cauldron at local `7,1,1`, not a Crafting Table; flower-pot metadata `10` is the old potted dead bush, and skull metadata `9` sets the standing skull rotation. Fixed: the modern Apothecary now places a full Water Cauldron, Potted Dead Bush, and rotated Skeleton Skull while preserving the old sparse two-stair counter, torch, source chest coordinate, villager spawn/trades, shell, and biome palette.
 
