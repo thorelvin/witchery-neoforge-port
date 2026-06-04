@@ -286,6 +286,20 @@ public class WitcheryCommands {
                                                 StringArgumentType.getString(ctx, "prophecy"),
                                                 EntityArgument.getPlayer(ctx, "target"))))))
 
+                // Debug: grant Mystic Branch demon-soul spell knowledge.
+                // /witchery learn <ignianima|carnosadiem|morsmordre|tormentum|all|clear> [target]
+                .then(Commands.literal("learn")
+                        .then(Commands.argument("knowledge", StringArgumentType.word())
+                                .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
+                                        java.util.List.of("ignianima", "carnosadiem", "morsmordre", "tormentum", "all", "clear"), b))
+                                .executes(ctx -> learnSymbol(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "knowledge"),
+                                        ctx.getSource().getPlayerOrException()))
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(ctx -> learnSymbol(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "knowledge"),
+                                                EntityArgument.getPlayer(ctx, "target"))))))
+
                 .then(Commands.literal("give")
                         .then(Commands.literal("primer")
                                 .executes(ctx -> givePrimer(ctx.getSource())))
@@ -641,6 +655,36 @@ public class WitcheryCommands {
                 + death + "\n" + timing;
 
         src.sendSuccess(() -> Component.literal(out), false);
+        return 1;
+    }
+
+    /** Grant (or clear) Mystic Branch demon-soul spell knowledge on {@code target}. */
+    private static int learnSymbol(CommandSourceStack src, String knowledge, ServerPlayer target) {
+        WitcheryAttachments.LearnedSymbols learned = WitcheryAttachments.learned(target);
+        String name = knowledge.toLowerCase(java.util.Locale.ROOT);
+        java.util.List<String> all = java.util.List.of("ignianima", "carnosadiem", "morsmordre", "tormentum");
+
+        if (name.equals("clear")) {
+            int n = learned.keys.size();
+            learned.keys.clear();
+            src.sendSuccess(() -> Component.literal("[Branch] Cleared " + n + " learned glyph(s) from "
+                    + target.getName().getString() + "."), false);
+            return n;
+        }
+        if (name.equals("all")) {
+            learned.keys.addAll(all);
+            src.sendSuccess(() -> Component.literal("[Branch] " + target.getName().getString()
+                    + " has learned all demonic glyphs."), false);
+            return all.size();
+        }
+        if (!all.contains(name)) {
+            src.sendFailure(Component.literal("Unknown knowledge '" + knowledge + "'. Options: "
+                    + String.join(", ", all) + ", all, clear"));
+            return 0;
+        }
+        boolean added = learned.keys.add(name);
+        src.sendSuccess(() -> Component.literal("[Branch] " + target.getName().getString()
+                + (added ? " has learned " : " already knew ") + name + "."), false);
         return 1;
     }
 
