@@ -2,6 +2,9 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-04 (apothecary QA):**
+- ~~Village Apothecary interior is missing source apothecary furnishings~~ - live QA found the sparse interior reading as only skull, two stairs, and an empty clay pot. Source comparison showed `ComponentVillageApothecary` places a full vanilla Cauldron at local `7,1,1`, not a Crafting Table; flower-pot metadata `10` is the old potted dead bush, and skull metadata `9` sets the standing skull rotation. Fixed: the modern Apothecary now places a full Water Cauldron, Potted Dead Bush, and rotated Skeleton Skull while preserving the old sparse two-stair counter, torch, source chest coordinate, villager spawn/trades, shell, and biome palette.
+
 **Closed 2026-06-02 (goto QA):**
 - ~~`/witchery goto straw_man` teleports but no Straw Man is there~~ - `StrawManPiece.hasDryLandFootprint` aborted the whole effigy whenever `WORLD_SURFACE > OCEAN_FLOOR` (true over any snow layer / grass / flower) even on dry land the structure-level `findGenerationPoint` had already approved, leaving a located-but-empty structure. Fixed: removed that redundant guard; the explicit fluid checks plus the structure water/biome guards still keep it off water.
 - ~~Coven/Stone Circle generates one block too high (raised dirt/grass plinth)~~ and ~~Straw Man sits on a one-block dirt pedestal~~ - `getFirstOccupiedHeight` returns the air block above terrain in this runtime (confirmed by the old CovenCirclePiece "stones appear to float" comment), but both pieces anchored their floor/ground layer at that Y. Fixed: `CovenCircleStructure` and `StrawManStructure` now anchor the piece at `groundY - 1`, so the floor lands flush and the standing stones/effigy rest on the surface.

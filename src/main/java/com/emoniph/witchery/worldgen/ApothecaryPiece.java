@@ -16,6 +16,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -121,12 +123,12 @@ public class ApothecaryPiece extends StructurePiece {
         placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.UPPER), 1, 2, 0, box);
         placeFrontStep(level, box, materials);
 
-        placeBlock(level, Blocks.CRAFTING_TABLE.defaultBlockState(), 7, 1, 1, box);
+        placeBlock(level, Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), 7, 1, 1, box);
         placeBlock(level, upperStair(materials, Direction.SOUTH), 5, 1, 1, box);
         placeBlock(level, upperStair(materials, Direction.NORTH), 5, 1, 3, box);
-        placeBlock(level, Blocks.FLOWER_POT.defaultBlockState(), 5, 1, 2, box);
+        placeBlock(level, Blocks.POTTED_DEAD_BUSH.defaultBlockState(), 5, 1, 2, box);
         placeBlock(level, Blocks.TORCH.defaultBlockState(), 5, 2, 3, box);
-        placeBlock(level, Blocks.SKELETON_SKULL.defaultBlockState(), 5, 2, 1, box);
+        placeBlock(level, Blocks.SKELETON_SKULL.defaultBlockState().setValue(SkullBlock.ROTATION, 9), 5, 2, 1, box);
         createChest(level, box, random, 7, 0, 1, LOOT_TABLE);
 
         placeApothecarySign(level, box);
