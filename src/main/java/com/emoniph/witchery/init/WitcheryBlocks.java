@@ -347,7 +347,7 @@ public class WitcheryBlocks {
                     .strength(0.0f).lightLevel(s -> 14).noOcclusion().noCollision().noLootTable());
 
     // Machines / Multiblocks
-    public static final DeferredBlock<KettleBlock>      KETTLE        = registerBlock("kettle",         KettleBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f).noOcclusion());
+    public static final DeferredBlock<KettleBlock>      KETTLE        = registerBlock("kettle",         KettleBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f, 10.0f).noOcclusion());
     public static final DeferredBlock<WitchCauldronBlock> WITCH_CAULDRON = registerBlock("witch_cauldron",
             WitchCauldronBlock::new, BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAULDRON));
     public static final DeferredBlock<DistilleryBlock>  DISTILLERY    = registerBlock("distillery",     DistilleryBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.5f).lightLevel(state -> state.getValue(DistilleryBlock.LIT) ? 6 : 0).noOcclusion());
