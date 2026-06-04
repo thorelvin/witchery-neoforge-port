@@ -398,7 +398,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f, 2.5f).noOcclusion());
     public static final DeferredBlock<PlacedItemBlock>  PLACED_ITEM    = registerBlock("placed_item",   PlacedItemBlock::new,   BlockBehaviour.Properties.of().strength(0.0f).noOcclusion().noCollision());
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f));
-    public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
+    public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f, 20.0f).noOcclusion());
     // 1.7.10 BlockSilverVat: Material.iron, setHardness(8.0F) -> resistance 8*5=40 (auto), metal sound.
     public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(8.0f, 40.0f).noOcclusion());
     public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f, 5.0f).noOcclusion());
