@@ -21,6 +21,11 @@ public class InfusionEvents {
     private static final int REFRESH_INTERVAL = 100; // ticks between effect refreshes
     private static final int EFFECT_DURATION   = 140; // ticks — slightly longer than interval
 
+    // Infernal is a one-shot boon granted at infusion time (see onInfusionGranted), not a
+    // periodic refresh — the brief Darkness is dramatic flavour, the buffs simply expire.
+    private static final int INFERNAL_DARKNESS_DURATION = 100;  // 5 seconds
+    private static final int INFERNAL_BUFF_DURATION     = 6000; // 5 minutes
+
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
@@ -34,7 +39,21 @@ public class InfusionEvents {
             case LIGHT      -> applyLight(player);
             case OVERWORLD  -> applyOverworld(player);
             case OTHERWHERE -> applyOtherwhere(player);
-            case INFERNAL   -> applyInfernal(player);
+            case INFERNAL   -> { /* one-shot at grant time, no periodic refresh */ }
+        }
+    }
+
+    /**
+     * Apply the one-shot boon a freshly granted infusion confers. Call this right after the
+     * infusion type is set (Rite of Infusion, or the debug command). Infernal flashes Darkness
+     * for 5 seconds, then leaves Fire Resistance + Strength running for 5 minutes; the other
+     * infusions are sustained by the periodic refresh and need nothing here.
+     */
+    public static void onInfusionGranted(ServerPlayer player, InfusionType type) {
+        if (type == InfusionType.INFERNAL) {
+            player.addEffect(new MobEffectInstance(MobEffects.DARKNESS,        INFERNAL_DARKNESS_DURATION, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, INFERNAL_BUFF_DURATION, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,        INFERNAL_BUFF_DURATION, 0, true, false));
         }
     }
 
@@ -61,12 +80,5 @@ public class InfusionEvents {
         player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, EFFECT_DURATION, 0, true, false));
         player.addEffect(new MobEffectInstance(MobEffects.SPEED, EFFECT_DURATION, 1, true, false)); // Speed II
         player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, EFFECT_DURATION, 1, true, false));           // Jump Boost II
-    }
-
-    /** Infernal Infusion — Fire Resistance + Strength I + Darkness (for theme). */
-    private static void applyInfernal(ServerPlayer player) {
-        player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, EFFECT_DURATION, 0, true, false));
-        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,    EFFECT_DURATION, 0, true, false)); // Strength I
-        player.addEffect(new MobEffectInstance(MobEffects.DARKNESS,        EFFECT_DURATION, 0, true, false));
     }
 }

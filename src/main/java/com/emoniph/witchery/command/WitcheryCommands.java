@@ -480,6 +480,7 @@ public class WitcheryCommands {
         } else {
             d.setInfusionType(type);
             d.setInfusionEnergy(200, 200);
+            com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(p, type);
         }
         sync(p, d);
         src.sendSuccess(() -> Component.literal(
@@ -689,6 +690,7 @@ public class WitcheryCommands {
         } else {
             data.setInfusionType(infusion);
             data.setInfusionEnergy(energy, energy);
+            com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(target, infusion);
             src.sendSuccess(() -> Component.literal("[Branch] " + target.getName().getString()
                     + " infused with " + infusion.name() + " (" + energy + "/" + energy + ")."), false);
         }

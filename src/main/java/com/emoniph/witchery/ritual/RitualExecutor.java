@@ -795,6 +795,7 @@ public class RitualExecutor {
         WitcheryPlayerData data = WitcheryAttachments.get(sp);
         data.setInfusionType(type);
         data.setInfusionEnergy(200, 200);
+        com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(sp, type);
 
         String msgKey = infusionSuccessKey(type);
 
