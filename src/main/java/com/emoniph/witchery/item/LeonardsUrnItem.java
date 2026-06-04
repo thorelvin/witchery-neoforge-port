@@ -136,6 +136,36 @@ public class LeonardsUrnItem extends Item {
                 stored.getHoverName()), true);
     }
 
+    /**
+     * Cast the brew held in {@code slot} of the first Leonard's Urn in the player's inventory, used
+     * by the Mystic Branch Caelum/Baratrum/Ortus/Occasus glyphs. Returns true if a brew was thrown.
+     */
+    public static boolean castSlotFromInventory(net.minecraft.server.level.ServerLevel level, Player player, int slot) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack urn = player.getInventory().getItem(i);
+            if (!(urn.getItem() instanceof LeonardsUrnItem)) {
+                continue;
+            }
+            ItemStack stored = getStored(urn, slot);
+            if (!(stored.getItem() instanceof ThrownBrewItem brewItem)) {
+                player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
+                return false;
+            }
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
+                    0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
+            int tier = stored.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
+            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brewItem.brewType(), brewItem.isGas(), tier);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
+            level.addFreshEntity(projectile);
+            setStored(urn, slot, ItemStack.EMPTY);
+            player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
+                    stored.getHoverName()), true);
+            return true;
+        }
+        return false;
+    }
+
     private static boolean isStorableBrew(ItemStack stack) {
         return stack.getItem() instanceof ThrownBrewItem;
     }

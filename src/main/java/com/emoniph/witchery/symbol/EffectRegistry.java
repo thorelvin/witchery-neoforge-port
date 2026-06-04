@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -698,6 +699,93 @@ public final class EffectRegistry {
             },
             new StrokeSet(1, 1, 1, 0, 0),
             new StrokeSet(1, 1, 1, 1, 0, 0, 0));
+
+    /** Flagrate — trace an infernal glyph against the struck face. */
+    public static final SymbolEffect FLAGRATE = instance().add(
+            new SymbolEffectProjectile(16, "witchery.pott.flagrate", 1, false, false, null, 0) {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (hit instanceof BlockHitResult bhr) {
+                        BlockPos pos = faceAdjacent(bhr);
+                        if (level.getBlockState(pos).canBeReplaced()
+                                && level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
+                            level.setBlock(pos, WitcheryBlocks.CIRCLE_INFERNAL.get().defaultBlockState(), 3);
+                        }
+                    }
+                }
+            }.setColor(0xFF5520).setSize(1.0F),
+            new StrokeSet(1, 0, 2, 3, 0, 2));
+
+    /** Colloportus — seal a door: replace it with a Rowan door locked to you. */
+    public static final SymbolEffect COLLOPORTUS = instance().add(
+            new SymbolEffectProjectile(6, "witchery.pott.colloportus") {
+                @Override
+                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    if (!(hit instanceof BlockHitResult bhr)
+                            || !(level.getBlockState(bhr.getBlockPos()).getBlock() instanceof DoorBlock)) {
+                        return;
+                    }
+                    BlockPos lower = level.getBlockState(bhr.getBlockPos()).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
+                            ? bhr.getBlockPos() : bhr.getBlockPos().below();
+                    BlockState old = level.getBlockState(lower);
+                    if (!(old.getBlock() instanceof DoorBlock) || old.getBlock() == WitcheryBlocks.ROWAN_DOOR.get()) {
+                        return;
+                    }
+                    DoorBlock rowan = WitcheryBlocks.ROWAN_DOOR.get();
+                    BlockState lowerNew = rowan.defaultBlockState()
+                            .setValue(DoorBlock.FACING, old.getValue(DoorBlock.FACING))
+                            .setValue(DoorBlock.HINGE, old.getValue(DoorBlock.HINGE))
+                            .setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER);
+                    level.setBlock(lower, lowerNew, 3);
+                    level.setBlock(lower.above(), lowerNew.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 3);
+                    rowan.setPlacedBy(level, lower, lowerNew, caster, ItemStack.EMPTY);
+                    level.levelEvent(null, 1006, lower, 0); // door close sound
+                }
+            }.setColor(0x513726).setSize(1.0F),
+            new StrokeSet(1, 3, 3, 1, 1, 2));
+
+    // ── Leonard's Urn casts ──────────────────────────────────────────────────
+    // Throw one of the four brews stored in a Leonard's Urn carried in your pack.
+
+    /** Caelum — cast the first brew stored in <a href="#ch30">Leonard's Urn</a>. */
+    public static final SymbolEffect CAELUM = instance().add(
+            new SymbolEffect(43, "witchery.pott.caelum") {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    com.emoniph.witchery.item.LeonardsUrnItem.castSlotFromInventory(level, caster, 0);
+                }
+            },
+            new StrokeSet(1, 2, 0, 3, 3, 1));
+
+    /** Baratrum — cast the second urn brew. */
+    public static final SymbolEffect BARATRUM = instance().add(
+            new SymbolEffect(44, "witchery.pott.baratrum") {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    com.emoniph.witchery.item.LeonardsUrnItem.castSlotFromInventory(level, caster, 1);
+                }
+            },
+            new StrokeSet(1, 3, 1, 2, 2, 0));
+
+    /** Ortus — cast the third urn brew. */
+    public static final SymbolEffect ORTUS = instance().add(
+            new SymbolEffect(45, "witchery.pott.ortus") {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    com.emoniph.witchery.item.LeonardsUrnItem.castSlotFromInventory(level, caster, 2);
+                }
+            },
+            new StrokeSet(1, 1, 2, 0, 0, 3));
+
+    /** Occasus — cast the fourth urn brew. */
+    public static final SymbolEffect OCCASUS = instance().add(
+            new SymbolEffect(46, "witchery.pott.occasus") {
+                @Override
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    com.emoniph.witchery.item.LeonardsUrnItem.castSlotFromInventory(level, caster, 3);
+                }
+            },
+            new StrokeSet(1, 0, 3, 1, 1, 2));
 
     private static boolean isDiggable(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM)

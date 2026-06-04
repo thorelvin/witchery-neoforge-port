@@ -62,6 +62,13 @@ class SymbolGlyphTest {
         assertGlyph("witchery.pott.defodio",      3, 0, 0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2);
         assertGlyph("witchery.pott.ennervate",    3, 0, 3, 3, 3, 0, 2, 2, 2, 3, 3, 3, 0, 2, 2, 2);
         assertGlyph("witchery.pott.caveinimicum", 2, 0, 3, 3, 0, 0, 0, 2, 2);
+        // System-blocked spells, now live.
+        assertGlyph("witchery.pott.flagrate",    1, 0, 2, 3, 0, 2);        // U R L U R
+        assertGlyph("witchery.pott.colloportus", 1, 3, 3, 1, 1, 2);        // L L D D R
+        assertGlyph("witchery.pott.caelum",      1, 2, 0, 3, 3, 1);        // R U L L D
+        assertGlyph("witchery.pott.baratrum",    1, 3, 1, 2, 2, 0);        // L D R R U
+        assertGlyph("witchery.pott.ortus",       1, 1, 2, 0, 0, 3);        // D R U U L
+        assertGlyph("witchery.pott.occasus",     1, 0, 3, 1, 1, 2);        // U L D D R
     }
 
     @Test
