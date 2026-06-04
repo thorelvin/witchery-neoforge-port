@@ -401,7 +401,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.0f).noOcclusion());
     // 1.7.10 BlockSilverVat: Material.iron, setHardness(8.0F) -> resistance 8*5=40 (auto), metal sound.
     public static final DeferredBlock<SilverVatBlock>   SILVER_VAT     = registerBlock("silver_vat",    SilverVatBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(8.0f, 40.0f).noOcclusion());
-    public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f).noOcclusion());
+    public static final DeferredBlock<CoffinBlock>      COFFIN         = registerBlock("coffin",        CoffinBlock::new,       BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f, 5.0f).noOcclusion());
     public static final DeferredBlock<com.emoniph.witchery.blocks.BloodCrucibleBlock> BLOOD_CRUCIBLE = registerBlock("blood_crucible",
             com.emoniph.witchery.blocks.BloodCrucibleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
