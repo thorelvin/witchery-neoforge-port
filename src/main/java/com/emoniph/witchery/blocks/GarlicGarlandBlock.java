@@ -84,6 +84,11 @@ public class GarlicGarlandBlock extends Block {
     }
 
     @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return getShape(state, level, pos, CollisionContext.empty());
+    }
+
+    @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                              InsideBlockEffectApplier _effectApplier, boolean _isMoved) {
         if (isVampire(entity)) {

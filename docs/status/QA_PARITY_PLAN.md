@@ -1,6 +1,6 @@
 # QA Parity Plan
 
-Last updated: 2026-06-04
+Last updated: 2026-06-05
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
@@ -34,7 +34,7 @@ Wolf Altar toughness QA note (2026-06-04): original `WitcheryBlocks.WOLF_ALTAR` 
 
 Wicker Bundle toughness QA note (2026-06-04): original `BlockWickerBundle` covers both plain and bloodied metadata variants, calls `setHardness(0.5F)`, and has no explicit resistance override, implying old blast resistance `2.5F`. Place plain and bloodied Wicker Bundles, compare survival break feel against the old `0.5F` target, and try ordinary blast cleanup nearby. Tester QA confirms Infernal Blood converts five nearby plain bundles; still explicitly check axis preservation if it was not observed, Demonic Blood compatibility, valid Wickerman ignition, structure validation, burned bundle positions, and Horned Huntsman summon behavior.
 
-Garlic Garland toughness QA note (2026-06-04): original `BlockGarlicGarland` calls `setHardness(0.2F)` and has no explicit resistance override, implying old blast resistance `1.0F`. Place Garlic Garlands on all horizontal facings, compare survival break feel against the old `0.2F` target, try ordinary blast cleanup nearby, and confirm the block still has click-through collision, the current outline shape, tagged-vampire/player-vampire contact repulsion, and non-creative vampire left-click fire/cancel counterplay.
+Garlic Garland render/targeting/toughness QA note (2026-06-05): original `BlockGarlicGarland` calls `setHardness(0.2F)` and has no explicit resistance override, implying old blast resistance `1.0F`; `RenderGarlicGarland` draws the garland as an upper-wall hanging, not crossed bush art, and the old block has no collision box. Place Garlic Garlands on all horizontal facings, confirm the art is flat against the wall/upper face, confirm the selection outline is targetable where the art appears and survival breaking removes/drops the garland, compare survival break feel against the old `0.2F` target, try ordinary blast cleanup nearby, and confirm click-through/no-collision behavior, tagged-vampire/player-vampire contact repulsion, and non-creative vampire left-click fire/cancel counterplay.
 
 Statue of Hobgoblin Patron toughness QA note (2026-06-04): original `STATUE_OF_WORSHIP` uses `BlockStatueOfWorship`, whose constructor sets `3.5F` hardness and `20.0F` blast resistance. Place the modern `statue_hobgoblin_patron`, compare survival break feel against the old `3.5F` target, try ordinary blast cleanup nearby, and confirm the block resists blasts at the old `20.0F` target. Then place nearby Hobgoblins, right-click the statue, and verify the current practical no-worshippers message, worship count feedback, anger chance, and Hobgoblin retaliation behavior still work.
 

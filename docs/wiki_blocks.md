@@ -160,7 +160,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Garlic Garland
 - **Obtain:** Crafted from 5 garlic bulbs and 3 string.
 - **Function:** Repels vampire players and entity types tagged `witchery:vampires`.
-- **Notes:** Places as a facing-aware, click-through hanging garland; non-creative vampire players are set on fire and stopped when they try to break it.
+- **Notes:** Places as a facing-aware, targetable, click-through hanging garland; non-creative vampire players are set on fire and stopped when they try to break it.
 
 ## Glass Goblet
 - **Obtain:** Crafted using glass and a variety of ingredients depending on the type.
