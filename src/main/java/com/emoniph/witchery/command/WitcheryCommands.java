@@ -300,6 +300,26 @@ public class WitcheryCommands {
                                                 StringArgumentType.getString(ctx, "knowledge"),
                                                 EntityArgument.getPlayer(ctx, "target"))))))
 
+                // Debug: set Mystic Branch infusion so spells can be cast in survival.
+                // /witchery infuse <none|light|overworld|otherwhere|infernal> [energy] [target]
+                .then(Commands.literal("infuse")
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
+                                        java.util.List.of("none", "light", "overworld", "otherwhere", "infernal"), b))
+                                .executes(ctx -> infuse(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "type"), 5000,
+                                        ctx.getSource().getPlayerOrException()))
+                                .then(Commands.argument("energy", IntegerArgumentType.integer(0))
+                                        .executes(ctx -> infuse(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "type"),
+                                                IntegerArgumentType.getInteger(ctx, "energy"),
+                                                ctx.getSource().getPlayerOrException()))
+                                        .then(Commands.argument("target", EntityArgument.player())
+                                                .executes(ctx -> infuse(ctx.getSource(),
+                                                        StringArgumentType.getString(ctx, "type"),
+                                                        IntegerArgumentType.getInteger(ctx, "energy"),
+                                                        EntityArgument.getPlayer(ctx, "target")))))))
+
                 .then(Commands.literal("give")
                         .then(Commands.literal("primer")
                                 .executes(ctx -> givePrimer(ctx.getSource())))
@@ -655,6 +675,24 @@ public class WitcheryCommands {
                 + death + "\n" + timing;
 
         src.sendSuccess(() -> Component.literal(out), false);
+        return 1;
+    }
+
+    /** Debug: set {@code target}'s Mystic Branch infusion type + energy so survival casting works. */
+    private static int infuse(CommandSourceStack src, String type, int energy, ServerPlayer target) {
+        InfusionType infusion = InfusionType.fromString(type);
+        WitcheryPlayerData data = WitcheryAttachments.get(target);
+        if (infusion == InfusionType.NONE) {
+            data.clearInfusion();
+            src.sendSuccess(() -> Component.literal("[Branch] Cleared infusion on "
+                    + target.getName().getString() + "."), false);
+        } else {
+            data.setInfusionType(infusion);
+            data.setInfusionEnergy(energy, energy);
+            src.sendSuccess(() -> Component.literal("[Branch] " + target.getName().getString()
+                    + " infused with " + infusion.name() + " (" + energy + "/" + energy + ")."), false);
+        }
+        sync(target, data);
         return 1;
     }
 
