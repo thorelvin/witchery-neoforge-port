@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.BrazierBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -9,7 +10,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -103,16 +103,20 @@ public class BrazierBlock extends BaseEntityBlock {
         }
     }
 
-    /** Drop ingredients when broken (unless burning — then they're consumed). */
+    /** Source player-break behavior: idle braziers return ingredients; burning braziers leave Wood Ash. */
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BrazierBlockEntity be && !be.isBurning()) {
-            for (ItemStack drop : be.getDrops()) {
-                ItemEntity ie = new ItemEntity(level,
-                        pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, drop.copy());
-                level.addFreshEntity(ie);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BrazierBlockEntity be) {
+            if (be.isBurning()) {
+                popResource(level, pos, new ItemStack(WitcheryItems.WOOD_ASH.get()));
+            } else {
+                for (ItemStack drop : be.getDrops()) {
+                    if (!drop.isEmpty()) {
+                        popResource(level, pos, drop.copy());
+                    }
+                }
             }
-            be.reset();
+            be.clearContent();
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
