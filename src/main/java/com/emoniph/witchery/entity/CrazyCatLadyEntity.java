@@ -3,6 +3,9 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -39,9 +42,12 @@ import java.util.List;
 public class CrazyCatLadyEntity extends PathfinderMob {
     private static final int MAX_CAT_THROWS = 7;
     private static final int THROW_INTERVAL_TICKS = 20 * 5;
+    private static final int CAT_READY_LEAD_TICKS = 20 * 2;
     private static final int RETREAT_TICKS = 20 * 60;
     private static final double SHOUT_RADIUS = 18.0D;
     private static final double ATTACK_RANGE = 18.0D;
+    private static final EntityDataAccessor<Boolean> CAT_READY =
+            SynchedEntityData.defineId(CrazyCatLadyEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String[] Q_AGGRO = {
             "entity.witchery.crazy_cat_lady.aggro.1",
@@ -62,7 +68,7 @@ public class CrazyCatLadyEntity extends PathfinderMob {
     private BlockPos hutHome = BlockPos.ZERO;
     private boolean hasHutHome = false;
     private int catsThrown = 0;
-    private int throwCooldown = 20;
+    private int throwCooldown = THROW_INTERVAL_TICKS;
     private int retreatTicks = 0;
     private int shoutCooldown = 0;
     @Nullable
@@ -79,6 +85,16 @@ public class CrazyCatLadyEntity extends PathfinderMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.32D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
                 .add(Attributes.ATTACK_DAMAGE, 1.0D);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CAT_READY, false);
+    }
+
+    public boolean hasCatReady() {
+        return this.entityData.get(CAT_READY);
     }
 
     @Override
@@ -167,9 +183,10 @@ public class CrazyCatLadyEntity extends PathfinderMob {
             moveTowardHome();
             if (retreatTicks == 0) {
                 catsThrown = 0;
-                throwCooldown = 20;
+                throwCooldown = THROW_INTERVAL_TICKS;
             }
         }
+        updateCatReadyState();
     }
 
     public void setHutHome(BlockPos pos) {
@@ -196,6 +213,7 @@ public class CrazyCatLadyEntity extends PathfinderMob {
         cat.setDeltaMovement(motion);
         serverLevel.addFreshEntity(cat);
         catsThrown++;
+        entityData.set(CAT_READY, false);
         shout(pick(Q_THROW), 70);
         playSound(SoundEvents.WITCH_THROW, 1.0F, 0.75F + random.nextFloat() * 0.25F);
         playSound(SoundEvents.CAT_DEATH, 0.8F, 1.55F + random.nextFloat() * 0.25F);
@@ -205,9 +223,20 @@ public class CrazyCatLadyEntity extends PathfinderMob {
         retreatTicks = RETREAT_TICKS;
         previousTarget = null;
         setTarget(null);
+        entityData.set(CAT_READY, false);
         shout("entity.witchery.crazy_cat_lady.retreat", 100);
         playSound(SoundEvents.WITCH_CELEBRATE, 1.0F, 0.9F + random.nextFloat() * 0.2F);
         moveTowardHome();
+    }
+
+    private void updateCatReadyState() {
+        LivingEntity target = getTarget();
+        boolean ready = retreatTicks <= 0
+                && catsThrown < MAX_CAT_THROWS
+                && target != null
+                && target.isAlive()
+                && throwCooldown <= CAT_READY_LEAD_TICKS;
+        entityData.set(CAT_READY, ready);
     }
 
     private void moveTowardHome() {
@@ -282,7 +311,7 @@ public class CrazyCatLadyEntity extends PathfinderMob {
                 tag.getIntOr("HutHomeY", 0),
                 tag.getIntOr("HutHomeZ", 0));
         catsThrown = tag.getIntOr("CatsThrown", 0);
-        throwCooldown = tag.getIntOr("ThrowCooldown", 20);
+        throwCooldown = tag.getIntOr("ThrowCooldown", THROW_INTERVAL_TICKS);
         retreatTicks = tag.getIntOr("RetreatTicks", 0);
     }
 }
