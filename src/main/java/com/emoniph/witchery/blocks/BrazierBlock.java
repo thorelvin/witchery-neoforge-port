@@ -115,9 +115,11 @@ public class BrazierBlock extends BaseEntityBlock {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         if (!level.isClientSide() && level.hasNeighborSignal(pos)) {
             if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be
-                    && !be.isBurning() && !be.isEmpty()) {
+                    && be.shouldIgniteFromRedstone(true) && !be.isBurning() && !be.isEmpty()) {
                 be.begin();
             }
+        } else if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BrazierBlockEntity be) {
+            be.shouldIgniteFromRedstone(false);
         }
     }
 

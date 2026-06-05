@@ -54,6 +54,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
 
     private int cookTime   = 0;
     private int powerLevel = 0;
+    private boolean previousRedstoneState = false;
 
     // ── Recipe definition ─────────────────────────────────────────────────────
 
@@ -228,6 +229,12 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
             slots.set(SLOT_BURNING_MARKER, new ItemStack(Items.CHARCOAL));
             setChanged();
         }
+    }
+
+    public boolean shouldIgniteFromRedstone(boolean powered) {
+        boolean risingEdge = previousRedstoneState != powered && powered;
+        previousRedstoneState = powered;
+        return risingEdge;
     }
 
     public void reset() {
