@@ -6,10 +6,15 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -45,6 +50,10 @@ public class AlluringSkullBlock extends BaseEntityBlock {
     private static final VoxelShape SOUTH_SHAPE = Block.box(4.0, 4.0, 0.0, 12.0, 12.0, 8.0);
     private static final VoxelShape WEST_SHAPE = Block.box(8.0, 4.0, 4.0, 16.0, 12.0, 12.0);
     private static final VoxelShape EAST_SHAPE = Block.box(0.0, 4.0, 4.0, 8.0, 12.0, 12.0);
+    private static final int FEEDBACK_PARTICLES = 20;
+    private static final double FEEDBACK_WIDTH = 0.5;
+    private static final double FEEDBACK_HEIGHT = 0.5;
+    private static final float FEEDBACK_VOLUME = 0.5F;
 
     public AlluringSkullBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -140,13 +149,29 @@ public class AlluringSkullBlock extends BaseEntityBlock {
 
         if (!state.getValue(ON)) {
             level.setBlock(pos, state.setValue(ON, true), 3);
-            level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.5f, 1.1f);
+            playFeedback(level, pos, ParticleTypes.FLAME, SoundEvents.SKELETON_HORSE_DEATH);
         } else {
+            playFeedback(level, pos, ParticleTypes.EXPLOSION, SoundEvents.SKELETON_HORSE_HURT);
             level.removeBlock(pos, false);
-            Block.popResource(level, pos, WitcheryItems.ALLURING_SKULL.get().getDefaultInstance());
-            level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.0f);
+            level.addFreshEntity(new ItemEntity(level,
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.8,
+                    pos.getZ() + 0.5,
+                    WitcheryItems.ALLURING_SKULL.get().getDefaultInstance()));
         }
         return InteractionResult.SUCCESS;
+    }
+
+    private static void playFeedback(Level level, BlockPos pos, ParticleOptions particles, SoundEvent sound) {
+        double x = pos.getX() + 0.5;
+        double y = pos.getY() + 0.3;
+        double z = pos.getZ() + 0.5;
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(particles, x, y, z,
+                    FEEDBACK_PARTICLES, FEEDBACK_WIDTH, FEEDBACK_HEIGHT, FEEDBACK_WIDTH, 0.0);
+        }
+        float pitch = 0.4F / (level.random.nextFloat() * 0.4F + 0.8F);
+        level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, FEEDBACK_VOLUME, pitch);
     }
 
     @Nullable
