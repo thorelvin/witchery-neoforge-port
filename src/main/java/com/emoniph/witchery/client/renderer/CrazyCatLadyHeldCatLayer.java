@@ -43,7 +43,6 @@ class CrazyCatLadyHeldCatLayer extends RenderLayer<CrazyCatLadyRenderer.CrazyCat
         getParentModel().getHead().translateAndRotate(poseStack);
         poseStack.translate(0.0F, -1.18F, 0.02F);
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
         poseStack.scale(0.42F, 0.42F, 0.42F);
         poseStack.translate(0.0F, -1.05F, 0.0F);
         submitCat(poseStack, collector, light, state);

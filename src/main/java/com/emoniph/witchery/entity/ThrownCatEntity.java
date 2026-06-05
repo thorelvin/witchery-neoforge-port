@@ -1,7 +1,9 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -27,6 +29,7 @@ public class ThrownCatEntity extends PathfinderMob {
     private static final int BLINDNESS_TICKS = 20 * 3;
     private static final int NAUSEA_TICKS = 20 * 4;
     private static final int SCRATCHED_TICKS = 20 * 60 * 5;
+    private static final float SCRATCHED_HEALTH_PENALTY = 4.0F;
 
     @Nullable
     private UUID ownerUuid;
@@ -95,14 +98,25 @@ public class ThrownCatEntity extends PathfinderMob {
         DamageSource source = owner != null
                 ? serverLevel.damageSources().mobAttack(owner)
                 : serverLevel.damageSources().generic();
+        boolean alreadyScratched = player.hasEffect(WitcheryMobEffects.SCRATCHED);
+        float scratchedMaxHealth = Math.max(1.0F,
+                player.getMaxHealth() - (alreadyScratched ? 0.0F : SCRATCHED_HEALTH_PENALTY));
         player.hurtServer(serverLevel, source, 1.0F);
         player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, BLINDNESS_TICKS, 0, false, true));
         player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, NAUSEA_TICKS, 0, false, true));
         player.addEffect(new MobEffectInstance(WitcheryMobEffects.SCRATCHED, SCRATCHED_TICKS, 0, false, true));
-        if (player.getHealth() > player.getMaxHealth()) {
-            player.setHealth(player.getMaxHealth());
-        }
+        clampScratchedHealth(player, scratchedMaxHealth);
         discard();
+    }
+
+    private void clampScratchedHealth(Player player, float maxHealth) {
+        if (player.getHealth() > maxHealth) {
+            player.setHealth(maxHealth);
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundSetHealthPacket(serverPlayer.getHealth(),
+                    serverPlayer.getFoodData().getFoodLevel(), serverPlayer.getFoodData().getSaturationLevel()));
+        }
     }
 
     @Nullable
