@@ -24,7 +24,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 public class DreamCatcherBlockEntity extends BlockEntity {
 
-    private static final String KEY_WEAVE = "WitchWeaveID";
+    private static final String KEY_WEAVE = "WITCWeaveID";
+    private static final String LEGACY_PORT_KEY_WEAVE = "WitchWeaveID";
 
     @Nullable private DreamWeaveType weave;
     private boolean buffPending = false;
@@ -136,7 +137,8 @@ public class DreamCatcherBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        int _weaveId = tag.getIntOr(KEY_WEAVE, -1); weave = _weaveId >= 0 ? DreamWeaveType.fromId(_weaveId) : null;
+        int _weaveId = tag.getIntOr(KEY_WEAVE, tag.getIntOr(LEGACY_PORT_KEY_WEAVE, -1));
+        weave = _weaveId >= 0 ? DreamWeaveType.fromId(_weaveId) : null;
         buffPending = tag.getBooleanOr("BuffPending", false);
     }
 
