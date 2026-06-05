@@ -373,9 +373,9 @@ public class VillageWallEvents {
         }
         PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
                 player.getYRot(), player.getXRot(), namespace, structureId, targetBuilding);
-        boolean buildingOnly = targetBuilding != null;
-        boolean processed = buildingOnly || VillageWallData.get(level).isProcessed(start.getBoundingBox());
-        boolean generateWalls = !buildingOnly && !processed;
+        boolean buildingTarget = targetBuilding != null;
+        boolean processed = VillageWallData.get(level).isProcessed(start.getBoundingBox());
+        boolean generateWalls = !processed;
         List<ChunkPos> chunks = !generateWalls
                 ? landingPrepChunks(target)
                 : gotoWallPrepChunks(start, target);
@@ -389,11 +389,11 @@ public class VillageWallEvents {
         GOTO_PREPS.add(new VillageGotoPrepJob(start, teleport, chunks, generateWalls, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued village arrival prep for {}:{} at {} with {} chunk(s){}.",
                 namespace, structureId, target, chunks.size(),
-                generateWalls ? " and wall generation" : buildingOnly ? " (building landing only)" : "");
+                generateWalls ? " and wall generation" : buildingTarget ? " (known-village building landing)" : "");
         player.sendSystemMessage(Component.literal(
-                buildingOnly
-                        ? "The hidden paths find the village " + structureId
-                        + ". Hold still while the doorway stones settle."
+                buildingTarget
+                        ? "The hidden paths find the village " + structureId + ". Hold still while "
+                        + (generateWalls ? "its roads and walls settle." : "the doorway stones settle.")
                 : processed
                         ? "The hidden paths find a known village. Hold still while the arrival stones settle."
                         : "The hidden paths find a village. Hold still while its walls rise before the crossing.")

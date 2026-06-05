@@ -2,6 +2,9 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-05 (apothecary goto QA):**
+- ~~/witchery goto apothecary can still freeze on an unseen village~~ - live QA showed the building-only landing shortcut remained unstable when the selected Apothecary was in a not-yet-seen village. Fixed: building-targeted village goto no longer treats target villages as already processed; fresh Apothecary targets reuse the same full village-arrival prep, temporary chunk hold, and wall/gate generation path as stable `/witchery goto village_*`, then apply the Apothecary doorway/floor landing resolver.
+
 **Closed 2026-06-05 (gatehouse/watchtower QA):**
 - ~~Gatehouse lantern bracket does not connect to the gatehouse wall~~ - live QA found the lantern support reading as a floating fence/wall post beside the gatehouse. Fixed: generated gatehouse lantern brackets now set their wall/fence connection property toward the gatehouse face before placement, preserving the existing material palette and lantern positions.
 - ~~Village Watch Tower ladders are rotated into air~~ - after the source-coordinate ladder restoration, live QA found the ladder blockstate still needed a 180-degree facing correction. Fixed: Watch Towers keep the decompiled source ladder runs at local `(4,1..12,4)` and `(3,13..15,5)` but now place them with modern `LadderBlock.FACING=SOUTH` so they stick onto the wall in-game.
