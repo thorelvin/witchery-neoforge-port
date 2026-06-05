@@ -309,7 +309,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> ARTHANA = ITEMS.register("arthana", id -> new com.emoniph.witchery.item.ArthanaItem(itemProps(id).durability(250)));
     public static final DeferredItem<Item> PENTACLE = ITEMS.register("pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
     public static final DeferredItem<Item> KOBOLDITE_PENTACLE = ITEMS.register("koboldite_pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
-    public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.registerSimpleBlockItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON);
+    public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.register("statue_hobgoblin_patron",
+            id -> new StatueHobgoblinPatronItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON.get(), itemProps(id)));
     public static final DeferredItem<Item> WAYSTONE = ITEMS.register("waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> BOUND_WAYSTONE = ITEMS.register("bound_waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> BLOODED_WAYSTONE = ITEMS.register("blooded_waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(1)));
