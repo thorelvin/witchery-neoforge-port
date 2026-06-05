@@ -1770,8 +1770,8 @@ public class WitcheryCommands {
 
         for (int z : List.of(0, SETUP_HOUSE_SIZE - 1)) {
             fillSetupGableRow(level, layout, z, baseY, 1, SETUP_HOUSE_SIZE - 2, gable);
-            fillSetupGableRow(level, layout, z, baseY + 1, 2, SETUP_HOUSE_SIZE - 3, gable);
-            fillSetupGableRow(level, layout, z, baseY + 2, 4, SETUP_HOUSE_SIZE - 5, gable);
+            fillSetupGableRow(level, layout, z, baseY + 1, 3, SETUP_HOUSE_SIZE - 4, gable);
+            fillSetupGableRow(level, layout, z, baseY + 2, 5, SETUP_HOUSE_SIZE - 6, gable);
         }
     }
 
