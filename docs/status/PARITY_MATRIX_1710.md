@@ -3,6 +3,7 @@
 **Built:** 2026-05-28
 **Baseline source:** `C:\claude\witchery\decompiled\witchery-1.7.10-0.24.1`
 **Port:** NeoForge 1.21.1
+**Latest local note:** 2026-06-05 live village QA corrected Keep ladder facing to the generated south-side support for all source meta-2 tower/bridge spans, and `/witchery goto apothecary` now prefers the village road/path in front of the transformed Apothecary door.
 
 Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wrong behavior
 

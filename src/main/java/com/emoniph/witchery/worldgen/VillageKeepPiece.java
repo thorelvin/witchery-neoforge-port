@@ -83,7 +83,7 @@ public class VillageKeepPiece extends StructurePiece {
         BlockState stepN = materials.stepStairs(Direction.NORTH);
         BlockState stepS = materials.stepStairs(Direction.SOUTH);
         BlockState stepW = materials.stepStairs(Direction.WEST);
-        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
 
         // ── Clear interior shell ──────────────────────────────────────────────
@@ -153,7 +153,7 @@ public class VillageKeepPiece extends StructurePiece {
         placeBlock(level, materials.trim(Direction.Axis.X), 8, 7, 9, box);
         placeBlock(level, materials.trim(Direction.Axis.Z), 6, 7, 11, box);
 
-        // Source ladder meta 2 attaches to the north wall here; wrong side facings self-prune.
+        // Source ladder meta 2 resolves to the generated south-side support in this fixed NORTH-oriented piece.
         for (int h = 1; h <= 14; h++) placeBlock(level, ladder, 2, h, 10, box);
 
         // Torches on S bridge
@@ -194,7 +194,7 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 10, 5, 11, 1, 2, 1, air);
         fill(level, box, 10, 1, 11, 1, 2, 1, air);
 
-        // Source ladder meta 2 attaches to the north wall here too.
+        // Source ladder meta 2 resolves to the generated south-side support here too.
         for (int h = 1; h <= 14; h++) placeBlock(level, ladder, 11, h, 10, box);
 
         // Torches on E bridge
@@ -325,7 +325,7 @@ public class VillageKeepPiece extends StructurePiece {
         fill(level, box, 4+oX, 5, 5, 1, 2, 1, air);
         fill(level, box, 4+oX, 1, 5, 1, 2, 1, air);
         fill(level, box, 6+oX-fX, 5, 3, 1, 2, 1, air);
-        // Ladder up the tower interior (facing south, on the z=2 wall)
+        // Ladder up the tower interior, using the same source meta-2 support side as the bridge spans.
         for (int h = 1; h <= 9; h++) placeBlock(level, ladder, 3+oX, h, 2, box);
         // Torches at each floor inside
         placeBlock(level, torch, 3+oX, 2, 4, box);

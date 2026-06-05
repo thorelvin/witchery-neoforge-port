@@ -2,6 +2,10 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-05 (keep/apothecary goto QA):**
+- ~~Village Keep ladders are rotated 180 degrees into air~~ - live QA found the Keep has the same ladder-facing problem previously seen in Watch Towers. Source `ComponentVillageKeep` uses old ladder meta `2` for both tower shafts and bridge spans; in the port's fixed NORTH-oriented structure those spans now use `LadderBlock.FACING=NORTH` so they attach to the generated south-side support.
+- ~~/witchery goto apothecary lands behind the Apothecary~~ - the building landing anchor used `bb.minZ()-1`, which is the back side after the source-shaped Apothecary's local front is transformed by `Direction.NORTH`. Fixed: Apothecary goto now anchors to `bb.maxZ()+1`, then prefers the nearest safe village road/path block in front of the doorway before falling back to a doorway-height safe landing.
+
 **Closed 2026-06-05 (watchtower QA):**
 - ~~Village Watch Tower upper ladder span is missing three lower blocks~~ - live QA found the offset top handoff needed to start three blocks lower. Fixed: the lower shaft remains at local `(4,1..12,4)`, while the upper handoff now runs at local `(3,10..15,5)` with its own support-facing state against the solid south wall.
 

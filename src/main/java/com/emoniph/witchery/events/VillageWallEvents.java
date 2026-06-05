@@ -1077,7 +1077,7 @@ public class VillageWallEvents {
         if (teleport.targetBuilding() != null) {
             BlockPos anchor = villageBuildingAnchor(start, teleport.targetBuilding());
             if (anchor != null) {
-                BlockPos target = findClearLandingNearY(level, anchor, 12, 4);
+                BlockPos target = villageBuildingLandingTarget(level, teleport.targetBuilding(), anchor);
                 if (isSafeLandingAt(level, target.getX(), target.getY(), target.getZ())) {
                     return target;
                 }
@@ -1119,10 +1119,40 @@ public class VillageWallEvents {
             if (canonicalOrigin != null && !WitcheryVillageElement.buildingOrigin(piece).equals(canonicalOrigin)) continue;
             BoundingBox bb = piece.getBoundingBox();
             if ("apothecary".equals(building)) {
-                return new BlockPos(bb.minX() + 1, bb.minY() + 1, bb.minZ() - 1);
+                return new BlockPos(bb.minX() + 1, bb.minY() + 1, bb.maxZ() + 1);
             }
             return new BlockPos((bb.minX() + bb.maxX()) / 2, bb.minY() + 1,
                     (bb.minZ() + bb.maxZ()) / 2);
+        }
+        return null;
+    }
+
+    private static BlockPos villageBuildingLandingTarget(ServerLevel level, String building, BlockPos anchor) {
+        if ("apothecary".equals(building)) {
+            BlockPos road = findVillageRoadLandingNear(level, anchor, 12);
+            if (road != null) {
+                return road;
+            }
+        }
+        return findClearLandingNearY(level, anchor, 12, 4);
+    }
+
+    private static BlockPos findVillageRoadLandingNear(ServerLevel level, BlockPos anchor, int radius) {
+        for (int r = 0; r <= radius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.abs(dx) != r && Math.abs(dz) != r) continue;
+                    int x = anchor.getX() + dx;
+                    int z = anchor.getZ() + dz;
+                    if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                    int y = safeSurfaceY(level, x, z, anchor.getY());
+                    if (!isSafeLandingAt(level, x, y, z)) continue;
+                    BlockState ground = level.getBlockState(new BlockPos(x, y - 1, z));
+                    if (isVillageRoadSurface(ground)) {
+                        return new BlockPos(x, y, z);
+                    }
+                }
+            }
         }
         return null;
     }
