@@ -9,10 +9,13 @@ import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.DistilleryBlock;
 import com.emoniph.witchery.blocks.FumeFunnelBlock;
 import com.emoniph.witchery.blocks.KettleBlock;
+import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.blocks.SpinningWheelBlock;
 import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.blocks.WickerBundleBlock;
 import com.emoniph.witchery.blocks.WitchesOvenBlock;
+import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
 import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
@@ -56,6 +59,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.StairBlock;
@@ -75,6 +79,8 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1530,7 +1536,7 @@ public class WitcheryCommands {
         placeSetupTraders(level, layout);
 
         src.sendSuccess(() -> Component.literal(
-                "Cleared a 20x20 pad in front and placed a sunken pitched-roof Rowan Witchery QA hut with player-height stations, stocked chest, and indoor traders."),
+                "Cleared a 20x20 pad in front and placed a sunken pitched-roof Rowan Witchery QA hut with a boosted altar, stocked chest, power garden, and indoor traders."),
                 false);
         return 1;
     }
@@ -1853,6 +1859,7 @@ public class WitcheryCommands {
         placeMachine(level, layout.pos(8, 0, 2),
                 WitcheryBlocks.SPINNING_WHEEL.get().defaultBlockState().setValue(SpinningWheelBlock.FACING, layout.left()));
         placeSupplyChest(level, layout.pos(6, 0, 1), layout.depth(), layout.width());
+        placeSetupAltarGarden(level, layout);
     }
 
     private static void placeAltarRig(ServerLevel level, BlockPos backLeft, Direction depthDirection, Direction widthDirection) {
@@ -1868,6 +1875,81 @@ public class WitcheryCommands {
         placeMachine(level, backLeft.relative(widthDirection).above(),
                 WitcheryBlocks.CHALICE.get().defaultBlockState().setValue(ChaliceBlock.FILLED, true));
         placeMachine(level, backLeft.relative(widthDirection, 2).above(), Blocks.SKELETON_SKULL.defaultBlockState());
+        placeAltarItem(level, backLeft.relative(depthDirection), depthDirection.getOpposite(), WitcheryItems.ARTHANA.get());
+        placeAltarItem(level, backLeft.relative(depthDirection).relative(widthDirection),
+                depthDirection.getOpposite(), WitcheryItems.PENTACLE.get());
+        placeAltarItem(level, backLeft.relative(depthDirection).relative(widthDirection, 2),
+                depthDirection.getOpposite(), WitcheryItems.MYSTIC_BRANCH.get());
+    }
+
+    private static void placeAltarItem(ServerLevel level, BlockPos altarPos, Direction facing, Item item) {
+        BlockPos itemPos = altarPos.above();
+        level.setBlock(itemPos, WitcheryBlocks.PLACED_ITEM.get().defaultBlockState()
+                .setValue(PlacedItemBlock.FACING, facing), 3);
+        if (level.getBlockEntity(itemPos) instanceof PlacedItemBlockEntity placedItem) {
+            placedItem.setStack(new ItemStack(item));
+            level.sendBlockUpdated(itemPos, level.getBlockState(itemPos), level.getBlockState(itemPos), 3);
+        }
+        if (level.getBlockEntity(altarPos) instanceof AltarBlockEntity altar) {
+            altar.invalidate(level);
+        }
+    }
+
+    private static void placeSetupAltarGarden(ServerLevel level, SetupHouseLayout layout) {
+        BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
+        placeGardenPost(level, layout, -2, 2,
+                WitcheryBlocks.ROWAN_LOG.get().defaultBlockState(),
+                WitcheryBlocks.ROWAN_LEAVES.get().defaultBlockState());
+        placeGardenPost(level, layout, -2, 8,
+                WitcheryBlocks.ALDER_LOG.get().defaultBlockState(),
+                WitcheryBlocks.ALDER_LEAVES.get().defaultBlockState());
+        placeGardenPost(level, layout, SETUP_HOUSE_SIZE + 1, 2,
+                WitcheryBlocks.HAWTHORN_LOG.get().defaultBlockState(),
+                WitcheryBlocks.HAWTHORN_LEAVES.get().defaultBlockState());
+        placeGardenPost(level, layout, SETUP_HOUSE_SIZE + 1, 8,
+                WitcheryBlocks.ROWAN_LOG.get().defaultBlockState(),
+                WitcheryBlocks.ROWAN_LEAVES.get().defaultBlockState());
+
+        placeGardenPlant(level, layout, 2, SETUP_HOUSE_SIZE + 2, grass,
+                aged(WitcheryBlocks.BELLADONNA.get().defaultBlockState(), BlockStateProperties.AGE_4, 4));
+        placeGardenPlant(level, layout, 3, SETUP_HOUSE_SIZE + 2, grass,
+                aged(WitcheryBlocks.MANDRAKE.get().defaultBlockState(), BlockStateProperties.AGE_4, 4));
+        placeGardenPlant(level, layout, 4, SETUP_HOUSE_SIZE + 2, grass,
+                aged(WitcheryBlocks.ARTICHOKE.get().defaultBlockState(), BlockStateProperties.AGE_4, 4));
+        placeGardenPlant(level, layout, 6, SETUP_HOUSE_SIZE + 2, Blocks.FARMLAND.defaultBlockState(),
+                aged(WitcheryBlocks.SNOWBELL.get().defaultBlockState(), BlockStateProperties.AGE_4, 4));
+        placeGardenPlant(level, layout, 7, SETUP_HOUSE_SIZE + 2, Blocks.FARMLAND.defaultBlockState(),
+                aged(WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), BlockStateProperties.AGE_4, 4));
+        placeGardenPlant(level, layout, 8, SETUP_HOUSE_SIZE + 2, grass,
+                aged(WitcheryBlocks.GARLIC_CROP.get().defaultBlockState(), BlockStateProperties.AGE_5, 5));
+
+        placeGardenPlant(level, layout, 1, -2, grass, WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState());
+        placeGardenPlant(level, layout, 3, -2, grass, WitcheryBlocks.ALDER_SAPLING.get().defaultBlockState());
+        placeGardenPlant(level, layout, 7, -2, grass, WitcheryBlocks.HAWTHORN_SAPLING.get().defaultBlockState());
+        placeGardenPlant(level, layout, 9, -2, grass, WitcheryBlocks.BLOOD_ROSE.get().defaultBlockState());
+    }
+
+    private static void placeGardenPost(ServerLevel level, SetupHouseLayout layout, int x, int z,
+                                        BlockState log, BlockState leaves) {
+        level.setBlock(layout.pos(x, -1, z), Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+        level.setBlock(layout.pos(x, 0, z), log.setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), 3);
+        level.setBlock(layout.pos(x, 1, z), persistentLeaves(leaves), 3);
+    }
+
+    private static void placeGardenPlant(ServerLevel level, SetupHouseLayout layout, int x, int z,
+                                         BlockState support, BlockState plant) {
+        level.setBlock(layout.pos(x, -1, z), support, 3);
+        level.setBlock(layout.pos(x, 0, z), plant, 3);
+    }
+
+    private static BlockState persistentLeaves(BlockState leaves) {
+        return leaves.hasProperty(LeavesBlock.PERSISTENT)
+                ? leaves.setValue(LeavesBlock.PERSISTENT, true)
+                : leaves;
+    }
+
+    private static BlockState aged(BlockState state, IntegerProperty property, int age) {
+        return state.hasProperty(property) ? state.setValue(property, age) : state;
     }
 
     private static void placeKettleRig(ServerLevel level, BlockPos kettlePos, Direction machineFacing) {
@@ -1919,10 +2001,19 @@ public class WitcheryCommands {
         supplies.add(stack(Items.GOLD_NUGGET, 64));
         supplies.add(stack(Items.GOLD_INGOT, 32));
         supplies.add(stack(Items.COAL, 64));
-        supplies.add(stack(Items.CHARCOAL, 64));
         supplies.add(stack(Items.CLAY_BALL, 64));
         supplies.add(stack(WitcheryItems.CLAY_JAR_SOFT.get(), 64));
         supplies.add(stack(WitcheryItems.CLAY_JAR.get(), 64));
+        supplies.add(stack(WitcheryItems.GLASS_GOBLET.get(), 16));
+        supplies.add(stack(WitcheryItems.ARTHANA.get(), 1));
+        supplies.add(stack(WitcheryItems.BOLINE.get(), 1));
+        supplies.add(stack(WitcheryItems.PENTACLE.get(), 1));
+        supplies.add(stack(WitcheryItems.MYSTIC_BRANCH.get(), 1));
+        supplies.add(stack(WitcheryItems.CHALK.get(), 4));
+        supplies.add(stack(WitcheryItems.CHALK_GOLDEN.get(), 4));
+        supplies.add(stack(WitcheryItems.CHALK_OTHERWHERE.get(), 4));
+        supplies.add(stack(WitcheryItems.CHALK_INFERNAL.get(), 4));
+        supplies.add(stack(WitcheryItems.TAGLOCK_KIT.get(), 16));
 
         supplies.add(stack(WitcheryItems.HAWTHORN_SAPLING.get(), 64));
         supplies.add(stack(WitcheryItems.ALDER_SAPLING.get(), 64));
