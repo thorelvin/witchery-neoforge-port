@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -19,9 +20,17 @@ public class WitcheryLogBlock extends RotatedPillarBlock {
     private static final int MAX_SPAWN_DISTANCE = 16;
     private static final int MAX_HEIGHT_SCAN = 8;
     private static final int MIN_HEADROOM = 3;
+    private final int fireSpreadSpeed;
+    private final int flammability;
 
     public WitcheryLogBlock(BlockBehaviour.Properties properties) {
+        this(properties, 5, 5);
+    }
+
+    public WitcheryLogBlock(BlockBehaviour.Properties properties, int fireSpreadSpeed, int flammability) {
         super(properties);
+        this.fireSpreadSpeed = fireSpreadSpeed;
+        this.flammability = flammability;
     }
 
     @Override
@@ -30,6 +39,16 @@ public class WitcheryLogBlock extends RotatedPillarBlock {
             trySpawnEnt(serverLevel, pos);
         }
         return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return fireSpreadSpeed;
+    }
+
+    @Override
+    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return flammability;
     }
 
     private static void trySpawnEnt(ServerLevel level, BlockPos pos) {

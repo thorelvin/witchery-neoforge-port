@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.Block;
@@ -213,7 +212,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
 
     // Wood logs/leaves
-    public static final DeferredBlock<RotatedPillarBlock> ROWAN_LOG = registerBlock("rowan_log",
+    public static final DeferredBlock<WitcheryLogBlock> ROWAN_LOG = registerBlock("rowan_log",
             WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
     public static final DeferredBlock<Block> ROWAN_WOOD = registerSimpleBlock("rowan_wood",
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f));
@@ -223,7 +222,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SaplingBlock> ROWAN_SAPLING = registerBlock("rowan_sapling",
             props -> new SaplingBlock(ROWAN_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
-    public static final DeferredBlock<RotatedPillarBlock> ALDER_LOG = registerBlock("alder_log",
+    public static final DeferredBlock<WitcheryLogBlock> ALDER_LOG = registerBlock("alder_log",
             WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
     public static final DeferredBlock<WitcheryWoodBlock> ALDER_PLANKS = registerBlock("alder_planks",
             props -> new WitcheryWoodBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
@@ -245,8 +244,9 @@ public class WitcheryBlocks {
     public static final DeferredBlock<SaplingBlock> ALDER_SAPLING = registerBlock("alder_sapling",
             props -> new SaplingBlock(ALDER_TREE, props.mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision().randomTicks()),
             BlockBehaviour.Properties.of());
-    public static final DeferredBlock<RotatedPillarBlock> HAWTHORN_LOG = registerBlock("hawthorn_log",
-            WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
+    public static final DeferredBlock<WitcheryLogBlock> HAWTHORN_LOG = registerBlock("hawthorn_log",
+            props -> new WitcheryLogBlock(props, 1, 1),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
     public static final DeferredBlock<WitcheryWoodBlock> HAWTHORN_PLANKS = registerBlock("hawthorn_planks",
             props -> new WitcheryWoodBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
                     .strength(2.0f, 10.0f), 1, 1),
