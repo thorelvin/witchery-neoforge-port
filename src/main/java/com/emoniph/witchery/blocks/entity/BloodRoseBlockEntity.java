@@ -48,14 +48,26 @@ public class BloodRoseBlockEntity extends BlockEntity {
     }
 
     public DrainResult drainStoredPlayerExcept(Player usingPlayer) {
+        return drainStoredPlayer(usingPlayer, false);
+    }
+
+    public DrainResult drainStoredPlayer(Player usingPlayer, boolean allowOwnTaglock) {
         if (level == null || level.isClientSide() || usingPlayer == null || !hasStoredPlayer()) {
             return DrainResult.none();
         }
 
         UUID usingUuid = usingPlayer.getUUID();
         String usingName = usingPlayer.getName().getString();
-        if (storedUuid.equals(usingUuid) || storedName.equalsIgnoreCase(usingName)) {
+        boolean ownStoredSample = storedUuid.equals(usingUuid) || storedName.equalsIgnoreCase(usingName);
+        if (ownStoredSample && !allowOwnTaglock) {
             return DrainResult.onlyOwn();
+        }
+        if (ownStoredSample) {
+            StoredPlayer result = new StoredPlayer(usingUuid, usingName);
+            storedUuid = null;
+            storedName = "";
+            sync(false);
+            return DrainResult.success(result);
         }
 
         ServerPlayer onlinePlayer = level.getServer() == null ? null : level.getServer().getPlayerList().getPlayer(storedUuid);

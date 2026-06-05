@@ -201,10 +201,13 @@ public class TaglockKitItem extends Item {
                 return InteractionResult.PASS;
             }
 
-            BloodRoseBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
+            BloodRoseBlockEntity.DrainResult drainResult = be.drainStoredPlayer(user, true);
             if (drainResult.player() != null) {
                 bindSinglePlayerTaglock(user, ctx.getHand(), stack, drainResult.player().uuid(), drainResult.player().name());
-                user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_rose",
+                boolean selfSample = drainResult.player().uuid().equals(user.getUUID());
+                user.displayClientMessage(Component.translatable(selfSample
+                                ? "witchery.taglock_kit.collected_rose_self"
+                                : "witchery.taglock_kit.collected_rose",
                         drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
                 return InteractionResult.CONSUME;
             }

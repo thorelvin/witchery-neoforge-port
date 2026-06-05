@@ -41,8 +41,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Catches the same small critter set as Witchery 1.7.10 and stores the catch in
- * block state so the existing caught textures can represent it in-world.
+ * Catches the original small Witchery critter set, plus requested modern rabbit
+ * coverage, and stores the catch in block state for in-world presentation.
  */
 public class CritterSnareBlock extends Block {
     public static final IntegerProperty CAUGHT = IntegerProperty.create("caught", 0, 9);
@@ -53,6 +53,7 @@ public class CritterSnareBlock extends Block {
     private static final int SILVERFISH = 2;
     private static final int SLIME = 3;
     private static final int MAGMA_CUBE = 4;
+    private static final int RABBIT = 5;
     private static final int STOCK_FLAG = 8;
     private static final int STOCKED_BAT = STOCK_FLAG | BAT;
     private static final VoxelShape SHAPE = box(0.8, 0.0, 0.8, 15.2, 16.0, 15.2);
@@ -118,8 +119,13 @@ public class CritterSnareBlock extends Block {
         }
 
         if (!level.isClientSide()) {
-            level.setBlock(pos, state.setValue(CAUGHT, EMPTY), 3);
+            BlockState emptyState = state.setValue(CAUGHT, EMPTY);
+            level.setBlock(pos, emptyState, 3);
             releaseCritter(level, pos, player, caught);
+            BlockState afterRelease = level.getBlockState(pos);
+            if (afterRelease.is(this) && afterRelease.hasProperty(CAUGHT) && afterRelease.getValue(CAUGHT) != EMPTY) {
+                level.setBlock(pos, afterRelease.setValue(CAUGHT, EMPTY), 3);
+            }
             level.playSound(null, pos, caughtSound(caught), SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
         }
         return InteractionResult.SUCCESS;
@@ -169,6 +175,9 @@ public class CritterSnareBlock extends Block {
         if (entity instanceof Slime slime && slime.getSize() == 1) {
             return SLIME;
         }
+        if (entity.getType() == EntityType.RABBIT) {
+            return RABBIT;
+        }
         return EMPTY;
     }
 
@@ -179,6 +188,7 @@ public class CritterSnareBlock extends Block {
             case SILVERFISH -> EntityType.SILVERFISH.create(level, EntitySpawnReason.TRIGGERED);
             case SLIME -> EntityType.SLIME.create(level, EntitySpawnReason.TRIGGERED);
             case MAGMA_CUBE -> EntityType.MAGMA_CUBE.create(level, EntitySpawnReason.TRIGGERED);
+            case RABBIT -> EntityType.RABBIT.create(level, EntitySpawnReason.TRIGGERED);
             default -> null;
         };
         if (entity == null) {
@@ -188,14 +198,16 @@ public class CritterSnareBlock extends Block {
         if (caught == STOCKED_BAT && entity instanceof Bat bat) {
             PolynesiaCharmItem.setEmptyStockInventory(level, bat);
         }
-
-        if (critter == BAT) {
-            entity.setPos(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
-        } else {
-            double x = player.getX() < pos.getX() ? pos.getX() - 0.5 : pos.getX() + 1.5;
-            double z = player.getZ() < pos.getZ() ? pos.getZ() - 0.5 : pos.getZ() + 1.5;
-            entity.setPos(x, player.getY() + 0.5, z);
+        if (entity instanceof MagmaCube cube) {
+            cube.setSize(1, true);
+        } else if (entity instanceof Slime slime) {
+            slime.setSize(1, true);
         }
+
+        double x = player.getX() < pos.getX() + 0.5 ? pos.getX() - 0.5 : pos.getX() + 1.5;
+        double z = player.getZ() < pos.getZ() + 0.5 ? pos.getZ() - 0.5 : pos.getZ() + 1.5;
+        double y = critter == BAT ? pos.getY() + 1.5 : player.getY() + 0.5;
+        entity.setPos(x, y, z);
 
         level.addFreshEntity(entity);
     }
@@ -206,6 +218,7 @@ public class CritterSnareBlock extends Block {
             case SILVERFISH -> SoundEvents.SILVERFISH_AMBIENT;
             case SLIME -> SoundEvents.SLIME_SQUISH_SMALL;
             case MAGMA_CUBE -> SoundEvents.MAGMA_CUBE_SQUISH_SMALL;
+            case RABBIT -> SoundEvents.RABBIT_AMBIENT;
             default -> SoundEvents.WOOL_PLACE;
         };
     }
@@ -216,11 +229,11 @@ public class CritterSnareBlock extends Block {
 
     private static int critterFromCaught(int caught) {
         int critter = caught & 7;
-        return critter >= EMPTY && critter <= MAGMA_CUBE ? critter : EMPTY;
+        return critter >= EMPTY && critter <= RABBIT ? critter : EMPTY;
     }
 
     private static boolean isValidCaught(int caught) {
-        return caught >= EMPTY && caught <= MAGMA_CUBE || caught == STOCKED_BAT;
+        return caught >= EMPTY && caught <= RABBIT || caught == STOCKED_BAT;
     }
 
     private ItemStack createStackForState(BlockState state) {

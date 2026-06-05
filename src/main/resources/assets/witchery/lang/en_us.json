@@ -417,6 +417,7 @@
   "witchery.taglock_kit.collected_bed": "Collected taglock from the bed: %s.",
   "witchery.taglock_kit.no_bed_sample": "This bed does not hold a fresh taglock sample.",
   "witchery.taglock_kit.collected_rose": "Collected taglock from the Blood Rose: %s.",
+  "witchery.taglock_kit.collected_rose_self": "The Blood Rose remembers you, %s. The thorn writes your name in red.",
   "witchery.taglock_kit.no_blood_rose_sample": "This Blood Rose does not hold a fresh sample.",
   "witchery.taglock_kit.collected_leech_chest": "Collected taglock from the Leech Chest: %s.",
   "witchery.taglock_kit.no_leech_chest_sample": "This Leech Chest does not hold a usable taglock.",

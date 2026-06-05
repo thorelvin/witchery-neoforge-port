@@ -18,6 +18,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PlaceOnWaterBlockItem;
 
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -147,7 +148,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> BLIGHTED_SOIL = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_SOIL);
     public static final DeferredItem<BlockItem> BLIGHTED_STONE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_STONE);
     public static final DeferredItem<BlockItem> BLIGHTED_LOG = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BLIGHTED_LOG);
-    public static final DeferredItem<BlockItem> LEAPING_LILY = ITEMS.registerSimpleBlockItem(WitcheryBlocks.LEAPING_LILY);
+    public static final DeferredItem<BlockItem> LEAPING_LILY = ITEMS.register("leaping_lily", id ->
+            new PlaceOnWaterBlockItem(WitcheryBlocks.LEAPING_LILY.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> GRASSPER = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GRASSPER);
     public static final DeferredItem<BlockItem> GLOWGLOBE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GLOWGLOBE);
     public static final DeferredItem<BlockItem> HOLLOW_TEARS = ITEMS.registerSimpleBlockItem(WitcheryBlocks.HOLLOW_TEARS);
