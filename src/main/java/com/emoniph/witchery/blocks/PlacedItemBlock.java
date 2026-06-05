@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -69,6 +70,14 @@ public class PlacedItemBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState s) { return RenderShape.INVISIBLE; }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        if (level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be && !be.getStack().isEmpty()) {
+            return be.getStack().copy();
+        }
+        return new ItemStack(WitcheryItems.ARTHANA.get());
+    }
 
     @Nullable @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
