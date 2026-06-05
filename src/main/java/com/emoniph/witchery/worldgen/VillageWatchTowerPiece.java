@@ -13,9 +13,11 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
@@ -58,7 +60,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState stone  = materials.roofSolid();
         BlockState air    = Blocks.AIR.defaultBlockState();
         BlockState fence  = materials.parapet();
-        BlockState slab   = materials.roofSlabTop();
+        BlockState slab   = materials.roofSlabBottom();
         // Source roof stair metas 3/2/0/1 map to NORTH/SOUTH/EAST/WEST.
         BlockState stairsN = materials.roofStairs(Direction.NORTH);
         BlockState stairsS = materials.roofStairs(Direction.SOUTH);
@@ -122,6 +124,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
         for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE, 7, 19, sz, box);
         for (int sz = 2; sz <= 6; sz++) placeBlock(level, stairsE, 6, 20, sz, box);
         for (int sz = 3; sz <= 5; sz++) placeBlock(level, stairsE, 5, 21, sz, box);
+        placeRoofCornerStairs(level, box, stairsW, stairsE);
         // Peak slab
         placeBlock(level, slab, 4, 22, 4, box);
 
@@ -182,6 +185,19 @@ public class VillageWatchTowerPiece extends StructurePiece {
 
         // ── Guard spawns (3 guards on the top parapet) ────────────────────────
         spawnGuards(level, box, 4, 16, 5, 3);
+    }
+
+    private void placeRoofCornerStairs(WorldGenLevel level, BoundingBox box,
+                                       BlockState westFace, BlockState eastFace) {
+        placeBlock(level, westFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT), 2, 20, 2, box);
+        placeBlock(level, eastFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_RIGHT), 6, 20, 2, box);
+        placeBlock(level, westFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_RIGHT), 2, 20, 6, box);
+        placeBlock(level, eastFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT), 6, 20, 6, box);
+
+        placeBlock(level, westFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT), 3, 21, 3, box);
+        placeBlock(level, eastFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_RIGHT), 5, 21, 3, box);
+        placeBlock(level, westFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_RIGHT), 3, 21, 5, box);
+        placeBlock(level, eastFace.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT), 5, 21, 5, box);
     }
 
     private void spawnGuards(WorldGenLevel level, BoundingBox box,
