@@ -95,8 +95,10 @@ public class WitcheryBlocks {
     }
 
     // Wood & Rowan family
-    public static final DeferredBlock<Block> ROWAN_PLANKS = registerSimpleBlock("rowan_planks",
-            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
+    public static final DeferredBlock<WitcheryWoodBlock> ROWAN_PLANKS = registerBlock("rowan_planks",
+            props -> new WitcheryWoodBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
+                    .strength(2.0f, 10.0f), 5, 20),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<Block> BLOODED_WOOL = registerSimpleBlock("bloodedwool",
             WitcheryBlocks::bloodedWoolProperties);
     public static final DeferredBlock<Block> BLOOD_STAINED_WOOL = registerSimpleBlock("blood_stained_wool",
@@ -223,8 +225,10 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> ALDER_LOG = registerBlock("alder_log",
             WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
-    public static final DeferredBlock<Block> ALDER_PLANKS = registerSimpleBlock("alder_planks",
-            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
+    public static final DeferredBlock<WitcheryWoodBlock> ALDER_PLANKS = registerBlock("alder_planks",
+            props -> new WitcheryWoodBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
+                    .strength(2.0f, 10.0f), 5, 20),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<WitcheryWoodStairBlock> ALDER_STAIRS = registerBlock("alder_stairs",
             props -> new WitcheryWoodStairBlock(ALDER_PLANKS.get().defaultBlockState(),
                     props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),
@@ -243,11 +247,13 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<RotatedPillarBlock> HAWTHORN_LOG = registerBlock("hawthorn_log",
             WitcheryLogBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
-    public static final DeferredBlock<Block> HAWTHORN_PLANKS = registerSimpleBlock("hawthorn_planks",
-            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 10.0f));
+    public static final DeferredBlock<WitcheryWoodBlock> HAWTHORN_PLANKS = registerBlock("hawthorn_planks",
+            props -> new WitcheryWoodBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD)
+                    .strength(2.0f, 10.0f), 1, 1),
+            BlockBehaviour.Properties.of());
     public static final DeferredBlock<WitcheryWoodStairBlock> HAWTHORN_STAIRS = registerBlock("hawthorn_stairs",
             props -> new WitcheryWoodStairBlock(HAWTHORN_PLANKS.get().defaultBlockState(),
-                    props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f)),
+                    props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5.0f, 20.0f), 1, 1),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<WitcheryWoodSlabBlock> HAWTHORN_SLAB = registerBlock("hawthorn_slab",
             props -> new WitcheryWoodSlabBlock(props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f, 5.0f)),
