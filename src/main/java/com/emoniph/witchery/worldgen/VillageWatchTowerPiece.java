@@ -67,7 +67,8 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState stairsW = materials.roofStairs(Direction.EAST);
         BlockState stairsE = materials.roofStairs(Direction.WEST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
-        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+        BlockState lowerLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+        BlockState upperLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
 
         // ── Main tower shell (2-6, 0-17, 2-6) ────────────────────────────────
         generateBox(level, box, 2, 0, 2, 6, 17, 6, cobble, cobble, false);
@@ -165,8 +166,8 @@ public class VillageWatchTowerPiece extends StructurePiece {
         placeBlock(level, torch, 4, 14, 3, box);
         placeBlock(level, torch, 5, 16, 5, box);
 
-        for (int ly = 1; ly <= 12; ly++) placeBlock(level, ladder, 4, ly, 4, box);
-        for (int ly = 13; ly <= 15; ly++) placeBlock(level, ladder, 3, ly, 5, box);
+        for (int ly = 1; ly <= 12; ly++) placeBlock(level, lowerLadder, 4, ly, 4, box);
+        for (int ly = 10; ly <= 15; ly++) placeBlock(level, upperLadder, 3, ly, 5, box);
 
         // ── Loot chest on mid platform ───────────────────────────────────────
         createChest(level, box, random, 5, 10, 5, LOOT);
