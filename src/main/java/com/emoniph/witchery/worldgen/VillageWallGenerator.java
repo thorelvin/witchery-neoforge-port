@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
@@ -275,19 +274,23 @@ public final class VillageWallGenerator {
         //    those internal loops must be removed before placement.
         pruneSmallWallLoops(grid, w, d);
 
-        // 7. Biome-adaptive materials
+        // 7. Village-type materials
         int cx = minX + (maxX - minX) / 2;
         int cz = minZ + (maxZ - minZ) / 2;
-        BlockState wallBlock   = wallMaterial(level, cx, cz);
-        BlockState brickBlock  = brickMaterial(level, cx, cz);
-        BlockState merlonBlock = merlonMaterial(level, cx, cz);
-        BlockState stairBlock  = stairMaterial(level, cx, cz);
+        VillageBuildingMaterials.VillageType villageType = VillageBuildingMaterials.resolveVillageType(level, start);
+        if (villageType == null) {
+            villageType = VillageBuildingMaterials.typeForSample(level, cx, cz);
+        }
+        BlockState wallBlock   = wallMaterial(villageType);
+        BlockState brickBlock  = brickMaterial(villageType);
+        BlockState merlonBlock = merlonMaterial(villageType);
+        BlockState stairBlock  = stairMaterial(villageType);
 
         // 7b. Detect gates as independent definitions (built after the wall, overriding it).
         //     No GATE cells are marked in the grid — the wall ring is solid and each gatehouse
         //     overrides whatever it covers. Road/path material is biome-aware (desert villages
         //     pave with smooth sandstone, not dirt path).
-        boolean desert = isDesertLike(level, cx, cz);
+        boolean desert = villageType == VillageBuildingMaterials.VillageType.DESERT;
         BlockState pathBlock = desert ? Blocks.SMOOTH_SANDSTONE.defaultBlockState()
                                       : Blocks.DIRT_PATH.defaultBlockState();
         GateDetection gateDetection = detectGates(level, grid, originX, originZ, w, d, desert);
@@ -1176,22 +1179,6 @@ public final class VillageWallGenerator {
                 : Blocks.SAND.defaultBlockState();
     }
 
-    private static boolean isDesertLike(ServerLevel level, int x, int z) {
-        return usesSandstoneVillageMaterials(level, x, z);
-    }
-
-    private static boolean usesSandstoneVillageMaterials(ServerLevel level, int x, int z) {
-        var biome = level.getBiome(new BlockPos(x, 64, z));
-        return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
-    }
-
-    private static boolean usesSavannaVillageWallMaterials(ServerLevel level, int x, int z) {
-        var biome = level.getBiome(new BlockPos(x, 64, z));
-        return biome.is(Biomes.SAVANNA)
-                || biome.is(Biomes.SAVANNA_PLATEAU)
-                || biome.is(Biomes.WINDSWEPT_SAVANNA);
-    }
-
     /** Unconditional block set (overrides existing), chunk-load guarded. */
     private static void forceSet(ServerLevel level, int x, int y, int z, BlockState state) {
         if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return;
@@ -1212,43 +1199,42 @@ public final class VillageWallGenerator {
         level.addFreshEntityWithPassengers(guard);
     }
 
-    // ── Biome materials ────────────────────────────────────────────────────────
+    // ── Village-type materials ────────────────────────────────────────────────
 
-    private static BlockState wallMaterial(ServerLevel level, int x, int z) {
+    private static BlockState wallMaterial(VillageBuildingMaterials.VillageType villageType) {
         // Stone-brick family only — no cobblestone.
-        var biome = level.getBiome(new BlockPos(x, 64, z));
-        if (usesSandstoneVillageMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.SANDSTONE.defaultBlockState();
-        if (usesSavannaVillageWallMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
-        if (biome.is(BiomeTags.IS_FOREST))
+        if (villageType == VillageBuildingMaterials.VillageType.TAIGA)
             return Blocks.MOSSY_STONE_BRICKS.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
-    private static BlockState brickMaterial(ServerLevel level, int x, int z) {
-        if (usesSandstoneVillageMaterials(level, x, z))
+    private static BlockState brickMaterial(VillageBuildingMaterials.VillageType villageType) {
+        if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.CHISELED_SANDSTONE.defaultBlockState();
-        if (usesSavannaVillageWallMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
     /** Battlement / merlon material — biome-adaptive wall-block variant. */
-    private static BlockState merlonMaterial(ServerLevel level, int x, int z) {
+    private static BlockState merlonMaterial(VillageBuildingMaterials.VillageType villageType) {
         // Stone-brick family only — no cobblestone wall.
-        if (usesSandstoneVillageMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.SANDSTONE_WALL.defaultBlockState();
-        if (usesSavannaVillageWallMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.RED_SANDSTONE_WALL.defaultBlockState();
         return Blocks.STONE_BRICK_WALL.defaultBlockState();
     }
 
     /** Stair caps used for the Witchery Walls-style rampart lips. */
-    private static BlockState stairMaterial(ServerLevel level, int x, int z) {
-        if (usesSandstoneVillageMaterials(level, x, z))
+    private static BlockState stairMaterial(VillageBuildingMaterials.VillageType villageType) {
+        if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.SANDSTONE_STAIRS.defaultBlockState();
-        if (usesSavannaVillageWallMaterials(level, x, z))
+        if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.RED_SANDSTONE_STAIRS.defaultBlockState();
         return Blocks.STONE_BRICK_STAIRS.defaultBlockState();
     }

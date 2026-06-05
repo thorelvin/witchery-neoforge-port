@@ -1,10 +1,15 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.events.VillageWallEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
@@ -15,8 +20,20 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 
 final class VillageBuildingMaterials {
+    enum VillageType {
+        PLAINS,
+        DESERT,
+        SAVANNA,
+        TAIGA,
+        SNOWY
+    }
+
+    private final VillageType type;
     private final BlockState foundation;
     private final BlockState floor;
     private final BlockState wall;
@@ -28,9 +45,10 @@ final class VillageBuildingMaterials {
     private final BlockState parapet;
     private final Block door;
 
-    private VillageBuildingMaterials(BlockState foundation, BlockState floor, BlockState wall,
+    private VillageBuildingMaterials(VillageType type, BlockState foundation, BlockState floor, BlockState wall,
                                      BlockState trim, BlockState roofSolid, Block roofStairs,
                                      Block stepStairs, Block roofSlab, BlockState parapet, Block door) {
+        this.type = type;
         this.foundation = foundation;
         this.floor = floor;
         this.wall = wall;
@@ -43,6 +61,15 @@ final class VillageBuildingMaterials {
         this.door = door;
     }
 
+    static VillageBuildingMaterials forVillage(WorldGenLevel level, StructureManager structureMgr,
+                                               BoundingBox pieceBox, BoundingBox generationBox) {
+        VillageType type = resolveVillageType(level, structureMgr, pieceBox);
+        if (type != null) {
+            return forType(type);
+        }
+        return forVillage(level, pieceBox, generationBox);
+    }
+
     static VillageBuildingMaterials forVillage(WorldGenLevel level, BoundingBox pieceBox, BoundingBox generationBox) {
         int minX = Math.max(pieceBox.minX(), generationBox.minX());
         int maxX = Math.min(pieceBox.maxX(), generationBox.maxX());
@@ -50,21 +77,112 @@ final class VillageBuildingMaterials {
         int maxZ = Math.min(pieceBox.maxZ(), generationBox.maxZ());
         if (minX <= maxX && minZ <= maxZ) {
             BlockPos sample = new BlockPos((minX + maxX) / 2, 64, (minZ + maxZ) / 2);
-            return forSample(level, sample);
+            return forType(typeForSample(level, sample));
         }
         return forVillage(level, pieceBox);
     }
 
     static VillageBuildingMaterials forVillage(WorldGenLevel level, BoundingBox box) {
         BlockPos center = new BlockPos((box.minX() + box.maxX()) / 2, 64, (box.minZ() + box.maxZ()) / 2);
-        return forSample(level, center);
+        return forType(typeForSample(level, center));
     }
 
-    private static VillageBuildingMaterials forSample(WorldGenLevel level, BlockPos center) {
-        var biome = level.getBiome(center);
+    static VillageType resolveVillageType(ServerLevel level, StructureStart start) {
+        VillageType type = typeForStructureId(level, start);
+        if (type != null) {
+            return type;
+        }
+        return typeForPoolPieces(start);
+    }
 
+    static VillageType typeForSample(ServerLevel level, int x, int z) {
+        return typeForBiome(level.getBiome(new BlockPos(x, 64, z)));
+    }
+
+    private static VillageType resolveVillageType(WorldGenLevel level, StructureManager structureMgr, BoundingBox pieceBox) {
+        StructureStart start = findVillageStart(level.getLevel(), structureMgr, pieceBox);
+        return start != null ? resolveVillageType(level.getLevel(), start) : null;
+    }
+
+    private static StructureStart findVillageStart(ServerLevel level, StructureManager structureMgr, BoundingBox pieceBox) {
+        StructureStart best = null;
+        long bestDist = Long.MAX_VALUE;
+        for (int chunkX = Math.floorDiv(pieceBox.minX(), 16); chunkX <= Math.floorDiv(pieceBox.maxX(), 16); chunkX++) {
+            for (int chunkZ = Math.floorDiv(pieceBox.minZ(), 16); chunkZ <= Math.floorDiv(pieceBox.maxZ(), 16); chunkZ++) {
+                for (StructureStart start : structureMgr.startsForStructure(
+                        new ChunkPos(chunkX, chunkZ), structure -> VillageWallEvents.isVillageStructure(structure, level))) {
+                    if (start == null || !start.isValid() || !start.getBoundingBox().intersects(pieceBox)) continue;
+                    long dist = distToCenterSqr(start.getBoundingBox(), pieceBox);
+                    if (dist < bestDist) {
+                        best = start;
+                        bestDist = dist;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    private static VillageType typeForStructureId(ServerLevel level, StructureStart start) {
+        var structure = start.getStructure();
+        var holder = level.registryAccess().lookupOrThrow(Registries.STRUCTURE)
+                .listElements()
+                .filter(entry -> entry.value() == structure)
+                .findFirst();
+        if (holder.isEmpty()) {
+            return null;
+        }
+        var id = holder.get().key().identifier();
+        return "minecraft".equals(id.getNamespace()) ? typeForVillagePath(id.getPath()) : null;
+    }
+
+    private static VillageType typeForPoolPieces(StructureStart start) {
+        for (StructurePiece piece : start.getPieces()) {
+            if (piece instanceof PoolElementStructurePiece poolPiece) {
+                VillageType type = typeForVillagePath(poolPiece.getElement().toString());
+                if (type != null) {
+                    return type;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static VillageType typeForVillagePath(String path) {
+        if (path.contains("village_desert") || path.contains("village/desert/")) return VillageType.DESERT;
+        if (path.contains("village_savanna") || path.contains("village/savanna/")) return VillageType.SAVANNA;
+        if (path.contains("village_taiga") || path.contains("village/taiga/")) return VillageType.TAIGA;
+        if (path.contains("village_snowy") || path.contains("village/snowy/")) return VillageType.SNOWY;
+        if (path.contains("village_plains") || path.contains("village/plains/")) return VillageType.PLAINS;
+        return null;
+    }
+
+    private static VillageType typeForSample(WorldGenLevel level, BlockPos center) {
+        return typeForBiome(level.getBiome(center));
+    }
+
+    private static VillageType typeForBiome(net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> biome) {
         if (biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS)) {
+            return VillageType.DESERT;
+        }
+        if (biome.is(Biomes.SAVANNA) || biome.is(Biomes.SAVANNA_PLATEAU)
+                || biome.is(Biomes.WINDSWEPT_SAVANNA)) {
+            return VillageType.SAVANNA;
+        }
+        if (biome.is(Biomes.TAIGA) || biome.is(Biomes.OLD_GROWTH_PINE_TAIGA)
+                || biome.is(Biomes.OLD_GROWTH_SPRUCE_TAIGA)) {
+            return VillageType.TAIGA;
+        }
+        if (biome.is(Biomes.SNOWY_TAIGA) || biome.is(Biomes.SNOWY_PLAINS) || biome.is(Biomes.ICE_SPIKES)) {
+            return VillageType.SNOWY;
+        }
+        return VillageType.PLAINS;
+    }
+
+    private static VillageBuildingMaterials forType(VillageType type) {
+        if (type == VillageType.DESERT) {
             return new VillageBuildingMaterials(
+                    type,
                     Blocks.SANDSTONE.defaultBlockState(),
                     Blocks.SMOOTH_SANDSTONE.defaultBlockState(),
                     Blocks.CUT_SANDSTONE.defaultBlockState(),
@@ -77,9 +195,9 @@ final class VillageBuildingMaterials {
                     Blocks.OAK_DOOR);
         }
 
-        if (biome.is(Biomes.SAVANNA) || biome.is(Biomes.SAVANNA_PLATEAU)
-                || biome.is(Biomes.WINDSWEPT_SAVANNA)) {
+        if (type == VillageType.SAVANNA) {
             return new VillageBuildingMaterials(
+                    type,
                     Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
                     Blocks.ACACIA_PLANKS.defaultBlockState(),
                     Blocks.ACACIA_PLANKS.defaultBlockState(),
@@ -92,11 +210,9 @@ final class VillageBuildingMaterials {
                     Blocks.ACACIA_DOOR);
         }
 
-        if (biome.is(Biomes.TAIGA) || biome.is(Biomes.SNOWY_TAIGA)
-                || biome.is(Biomes.OLD_GROWTH_PINE_TAIGA)
-                || biome.is(Biomes.OLD_GROWTH_SPRUCE_TAIGA)
-                || biome.is(Biomes.SNOWY_PLAINS) || biome.is(Biomes.ICE_SPIKES)) {
+        if (type == VillageType.TAIGA || type == VillageType.SNOWY) {
             return new VillageBuildingMaterials(
+                    type,
                     Blocks.COBBLESTONE.defaultBlockState(),
                     Blocks.SPRUCE_PLANKS.defaultBlockState(),
                     Blocks.SPRUCE_PLANKS.defaultBlockState(),
@@ -110,6 +226,7 @@ final class VillageBuildingMaterials {
         }
 
         return new VillageBuildingMaterials(
+                type,
                 Blocks.COBBLESTONE.defaultBlockState(),
                 Blocks.OAK_PLANKS.defaultBlockState(),
                 Blocks.OAK_PLANKS.defaultBlockState(),
@@ -120,6 +237,20 @@ final class VillageBuildingMaterials {
                 Blocks.OAK_SLAB,
                 Blocks.OAK_FENCE.defaultBlockState(),
                 Blocks.OAK_DOOR);
+    }
+
+    private static long distToCenterSqr(BoundingBox startBox, BoundingBox pieceBox) {
+        long startX = (startBox.minX() + startBox.maxX()) / 2L;
+        long startZ = (startBox.minZ() + startBox.maxZ()) / 2L;
+        long pieceX = (pieceBox.minX() + pieceBox.maxX()) / 2L;
+        long pieceZ = (pieceBox.minZ() + pieceBox.maxZ()) / 2L;
+        long dx = pieceX - startX;
+        long dz = pieceZ - startZ;
+        return dx * dx + dz * dz;
+    }
+
+    VillageType type() {
+        return type;
     }
 
     BlockState foundation() {

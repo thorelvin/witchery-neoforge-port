@@ -2,6 +2,9 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-05 (village palette QA):**
+- ~~Plains village Watch Tower can generate with savanna terracotta/acacia materials~~ - live QA found a Watch Tower in a plains village using the savanna palette. Fixed: Witchery village buildings and generated walls/gates now resolve the enclosing vanilla village structure family from the `StructureStart` before falling back to terrain-biome sampling, so plains/savanna/desert/taiga/snowy village palettes stay consistent across all Witchery village additions.
+
 **Closed 2026-06-05 (apothecary QA):**
 - ~~Fresh taiga Apothecary roof uses the wrong palette~~ - live QA found the Apothecary roof did not match nearby taiga Witchery village buildings. Fixed: the source-shaped Apothecary keeps its old stepped footprint/stair rows but now uses the shared biome `roofSolid` material for the three solid roof bands, so taiga/snowy variants use spruce roof solids with their spruce stair rows instead of cobblestone bands.
 - ~~More than one Apothecary can generate in one modern village~~ - live QA found two Apothecaries in one village. Source `WorldHandlerVillageApothecary` could request up to two Apothecaries in larger 1.7.10 villages, but the port's policy is max one of each Witchery building per modern village start. Fixed: `WitcheryVillageElement` now chooses one deterministic canonical planned origin for each Witchery building type from the `StructureStart` and skips other planned duplicates even after chunk replay/restart; `/witchery goto apothecary` uses the same canonical origin.

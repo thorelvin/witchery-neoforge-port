@@ -64,7 +64,7 @@ public class BookshopPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, mgr, boundingBox, box);
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState stone = materials.foundation();
         BlockState floor = materials.floor();

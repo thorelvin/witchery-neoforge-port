@@ -68,7 +68,7 @@ public class VillageKeepPiece extends StructurePiece {
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
 
-        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
+        VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, mgr, boundingBox, box);
         BlockState cobble = materials.foundation();
         BlockState stone  = materials.roofSolid();
         BlockState log    = materials.trim();
