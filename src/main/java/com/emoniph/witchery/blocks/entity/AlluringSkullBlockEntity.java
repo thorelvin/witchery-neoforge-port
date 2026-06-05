@@ -21,11 +21,15 @@ import org.jetbrains.annotations.Nullable;
 public class AlluringSkullBlockEntity extends BlockEntity {
 
     private static final int TICK_INTERVAL = 100;
+    private static final int QUADRANT_COUNT = 8;
     private static final double RANGE = 64.0;
-    private static final double HEIGHT = 10.0;
+    private static final double VERTICAL_RANGE = 10.0;
+    private static final double PATH_SPEED = 1.0;
     private static final String KEY_ROTATION = "Rotation";
 
     private int rotationSegment;
+    private int quadrant;
+    private long ticks;
 
     public AlluringSkullBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.ALLURING_SKULL.get(), pos, state);
@@ -71,19 +75,45 @@ public class AlluringSkullBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, AlluringSkullBlockEntity blockEntity) {
+        blockEntity.tickCounter();
         if (!state.getValue(AlluringSkullBlock.ON)) {
             return;
         }
-        if (level.getGameTime() % TICK_INTERVAL != 0) {
+        if (blockEntity.ticks % TICK_INTERVAL != 0) {
             return;
         }
 
-        AABB bounds = new AABB(pos).inflate(RANGE, HEIGHT, RANGE);
+        blockEntity.quadrant = (blockEntity.quadrant + 1) % QUADRANT_COUNT;
+        AABB bounds = quadrantBounds(pos, blockEntity.quadrant);
         for (PathfinderMob mob : level.getEntitiesOfClass(PathfinderMob.class, bounds)) {
             if (!mob.getType().is(EntityTypeTags.UNDEAD) || !mob.isAlive()) {
                 continue;
             }
-            mob.getNavigation().moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Math.max(1.0, mob.getSpeed()));
+            mob.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), PATH_SPEED);
         }
+    }
+
+    private void tickCounter() {
+        if (ticks == Long.MAX_VALUE) {
+            ticks = 1L;
+        } else {
+            ticks++;
+        }
+    }
+
+    private static AABB quadrantBounds(BlockPos pos, int quadrant) {
+        double x = pos.getX();
+        double y = pos.getY();
+        double z = pos.getZ();
+        return switch (quadrant) {
+            case 0 -> new AABB(x, y - VERTICAL_RANGE, z - RANGE, x + RANGE, y, z);
+            case 1 -> new AABB(x - RANGE, y - VERTICAL_RANGE, z - RANGE, x, y, z);
+            case 2 -> new AABB(x, y - VERTICAL_RANGE, z, x + RANGE, y, z + RANGE);
+            case 3 -> new AABB(x - RANGE, y - VERTICAL_RANGE, z, x, y, z + RANGE);
+            case 4 -> new AABB(x - RANGE, y + 1.0, z - RANGE, x, y + VERTICAL_RANGE, z);
+            case 5 -> new AABB(x, y + 1.0, z, x + RANGE, y + VERTICAL_RANGE, z + RANGE);
+            case 6 -> new AABB(x - RANGE, y + 1.0, z, x, y + VERTICAL_RANGE, z + RANGE);
+            default -> new AABB(x, y + 1.0, z - RANGE, x + RANGE, y + VERTICAL_RANGE, z);
+        };
     }
 }
