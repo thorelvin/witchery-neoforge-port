@@ -1749,8 +1749,8 @@ public class WitcheryCommands {
     }
 
     private static void placeSetupRoof(ServerLevel level, SetupHouseLayout layout, int baseY) {
-        BlockState leftSlope = setupRoofStair(layout.left());
-        BlockState rightSlope = setupRoofStair(layout.width());
+        BlockState leftSlope = setupRoofStair(layout.width());
+        BlockState rightSlope = setupRoofStair(layout.left());
         BlockState gable = WitcheryBlocks.ROWAN_PLANKS.get().defaultBlockState();
         BlockState ridge = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState()
                 .setValue(RotatedPillarBlock.AXIS, layout.depth().getAxis());
