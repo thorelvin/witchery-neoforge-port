@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -91,6 +92,15 @@ public class DistilleryBlock extends BaseEntityBlock {
     @Override
     protected boolean hasAnalogOutputSignal(BlockState state) {
         return true;
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof DistilleryBlockEntity be) {
+            Containers.dropContents(level, pos, be);
+            level.updateNeighbourForOutputSignal(pos, this);
+        }
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
