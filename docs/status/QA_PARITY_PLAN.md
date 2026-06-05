@@ -206,6 +206,7 @@ Priority mechanics checklist:
 3. Poppets and storage: Poppet Shelf, Leech Chest, Refilling Chest, Taglock flow, chunk-loading expectations.
 4. Spirit World: Dream Catcher rules, Nightmare/Demonic Nightmare cadence, corpse rules, Flowing Spirit, plant interactions.
 5. Blocks and plants: cotton, blood rose, brambles including Void Bramble ritual nulling, grassper, glowglobe, critter snare, wicker bundle, crystal ball, coffin, brazier, fetish blocks.
+   Glint Weed drop QA note (2026-06-06): original `BlockGlintWeed` inherits the normal bush item-block drop path, while `BlockEmberMoss` overrides normal drops to zero with shears-only harvesting and `BlockGlowGlobe` explicitly drops nothing. Break Glint Weed in survival and confirm it drops `witchery:glint_weed`; break Ember Moss bare-handed and confirm no drop, then shear it and confirm one `witchery:ember_moss`; break Glowglobe and confirm no drop/no pick clone remains intentional.
 6. Entities: broom flight, familiar powers, mob AI, renderer-linked gameplay expectations.
 
 Current entity verification note:
