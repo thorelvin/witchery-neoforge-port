@@ -1,5 +1,6 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.entity.CrazyCatLadyEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
@@ -104,15 +105,29 @@ public class WitchHutPiece extends StructurePiece {
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 2);
         if (!box.isInside(spawnPos)) return;
-        CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get()
-                .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
-        if (witch != null) {
-            witch.setPersistenceRequired();
-            witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            witch.finalizeSpawn(level,
-                    new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
-                    EntitySpawnReason.STRUCTURE, null);
-            level.addFreshEntityWithPassengers(witch);
+        if (random.nextInt(20) == 0) {
+            CrazyCatLadyEntity catLady = WitcheryEntities.CRAZY_CAT_LADY.get()
+                    .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            if (catLady != null) {
+                catLady.setPersistenceRequired();
+                catLady.setHutHome(spawnPos);
+                catLady.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                catLady.finalizeSpawn(level,
+                        new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
+                        EntitySpawnReason.STRUCTURE, null);
+                level.addFreshEntityWithPassengers(catLady);
+            }
+        } else {
+            CovenWitchEntity witch = WitcheryEntities.COVEN_WITCH.get()
+                    .create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            if (witch != null) {
+                witch.setPersistenceRequired();
+                witch.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                witch.finalizeSpawn(level,
+                        new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
+                        EntitySpawnReason.STRUCTURE, null);
+                level.addFreshEntityWithPassengers(witch);
+            }
         }
     }
 

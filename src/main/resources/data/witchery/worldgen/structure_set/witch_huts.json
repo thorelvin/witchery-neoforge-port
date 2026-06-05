@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "witchery:witch_hut",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 36,
+    "separation": 10,
+    "salt": 1630924712
+  }
+}

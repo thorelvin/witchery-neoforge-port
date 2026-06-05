@@ -69,10 +69,21 @@ public class WitcheryEntities {
                     EntityType.Builder.of(CovenWitchEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "coven_witch"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<CrazyCatLadyEntity>> CRAZY_CAT_LADY =
+            ENTITY_TYPES.register("crazy_cat_lady", () ->
+                    EntityType.Builder.of(CrazyCatLadyEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "crazy_cat_lady"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<WitchHunterEntity>> WITCH_HUNTER =
             ENTITY_TYPES.register("witch_hunter", () ->
                     EntityType.Builder.of(WitchHunterEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "witch_hunter"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ThrownCatEntity>> THROWN_CAT =
+            ENTITY_TYPES.register("thrown_cat", () ->
+                    EntityType.Builder.<ThrownCatEntity>of(ThrownCatEntity::new, MobCategory.MISC)
+                            .sized(0.6F, 0.7F).clientTrackingRange(8).updateInterval(2).noSave().noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "thrown_cat"))));
 
     // ── Broom ─────────────────────────────────────────────────────────────────
 
@@ -356,6 +367,7 @@ public class WitcheryEntities {
 
         // Ground mobs — humanoids and ground-walkers
         event.register(COVEN_WITCH.get(),   SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(CRAZY_CAT_LADY.get(), SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(WITCH_HUNTER.get(), SpawnPlacementTypes.ON_GROUND,         Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(TREEFYD.get(),       SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(ENT.get(),           SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
@@ -379,6 +391,8 @@ public class WitcheryEntities {
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
         event.put(PARASYTIC_LOUSE.get(), ParasyticLouseEntity.createAttributes().build());
         event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());
+        event.put(CRAZY_CAT_LADY.get(), CrazyCatLadyEntity.createAttributes().build());
+        event.put(THROWN_CAT.get(),     ThrownCatEntity.createAttributes().build());
         event.put(WITCH_HUNTER.get(),  WitchHunterEntity.createAttributes().build());
         event.put(BANSHEE.get(),       BansheeEntity.createAttributes().build());
         event.put(SPECTRE.get(),       SpectreEntity.createAttributes().build());

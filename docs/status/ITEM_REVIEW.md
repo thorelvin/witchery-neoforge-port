@@ -232,6 +232,7 @@ Rows started from the old creative-tab order. The live Witchery creative tab is 
 | # | Item ID | Notes |
 |---|---|---|
 | 134 | `witchery:coven_witch_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
+| 134a | `witchery:crazy_cat_lady_spawn_egg` | `Partial - custom Witch Hut resident spawn egg, local vanilla-style spawn egg template restored` |
 | 135 | `witchery:witch_hunter_spawn_egg` | `Partial - local vanilla-style spawn egg template restored` |
 
 ---

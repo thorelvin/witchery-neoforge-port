@@ -528,6 +528,7 @@ public class WitcheryCreativeTabs {
     private static void addSpawnEggs(CreativeModeTab.Output output) {
         add(output,
                 WitcheryItems.COVEN_WITCH_SPAWN_EGG.get(),
+                WitcheryItems.CRAZY_CAT_LADY_SPAWN_EGG.get(),
                 WitcheryItems.VAMPIRE_SPAWN_EGG.get(),
                 WitcheryItems.GOBLIN_GULG_SPAWN_EGG.get(),
                 WitcheryItems.GOBLIN_MOG_SPAWN_EGG.get(),

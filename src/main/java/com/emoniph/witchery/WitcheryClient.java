@@ -222,6 +222,8 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.TOAD.get(),             ToadFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.PARASYTIC_LOUSE.get(),  ParasyticLouseRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.COVEN_WITCH.get(),     CovenWitchRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.CRAZY_CAT_LADY.get(),  CrazyCatLadyRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.THROWN_CAT.get(),       ThrownCatRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.WITCH_HUNTER.get(),    WitchHunterRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.BANSHEE.get(),         BansheeRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPECTRE.get(),         SpectreRenderer::new);

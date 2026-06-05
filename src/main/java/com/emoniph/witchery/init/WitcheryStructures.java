@@ -12,6 +12,7 @@ import com.emoniph.witchery.worldgen.StrawManStructure;
 import com.emoniph.witchery.worldgen.VillageKeepPiece;
 import com.emoniph.witchery.worldgen.VillageWatchTowerPiece;
 import com.emoniph.witchery.worldgen.WitchHutPiece;
+import com.emoniph.witchery.worldgen.WitchHutStructure;
 import com.emoniph.witchery.worldgen.WitcheryVillageElement;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -53,6 +54,9 @@ public class WitcheryStructures {
 
     // ── Village pool pieces (injected via WitcheryVillageElement) ─────────────
     // Piece types remain registered so saved worlds can deserialize them.
+
+    public static final DeferredHolder<StructureType<?>, StructureType<WitchHutStructure>> WITCH_HUT_TYPE =
+            STRUCTURE_TYPES.register("witch_hut", () -> () -> WitchHutStructure.CODEC);
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> WITCH_HUT_PIECE =
             PIECE_TYPES.register("witch_hut", () -> WitchHutPiece::new);

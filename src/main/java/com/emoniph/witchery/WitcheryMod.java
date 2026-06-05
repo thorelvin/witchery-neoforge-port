@@ -13,6 +13,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryCreativeTabs;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryFeatures;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.init.WitcheryRecipeSerializers;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.init.WitcherySoundEvents;
@@ -47,6 +48,7 @@ public class WitcheryMod {
         WitcheryDataComponents.DATA_COMPONENTS.register(modEventBus);
         WitcheryMenuTypes.MENU_TYPES.register(modEventBus);
         WitcheryEntities.ENTITY_TYPES.register(modEventBus);
+        WitcheryMobEffects.MOB_EFFECTS.register(modEventBus);
         WitcherySoundEvents.SOUND_EVENTS.register(modEventBus);
         WitcheryStructures.STRUCTURE_TYPES.register(modEventBus);
         WitcheryStructures.PIECE_TYPES.register(modEventBus);
