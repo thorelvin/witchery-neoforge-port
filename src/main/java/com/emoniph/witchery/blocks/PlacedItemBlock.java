@@ -99,16 +99,26 @@ public class PlacedItemBlock extends BaseEntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        dropStoredStack(level, pos);
+        if (player.getAbilities().instabuild) {
+            clearStoredStack(level, pos);
+        } else {
+            dropStoredStack(level, pos);
+        }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     private static void dropStoredStack(Level level, BlockPos pos) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be) {
-            ItemStack stored = be.getStack();
+            ItemStack stored = be.takeStack();
             if (!stored.isEmpty()) {
                 popResource(level, pos, stored.copy());
             }
+        }
+    }
+
+    private static void clearStoredStack(Level level, BlockPos pos) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PlacedItemBlockEntity be) {
+            be.takeStack();
         }
     }
 }
