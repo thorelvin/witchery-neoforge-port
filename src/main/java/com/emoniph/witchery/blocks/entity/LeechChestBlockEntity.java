@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -40,6 +41,9 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private static final String KEY_STORED_PLAYER_COUNT = "StoredPlayerCount";
     private static final String KEY_STORED_PLAYER_UUID = "StoredPlayerUuid";
     private static final String KEY_STORED_PLAYER_NAME = "StoredPlayerName";
+    private static final String SOURCE_PLAYERS_KEY = "WITCPlayers";
+    private static final String SOURCE_PLAYER_KEY = "Player";
+    private static final UUID UNKNOWN_PLAYER_UUID = new UUID(0L, 0L);
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final List<StoredPlayer> recentPlayers = new ArrayList<>();
@@ -106,7 +110,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         StoredPlayer stored = new StoredPlayer(player.getUUID(), player.getName().getString());
-        if (recentPlayers.contains(stored)) {
+        if (hasStoredPlayer(stored.uuid(), stored.name())) {
             return;
         }
 
@@ -135,7 +139,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
                 continue;
             }
 
-            ServerPlayer onlinePlayer = level.getServer() == null ? null : level.getServer().getPlayerList().getPlayer(stored.uuid());
+            ServerPlayer onlinePlayer = findOnlinePlayer(stored);
             if (onlinePlayer != null && onlinePlayer.isAlive()) {
                 recentPlayers.remove(i);
                 sync();
@@ -149,6 +153,29 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             return DrainResult.missingPlayers(missingPlayers);
         }
         return DrainResult.none();
+    }
+
+    private boolean hasStoredPlayer(UUID uuid, String name) {
+        for (StoredPlayer stored : recentPlayers) {
+            if (!UNKNOWN_PLAYER_UUID.equals(stored.uuid()) && stored.uuid().equals(uuid)) {
+                return true;
+            }
+            if (stored.name().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    private ServerPlayer findOnlinePlayer(StoredPlayer stored) {
+        if (level == null || level.getServer() == null) {
+            return null;
+        }
+        ServerPlayer player = UNKNOWN_PLAYER_UUID.equals(stored.uuid())
+                ? null
+                : level.getServer().getPlayerList().getPlayer(stored.uuid());
+        return player != null ? player : level.getServer().getPlayerList().getPlayerByName(stored.name());
     }
 
     public CompoundTag createDropData() {
@@ -345,6 +372,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             tag.putString(KEY_STORED_PLAYER_UUID + i, stored.uuid().toString());
             tag.putString(KEY_STORED_PLAYER_NAME + i, stored.name());
         }
+        saveSourcePlayersToTag(tag);
     }
 
     private void loadStoredPlayersFromTag(CompoundTag tag) {
@@ -363,6 +391,42 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             } catch (IllegalArgumentException ignored) {
                 // Skip malformed historical data rather than bricking the chest.
             }
+        }
+
+        if (recentPlayers.isEmpty()) {
+            loadSourcePlayersFromTag(tag);
+        }
+    }
+
+    private void saveSourcePlayersToTag(CompoundTag tag) {
+        if (recentPlayers.isEmpty()) {
+            return;
+        }
+        ListTag players = new ListTag();
+        for (StoredPlayer stored : recentPlayers) {
+            if (stored.name().isBlank()) {
+                continue;
+            }
+            CompoundTag player = new CompoundTag();
+            player.putString(SOURCE_PLAYER_KEY, stored.name());
+            players.add(player);
+        }
+        if (!players.isEmpty()) {
+            tag.put(SOURCE_PLAYERS_KEY, players);
+        }
+    }
+
+    private void loadSourcePlayersFromTag(CompoundTag tag) {
+        ListTag players = tag.getListOrEmpty(SOURCE_PLAYERS_KEY);
+        for (int i = 0; i < players.size(); i++) {
+            CompoundTag player = players.getCompoundOrEmpty(i);
+            String name = player.getStringOr(SOURCE_PLAYER_KEY, "");
+            if (!name.isBlank() && !hasStoredPlayer(UNKNOWN_PLAYER_UUID, name)) {
+                recentPlayers.add(new StoredPlayer(UNKNOWN_PLAYER_UUID, name));
+            }
+        }
+        while (recentPlayers.size() > MAX_RECENT_PLAYERS) {
+            recentPlayers.remove(0);
         }
     }
 
