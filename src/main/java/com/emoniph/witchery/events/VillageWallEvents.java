@@ -368,8 +368,10 @@ public class VillageWallEvents {
         }
         PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
                 player.getYRot(), player.getXRot(), namespace, structureId, targetBuilding);
-        boolean processed = VillageWallData.get(level).isProcessed(start.getBoundingBox());
-        List<ChunkPos> chunks = processed
+        boolean buildingOnly = targetBuilding != null;
+        boolean processed = buildingOnly || VillageWallData.get(level).isProcessed(start.getBoundingBox());
+        boolean generateWalls = !buildingOnly && !processed;
+        List<ChunkPos> chunks = !generateWalls
                 ? landingPrepChunks(target)
                 : gotoWallPrepChunks(start, target);
         GOTO_PREPS.removeIf(job -> {
@@ -379,11 +381,15 @@ public class VillageWallEvents {
             }
             return samePlayer;
         });
-        GOTO_PREPS.add(new VillageGotoPrepJob(start, teleport, chunks, !processed, level.getGameTime()));
+        GOTO_PREPS.add(new VillageGotoPrepJob(start, teleport, chunks, generateWalls, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued village arrival prep for {}:{} at {} with {} chunk(s){}.",
-                namespace, structureId, target, chunks.size(), processed ? "" : " and wall generation");
+                namespace, structureId, target, chunks.size(),
+                generateWalls ? " and wall generation" : buildingOnly ? " (building landing only)" : "");
         player.sendSystemMessage(Component.literal(
-                processed
+                buildingOnly
+                        ? "The hidden paths find the village " + structureId
+                        + ". Hold still while the doorway stones settle."
+                : processed
                         ? "The hidden paths find a known village. Hold still while the arrival stones settle."
                         : "The hidden paths find a village. Hold still while its walls rise before the crossing.")
                 .withStyle(ChatFormatting.LIGHT_PURPLE));
@@ -1048,7 +1054,7 @@ public class VillageWallEvents {
         if (teleport.targetBuilding() != null) {
             BlockPos anchor = villageBuildingAnchor(start, teleport.targetBuilding());
             if (anchor != null) {
-                BlockPos target = findClearSurfaceNear(level, anchor, 12);
+                BlockPos target = findClearLandingNearY(level, anchor, 12, 4);
                 if (isSafeLandingAt(level, target.getX(), target.getY(), target.getZ())) {
                     return target;
                 }
@@ -1118,6 +1124,26 @@ public class VillageWallEvents {
         }
         int y = safeSurfaceY(level, anchor.getX(), anchor.getZ(), anchor.getY());
         return new BlockPos(anchor.getX(), y, anchor.getZ());
+    }
+
+    private static BlockPos findClearLandingNearY(ServerLevel level, BlockPos anchor, int radius, int verticalRange) {
+        for (int r = 0; r <= radius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.abs(dx) != r && Math.abs(dz) != r) continue;
+                    int x = anchor.getX() + dx;
+                    int z = anchor.getZ() + dz;
+                    if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                    for (int dy = 0; dy <= verticalRange; dy++) {
+                        int up = anchor.getY() + dy;
+                        if (isSafeLandingAt(level, x, up, z)) return new BlockPos(x, up, z);
+                        int down = anchor.getY() - dy;
+                        if (dy != 0 && isSafeLandingAt(level, x, down, z)) return new BlockPos(x, down, z);
+                    }
+                }
+            }
+        }
+        return findClearSurfaceNear(level, anchor, radius);
     }
 
     private static int safeSurfaceY(ServerLevel level, int x, int z, int fallbackY) {

@@ -8,8 +8,8 @@
   "elements": [
     {
       "name": "source_wall_garland",
-      "from": [1.6, 12.8, 15.75],
-      "to": [14.4, 16.0, 15.75],
+      "from": [0.0, 0.0, 15.75],
+      "to": [16.0, 16.0, 15.75],
       "shade": false,
       "faces": {
         "north": { "uv": [0, 0, 16, 16], "texture": "#garland" },

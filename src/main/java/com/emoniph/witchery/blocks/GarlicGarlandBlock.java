@@ -32,11 +32,11 @@ import org.jetbrains.annotations.Nullable;
 public class GarlicGarlandBlock extends Block {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape DEFAULT_SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 8.0, 12.0);
-    private static final VoxelShape NORTH_SHAPE = Block.box(1.6, 12.8, 14.4, 13.6, 16.0, 16.0);
-    private static final VoxelShape SOUTH_SHAPE = Block.box(1.6, 12.8, 0.0, 14.4, 16.0, 2.4);
-    private static final VoxelShape WEST_SHAPE = Block.box(13.6, 12.8, 1.6, 14.4, 16.0, 16.0);
-    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 12.8, 1.6, 2.4, 16.0, 14.4);
+    private static final VoxelShape DEFAULT_SHAPE = Block.box(0.0, 0.0, 15.2, 16.0, 16.0, 16.0);
+    private static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 15.2, 16.0, 16.0, 16.0);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 0.8);
+    private static final VoxelShape WEST_SHAPE = Block.box(15.2, 0.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 0.8, 16.0, 16.0);
     private static final double REPEL_RADIUS = 6.0;
     private static final double REPEL_RADIUS_FOURTH = REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS;
     private static final double REPEL_SCALE = REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS;
