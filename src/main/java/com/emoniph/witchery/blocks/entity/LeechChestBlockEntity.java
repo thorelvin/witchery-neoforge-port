@@ -10,6 +10,9 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -53,12 +56,31 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, LeechChestBlockEntity be) {
-        be.oLidAngle = be.lidAngle;
+        float previous = be.lidAngle;
+        be.oLidAngle = previous;
+        if (be.openCount > 0 && previous == 0.0f) {
+            playSourceChestSound(level, pos, SoundEvents.CHEST_OPEN);
+        }
         if (be.openCount > 0) {
             be.lidAngle = Math.min(1.0f, be.lidAngle + 0.1f);
         } else {
             be.lidAngle = Math.max(0.0f, be.lidAngle - 0.1f);
+            if (be.lidAngle < 0.5f && previous >= 0.5f) {
+                playSourceChestSound(level, pos, SoundEvents.CHEST_CLOSE);
+            }
         }
+    }
+
+    private static void playSourceChestSound(Level level, BlockPos pos, SoundEvent sound) {
+        level.playLocalSound(
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5,
+                sound,
+                SoundSource.BLOCKS,
+                0.5f,
+                level.random.nextFloat() * 0.1f + 0.9f,
+                false);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, LeechChestBlockEntity be) {
