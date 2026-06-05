@@ -248,6 +248,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.CONCENTRATED_BAT_BALL.get(),
                 WitcheryItems.INFERNAL_BLOOD.get(),
                 WitcheryItems.NULLIFIED_LEATHER.get(),
+                WitcheryItems.ENT_TWIG.get(),
                 WitcheryItems.WOOD_ASH.get(),
                 WitcheryItems.SILVER_DEPOSITS.get(),
                 WitcheryItems.GOLDEN_HEART.get(),

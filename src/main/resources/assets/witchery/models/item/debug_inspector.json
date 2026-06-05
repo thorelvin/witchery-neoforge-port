@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "witchery:item/debug_death_ward"
+    "layer0": "witchery:item/ingredient.entbranch"
   }
 }
