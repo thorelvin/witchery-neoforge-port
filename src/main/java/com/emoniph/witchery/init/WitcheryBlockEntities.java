@@ -53,6 +53,8 @@ public class WitcheryBlockEntities {
                            WitcheryBlocks.FETISH_WITCHS_LADDER.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StatueGoddessBlockEntity>> STATUE_GODDESS =
             BLOCK_ENTITIES.register("statue_goddess", () -> new BlockEntityType<>(StatueGoddessBlockEntity::new, Set.of(WitcheryBlocks.STATUE_GODDESS.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StatueHobgoblinPatronBlockEntity>> STATUE_HOBGOBLIN_PATRON =
+            BLOCK_ENTITIES.register("statue_hobgoblin_patron", () -> new BlockEntityType<>(StatueHobgoblinPatronBlockEntity::new, Set.of(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> ALTAR =
             BLOCK_ENTITIES.register("altar", () -> new BlockEntityType<>(AltarBlockEntity::new, Set.of(WitcheryBlocks.ALTAR.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlacedItemBlockEntity>> PLACED_ITEM =
