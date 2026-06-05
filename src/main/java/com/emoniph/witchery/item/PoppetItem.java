@@ -46,11 +46,8 @@ public class PoppetItem extends Item {
             return InteractionResult.CONSUME;
         }
 
-        if (target instanceof Player targetPlayer) {
-            bind(stack, targetPlayer);
-        } else {
-            bindEntity(stack, target);
-        }
+        ItemStack boundStack = boundCopy(stack, target);
+        replaceOneWithBound(user, hand, stack, boundStack);
 
         user.displayClientMessage(Component.translatable(
                 "witchery.poppet.bound", target.getDisplayName())
@@ -111,6 +108,28 @@ public class PoppetItem extends Item {
             tag.putString(TAG_NAME, entity.getDisplayName().getString());
             tag.putString(TAG_ENTITY_TYPE, typeId.toString());
         });
+    }
+
+    protected static ItemStack boundCopy(ItemStack sourceStack, LivingEntity target) {
+        ItemStack boundStack = sourceStack.copyWithCount(1);
+        if (target instanceof Player targetPlayer) {
+            bind(boundStack, targetPlayer);
+        } else {
+            bindEntity(boundStack, target);
+        }
+        return boundStack;
+    }
+
+    protected static void replaceOneWithBound(Player user, InteractionHand hand, ItemStack sourceStack, ItemStack boundStack) {
+        if (sourceStack.getCount() == 1) {
+            user.setItemInHand(hand, boundStack);
+            return;
+        }
+
+        sourceStack.shrink(1);
+        if (!user.getInventory().add(boundStack)) {
+            user.drop(boundStack, false);
+        }
     }
 
     public static void bindFromTaglock(ItemStack stack, ItemStack taglock) {

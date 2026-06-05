@@ -157,10 +157,14 @@ public class VoodooPoppetItem extends PoppetItem {
         UUID uuid = getBoundUUID(stack).orElse(null);
         if (uuid == null) return null;
 
+        ServerLevel serverLevel = (ServerLevel) level;
         if (!isMobBound(stack)) {
-            return ((ServerLevel) level).getServer().getPlayerList().getPlayer(uuid);
+            ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(uuid);
+            if (player != null) {
+                return player;
+            }
         }
 
-        return PoppetItem.findLivingEntity(((ServerLevel) level).getServer(), uuid).orElse(null);
+        return PoppetItem.findLivingEntity(serverLevel.getServer(), uuid).orElse(null);
     }
 }

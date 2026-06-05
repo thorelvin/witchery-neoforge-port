@@ -466,7 +466,7 @@
   "witchery.poppet.type.hunger": "Absorbs lethal starvation",
   "witchery.poppet.type.voodoo": "Absorbs lethal magical damage",
   "witchery.poppet.type.poppet_shield": "Protects Voodoo Protection Poppets",
-  "witchery.poppet.tooltip.unbound": "Unbound - right-click a player to bind",
+  "witchery.poppet.tooltip.unbound": "Unbound - right-click a player or creature to bind",
   "witchery.poppet.tooltip.bound": "Bound to: %s",
   "witchery.poppet.bound": "Poppet bound to %s.",
   "witchery.poppet.already_bound": "Poppet is already bound to %s.",
