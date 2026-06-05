@@ -26,25 +26,56 @@ class CrazyCatLadyHeldCatLayer extends RenderLayer<CrazyCatLadyRenderer.CrazyCat
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light,
                        CrazyCatLadyRenderer.CrazyCatLadyRenderState state, float yRot, float xRot) {
-        if (!state.catReady || state.isInvisible) {
+        if (state.isInvisible) {
             return;
         }
 
-        catState.sitting = false;
-        catState.walkAnimationPos = 0.0F;
-        catState.walkAnimationSpeed = 0.0F;
-        catState.yRot = 0.0F;
-        catState.xRot = 0.0F;
-        model.setupAnim(catState);
+        renderHatCat(poseStack, collector, light, state);
+        if (state.catReady) {
+            renderHeldCat(poseStack, collector, light, state);
+        }
+    }
 
+    private void renderHatCat(PoseStack poseStack, SubmitNodeCollector collector, int light,
+                              CrazyCatLadyRenderer.CrazyCatLadyRenderState state) {
+        setupCat(true);
+        poseStack.pushPose();
+        getParentModel().getHead().translateAndRotate(poseStack);
+        poseStack.translate(0.0F, -1.18F, 0.02F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        poseStack.scale(0.42F, 0.42F, 0.42F);
+        poseStack.translate(0.0F, -1.05F, 0.0F);
+        submitCat(poseStack, collector, light, state);
+        poseStack.popPose();
+    }
+
+    private void renderHeldCat(PoseStack poseStack, SubmitNodeCollector collector, int light,
+                               CrazyCatLadyRenderer.CrazyCatLadyRenderState state) {
+        setupCat(false);
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.62F, -0.36F);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
         poseStack.scale(0.56F, 0.56F, 0.56F);
         poseStack.translate(0.0F, -1.15F, 0.0F);
+        submitCat(poseStack, collector, light, state);
+        poseStack.popPose();
+    }
+
+    private void setupCat(boolean sitting) {
+        catState.sitting = false;
+        catState.walkAnimationPos = 0.0F;
+        catState.walkAnimationSpeed = 0.0F;
+        catState.yRot = 0.0F;
+        catState.xRot = 0.0F;
+        catState.sitting = sitting;
+        model.setupAnim(catState);
+    }
+
+    private void submitCat(PoseStack poseStack, SubmitNodeCollector collector, int light,
+                           CrazyCatLadyRenderer.CrazyCatLadyRenderState state) {
         collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
                 light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), null);
-        poseStack.popPose();
     }
 }
