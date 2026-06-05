@@ -362,7 +362,7 @@ public final class VillageWallGenerator {
         }
 
         // 10. Build gatehouses — independent locked 7×3 models that override the wall.
-        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, pathBlock, desert, spawnGuards);
+        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, merlonBlock, pathBlock, desert, spawnGuards);
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
@@ -942,11 +942,8 @@ public final class VillageWallGenerator {
      * floor). Matching fillDown bridges the structure down to the terrain/sea floor, and the path
      * is laid out and in (meeting the existing road) for the central 3 lanes.
      */
-    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick,
+    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick, BlockState gateCap,
                                         BlockState pathBlock, boolean desert, boolean spawnGuards) {
-        BlockState gateCap = brick.is(Blocks.CHISELED_SANDSTONE)
-                ? Blocks.SANDSTONE_WALL.defaultBlockState()
-                : Blocks.STONE_BRICK_WALL.defaultBlockState();
         BlockState pathSupport = pathSupportMaterial(level, g.centerWX(), g.centerWZ(), desert);
         int refY = g.refY();
 
@@ -1017,11 +1014,18 @@ public final class VillageWallGenerator {
             if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
             for (int y = minY; y <= maxY; y++) {
                 BlockPos pos = new BlockPos(x, y, z);
-                if (level.getBlockState(pos).is(brick.getBlock())) {
+                if (isWallLedgeMaterial(level.getBlockState(pos), brick)) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
         }
+    }
+
+    private static boolean isWallLedgeMaterial(BlockState state, BlockState brick) {
+        return state.is(brick.getBlock())
+                || state.is(Blocks.STONE_BRICKS)
+                || state.is(Blocks.CHISELED_SANDSTONE)
+                || state.is(Blocks.ORANGE_TERRACOTTA);
     }
 
     private static void buildGatehouseGuardRampart(ServerLevel level, GateDef g,
@@ -1181,6 +1185,13 @@ public final class VillageWallGenerator {
         return biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS);
     }
 
+    private static boolean usesSavannaVillageWallMaterials(ServerLevel level, int x, int z) {
+        var biome = level.getBiome(new BlockPos(x, 64, z));
+        return biome.is(Biomes.SAVANNA)
+                || biome.is(Biomes.SAVANNA_PLATEAU)
+                || biome.is(Biomes.WINDSWEPT_SAVANNA);
+    }
+
     /** Unconditional block set (overrides existing), chunk-load guarded. */
     private static void forceSet(ServerLevel level, int x, int y, int z, BlockState state) {
         if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return;
@@ -1208,6 +1219,8 @@ public final class VillageWallGenerator {
         var biome = level.getBiome(new BlockPos(x, 64, z));
         if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE.defaultBlockState();
+        if (usesSavannaVillageWallMaterials(level, x, z))
+            return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
         if (biome.is(BiomeTags.IS_FOREST))
             return Blocks.MOSSY_STONE_BRICKS.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
@@ -1216,6 +1229,8 @@ public final class VillageWallGenerator {
     private static BlockState brickMaterial(ServerLevel level, int x, int z) {
         if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.CHISELED_SANDSTONE.defaultBlockState();
+        if (usesSavannaVillageWallMaterials(level, x, z))
+            return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
         return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
@@ -1224,6 +1239,8 @@ public final class VillageWallGenerator {
         // Stone-brick family only — no cobblestone wall.
         if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE_WALL.defaultBlockState();
+        if (usesSavannaVillageWallMaterials(level, x, z))
+            return Blocks.RED_SANDSTONE_WALL.defaultBlockState();
         return Blocks.STONE_BRICK_WALL.defaultBlockState();
     }
 
@@ -1231,6 +1248,8 @@ public final class VillageWallGenerator {
     private static BlockState stairMaterial(ServerLevel level, int x, int z) {
         if (usesSandstoneVillageMaterials(level, x, z))
             return Blocks.SANDSTONE_STAIRS.defaultBlockState();
+        if (usesSavannaVillageWallMaterials(level, x, z))
+            return Blocks.RED_SANDSTONE_STAIRS.defaultBlockState();
         return Blocks.STONE_BRICK_STAIRS.defaultBlockState();
     }
 
