@@ -153,7 +153,10 @@ final class VillageBuildingMaterials {
         if (path.contains("village_savanna") || path.contains("village/savanna/")) return VillageType.SAVANNA;
         if (path.contains("village_taiga") || path.contains("village/taiga/")) return VillageType.TAIGA;
         if (path.contains("village_snowy") || path.contains("village/snowy/")) return VillageType.SNOWY;
-        if (path.contains("village_plains") || path.contains("village/plains/")) return VillageType.PLAINS;
+        if (path.contains("village_plains") || path.contains("village/plains/")
+                || path.contains("village_meadow") || path.contains("village/meadow/")) {
+            return VillageType.PLAINS;
+        }
         return null;
     }
 
@@ -175,6 +178,10 @@ final class VillageBuildingMaterials {
         }
         if (biome.is(Biomes.SNOWY_TAIGA) || biome.is(Biomes.SNOWY_PLAINS) || biome.is(Biomes.ICE_SPIKES)) {
             return VillageType.SNOWY;
+        }
+        // 1.21.11 routes Meadow villages through the plains village style/tag.
+        if (biome.is(Biomes.MEADOW)) {
+            return VillageType.PLAINS;
         }
         return VillageType.PLAINS;
     }

@@ -23,6 +23,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -116,6 +117,7 @@ public class VillageWallEvents {
         final String namespace;
         final String structureId;
         final String targetBuilding;
+        final ResourceKey<Biome> targetBiome;
         final List<LocateCandidate> candidates;
         final long queuedAt;
         int cursor;
@@ -123,6 +125,7 @@ public class VillageWallEvents {
 
         VillageGotoLocateJob(UUID playerId, BlockPos from, float yRot, float xRot,
                              String namespace, String structureId, String targetBuilding,
+                             ResourceKey<Biome> targetBiome,
                              List<LocateCandidate> candidates, long queuedAt) {
             this.playerId = playerId;
             this.from = from;
@@ -131,6 +134,7 @@ public class VillageWallEvents {
             this.namespace = namespace;
             this.structureId = structureId;
             this.targetBuilding = targetBuilding;
+            this.targetBiome = targetBiome;
             this.candidates = candidates;
             this.queuedAt = queuedAt;
         }
@@ -197,7 +201,7 @@ public class VillageWallEvents {
 
     static final List<String> VILLAGE_IDS = List.of(
             "village_plains", "village_savanna", "village_taiga",
-            "village_snowy", "village_desert");
+            "village_snowy", "village_desert", "village_meadow");
 
     public static boolean isVillageId(String namespace, String path) {
         return "minecraft".equals(namespace) && VILLAGE_IDS.contains(path);
@@ -400,6 +404,12 @@ public class VillageWallEvents {
     public static boolean queueVillageGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
                                                  BlockPos from, String namespace, String structureId,
                                                  int searchRadius) {
+        return queueVillageGotoLocate(level, player, holder, from, namespace, structureId, searchRadius, null);
+    }
+
+    public static boolean queueVillageGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
+                                                 BlockPos from, String namespace, String structureId,
+                                                 int searchRadius, ResourceKey<Biome> targetBiome) {
         if (!isVillageId(namespace, structureId)) return false;
         List<LocateCandidate> candidates = villageGotoLocateCandidates(level, holder, from, searchRadius);
         if (candidates.isEmpty()) {
@@ -411,9 +421,10 @@ public class VillageWallEvents {
         UUID playerId = player.getUUID();
         GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
         GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
-                namespace, structureId, null, candidates, level.getGameTime()));
-        WitcheryMod.LOGGER.info("[Goto] Queued safe village locate for {}:{} from {} with {} candidate chunk(s).",
-                namespace, structureId, from, candidates.size());
+                namespace, structureId, null, targetBiome, candidates, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued safe village locate for {}:{} from {} with {} candidate chunk(s){}.",
+                namespace, structureId, from, candidates.size(),
+                targetBiome != null ? " filtered to " + targetBiome.identifier() : "");
         return true;
     }
 
@@ -438,7 +449,7 @@ public class VillageWallEvents {
         UUID playerId = player.getUUID();
         GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
         GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
-                WitcheryMod.MODID, building, building, candidates, level.getGameTime()));
+                WitcheryMod.MODID, building, building, null, candidates, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued safe village-building locate for {} from {} with {} candidate chunk(s).",
                 building, from, candidates.size());
         return true;
@@ -492,6 +503,11 @@ public class VillageWallEvents {
 
             VillageGotoFound found = probeVillageGotoCandidate(level, candidate);
             if (found == null) continue;
+            if (job.targetBiome != null && !matchesTargetBiome(level, found.start(), found.target(), job.targetBiome)) {
+                debugLog("Goto candidate village {} rejected for biome filter {} at {}.",
+                        found.start().getBoundingBox(), job.targetBiome.identifier(), found.target());
+                continue;
+            }
             if (job.targetBuilding != null) {
                 BlockPos buildingTarget = villageBuildingAnchor(found.start(), job.targetBuilding);
                 if (buildingTarget == null) {
@@ -535,6 +551,12 @@ public class VillageWallEvents {
                     job.namespace, job.structureId, job.from, job.cursor, job.candidates.size());
         }
         return false;
+    }
+
+    private static boolean matchesTargetBiome(ServerLevel level, StructureStart start, BlockPos target,
+                                              ResourceKey<Biome> targetBiome) {
+        int y = Math.clamp(start.getBoundingBox().minY() + 1, level.getMinY(), level.getMaxY() - 1);
+        return level.getBiome(new BlockPos(target.getX(), y, target.getZ())).is(targetBiome);
     }
 
     private static List<LocateCandidate> villageGotoLocateCandidates(ServerLevel level, Holder<Structure> holder,
