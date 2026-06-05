@@ -58,6 +58,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -73,6 +74,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.Half;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1528,7 +1530,7 @@ public class WitcheryCommands {
         placeSetupTraders(level, layout);
 
         src.sendSuccess(() -> Component.literal(
-                "Cleared a 20x20 pad in front and placed a sunken Rowan Witchery QA hut with player-height stations, stocked chest, and indoor traders."),
+                "Cleared a 20x20 pad in front and placed a sunken pitched-roof Rowan Witchery QA hut with player-height stations, stocked chest, and indoor traders."),
                 false);
         return 1;
     }
@@ -1682,12 +1684,10 @@ public class WitcheryCommands {
         BlockState stone = Blocks.STONE_BRICKS.defaultBlockState();
         BlockState planks = WitcheryBlocks.ROWAN_PLANKS.get().defaultBlockState();
         BlockState log = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState();
-        BlockState slab = WitcheryBlocks.ROWAN_SLAB.get().defaultBlockState();
         int floorY = -SETUP_SHELL_DROP;
         int wallBaseY = floorY + 1;
         int wallTopY = wallBaseY + 3;
         int roofY = floorY + 5;
-        int roofTrimY = floorY + 6;
 
         for (int x = 0; x < SETUP_HOUSE_SIZE; x++) {
             for (int z = 0; z < SETUP_HOUSE_SIZE; z++) {
@@ -1718,22 +1718,68 @@ public class WitcheryCommands {
             level.setBlock(layout.pos(6, y, 0), log, 3);
         }
 
-        for (int x = 0; x < SETUP_HOUSE_SIZE; x++) {
-            for (int z = 0; z < SETUP_HOUSE_SIZE; z++) {
-                level.setBlock(layout.pos(x, roofY, z), planks, 3);
-            }
+        for (int y = wallBaseY; y <= wallTopY; y++) {
+            level.setBlock(layout.pos(0, y, 5), log, 3);
+            level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, y, 5), log, 3);
+            level.setBlock(layout.pos(5, y, SETUP_HOUSE_SIZE - 1), log, 3);
         }
 
-        for (int edge = 0; edge < SETUP_HOUSE_SIZE; edge++) {
-            level.setBlock(layout.pos(edge, roofTrimY, 0), slab, 3);
-            level.setBlock(layout.pos(edge, roofTrimY, SETUP_HOUSE_SIZE - 1), slab, 3);
-            level.setBlock(layout.pos(0, roofTrimY, edge), slab, 3);
-            level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, roofTrimY, edge), slab, 3);
+        BlockState widthBeam = log.setValue(RotatedPillarBlock.AXIS, layout.width().getAxis());
+        BlockState depthBeam = log.setValue(RotatedPillarBlock.AXIS, layout.depth().getAxis());
+        for (int x = 1; x < SETUP_HOUSE_SIZE - 1; x++) {
+            level.setBlock(layout.pos(x, wallTopY, 0), widthBeam, 3);
+            level.setBlock(layout.pos(x, wallTopY, SETUP_HOUSE_SIZE - 1), widthBeam, 3);
         }
+        for (int z = 1; z < SETUP_HOUSE_SIZE - 1; z++) {
+            level.setBlock(layout.pos(0, wallTopY, z), depthBeam, 3);
+            level.setBlock(layout.pos(SETUP_HOUSE_SIZE - 1, wallTopY, z), depthBeam, 3);
+        }
+
+        placeSetupRoof(level, layout, roofY);
 
         placeSetupDoor(level, layout);
         placeSetupWindows(level, layout);
         placeSetupLights(level, layout, roofY - 1);
+    }
+
+    private static void placeSetupRoof(ServerLevel level, SetupHouseLayout layout, int baseY) {
+        BlockState leftSlope = setupRoofStair(layout.left());
+        BlockState rightSlope = setupRoofStair(layout.width());
+        BlockState gable = WitcheryBlocks.ROWAN_PLANKS.get().defaultBlockState();
+        BlockState ridge = WitcheryBlocks.ROWAN_LOG.get().defaultBlockState()
+                .setValue(RotatedPillarBlock.AXIS, layout.depth().getAxis());
+
+        for (int z = -1; z <= SETUP_HOUSE_SIZE; z++) {
+            for (int step = 0; step < 3; step++) {
+                int y = baseY + step;
+                int leftX = -1 + step * 2;
+                int rightX = SETUP_HOUSE_SIZE - step * 2;
+                level.setBlock(layout.pos(leftX, y, z), leftSlope, 3);
+                level.setBlock(layout.pos(leftX + 1, y, z), leftSlope, 3);
+                level.setBlock(layout.pos(rightX, y, z), rightSlope, 3);
+                level.setBlock(layout.pos(rightX - 1, y, z), rightSlope, 3);
+            }
+            level.setBlock(layout.pos(SETUP_HOUSE_SIZE / 2, baseY + 3, z), ridge, 3);
+        }
+
+        for (int z : List.of(0, SETUP_HOUSE_SIZE - 1)) {
+            fillSetupGableRow(level, layout, z, baseY, 1, SETUP_HOUSE_SIZE - 2, gable);
+            fillSetupGableRow(level, layout, z, baseY + 1, 2, SETUP_HOUSE_SIZE - 3, gable);
+            fillSetupGableRow(level, layout, z, baseY + 2, 4, SETUP_HOUSE_SIZE - 5, gable);
+        }
+    }
+
+    private static void fillSetupGableRow(ServerLevel level, SetupHouseLayout layout, int z, int y,
+                                          int fromX, int toX, BlockState state) {
+        for (int x = fromX; x <= toX; x++) {
+            level.setBlock(layout.pos(x, y, z), state, 3);
+        }
+    }
+
+    private static BlockState setupRoofStair(Direction facing) {
+        return WitcheryBlocks.ROWAN_STAIRS.get().defaultBlockState()
+                .setValue(StairBlock.FACING, facing)
+                .setValue(StairBlock.HALF, Half.BOTTOM);
     }
 
     private static void placeSetupDoor(ServerLevel level, SetupHouseLayout layout) {
