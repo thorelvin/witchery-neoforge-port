@@ -4,20 +4,20 @@
     {
       "rolls": {
         "type": "minecraft:uniform",
-        "min": 4,
-        "max": 8
+        "min": 3,
+        "max": 6
       },
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "witchery:rowan_berries",
-          "weight": 10,
+          "name": "minecraft:glass_bottle",
+          "weight": 12,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 3,
+                "min": 2,
                 "max": 8
               }
             }
@@ -25,22 +25,52 @@
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:bat_wool",
+          "name": "minecraft:bread",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:apple",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:rowan_berries",
           "weight": 8,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2,
-                "max": 6
+                "min": 1,
+                "max": 5
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:exhale_of_horned_one",
+          "name": "witchery:bat_wool",
           "weight": 6,
           "functions": [
             {
@@ -55,7 +85,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:fanciful_thread",
+          "name": "witchery:tongue_of_dog",
           "weight": 6,
           "functions": [
             {
@@ -64,6 +94,21 @@
                 "type": "minecraft:uniform",
                 "min": 1,
                 "max": 4
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:clay_ball",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 10
               }
             }
           ]
@@ -71,7 +116,7 @@
         {
           "type": "minecraft:item",
           "name": "witchery:belladonna",
-          "weight": 6,
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -86,7 +131,7 @@
         {
           "type": "minecraft:item",
           "name": "witchery:mandrake_root",
-          "weight": 6,
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -100,8 +145,8 @@
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:wormwood",
-          "weight": 6,
+          "name": "witchery:garlic",
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -115,7 +160,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:snowbell",
+          "name": "witchery:artichoke",
           "weight": 4,
           "functions": [
             {
@@ -130,33 +175,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:rowan_sapling",
-          "weight": 5,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 2,
-                "max": 4
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "witchery:chalk",
-          "weight": 5,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "witchery:taglock_kit",
+          "name": "witchery:wormwood",
           "weight": 4,
           "functions": [
             {
@@ -172,7 +191,22 @@
         {
           "type": "minecraft:item",
           "name": "witchery:mutandis",
-          "weight": 2,
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:chalk",
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -182,75 +216,56 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:glass_bottle",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 3,
-                "max": 8
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:wheat_seeds",
-          "weight": 8,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 2,
-                "max": 6
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:spider_eye",
-          "weight": 6,
+          "name": "witchery:snowbell",
+          "weight": 3,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1,
-                "max": 3
+                "max": 2
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:sugar",
-          "weight": 8,
+          "name": "witchery:spectral_dust",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:rowan_sapling",
+          "weight": 3,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2,
-                "max": 5
+                "min": 1,
+                "max": 2
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:gold_nugget",
-          "weight": 6,
+          "name": "minecraft:gold_ingot",
+          "weight": 3,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4,
-                "max": 10
+                "min": 1,
+                "max": 2
               }
             }
           ]
@@ -265,14 +280,25 @@
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1,
-                "max": 3
+                "max": 2
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "witchery:poppet",
+          "name": "witchery:taglock_kit",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
           "weight": 1,
           "functions": [
             {
@@ -283,12 +309,45 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:enchanted_book",
+          "name": "minecraft:skeleton_skull",
           "weight": 1,
           "functions": [
             {
-              "function": "minecraft:enchant_randomly",
-              "options": "#minecraft:on_random_loot"
+              "function": "minecraft:set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:water_diviner",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:voodoo_poppet",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "witchery:fire_protection_poppet",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
             }
           ]
         }
