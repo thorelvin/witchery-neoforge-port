@@ -53,7 +53,8 @@ public class GarlicGarlandBlock extends Block {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        // Source metadata is chosen from player yaw, but the hanging model sits on the back face of that state.
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
