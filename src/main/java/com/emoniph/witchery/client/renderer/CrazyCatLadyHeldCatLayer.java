@@ -38,10 +38,10 @@ class CrazyCatLadyHeldCatLayer extends RenderLayer<CrazyCatLadyRenderer.CrazyCat
         model.setupAnim(catState);
 
         poseStack.pushPose();
-        poseStack.translate(0.0F, 0.65F, -0.34F);
+        poseStack.translate(0.0F, 0.62F, -0.36F);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-        poseStack.scale(0.36F, 0.36F, 0.36F);
+        poseStack.scale(0.56F, 0.56F, 0.56F);
         poseStack.translate(0.0F, -1.15F, 0.0F);
         collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
                 light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), null);

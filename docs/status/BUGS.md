@@ -2,6 +2,9 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-05 (Crazy Cat Lady QA):**
+- ~~Thrown cats appear at the Crazy Cat Lady's head/hat instead of arcing toward the player~~ - live QA found the thrown cat entity spawned at the launch position but did not travel. Fixed: `ThrownCatEntity` now keeps its familiar-cat model and hit effects but applies explicit projectile-style movement, gravity, drag, collision expiry, and velocity sync each tick, so launched cats should visibly arc from the witch toward the target. The held/readied cat render was also scaled up so it no longer reads as a miniature.
+
 **Closed 2026-06-05 (world creation registry load):**
 - ~~Entering world creation crashes with registry loading errors for `witchery:witch_hut`~~ - latest client logs showed `Failed to parse witchery:worldgen/structure/witch_hut.json` caused by missing `spawn_overrides`. The new wild Witch Hut structure JSON now includes an empty `spawn_overrides` map like the existing Coven Circle and Straw Man structures, allowing the worldgen structure registry to freeze cleanly.
 

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -45,16 +47,22 @@ public class ThrownCatEntity extends PathfinderMob {
         this.ownerUuid = owner.getUUID();
     }
 
+    public void launch(Vec3 motion) {
+        setDeltaMovement(motion);
+        hurtMarked = true;
+    }
+
     @Override
     public void tick() {
         super.tick();
         setBaby(true);
         setNoAi(true);
         fallDistance = 0.0F;
+        moveAsThrownCat();
         if (level().isClientSide()) {
             return;
         }
-        if (tickCount > MAX_LIFE_TICKS || onGround()) {
+        if (tickCount > MAX_LIFE_TICKS || onGround() || horizontalCollision || verticalCollision) {
             discard();
             return;
         }
@@ -63,6 +71,20 @@ public class ThrownCatEntity extends PathfinderMob {
             scratch(player);
             break;
         }
+    }
+
+    private void moveAsThrownCat() {
+        Vec3 motion = getDeltaMovement();
+        if (motion.lengthSqr() < 1.0E-7D) {
+            return;
+        }
+        move(MoverType.SELF, motion);
+        Vec3 next = getDeltaMovement();
+        if (!isNoGravity()) {
+            next = next.add(0.0D, -0.05D, 0.0D);
+        }
+        setDeltaMovement(next.scale(onGround() ? 0.45D : 0.98D));
+        hurtMarked = true;
     }
 
     private void scratch(Player player) {

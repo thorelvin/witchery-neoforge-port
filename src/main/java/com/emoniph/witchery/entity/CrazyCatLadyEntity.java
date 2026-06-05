@@ -210,7 +210,7 @@ public class CrazyCatLadyEntity extends PathfinderMob {
         Vec3 motion = new Vec3(aim.x, aim.y + flat * 0.18D, aim.z).normalize().scale(0.95D);
         cat.setOwner(this);
         cat.snapTo(start.x, start.y, start.z, getYRot(), 0.0F);
-        cat.setDeltaMovement(motion);
+        cat.launch(motion);
         serverLevel.addFreshEntity(cat);
         catsThrown++;
         entityData.set(CAT_READY, false);
