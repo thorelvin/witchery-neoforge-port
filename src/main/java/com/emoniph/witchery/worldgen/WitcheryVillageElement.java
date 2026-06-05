@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.entity.JigsawBlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.data.worldgen.Pools;
@@ -231,7 +232,13 @@ public class WitcheryVillageElement extends StructurePoolElement {
     private boolean claimVillageBuilding(WorldGenLevel level, StructureManager structureMgr, BlockPos origin) {
         BlockPos immutableOrigin = origin.immutable();
         ServerLevel serverLevel = level.getLevel();
-        VillageKey villageKey = findVillageKey(serverLevel, structureMgr, origin);
+        StructureStart villageStart = findVillageStart(serverLevel, structureMgr, origin);
+        if (villageStart != null && !isCanonicalBuildingOrigin(villageStart, building, immutableOrigin)) {
+            debugLog("Skipping non-canonical planned {} at {} for village start {}.",
+                    building, immutableOrigin, villageStart.getBoundingBox());
+            return false;
+        }
+        VillageKey villageKey = villageStart != null ? VillageKey.of(villageStart) : null;
         synchronized (VILLAGE_CLAIMS) {
             List<VillageClaim> claims = VILLAGE_CLAIMS.computeIfAbsent(serverLevel, key -> new ArrayList<>());
             VillageClaim claim = null;
@@ -264,7 +271,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
         }
     }
 
-    private VillageKey findVillageKey(ServerLevel level, StructureManager structureMgr, BlockPos origin) {
+    private StructureStart findVillageStart(ServerLevel level, StructureManager structureMgr, BlockPos origin) {
         StructureStart best = null;
         long bestDist = Long.MAX_VALUE;
         for (StructureStart start : structureMgr.startsForStructure(
@@ -273,7 +280,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
             BoundingBox bb = start.getBoundingBox();
             if (origin.getX() >= bb.minX() && origin.getX() <= bb.maxX()
                     && origin.getZ() >= bb.minZ() && origin.getZ() <= bb.maxZ()) {
-                return VillageKey.of(start);
+                return start;
             }
             long dist = distToCenterSqr(bb, origin);
             if (dist < bestDist) {
@@ -281,7 +288,42 @@ public class WitcheryVillageElement extends StructurePoolElement {
                 bestDist = dist;
             }
         }
-        return best != null && bestDist <= VILLAGE_CLAIM_RADIUS_SQR ? VillageKey.of(best) : null;
+        return best != null && bestDist <= VILLAGE_CLAIM_RADIUS_SQR ? best : null;
+    }
+
+    public static boolean isCanonicalBuildingOrigin(StructureStart start, String building, BlockPos origin) {
+        BlockPos canonical = canonicalBuildingOrigin(start, building);
+        return canonical == null || canonical.equals(origin);
+    }
+
+    public static BlockPos canonicalBuildingOrigin(StructureStart start, String building) {
+        BlockPos best = null;
+        for (StructurePiece piece : start.getPieces()) {
+            if (!isBuildingElement(piece, building)) continue;
+            BlockPos origin = buildingOrigin(piece);
+            if (best == null || compareBuildingOrigins(origin, best) < 0) {
+                best = origin;
+            }
+        }
+        return best;
+    }
+
+    public static boolean isBuildingElement(StructurePiece piece, String building) {
+        return piece instanceof PoolElementStructurePiece poolPiece
+                && poolPiece.getElement().toString().equals("WitcheryVillageElement[" + building + "]");
+    }
+
+    public static BlockPos buildingOrigin(StructurePiece piece) {
+        BoundingBox bb = piece.getBoundingBox();
+        return new BlockPos(bb.minX(), bb.minY(), bb.minZ());
+    }
+
+    private static int compareBuildingOrigins(BlockPos left, BlockPos right) {
+        int cmp = Integer.compare(left.getX(), right.getX());
+        if (cmp != 0) return cmp;
+        cmp = Integer.compare(left.getZ(), right.getZ());
+        if (cmp != 0) return cmp;
+        return Integer.compare(left.getY(), right.getY());
     }
 
     private static void debugLog(String message, Object... args) {

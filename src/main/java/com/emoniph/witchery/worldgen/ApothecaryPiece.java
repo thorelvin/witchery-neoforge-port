@@ -60,6 +60,7 @@ public class ApothecaryPiece extends StructurePiece {
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
         VillageBuildingMaterials materials = VillageBuildingMaterials.forVillage(level, boundingBox, box);
         BlockState stone = materials.foundation();
+        BlockState roof = materials.roofSolid();
         BlockState planks = materials.wall();
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState glassFront = VillageBuildingMaterials.paneEastWest();
@@ -67,9 +68,9 @@ public class ApothecaryPiece extends StructurePiece {
 
         generateBox(level, box, 1, 1, 1, 7, 5, 4, air, air, false);
         generateBox(level, box, 0, 0, 0, 8, 0, 5, stone, stone, false);
-        generateBox(level, box, 0, 5, 0, 8, 5, 5, stone, stone, false);
-        generateBox(level, box, 0, 6, 1, 8, 6, 4, stone, stone, false);
-        generateBox(level, box, 0, 7, 2, 8, 7, 3, stone, stone, false);
+        generateBox(level, box, 0, 5, 0, 8, 5, 5, roof, roof, false);
+        generateBox(level, box, 0, 6, 1, 8, 6, 4, roof, roof, false);
+        generateBox(level, box, 0, 7, 2, 8, 7, 3, roof, roof, false);
 
         for (int k = -1; k <= 2; k++) {
             for (int x = 0; x <= 8; x++) {

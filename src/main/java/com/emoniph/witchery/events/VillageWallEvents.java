@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.world.VillageWallData;
 import com.emoniph.witchery.worldgen.VillageWallGenerator;
+import com.emoniph.witchery.worldgen.WitcheryVillageElement;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -1090,13 +1091,10 @@ public class VillageWallEvents {
     }
 
     private static BlockPos villageBuildingAnchor(StructureStart start, String building) {
+        BlockPos canonicalOrigin = WitcheryVillageElement.canonicalBuildingOrigin(start, building);
         for (net.minecraft.world.level.levelgen.structure.StructurePiece piece : start.getPieces()) {
-            if (!(piece instanceof net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece poolPiece)) {
-                continue;
-            }
-            if (!poolPiece.getElement().toString().equals("WitcheryVillageElement[" + building + "]")) {
-                continue;
-            }
+            if (!WitcheryVillageElement.isBuildingElement(piece, building)) continue;
+            if (canonicalOrigin != null && !WitcheryVillageElement.buildingOrigin(piece).equals(canonicalOrigin)) continue;
             BoundingBox bb = piece.getBoundingBox();
             if ("apothecary".equals(building)) {
                 return new BlockPos(bb.minX() + 1, bb.minY() + 1, bb.minZ() - 1);

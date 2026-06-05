@@ -2,6 +2,10 @@
 
 Last reconciled: 2026-06-01. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-05 (apothecary QA):**
+- ~~Fresh taiga Apothecary roof uses the wrong palette~~ - live QA found the Apothecary roof did not match nearby taiga Witchery village buildings. Fixed: the source-shaped Apothecary keeps its old stepped footprint/stair rows but now uses the shared biome `roofSolid` material for the three solid roof bands, so taiga/snowy variants use spruce roof solids with their spruce stair rows instead of cobblestone bands.
+- ~~More than one Apothecary can generate in one modern village~~ - live QA found two Apothecaries in one village. Source `WorldHandlerVillageApothecary` could request up to two Apothecaries in larger 1.7.10 villages, but the port's policy is max one of each Witchery building per modern village start. Fixed: `WitcheryVillageElement` now chooses one deterministic canonical planned origin for each Witchery building type from the `StructureStart` and skips other planned duplicates even after chunk replay/restart; `/witchery goto apothecary` uses the same canonical origin.
+
 **Closed 2026-06-04 (Rowan Door QA):**
 - ~~Redstone can open a locked Rowan Door~~ - live QA found vanilla neighbor-power handling could still flip a locked Rowan Door open. Source comparison against 1.7.10 `BlockWitchDoor` showed Rowan refuses the redstone-open path through its `func_150014_a(..., true)` override, while still allowing the redstone-off close path. Fixed: modern Rowan Doors now place closed even beside power, track neighbor power without setting `OPEN=true`, and only use redstone-off updates to close an already-open door. Needs in-game retest with a locked door, lever/button/pressure plate, and a key/keyring holder.
 
