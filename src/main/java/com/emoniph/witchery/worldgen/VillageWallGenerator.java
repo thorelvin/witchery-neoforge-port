@@ -11,9 +11,12 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
@@ -21,6 +24,7 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayDeque;
@@ -1067,14 +1071,49 @@ public final class VillageWallGenerator {
         BlockState lantern = Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
         int outsideDX = -g.inDX();
         int outsideDZ = -g.inDZ();
+        Direction towardGatehouse = horizontalDirection(g.inDX(), g.inDZ());
         int bracketY = g.refY() + 4;
         int lanternY = bracketY - 1;
         for (int o : new int[]{-2, 2}) {
             int x = g.centerWX() + g.axisDX() * o + outsideDX * 2;
             int z = g.centerWZ() + g.axisDZ() * o + outsideDZ * 2;
-            forceSet(level, x, bracketY, z, bracket);
+            forceSet(level, x, bracketY, z, bracketConnectedToward(bracket, towardGatehouse));
             forceSet(level, x, lanternY, z, lantern);
         }
+    }
+
+    private static Direction horizontalDirection(int dx, int dz) {
+        if (dx > 0) return Direction.EAST;
+        if (dx < 0) return Direction.WEST;
+        if (dz > 0) return Direction.SOUTH;
+        return Direction.NORTH;
+    }
+
+    private static BlockState bracketConnectedToward(BlockState state, Direction direction) {
+        if (state.getBlock() instanceof WallBlock) {
+            state = state.setValue(WallBlock.UP, true);
+            return switch (direction) {
+                case NORTH -> state.setValue(BlockStateProperties.NORTH_WALL, WallSide.LOW);
+                case EAST -> state.setValue(BlockStateProperties.EAST_WALL, WallSide.LOW);
+                case SOUTH -> state.setValue(BlockStateProperties.SOUTH_WALL, WallSide.LOW);
+                case WEST -> state.setValue(BlockStateProperties.WEST_WALL, WallSide.LOW);
+                default -> state;
+            };
+        }
+        if (state.getBlock() instanceof FenceBlock) {
+            return switch (direction) {
+                case NORTH -> state.hasProperty(BlockStateProperties.NORTH)
+                        ? state.setValue(BlockStateProperties.NORTH, true) : state;
+                case EAST -> state.hasProperty(BlockStateProperties.EAST)
+                        ? state.setValue(BlockStateProperties.EAST, true) : state;
+                case SOUTH -> state.hasProperty(BlockStateProperties.SOUTH)
+                        ? state.setValue(BlockStateProperties.SOUTH, true) : state;
+                case WEST -> state.hasProperty(BlockStateProperties.WEST)
+                        ? state.setValue(BlockStateProperties.WEST, true) : state;
+                default -> state;
+            };
+        }
+        return state;
     }
 
     /**

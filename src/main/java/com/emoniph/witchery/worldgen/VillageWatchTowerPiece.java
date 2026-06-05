@@ -67,7 +67,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
         BlockState stairsW = materials.roofStairs(Direction.EAST);
         BlockState stairsE = materials.roofStairs(Direction.WEST);
         BlockState torch  = Blocks.TORCH.defaultBlockState();
-        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
+        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
 
         // ── Main tower shell (2-6, 0-17, 2-6) ────────────────────────────────
         generateBox(level, box, 2, 0, 2, 6, 17, 6, cobble, cobble, false);
