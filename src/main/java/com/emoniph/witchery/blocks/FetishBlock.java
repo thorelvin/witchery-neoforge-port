@@ -27,10 +27,14 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FetishBlock extends BaseEntityBlock {
 
@@ -87,7 +91,7 @@ public class FetishBlock extends BaseEntityBlock {
         FetishBlockEntity be = getEntity(level, pos);
         if (be == null) return;
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        be.setEffectType(tag.getIntOr("FetishEffect", 0));
+        be.loadFromItemData(tag);
         be.setFacing(state.getValue(FACING));
         be.setChanged();
     }
@@ -95,16 +99,12 @@ public class FetishBlock extends BaseEntityBlock {
     // ── Write effectType to dropped item ──────────────────────────────────────
 
     @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
-                              @Nullable BlockEntity be, ItemStack tool) {
-        if (!level.isClientSide() && be instanceof FetishBlockEntity fetish && fetish.getEffectType() != 0) {
-            ItemStack drop = new ItemStack(this);
-            CustomData.update(DataComponents.CUSTOM_DATA, drop, tag -> tag.putInt("FetishEffect", fetish.getEffectType()));
-            popResource(level, pos, drop);
-            level.removeBlock(pos, false);
-            return;
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        BlockEntity be = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (be instanceof FetishBlockEntity fetish) {
+            return List.of(fetish.createDropStack(this));
         }
-        super.playerDestroy(level, player, pos, state, be, tool);
+        return List.of(new ItemStack(this));
     }
 
     // ── Right-click: taglock (known player) or boline (cycle mode) ────────────

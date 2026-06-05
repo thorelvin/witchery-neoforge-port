@@ -16,17 +16,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 
 /**
  * Stores the spirit-bound effect on a fetish block (Scarecrow / Trent Effigy / Witch's Ladder).
@@ -62,6 +68,10 @@ public class FetishBlockEntity extends BlockEntity {
     private int alarmMode   = MODE_OFF;
     private Direction facing = Direction.NORTH;
     private final List<String> knownPlayers = new ArrayList<>();
+
+    private static final String ITEM_EFFECT_TAG = "FetishEffect";
+    private static final String ITEM_ALARM_MODE_TAG = "FetishAlarmMode";
+    private static final String ITEM_KNOWN_PLAYERS_TAG = "FetishKnownPlayers";
 
     // Transient: not saved to disk
     private boolean lastRaiseAlarm = false;
@@ -208,6 +218,44 @@ public class FetishBlockEntity extends BlockEntity {
 
     public String knownPlayersDisplay() {
         return knownPlayers.isEmpty() ? "-" : String.join(", ", knownPlayers);
+    }
+
+    public void loadFromItemData(CompoundTag tag) {
+        effectType = tag.getIntOr(ITEM_EFFECT_TAG, tag.getIntOr("EffectTypeID", EFFECT_NONE));
+        alarmMode = tag.getIntOr(ITEM_ALARM_MODE_TAG, tag.getIntOr("AlarmMode", MODE_OFF));
+        knownPlayers.clear();
+        readKnownPlayers(tag.getListOrEmpty(ITEM_KNOWN_PLAYERS_TAG));
+        if (knownPlayers.isEmpty()) {
+            readKnownPlayers(tag.getListOrEmpty("KnownPlayers"));
+        }
+        setChanged();
+    }
+
+    public ItemStack createDropStack(Block block) {
+        ItemStack stack = new ItemStack(block);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, this::writeItemData);
+        return stack;
+    }
+
+    private void writeItemData(CompoundTag tag) {
+        tag.putInt(ITEM_EFFECT_TAG, effectType);
+        tag.putInt(ITEM_ALARM_MODE_TAG, alarmMode);
+        if (!knownPlayers.isEmpty()) {
+            ListTag players = new ListTag();
+            for (String name : knownPlayers) {
+                players.add(StringTag.valueOf(name));
+            }
+            tag.put(ITEM_KNOWN_PLAYERS_TAG, players);
+        }
+    }
+
+    private void readKnownPlayers(ListTag players) {
+        for (int i = 0; i < players.size(); i++) {
+            String name = players.getString(i).orElse("");
+            if (name != null && !name.isBlank() && !knownPlayers.contains(name)) {
+                knownPlayers.add(name);
+            }
+        }
     }
 
     /** Returns true if a player is within 16 blocks of a fetish with the given effect type. */
