@@ -67,8 +67,10 @@ public class VillageWallEvents {
 
     private record PendingWall(StructureStart start, long processAfter, int attempts) {}
     private record PendingTeleport(UUID playerId, BlockPos target, BlockPos from,
-                                   float yRot, float xRot, String namespace, String structureId) {}
-    private record LocateCandidate(ChunkPos chunk, StructurePlacement placement, double distanceSqr) {}
+                                   float yRot, float xRot, String namespace, String structureId,
+                                   String targetBuilding) {}
+    private record LocateCandidate(Holder<Structure> holder, ChunkPos chunk, StructurePlacement placement,
+                                   double distanceSqr) {}
     private record VillageGotoFound(BlockPos target, StructureStart start) {}
 
     public enum VillageGotoResult {
@@ -112,14 +114,14 @@ public class VillageWallEvents {
         final float xRot;
         final String namespace;
         final String structureId;
-        final Holder<Structure> holder;
+        final String targetBuilding;
         final List<LocateCandidate> candidates;
         final long queuedAt;
         int cursor;
         long lastLogAt;
 
         VillageGotoLocateJob(UUID playerId, BlockPos from, float yRot, float xRot,
-                             String namespace, String structureId, Holder<Structure> holder,
+                             String namespace, String structureId, String targetBuilding,
                              List<LocateCandidate> candidates, long queuedAt) {
             this.playerId = playerId;
             this.from = from;
@@ -127,7 +129,7 @@ public class VillageWallEvents {
             this.xRot = xRot;
             this.namespace = namespace;
             this.structureId = structureId;
-            this.holder = holder;
+            this.targetBuilding = targetBuilding;
             this.candidates = candidates;
             this.queuedAt = queuedAt;
         }
@@ -354,12 +356,18 @@ public class VillageWallEvents {
     private static VillageGotoResult queueVillageGoto(ServerLevel level, ServerPlayer player, BlockPos target,
                                                       BlockPos from, String namespace, String structureId,
                                                       StructureStart start) {
+        return queueVillageGoto(level, player, target, from, namespace, structureId, start, null);
+    }
+
+    private static VillageGotoResult queueVillageGoto(ServerLevel level, ServerPlayer player, BlockPos target,
+                                                      BlockPos from, String namespace, String structureId,
+                                                      StructureStart start, String targetBuilding) {
         if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
             WitcheryMod.LOGGER.info("[VillageWalls] No ready village start near {} for goto wall queue.", target);
             return VillageGotoResult.NOT_READY;
         }
         PendingTeleport teleport = new PendingTeleport(player.getUUID(), target, from,
-                player.getYRot(), player.getXRot(), namespace, structureId);
+                player.getYRot(), player.getXRot(), namespace, structureId, targetBuilding);
         boolean processed = VillageWallData.get(level).isProcessed(start.getBoundingBox());
         List<ChunkPos> chunks = processed
                 ? landingPrepChunks(target)
@@ -396,10 +404,49 @@ public class VillageWallEvents {
         UUID playerId = player.getUUID();
         GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
         GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
-                namespace, structureId, holder, candidates, level.getGameTime()));
+                namespace, structureId, null, candidates, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued safe village locate for {}:{} from {} with {} candidate chunk(s).",
                 namespace, structureId, from, candidates.size());
         return true;
+    }
+
+    public static boolean queueVillageBuildingGotoLocate(ServerLevel level, ServerPlayer player,
+                                                         BlockPos from, String building, int searchRadius) {
+        List<Holder<Structure>> holders = villageStructureHolders(level);
+        if (holders.isEmpty()) {
+            WitcheryMod.LOGGER.info("[Goto] No village structure holders available for building search {}.", building);
+            return false;
+        }
+
+        List<LocateCandidate> candidates = new ArrayList<>();
+        for (Holder<Structure> holder : holders) {
+            candidates.addAll(villageGotoLocateCandidates(level, holder, from, searchRadius));
+        }
+        if (candidates.isEmpty()) {
+            WitcheryMod.LOGGER.info("[Goto] No safe village candidates for building {} from {}.", building, from);
+            return false;
+        }
+        candidates.sort(Comparator.comparingDouble(LocateCandidate::distanceSqr));
+
+        UUID playerId = player.getUUID();
+        GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
+        GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
+                WitcheryMod.MODID, building, building, candidates, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued safe village-building locate for {} from {} with {} candidate chunk(s).",
+                building, from, candidates.size());
+        return true;
+    }
+
+    private static List<Holder<Structure>> villageStructureHolders(ServerLevel level) {
+        List<Holder<Structure>> holders = new ArrayList<>();
+        level.registryAccess().lookup(Registries.STRUCTURE).ifPresent(registry -> {
+            for (String villageId : VILLAGE_IDS) {
+                ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE,
+                        Identifier.withDefaultNamespace(villageId));
+                registry.get(key).ifPresent(holders::add);
+            }
+        });
+        return holders;
     }
 
     private static StructureStart refreshVillageStart(ServerLevel level, StructureStart queued) {
@@ -436,14 +483,23 @@ public class VillageWallEvents {
                     job.cursor, job.candidates.size(), job.namespace, job.structureId, job.from,
                     candidate.chunk(), candidate.distanceSqr());
 
-            VillageGotoFound found = probeVillageGotoCandidate(level, job.holder, candidate);
+            VillageGotoFound found = probeVillageGotoCandidate(level, candidate);
             if (found == null) continue;
+            if (job.targetBuilding != null) {
+                BlockPos buildingTarget = villageBuildingAnchor(found.start(), job.targetBuilding);
+                if (buildingTarget == null) {
+                    debugLog("Goto candidate village {} does not contain requested building {}.",
+                            found.start().getBoundingBox(), job.targetBuilding);
+                    continue;
+                }
+                found = new VillageGotoFound(buildingTarget, found.start());
+            }
 
             WitcheryMod.LOGGER.info("[Goto] Safe village locate found {}:{} at {} after {}/{} probe(s).",
                     job.namespace, job.structureId, found.target(), job.cursor, job.candidates.size());
 
             VillageGotoResult wallResult = queueVillageGoto(level, player, found.target(), job.from,
-                    job.namespace, job.structureId, found.start());
+                    job.namespace, job.structureId, found.start(), job.targetBuilding);
             WitcheryMod.LOGGER.info("[Goto] Village wall job for {}:{} at {} -> {}.",
                     job.namespace, job.structureId, found.target(), wallResult.name().toLowerCase(java.util.Locale.ROOT));
             if (wallResult == VillageGotoResult.NOT_READY) {
@@ -455,8 +511,11 @@ public class VillageWallEvents {
         }
 
         if (job.cursor >= job.candidates.size()) {
-            player.sendSystemMessage(Component.literal(
-                    "The scrying mists reveal no matching village nearby within the safe range. Wander further and gaze again.")
+            String message = job.targetBuilding == null
+                    ? "The scrying mists reveal no matching village nearby within the safe range. Wander further and gaze again."
+                    : "The scrying mists reveal no village " + job.targetBuilding
+                    + " nearby within the safe range. Wander further and gaze again.";
+            player.sendSystemMessage(Component.literal(message)
                     .withStyle(ChatFormatting.DARK_PURPLE));
             WitcheryMod.LOGGER.info("[Goto] Safe village locate found no {}:{} from {} after {} probe(s).",
                     job.namespace, job.structureId, job.from, job.candidates.size());
@@ -494,7 +553,7 @@ public class VillageWallEvents {
                                 state.getLevelSeed(), candidateSectionX, candidateSectionZ);
                         if (!seen.add(chunk.toLong())) continue;
                         BlockPos locatePos = placement.getLocatePos(chunk);
-                        candidates.add(new LocateCandidate(chunk, placement, locatePos.distSqr(from)));
+                        candidates.add(new LocateCandidate(holder, chunk, placement, locatePos.distSqr(from)));
                     }
                 }
             }
@@ -504,11 +563,10 @@ public class VillageWallEvents {
         return candidates;
     }
 
-    private static VillageGotoFound probeVillageGotoCandidate(ServerLevel level, Holder<Structure> holder,
-                                                              LocateCandidate candidate) {
+    private static VillageGotoFound probeVillageGotoCandidate(ServerLevel level, LocateCandidate candidate) {
         debugLog("Checking structure presence for goto candidate chunk {}.", candidate.chunk());
         StructureCheckResult result = level.structureManager().checkStructurePresence(
-                candidate.chunk(), holder.value(), candidate.placement(), false);
+                candidate.chunk(), candidate.holder().value(), candidate.placement(), false);
         debugLog("Structure presence for goto candidate chunk {} -> {}.", candidate.chunk(), result);
         if (result == StructureCheckResult.START_NOT_PRESENT) {
             return null;
@@ -519,7 +577,7 @@ public class VillageWallEvents {
                 ChunkStatus.STRUCTURE_STARTS, true);
         debugLog("Loaded STRUCTURE_STARTS for goto candidate chunk {}.", candidate.chunk());
         StructureStart start = level.structureManager().getStartForStructure(
-                SectionPos.bottomOf(chunk), holder.value(), chunk);
+                SectionPos.bottomOf(chunk), candidate.holder().value(), chunk);
         if (start != null && start.isValid()) {
             BlockPos target = candidate.placement().getLocatePos(start.getChunkPos());
             debugLog("Goto candidate chunk {} resolved start {} with {} piece(s), target {}.",
@@ -969,7 +1027,7 @@ public class VillageWallEvents {
         }
 
         BlockPos target = start != null
-                ? villageLandingTarget(level, start, teleport.target())
+                ? villageLandingTarget(level, start, teleport)
                 : findClearSurfaceNear(level, teleport.target(), 10);
         int surfaceY = target.getY();
         debugLog("Completing goto teleport for {}:{} from target {} to landing {} (wallsReady={}).",
@@ -986,7 +1044,18 @@ public class VillageWallEvents {
                 + target.getX() + " ~ " + target.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
-    private static BlockPos villageLandingTarget(ServerLevel level, StructureStart start, BlockPos fallback) {
+    private static BlockPos villageLandingTarget(ServerLevel level, StructureStart start, PendingTeleport teleport) {
+        if (teleport.targetBuilding() != null) {
+            BlockPos anchor = villageBuildingAnchor(start, teleport.targetBuilding());
+            if (anchor != null) {
+                BlockPos target = findClearSurfaceNear(level, anchor, 12);
+                if (isSafeLandingAt(level, target.getX(), target.getY(), target.getZ())) {
+                    return target;
+                }
+            }
+        }
+
+        BlockPos fallback = teleport.target();
         BoundingBox bb = start.getBoundingBox();
         BlockPos bestRoad = null;
         double bestRoadDist = Double.MAX_VALUE;
@@ -1012,6 +1081,24 @@ public class VillageWallEvents {
             return nearCenter;
         }
         return findClearSurfaceNear(level, fallback, 18);
+    }
+
+    private static BlockPos villageBuildingAnchor(StructureStart start, String building) {
+        for (net.minecraft.world.level.levelgen.structure.StructurePiece piece : start.getPieces()) {
+            if (!(piece instanceof net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece poolPiece)) {
+                continue;
+            }
+            if (!poolPiece.getElement().toString().equals("WitcheryVillageElement[" + building + "]")) {
+                continue;
+            }
+            BoundingBox bb = piece.getBoundingBox();
+            if ("apothecary".equals(building)) {
+                return new BlockPos(bb.minX() + 1, bb.minY() + 1, bb.minZ() - 1);
+            }
+            return new BlockPos((bb.minX() + bb.maxX()) / 2, bb.minY() + 1,
+                    (bb.minZ() + bb.maxZ()) / 2);
+        }
+        return null;
     }
 
     private static BlockPos findClearSurfaceNear(ServerLevel level, BlockPos anchor, int radius) {

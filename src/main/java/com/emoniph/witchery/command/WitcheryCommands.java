@@ -102,7 +102,7 @@ import java.util.List;
  * /witchery altar                   — show altar power at current location
  * /witchery setup rite              - place a QA pad with ritual circle rings
  * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man)
- *                                   village buildings (apothecary / witch_hut / keep / watchtower) are now inside vanilla villages — use /locate structure minecraft:village_plains etc.
+ *                                   or a Witchery village building such as apothecary
  */
 @EventBusSubscriber
 public class WitcheryCommands {
@@ -407,6 +407,7 @@ public class WitcheryCommands {
                         .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("stone_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("straw_man")       .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "straw_man")))
+                        .then(Commands.literal("apothecary")      .executes(ctx -> gotoVillageBuilding(ctx.getSource(), "apothecary")))
                         .then(Commands.literal("village_plains")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_plains")))
                         .then(Commands.literal("village_savanna") .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_savanna")))
                         .then(Commands.literal("village_taiga")   .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_taiga")))
@@ -2087,6 +2088,40 @@ public class WitcheryCommands {
     private static final int GOTO_VILLAGE_SEARCH_RADIUS_RINGS = 8;
     private static final boolean GOTO_SKIP_REFERENCED_STRUCTURES = false;
     private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
+
+    private static int gotoVillageBuilding(CommandSourceStack src, String building)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+
+        long now = level.getGameTime();
+        Long last = GOTO_COOLDOWN.get(player.getUUID());
+        if (last != null && now - last < GOTO_COOLDOWN_TICKS) {
+            long remaining = (GOTO_COOLDOWN_TICKS - (now - last) + 19) / 20;
+            src.sendFailure(Component.literal(
+                    "The leylines are still tangled from your last crossing. Rest " + remaining
+                    + "s before you walk the hidden paths again.").withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        BlockPos from = player.blockPosition();
+        WitcheryMod.LOGGER.info("[Goto] Queueing safe village-building search for {} from {} (radius={}, one candidate chunk per tick).",
+                building, from, GOTO_VILLAGE_SEARCH_RADIUS_RINGS);
+        boolean queued = com.emoniph.witchery.events.VillageWallEvents.queueVillageBuildingGotoLocate(
+                level, player, from, building, GOTO_VILLAGE_SEARCH_RADIUS_RINGS);
+        if (!queued) {
+            src.sendFailure(Component.literal(
+                    "The hidden paths could not prepare a safe search for a village " + building + ".")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        GOTO_COOLDOWN.put(player.getUUID(), now);
+        src.sendSuccess(() -> Component.literal(
+                "The hidden paths begin searching village omens for a " + building + ".")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
 
     private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
