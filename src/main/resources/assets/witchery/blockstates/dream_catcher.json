@@ -1,8 +1,33 @@
 {
-  "variants": {
-    "facing=north": { "model": "witchery:block/dream_catcher" },
-    "facing=south": { "model": "witchery:block/dream_catcher", "y": 180 },
-    "facing=east":  { "model": "witchery:block/dream_catcher", "y": 90 },
-    "facing=west":  { "model": "witchery:block/dream_catcher", "y": 270 }
-  }
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "witchery:block/dream_catcher" } },
+    { "when": { "facing": "south" }, "apply": { "model": "witchery:block/dream_catcher", "y": 180 } },
+    { "when": { "facing": "east" },  "apply": { "model": "witchery:block/dream_catcher", "y": 90 } },
+    { "when": { "facing": "west" },  "apply": { "model": "witchery:block/dream_catcher", "y": 270 } },
+
+    { "when": { "facing": "north", "weave": "1" }, "apply": { "model": "witchery:block/dream_catcher_net_fleet_foot" } },
+    { "when": { "facing": "south", "weave": "1" }, "apply": { "model": "witchery:block/dream_catcher_net_fleet_foot", "y": 180 } },
+    { "when": { "facing": "east",  "weave": "1" }, "apply": { "model": "witchery:block/dream_catcher_net_fleet_foot", "y": 90 } },
+    { "when": { "facing": "west",  "weave": "1" }, "apply": { "model": "witchery:block/dream_catcher_net_fleet_foot", "y": 270 } },
+
+    { "when": { "facing": "north", "weave": "2" }, "apply": { "model": "witchery:block/dream_catcher_net_iron_arm" } },
+    { "when": { "facing": "south", "weave": "2" }, "apply": { "model": "witchery:block/dream_catcher_net_iron_arm", "y": 180 } },
+    { "when": { "facing": "east",  "weave": "2" }, "apply": { "model": "witchery:block/dream_catcher_net_iron_arm", "y": 90 } },
+    { "when": { "facing": "west",  "weave": "2" }, "apply": { "model": "witchery:block/dream_catcher_net_iron_arm", "y": 270 } },
+
+    { "when": { "facing": "north", "weave": "3" }, "apply": { "model": "witchery:block/dream_catcher_net_fasting" } },
+    { "when": { "facing": "south", "weave": "3" }, "apply": { "model": "witchery:block/dream_catcher_net_fasting", "y": 180 } },
+    { "when": { "facing": "east",  "weave": "3" }, "apply": { "model": "witchery:block/dream_catcher_net_fasting", "y": 90 } },
+    { "when": { "facing": "west",  "weave": "3" }, "apply": { "model": "witchery:block/dream_catcher_net_fasting", "y": 270 } },
+
+    { "when": { "facing": "north", "weave": "4" }, "apply": { "model": "witchery:block/dream_catcher_net_nightmares" } },
+    { "when": { "facing": "south", "weave": "4" }, "apply": { "model": "witchery:block/dream_catcher_net_nightmares", "y": 180 } },
+    { "when": { "facing": "east",  "weave": "4" }, "apply": { "model": "witchery:block/dream_catcher_net_nightmares", "y": 90 } },
+    { "when": { "facing": "west",  "weave": "4" }, "apply": { "model": "witchery:block/dream_catcher_net_nightmares", "y": 270 } },
+
+    { "when": { "facing": "north", "weave": "5" }, "apply": { "model": "witchery:block/dream_catcher_net_intensity" } },
+    { "when": { "facing": "south", "weave": "5" }, "apply": { "model": "witchery:block/dream_catcher_net_intensity", "y": 180 } },
+    { "when": { "facing": "east",  "weave": "5" }, "apply": { "model": "witchery:block/dream_catcher_net_intensity", "y": 90 } },
+    { "when": { "facing": "west",  "weave": "5" }, "apply": { "model": "witchery:block/dream_catcher_net_intensity", "y": 270 } }
+  ]
 }

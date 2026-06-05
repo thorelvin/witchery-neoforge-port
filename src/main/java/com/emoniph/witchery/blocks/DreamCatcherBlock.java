@@ -6,7 +6,6 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -34,10 +32,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class DreamCatcherBlock extends BaseEntityBlock {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final IntegerProperty WEAVE = IntegerProperty.create("weave", 0, 5);
 
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Map.of(
         Direction.NORTH, Block.box( 4.0, 0.0, 14.72, 12.0, 13.92, 16.0),
@@ -51,12 +51,12 @@ public class DreamCatcherBlock extends BaseEntityBlock {
 
     public DreamCatcherBlock(BlockBehaviour.Properties p) {
         super(p);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WEAVE, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, WEAVE);
     }
 
     @Override
@@ -94,19 +94,6 @@ public class DreamCatcherBlock extends BaseEntityBlock {
             level.destroyBlock(pos, false);
         }
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
-    }
-
-    // Right-click with empty hand → retrieve weave
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
-                                               Player player, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof DreamCatcherBlockEntity be)) return InteractionResult.PASS;
-        DreamWeaveType weave = be.getWeave();
-        if (weave == null) return InteractionResult.PASS;
-        be.setWeave(null);
-        Block.popResource(level, pos, WitcheryItems.getDreamWeaveItem(weave).getDefaultInstance());
-        return InteractionResult.SUCCESS;
     }
 
     @Override

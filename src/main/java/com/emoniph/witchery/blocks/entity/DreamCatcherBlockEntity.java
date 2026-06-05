@@ -41,8 +41,18 @@ public class DreamCatcherBlockEntity extends BlockEntity {
     public void setWeave(@Nullable DreamWeaveType w) {
         this.weave = w;
         setChanged();
-        if (level != null && !level.isClientSide())
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        syncWeaveVisualState();
+    }
+
+    private void syncWeaveVisualState() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        int visualWeave = weave == null ? 0 : weave.id + 1;
+        BlockState state = getBlockState();
+        if (state.hasProperty(DreamCatcherBlock.WEAVE) && state.getValue(DreamCatcherBlock.WEAVE) != visualWeave) {
+            level.setBlock(worldPosition, state.setValue(DreamCatcherBlock.WEAVE, visualWeave), 3);
+        }
     }
 
     public void consumePendingBuff(ServerLevel level) {
@@ -61,6 +71,7 @@ public class DreamCatcherBlockEntity extends BlockEntity {
     public static void serverTick(net.minecraft.world.level.Level levelRaw, BlockPos pos,
                                   BlockState state, DreamCatcherBlockEntity be) {
         if (!(levelRaw instanceof ServerLevel level)) return;
+        be.syncWeaveVisualState();
         if (be.weave == null) return;
 
         if (be.buffPending) {

@@ -23,7 +23,7 @@ public class DreamCatcherModel extends Model.Simple {
         parts = List.of(
             root.getChild("frame_left"), root.getChild("frame_right"),
             root.getChild("frame_top"), root.getChild("frame_bottom"),
-            root.getChild("net"), root.getChild("decoration")
+            root.getChild("decoration")
         );
     }
 
@@ -35,8 +35,7 @@ public class DreamCatcherModel extends Model.Simple {
         root.addOrReplaceChild("frame_right",  CubeListBuilder.create().texOffs(0,2).addBox(0,0,0,1,8,1), PartPose.offset(3f,10f,7f));
         root.addOrReplaceChild("frame_top",    CubeListBuilder.create().texOffs(0,0).addBox(0,0,0,6,1,1), PartPose.offset(-3f,10f,7f));
         root.addOrReplaceChild("frame_bottom", CubeListBuilder.create().texOffs(0,0).addBox(0,0,0,6,1,1), PartPose.offset(-3f,17f,7f));
-        // Net and decoration are D=0 flat faces — use original zero dimension for correct UV
-        root.addOrReplaceChild("net",          CubeListBuilder.create().texOffs(0,12).addBox(0,0,0,6,6,0), PartPose.offset(-3f,11f,7f));
+        // Decoration is a D=0 flat face, matching the original zero-depth model.
         root.addOrReplaceChild("decoration",   CubeListBuilder.create().texOffs(0,12).addBox(0,0,0,8,6,0), PartPose.offset(-4f,18f,7f));
 
         return LayerDefinition.create(mesh, 32, 32);

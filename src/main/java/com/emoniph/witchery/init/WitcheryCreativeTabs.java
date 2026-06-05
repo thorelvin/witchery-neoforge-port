@@ -150,7 +150,6 @@ public class WitcheryCreativeTabs {
         output.accept(filledChaliceStack());
         add(output,
                 WitcheryItems.CRYSTAL_BALL.get(),
-                WitcheryItems.DREAM_CATCHER.get(),
                 WitcheryItems.ALLURING_SKULL.get(),
                 WitcheryItems.DEMON_HEART.get(),
                 WitcheryItems.COFFIN.get(),

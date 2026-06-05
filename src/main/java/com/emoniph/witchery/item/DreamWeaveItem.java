@@ -12,7 +12,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Right-click on a Dream Catcher block to insert this weave. */
+/** Places the source-style Dream Catcher host block carrying this weave. */
 public class DreamWeaveItem extends Item {
     private final DreamWeaveType weaveType;
 
@@ -27,6 +27,9 @@ public class DreamWeaveItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
         if (level.getBlockEntity(ctx.getClickedPos()) instanceof DreamCatcherBlockEntity be) {
+            if (be.getWeave() != null) {
+                return InteractionResult.FAIL;
+            }
             if (level.isClientSide()) return InteractionResult.SUCCESS;
             be.setWeave(weaveType);
             if (ctx.getPlayer() != null && !ctx.getPlayer().isCreative())
@@ -42,7 +45,8 @@ public class DreamWeaveItem extends Item {
         BlockPos placePos = ctx.getClickedPos().relative(face);
         BlockState placedState = WitcheryBlocks.DREAM_CATCHER.get()
                 .defaultBlockState()
-                .setValue(DreamCatcherBlock.FACING, face);
+                .setValue(DreamCatcherBlock.FACING, face)
+                .setValue(DreamCatcherBlock.WEAVE, weaveType.id + 1);
         if (!level.getBlockState(placePos).canBeReplaced() || !placedState.canSurvive(level, placePos)) {
             return InteractionResult.FAIL;
         }
