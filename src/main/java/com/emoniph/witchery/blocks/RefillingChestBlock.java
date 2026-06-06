@@ -44,11 +44,10 @@ public class RefillingChestBlock extends ChestBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        FluidState fluidstate = ctx.getLevel().getFluidState(ctx.getClickedPos());
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
                 .setValue(TYPE, ChestType.SINGLE)
-                .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+                .setValue(WATERLOGGED, false);
     }
 
     @Override
@@ -66,7 +65,20 @@ public class RefillingChestBlock extends ChestBlock {
         if (updated.hasProperty(TYPE) && updated.getValue(TYPE) != ChestType.SINGLE) {
             updated = updated.setValue(TYPE, ChestType.SINGLE);
         }
+        if (updated.hasProperty(WATERLOGGED) && updated.getValue(WATERLOGGED)) {
+            updated = updated.setValue(WATERLOGGED, false);
+        }
         return updated;
+    }
+
+    @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        return false;
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        return Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
