@@ -1,9 +1,11 @@
 package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
+import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -11,6 +13,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -278,6 +281,45 @@ class BrewLogicTest {
         assertSame(MobEffects.WITHER.value(), tier3.getEffect().value());
         assertEquals(400, tier3.getDuration());
         assertEquals(0, tier3.getAmplifier());
+    }
+
+    @Test
+    void cobwebRestoresSourceProjectileBrewPair() {
+        Brews.bootstrap();
+        List<MobEffectInstance> reflect = Brews.buildEffects(List.of(Items.COBWEB));
+        assertEquals(1, reflect.size(), "Cobweb resolves as the old Reflect Projectiles effect ingredient");
+        assertSame(WitcheryMobEffects.REFLECT_PROJECTILES.value(), reflect.get(0).getEffect().value(),
+                "source Cobweb uses Witchery's Reflect Projectiles potion");
+        assertEquals(1800, reflect.get(0).getDuration(), "source Reflect Projectiles lasts ninety seconds");
+        assertEquals(250, Brews.powerCost(List.of(Items.COBWEB)), "Reflect Projectiles source effect power");
+
+        List<MobEffectInstance> attract = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.COBWEB));
+        assertSame(WitcheryMobEffects.ATTRACT_PROJECTILES.value(), attract.get(0).getEffect().value(),
+                "inverted source Cobweb uses Witchery's Attract Projectiles potion");
+        assertEquals(900, attract.get(0).getDuration(), "source Attract Projectiles lasts forty-five seconds");
+        assertEquals(275, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.COBWEB)),
+                "inverted Cobweb counts Fermented Spider Eye plus source effect power");
+    }
+
+    @Test
+    void projectileEffectsUseSourceConstants() {
+        assertEquals(2.0D, ReflectProjectilesMobEffect.RADIUS);
+        assertEquals(-0.25D, ReflectProjectilesMobEffect.reflectFactor(0));
+        assertEquals(-0.5D, ReflectProjectilesMobEffect.reflectFactor(1));
+        assertEquals(new Vec3(0.25D, -0.5D, -0.75D),
+                ReflectProjectilesMobEffect.reflectedMotion(new Vec3(-1.0D, 2.0D, 3.0D), 0),
+                "source reflect flips Y only after X/Z direction check");
+        assertEquals(new Vec3(-0.25D, 2.0D, 0.75D),
+                ReflectProjectilesMobEffect.reflectedMotion(new Vec3(1.0D, 2.0D, -3.0D), 0),
+                "source reflect leaves Y alone when reflected X and original Z are not positive");
+
+        assertEquals(3.0D, AttractProjectilesMobEffect.radius(0));
+        assertEquals(6.0D, AttractProjectilesMobEffect.radius(1));
+        assertTrue(AttractProjectilesMobEffect.canRedirect(1, 0.26D),
+                "fast projectiles redirect after one tick");
+        assertFalse(AttractProjectilesMobEffect.canRedirect(9, 0.25D),
+                "slow projectiles wait until ten ticks");
+        assertTrue(AttractProjectilesMobEffect.canRedirect(10, 0.25D));
     }
 
     @Test

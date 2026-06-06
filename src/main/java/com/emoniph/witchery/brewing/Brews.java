@@ -182,6 +182,9 @@ public final class Brews {
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x233423, 250));
         register(Items.RED_MUSHROOM, Ingredient.effect(WitcheryMobEffects.POISON_WEAPONS,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2814C9, 200));
+        register(Items.COBWEB, Ingredient.effect(WitcheryMobEffects.REFLECT_PROJECTILES,
+                WitcheryMobEffects.ATTRACT_PROJECTILES, 1800, 900,
+                SOURCE_DEFAULT_STRENGTH_CEILING, 0x664613, 250));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,

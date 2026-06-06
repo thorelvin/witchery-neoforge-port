@@ -4,6 +4,8 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
+import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
+import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -35,6 +37,12 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> POISON_WEAPONS =
             MOB_EFFECTS.register("poison_weapons", () -> new PoisonWeaponsMobEffect(0x2814C9));
+
+    public static final DeferredHolder<MobEffect, MobEffect> REFLECT_PROJECTILES =
+            MOB_EFFECTS.register("reflect_projectiles", () -> new ReflectProjectilesMobEffect(0x664613));
+
+    public static final DeferredHolder<MobEffect, MobEffect> ATTRACT_PROJECTILES =
+            MOB_EFFECTS.register("attract_projectiles", () -> new AttractProjectilesMobEffect(0x51BD4F));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
