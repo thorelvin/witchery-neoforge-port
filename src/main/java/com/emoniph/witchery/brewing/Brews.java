@@ -57,7 +57,7 @@ public final class Brews {
                              BrewAction action, int baseDuration, int strengthCeiling, int color,
                              int capacityIncrement, int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
-        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS }
+        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR }
 
         public enum BrewAction { ANIMAL }
 
@@ -80,6 +80,11 @@ public final class Brews {
         static Ingredient capacity(int increment, int ceiling, int powerCost) {
             return new Ingredient(Kind.CAPACITY, null, null, null, 0, 0, 0,
                     increment, ceiling, 0, powerCost, null, null);
+        }
+
+        static Ingredient color(int color) {
+            return new Ingredient(Kind.COLOR, null, null, null, 0, 0, color,
+                    0, 0, 0, 0, null, null);
         }
 
         static Ingredient modifier(Kind kind) {
@@ -156,6 +161,24 @@ public final class Brews {
         register(WitcheryItems.PENTACLE.get(), Ingredient.capacity(6, 16, 1000));
         register(WitcheryItems.KOBOLDITE_PENTACLE.get(), Ingredient.capacity(6, 16, 1000));
 
+        // Source wool colour modifiers (old Dye.rgb table, registered against wool metadata).
+        register(Items.WHITE_WOOL, Ingredient.color(16777215));
+        register(Items.ORANGE_WOOL, Ingredient.color(15113780));
+        register(Items.MAGENTA_WOOL, Ingredient.color(14383829));
+        register(Items.LIGHT_BLUE_WOOL, Ingredient.color(12179199));
+        register(Items.YELLOW_WOOL, Ingredient.color(15197994));
+        register(Items.LIME_WOOL, Ingredient.color(8639516));
+        register(Items.PINK_WOOL, Ingredient.color(15574987));
+        register(Items.GRAY_WOOL, Ingredient.color(7763574));
+        register(Items.LIGHT_GRAY_WOOL, Ingredient.color(11513789));
+        register(Items.CYAN_WOOL, Ingredient.color(3968688));
+        register(Items.PURPLE_WOOL, Ingredient.color(8532146));
+        register(Items.BLUE_WOOL, Ingredient.color(2247599));
+        register(Items.BROWN_WOOL, Ingredient.color(5057301));
+        register(Items.GREEN_WOOL, Ingredient.color(5732898));
+        register(Items.RED_WOOL, Ingredient.color(12464176));
+        register(Items.BLACK_WOOL, Ingredient.color(1118481));
+
         // ── Modifier ingredients ──
         register(Items.GLOWSTONE_DUST, Ingredient.modifier(Ingredient.Kind.STRENGTH));
         register(Items.REDSTONE, Ingredient.modifier(Ingredient.Kind.DURATION));
@@ -229,7 +252,7 @@ public final class Brews {
                 case STRENGTH -> mods.strength++;
                 case DURATION -> mods.duration++;
                 case INVERT -> mods.inverted = !mods.inverted;
-                case SPLASH, GAS -> { /* dispersal only */ }
+                case SPLASH, GAS, COLOR -> { /* presentation/dispersal only */ }
                 case EFFECT -> {
                     Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
                     int amplifier = Math.min(mods.strength, ing.strengthCeiling());
@@ -463,13 +486,19 @@ public final class Brews {
         long g = 0;
         long b = 0;
         int count = 0;
+        Integer forcedColor = null;
         for (Ingredient ing : resolve(items)) {
             if (ing.kind() == Ingredient.Kind.EFFECT || ing.kind() == Ingredient.Kind.ACTION) {
                 r += (ing.color() >> 16) & 0xFF;
                 g += (ing.color() >> 8) & 0xFF;
                 b += ing.color() & 0xFF;
                 count++;
+            } else if (ing.kind() == Ingredient.Kind.COLOR) {
+                forcedColor = ing.color();
             }
+        }
+        if (forcedColor != null) {
+            return forcedColor;
         }
         if (count == 0) {
             return 0x8A2BE2;

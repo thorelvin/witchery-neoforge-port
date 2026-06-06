@@ -77,6 +77,15 @@ class BrewLogicTest {
     }
 
     @Test
+    void woolColorModifiersForceBottleTint() {
+        Brews.bootstrap();
+        assertEquals(12464176, Brews.color(List.of(Items.RED_WOOL, Items.SPIDER_EYE)),
+                "red wool uses the old Witchery dye RGB");
+        assertEquals(2247599, Brews.color(List.of(Items.RED_WOOL, Items.BLUE_WOOL, Items.SPIDER_EYE)),
+                "latest wool colour modifier wins");
+    }
+
+    @Test
     void modifiersResetBetweenEffects() {
         Brews.bootstrap();
         // Glowstone strengthens only the FIRST effect; the second resets to amplifier 0.
