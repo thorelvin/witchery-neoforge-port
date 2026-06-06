@@ -372,7 +372,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<PoppetShelfBlock> POPPET_SHELF  = registerBlock("poppet_shelf",   PoppetShelfBlock::new,  BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.5f, 12.5f).noOcclusion());
     public static final DeferredBlock<LeechChestBlock>  LEECH_CHEST   = registerBlock("leech_chest",    LeechChestBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(25.0f, 1000.0f).noOcclusion());
     public static final DeferredBlock<RefillingChestBlock> REFILLING_CHEST = registerBlock("refilling_chest", RefillingChestBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(-1.0F, 3600000.0F).noLootTable());
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(-1.0F, 9999.0F).noLootTable());
 
     // Decorative / Ritual
     public static final DeferredBlock<CandelabraBlock>  CANDELABRA    = registerBlock("candelabra",     CandelabraBlock::new,   BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0f, 10.0f).lightLevel(s -> 15).noOcclusion());
