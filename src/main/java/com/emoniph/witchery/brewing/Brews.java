@@ -2,6 +2,7 @@ package com.emoniph.witchery.brewing;
 
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -175,7 +176,7 @@ public final class Brews {
                 0, 0, 1, 0xBC1A1A, 200));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
                 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
-        register(Items.PHANTOM_MEMBRANE, Ingredient.effect(MobEffects.SLOW_FALLING, 1800, 0, 0xCAC5B6));
+        register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,

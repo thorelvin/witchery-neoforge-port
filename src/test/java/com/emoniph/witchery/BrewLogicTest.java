@@ -1,7 +1,9 @@
 package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
@@ -167,6 +169,34 @@ class BrewLogicTest {
                 "source Jump accepts the normal strength modifier path");
         assertFalse(Brews.isIngredient(Items.RABBIT_FOOT),
                 "Rabbit Foot is a modern vanilla brewing item, not the old Witchery Jump ingredient");
+    }
+
+    @Test
+    void featherRestoresSourceFeatherFallBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> featherFall = Brews.buildEffects(List.of(Items.FEATHER));
+        assertEquals(1, featherFall.size(), "Feather resolves as the old Feather Fall effect ingredient");
+        assertSame(WitcheryMobEffects.FEATHER_FALL.value(), featherFall.get(0).getEffect().value(),
+                "Feather uses Witchery's source Feather Fall effect instead of vanilla Slow Falling");
+        assertEquals(1200, featherFall.get(0).getDuration(), "source Feather Fall lasts one minute");
+        assertEquals(100, Brews.powerCost(List.of(Items.FEATHER)), "Feather Fall source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.FEATHER)).get(0).getAmplifier(),
+                "source Feather Fall accepts the normal strength modifier path");
+        assertFalse(Brews.isIngredient(Items.PHANTOM_MEMBRANE),
+                "Phantom Membrane is a modern placeholder, not the old Witchery Feather Fall ingredient");
+    }
+
+    @Test
+    void featherFallEffectUsesSourceStrengthThresholds() {
+        assertEquals(5, FeatherFallMobEffect.activationDistance(0));
+        assertEquals(4, FeatherFallMobEffect.activationDistance(1));
+        assertEquals(3, FeatherFallMobEffect.activationDistance(2));
+
+        assertEquals(6, FeatherFallMobEffect.maxFallDistance(0));
+        assertEquals(5, FeatherFallMobEffect.maxFallDistance(1));
+        assertEquals(4, FeatherFallMobEffect.maxFallDistance(2));
+        assertEquals(3, FeatherFallMobEffect.maxFallDistance(3));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
@@ -19,6 +20,9 @@ public final class WitcheryMobEffects {
                     .addAttributeModifier(Attributes.MAX_HEALTH,
                             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "effect.scratched"),
                             -4.0D, AttributeModifier.Operation.ADD_VALUE));
+
+    public static final DeferredHolder<MobEffect, MobEffect> FEATHER_FALL =
+            MOB_EFFECTS.register("feather_fall", () -> new FeatherFallMobEffect(0xFFEBD1));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
