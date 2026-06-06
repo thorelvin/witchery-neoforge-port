@@ -20,14 +20,13 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Witchery Refilling Chest using the vanilla single-chest visuals/lid path while
- * keeping Witchery's refill mechanics in its custom block entity.
+ * Witchery Refilling Chest using the vanilla chest visuals/lid path while keeping
+ * Witchery's refill mechanics in its custom block entity.
  */
 public class RefillingChestBlock extends ChestBlock {
 
@@ -44,10 +43,8 @@ public class RefillingChestBlock extends ChestBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState()
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
-                .setValue(TYPE, ChestType.SINGLE)
-                .setValue(WATERLOGGED, false);
+        BlockState state = super.getStateForPlacement(ctx);
+        return state == null ? null : state.setValue(WATERLOGGED, false);
     }
 
     @Override
@@ -62,9 +59,6 @@ public class RefillingChestBlock extends ChestBlock {
             RandomSource random
     ) {
         BlockState updated = super.updateShape(state, level, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
-        if (updated.hasProperty(TYPE) && updated.getValue(TYPE) != ChestType.SINGLE) {
-            updated = updated.setValue(TYPE, ChestType.SINGLE);
-        }
         if (updated.hasProperty(WATERLOGGED) && updated.getValue(WATERLOGGED)) {
             updated = updated.setValue(WATERLOGGED, false);
         }
