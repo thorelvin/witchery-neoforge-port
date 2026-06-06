@@ -52,11 +52,18 @@ public class CustomThrownBrewItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        BrewContents brew = contents(stack);
+        if (brew.isEmpty()) {
+            if (!level.isClientSide()) {
+                player.displayClientMessage(Component.translatable("witchery.brew.empty_throw"), true);
+            }
+            return InteractionResult.FAIL;
+        }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide()) {
-            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, contents(stack), gas);
+            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, gas);
             projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.5F, 1.0F);
             level.addFreshEntity(projectile);
             if (!player.isCreative()) {

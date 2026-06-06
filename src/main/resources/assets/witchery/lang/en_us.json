@@ -1459,6 +1459,7 @@
   "item.witchery.splash_brew_bottle": "Splash Brew",
   "item.witchery.lingering_brew_bottle": "Lingering Brew",
   "item.witchery.brew_mundane": "Mundane Brew",
+  "witchery.brew.empty_throw": "This brew has no prepared effect.",
   "witchery.brew.of": "Brew of %s",
   "witchery.brew.strong": "Strong Brew of %s",
   "witchery.brew.lasting": "Lasting Brew of %s",
