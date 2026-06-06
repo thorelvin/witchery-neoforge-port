@@ -45,7 +45,7 @@ public enum DreamWeaveType {
     public void applyEffect(Player player, boolean isDream, boolean isEnhanced) {
         if (isDream) {
             boolean isSaturation = dream == MobEffects.SATURATION;
-            int d = isEnhanced ? (isSaturation ? duration + 2400 : Math.max(20, duration - 2400))
+            int d = isEnhanced ? (isSaturation ? duration + 2400 : duration - 2400)
                                : duration;
             int a = (isEnhanced && !isSaturation) ? amplifier + 1 : amplifier;
             player.addEffect(new MobEffectInstance(dream, d, a));
