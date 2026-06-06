@@ -27,20 +27,34 @@ import java.util.UUID;
 public class BeartrapBlockEntity extends BlockEntity {
     private static final String KEY_OWNER_UUID = "OwnerUUID";
     private static final String KEY_OWNER_NAME = "OwnerName";
+    private static final String KEY_SOURCE_OWNER = "Owner";
+    private static final String KEY_SOURCE_OWNER_ID = "Id";
+    private static final String KEY_SOURCE_OWNER_NAME = "Name";
+    private static final String KEY_SOURCE_SPRUNG = "Sprung";
     private static final String KEY_WOLFTRAP_START = "WolftrapStart";
     private static final String KEY_WOLF_UUID = "Wolf";
+    private static final String KEY_SOURCE_WOLF_LEAST = "WolfLeast";
+    private static final String KEY_SOURCE_WOLF_MOST = "WolfMost";
     private static final int WOLFTRAP_CHECK_INTERVAL = 200;
     private static final double BAIT_RANGE = 8.0D;
     private static final double BAIT_RANGE_SQUARED = BAIT_RANGE * BAIT_RANGE;
 
     private String ownerUuid = "";
     private String ownerName = "";
+    private boolean sourceClosed;
     private long wolftrapStartTime;
     @Nullable
     private UUID spawnedWolfUuid;
 
     public BeartrapBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.BEARTRAP.get(), pos, state);
+        sourceClosed = state.hasProperty(BeartrapBlock.CLOSED) && state.getValue(BeartrapBlock.CLOSED);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        applySourceClosedToBlockState();
     }
 
     public void setOwner(Player player) {
@@ -149,9 +163,13 @@ public class BeartrapBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         tag.putString(KEY_OWNER_UUID, ownerUuid);
         tag.putString(KEY_OWNER_NAME, ownerName);
+        tag.putBoolean(KEY_SOURCE_SPRUNG, currentClosedState());
+        saveSourceOwner(tag);
         tag.putLong(KEY_WOLFTRAP_START, wolftrapStartTime);
         if (spawnedWolfUuid != null) {
             tag.putString(KEY_WOLF_UUID, spawnedWolfUuid.toString());
+            tag.putLong(KEY_SOURCE_WOLF_LEAST, spawnedWolfUuid.getLeastSignificantBits());
+            tag.putLong(KEY_SOURCE_WOLF_MOST, spawnedWolfUuid.getMostSignificantBits());
         }
     }
 
@@ -160,8 +178,60 @@ public class BeartrapBlockEntity extends BlockEntity {
         super.loadAdditional(tag);
         ownerUuid = tag.getStringOr(KEY_OWNER_UUID, "");
         ownerName = tag.getStringOr(KEY_OWNER_NAME, "");
+        loadSourceOwner(tag);
+        sourceClosed = tag.getBooleanOr(KEY_SOURCE_SPRUNG, currentClosedState());
         wolftrapStartTime = tag.getLongOr(KEY_WOLFTRAP_START, 0L);
-        spawnedWolfUuid = readUuid(tag.getStringOr(KEY_WOLF_UUID, ""));
+        spawnedWolfUuid = readSourceWolfUuid(tag);
+        if (spawnedWolfUuid == null) {
+            spawnedWolfUuid = readUuid(tag.getStringOr(KEY_WOLF_UUID, ""));
+        }
+        applySourceClosedToBlockState();
+    }
+
+    private void saveSourceOwner(ValueOutput tag) {
+        if (ownerUuid.isEmpty() && ownerName.isEmpty()) {
+            return;
+        }
+        ValueOutput owner = tag.child(KEY_SOURCE_OWNER);
+        if (!ownerUuid.isEmpty()) {
+            owner.putString(KEY_SOURCE_OWNER_ID, ownerUuid);
+        }
+        if (!ownerName.isEmpty()) {
+            owner.putString(KEY_SOURCE_OWNER_NAME, ownerName);
+        }
+    }
+
+    private void loadSourceOwner(ValueInput tag) {
+        tag.child(KEY_SOURCE_OWNER).ifPresent(owner -> {
+            String sourceUuid = owner.getStringOr(KEY_SOURCE_OWNER_ID, "");
+            String sourceName = owner.getStringOr(KEY_SOURCE_OWNER_NAME, "");
+            if (!sourceUuid.isBlank()) {
+                ownerUuid = sourceUuid;
+            }
+            if (!sourceName.isBlank()) {
+                ownerName = sourceName;
+            }
+        });
+    }
+
+    private void applySourceClosedToBlockState() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        BlockState state = getBlockState();
+        if (!state.hasProperty(BeartrapBlock.CLOSED) || !state.hasProperty(BeartrapBlock.ARMED)) {
+            return;
+        }
+        if (state.getValue(BeartrapBlock.CLOSED) != sourceClosed) {
+            level.setBlock(worldPosition, state
+                    .setValue(BeartrapBlock.CLOSED, sourceClosed)
+                    .setValue(BeartrapBlock.ARMED, !sourceClosed), 3);
+        }
+    }
+
+    private boolean currentClosedState() {
+        BlockState state = getBlockState();
+        return state.hasProperty(BeartrapBlock.CLOSED) && state.getValue(BeartrapBlock.CLOSED);
     }
 
     @Nullable
@@ -174,5 +244,13 @@ public class BeartrapBlockEntity extends BlockEntity {
         } catch (IllegalArgumentException ignored) {
             return null;
         }
+    }
+
+    @Nullable
+    private static UUID readSourceWolfUuid(ValueInput tag) {
+        if (!tag.keySet().contains(KEY_SOURCE_WOLF_LEAST) || !tag.keySet().contains(KEY_SOURCE_WOLF_MOST)) {
+            return null;
+        }
+        return new UUID(tag.getLongOr(KEY_SOURCE_WOLF_MOST, 0L), tag.getLongOr(KEY_SOURCE_WOLF_LEAST, 0L));
     }
 }
