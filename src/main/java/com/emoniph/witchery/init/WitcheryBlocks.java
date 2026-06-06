@@ -426,8 +426,8 @@ public class WitcheryBlocks {
     // Portals / Dimensional
     public static final DeferredBlock<SpiritPortalBlock> SPIRIT_PORTAL = registerBlock("spirit_portal", SpiritPortalBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 11).noOcclusion().noCollision().noLootTable());
-    public static final DeferredBlock<Block> TORMENT_STONE = registerSimpleBlock("torment_stone",
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
+    public static final DeferredBlock<TormentStoneBlock> TORMENT_STONE = registerBlock("torment_stone", TormentStoneBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(-1.0F, 9999.0F).noLootTable());
     public static final DeferredBlock<TormentPortalBlock> TORMENT_PORTAL = registerBlock("torment_portal", TormentPortalBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 9999.0F).lightLevel(s -> 11).noOcclusion().noCollision().noLootTable());
     public static final DeferredBlock<com.emoniph.witchery.blocks.SunCollectorBlock> SUN_COLLECTOR = registerBlock("sun_collector",
