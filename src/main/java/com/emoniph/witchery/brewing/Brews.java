@@ -138,7 +138,7 @@ public final class Brews {
         register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.BLINDNESS, 3600, 0, 0x1F1FA1));
         register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.HEALTH_BOOST, 3600, 1, 0xBC1A1A));
         register(Items.PHANTOM_MEMBRANE, Ingredient.effect(MobEffects.SLOW_FALLING, 1800, 0, 0xCAC5B6));
-        register(com.emoniph.witchery.init.WitcheryItems.WORMWOOD.get(),
+        register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,
                 4, 500, 0xF2C94C,
@@ -161,6 +161,8 @@ public final class Brews {
         register(Items.REDSTONE, Ingredient.modifier(Ingredient.Kind.DURATION));
         register(Items.FERMENTED_SPIDER_EYE, Ingredient.modifier(Ingredient.Kind.INVERT));
         register(Items.GUNPOWDER, Ingredient.modifier(Ingredient.Kind.SPLASH));
+        register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
+        register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
         register(Items.DRAGON_BREATH, Ingredient.modifier(Ingredient.Kind.GAS));
     }
 
@@ -277,11 +279,10 @@ public final class Brews {
     public static Dispersal dispersal(List<Item> items) {
         Dispersal result = Dispersal.DRINK;
         for (Ingredient ing : resolve(items)) {
-            if (ing.kind() == Ingredient.Kind.GAS) {
-                return Dispersal.GAS;
-            }
             if (ing.kind() == Ingredient.Kind.SPLASH) {
                 result = Dispersal.SPLASH;
+            } else if (ing.kind() == Ingredient.Kind.GAS) {
+                result = Dispersal.GAS;
             }
         }
         return result;

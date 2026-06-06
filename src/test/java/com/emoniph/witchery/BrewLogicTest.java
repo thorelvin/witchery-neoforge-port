@@ -55,6 +55,28 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceDispersalIngredientsAreRecognized() {
+        Brews.bootstrap();
+        assertEquals(Brews.Dispersal.SPLASH,
+                Brews.dispersal(List.of(WitcheryItems.ARTICHOKE.get(), Items.SPIDER_EYE)),
+                "Water Artichoke is the old instant/splash dispersal");
+        assertEquals(Brews.Dispersal.GAS,
+                Brews.dispersal(List.of(WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE)),
+                "Bat Wool is the old gas dispersal");
+    }
+
+    @Test
+    void latestCompetingDispersalWins() {
+        Brews.bootstrap();
+        assertEquals(Brews.Dispersal.GAS,
+                Brews.dispersal(List.of(Items.GUNPOWDER, WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE)),
+                "later Bat Wool replaces earlier instant dispersal");
+        assertEquals(Brews.Dispersal.SPLASH,
+                Brews.dispersal(List.of(WitcheryItems.BAT_WOOL.get(), WitcheryItems.ARTICHOKE.get(), Items.SPIDER_EYE)),
+                "later Artichoke replaces earlier gas dispersal");
+    }
+
+    @Test
     void modifiersResetBetweenEffects() {
         Brews.bootstrap();
         // Glowstone strengthens only the FIRST effect; the second resets to amplifier 0.
