@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
+import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -18,6 +19,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class BrewMobEffectEvents {
@@ -86,6 +88,39 @@ public final class BrewMobEffectEvents {
 
         player.getFoodData().eat(-foodPenalty, 2.0F);
         event.setNewDamage(0.0F);
+    }
+
+    @SubscribeEvent
+    public static void onParalysedDamage(LivingDamageEvent.Pre event) {
+        LivingEntity entity = event.getEntity();
+        MobEffectInstance paralysis = entity.getEffect(WitcheryMobEffects.PARALYSED);
+        if (paralysis != null && ParalyzedMobEffect.shouldBreakOnHurt(entity.level().isClientSide(),
+                paralysis.getAmplifier(), event.getNewDamage())) {
+            entity.removeEffect(WitcheryMobEffects.PARALYSED);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onParalysedAdded(MobEffectEvent.Added event) {
+        MobEffectInstance effect = event.getEffectInstance();
+        if (effect.is(WitcheryMobEffects.PARALYSED)) {
+            ParalyzedMobEffect.syncSourceSpeedModifier(event.getEntity(), effect.getAmplifier());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onParalysedRemoved(MobEffectEvent.Remove event) {
+        if (event.getEffect().is(WitcheryMobEffects.PARALYSED)) {
+            ParalyzedMobEffect.removeSourceSpeedModifier(event.getEntity());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onParalysedExpired(MobEffectEvent.Expired event) {
+        MobEffectInstance effect = event.getEffectInstance();
+        if (effect != null && effect.is(WitcheryMobEffects.PARALYSED)) {
+            ParalyzedMobEffect.removeSourceSpeedModifier(event.getEntity());
+        }
     }
 
     @SubscribeEvent

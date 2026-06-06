@@ -7,6 +7,7 @@ import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
+import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
@@ -539,6 +540,39 @@ class BrewLogicTest {
         assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, false, true, 0.45F));
         assertEquals(1.0F, SunAllergyMobEffect.playerDamage(2));
         assertEquals(2.0F, SunAllergyMobEffect.playerDamage(3));
+    }
+
+    @Test
+    void demonHeartRestoresSourceParalysisBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> paralysis = Brews.buildEffects(level4(WitcheryItems.DEMON_HEART.get()));
+        assertEquals(1, paralysis.size(), "Demon Heart resolves as the old Paralysis ingredient");
+        assertSame(WitcheryMobEffects.PARALYSED.value(), paralysis.get(0).getEffect().value(),
+                "source Demon Heart uses Witchery's Paralyzed potion");
+        assertEquals(200, paralysis.get(0).getDuration(), "source Paralysis lasts ten seconds");
+        assertEquals(900, Brews.powerCost(level4(WitcheryItems.DEMON_HEART.get())),
+                "Paralysis source effect power plus level-4 capacity power");
+        assertTrue(Brews.blockedByCapacity(level2(WitcheryItems.DEMON_HEART.get())),
+                "source Paralysis requires effect level 4 capacity");
+
+        assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, WitcheryItems.DEMON_HEART.get()))
+                        .get(0).getAmplifier(),
+                "source Paralysis accepts the normal strength modifier path");
+    }
+
+    @Test
+    void paralysisEffectUsesSourceGates() {
+        assertEquals(-40.0D, ParalyzedMobEffect.sourceSpeedModifierAmount(0));
+        assertEquals(-120.0D, ParalyzedMobEffect.sourceSpeedModifierAmount(2));
+        assertTrue(ParalyzedMobEffect.shouldPinVertical(1, true, 5));
+        assertFalse(ParalyzedMobEffect.shouldPinVertical(2, true, 5));
+        assertTrue(ParalyzedMobEffect.shouldPinVertical(2, true, 4));
+        assertFalse(ParalyzedMobEffect.shouldBreakOnHurt(false, 3, 1.0F));
+        assertFalse(ParalyzedMobEffect.shouldBreakOnHurt(true, 4, 1.0F));
+        assertFalse(ParalyzedMobEffect.shouldBreakOnHurt(false, 4, 0.5F));
+        assertTrue(ParalyzedMobEffect.shouldBreakOnHurt(false, 4, 1.0F));
+        assertEquals(1800, ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS,
+                "source amplified player expiry applies Queasy for ninety seconds once Queasy exists");
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
+import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
@@ -74,6 +75,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> SUN_ALLERGY =
             MOB_EFFECTS.register("sun_allergy", () -> new SunAllergyMobEffect(0x30A212));
+
+    public static final DeferredHolder<MobEffect, MobEffect> PARALYSED =
+            MOB_EFFECTS.register("paralysed", () -> new ParalyzedMobEffect(0x35BDB7BF));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

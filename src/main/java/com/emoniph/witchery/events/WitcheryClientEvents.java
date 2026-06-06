@@ -137,8 +137,8 @@ public class WitcheryClientEvents {
             return;
         }
 
-        // Source also excludes the old Paralyzed potion. That effect is not registered in this port yet.
-        SwimmingMobEffect.applyPlayerClientTick(mc.player, mc.player.input.hasForwardImpulse(), false);
+        SwimmingMobEffect.applyPlayerClientTick(mc.player, mc.player.input.hasForwardImpulse(),
+                mc.player.hasEffect(WitcheryMobEffects.PARALYSED));
     }
 
     private static void tryHowl(Player player, InteractionHand hand) {
