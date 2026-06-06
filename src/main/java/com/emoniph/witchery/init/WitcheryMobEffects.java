@@ -3,6 +3,7 @@ package com.emoniph.witchery.init;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -31,6 +32,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> FLOATING =
             MOB_EFFECTS.register("floating", () -> new FloatingMobEffect(0x4E18CC));
+
+    public static final DeferredHolder<MobEffect, MobEffect> POISON_WEAPONS =
+            MOB_EFFECTS.register("poison_weapons", () -> new PoisonWeaponsMobEffect(0x2814C9));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

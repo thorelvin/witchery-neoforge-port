@@ -3,6 +3,7 @@ package com.emoniph.witchery;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -239,6 +240,44 @@ class BrewLogicTest {
         assertEquals(5, FloatingMobEffect.hoverHeight(2));
         assertEquals(0.25D, FloatingMobEffect.RAISED_Y_VELOCITY);
         assertEquals(-0.05D, FloatingMobEffect.UNSUPPORTED_DRIFT_Y_VELOCITY);
+    }
+
+    @Test
+    void redMushroomRestoresSourcePoisonWeaponsBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> poisonWeapons = Brews.buildEffects(List.of(Items.RED_MUSHROOM));
+        assertEquals(1, poisonWeapons.size(), "Red Mushroom resolves as the old Poison Weapons effect ingredient");
+        assertSame(WitcheryMobEffects.POISON_WEAPONS.value(), poisonWeapons.get(0).getEffect().value(),
+                "source Red Mushroom uses Witchery's Poison Weapons potion");
+        assertEquals(1800, poisonWeapons.get(0).getDuration(), "source Poison Weapons lasts ninety seconds");
+        assertEquals(200, Brews.powerCost(List.of(Items.RED_MUSHROOM)), "Poison Weapons source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.RED_MUSHROOM))
+                        .get(0).getAmplifier(),
+                "source Poison Weapons accepts the normal strength modifier path");
+    }
+
+    @Test
+    void poisonWeaponsEffectUsesSourceAttackEffectTable() {
+        MobEffectInstance tier0 = PoisonWeaponsMobEffect.attackEffect(0);
+        assertSame(MobEffects.POISON.value(), tier0.getEffect().value());
+        assertEquals(100, tier0.getDuration());
+        assertEquals(0, tier0.getAmplifier());
+
+        MobEffectInstance tier1 = PoisonWeaponsMobEffect.attackEffect(1);
+        assertSame(MobEffects.POISON.value(), tier1.getEffect().value());
+        assertEquals(100, tier1.getDuration());
+        assertEquals(1, tier1.getAmplifier());
+
+        MobEffectInstance tier2 = PoisonWeaponsMobEffect.attackEffect(2);
+        assertSame(MobEffects.POISON.value(), tier2.getEffect().value());
+        assertEquals(300, tier2.getDuration());
+        assertEquals(1, tier2.getAmplifier());
+
+        MobEffectInstance tier3 = PoisonWeaponsMobEffect.attackEffect(3);
+        assertSame(MobEffects.WITHER.value(), tier3.getEffect().value());
+        assertEquals(400, tier3.getDuration());
+        assertEquals(0, tier3.getAmplifier());
     }
 
     @Test

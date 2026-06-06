@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.tags.DamageTypeTags;
@@ -42,5 +43,22 @@ public final class BrewMobEffectEvents {
         Vec3 motion = RepellAttackerMobEffect.pushbackMotion(attacker, protectedEntity, repell.getAmplifier());
         attacker.setDeltaMovement(motion);
         attacker.hurtMarked = true;
+    }
+
+    @SubscribeEvent
+    public static void onPoisonWeaponsDamage(LivingDamageEvent.Pre event) {
+        LivingEntity target = event.getEntity();
+        if (target.level().isClientSide() || !PoisonWeaponsMobEffect.isSourceMeleeDamage(event.getSource())) {
+            return;
+        }
+        if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) {
+            return;
+        }
+        MobEffectInstance poisonWeapons = attacker.getEffect(WitcheryMobEffects.POISON_WEAPONS);
+        if (poisonWeapons == null) {
+            return;
+        }
+
+        target.addEffect(PoisonWeaponsMobEffect.attackEffect(poisonWeapons.getAmplifier()));
     }
 }
