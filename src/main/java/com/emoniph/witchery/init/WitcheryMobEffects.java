@@ -9,6 +9,7 @@ import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
+import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -58,6 +59,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> WOLFSBANE =
             MOB_EFFECTS.register("wolfsbane", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x67FA11));
+
+    public static final DeferredHolder<MobEffect, MobEffect> SNOW_TRAIL =
+            MOB_EFFECTS.register("snow_trail", () -> new SnowTrailMobEffect(0x3F825D));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

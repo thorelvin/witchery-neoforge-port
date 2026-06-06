@@ -9,6 +9,7 @@ import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
+import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -412,6 +413,37 @@ class BrewLogicTest {
         assertEquals(1200, wolfsbane.get(0).getDuration(), "source Wolfsbane lasts sixty seconds");
         assertEquals(0, Brews.powerCost(List.of(WitcheryItems.WOLFSBANE_FLOWER.get())),
                 "Wolfsbane has no source altar cost");
+    }
+
+    @Test
+    void snowballRestoresSourceSnowTrailBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> snowTrail = Brews.buildEffects(level1(Items.SNOWBALL));
+        assertEquals(1, snowTrail.size(), "Snowball resolves as the old Snow Trail effect ingredient");
+        assertSame(WitcheryMobEffects.SNOW_TRAIL.value(), snowTrail.get(0).getEffect().value(),
+                "source Snowball uses Witchery's Snow Trail potion");
+        assertEquals(3600, snowTrail.get(0).getDuration(), "source Snow Trail lasts three minutes");
+        assertEquals(0, Brews.powerCost(List.of(Items.SNOWBALL)), "Snow Trail has no source altar cost");
+
+        assertEquals(1, Brews.buildEffects(level1(Items.GLOWSTONE_DUST, Items.SNOWBALL)).get(0).getAmplifier(),
+                "source Snow Trail accepts the normal strength modifier path");
+    }
+
+    @Test
+    void snowTrailEffectUsesSourceConstants() {
+        SnowTrailMobEffect effect = new SnowTrailMobEffect(0x3F825D);
+        assertTrue(effect.shouldApplyEffectTickThisTick(20, 0));
+        assertFalse(effect.shouldApplyEffectTickThisTick(21, 0));
+        assertEquals(10, SnowTrailMobEffect.TICK_INTERVAL);
+        assertEquals(0.25D, SnowTrailMobEffect.footprintOffsetX(1));
+        assertEquals(-0.25D, SnowTrailMobEffect.footprintOffsetX(2));
+        assertEquals(-0.25D, SnowTrailMobEffect.footprintOffsetZ(1));
+        assertEquals(0.25D, SnowTrailMobEffect.footprintOffsetZ(2));
+        assertTrue(SnowTrailMobEffect.allowsSnowTrail(1.599F));
+        assertFalse(SnowTrailMobEffect.allowsSnowTrail(1.6F));
+        assertEquals(8, SnowTrailMobEffect.SNOW_GOLEM_COVER_RADIUS);
+        assertEquals(3.0F, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_POWER);
+        assertEquals(20, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_ROLL);
     }
 
     @Test
