@@ -2,6 +2,7 @@ package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
+import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -197,6 +198,31 @@ class BrewLogicTest {
         assertEquals(5, FeatherFallMobEffect.maxFallDistance(1));
         assertEquals(4, FeatherFallMobEffect.maxFallDistance(2));
         assertEquals(3, FeatherFallMobEffect.maxFallDistance(3));
+    }
+
+    @Test
+    void brambleRestoresSourceRepellAttackerBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> repell = Brews.buildEffects(List.of(WitcheryItems.BRAMBLE.get()));
+        assertEquals(1, repell.size(), "Bramble resolves as the old Repell Attacker effect ingredient");
+        assertSame(WitcheryMobEffects.REPELL_ATTACKER.value(), repell.get(0).getEffect().value(),
+                "source Bramble uses Witchery's Repell Attacker potion");
+        assertEquals(1800, repell.get(0).getDuration(), "source Repell Attacker lasts ninety seconds");
+        assertEquals(250, Brews.powerCost(List.of(WitcheryItems.BRAMBLE.get())),
+                "Repell Attacker source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, WitcheryItems.BRAMBLE.get()))
+                        .get(0).getAmplifier(),
+                "source Repell Attacker accepts the normal strength modifier path");
+    }
+
+    @Test
+    void repellAttackerEffectUsesSourcePushScaling() {
+        assertEquals(9.0D, RepellAttackerMobEffect.MAX_RANGE_SQ);
+        assertEquals(1.0D, RepellAttackerMobEffect.horizontalStrength(0));
+        assertEquals(1.75D, RepellAttackerMobEffect.horizontalStrength(1));
+        assertEquals(0.5D, RepellAttackerMobEffect.verticalStrength(0));
+        assertEquals(0.7D, RepellAttackerMobEffect.verticalStrength(1));
     }
 
     @Test

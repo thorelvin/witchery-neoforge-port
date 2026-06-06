@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
+import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
@@ -23,6 +24,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> FEATHER_FALL =
             MOB_EFFECTS.register("feather_fall", () -> new FeatherFallMobEffect(0xFFEBD1));
+
+    public static final DeferredHolder<MobEffect, MobEffect> REPELL_ATTACKER =
+            MOB_EFFECTS.register("repell_attacker", () -> new RepellAttackerMobEffect(0x233423));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
