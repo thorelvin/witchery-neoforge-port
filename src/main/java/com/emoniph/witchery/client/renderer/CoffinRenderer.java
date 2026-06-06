@@ -65,7 +65,7 @@ public class CoffinRenderer implements BlockEntityRenderer<CoffinBlockEntity, Co
         }
 
         state.shouldRender = true;
-        state.openAmount = blockState.getValue(CoffinBlock.OPEN) ? 1.0F : 0.0F;
+        state.openAmount = blockState.getValue(CoffinBlock.OPEN) || be.isSourceOpened() ? 1.0F : 0.0F;
         state.facingYaw = facingToYaw(blockState.getValue(CoffinBlock.FACING));
     }
 
