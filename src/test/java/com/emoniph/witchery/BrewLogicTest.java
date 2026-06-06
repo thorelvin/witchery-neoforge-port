@@ -21,10 +21,12 @@ import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
@@ -456,6 +458,10 @@ class BrewLogicTest {
         assertEquals(8, SnowTrailMobEffect.SNOW_GOLEM_COVER_RADIUS);
         assertEquals(3.0F, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_POWER);
         assertEquals(20, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_ROLL);
+        assertEquals(2, Brews.sourceBlockHitRadius(0),
+                "source Snow Trail block-hit burst starts at radius 2");
+        assertEquals(4, Brews.sourceBlockHitRadius(1),
+                "Glowstone strength expands source block-hit bursts by two blocks");
     }
 
     @Test
@@ -597,6 +603,16 @@ class BrewLogicTest {
         assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(1.5F, 1));
         assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(4.0F, 2));
         assertEquals(0.0F, ChilledMobEffect.fireDamageAfterReduction(2.0F, 2));
+        assertTrue(Brews.sourceColdBlockHitShouldFreeze(Blocks.WATER.defaultBlockState()),
+                "source Icy Needle block hit replaces water material");
+        assertFalse(Brews.sourceColdBlockHitShouldFreeze(Blocks.ICE.defaultBlockState()),
+                "source Icy Needle block hit does not recursively replace existing ice");
+        assertFalse(Brews.sourceColdBlockHitShouldFreeze(Blocks.AIR.defaultBlockState()),
+                "source Icy Needle block hit only follows water");
+        assertTrue(Brews.sourceReplaceSphereCanRecurse(BlockPos.ZERO, BlockPos.ZERO, 2));
+        assertTrue(Brews.sourceReplaceSphereCanRecurse(BlockPos.ZERO, new BlockPos(1, 0, 0), 2));
+        assertFalse(Brews.sourceReplaceSphereCanRecurse(BlockPos.ZERO, new BlockPos(2, 0, 0), 2),
+                "source sphere recursion stops at exact radius");
     }
 
     @Test

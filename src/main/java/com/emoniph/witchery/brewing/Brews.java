@@ -1,6 +1,7 @@
 package com.emoniph.witchery.brewing;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
@@ -16,6 +17,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -42,16 +44,20 @@ import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
@@ -557,6 +563,11 @@ public final class Brews {
 
     public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal,
                                    LivingEntity directTarget, Entity source) {
+        applyToArea(level, pos, items, dispersal, directTarget, source, false);
+    }
+
+    public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal,
+                                   LivingEntity directTarget, Entity source, boolean blockHit) {
         Resolution resolved = resolveBrew(items);
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
@@ -592,9 +603,12 @@ public final class Brews {
             level.sendParticles(ParticleTypes.SPLASH, pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.1);
             level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
         }
+        if (dispersal == Brews.Dispersal.SPLASH && blockHit && !resolved.effects.isEmpty()) {
+            applyBlockImpactEffects(level, BlockPos.containing(pos), resolved.effects, source);
+        }
         if (!resolved.actions.isEmpty()) {
             applyAreaActions(level, pos, directTarget, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
-            if (dispersal == Brews.Dispersal.SPLASH && directTarget == null) {
+            if (dispersal == Brews.Dispersal.SPLASH && blockHit) {
                 applyBlockImpactActions(level, pos, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
             }
         }
@@ -709,11 +723,60 @@ public final class Brews {
         }
     }
 
+    private static void applyBlockImpactEffects(ServerLevel level, BlockPos impactPos, List<MobEffectInstance> effects,
+                                                Entity source) {
+        for (MobEffectInstance effect : effects) {
+            MobEffect mobEffect = effect.getEffect().value();
+            if (mobEffect == WitcheryMobEffects.SNOW_TRAIL.value()) {
+                applySnowTrailBlockHit(level, impactPos, effect.getAmplifier(), source);
+            } else if (mobEffect == WitcheryMobEffects.CHILLED.value()) {
+                applyChilledBlockHit(level, impactPos, effect.getAmplifier(), source);
+            }
+        }
+    }
+
     private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, List<ActionApplication> actions,
                                                 Entity source, double instantRadius) {
         for (ActionApplication action : actions) {
             if (action.action() == Ingredient.BrewAction.PULL) {
                 applyPullToNonLivingEntities(level, impactPos, action.strength(), source, instantRadius);
+            }
+        }
+    }
+
+    private static void applySnowTrailBlockHit(ServerLevel level, BlockPos impactPos, int strength, Entity source) {
+        if (!sourceMayModify(level, impactPos, source)) {
+            return;
+        }
+        SnowTrailMobEffect.createSnowCovering(level, impactPos, sourceBlockHitRadius(strength));
+    }
+
+    private static void applyChilledBlockHit(ServerLevel level, BlockPos impactPos, int strength, Entity source) {
+        if (!sourceMayModify(level, impactPos, source)) {
+            return;
+        }
+        replaceSourceConnectedWaterSphere(level, impactPos, sourceBlockHitRadius(strength));
+    }
+
+    private static boolean sourceMayModify(ServerLevel level, BlockPos pos, Entity source) {
+        return !(source instanceof Player player) || level.mayInteract(player, pos);
+    }
+
+    private static void replaceSourceConnectedWaterSphere(ServerLevel level, BlockPos center, int radius) {
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        Set<BlockPos> processed = new HashSet<>();
+        queue.add(center);
+        while (!queue.isEmpty()) {
+            BlockPos current = queue.remove();
+            if (!processed.add(current) || !sourceReplaceSphereCanRecurse(center, current, radius)) {
+                continue;
+            }
+            for (Direction direction : Direction.values()) {
+                BlockPos next = current.relative(direction);
+                if (sourceColdBlockHitShouldFreeze(level.getBlockState(next))) {
+                    level.setBlockAndUpdate(next, Blocks.ICE.defaultBlockState());
+                    queue.add(next);
+                }
             }
         }
     }
@@ -859,6 +922,21 @@ public final class Brews {
         return new Vec3(delta.x * SOURCE_PULL_HORIZONTAL_SCALE,
                 SOURCE_PULL_VERTICAL_MOTION,
                 delta.z * SOURCE_PULL_HORIZONTAL_SCALE);
+    }
+
+    public static int sourceBlockHitRadius(int strength) {
+        return 2 + 2 * strength;
+    }
+
+    public static boolean sourceColdBlockHitShouldFreeze(BlockState state) {
+        return state.is(Blocks.WATER);
+    }
+
+    public static boolean sourceReplaceSphereCanRecurse(BlockPos center, BlockPos current, int radius) {
+        int dx = center.getX() - current.getX();
+        int dy = center.getY() - current.getY();
+        int dz = center.getZ() - current.getZ();
+        return dx * dx + dy * dy + dz * dz < radius * radius;
     }
 
     public static boolean isSourceUndead(LivingEntity target) {

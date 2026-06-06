@@ -86,4 +86,9 @@ public record BrewContents(List<Item> items) {
     public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal, LivingEntity directTarget, Entity source) {
         Brews.applyToArea(level, pos, items, dispersal, directTarget, source);
     }
+
+    public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal,
+                            LivingEntity directTarget, Entity source, boolean blockHit) {
+        Brews.applyToArea(level, pos, items, dispersal, directTarget, source, blockHit);
+    }
 }
