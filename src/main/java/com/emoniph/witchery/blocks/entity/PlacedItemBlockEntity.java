@@ -15,6 +15,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 public class PlacedItemBlockEntity extends BlockEntity {
+    private static final String SOURCE_ITEM_KEY = "WITCPlacedItem";
+    private static final String LEGACY_PORT_ITEM_KEY = "Item";
 
     private ItemStack stack = ItemStack.EMPTY;
 
@@ -51,14 +53,18 @@ public class PlacedItemBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
         super.saveAdditional(tag);
-        if (!stack.isEmpty())
-            tag.store("Item", net.minecraft.world.item.ItemStack.CODEC, stack);
+        if (!stack.isEmpty()) {
+            tag.store(SOURCE_ITEM_KEY, net.minecraft.world.item.ItemStack.CODEC, stack);
+            tag.store(LEGACY_PORT_ITEM_KEY, net.minecraft.world.item.ItemStack.CODEC, stack);
+        }
     }
 
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        stack = tag.read("Item", net.minecraft.world.item.ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        stack = tag.read(SOURCE_ITEM_KEY, net.minecraft.world.item.ItemStack.CODEC)
+                .or(() -> tag.read(LEGACY_PORT_ITEM_KEY, net.minecraft.world.item.ItemStack.CODEC))
+                .orElse(ItemStack.EMPTY);
     }
 
     private void notifySupportingAltar() {
