@@ -985,6 +985,45 @@ class BrewLogicTest {
     }
 
     @Test
+    void slimeBallRestoresSourceFrogsTonguePullAction() {
+        Brews.bootstrap();
+
+        assertFalse(Brews.canAdd(List.of(), Items.SLIME_BALL),
+                "source Pull requires level-2 capacity");
+        assertTrue(Brews.canAdd(level2(), Items.SLIME_BALL),
+                "Nether Wart opens enough capacity for source Pull");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.SLIME_BALL)),
+                "under-capacity Pull resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level2(Items.SLIME_BALL));
+        assertEquals(1, actions.size(), "Slime Ball resolves as source Frog's Tongue / Pull");
+        assertEquals(Brews.Ingredient.BrewAction.PULL, actions.get(0).action());
+        assertEquals("witchery.brew.frogtongue", actions.get(0).nameKey());
+        assertEquals(200, Brews.powerCost(level2(Items.SLIME_BALL)),
+                "source Nether Wart capacity cost plus Slime Ball altar cost");
+
+        assertEquals(1, Brews.buildActions(level2(Items.GLOWSTONE_DUST, Items.SLIME_BALL)).get(0).strength(),
+                "Glowstone raises Pull strength and switches source targeting toward the caster");
+    }
+
+    @Test
+    void pullUsesSourceTargetingAndMotionMath() {
+        assertFalse(Brews.sourcePullUsesCaster(0, false),
+                "unpowered source Pull targets the impact location");
+        assertTrue(Brews.sourcePullUsesCaster(1, false),
+                "powered source Pull targets the caster");
+        assertFalse(Brews.sourcePullUsesCaster(1, true),
+                "FakePlayer casters use the impact-location branch");
+
+        assertEquals(new Vec3(0.3D, 0.4D, -0.6D),
+                Brews.sourcePullMotion(new Vec3(1.0D, 2.0D, 3.0D), new Vec3(3.0D, 99.0D, -1.0D)),
+                "source Pull horizontal motion is delta * 0.15 with fixed 0.4 upward motion");
+        assertEquals(Vec3.ZERO,
+                Brews.sourcePullMotion(new Vec3(1.0D, 2.0D, 3.0D), new Vec3(1.0D, 2.0D, 3.0D)),
+                "source Pull skips occupied target positions");
+    }
+
+    @Test
     void iceRestoresSourceDemonbaneAction() {
         Brews.bootstrap();
         List<Item> level5 = withCapacity(List.of(Items.NETHER_WART,

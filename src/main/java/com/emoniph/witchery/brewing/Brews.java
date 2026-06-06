@@ -3,6 +3,7 @@ package com.emoniph.witchery.brewing;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
@@ -86,7 +88,7 @@ public final class Brews {
 
         public enum BrewAction {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
-            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE
+            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -199,6 +201,10 @@ public final class Brews {
     private static final int SOURCE_POTION_LONGEVITY_BOOST_TICKS = 3 * 60 * 20;
     private static final int SOURCE_POTION_LONGEVITY_HUNGER_TICKS = 2 * 60 * 20;
     private static final int SOURCE_POTION_LONGEVITY_NAUSEA_TICKS = 5 * 60 * 20;
+    private static final int SOURCE_PULL_JUMP_TICKS = 20;
+    private static final int SOURCE_PULL_JUMP_AMPLIFIER = 1;
+    private static final double SOURCE_PULL_HORIZONTAL_SCALE = 0.15D;
+    private static final double SOURCE_PULL_VERTICAL_MOTION = 0.4D;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
 
@@ -298,6 +304,9 @@ public final class Brews {
         register(WitcheryItems.BREATH_OF_GODDESS.get(), Ingredient.action(Ingredient.BrewAction.AIR_HIKE,
                 2, 750, 0xD8F4FF,
                 "witchery.brew.airhike", null));
+        register(Items.SLIME_BALL, Ingredient.action(Ingredient.BrewAction.PULL,
+                2, 150, 0x8CD66A,
+                "witchery.brew.frogtongue", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -533,7 +542,7 @@ public final class Brews {
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
-                applyAction(serverLevel, target, action, 1.0, 1.0, source);
+                applyAction(serverLevel, target, action, 1.0, 1.0, source, target.position());
             }
         }
     }
@@ -585,6 +594,9 @@ public final class Brews {
         }
         if (!resolved.actions.isEmpty()) {
             applyAreaActions(level, pos, directTarget, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
+            if (dispersal == Brews.Dispersal.SPLASH && directTarget == null) {
+                applyBlockImpactActions(level, pos, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
+            }
         }
     }
 
@@ -659,13 +671,13 @@ public final class Brews {
             boolean directHit = target == directTarget;
             double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
             for (ActionApplication action : actions) {
-                applyAction(level, target, action, powerFactor, SOURCE_SPLASH_DURATION_SCALE * powerFactor, source);
+                applyAction(level, target, action, powerFactor, SOURCE_SPLASH_DURATION_SCALE * powerFactor, source, pos);
             }
         }
     }
 
     private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action,
-                                    double powerFactor, double durationFactor, Entity source) {
+                                    double powerFactor, double durationFactor, Entity source, Vec3 impactPos) {
         if (action.action() == Ingredient.BrewAction.ANIMAL) {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
@@ -692,7 +704,63 @@ public final class Brews {
             applyPotionLongevity(target, action.strength(), powerFactor, source);
         } else if (action.action() == Ingredient.BrewAction.AIR_HIKE) {
             applyAirHike(target, action.strength());
+        } else if (action.action() == Ingredient.BrewAction.PULL) {
+            applyPull(target, action.strength(), source, impactPos);
         }
+    }
+
+    private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, List<ActionApplication> actions,
+                                                Entity source, double instantRadius) {
+        for (ActionApplication action : actions) {
+            if (action.action() == Ingredient.BrewAction.PULL) {
+                applyPullToNonLivingEntities(level, impactPos, action.strength(), source, instantRadius);
+            }
+        }
+    }
+
+    private static void applyPullToNonLivingEntities(ServerLevel level, Vec3 impactPos, int strength,
+                                                     Entity source, double radius) {
+        AABB area = new AABB(impactPos.x - radius, impactPos.y - radius, impactPos.z - radius,
+                impactPos.x + radius, impactPos.y + radius, impactPos.z + radius);
+        Vec3 pullTarget = sourcePullTarget(impactPos, source, strength);
+        for (Entity entity : level.getEntities((Entity) null, area,
+                entity -> !(entity instanceof LivingEntity) && entity.isAlive())) {
+            if (entity.distanceToSqr(impactPos) <= radius * radius) {
+                applySourcePull(entity, pullTarget);
+            }
+        }
+    }
+
+    private static void applyPull(LivingEntity target, int strength, Entity source, Vec3 impactPos) {
+        Vec3 pullTarget = sourcePullTarget(impactPos, source, strength);
+        if (applySourcePull(target, pullTarget)) {
+            target.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,
+                    SOURCE_PULL_JUMP_TICKS, SOURCE_PULL_JUMP_AMPLIFIER), source);
+        }
+    }
+
+    private static Vec3 sourcePullTarget(Vec3 impactPos, Entity source, int strength) {
+        if (sourcePullUsesCaster(strength, isFakePlayer(source)) && source != null) {
+            return source.position();
+        }
+        return impactPos;
+    }
+
+    private static boolean applySourcePull(Entity entity, Vec3 targetPosition) {
+        if (entity instanceof EnderDragon || entity instanceof HornedHuntsmanEntity) {
+            return false;
+        }
+        Vec3 motion = sourcePullMotion(entity.position(), targetPosition);
+        if (motion == Vec3.ZERO) {
+            return false;
+        }
+        entity.setDeltaMovement(motion);
+        entity.hurtMarked = true;
+        return true;
+    }
+
+    private static boolean isFakePlayer(Entity entity) {
+        return entity != null && entity.getClass().getSimpleName().equals("FakePlayer");
     }
 
     private static void applyAirHike(LivingEntity target, int strength) {
@@ -777,6 +845,20 @@ public final class Brews {
 
     public static double sourceAirHikeMotionY(int strength) {
         return 0.6D + 0.2D * (double) strength;
+    }
+
+    public static boolean sourcePullUsesCaster(int strength, boolean fakeCaster) {
+        return strength > 0 && !fakeCaster;
+    }
+
+    public static Vec3 sourcePullMotion(Vec3 entityPosition, Vec3 targetPosition) {
+        Vec3 delta = targetPosition.subtract(entityPosition);
+        if (delta.lengthSqr() < 0.0001D) {
+            return Vec3.ZERO;
+        }
+        return new Vec3(delta.x * SOURCE_PULL_HORIZONTAL_SCALE,
+                SOURCE_PULL_VERTICAL_MOTION,
+                delta.z * SOURCE_PULL_HORIZONTAL_SCALE);
     }
 
     public static boolean isSourceUndead(LivingEntity target) {
