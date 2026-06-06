@@ -2,6 +2,7 @@ package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
+import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -214,6 +215,30 @@ class BrewLogicTest {
         assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, WitcheryItems.BRAMBLE.get()))
                         .get(0).getAmplifier(),
                 "source Repell Attacker accepts the normal strength modifier path");
+    }
+
+    @Test
+    void sugarCaneRestoresSourceFloatingBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> floating = Brews.buildEffects(List.of(Items.SUGAR_CANE));
+        assertEquals(1, floating.size(), "Sugar Cane resolves as the old Floating effect ingredient");
+        assertSame(WitcheryMobEffects.FLOATING.value(), floating.get(0).getEffect().value(),
+                "source Sugar Cane uses Witchery's Floating potion");
+        assertEquals(1800, floating.get(0).getDuration(), "source Floating lasts ninety seconds");
+        assertEquals(250, Brews.powerCost(List.of(Items.SUGAR_CANE)), "Floating source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.SUGAR_CANE))
+                        .get(0).getAmplifier(),
+                "source Floating accepts the normal strength modifier path");
+    }
+
+    @Test
+    void floatingEffectUsesSourceHoverConstants() {
+        assertEquals(3, FloatingMobEffect.hoverHeight(0));
+        assertEquals(4, FloatingMobEffect.hoverHeight(1));
+        assertEquals(5, FloatingMobEffect.hoverHeight(2));
+        assertEquals(0.25D, FloatingMobEffect.RAISED_Y_VELOCITY);
+        assertEquals(-0.05D, FloatingMobEffect.UNSUPPORTED_DRIFT_Y_VELOCITY);
     }
 
     @Test
