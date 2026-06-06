@@ -417,7 +417,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorWallBlock> MIRROR_WALL = registerBlock("mirror_wall",
             com.emoniph.witchery.blocks.MirrorWallBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
-                    .strength(-1.0F, 3_600_000.0F).noLootTable());
+                    .strength(-1.0F, 9999.0F).noLootTable());
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorBlock> MIRROR = registerBlock("mirror",
             com.emoniph.witchery.blocks.MirrorBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
