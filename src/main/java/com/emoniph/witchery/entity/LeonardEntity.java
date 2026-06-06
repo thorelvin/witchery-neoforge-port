@@ -35,6 +35,8 @@ public class LeonardEntity extends Monster {
     private static final float SOULS_THRESHOLD = 300.0F;
     private static final int   SOUL_COUNT = 6; // 2 green, 2 red, 2 black
     private static final float SOUL_RADIUS = 20.0F;
+    private static final float SOURCE_DEMONBANE_HEALTH_GATE = 0.4F;
+    private static final float SOURCE_DEMONBANE_DAMAGE_CAP = 15.0F;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.witchery.leonard"),
@@ -111,6 +113,22 @@ public class LeonardEntity extends Monster {
             spawnLostSouls(level);
         }
         return hurt;
+    }
+
+    public boolean hurtFromDemonbaneWeakness(ServerLevel level, int damage) {
+        if (damage <= 0 || !sourceDemonbaneWeaknessCanHurt(getHealth(), getMaxHealth())) {
+            return false;
+        }
+        return super.hurtServer(level, level.damageSources().magic(),
+                Math.min((float) damage, sourceDemonbaneWeaknessDamageCap(false)));
+    }
+
+    public static boolean sourceDemonbaneWeaknessCanHurt(float health, float maxHealth) {
+        return health < maxHealth * SOURCE_DEMONBANE_HEALTH_GATE;
+    }
+
+    public static float sourceDemonbaneWeaknessDamageCap(boolean largeResizing) {
+        return largeResizing ? 8.0F : SOURCE_DEMONBANE_DAMAGE_CAP;
     }
 
     private void spawnLostSouls(ServerLevel level) {

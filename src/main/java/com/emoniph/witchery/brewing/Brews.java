@@ -1,6 +1,11 @@
 package com.emoniph.witchery.brewing;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -25,6 +30,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -72,7 +81,9 @@ public final class Brews {
             EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
         }
 
-        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES }
+        public enum BrewAction {
+            ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS
+        }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
@@ -265,6 +276,9 @@ public final class Brews {
         register(WitcheryItems.GARLIC.get(), Ingredient.action(Ingredient.BrewAction.WEAKEN_VAMPIRES,
                 4, 500, 0xD8D4A5,
                 "witchery.brew.weakenvampires", null));
+        register(Items.ICE, Ingredient.action(Ingredient.BrewAction.BANE_DEMONS,
+                5, 500, 0x8AD7FF,
+                "witchery.brew.harmdemons", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -647,6 +661,9 @@ public final class Brews {
                     action.strengthCeilingDisabled(), powerFactor);
         } else if (action.action() == Ingredient.BrewAction.WEAKEN_VAMPIRES) {
             applyWeakenVampires(target, action, durationFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.BANE_DEMONS) {
+            applyDemonbaneDamage(level, target, source, action.strength(),
+                    action.strengthCeilingDisabled(), powerFactor);
         }
     }
 
@@ -673,6 +690,19 @@ public final class Brews {
         int damage = sourceBaneDamage(matchingTarget, strength, strengthCeilingDisabled, powerFactor);
         if (damage > 0) {
             target.hurtServer(level, sourceBaneDamageSource(level, source), damage);
+        }
+    }
+
+    private static void applyDemonbaneDamage(ServerLevel level, LivingEntity target, Entity source,
+                                             int strength, boolean strengthCeilingDisabled, double powerFactor) {
+        if (target instanceof LeonardEntity leonard) {
+            int damage = sourceBaneDamage(true, strength, strengthCeilingDisabled, powerFactor);
+            if (damage > 0) {
+                leonard.hurtFromDemonbaneWeakness(level, damage);
+            }
+        } else {
+            applyBaneDamage(level, target, source, isSourceDemonic(target), strength,
+                    strengthCeilingDisabled, powerFactor);
         }
     }
 
@@ -703,6 +733,18 @@ public final class Brews {
             return true;
         }
         return target instanceof Player player && WitcheryAttachments.get(player).isVampire();
+    }
+
+    public static boolean isSourceDemonic(LivingEntity target) {
+        return target instanceof DemonEntity
+                || target instanceof Ghast
+                || target instanceof Blaze
+                || target instanceof MagmaCube
+                || target instanceof LeonardEntity
+                || target instanceof LordOfTormentEntity
+                || target instanceof FlameImpEntity
+                || target instanceof LilithEntity
+                || target instanceof WitherBoss;
     }
 
     public static int sourceWeakenVampiresBloodLoss(int strength) {

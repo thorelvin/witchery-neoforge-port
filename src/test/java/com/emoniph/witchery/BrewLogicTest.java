@@ -18,6 +18,7 @@ import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import com.emoniph.witchery.effect.SunAllergyMobEffect;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
+import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -943,6 +944,51 @@ class BrewLogicTest {
                 "source splash power factor scales bane damage before ceiling");
         assertEquals(2, Brews.sourceBaneDamage(false, 0, false, 0.5),
                 "source fractional lesser damage is rounded up");
+    }
+
+    @Test
+    void iceRestoresSourceDemonbaneAction() {
+        Brews.bootstrap();
+        List<Item> level5 = withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get()), Items.ICE);
+
+        assertFalse(Brews.canAdd(level4(), Items.ICE),
+                "source Demonbane requires level-5 capacity");
+        assertTrue(Brews.canAdd(withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get())), Items.ICE),
+                "Nether Wart + Tear of the Goddess + Diamond Vapour opens enough capacity for Demonbane");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.ICE)),
+                "under-capacity Demonbane resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level5);
+        assertEquals(1, actions.size(), "Ice resolves as source Demonbane");
+        assertEquals(Brews.Ingredient.BrewAction.BANE_DEMONS, actions.get(0).action());
+        assertEquals("witchery.brew.harmdemons", actions.get(0).nameKey());
+        assertEquals(800, Brews.powerCost(level5),
+                "source capacity route cost plus Ice altar cost");
+
+        Brews.ActionApplication modified = Brews.buildActions(withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get()), Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
+                Items.BLAZE_ROD, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.ICE)).get(0);
+        assertEquals(3, modified.strength(),
+                "Demonbane carries the normal source strength modifiers");
+        assertTrue(modified.strengthCeilingDisabled(),
+                "Tropical Fish opens the old Demonbane strength ceiling to level IV damage");
+    }
+
+    @Test
+    void leonardDemonbaneWeaknessUsesSourceGateAndCap() {
+        assertFalse(LeonardEntity.sourceDemonbaneWeaknessCanHurt(200.0F, 500.0F),
+                "source Leonard weakness does not hurt at exactly 40 percent health");
+        assertTrue(LeonardEntity.sourceDemonbaneWeaknessCanHurt(199.0F, 500.0F),
+                "source Leonard weakness starts below 40 percent health");
+        assertEquals(15.0F, LeonardEntity.sourceDemonbaneWeaknessDamageCap(false),
+                "normal source Leonard Demonbane weakness caps at 15 damage");
+        assertEquals(8.0F, LeonardEntity.sourceDemonbaneWeaknessDamageCap(true),
+                "large Resizing source Leonard Demonbane weakness caps at 8 damage");
     }
 
     @Test
