@@ -154,6 +154,22 @@ class BrewLogicTest {
     }
 
     @Test
+    void leatherRestoresSourceJumpBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> jump = Brews.buildEffects(List.of(Items.LEATHER));
+        assertEquals(1, jump.size(), "Leather resolves as the old Jump effect ingredient");
+        assertSame(MobEffects.JUMP_BOOST.value(), jump.get(0).getEffect().value(),
+                "source Jump uses the vanilla Jump Boost potion");
+        assertEquals(3600, jump.get(0).getDuration(), "source Jump lasts three minutes");
+        assertEquals(200, Brews.powerCost(List.of(Items.LEATHER)), "Leather source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.LEATHER)).get(0).getAmplifier(),
+                "source Jump accepts the normal strength modifier path");
+        assertFalse(Brews.isIngredient(Items.RABBIT_FOOT),
+                "Rabbit Foot is a modern vanilla brewing item, not the old Witchery Jump ingredient");
+    }
+
+    @Test
     void dispersalDetectedFromModifiers() {
         Brews.bootstrap();
         assertEquals(Brews.Dispersal.SPLASH, Brews.dispersal(List.of(Items.GUNPOWDER, Items.SPIDER_EYE)));
