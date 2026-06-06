@@ -317,6 +317,34 @@ class BrewLogicTest {
     }
 
     @Test
+    void skullAndApplesRestoreSourceVanillaEffectBrews() {
+        Brews.bootstrap();
+        List<MobEffectInstance> wither = Brews.buildEffects(List.of(Items.WITHER_SKELETON_SKULL));
+        assertEquals(1, wither.size(), "Wither Skeleton Skull resolves as the old Wither brew ingredient");
+        assertSame(MobEffects.WITHER.value(), wither.get(0).getEffect().value(),
+                "source skull metadata 1 makes vanilla Wither");
+        assertEquals(300, wither.get(0).getDuration(), "source Wither brew lasts fifteen seconds");
+        assertEquals(200, Brews.powerCost(List.of(Items.WITHER_SKELETON_SKULL)), "Wither source effect power");
+
+        List<MobEffectInstance> absorption = Brews.buildEffects(List.of(Items.GOLDEN_APPLE));
+        assertSame(MobEffects.ABSORPTION.value(), absorption.get(0).getEffect().value(),
+                "source Golden Apple metadata 0 makes Absorption");
+        assertEquals(600, absorption.get(0).getDuration(), "source Absorbsion brew lasts thirty seconds");
+        assertEquals(1000, Brews.powerCost(List.of(Items.GOLDEN_APPLE)), "Absorption source effect power");
+
+        List<MobEffectInstance> healthBoost = Brews.buildEffects(List.of(Items.ENCHANTED_GOLDEN_APPLE));
+        assertSame(MobEffects.HEALTH_BOOST.value(), healthBoost.get(0).getEffect().value(),
+                "source Golden Apple metadata 1 maps to modern Enchanted Golden Apple and Health Boost");
+        assertEquals(2400, healthBoost.get(0).getDuration(), "source Health Boost brew lasts two minutes");
+        assertEquals(1000, Brews.powerCost(List.of(Items.ENCHANTED_GOLDEN_APPLE)),
+                "Health Boost source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.WITHER_SKELETON_SKULL))
+                        .get(0).getAmplifier(),
+                "these vanilla effect brews use the normal source strength modifier path");
+    }
+
+    @Test
     void enderInhibitionUsesSourceAmplifierGate() {
         assertFalse(EnderInhibitionMobEffect.canTeleport(0, 0),
                 "an active level-I effect blocks ordinary ender teleport checks");
