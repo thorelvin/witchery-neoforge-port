@@ -29,7 +29,7 @@ public class DemonHeartBlock extends BaseEntityBlock {
 
     public static final MapCodec<DemonHeartBlock> CODEC = simpleCodec(DemonHeartBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 13.0, 12.0);
+    private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 12.8, 12.0);
 
     public DemonHeartBlock(BlockBehaviour.Properties properties) {
         super(properties);
