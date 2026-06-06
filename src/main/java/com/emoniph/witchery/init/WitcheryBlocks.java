@@ -421,7 +421,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorBlock> MIRROR = registerBlock("mirror",
             com.emoniph.witchery.blocks.MirrorBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
-                    .strength(1.5f, 6.0f).noOcclusion().lightLevel(s -> 10));
+                    .strength(1.0f, 9999.0f).noOcclusion().lightLevel(s -> 10));
 
     // Portals / Dimensional
     public static final DeferredBlock<SpiritPortalBlock> SPIRIT_PORTAL = registerBlock("spirit_portal", SpiritPortalBlock::new,
