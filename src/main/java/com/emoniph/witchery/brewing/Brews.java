@@ -203,6 +203,8 @@ public final class Brews {
                 2400, SOURCE_DEFAULT_STRENGTH_CEILING, 0xF87D23, 1000, 4));
         register(Items.INK_SAC, Ingredient.effect(MobEffects.BLINDNESS,
                 300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1F23, 1000, 4));
+        register(WitcheryItems.INFERNAL_BLOOD.get(), Ingredient.effect(WitcheryMobEffects.GROTESQUE,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x669DC93D, 500, 2));
         register(WitcheryItems.ENDER_DEW.get(), Ingredient.effect(WitcheryMobEffects.ENDER_INHIBITION,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200, 1));
         register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,

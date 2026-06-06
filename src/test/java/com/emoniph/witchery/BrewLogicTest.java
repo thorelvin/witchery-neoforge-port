@@ -7,6 +7,7 @@ import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.FortuneMobEffect;
+import com.emoniph.witchery.effect.GrotesqueMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
@@ -595,6 +596,40 @@ class BrewLogicTest {
         assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(1.5F, 1));
         assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(4.0F, 2));
         assertEquals(0.0F, ChilledMobEffect.fireDamageAfterReduction(2.0F, 2));
+    }
+
+    @Test
+    void infernalBloodRestoresSourceGrotesqueBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> grotesque = Brews.buildEffects(level2(WitcheryItems.INFERNAL_BLOOD.get()));
+        assertEquals(1, grotesque.size(), "Infernal Blood resolves as the old Fear/Grotesque ingredient");
+        assertSame(WitcheryMobEffects.GROTESQUE.value(), grotesque.get(0).getEffect().value(),
+                "source Infernal Blood applies Witchery's Grotesque potion");
+        assertEquals(GrotesqueMobEffect.BREW_DURATION_TICKS, grotesque.get(0).getDuration(),
+                "source Grotesque lasts three minutes");
+        assertEquals(550, Brews.powerCost(level2(WitcheryItems.INFERNAL_BLOOD.get())),
+                "Grotesque source effect power plus level-2 capacity power");
+        assertTrue(Brews.blockedByCapacity(level1(WitcheryItems.INFERNAL_BLOOD.get())),
+                "source Grotesque requires effect level 2 capacity");
+
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, WitcheryItems.INFERNAL_BLOOD.get()))
+                        .get(0).getAmplifier(),
+                "source Grotesque accepts the normal strength modifier path");
+    }
+
+    @Test
+    void grotesqueEffectUsesSourceRepulsionRules() {
+        assertFalse(GrotesqueMobEffect.isSourceTickPhase(2L));
+        assertTrue(GrotesqueMobEffect.isSourceTickPhase(3L));
+        assertFalse(GrotesqueMobEffect.shouldRepulseMob(true, false, 1.0D));
+        assertFalse(GrotesqueMobEffect.shouldRepulseMob(false, true, 1.0D));
+        assertFalse(GrotesqueMobEffect.shouldRepulseMob(false, false, GrotesqueMobEffect.SOURCE_RADIUS_SQ));
+        assertTrue(GrotesqueMobEffect.shouldRepulseMob(false, false, 15.99D));
+        assertEquals(Vec3.ZERO, GrotesqueMobEffect.repulsionPush(Vec3.ZERO, Vec3.ZERO));
+        Vec3 push = GrotesqueMobEffect.repulsionPush(Vec3.ZERO, new Vec3(1.0D, 0.0D, 0.0D));
+        assertEquals(0.22D, push.x, 0.000001D);
+        assertEquals(0.0D, push.y, 0.000001D);
+        assertEquals(0.0D, push.z, 0.000001D);
     }
 
     @Test
