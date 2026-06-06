@@ -119,7 +119,13 @@ public final class BrewMobEffectEvents {
     public static void onParalysedExpired(MobEffectEvent.Expired event) {
         MobEffectInstance effect = event.getEffectInstance();
         if (effect != null && effect.is(WitcheryMobEffects.PARALYSED)) {
-            ParalyzedMobEffect.removeSourceSpeedModifier(event.getEntity());
+            LivingEntity entity = event.getEntity();
+            ParalyzedMobEffect.removeSourceSpeedModifier(entity);
+            if (ParalyzedMobEffect.shouldApplyQueasyOnExpiry(entity.level().isClientSide(),
+                    entity instanceof Player, effect.getAmplifier())) {
+                entity.addEffect(new MobEffectInstance(WitcheryMobEffects.QUEASY,
+                        ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS, 0, true, true));
+            }
         }
     }
 

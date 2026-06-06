@@ -9,6 +9,7 @@ import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
+import com.emoniph.witchery.effect.QueasyMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
@@ -571,8 +572,12 @@ class BrewLogicTest {
         assertFalse(ParalyzedMobEffect.shouldBreakOnHurt(true, 4, 1.0F));
         assertFalse(ParalyzedMobEffect.shouldBreakOnHurt(false, 4, 0.5F));
         assertTrue(ParalyzedMobEffect.shouldBreakOnHurt(false, 4, 1.0F));
-        assertEquals(1800, ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS,
-                "source amplified player expiry applies Queasy for ninety seconds once Queasy exists");
+        assertFalse(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(true, true, 4));
+        assertFalse(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, false, 4));
+        assertFalse(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, true, 3));
+        assertTrue(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, true, 4));
+        assertEquals(QueasyMobEffect.PARALYSED_EXPIRY_DURATION_TICKS, ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS,
+                "source amplified player expiry applies Queasy for ninety seconds");
     }
 
     @Test

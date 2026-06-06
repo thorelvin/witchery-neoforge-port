@@ -33,7 +33,7 @@ public class ParalyzedMobEffect extends MobEffect {
     public static final int PLAYER_REQUIRED_AMPLIFIER = 2;
     public static final int VILLAGER_ESCAPE_AMPLIFIER = 5;
     public static final int DAMAGE_BREAK_AMPLIFIER = 4;
-    public static final int QUEASY_EXPIRY_DURATION_TICKS = 1800;
+    public static final int QUEASY_EXPIRY_DURATION_TICKS = QueasyMobEffect.PARALYSED_EXPIRY_DURATION_TICKS;
     public static final double SOURCE_SPEED_MODIFIER_BASE = -40.0D;
     public static final double PINNED_Y_VELOCITY = -0.2D;
     private static final Identifier SPEED_MODIFIER_ID =
@@ -102,6 +102,10 @@ public class ParalyzedMobEffect extends MobEffect {
 
     public static boolean shouldBreakOnHurt(boolean clientSide, int amplifier, float damage) {
         return !clientSide && amplifier >= DAMAGE_BREAK_AMPLIFIER && damage >= 1.0F;
+    }
+
+    public static boolean shouldApplyQueasyOnExpiry(boolean clientSide, boolean player, int amplifier) {
+        return !clientSide && player && amplifier >= DAMAGE_BREAK_AMPLIFIER;
     }
 
     public static double sourceSpeedModifierAmount(int amplifier) {
