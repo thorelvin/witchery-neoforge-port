@@ -52,7 +52,7 @@ public class CauldronBookProvider implements BookSubProvider {
                         + "these *before* the reagent they shape — the cauldron remembers only forward."));
         pages.addAll(WitcheryBooks.prose("The Gift of the Reagent",
                 "The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's "
-                        + "tear for mending, wormwood for unseeing."
+                        + "tear for mending, and leather for leaping."
                         + "\n\n**Gunpowder** bursts the bottle where it lands, sharing its work with all "
                         + "nearby. **Dragon's breath** leaves a slow, drifting fog. With neither, the draught "
                         + "is yours alone."));

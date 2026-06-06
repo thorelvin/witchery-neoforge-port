@@ -364,7 +364,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 return;
             }
         }
-        Item resultItem = switch (contents.dispersal()) {
+        Item resultItem = switch (contents.bottledDispersal()) {
             case SPLASH -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
             case GAS -> WitcheryItems.LINGERING_BREW_BOTTLE.get();
             default -> WitcheryItems.BREW_BOTTLE.get();

@@ -15,7 +15,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "The reagent itself decides the gift. A spider's eye gives poison, sugar gives swiftness, a ghast's tear gives mending, wormwood gives unseeing, and many more besides.$(br2)Toss in $(l)gunpowder$() and the bottle will burst where it lands, sharing its work with all who stand near. A breath of $(l)dragon's breath$() and it will hang in the air as a slow, drifting fog. With neither, the draught is yours alone to drink."
+      "text": "The reagent itself decides the gift. A spider's eye gives poison, sugar gives swiftness, a ghast's tear gives mending, and many more besides.$(br2)Toss in $(l)gunpowder$() and the bottle will burst where it lands, sharing its work with all who stand near. A breath of $(l)dragon's breath$() and it will hang in the air as a slow, drifting fog. With neither, the draught is yours alone to drink."
     },
     {
       "type": "patchouli:text",

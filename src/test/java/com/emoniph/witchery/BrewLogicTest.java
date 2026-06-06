@@ -794,6 +794,9 @@ class BrewLogicTest {
         assertEquals(Brews.Dispersal.GAS,
                 Brews.dispersal(List.of(WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE)),
                 "Bat Wool is the old gas dispersal");
+        assertEquals(Brews.Dispersal.LIQUID,
+                Brews.dispersal(List.of(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)),
+                "Wormwood is the old liquid dispersal selector");
     }
 
     @Test
@@ -805,6 +808,32 @@ class BrewLogicTest {
         assertEquals(Brews.Dispersal.SPLASH,
                 Brews.dispersal(List.of(WitcheryItems.BAT_WOOL.get(), WitcheryItems.ARTICHOKE.get(), Items.SPIDER_EYE)),
                 "later Artichoke replaces earlier gas dispersal");
+        assertEquals(Brews.Dispersal.LIQUID,
+                Brews.dispersal(List.of(Items.GUNPOWDER, WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)),
+                "later Wormwood replaces earlier instant dispersal");
+        assertEquals(Brews.Dispersal.GAS,
+                Brews.dispersal(List.of(WitcheryItems.WORMWOOD.get(), WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE)),
+                "later Bat Wool replaces earlier liquid dispersal");
+        assertEquals(Brews.Dispersal.SPLASH,
+                Brews.dispersal(List.of(WitcheryItems.WORMWOOD.get(), WitcheryItems.ARTICHOKE.get(), Items.SPIDER_EYE)),
+                "later Artichoke replaces earlier liquid dispersal");
+    }
+
+    @Test
+    void wormwoodIsNotPotionEffectIngredient() {
+        Brews.bootstrap();
+        assertFalse(Brews.hasEffect(List.of(WitcheryItems.WORMWOOD.get())));
+        assertTrue(Brews.buildEffects(List.of(WitcheryItems.WORMWOOD.get())).isEmpty());
+    }
+
+    @Test
+    void liquidDispersalBottlesAsDrinkUntilFluidBlocksExist() {
+        Brews.bootstrap();
+        assertEquals(Brews.Dispersal.LIQUID,
+                Brews.dispersal(List.of(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)));
+        assertEquals(Brews.Dispersal.DRINK,
+                Brews.bottledDispersal(List.of(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)),
+                "liquid brew block/container transport is not implemented yet");
     }
 
     @Test

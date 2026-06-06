@@ -72,7 +72,8 @@ import java.util.UUID;
  * list of ingredient items. Modifier ingredients (Glowstone = +strength, Redstone = +duration,
  * Fermented Spider Eye = invert) accumulate into a running {@link Modifiers}; each effect ingredient
  * then applies its potion at the accumulated strength/duration and resets the accumulator. Gunpowder
- * makes the brew splashable, Dragon's Breath makes it a lingering gas.
+ * makes the brew splashable, Bat Wool makes it a lingering gas, and Wormwood selects the old liquid
+ * dispersal once moving brew fluids are available.
  *
  * Ingredients are keyed by their item, so a brew persists as just the list of trigger items and the
  * action table is rebuilt on demand — exactly like the source.
@@ -80,7 +81,7 @@ import java.util.UUID;
 public final class Brews {
 
     /** How a finished brew is delivered. */
-    public enum Dispersal { DRINK, SPLASH, GAS }
+    public enum Dispersal { DRINK, SPLASH, GAS, LIQUID }
 
     /** Maximum ingredients a single cauldron brew may hold. */
     public static final int MAX_CAPACITY = 8;
@@ -92,7 +93,7 @@ public final class Brews {
                              int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
         public enum Kind {
-            EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED,
+            EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, LIQUID, COLOR, DRINK_SPEED,
             EXTENT, LIFETIME, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET,
             DISABLE_STRENGTH_CEILING
         }
@@ -318,8 +319,6 @@ public final class Brews {
                 SOURCE_DEFAULT_STRENGTH_CEILING, 0x664613, 250, 2));
         register(WitcheryItems.FOUL_FUME.get(), Ingredient.effect(WitcheryMobEffects.STOUT_BELLY,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x9F51EF, 1000, 4));
-        register(WitcheryItems.WORMWOOD.get(),
-                Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,
                 4, 500, 0xF2C94C,
                 "witchery.brew.animal_attraction", "witchery.brew.animal_repulsion"));
@@ -412,6 +411,7 @@ public final class Brews {
         register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
         register(Items.DRAGON_BREATH, Ingredient.modifier(Ingredient.Kind.GAS));
+        register(WitcheryItems.WORMWOOD.get(), Ingredient.modifier(Ingredient.Kind.LIQUID));
     }
 
     private static void register(Item item, Ingredient ingredient) {
@@ -489,7 +489,7 @@ public final class Brews {
                 case DISABLE_BLOCK_TARGET -> mods.disableBlockTarget = true;
                 case DISABLE_ENTITY_TARGET -> mods.disableEntityTarget = true;
                 case DISABLE_STRENGTH_CEILING -> mods.strengthCeilingDisabled = true;
-                case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
+                case SPLASH, GAS, LIQUID, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EXTENT -> {
                     if (resolved.extent < ing.modifierCeiling()) {
                         resolved.extent++;
@@ -576,9 +576,16 @@ public final class Brews {
                 result = Dispersal.SPLASH;
             } else if (ing.kind() == Ingredient.Kind.GAS) {
                 result = Dispersal.GAS;
+            } else if (ing.kind() == Ingredient.Kind.LIQUID) {
+                result = Dispersal.LIQUID;
             }
         }
         return result;
+    }
+
+    public static Dispersal bottledDispersal(List<Item> items) {
+        Dispersal dispersal = dispersal(items);
+        return dispersal == Dispersal.LIQUID ? Dispersal.DRINK : dispersal;
     }
 
     /** Whether the brew contains at least one real effect (otherwise it's a mundane brew). */
@@ -639,6 +646,9 @@ public final class Brews {
                                    LivingEntity directTarget, Entity source, boolean blockHit) {
         Resolution resolved = resolveBrew(items);
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
+            return;
+        }
+        if (dispersal == Brews.Dispersal.LIQUID) {
             return;
         }
         List<EffectApplication> entityEffects = resolved.effects.stream()

@@ -43,6 +43,10 @@ public record BrewContents(List<Item> items) {
         return Brews.dispersal(items);
     }
 
+    public Brews.Dispersal bottledDispersal() {
+        return Brews.bottledDispersal(items);
+    }
+
     public boolean hasEffect() {
         return Brews.hasEffect(items);
     }
