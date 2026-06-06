@@ -59,7 +59,7 @@ public class CustomBrewItem extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide()) {
-            contents(stack).applyToEntity(entity);
+            contents(stack).applyToEntity(entity, entity);
         }
         if (entity instanceof Player player && player.getAbilities().instabuild) {
             return stack;
@@ -92,7 +92,9 @@ public class CustomBrewItem extends Item {
                 name = Component.translatable("potion.withAmplifier", name,
                         Component.translatable("potion.potency." + effect.getAmplifier()));
             }
-            name = Component.translatable("potion.withDuration", name, formatDuration(effect.getDuration()));
+            if (!effect.getEffect().value().isInstantenous()) {
+                name = Component.translatable("potion.withDuration", name, formatDuration(effect.getDuration()));
+            }
             tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
         }
         for (var action : com.emoniph.witchery.brewing.Brews.buildActions(brew.items())) {

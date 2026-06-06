@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -161,7 +162,8 @@ public final class Brews {
         register(Items.RABBIT_FOOT, Ingredient.effect(MobEffects.JUMP_BOOST, 1800, 2, 0x22FF4C));
         register(Items.PUFFERFISH, Ingredient.effect(MobEffects.WATER_BREATHING, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2E5299, 100));
         register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200));
-        register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.HEALTH_BOOST, 3600, 1, 0xBC1A1A));
+        register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.INSTANT_HEALTH, MobEffects.INSTANT_DAMAGE,
+                0, 0, 1, 0xBC1A1A, 200));
         register(Items.PHANTOM_MEMBRANE, Ingredient.effect(MobEffects.SLOW_FALLING, 1800, 0, 0xCAC5B6));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
@@ -363,9 +365,13 @@ public final class Brews {
     }
 
     public static void applyToEntity(LivingEntity target, List<Item> items) {
+        applyToEntity(target, items, target);
+    }
+
+    public static void applyToEntity(LivingEntity target, List<Item> items, Entity source) {
         Resolution resolved = resolveBrew(items);
         for (MobEffectInstance effect : resolved.effects) {
-            target.addEffect(new MobEffectInstance(effect));
+            applyEffect(target, effect, source, 1.0);
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
@@ -379,6 +385,11 @@ public final class Brews {
     }
 
     public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal, LivingEntity directTarget) {
+        applyToArea(level, pos, items, dispersal, directTarget, directTarget);
+    }
+
+    public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal,
+                                   LivingEntity directTarget, Entity source) {
         Resolution resolved = resolveBrew(items);
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
@@ -399,7 +410,7 @@ public final class Brews {
             if (!resolved.effects.isEmpty()) {
                 for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
                     for (MobEffectInstance effect : resolved.effects) {
-                        entity.addEffect(new MobEffectInstance(effect));
+                        applyEffect(entity, effect, source, 1.0);
                     }
                 }
             }
@@ -408,6 +419,17 @@ public final class Brews {
         }
         if (!resolved.actions.isEmpty()) {
             applyAreaActions(level, pos, directTarget, resolved.actions);
+        }
+    }
+
+    private static void applyEffect(LivingEntity target, MobEffectInstance effect, Entity source, double factor) {
+        MobEffect mobEffect = effect.getEffect().value();
+        if (mobEffect.isInstantenous()) {
+            if (target.level() instanceof ServerLevel serverLevel) {
+                mobEffect.applyInstantenousEffect(serverLevel, source, source, target, effect.getAmplifier(), factor);
+            }
+        } else {
+            target.addEffect(new MobEffectInstance(effect), source);
         }
     }
 

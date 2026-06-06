@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
@@ -70,11 +71,19 @@ public record BrewContents(List<Item> items) {
         Brews.applyToEntity(target, items);
     }
 
+    public void applyToEntity(LivingEntity target, Entity source) {
+        Brews.applyToEntity(target, items, source);
+    }
+
     public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal) {
         Brews.applyToArea(level, pos, items, dispersal);
     }
 
     public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal, LivingEntity directTarget) {
         Brews.applyToArea(level, pos, items, dispersal, directTarget);
+    }
+
+    public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal, LivingEntity directTarget, Entity source) {
+        Brews.applyToArea(level, pos, items, dispersal, directTarget, source);
     }
 }

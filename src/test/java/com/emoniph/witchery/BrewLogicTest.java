@@ -114,6 +114,28 @@ class BrewLogicTest {
     }
 
     @Test
+    void glisteringMelonUsesSourceInstantHealingAndHarming() {
+        Brews.bootstrap();
+        List<MobEffectInstance> healing = Brews.buildEffects(List.of(Items.GLISTERING_MELON_SLICE));
+        assertSame(MobEffects.INSTANT_HEALTH.value(), healing.get(0).getEffect().value(),
+                "Glistering Melon makes source Healing");
+        assertEquals(0, healing.get(0).getDuration(), "source Healing is instant");
+        assertEquals(200, Brews.powerCost(List.of(Items.GLISTERING_MELON_SLICE)),
+                "Glistering Melon source altar cost");
+
+        List<MobEffectInstance> harming = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE,
+                Items.GLISTERING_MELON_SLICE));
+        assertSame(MobEffects.INSTANT_DAMAGE.value(), harming.get(0).getEffect().value(),
+                "inverted Glistering Melon makes source Harming");
+        assertEquals(225, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.GLISTERING_MELON_SLICE)),
+                "inverted Glistering Melon counts Fermented Spider Eye plus source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+                        Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
+                "source Healing/Harming keeps the old strength ceiling of one");
+    }
+
+    @Test
     void dispersalDetectedFromModifiers() {
         Brews.bootstrap();
         assertEquals(Brews.Dispersal.SPLASH, Brews.dispersal(List.of(Items.GUNPOWDER, Items.SPIDER_EYE)));

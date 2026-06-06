@@ -96,7 +96,8 @@ public class ThrownBrewEntity extends ThrowableProjectile {
             if (!composed.isEmpty()) {
                 LivingEntity directTarget = result instanceof EntityHitResult entityHit
                         && entityHit.getEntity() instanceof LivingEntity living ? living : null;
-                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH, directTarget);
+                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH,
+                        directTarget, getOwner());
             } else {
                 BrewType type = getBrewType();
                 int tier = getPower();
