@@ -946,6 +946,58 @@ class BrewLogicTest {
     }
 
     @Test
+    void garlicRestoresSourceWeakenVampiresAction() {
+        Brews.bootstrap();
+        Item garlic = WitcheryItems.GARLIC.get();
+
+        assertFalse(Brews.canAdd(level2(), garlic),
+                "source Weaken Vampires requires level-4 capacity");
+        assertTrue(Brews.canAdd(level4(), garlic),
+                "Nether Wart plus Tear of the Goddess reaches the old level-4 garlic action");
+        assertTrue(Brews.blockedByCapacity(List.of(garlic)),
+                "under-capacity Weaken Vampires resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level4(garlic));
+        assertEquals(1, actions.size(), "Garlic resolves as source Weaken Vampires");
+        assertEquals(Brews.Ingredient.BrewAction.WEAKEN_VAMPIRES, actions.get(0).action());
+        assertEquals("witchery.brew.weakenvampires", actions.get(0).nameKey());
+        assertEquals(650, Brews.powerCost(level4(garlic)),
+                "source Nether Wart + Tear capacity cost plus Garlic altar cost");
+
+        Brews.ActionApplication modified = Brews.buildActions(level4(Items.REDSTONE, Items.GLOWSTONE_DUST,
+                Items.GOLD_NUGGET, garlic)).get(0);
+        assertEquals(1, modified.duration(),
+                "Redstone carries the source duration modifier into action effects");
+        assertEquals(1, modified.strength(),
+                "Glowstone carries the source strength modifier into action effects");
+        assertTrue(modified.noParticles(),
+                "Gold Nugget carries the source ambient/no-particles flag into action effects");
+    }
+
+    @Test
+    void weakenVampiresUsesSourceBloodAndWeaknessMath() {
+        assertEquals(50, Brews.sourceWeakenVampiresBloodLoss(0),
+                "base Weaken Vampires drains 50 blood power");
+        assertEquals(70, Brews.sourceWeakenVampiresBloodLoss(1),
+                "each source strength tier adds 20 blood power drain");
+        assertEquals(0, Brews.sourceWeakenVampiresBloodAfter(30, 0),
+                "source exact=false drain spends any positive blood and clamps through setBloodPower");
+        assertEquals(0, Brews.sourceWeakenVampiresBloodAfter(0, 3),
+                "empty blood power is not reduced");
+        assertEquals(50, Brews.sourceWeakenVampiresBloodAfter(100, 0),
+                "normal blood drain subtracts the source base amount");
+
+        assertEquals(1800, Brews.sourceModifiedActionDuration(1800, 0, 1.0),
+                "drink delivery applies the source 90-second Weakness duration");
+        assertEquals(3600, Brews.sourceModifiedActionDuration(1800, 1, 1.0),
+                "Redstone doubles the garlic action Weakness duration");
+        assertEquals(900, Brews.sourceModifiedActionDuration(1800, 0, 0.5),
+                "instant splash delivery halves action durations like source DispersalInstant");
+        assertEquals(3, Brews.sourceWeakenVampiresWeaknessAmplifier(3),
+                "Weaken Vampires uses the normal source potion-effect strength path");
+    }
+
+    @Test
     void sourceCapacityIngredientsGatePotionEffects() {
         Brews.bootstrap();
         Item tear = WitcheryItems.TEAR_OF_GODDESS.get();

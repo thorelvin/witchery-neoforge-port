@@ -1,5 +1,6 @@
 package com.emoniph.witchery.brewing;
 
+import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -71,7 +72,7 @@ public final class Brews {
             EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
         }
 
-        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS }
+        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
@@ -149,8 +150,8 @@ public final class Brews {
         }
     }
 
-    public record ActionApplication(Ingredient.BrewAction action, boolean inverted, int strength,
-                                    boolean strengthCeilingDisabled, String nameKey) {}
+    public record ActionApplication(Ingredient.BrewAction action, boolean inverted, int strength, int duration,
+                                    boolean noParticles, boolean strengthCeilingDisabled, String nameKey) {}
 
     private static final class Resolution {
         final List<MobEffectInstance> effects = new ArrayList<>();
@@ -179,6 +180,7 @@ public final class Brews {
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
     private static final Method MOB_EFFECT_INSTANCE_GET_CURES = findMobEffectInstanceGetCures();
     private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
+    private static final int SOURCE_WEAKEN_VAMPIRES_WEAKNESS_TICKS = 90 * 20;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
 
@@ -260,6 +262,9 @@ public final class Brews {
         register(Items.BLUE_ORCHID, Ingredient.action(Ingredient.BrewAction.BANE_ARTHROPODS,
                 2, 200, 0x39A8B8,
                 "witchery.brew.harminsects", null));
+        register(WitcheryItems.GARLIC.get(), Ingredient.action(Ingredient.BrewAction.WEAKEN_VAMPIRES,
+                4, 500, 0xD8D4A5,
+                "witchery.brew.weakenvampires", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -411,7 +416,7 @@ public final class Brews {
                         boolean inverted = mods.inverted && ing.invertedNameKey() != null;
                         String nameKey = inverted ? ing.invertedNameKey() : ing.nameKey();
                         resolved.actions.add(new ActionApplication(ing.action(), inverted, mods.strength,
-                                mods.strengthCeilingDisabled, nameKey));
+                                mods.duration, mods.noParticles, mods.strengthCeilingDisabled, nameKey));
                         resolved.usedCapacity += ing.capacityRequired();
                         mods.reset();
                     } else {
@@ -495,7 +500,7 @@ public final class Brews {
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
-                applyAction(serverLevel, target, action, 1.0, source);
+                applyAction(serverLevel, target, action, 1.0, 1.0, source);
             }
         }
     }
@@ -611,13 +616,6 @@ public final class Brews {
 
     private static void applyAreaActions(ServerLevel level, Vec3 pos, LivingEntity directTarget,
                                          List<ActionApplication> actions, Entity source, double instantRadius) {
-        if (directTarget != null && directTarget.isAlive()) {
-            for (ActionApplication action : actions) {
-                applyAction(level, directTarget, action, 1.0, source);
-            }
-            return;
-        }
-
         AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
                 pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area, LivingEntity::isAlive)) {
@@ -625,15 +623,16 @@ public final class Brews {
             if (distance > instantRadius) {
                 continue;
             }
-            double powerFactor = splashPowerFactor(distance, false, instantRadius);
+            boolean directHit = target == directTarget;
+            double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
             for (ActionApplication action : actions) {
-                applyAction(level, target, action, powerFactor, source);
+                applyAction(level, target, action, powerFactor, SOURCE_SPLASH_DURATION_SCALE * powerFactor, source);
             }
         }
     }
 
     private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action,
-                                    double powerFactor, Entity source) {
+                                    double powerFactor, double durationFactor, Entity source) {
         if (action.action() == Ingredient.BrewAction.ANIMAL) {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
@@ -646,6 +645,26 @@ public final class Brews {
         } else if (action.action() == Ingredient.BrewAction.BANE_ARTHROPODS) {
             applyBaneDamage(level, target, source, isSourceArthropod(target), action.strength(),
                     action.strengthCeilingDisabled(), powerFactor);
+        } else if (action.action() == Ingredient.BrewAction.WEAKEN_VAMPIRES) {
+            applyWeakenVampires(target, action, durationFactor, source);
+        }
+    }
+
+    private static void applyWeakenVampires(LivingEntity target, ActionApplication action,
+                                            double durationFactor, Entity source) {
+        if (!isSourceVampire(target)) {
+            return;
+        }
+        if (target instanceof Player player && !player.getAbilities().instabuild) {
+            WitcheryPlayerData data = WitcheryAttachments.get(player);
+            data.setBloodPower(sourceWeakenVampiresBloodAfter(data.getBloodPower(), action.strength()));
+        }
+        int duration = sourceModifiedActionDuration(SOURCE_WEAKEN_VAMPIRES_WEAKNESS_TICKS,
+                action.duration(), durationFactor);
+        int amplifier = sourceWeakenVampiresWeaknessAmplifier(action.strength());
+        if (duration > 0) {
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, amplifier,
+                    action.noParticles(), true, true), source);
         }
     }
 
@@ -677,6 +696,33 @@ public final class Brews {
 
     public static boolean isSourceArthropod(LivingEntity target) {
         return target.getType().is(EntityTypeTags.ARTHROPOD);
+    }
+
+    public static boolean isSourceVampire(LivingEntity target) {
+        if (target instanceof VampireEntity) {
+            return true;
+        }
+        return target instanceof Player player && WitcheryAttachments.get(player).isVampire();
+    }
+
+    public static int sourceWeakenVampiresBloodLoss(int strength) {
+        return 50 + 20 * Math.max(0, strength);
+    }
+
+    public static int sourceWeakenVampiresBloodAfter(int currentBlood, int strength) {
+        int clampedCurrent = Math.max(0, currentBlood);
+        return clampedCurrent >= 1
+                ? Math.max(0, clampedCurrent - sourceWeakenVampiresBloodLoss(strength))
+                : clampedCurrent;
+    }
+
+    public static int sourceWeakenVampiresWeaknessAmplifier(int strength) {
+        return Math.min(Math.max(0, strength), SOURCE_DEFAULT_STRENGTH_CEILING);
+    }
+
+    public static int sourceModifiedActionDuration(int baseTicks, int durationModifiers, double durationFactor) {
+        return Math.min(Mth.ceil(durationFactor * (double) baseTicks * (double) (durationModifiers + 1)),
+                Integer.MAX_VALUE);
     }
 
     private static void removeBuffs(LivingEntity target, int strength) {
