@@ -227,6 +227,23 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceImpactExtentModifiersUseCappedTiers() {
+        Brews.bootstrap();
+        assertEquals(1, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), WitcheryItems.WOOD_ASH.get(),
+                        Items.SPIDER_EYE)),
+                "repeated Wood Ash is capped at source extent tier 1");
+        assertEquals(2, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
+                        Items.SPIDER_EYE)),
+                "Cocoa Beans open source extent tier 2");
+        assertEquals(3, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
+                        WitcheryItems.WISPY_COTTON.get(), Items.SPIDER_EYE)),
+                "Wispy Cotton opens source extent tier 3");
+        assertEquals(400, Brews.powerCost(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
+                        WitcheryItems.WISPY_COTTON.get(), Items.SUGAR)),
+                "extent tiers count source altar costs alongside the potion effect");
+    }
+
+    @Test
     void dualPurposeCapacityIngredientsRequireExplicitStirring() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");

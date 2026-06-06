@@ -59,7 +59,7 @@ public final class Brews {
                              int modifierCeiling, int drinkSpeedModifier, int capacityIncrement,
                              int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
-        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED }
+        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED, EXTENT }
 
         public enum BrewAction { ANIMAL }
 
@@ -133,6 +133,7 @@ public final class Brews {
         final List<ActionApplication> actions = new ArrayList<>();
         int capacity;
         int usedCapacity;
+        int extent;
         int powerCost;
         boolean blockedByCapacity;
         int blockedRequired;
@@ -214,6 +215,9 @@ public final class Brews {
         register(WitcheryItems.ROWAN_BERRIES.get(), Ingredient.drinkSpeed(-8, 50));
         registerExplicit(WitcheryItems.EXHALE_OF_HORNED_ONE.get(), Ingredient.drinkSpeed(-4, 0));
         register(WitcheryItems.SPANISH_MOSS.get(), Ingredient.drinkSpeed(-4, 50));
+        register(WitcheryItems.WOOD_ASH.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 1, 50));
+        register(Items.COCOA_BEANS, Ingredient.modifier(Ingredient.Kind.EXTENT, 2, 100));
+        register(WitcheryItems.WISPY_COTTON.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 3, 150));
         register(Items.GUNPOWDER, Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
@@ -292,6 +296,11 @@ public final class Brews {
                 }
                 case INVERT -> mods.inverted = true;
                 case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
+                case EXTENT -> {
+                    if (resolved.extent < ing.modifierCeiling()) {
+                        resolved.extent++;
+                    }
+                }
                 case EFFECT -> {
                     Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
                     int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
@@ -408,14 +417,15 @@ public final class Brews {
             level.addFreshEntity(cloud);
             level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 24, 1.0, 0.5, 1.0, 0.05);
         } else {
-            AABB area = new AABB(pos.x - SOURCE_INSTANT_RADIUS, pos.y - SOURCE_INSTANT_RADIUS, pos.z - SOURCE_INSTANT_RADIUS,
-                    pos.x + SOURCE_INSTANT_RADIUS, pos.y + SOURCE_INSTANT_RADIUS, pos.z + SOURCE_INSTANT_RADIUS);
+            double instantRadius = SOURCE_INSTANT_RADIUS + resolved.extent;
+            AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
+                    pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
             if (!resolved.effects.isEmpty()) {
                 for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
                     double distance = Math.sqrt(entity.distanceToSqr(pos));
-                    if (distance <= SOURCE_INSTANT_RADIUS) {
+                    if (distance <= instantRadius) {
                         boolean directHit = entity == directTarget;
-                        double powerFactor = splashPowerFactor(distance, directHit);
+                        double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
                         double durationFactor = SOURCE_SPLASH_DURATION_SCALE * powerFactor;
                         for (MobEffectInstance effect : resolved.effects) {
                             applyEffect(entity, effect, source, powerFactor, durationFactor);
@@ -432,7 +442,11 @@ public final class Brews {
     }
 
     static double splashPowerFactor(double distance, boolean directHit) {
-        return directHit ? 1.0 : Math.max(0.0, 1.0 - distance / SOURCE_INSTANT_RADIUS);
+        return splashPowerFactor(distance, directHit, SOURCE_INSTANT_RADIUS);
+    }
+
+    static double splashPowerFactor(double distance, boolean directHit, double radius) {
+        return directHit ? 1.0 : Math.max(0.0, 1.0 - distance / radius);
     }
 
     static int scaledSplashDuration(int baseDuration, double powerFactor) {
@@ -671,6 +685,10 @@ public final class Brews {
             }
         }
         return Math.max(duration, 2);
+    }
+
+    public static int impactExtent(List<Item> items) {
+        return resolveBrew(items).extent;
     }
 
     public static Identifier id() {

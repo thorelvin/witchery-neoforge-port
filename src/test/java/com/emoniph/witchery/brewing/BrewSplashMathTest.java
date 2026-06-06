@@ -19,4 +19,11 @@ class BrewSplashMathTest {
         assertEquals(0.0, Brews.splashPowerFactor(3.0, false), 0.00001);
         assertEquals(0, Brews.scaledSplashDuration(3600, Brews.splashPowerFactor(3.0, false)));
     }
+
+    @Test
+    void sourceInstantSplashExtentWidensFalloffRadius() {
+        assertEquals(0.25, Brews.splashPowerFactor(3.0, false, 4.0), 0.00001);
+        assertEquals(450, Brews.scaledSplashDuration(3600, Brews.splashPowerFactor(3.0, false, 4.0)));
+        assertEquals(0.0, Brews.splashPowerFactor(4.0, false, 4.0), 0.00001);
+    }
 }
