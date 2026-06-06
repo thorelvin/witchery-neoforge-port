@@ -53,7 +53,7 @@ Substantial restored or in-progress systems include:
 - Vanilla villages now receive Witchery village buildings and adaptive town walls: apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA.
 - A large exact-ID cleanup pass has promoted many source and community fan-mod aliases out of placeholder status, including guidebooks, hunter gear, brews, contracts, waystones, special wearables, utility tools, and several old food/ingredient items.
 - Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are restored or partially restored, with current QA notes in the status docs.
-- JEI and Patchouli are declared optional; dependency wiring may lag current Minecraft/NeoForge availability.
+- The in-game guidebook is powered by **Modonomicon**; JEI integration is declared optional. Dependency wiring may lag current Minecraft/NeoForge availability.
 
 ## Not Done Yet
 
