@@ -12,6 +12,7 @@ import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
+import com.emoniph.witchery.effect.SunAllergyMobEffect;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -508,6 +509,36 @@ class BrewLogicTest {
         assertEquals(1, FortuneMobEffect.sourceFortuneBonus(2));
         assertEquals(2, FortuneMobEffect.sourceFortuneBonus(3));
         assertEquals(4, FortuneMobEffect.boostedFortuneLevel(2, 3));
+    }
+
+    @Test
+    void salmonRestoresSourceSunAllergyBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> sunAllergy = Brews.buildEffects(level6(Items.SALMON));
+        assertEquals(1, sunAllergy.size(), "Salmon resolves as the old fish-metadata-1 Sun Allergy ingredient");
+        assertSame(WitcheryMobEffects.SUN_ALLERGY.value(), sunAllergy.get(0).getEffect().value(),
+                "source fish metadata 1 uses Witchery's Sun Allergy potion");
+        assertEquals(1200, sunAllergy.get(0).getDuration(), "source Sun Allergy lasts sixty seconds");
+        assertEquals(2000, Brews.powerCost(level6(Items.SALMON)),
+                "Sun Allergy source effect power plus Pentacle capacity power");
+        assertTrue(Brews.blockedByCapacity(level4(Items.SALMON)),
+                "source Sun Allergy requires effect level 6 capacity");
+
+        assertEquals(1, Brews.buildEffects(level6(Items.GLOWSTONE_DUST, Items.SALMON)).get(0).getAmplifier(),
+                "source Sun Allergy accepts the normal strength modifier path");
+    }
+
+    @Test
+    void sunAllergyEffectUsesSourceDaylightRules() {
+        assertTrue(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, false, true, 0.44F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(41L, true, 0.9F, false, true, 0.44F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(40L, false, 0.9F, false, true, 0.44F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.5F, false, true, 0.0F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, true, true, 0.44F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, false, false, 0.44F));
+        assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, false, true, 0.45F));
+        assertEquals(1.0F, SunAllergyMobEffect.playerDamage(2));
+        assertEquals(2.0F, SunAllergyMobEffect.playerDamage(3));
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
+import com.emoniph.witchery.effect.SunAllergyMobEffect;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -70,6 +71,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> FORTUNE =
             MOB_EFFECTS.register("fortune", () -> new FortuneMobEffect(0x5C3EBB));
+
+    public static final DeferredHolder<MobEffect, MobEffect> SUN_ALLERGY =
+            MOB_EFFECTS.register("sun_allergy", () -> new SunAllergyMobEffect(0x30A212));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
