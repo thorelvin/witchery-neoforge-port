@@ -55,7 +55,7 @@ Last updated: 2026-06-01
 - Active ritual state is stored in memory and cancelled/refunded on server stop, not persisted through reload like a full modern SavedData implementation would require.
 - Optional Bound Waystone relocation is still mostly dropped-item based. Source optional sacrifices can also come from Grasspers.
 - Sustained visuals need per-rite source review before more effects are added. The green protection ring is approved; other non-source visuals still need approval before becoming intentional.
-- Source BarrierBlock also had owner and creative-sneak pass-through exceptions for some non-rite barrier uses. Current protection rites pass no owner, and the port has no other live `BarrierBlock.setBarrier` caller yet, so that broader owner path remains a future parity check if Light Infusion barrier placement is restored.
+- Source BarrierBlock also had owner and creative-sneak pass-through exceptions for some non-rite barrier uses. Creative-sneak pass-through is restored for current player-blocking barriers. Current protection rites pass no owner, and the port has no other live `BarrierBlock.setBarrier` caller yet, so that broader owner path remains a future parity check if Light Infusion barrier placement is restored.
 
 ## Suggested Next Rite Tests
 

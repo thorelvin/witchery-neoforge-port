@@ -65,7 +65,7 @@ public class BarrierBlock extends BaseEntityBlock {
         Entity entity = context instanceof EntityCollisionContext entityContext ? entityContext.getEntity() : null;
         if (entity instanceof Player player
                 && level.getBlockEntity(pos) instanceof BarrierBlockEntity barrier
-                && !barrier.blocksPlayers()) {
+                && (!barrier.blocksPlayers() || player.isCreative() && player.isShiftKeyDown())) {
             return Shapes.empty();
         }
         return COLLISION_SHAPE;
