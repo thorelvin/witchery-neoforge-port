@@ -93,7 +93,8 @@ public final class Brews {
                              String nameKey, String invertedNameKey) {
         public enum Kind {
             EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED,
-            EXTENT, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET, DISABLE_STRENGTH_CEILING
+            EXTENT, LIFETIME, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET,
+            DISABLE_STRENGTH_CEILING
         }
 
         public enum BrewAction {
@@ -193,6 +194,7 @@ public final class Brews {
         int capacity;
         int usedCapacity;
         int extent;
+        int lifetime;
         int powerCost;
         boolean blockedByCapacity;
         int blockedRequired;
@@ -224,6 +226,8 @@ public final class Brews {
     private static final double SOURCE_PULL_VERTICAL_MOTION = 0.4D;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
+    private static final int SOURCE_GAS_CLOUD_BASE_DURATION_TICKS = 600;
+    private static final int SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR = 5;
     private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
     private static final String PORT_SUMMONED_UNDEAD_OWNER_TAG = "witchery_enslaver_uuid";
     private static final String SOURCE_BREW_GAS_TAG = "WITCBrewGas";
@@ -397,6 +401,9 @@ public final class Brews {
         register(WitcheryItems.WOOD_ASH.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 1, 50));
         register(Items.COCOA_BEANS, Ingredient.modifier(Ingredient.Kind.EXTENT, 2, 100));
         register(WitcheryItems.WISPY_COTTON.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 3, 150));
+        register(WitcheryItems.BELLADONNA.get(), Ingredient.modifier(Ingredient.Kind.LIFETIME, 1, 50));
+        register(Items.LAPIS_LAZULI, Ingredient.modifier(Ingredient.Kind.LIFETIME, 2, 100));
+        register(Items.HAY_BLOCK, Ingredient.modifier(Ingredient.Kind.LIFETIME, 3, 150));
         registerExplicit(Items.GOLD_NUGGET, Ingredient.modifier(Ingredient.Kind.NO_PARTICLES, 0, 50));
         register(Items.NETHER_BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_BLOCK_TARGET, 0, 50));
         register(Items.BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_ENTITY_TARGET, 0, 50));
@@ -486,6 +493,11 @@ public final class Brews {
                 case EXTENT -> {
                     if (resolved.extent < ing.modifierCeiling()) {
                         resolved.extent++;
+                    }
+                }
+                case LIFETIME -> {
+                    if (resolved.lifetime < ing.modifierCeiling()) {
+                        resolved.lifetime++;
                     }
                 }
                 case EFFECT -> {
@@ -634,9 +646,10 @@ public final class Brews {
                 .toList();
         if (dispersal == Brews.Dispersal.GAS && !entityEffects.isEmpty()) {
             AreaEffectCloud cloud = new AreaEffectCloud(level, pos.x, pos.y, pos.z);
+            int duration = gasCloudDurationTicks(resolved.lifetime);
             cloud.setRadius(3.0F);
-            cloud.setDuration(600);
-            cloud.setRadiusPerTick(-0.005F);
+            cloud.setDuration(duration);
+            cloud.setRadiusPerTick(gasCloudRadiusPerTick(duration));
             cloud.setWaitTime(10);
             tagSourceBrewGasCloud(cloud);
             for (EffectApplication application : entityEffects) {
@@ -1623,6 +1636,29 @@ public final class Brews {
 
     public static int impactExtent(List<Item> items) {
         return resolveBrew(items).extent;
+    }
+
+    public static int impactLifetime(List<Item> items) {
+        return resolveBrew(items).lifetime;
+    }
+
+    public static int sourceBrewFluidDecayDenominator(int lifetime) {
+        int clamped = Math.clamp(lifetime, 0, 3);
+        return SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR + clamped * clamped * 5;
+    }
+
+    public static int gasCloudDurationTicks(List<Item> items) {
+        return gasCloudDurationTicks(resolveBrew(items).lifetime);
+    }
+
+    public static int gasCloudDurationTicks(int lifetime) {
+        return SOURCE_GAS_CLOUD_BASE_DURATION_TICKS
+                * sourceBrewFluidDecayDenominator(lifetime)
+                / SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR;
+    }
+
+    public static float gasCloudRadiusPerTick(int durationTicks) {
+        return durationTicks > 0 ? (float) (-SOURCE_INSTANT_RADIUS / durationTicks) : 0.0F;
     }
 
     public static Identifier id() {

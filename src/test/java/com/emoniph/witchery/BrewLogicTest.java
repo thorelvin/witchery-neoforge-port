@@ -1490,6 +1490,51 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceImpactLifetimeModifiersUseCappedTiers() {
+        Brews.bootstrap();
+        assertEquals(1, Brews.impactLifetime(level2(WitcheryItems.BELLADONNA.get(),
+                        WitcheryItems.BELLADONNA.get(), Items.SPIDER_EYE)),
+                "repeated Belladonna is capped at source lifetime tier 1");
+        assertEquals(2, Brews.impactLifetime(level2(WitcheryItems.BELLADONNA.get(), Items.LAPIS_LAZULI,
+                        Items.SPIDER_EYE)),
+                "Lapis Lazuli opens source lifetime tier 2");
+        assertEquals(3, Brews.impactLifetime(level2(WitcheryItems.BELLADONNA.get(), Items.LAPIS_LAZULI,
+                        Items.HAY_BLOCK, Items.SPIDER_EYE)),
+                "Hay Block opens source lifetime tier 3");
+        assertEquals(400, Brews.powerCost(List.of(WitcheryItems.BELLADONNA.get(), Items.LAPIS_LAZULI,
+                        Items.HAY_BLOCK, Items.SUGAR)),
+                "lifetime tiers count source altar costs alongside the potion effect");
+    }
+
+    @Test
+    void sourceImpactLifetimeFeedsCurrentGasCloudFallback() {
+        Brews.bootstrap();
+        assertEquals(5, Brews.sourceBrewFluidDecayDenominator(0),
+                "source TileEntityBrewFluid default decay denominator is 5");
+        assertEquals(10, Brews.sourceBrewFluidDecayDenominator(1),
+                "source lifetime tier 1 yields 5 + 1^2 * 5");
+        assertEquals(25, Brews.sourceBrewFluidDecayDenominator(2),
+                "source lifetime tier 2 yields 5 + 2^2 * 5");
+        assertEquals(50, Brews.sourceBrewFluidDecayDenominator(3),
+                "source lifetime tier 3 yields 5 + 3^2 * 5");
+        assertEquals(50, Brews.sourceBrewFluidDecayDenominator(4),
+                "modern helper clamps to the source maximum lifetime tier");
+
+        assertEquals(600, Brews.gasCloudDurationTicks(List.of(Items.SUGAR)),
+                "the current gas-cloud fallback keeps the existing base lifetime without impact modifiers");
+        assertEquals(1200, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(), Items.SUGAR)),
+                "Belladonna scales the fallback cloud by the source tier-1 decay ratio");
+        assertEquals(3000, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(),
+                        Items.LAPIS_LAZULI, Items.SUGAR)),
+                "Lapis Lazuli scales the fallback cloud by the source tier-2 decay ratio");
+        assertEquals(6000, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(),
+                        Items.LAPIS_LAZULI, Items.HAY_BLOCK, Items.SUGAR)),
+                "Hay Block scales the fallback cloud by the source tier-3 decay ratio");
+        assertEquals(-0.001F, Brews.gasCloudRadiusPerTick(3000), 0.000001F,
+                "longer fallback clouds shrink over their full configured lifetime");
+    }
+
+    @Test
     void sourceNoParticlesModifierMarksNextEffectAmbientOnly() {
         Brews.bootstrap();
         List<MobEffectInstance> fx = Brews.buildEffects(level4(Items.GOLD_NUGGET, Items.SPIDER_EYE, Items.SUGAR));
