@@ -72,6 +72,10 @@ public class FetishBlockEntity extends BlockEntity {
     private static final String ITEM_EFFECT_TAG = "FetishEffect";
     private static final String ITEM_ALARM_MODE_TAG = "FetishAlarmMode";
     private static final String ITEM_KNOWN_PLAYERS_TAG = "FetishKnownPlayers";
+    private static final String SOURCE_EFFECT_TAG = "EffectTypeID";
+    private static final String SOURCE_ALARM_MODE_TAG = "AlarmMode";
+    private static final String SOURCE_KNOWN_PLAYERS_TAG = "KnownPlayers";
+    private static final String SOURCE_PLAYER_NAME_TAG = "PlayerName";
 
     // Transient: not saved to disk
     private boolean lastRaiseAlarm = false;
@@ -221,12 +225,15 @@ public class FetishBlockEntity extends BlockEntity {
     }
 
     public void loadFromItemData(CompoundTag tag) {
-        effectType = tag.getIntOr(ITEM_EFFECT_TAG, tag.getIntOr("EffectTypeID", EFFECT_NONE));
-        alarmMode = tag.getIntOr(ITEM_ALARM_MODE_TAG, tag.getIntOr("AlarmMode", MODE_OFF));
+        effectType = tag.getIntOr(ITEM_EFFECT_TAG, tag.getIntOr(SOURCE_EFFECT_TAG, EFFECT_NONE));
+        alarmMode = tag.getIntOr(ITEM_ALARM_MODE_TAG, tag.getIntOr(SOURCE_ALARM_MODE_TAG, MODE_OFF));
         knownPlayers.clear();
-        readKnownPlayers(tag.getListOrEmpty(ITEM_KNOWN_PLAYERS_TAG));
+        readKnownPlayerStrings(tag.getListOrEmpty(ITEM_KNOWN_PLAYERS_TAG));
         if (knownPlayers.isEmpty()) {
-            readKnownPlayers(tag.getListOrEmpty("KnownPlayers"));
+            readSourceKnownPlayers(tag.getListOrEmpty(SOURCE_KNOWN_PLAYERS_TAG));
+        }
+        if (knownPlayers.isEmpty()) {
+            readKnownPlayerStrings(tag.getListOrEmpty(SOURCE_KNOWN_PLAYERS_TAG));
         }
         setChanged();
     }
@@ -240,21 +247,50 @@ public class FetishBlockEntity extends BlockEntity {
     private void writeItemData(CompoundTag tag) {
         tag.putInt(ITEM_EFFECT_TAG, effectType);
         tag.putInt(ITEM_ALARM_MODE_TAG, alarmMode);
+        tag.putInt(SOURCE_EFFECT_TAG, effectType);
+        tag.putInt(SOURCE_ALARM_MODE_TAG, alarmMode);
         if (!knownPlayers.isEmpty()) {
             ListTag players = new ListTag();
             for (String name : knownPlayers) {
                 players.add(StringTag.valueOf(name));
             }
             tag.put(ITEM_KNOWN_PLAYERS_TAG, players);
+            writeSourceKnownPlayers(tag);
         }
     }
 
-    private void readKnownPlayers(ListTag players) {
+    private void writeSourceKnownPlayers(CompoundTag tag) {
+        ListTag players = new ListTag();
+        for (String name : knownPlayers) {
+            if (name == null || name.isBlank()) {
+                continue;
+            }
+            CompoundTag player = new CompoundTag();
+            player.putString(SOURCE_PLAYER_NAME_TAG, name);
+            players.add(player);
+        }
+        if (!players.isEmpty()) {
+            tag.put(SOURCE_KNOWN_PLAYERS_TAG, players);
+        }
+    }
+
+    private void readKnownPlayerStrings(ListTag players) {
         for (int i = 0; i < players.size(); i++) {
             String name = players.getString(i).orElse("");
-            if (name != null && !name.isBlank() && !knownPlayers.contains(name)) {
-                knownPlayers.add(name);
-            }
+            addKnownPlayer(name);
+        }
+    }
+
+    private void readSourceKnownPlayers(ListTag players) {
+        for (int i = 0; i < players.size(); i++) {
+            CompoundTag player = players.getCompoundOrEmpty(i);
+            addKnownPlayer(player.getStringOr(SOURCE_PLAYER_NAME_TAG, ""));
+        }
+    }
+
+    private void addKnownPlayer(String name) {
+        if (name != null && !name.isBlank() && !knownPlayers.contains(name)) {
+            knownPlayers.add(name);
         }
     }
 
@@ -306,27 +342,38 @@ public class FetishBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putInt("EffectTypeID", effectType);
-        tag.putInt("AlarmMode", alarmMode);
+        tag.putInt(SOURCE_EFFECT_TAG, effectType);
+        tag.putInt(SOURCE_ALARM_MODE_TAG, alarmMode);
         tag.putString("Facing", facing.getName());
         tag.putLong("LastActivation", lastActivationTime);
         if (!knownPlayers.isEmpty()) {
-            var playerListOut = tag.list("KnownPlayers", com.mojang.serialization.Codec.STRING);
-            for (String name : knownPlayers) playerListOut.add(name);
+            ValueOutput.ValueOutputList players = tag.childrenList(SOURCE_KNOWN_PLAYERS_TAG);
+            for (String name : knownPlayers) {
+                if (name == null || name.isBlank()) {
+                    continue;
+                }
+                ValueOutput player = players.addChild();
+                player.putString(SOURCE_PLAYER_NAME_TAG, name);
+            }
         }
     }
 
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        effectType        = tag.getIntOr("EffectTypeID", 0);
-        alarmMode = tag.getIntOr("AlarmMode", MODE_OFF);
+        effectType        = tag.getIntOr(SOURCE_EFFECT_TAG, 0);
+        alarmMode = tag.getIntOr(SOURCE_ALARM_MODE_TAG, MODE_OFF);
         lastActivationTime = tag.getLongOr("LastActivation", 0L);
         facing = Direction.byName(tag.getStringOr("Facing", "north"));
         if (facing == null || facing.getAxis() == Direction.Axis.Y) facing = Direction.NORTH;
         knownPlayers.clear();
-        for (String name : tag.listOrEmpty("KnownPlayers", com.mojang.serialization.Codec.STRING)) {
-            knownPlayers.add(name);
+        for (ValueInput player : tag.childrenListOrEmpty(SOURCE_KNOWN_PLAYERS_TAG)) {
+            addKnownPlayer(player.getStringOr(SOURCE_PLAYER_NAME_TAG, ""));
+        }
+        if (knownPlayers.isEmpty()) {
+            for (String name : tag.listOrEmpty(SOURCE_KNOWN_PLAYERS_TAG, com.mojang.serialization.Codec.STRING)) {
+                addKnownPlayer(name);
+            }
         }
     }
 
@@ -335,7 +382,7 @@ public class FetishBlockEntity extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider reg) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("EffectTypeID", effectType);
+        tag.putInt(SOURCE_EFFECT_TAG, effectType);
         return tag;
     }
 
