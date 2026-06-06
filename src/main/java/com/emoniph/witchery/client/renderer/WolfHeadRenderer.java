@@ -53,7 +53,7 @@ public class WolfHeadRenderer implements BlockEntityRenderer<WolfHeadBlockEntity
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTick, cameraPos, overlay);
         BlockState blockState = blockEntity.getBlockState();
         state.facing = blockState.getValue(WolfHeadBlock.FACING);
-        state.hellhound = blockState.getBlock() instanceof WolfHeadBlock head && head.isHellhound();
+        state.hellhound = blockEntity.isHellhoundSkull();
         state.yaw = state.facing == Direction.UP
                 ? RotationSegment.convertToDegrees(blockEntity.getRotationSegment())
                 : switch (state.facing) {

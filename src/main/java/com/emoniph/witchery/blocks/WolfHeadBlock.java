@@ -86,12 +86,14 @@ public class WolfHeadBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level.isClientSide() || state.getValue(FACING) != Direction.UP
-                || !(level.getBlockEntity(pos) instanceof WolfHeadBlockEntity head)) {
+        if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof WolfHeadBlockEntity head)) {
             return;
         }
-        float rotation = placer != null ? placer.getYRot() : 0.0F;
-        head.setRotationSegment(RotationSegment.convertToSegment(rotation));
+        head.setSkullType(isHellhound() ? 1 : 0);
+        if (state.getValue(FACING) == Direction.UP) {
+            float rotation = placer != null ? placer.getYRot() : 0.0F;
+            head.setRotationSegment(RotationSegment.convertToSegment(rotation));
+        }
     }
 
     @Override
