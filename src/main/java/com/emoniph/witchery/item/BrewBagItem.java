@@ -1,7 +1,6 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.ThrownBrewEntity;
-import com.emoniph.witchery.init.WitcheryDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -113,7 +112,7 @@ public class BrewBagItem extends Item {
     private static void throwSelectedBrew(Level level, Player player, ItemStack bag) {
         int slot = selectedSlot(bag);
         ItemStack stored = getStored(bag, slot);
-        if (!(stored.getItem() instanceof ThrownBrewItem brewItem)) {
+        if (!ThrowableBrewSupport.isThrowableBrew(stored)) {
             player.displayClientMessage(Component.translatable("item.witchery.brew_bag.empty"), true);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
@@ -124,8 +123,11 @@ public class BrewBagItem extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-        int tier = stored.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
-        ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brewItem.brewType(), brewItem.isGas(), tier);
+        ThrownBrewEntity projectile = ThrowableBrewSupport.createProjectile(level, player, stored);
+        if (projectile == null) {
+            player.displayClientMessage(Component.translatable("item.witchery.brew_bag.empty"), true);
+            return;
+        }
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.5F, 1.0F);
         level.addFreshEntity(projectile);
 
@@ -142,7 +144,7 @@ public class BrewBagItem extends Item {
     }
 
     private static boolean isStorableBrew(ItemStack stack) {
-        return stack.getItem() instanceof ThrownBrewItem;
+        return ThrowableBrewSupport.isThrowableBrew(stack);
     }
 
     private static int firstAvailableSlot(ItemStack bag, ItemStack brew) {

@@ -35,6 +35,10 @@ public class CustomThrownBrewItem extends Item {
         this.gas = gas;
     }
 
+    boolean isGas() {
+        return gas;
+    }
+
     private static BrewContents contents(ItemStack stack) {
         return stack.getOrDefault(WitcheryDataComponents.BREW_CONTENTS.get(), BrewContents.EMPTY);
     }

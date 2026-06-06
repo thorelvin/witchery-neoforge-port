@@ -1,7 +1,6 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.ThrownBrewEntity;
-import com.emoniph.witchery.init.WitcheryDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -118,7 +117,7 @@ public class LeonardsUrnItem extends Item {
     private static void castStoredBrew(Level level, Player player, ItemStack urn) {
         int slot = selectedSlot(urn);
         ItemStack stored = getStored(urn, slot);
-        if (!(stored.getItem() instanceof ThrownBrewItem brewItem)) {
+        if (!ThrowableBrewSupport.isThrowableBrew(stored)) {
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5f, 1.0f);
@@ -128,8 +127,11 @@ public class LeonardsUrnItem extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                 0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
-        int tier = stored.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
-        ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brewItem.brewType(), brewItem.isGas(), tier);
+        ThrownBrewEntity projectile = ThrowableBrewSupport.createProjectile(level, player, stored);
+        if (projectile == null) {
+            player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
+            return;
+        }
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
         level.addFreshEntity(projectile);
         player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
@@ -147,15 +149,18 @@ public class LeonardsUrnItem extends Item {
                 continue;
             }
             ItemStack stored = getStored(urn, slot);
-            if (!(stored.getItem() instanceof ThrownBrewItem brewItem)) {
+            if (!ThrowableBrewSupport.isThrowableBrew(stored)) {
                 player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
                 return false;
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                     0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
-            int tier = stored.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
-            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brewItem.brewType(), brewItem.isGas(), tier);
+            ThrownBrewEntity projectile = ThrowableBrewSupport.createProjectile(level, player, stored);
+            if (projectile == null) {
+                player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
+                return false;
+            }
             projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
             level.addFreshEntity(projectile);
             setStored(urn, slot, ItemStack.EMPTY);
@@ -167,7 +172,7 @@ public class LeonardsUrnItem extends Item {
     }
 
     private static boolean isStorableBrew(ItemStack stack) {
-        return stack.getItem() instanceof ThrownBrewItem;
+        return ThrowableBrewSupport.isThrowableBrew(stack);
     }
 
     private static int firstAvailableSlot(ItemStack urn) {
