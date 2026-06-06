@@ -86,7 +86,7 @@ public final class Brews {
 
         public enum BrewAction {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
-            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST
+            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -295,6 +295,9 @@ public final class Brews {
         register(WitcheryItems.CREEPER_HEART.get(), Ingredient.action(Ingredient.BrewAction.DURATION_BOOST,
                 6, 5000, 0x5A8F3F,
                 "witchery.brew.durationboost", null));
+        register(WitcheryItems.BREATH_OF_GODDESS.get(), Ingredient.action(Ingredient.BrewAction.AIR_HIKE,
+                2, 750, 0xD8F4FF,
+                "witchery.brew.airhike", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -687,7 +690,16 @@ public final class Brews {
             stealBuffs(level, target, action.strength(), powerFactor, source);
         } else if (action.action() == Ingredient.BrewAction.DURATION_BOOST) {
             applyPotionLongevity(target, action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.AIR_HIKE) {
+            applyAirHike(target, action.strength());
         }
+    }
+
+    private static void applyAirHike(LivingEntity target, int strength) {
+        Vec3 motion = target.getDeltaMovement();
+        target.fallDistance = 0.0F;
+        target.setDeltaMovement(motion.x, sourceAirHikeMotionY(strength), motion.z);
+        target.hurtMarked = true;
     }
 
     private static void applyWeakenVampires(LivingEntity target, ActionApplication action,
@@ -761,6 +773,10 @@ public final class Brews {
         int cappedStrength = Math.min(strength, strengthCeilingDisabled ? 3 : 1);
         int baseDamage = matchingTarget ? 3 : 1;
         return Mth.ceil((double) (baseDamage << cappedStrength) * powerFactor);
+    }
+
+    public static double sourceAirHikeMotionY(int strength) {
+        return 0.6D + 0.2D * (double) strength;
     }
 
     public static boolean isSourceUndead(LivingEntity target) {

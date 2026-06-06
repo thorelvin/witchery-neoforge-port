@@ -947,6 +947,44 @@ class BrewLogicTest {
     }
 
     @Test
+    void breathOfGoddessRestoresSourceAirHikeAction() {
+        Brews.bootstrap();
+        Item breath = WitcheryItems.BREATH_OF_GODDESS.get();
+
+        assertFalse(Brews.canAdd(List.of(), breath),
+                "source Air Hike requires level-2 capacity");
+        assertTrue(Brews.canAdd(level2(), breath),
+                "Nether Wart opens enough capacity for source Air Hike");
+        assertTrue(Brews.blockedByCapacity(List.of(breath)),
+                "under-capacity Air Hike resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level2(breath));
+        assertEquals(1, actions.size(), "Breath of the Goddess resolves as source Air Hike");
+        assertEquals(Brews.Ingredient.BrewAction.AIR_HIKE, actions.get(0).action());
+        assertEquals("witchery.brew.airhike", actions.get(0).nameKey());
+        assertEquals(800, Brews.powerCost(level2(breath)),
+                "source Nether Wart capacity cost plus Breath of the Goddess altar cost");
+
+        Brews.ActionApplication modified = Brews.buildActions(level2(Items.TROPICAL_FISH,
+                Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                WitcheryItems.ATTUNED_STONE_CHARGED.get(), breath)).get(0);
+        assertEquals(3, modified.strength(),
+                "Air Hike carries the normal source strength modifiers");
+        assertTrue(modified.strengthCeilingDisabled(),
+                "Tropical Fish still marks the source strength ceiling bypass for Air Hike");
+    }
+
+    @Test
+    void airHikeUsesSourceVerticalMotion() {
+        assertEquals(0.6D, Brews.sourceAirHikeMotionY(0), 0.0001D,
+                "base source Air Hike launches at 0.6 Y motion");
+        assertEquals(0.8D, Brews.sourceAirHikeMotionY(1), 0.0001D,
+                "Glowstone raises Air Hike by 0.2 Y motion");
+        assertEquals(1.2D, Brews.sourceAirHikeMotionY(3), 0.0001D,
+                "full source strength reaches 1.2 Y motion");
+    }
+
+    @Test
     void iceRestoresSourceDemonbaneAction() {
         Brews.bootstrap();
         List<Item> level5 = withCapacity(List.of(Items.NETHER_WART,
