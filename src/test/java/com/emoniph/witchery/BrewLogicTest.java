@@ -11,6 +11,7 @@ import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
+import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -444,6 +445,35 @@ class BrewLogicTest {
         assertEquals(8, SnowTrailMobEffect.SNOW_GOLEM_COVER_RADIUS);
         assertEquals(3.0F, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_POWER);
         assertEquals(20, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_ROLL);
+    }
+
+    @Test
+    void codRestoresSourceSwimBoostBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> swimming = Brews.buildEffects(level1(Items.COD));
+        assertEquals(1, swimming.size(), "Cod resolves as the old raw-fish Swim Boost effect ingredient");
+        assertSame(WitcheryMobEffects.SWIMMING.value(), swimming.get(0).getEffect().value(),
+                "source raw fish metadata 0 uses Witchery's Swimming potion");
+        assertEquals(3600, swimming.get(0).getDuration(), "source Swim Boost lasts three minutes");
+        assertEquals(0, Brews.powerCost(List.of(Items.COD)), "Swim Boost has no source altar cost");
+
+        assertEquals(1, Brews.buildEffects(level1(Items.GLOWSTONE_DUST, Items.COD)).get(0).getAmplifier(),
+                "source Swim Boost accepts the normal strength modifier path");
+    }
+
+    @Test
+    void swimBoostEffectUsesSourceMotionConstants() {
+        assertEquals(1.24D, SwimmingMobEffect.horizontalMultiplier(SwimmingMobEffect.PLAYER_SOURCE_STRENGTH),
+                0.000001D);
+        assertEquals(new Vec3(1.24D, 2.0D, -2.48D),
+                SwimmingMobEffect.boostHorizontal(new Vec3(1.0D, 2.0D, -2.0D),
+                        SwimmingMobEffect.PLAYER_SOURCE_STRENGTH));
+        assertTrue(SwimmingMobEffect.shouldBoostPlayer(true, true, false));
+        assertFalse(SwimmingMobEffect.shouldBoostPlayer(false, true, false));
+        assertFalse(SwimmingMobEffect.shouldBoostPlayer(true, false, false));
+        assertFalse(SwimmingMobEffect.shouldBoostPlayer(true, true, true));
+        assertTrue(SwimmingMobEffect.shouldBoostNonPlayer(13L, true, true));
+        assertFalse(SwimmingMobEffect.shouldBoostNonPlayer(12L, true, true));
     }
 
     @Test

@@ -5,9 +5,11 @@ import com.emoniph.witchery.blocks.BeartrapBlock;
 import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
 import com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.core.BlockPos;
@@ -41,6 +43,7 @@ public class WitcheryClientEvents {
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
+        applySwimmingBoost();
     }
 
     @SubscribeEvent
@@ -126,6 +129,16 @@ public class WitcheryClientEvents {
         return entity instanceof Player player
                 && WitcheryAttachments.get(player).isWerewolf()
                 && WitcheryAttachments.get(player).getTransformationLevel() > 0.01F;
+    }
+
+    private static void applySwimmingBoost() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || !mc.player.hasEffect(WitcheryMobEffects.SWIMMING)) {
+            return;
+        }
+
+        // Source also excludes the old Paralyzed potion. That effect is not registered in this port yet.
+        SwimmingMobEffect.applyPlayerClientTick(mc.player, mc.player.input.hasForwardImpulse(), false);
     }
 
     private static void tryHowl(Player player, InteractionHand hand) {

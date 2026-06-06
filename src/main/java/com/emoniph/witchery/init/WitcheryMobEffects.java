@@ -11,6 +11,7 @@ import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
+import com.emoniph.witchery.effect.SwimmingMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
@@ -62,6 +63,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> SNOW_TRAIL =
             MOB_EFFECTS.register("snow_trail", () -> new SnowTrailMobEffect(0x3F825D));
+
+    public static final DeferredHolder<MobEffect, MobEffect> SWIMMING =
+            MOB_EFFECTS.register("swimming", () -> new SwimmingMobEffect(0x0AC3A3));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
