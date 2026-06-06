@@ -56,6 +56,9 @@ public final class WitcheryMobEffects {
     public static final DeferredHolder<MobEffect, MobEffect> STOUT_BELLY =
             MOB_EFFECTS.register("stout_belly", () -> new StoutBellyMobEffect(0x9F51EF));
 
+    public static final DeferredHolder<MobEffect, MobEffect> WOLFSBANE =
+            MOB_EFFECTS.register("wolfsbane", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x67FA11));
+
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
             super(category, color);

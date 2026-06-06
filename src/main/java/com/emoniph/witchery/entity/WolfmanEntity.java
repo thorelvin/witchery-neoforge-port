@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -79,7 +80,8 @@ public class WolfmanEntity extends Monster {
         super.tick();
         if (attackTimer > 0) attackTimer--;
         if (!level().isClientSide()) {
-            if (tickCount % 100 == 3 && formerProfession >= 0 && !isFullMoonNight() && !hasEffect(MobEffects.POISON)) {
+            if (tickCount % 100 == 3 && formerProfession >= 0 && !isFullMoonNight()
+                    && !hasEffect(WitcheryMobEffects.WOLFSBANE)) {
                 convertToWereVillager();
             } else if (tickCount % 40 == 4 && hasEffect(MobEffects.WEAKNESS)) {
                 removeEffect(MobEffects.WEAKNESS);

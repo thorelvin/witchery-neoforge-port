@@ -371,6 +371,18 @@ class BrewLogicTest {
     }
 
     @Test
+    void wolfsbaneRestoresSourceBrewMarker() {
+        Brews.bootstrap();
+        List<MobEffectInstance> wolfsbane = Brews.buildEffects(List.of(WitcheryItems.WOLFSBANE_FLOWER.get()));
+        assertEquals(1, wolfsbane.size(), "Wolfsbane resolves as the old source potion marker");
+        assertSame(WitcheryMobEffects.WOLFSBANE.value(), wolfsbane.get(0).getEffect().value(),
+                "source Wolfsbane uses Witchery's plain Wolfsbane potion marker");
+        assertEquals(1200, wolfsbane.get(0).getDuration(), "source Wolfsbane lasts sixty seconds");
+        assertEquals(0, Brews.powerCost(List.of(WitcheryItems.WOLFSBANE_FLOWER.get())),
+                "Wolfsbane has no source altar cost");
+    }
+
+    @Test
     void foulFumeRestoresSourceStoutBellyBrew() {
         Brews.bootstrap();
         List<MobEffectInstance> stoutBelly = Brews.buildEffects(List.of(WitcheryItems.FOUL_FUME.get()));

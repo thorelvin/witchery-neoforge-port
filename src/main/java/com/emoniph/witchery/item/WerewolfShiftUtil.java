@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -28,7 +29,8 @@ public final class WerewolfShiftUtil {
     }
 
     public static boolean hasWolfsbane(Player player) {
-        return hasItemInInventory(player, WitcheryItems.WOLFSBANE_FLOWER.get());
+        return player.hasEffect(WitcheryMobEffects.WOLFSBANE)
+                || hasItemInInventory(player, WitcheryItems.WOLFSBANE_FLOWER.get());
     }
 
     public static void setTransformed(ServerPlayer player, WitcheryPlayerData data,

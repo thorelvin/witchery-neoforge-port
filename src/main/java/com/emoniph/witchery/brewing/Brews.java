@@ -185,6 +185,8 @@ public final class Brews {
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200));
         register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7D3083, 0));
+        register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
+                1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
                 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100));
