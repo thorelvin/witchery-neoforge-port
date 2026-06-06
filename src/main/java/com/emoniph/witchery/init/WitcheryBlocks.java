@@ -461,7 +461,7 @@ public class WitcheryBlocks {
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
             BlockBehaviour.Properties.of());
     public static final DeferredBlock<BarrierBlock> BARRIER   = registerBlock("barrier", BarrierBlock::new,
-            BlockBehaviour.Properties.of().strength(-1.0f, 3_600_000.0f).noOcclusion().noLootTable());
+            BlockBehaviour.Properties.of().strength(-1.0f, 1000.0f).noOcclusion().noLootTable());
     public static final DeferredBlock<ForceBlock> FORCE      = registerBlock("force", ForceBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
                     .strength(-1.0F, 9999.0F).noOcclusion().noLootTable()

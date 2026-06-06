@@ -51,6 +51,16 @@ public class BarrierBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getLightBlock(BlockState state) {
+        return 0;
+    }
+
+    @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Entity entity = context instanceof EntityCollisionContext entityContext ? entityContext.getEntity() : null;
         if (entity instanceof Player player
