@@ -54,7 +54,7 @@ public final class Brews {
 
     /** One brew ingredient: an effect/action, or a modifier that augments the next effect / the dispersal. */
     public record Ingredient(Kind kind, Holder<MobEffect> effect, Holder<MobEffect> inverted,
-                             BrewAction action, int baseDuration, int strengthCeiling, int color,
+                             BrewAction action, int baseDuration, int invertedDuration, int strengthCeiling, int color,
                              int modifierCeiling, int drinkSpeedModifier, int capacityIncrement,
                              int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
@@ -63,43 +63,51 @@ public final class Brews {
         public enum BrewAction { ANIMAL }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
-            return new Ingredient(Kind.EFFECT, effect, null, null, baseDuration, ceiling, color,
-                    0, 0, 0, 0, 0, 0, null, null);
+            return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0);
+        }
+
+        static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color, int powerCost) {
+            return effect(effect, null, baseDuration, baseDuration, ceiling, color, powerCost);
         }
 
         static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration, int ceiling, int color) {
-            return new Ingredient(Kind.EFFECT, effect, inverted, null, baseDuration, ceiling, color,
-                    0, 0, 0, 0, 0, 0, null, null);
+            return effect(effect, inverted, baseDuration, baseDuration, ceiling, color, 0);
+        }
+
+        static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration,
+                                 int invertedDuration, int ceiling, int color, int powerCost) {
+            return new Ingredient(Kind.EFFECT, effect, inverted, null, baseDuration, invertedDuration, ceiling, color,
+                    0, 0, 0, 0, 0, powerCost, null, null);
         }
 
         static Ingredient action(BrewAction action, int capacityRequired, int powerCost, int color,
                                  String nameKey, String invertedNameKey) {
-            return new Ingredient(Kind.ACTION, null, null, action, 0, 0, color,
+            return new Ingredient(Kind.ACTION, null, null, action, 0, 0, 0, color,
                     0, 0, 0, 0, capacityRequired, powerCost, nameKey, invertedNameKey);
         }
 
         static Ingredient capacity(int increment, int ceiling, int powerCost) {
-            return new Ingredient(Kind.CAPACITY, null, null, null, 0, 0, 0,
+            return new Ingredient(Kind.CAPACITY, null, null, null, 0, 0, 0, 0,
                     0, 0, increment, ceiling, 0, powerCost, null, null);
         }
 
         static Ingredient color(int color) {
-            return new Ingredient(Kind.COLOR, null, null, null, 0, 0, color,
+            return new Ingredient(Kind.COLOR, null, null, null, 0, 0, 0, color,
                     0, 0, 0, 0, 0, 0, null, null);
         }
 
         static Ingredient drinkSpeed(int modifier, int powerCost) {
-            return new Ingredient(Kind.DRINK_SPEED, null, null, null, 0, 0, 0,
+            return new Ingredient(Kind.DRINK_SPEED, null, null, null, 0, 0, 0, 0,
                     0, modifier, 0, 0, 0, powerCost, null, null);
         }
 
         static Ingredient modifier(Kind kind) {
-            return new Ingredient(kind, null, null, null, 0, 0, 0,
+            return new Ingredient(kind, null, null, null, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, null, null);
         }
 
         static Ingredient modifier(Kind kind, int ceiling, int powerCost) {
-            return new Ingredient(kind, null, null, null, 0, 0, 0,
+            return new Ingredient(kind, null, null, null, 0, 0, 0, 0,
                     ceiling, 0, 0, 0, 0, powerCost, null, null);
         }
     }
@@ -133,6 +141,7 @@ public final class Brews {
     private static final Map<Item, Ingredient> REGISTRY = new LinkedHashMap<>();
     private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
+    private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
 
     private Brews() {
     }
@@ -145,13 +154,13 @@ public final class Brews {
         // NOTE: ingredients consumed by the cauldron's hardcoded recipes are not auto-stirred from
         // dropped item entities. The old dual-purpose capacity trio below is registered for composed
         // brews, but requires the explicit player stir path so source offerings remain intact.
-        register(Items.SPIDER_EYE, Ingredient.effect(MobEffects.POISON, MobEffects.REGENERATION, 300, 1, 0x4E9331));
-        register(Items.MAGMA_CREAM, Ingredient.effect(MobEffects.FIRE_RESISTANCE, 3600, 0, 0xE49A3A));
-        register(Items.SUGAR, Ingredient.effect(MobEffects.SPEED, MobEffects.SLOWNESS, 1800, 2, 0x7CAFC6));
-        register(Items.GHAST_TEAR, Ingredient.effect(MobEffects.REGENERATION, MobEffects.POISON, 900, 1, 0xCD5CAB));
+        register(Items.SPIDER_EYE, Ingredient.effect(MobEffects.POISON, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4E9331, 0));
+        register(Items.MAGMA_CREAM, Ingredient.effect(MobEffects.FIRE_RESISTANCE, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xE49A3A, 100));
+        register(Items.SUGAR, Ingredient.effect(MobEffects.SPEED, MobEffects.SLOWNESS, 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7CAFC6, 100));
+        register(Items.GHAST_TEAR, Ingredient.effect(MobEffects.REGENERATION, MobEffects.POISON, 900, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0xCD5CAB, 200));
         register(Items.RABBIT_FOOT, Ingredient.effect(MobEffects.JUMP_BOOST, 1800, 2, 0x22FF4C));
-        register(Items.PUFFERFISH, Ingredient.effect(MobEffects.WATER_BREATHING, 3600, 0, 0x2E5299));
-        register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.BLINDNESS, 3600, 0, 0x1F1FA1));
+        register(Items.PUFFERFISH, Ingredient.effect(MobEffects.WATER_BREATHING, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2E5299, 100));
+        register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200));
         register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.HEALTH_BOOST, 3600, 1, 0xBC1A1A));
         register(Items.PHANTOM_MEMBRANE, Ingredient.effect(MobEffects.SLOW_FALLING, 1800, 0, 0xCAC5B6));
         register(WitcheryItems.WORMWOOD.get(),
@@ -281,8 +290,9 @@ public final class Brews {
                 case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EFFECT -> {
                     Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
+                    int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
                     int amplifier = Math.min(mods.strength, ing.strengthCeiling());
-                    int duration = ing.baseDuration() * (mods.duration + 1);
+                    int duration = baseDuration * (mods.duration + 1);
                     resolved.effects.add(new MobEffectInstance(effect, duration, amplifier));
                     mods.reset();
                 }

@@ -296,13 +296,13 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 
 | Component | Status | Notes |
 |---|---|---|
-| WitcheryBrewRegistry (ingredient → action mapping) | ❌ Missing | Source: ingredient stacking builds a brew from action list |
-| BrewAction base + dispatch | ❌ Missing | Source: 14 action base classes |
-| BrewActionDispersal (instant/liquid/gas/triggered) | 🔶 Partial | Splash/gas variants exist as separate item classes only |
-| BrewActionEffect (direct hit effects) | ❌ Missing | |
-| BrewActionModifier / ImpactModifier | ❌ Missing | Mandrake root / golden apple / void ore strength system |
+| WitcheryBrewRegistry (ingredient → action mapping) | 🔶 Partial | Practical composed-brew registry exists for vanilla potion entries, source capacity/modifier/drink-speed/color/dispersal slices, and Heart of Gold Animal Attraction / Repulsion; full old action roster still missing |
+| BrewAction base + dispatch | 🔶 Partial | Ordered ingredient resolver and drink/splash/gas dispatch exist for current effects/actions; source action class hierarchy/serializers are not complete |
+| BrewActionDispersal (instant/liquid/gas/triggered) | 🔶 Partial | Gunpowder/Water Artichoke instant-splash and Bat Wool gas aliases work for supported composed bottles; liquid/triggered dispersal and moving brew fluids remain missing |
+| BrewActionEffect (direct hit effects) | 🔶 Partial | Source vanilla potion subset restored for Spider Eye, Sugar, Pufferfish, Magma Cream, Golden Carrot, and Ghast Tear; many block/entity custom actions remain direct-brew item stand-ins |
+| BrewActionModifier / ImpactModifier | 🔶 Partial | Source capacity, strength/duration/invert, drink-speed, and wool-color modifiers are live; block/entity target toggles, no-particles, strength-ceiling disable, and impact modifiers remain open |
 | BrewActionRitual* (cauldron ritual summons) | ❌ Missing | Summon Leonard via cauldron |
-| TileEntityCauldron ingredient-throwing loop | ❌ Missing | Dynamic brew building from thrown items |
+| TileEntityCauldron ingredient-throwing loop | 🔶 Partial | Heated filled Witch's Cauldron stirs automatic dropped ingredients and explicit sneak-use dual-purpose ingredients into composed bottles; full source liquid/ritual/container behavior remains open |
 | FluidBrew / BlockBrew (moving brew fluid) | ❌ Missing | Solid block stand-in only |
 | BlockBrewGas (gas brew cloud) | ❌ Missing | |
 | EntityBrew (thrown brew projectile physics) | 🔶 Partial | thrown_brew entity exists; full brew physics incomplete |

@@ -34,8 +34,8 @@ class BrewLogicTest {
     @Test
     void redstoneExtendsDuration() {
         Brews.bootstrap();
-        // Spider Eye base poison duration 300; one redstone doubles to 600.
-        assertEquals(600, Brews.buildEffects(List.of(Items.REDSTONE, Items.SPIDER_EYE)).get(0).getDuration());
+        // Spider Eye source poison duration is 900 ticks; one Redstone doubles to 1800.
+        assertEquals(1800, Brews.buildEffects(List.of(Items.REDSTONE, Items.SPIDER_EYE)).get(0).getDuration());
     }
 
     @Test
@@ -47,6 +47,10 @@ class BrewLogicTest {
         assertEquals(2, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR))
                         .get(0).getAmplifier(),
                 "Blaze Powder opens source strength tier 2");
+        assertEquals(3, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR))
+                        .get(0).getAmplifier(),
+                "vanilla potion effects use the old default strength ceiling");
         assertEquals(4, Brews.power(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR)),
                 "Charged Attuned Stone contributes the third source strength modifier tier");
@@ -55,13 +59,13 @@ class BrewLogicTest {
     @Test
     void sourceDurationModifiersUseCappedTiers() {
         Brews.bootstrap();
-        assertEquals(600, Brews.buildEffects(List.of(Items.REDSTONE, Items.REDSTONE, Items.SPIDER_EYE))
+        assertEquals(1800, Brews.buildEffects(List.of(Items.REDSTONE, Items.REDSTONE, Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "repeated Redstone is capped at source duration tier 1");
-        assertEquals(900, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN, Items.SPIDER_EYE))
+        assertEquals(2700, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN, Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "Obsidian opens source duration tier 2");
-        assertEquals(1200, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN,
+        assertEquals(3600, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN,
                         WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "Mindrake Bulb represents the old Mindrake seed duration tier 3");
@@ -70,15 +74,43 @@ class BrewLogicTest {
     @Test
     void fermentedSpiderEyeInverts() {
         Brews.bootstrap();
-        assertSame(MobEffects.REGENERATION.value(),
+        assertSame(MobEffects.POISON.value(),
                 Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)).get(0).getEffect().value(),
-                "poison inverted to regeneration");
-        assertSame(MobEffects.REGENERATION.value(),
+                "source Spider Eye has no separate inverted potion");
+        assertSame(MobEffects.POISON.value(),
                 Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE))
                         .get(0).getEffect().value(),
                 "source Fermented Spider Eye sets inversion instead of toggling it off");
+        assertSame(MobEffects.POISON.value(),
+                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.GHAST_TEAR)).get(0).getEffect().value(),
+                "Ghast Tear owns the source Regeneration/Poison inversion pair");
         assertEquals(25, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)),
                 "source Fermented Spider Eye modifier costs 25 altar power");
+    }
+
+    @Test
+    void sourceVanillaPotionIngredientsUseOldDurationsInversionsAndCosts() {
+        Brews.bootstrap();
+        List<MobEffectInstance> sugar = Brews.buildEffects(List.of(Items.SUGAR));
+        assertSame(MobEffects.SPEED.value(), sugar.get(0).getEffect().value(), "Sugar makes Move Speed");
+        assertEquals(3600, sugar.get(0).getDuration(), "Sugar source duration is three minutes");
+        assertEquals(100, Brews.powerCost(List.of(Items.SUGAR)), "Sugar source altar cost");
+
+        List<MobEffectInstance> slow = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.SUGAR));
+        assertSame(MobEffects.SLOWNESS.value(), slow.get(0).getEffect().value(), "inverted Sugar makes Slowness");
+        assertEquals(1800, slow.get(0).getDuration(), "source Slowness duration is ninety seconds");
+        assertEquals(125, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.SUGAR)),
+                "inverted Sugar counts Fermented Spider Eye plus Sugar power");
+
+        assertEquals(900, Brews.buildEffects(List.of(Items.SPIDER_EYE)).get(0).getDuration(),
+                "Spider Eye source poison duration is forty-five seconds");
+        assertEquals(100, Brews.powerCost(List.of(Items.PUFFERFISH)), "Pufferfish source altar cost");
+        assertEquals(100, Brews.powerCost(List.of(Items.MAGMA_CREAM)), "Magma Cream source altar cost");
+        assertSame(MobEffects.INVISIBILITY.value(),
+                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.GOLDEN_CARROT)).get(0).getEffect().value(),
+                "Golden Carrot inverts to Invisibility in source");
+        assertEquals(200, Brews.powerCost(List.of(Items.GOLDEN_CARROT)), "Golden Carrot source altar cost");
+        assertEquals(200, Brews.powerCost(List.of(Items.GHAST_TEAR)), "Ghast Tear source altar cost");
     }
 
     @Test
@@ -150,8 +182,8 @@ class BrewLogicTest {
     @Test
     void sourceModifierPowerCostsAreCounted() {
         Brews.bootstrap();
-        assertEquals(150, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR)),
-                "Glowstone Dust plus Blaze Powder uses source modifier altar costs");
+        assertEquals(250, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR)),
+                "Glowstone Dust plus Blaze Powder plus Sugar use source altar costs");
         assertEquals(300, Brews.powerCost(List.of(Items.REDSTONE, Items.OBSIDIAN,
                         WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE)),
                 "Redstone, Obsidian, and old Mindrake seed tier costs are counted");
