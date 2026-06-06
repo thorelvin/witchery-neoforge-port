@@ -177,6 +177,8 @@ public final class Brews {
                 0, 0, 1, 0xBC1A1A, 200));
         register(WitcheryItems.ENDER_DEW.get(), Ingredient.effect(WitcheryMobEffects.ENDER_INHIBITION,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200));
+        register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7D3083, 0));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
                 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100));
@@ -187,6 +189,8 @@ public final class Brews {
         register(Items.COBWEB, Ingredient.effect(WitcheryMobEffects.REFLECT_PROJECTILES,
                 WitcheryMobEffects.ATTRACT_PROJECTILES, 1800, 900,
                 SOURCE_DEFAULT_STRENGTH_CEILING, 0x664613, 250));
+        register(WitcheryItems.FOUL_FUME.get(), Ingredient.effect(WitcheryMobEffects.STOUT_BELLY,
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x9F51EF, 1000));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,

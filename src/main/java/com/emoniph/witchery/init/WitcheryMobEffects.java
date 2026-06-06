@@ -5,9 +5,11 @@ import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
+import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
@@ -47,6 +49,12 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> ATTRACT_PROJECTILES =
             MOB_EFFECTS.register("attract_projectiles", () -> new AttractProjectilesMobEffect(0x51BD4F));
+
+    public static final DeferredHolder<MobEffect, MobEffect> MOONSHINE =
+            MOB_EFFECTS.register("moonshine", () -> new MoonshineMobEffect(0x7D3083));
+
+    public static final DeferredHolder<MobEffect, MobEffect> STOUT_BELLY =
+            MOB_EFFECTS.register("stout_belly", () -> new StoutBellyMobEffect(0x9F51EF));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

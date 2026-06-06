@@ -2,6 +2,7 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
+import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -9,8 +10,10 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
@@ -62,6 +65,27 @@ public final class BrewMobEffectEvents {
         }
 
         target.addEffect(PoisonWeaponsMobEffect.attackEffect(poisonWeapons.getAmplifier()));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onMoonshineDamage(LivingDamageEvent.Pre event) {
+        if (!(event.getEntity() instanceof Player player)
+                || player.level().isClientSide()
+                || !MoonshineMobEffect.isSourcePainDamage(event.getSource())) {
+            return;
+        }
+        MobEffectInstance moonshine = player.getEffect(WitcheryMobEffects.MOONSHINE);
+        if (moonshine == null) {
+            return;
+        }
+        int foodPenalty = MoonshineMobEffect.foodPenalty(event.getNewDamage(), moonshine.getAmplifier(),
+                player.getFoodData().getFoodLevel());
+        if (foodPenalty <= 0) {
+            return;
+        }
+
+        player.getFoodData().eat(-foodPenalty, 2.0F);
+        event.setNewDamage(0.0F);
     }
 
     @SubscribeEvent

@@ -5,9 +5,11 @@ import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
+import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -322,6 +324,77 @@ class BrewLogicTest {
                 "source helper only blocks checks at or below the active amplifier");
         assertFalse(EnderInhibitionMobEffect.canTeleport(2, 2));
         assertTrue(EnderInhibitionMobEffect.canTeleport(2, 3));
+    }
+
+    @Test
+    void wheatRestoresSourceMoonshineBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> moonshine = Brews.buildEffects(List.of(Items.WHEAT));
+        assertEquals(1, moonshine.size(), "Wheat resolves as the old Moonshine effect ingredient");
+        assertSame(WitcheryMobEffects.MOONSHINE.value(), moonshine.get(0).getEffect().value(),
+                "source Moonshine uses Witchery's Feel No Pain potion behavior");
+        assertEquals(1800, moonshine.get(0).getDuration(), "source Moonshine lasts ninety seconds");
+        assertEquals(0, Brews.powerCost(List.of(Items.WHEAT)), "Moonshine has no source altar cost");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.WHEAT)).get(0).getAmplifier(),
+                "source Moonshine accepts the normal strength modifier path");
+        assertEquals(50, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.WHEAT)),
+                "only the source Glowstone modifier costs altar power");
+    }
+
+    @Test
+    void foulFumeRestoresSourceStoutBellyBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> stoutBelly = Brews.buildEffects(List.of(WitcheryItems.FOUL_FUME.get()));
+        assertEquals(1, stoutBelly.size(), "Foul Fume resolves as the old Stout Belly effect ingredient");
+        assertSame(WitcheryMobEffects.STOUT_BELLY.value(), stoutBelly.get(0).getEffect().value(),
+                "source Foul Fume uses Witchery's Stout Belly potion");
+        assertEquals(1800, stoutBelly.get(0).getDuration(), "source Stout Belly lasts ninety seconds");
+        assertEquals(1000, Brews.powerCost(List.of(WitcheryItems.FOUL_FUME.get())),
+                "Stout Belly source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, WitcheryItems.FOUL_FUME.get()))
+                        .get(0).getAmplifier(),
+                "source Stout Belly accepts the normal strength modifier path");
+    }
+
+    @Test
+    void moonshineEffectUsesSourceDamageAndHungerRules() {
+        assertEquals(8, MoonshineMobEffect.foodPenalty(4.0F, 0, 20),
+                "level I doubles damage into food loss with a minimum of three");
+        assertEquals(4, MoonshineMobEffect.foodPenalty(4.0F, 1, 20),
+                "level II uses damage divided by amplifier with a minimum of two");
+        assertEquals(2, MoonshineMobEffect.foodPenalty(4.0F, 2, 20),
+                "level III uses damage divided by amplifier with a minimum of one");
+        assertEquals(1, MoonshineMobEffect.foodPenalty(0.5F, 2, 20),
+                "amplifier above one keeps the old one-food minimum");
+        assertEquals(3, MoonshineMobEffect.foodPenalty(10.0F, 0, 3),
+                "food loss is capped by current food");
+        assertEquals(0, MoonshineMobEffect.foodPenalty(10.0F, 0, 0),
+                "source only cancels hurt when the player has food");
+
+        assertFalse(MoonshineMobEffect.shouldRollHunger(2L, 0, false, false),
+                "base Moonshine has no random Hunger side effect");
+        assertTrue(MoonshineMobEffect.shouldRollHunger(2L, 1, false, false),
+                "amplified Moonshine rolls Hunger on source tick phase two");
+        assertFalse(MoonshineMobEffect.shouldRollHunger(3L, 1, false, false));
+        assertFalse(MoonshineMobEffect.shouldRollHunger(2L, 1, true, false));
+        assertFalse(MoonshineMobEffect.shouldRollHunger(2L, 1, false, true));
+        assertEquals(160, MoonshineMobEffect.hungerDurationTicks(1));
+        assertEquals(240, MoonshineMobEffect.hungerDurationTicks(3));
+        assertEquals(4, MoonshineMobEffect.hungerRollBound(1));
+        assertEquals(2, MoonshineMobEffect.hungerRollBound(3));
+        assertEquals(2, MoonshineMobEffect.hungerRollBound(4));
+    }
+
+    @Test
+    void stoutBellyEffectUsesSourceHungerGate() {
+        assertFalse(StoutBellyMobEffect.shouldRemoveHunger(3L, 0, true),
+                "source Stout Belly I does not clear Hunger because amplifier must be above zero");
+        assertTrue(StoutBellyMobEffect.shouldRemoveHunger(3L, 1, true),
+                "amplified Stout Belly clears Hunger on source tick phase three");
+        assertFalse(StoutBellyMobEffect.shouldRemoveHunger(2L, 1, true));
+        assertFalse(StoutBellyMobEffect.shouldRemoveHunger(3L, 1, false));
     }
 
     @Test
