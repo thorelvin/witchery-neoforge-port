@@ -244,6 +244,52 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceNoParticlesModifierMarksNextEffectAmbientOnly() {
+        Brews.bootstrap();
+        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.GOLD_NUGGET, Items.SPIDER_EYE, Items.SUGAR));
+        assertEquals(2, fx.size(), "Gold Nugget modifies the next effect without removing later effects");
+        assertTrue(fx.get(0).isAmbient(), "source noParticles flag maps to the old ambient potion-effect flag");
+        assertTrue(fx.get(0).isVisible(), "Resurrected preserved visible potion particles while marking the effect ambient");
+        assertTrue(fx.get(0).showIcon(), "the modern tooltip/status icon remains visible");
+        assertFalse(fx.get(1).isAmbient(), "the noParticles/ambient flag resets after the modified effect");
+        assertEquals(150, Brews.powerCost(List.of(Items.GOLD_NUGGET, Items.SUGAR)),
+                "Gold Nugget costs 50 altar power on top of the source Sugar cost");
+        assertTrue(Brews.requiresExplicitStir(Items.GOLD_NUGGET),
+                "Gold Nugget stays available to Golden Chalk cauldron offerings unless explicitly stirred");
+        assertFalse(Brews.canAddAutomatically(List.of(), Items.GOLD_NUGGET),
+                "dropped Gold Nugget must remain available to hardcoded cauldron offerings");
+    }
+
+    @Test
+    void sourceDisablePowerLimitBypassesEffectStrengthCeiling() {
+        Brews.bootstrap();
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+                        Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
+                "source Healing/Harming normally caps at strength ceiling one");
+
+        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
+                Items.BLAZE_POWDER, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE));
+        assertEquals(3, fx.get(0).getAmplifier(),
+                "old fish metadata 2 disables the effect strength ceiling for the following potion effect");
+        assertEquals(700, Brews.powerCost(List.of(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
+                        Items.BLAZE_POWDER, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE)),
+                "the secret source ceiling-bypass modifier costs 200 altar power");
+    }
+
+    @Test
+    void sourceDisablePowerLimitPersistsThroughEffectReset() {
+        Brews.bootstrap();
+        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH,
+                Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.GLISTERING_MELON_SLICE,
+                Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.GLISTERING_MELON_SLICE));
+        assertEquals(2, fx.size(), "two Healing effects resolve");
+        assertEquals(2, fx.get(0).getAmplifier(),
+                "the first Healing effect uses the disabled ceiling");
+        assertEquals(2, fx.get(1).getAmplifier(),
+                "source ModifiersEffect.reset does not clear strengthCeilingDisabled");
+    }
+
+    @Test
     void dualPurposeCapacityIngredientsRequireExplicitStirring() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");

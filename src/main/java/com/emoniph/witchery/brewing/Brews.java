@@ -59,7 +59,10 @@ public final class Brews {
                              int modifierCeiling, int drinkSpeedModifier, int capacityIncrement,
                              int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
-        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED, EXTENT }
+        public enum Kind {
+            EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED,
+            EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
+        }
 
         public enum BrewAction { ANIMAL }
 
@@ -117,11 +120,14 @@ public final class Brews {
     private static final class Modifiers {
         int strength;
         int duration;
+        boolean noParticles;
         boolean inverted;
+        boolean strengthCeilingDisabled;
 
         void reset() {
             strength = 0;
             duration = 0;
+            noParticles = false;
             inverted = false;
         }
     }
@@ -218,6 +224,8 @@ public final class Brews {
         register(WitcheryItems.WOOD_ASH.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 1, 50));
         register(Items.COCOA_BEANS, Ingredient.modifier(Ingredient.Kind.EXTENT, 2, 100));
         register(WitcheryItems.WISPY_COTTON.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 3, 150));
+        registerExplicit(Items.GOLD_NUGGET, Ingredient.modifier(Ingredient.Kind.NO_PARTICLES, 0, 50));
+        register(Items.TROPICAL_FISH, Ingredient.modifier(Ingredient.Kind.DISABLE_STRENGTH_CEILING, 0, 200));
         register(Items.GUNPOWDER, Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
@@ -295,6 +303,8 @@ public final class Brews {
                     }
                 }
                 case INVERT -> mods.inverted = true;
+                case NO_PARTICLES -> mods.noParticles = true;
+                case DISABLE_STRENGTH_CEILING -> mods.strengthCeilingDisabled = true;
                 case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EXTENT -> {
                     if (resolved.extent < ing.modifierCeiling()) {
@@ -304,9 +314,10 @@ public final class Brews {
                 case EFFECT -> {
                     Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
                     int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
-                    int amplifier = Math.min(mods.strength, ing.strengthCeiling());
+                    int strengthCeiling = mods.strengthCeilingDisabled ? SOURCE_DEFAULT_STRENGTH_CEILING : ing.strengthCeiling();
+                    int amplifier = Math.min(mods.strength, strengthCeiling);
                     int duration = baseDuration * (mods.duration + 1);
-                    resolved.effects.add(new MobEffectInstance(effect, duration, amplifier));
+                    resolved.effects.add(new MobEffectInstance(effect, duration, amplifier, mods.noParticles, true, true));
                     mods.reset();
                 }
                 case ACTION -> {

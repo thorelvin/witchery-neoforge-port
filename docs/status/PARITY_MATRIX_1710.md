@@ -3,7 +3,7 @@
 **Built:** 2026-05-28
 **Baseline source:** `C:\claude\witchery\decompiled\witchery-1.7.10-0.24.1`
 **Port:** NeoForge 1.21.1
-**Latest local note:** 2026-06-06 composed custom-brew instant/splash extent modifiers are restored: Wood Ash / Cocoa Beans / Wispy Cotton widen supported splash potion-effect delivery through source radius `3 + extent`, while moving-brew linger/lifetime behavior remains blocked on true gas/liquid brew blocks.
+**Latest local note:** 2026-06-06 composed custom-brew effect modifiers now include Gold Nugget's old ambient/no-particles flag and fish metadata 2's strength-ceiling bypass through modern Tropical Fish. Wood Ash / Cocoa Beans / Wispy Cotton already widen supported splash potion-effect delivery through source radius `3 + extent`; Brick/Nether Brick target toggles and moving-brew linger/lifetime behavior remain blocked on true generic block/liquid brew routing.
 
 Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wrong behavior
 
@@ -300,7 +300,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 | BrewAction base + dispatch | 🔶 Partial | Ordered ingredient resolver and drink/splash/gas dispatch exist for current effects/actions; source action class hierarchy/serializers are not complete |
 | BrewActionDispersal (instant/liquid/gas/triggered) | 🔶 Partial | Gunpowder/Water Artichoke instant-splash and Bat Wool gas aliases work for supported composed bottles; instant splash potion effects use source radius `3 + extent`, direct-hit half duration, and distance falloff. Liquid/triggered dispersal and moving brew fluids remain missing |
 | BrewActionEffect (direct hit effects) | 🔶 Partial | Source vanilla potion subset restored for Spider Eye, Sugar, Pufferfish, Magma Cream, Golden Carrot, Ghast Tear, and Glistering Melon; many block/entity custom actions remain direct-brew item stand-ins |
-| BrewActionModifier / ImpactModifier | 🔶 Partial | Source capacity, strength/duration/invert, drink-speed, wool-color, and instant/splash extent modifiers are live; block/entity target toggles, no-particles, strength-ceiling disable, and moving-brew linger/lifetime modifiers remain open |
+| BrewActionModifier / ImpactModifier | 🔶 Partial | Source capacity, strength/duration/invert, Gold Nugget ambient/no-particles, Tropical Fish strength-ceiling bypass, drink-speed, wool-color, and instant/splash extent modifiers are live; Brick/Nether Brick target toggles and moving-brew linger/lifetime modifiers remain open |
 | BrewActionRitual* (cauldron ritual summons) | ❌ Missing | Summon Leonard via cauldron |
 | TileEntityCauldron ingredient-throwing loop | 🔶 Partial | Heated filled Witch's Cauldron stirs automatic dropped ingredients and explicit sneak-use dual-purpose ingredients into composed bottles; full source liquid/ritual/container behavior remains open |
 | FluidBrew / BlockBrew (moving brew fluid) | ❌ Missing | Solid block stand-in only |
