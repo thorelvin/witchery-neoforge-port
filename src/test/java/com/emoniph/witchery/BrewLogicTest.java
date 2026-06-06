@@ -39,11 +39,46 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceStrengthModifiersUseCappedTiers() {
+        Brews.bootstrap();
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))
+                        .get(0).getAmplifier(),
+                "repeated Glowstone Dust is capped at source strength tier 1");
+        assertEquals(2, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR))
+                        .get(0).getAmplifier(),
+                "Blaze Powder opens source strength tier 2");
+        assertEquals(4, Brews.power(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR)),
+                "Charged Attuned Stone contributes the third source strength modifier tier");
+    }
+
+    @Test
+    void sourceDurationModifiersUseCappedTiers() {
+        Brews.bootstrap();
+        assertEquals(600, Brews.buildEffects(List.of(Items.REDSTONE, Items.REDSTONE, Items.SPIDER_EYE))
+                        .get(0).getDuration(),
+                "repeated Redstone is capped at source duration tier 1");
+        assertEquals(900, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN, Items.SPIDER_EYE))
+                        .get(0).getDuration(),
+                "Obsidian opens source duration tier 2");
+        assertEquals(1200, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN,
+                        WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE))
+                        .get(0).getDuration(),
+                "Mindrake Bulb represents the old Mindrake seed duration tier 3");
+    }
+
+    @Test
     void fermentedSpiderEyeInverts() {
         Brews.bootstrap();
         assertSame(MobEffects.REGENERATION.value(),
                 Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)).get(0).getEffect().value(),
                 "poison inverted to regeneration");
+        assertSame(MobEffects.REGENERATION.value(),
+                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE))
+                        .get(0).getEffect().value(),
+                "source Fermented Spider Eye sets inversion instead of toggling it off");
+        assertEquals(25, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)),
+                "source Fermented Spider Eye modifier costs 25 altar power");
     }
 
     @Test
@@ -113,6 +148,16 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceModifierPowerCostsAreCounted() {
+        Brews.bootstrap();
+        assertEquals(150, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR)),
+                "Glowstone Dust plus Blaze Powder uses source modifier altar costs");
+        assertEquals(300, Brews.powerCost(List.of(Items.REDSTONE, Items.OBSIDIAN,
+                        WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE)),
+                "Redstone, Obsidian, and old Mindrake seed tier costs are counted");
+    }
+
+    @Test
     void dualPurposeCapacityIngredientsRequireExplicitStirring() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");
@@ -121,5 +166,8 @@ class BrewLogicTest {
                 "dropped Mandrake Root must remain available to hardcoded cauldron offerings");
         assertTrue(Brews.canAddAutomatically(List.of(), WitcheryItems.DIAMOND_VAPOUR.get()),
                 "non-conflicting capacity ingredients still auto-stir when dropped");
+        assertTrue(Brews.isIngredient(Items.BLAZE_POWDER), "Blaze Powder is a source strength modifier");
+        assertTrue(Brews.requiresExplicitStir(Items.BLAZE_POWDER),
+                "Blaze Powder stays available to the Infernal Chalk cauldron offering path when dropped");
     }
 }
