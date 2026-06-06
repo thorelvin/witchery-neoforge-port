@@ -68,21 +68,31 @@ public final class Brews {
         public enum BrewAction { ANIMAL }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
-            return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0);
+            return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color, int powerCost) {
-            return effect(effect, null, baseDuration, baseDuration, ceiling, color, powerCost);
+            return effect(effect, null, baseDuration, baseDuration, ceiling, color, powerCost, 0);
+        }
+
+        static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color,
+                                 int powerCost, int capacityRequired) {
+            return effect(effect, null, baseDuration, baseDuration, ceiling, color, powerCost, capacityRequired);
         }
 
         static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration, int ceiling, int color) {
-            return effect(effect, inverted, baseDuration, baseDuration, ceiling, color, 0);
+            return effect(effect, inverted, baseDuration, baseDuration, ceiling, color, 0, 0);
         }
 
         static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration,
                                  int invertedDuration, int ceiling, int color, int powerCost) {
+            return effect(effect, inverted, baseDuration, invertedDuration, ceiling, color, powerCost, 0);
+        }
+
+        static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration,
+                                 int invertedDuration, int ceiling, int color, int powerCost, int capacityRequired) {
             return new Ingredient(Kind.EFFECT, effect, inverted, null, baseDuration, invertedDuration, ceiling, color,
-                    0, 0, 0, 0, 0, powerCost, null, null);
+                    0, 0, 0, 0, capacityRequired, powerCost, null, null);
         }
 
         static Ingredient action(BrewAction action, int capacityRequired, int powerCost, int color,
@@ -147,6 +157,16 @@ public final class Brews {
         int blockedAvailable;
     }
 
+    private static boolean hasAvailableCapacity(Resolution resolved, Ingredient ing) {
+        return ing.capacityRequired() <= resolved.capacity - resolved.usedCapacity;
+    }
+
+    private static void blockByCapacity(Resolution resolved, Ingredient ing) {
+        resolved.blockedByCapacity = true;
+        resolved.blockedRequired = Math.max(resolved.blockedRequired, ing.capacityRequired());
+        resolved.blockedAvailable = Math.max(resolved.blockedAvailable, resolved.capacity - resolved.usedCapacity);
+    }
+
     private static final Map<Item, Ingredient> REGISTRY = new LinkedHashMap<>();
     private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
@@ -165,42 +185,42 @@ public final class Brews {
         // NOTE: ingredients consumed by the cauldron's hardcoded recipes are not auto-stirred from
         // dropped item entities. The old dual-purpose capacity trio below is registered for composed
         // brews, but requires the explicit player stir path so source offerings remain intact.
-        register(Items.SPIDER_EYE, Ingredient.effect(MobEffects.POISON, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4E9331, 0));
-        register(Items.MAGMA_CREAM, Ingredient.effect(MobEffects.FIRE_RESISTANCE, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xE49A3A, 100));
-        register(Items.SUGAR, Ingredient.effect(MobEffects.SPEED, MobEffects.SLOWNESS, 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7CAFC6, 100));
-        register(Items.GHAST_TEAR, Ingredient.effect(MobEffects.REGENERATION, MobEffects.POISON, 900, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0xCD5CAB, 200));
-        register(Items.LEATHER, Ingredient.effect(MobEffects.JUMP_BOOST, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x22FF4C, 200));
-        register(Items.SUGAR_CANE, Ingredient.effect(WitcheryMobEffects.FLOATING, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4E18CC, 250));
-        register(Items.PUFFERFISH, Ingredient.effect(MobEffects.WATER_BREATHING, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2E5299, 100));
-        register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200));
+        register(Items.SPIDER_EYE, Ingredient.effect(MobEffects.POISON, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4E9331, 0, 2));
+        register(Items.MAGMA_CREAM, Ingredient.effect(MobEffects.FIRE_RESISTANCE, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xE49A3A, 100, 2));
+        register(Items.SUGAR, Ingredient.effect(MobEffects.SPEED, MobEffects.SLOWNESS, 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7CAFC6, 100, 2));
+        register(Items.GHAST_TEAR, Ingredient.effect(MobEffects.REGENERATION, MobEffects.POISON, 900, 900, SOURCE_DEFAULT_STRENGTH_CEILING, 0xCD5CAB, 200, 2));
+        register(Items.LEATHER, Ingredient.effect(MobEffects.JUMP_BOOST, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x22FF4C, 200, 2));
+        register(Items.SUGAR_CANE, Ingredient.effect(WitcheryMobEffects.FLOATING, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4E18CC, 250, 2));
+        register(Items.PUFFERFISH, Ingredient.effect(MobEffects.WATER_BREATHING, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2E5299, 100, 2));
+        register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200, 2));
         register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.INSTANT_HEALTH, MobEffects.INSTANT_DAMAGE,
-                0, 0, 1, 0xBC1A1A, 200));
+                0, 0, 1, 0xBC1A1A, 200, 2));
         register(Items.WITHER_SKELETON_SKULL, Ingredient.effect(MobEffects.WITHER,
-                300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x736156, 200));
+                300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x736156, 200, 4));
         register(Items.GOLDEN_APPLE, Ingredient.effect(MobEffects.ABSORPTION,
-                600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2552A5, 1000));
+                600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2552A5, 1000, 4));
         register(Items.ENCHANTED_GOLDEN_APPLE, Ingredient.effect(MobEffects.HEALTH_BOOST,
-                2400, SOURCE_DEFAULT_STRENGTH_CEILING, 0xF87D23, 1000));
+                2400, SOURCE_DEFAULT_STRENGTH_CEILING, 0xF87D23, 1000, 4));
         register(Items.INK_SAC, Ingredient.effect(MobEffects.BLINDNESS,
-                300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1F23, 1000));
+                300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1F23, 1000, 4));
         register(WitcheryItems.ENDER_DEW.get(), Ingredient.effect(WitcheryMobEffects.ENDER_INHIBITION,
-                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200));
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200, 1));
         register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,
-                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7D3083, 0));
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7D3083, 0, 1));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
-                1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0));
+                1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
-                3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
-        register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100));
+                3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200, 2));
+        register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100, 2));
         register(WitcheryItems.BRAMBLE.get(), Ingredient.effect(WitcheryMobEffects.REPELL_ATTACKER,
-                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x233423, 250));
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x233423, 250, 2));
         register(Items.RED_MUSHROOM, Ingredient.effect(WitcheryMobEffects.POISON_WEAPONS,
-                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2814C9, 200));
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2814C9, 200, 2));
         register(Items.COBWEB, Ingredient.effect(WitcheryMobEffects.REFLECT_PROJECTILES,
                 WitcheryMobEffects.ATTRACT_PROJECTILES, 1800, 900,
-                SOURCE_DEFAULT_STRENGTH_CEILING, 0x664613, 250));
+                SOURCE_DEFAULT_STRENGTH_CEILING, 0x664613, 250, 2));
         register(WitcheryItems.FOUL_FUME.get(), Ingredient.effect(WitcheryMobEffects.STOUT_BELLY,
-                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x9F51EF, 1000));
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x9F51EF, 1000, 4));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,
@@ -339,25 +359,28 @@ public final class Brews {
                     }
                 }
                 case EFFECT -> {
-                    Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
-                    int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
-                    int strengthCeiling = mods.strengthCeilingDisabled ? SOURCE_DEFAULT_STRENGTH_CEILING : ing.strengthCeiling();
-                    int amplifier = Math.min(mods.strength, strengthCeiling);
-                    int duration = baseDuration * (mods.duration + 1);
-                    resolved.effects.add(new MobEffectInstance(effect, duration, amplifier, mods.noParticles, true, true));
-                    mods.reset();
+                    if (hasAvailableCapacity(resolved, ing)) {
+                        Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
+                        int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
+                        int strengthCeiling = mods.strengthCeilingDisabled ? SOURCE_DEFAULT_STRENGTH_CEILING : ing.strengthCeiling();
+                        int amplifier = Math.min(mods.strength, strengthCeiling);
+                        int duration = baseDuration * (mods.duration + 1);
+                        resolved.effects.add(new MobEffectInstance(effect, duration, amplifier, mods.noParticles, true, true));
+                        resolved.usedCapacity += ing.capacityRequired();
+                        mods.reset();
+                    } else {
+                        blockByCapacity(resolved, ing);
+                    }
                 }
                 case ACTION -> {
-                    if (resolved.usedCapacity + ing.capacityRequired() <= resolved.capacity) {
+                    if (hasAvailableCapacity(resolved, ing)) {
                         boolean inverted = mods.inverted && ing.invertedNameKey() != null;
                         String nameKey = inverted ? ing.invertedNameKey() : ing.nameKey();
                         resolved.actions.add(new ActionApplication(ing.action(), inverted, mods.strength, nameKey));
                         resolved.usedCapacity += ing.capacityRequired();
                         mods.reset();
                     } else {
-                        resolved.blockedByCapacity = true;
-                        resolved.blockedRequired = Math.max(resolved.blockedRequired, ing.capacityRequired());
-                        resolved.blockedAvailable = Math.max(resolved.blockedAvailable, resolved.capacity - resolved.usedCapacity);
+                        blockByCapacity(resolved, ing);
                     }
                 }
             }
@@ -373,7 +396,7 @@ public final class Brews {
         Resolution current = resolveBrew(currentItems);
         return switch (ing.kind()) {
             case CAPACITY -> current.capacity < ing.capacityCeiling();
-            case ACTION -> current.usedCapacity + ing.capacityRequired() <= current.capacity;
+            case EFFECT, ACTION -> hasAvailableCapacity(current, ing);
             default -> true;
         };
     }
@@ -384,6 +407,19 @@ public final class Brews {
 
     public static boolean blockedByCapacity(List<Item> items) {
         return resolveBrew(items).blockedByCapacity;
+    }
+
+    public static int availableCapacity(List<Item> items) {
+        return resolveBrew(items).capacity;
+    }
+
+    public static int usedCapacity(List<Item> items) {
+        return resolveBrew(items).usedCapacity;
+    }
+
+    public static int remainingCapacity(List<Item> items) {
+        Resolution resolved = resolveBrew(items);
+        return resolved.capacity - resolved.usedCapacity;
     }
 
     public static Dispersal dispersal(List<Item> items) {
@@ -619,14 +655,26 @@ public final class Brews {
         long b = 0;
         int count = 0;
         Integer forcedColor = null;
+        int capacity = 0;
+        int usedCapacity = 0;
         for (Ingredient ing : resolve(items)) {
-            if (ing.kind() == Ingredient.Kind.EFFECT || ing.kind() == Ingredient.Kind.ACTION) {
-                r += (ing.color() >> 16) & 0xFF;
-                g += (ing.color() >> 8) & 0xFF;
-                b += ing.color() & 0xFF;
-                count++;
-            } else if (ing.kind() == Ingredient.Kind.COLOR) {
-                forcedColor = ing.color();
+            switch (ing.kind()) {
+                case CAPACITY -> {
+                    if (capacity < ing.capacityCeiling()) {
+                        capacity += ing.capacityIncrement();
+                    }
+                }
+                case EFFECT, ACTION -> {
+                    if (ing.capacityRequired() <= capacity - usedCapacity) {
+                        r += (ing.color() >> 16) & 0xFF;
+                        g += (ing.color() >> 8) & 0xFF;
+                        b += ing.color() & 0xFF;
+                        count++;
+                        usedCapacity += ing.capacityRequired();
+                    }
+                }
+                case COLOR -> forcedColor = ing.color();
+                default -> { }
             }
         }
         if (forcedColor != null) {
@@ -668,13 +716,16 @@ public final class Brews {
                 }
                 case INVERT -> pendingInvert = true;
                 case EFFECT -> {
-                    Holder<MobEffect> effect = pendingInvert && ing.inverted() != null ? ing.inverted() : ing.effect();
-                    primary = Component.translatable(effect.value().getDescriptionId());
-                    strong = strength > 0;
-                    lengthy = duration > 0;
-                    strength = 0;
-                    duration = 0;
-                    pendingInvert = false;
+                    if (ing.capacityRequired() <= capacity - usedCapacity) {
+                        Holder<MobEffect> effect = pendingInvert && ing.inverted() != null ? ing.inverted() : ing.effect();
+                        primary = Component.translatable(effect.value().getDescriptionId());
+                        strong = strength > 0;
+                        lengthy = duration > 0;
+                        usedCapacity += ing.capacityRequired();
+                        strength = 0;
+                        duration = 0;
+                        pendingInvert = false;
+                    }
                 }
                 case ACTION -> {
                     if (usedCapacity + ing.capacityRequired() <= capacity) {
@@ -701,14 +752,28 @@ public final class Brews {
     public static int power(List<Item> items) {
         int appliedStrength = 0;
         int strength = 0;
+        int capacity = 0;
+        int usedCapacity = 0;
         for (Ingredient ing : resolve(items)) {
-            if (ing.kind() == Ingredient.Kind.STRENGTH) {
-                if (strength < ing.modifierCeiling()) {
-                    strength++;
+            switch (ing.kind()) {
+                case CAPACITY -> {
+                    if (capacity < ing.capacityCeiling()) {
+                        capacity += ing.capacityIncrement();
+                    }
                 }
-            } else if (ing.kind() == Ingredient.Kind.EFFECT || ing.kind() == Ingredient.Kind.ACTION) {
-                appliedStrength = Math.max(appliedStrength, strength);
-                strength = 0;
+                case STRENGTH -> {
+                    if (strength < ing.modifierCeiling()) {
+                        strength++;
+                    }
+                }
+                case EFFECT, ACTION -> {
+                    if (ing.capacityRequired() <= capacity - usedCapacity) {
+                        appliedStrength = Math.max(appliedStrength, strength);
+                        usedCapacity += ing.capacityRequired();
+                        strength = 0;
+                    }
+                }
+                default -> { }
             }
         }
         appliedStrength = Math.max(appliedStrength, strength);

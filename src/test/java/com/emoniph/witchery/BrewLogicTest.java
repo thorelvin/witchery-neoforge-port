@@ -33,10 +33,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class BrewLogicTest {
 
+    private static List<Item> level1(Item... ingredients) {
+        return withCapacity(List.of(WitcheryItems.MANDRAKE_ROOT.get()), ingredients);
+    }
+
+    private static List<Item> level2(Item... ingredients) {
+        return withCapacity(List.of(Items.NETHER_WART), ingredients);
+    }
+
+    private static List<Item> level4(Item... ingredients) {
+        return withCapacity(List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get()), ingredients);
+    }
+
+    private static List<Item> withCapacity(List<Item> capacity, Item... ingredients) {
+        java.util.ArrayList<Item> items = new java.util.ArrayList<>(capacity);
+        items.addAll(List.of(ingredients));
+        return List.copyOf(items);
+    }
+
     @Test
     void glowstoneStrengthensNextEffect() {
         Brews.bootstrap();
-        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.SPIDER_EYE));
+        List<MobEffectInstance> fx = Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.SPIDER_EYE));
         assertEquals(1, fx.size(), "one effect");
         assertSame(MobEffects.POISON.value(), fx.get(0).getEffect().value(), "poison");
         assertEquals(1, fx.get(0).getAmplifier(), "amplifier raised by one glowstone");
@@ -46,23 +64,23 @@ class BrewLogicTest {
     void redstoneExtendsDuration() {
         Brews.bootstrap();
         // Spider Eye source poison duration is 900 ticks; one Redstone doubles to 1800.
-        assertEquals(1800, Brews.buildEffects(List.of(Items.REDSTONE, Items.SPIDER_EYE)).get(0).getDuration());
+        assertEquals(1800, Brews.buildEffects(level2(Items.REDSTONE, Items.SPIDER_EYE)).get(0).getDuration());
     }
 
     @Test
     void sourceStrengthModifiersUseCappedTiers() {
         Brews.bootstrap();
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))
                         .get(0).getAmplifier(),
                 "repeated Glowstone Dust is capped at source strength tier 1");
-        assertEquals(2, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.SUGAR))
+        assertEquals(2, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.SUGAR))
                         .get(0).getAmplifier(),
                 "Blaze Rod opens source strength tier 2");
-        assertEquals(3, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+        assertEquals(3, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR))
                         .get(0).getAmplifier(),
                 "vanilla potion effects use the old default strength ceiling");
-        assertEquals(4, Brews.power(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+        assertEquals(4, Brews.power(level2(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR)),
                 "Charged Attuned Stone contributes the third source strength modifier tier");
     }
@@ -70,13 +88,13 @@ class BrewLogicTest {
     @Test
     void sourceDurationModifiersUseCappedTiers() {
         Brews.bootstrap();
-        assertEquals(1800, Brews.buildEffects(List.of(Items.REDSTONE, Items.REDSTONE, Items.SPIDER_EYE))
+        assertEquals(1800, Brews.buildEffects(level2(Items.REDSTONE, Items.REDSTONE, Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "repeated Redstone is capped at source duration tier 1");
-        assertEquals(2700, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN, Items.SPIDER_EYE))
+        assertEquals(2700, Brews.buildEffects(level2(Items.REDSTONE, Items.OBSIDIAN, Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "Obsidian opens source duration tier 2");
-        assertEquals(3600, Brews.buildEffects(List.of(Items.REDSTONE, Items.OBSIDIAN,
+        assertEquals(3600, Brews.buildEffects(level2(Items.REDSTONE, Items.OBSIDIAN,
                         WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE))
                         .get(0).getDuration(),
                 "Mindrake Bulb represents the old Mindrake seed duration tier 3");
@@ -86,14 +104,14 @@ class BrewLogicTest {
     void fermentedSpiderEyeInverts() {
         Brews.bootstrap();
         assertSame(MobEffects.POISON.value(),
-                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)).get(0).getEffect().value(),
+                Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)).get(0).getEffect().value(),
                 "source Spider Eye has no separate inverted potion");
         assertSame(MobEffects.POISON.value(),
-                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE))
+                Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE))
                         .get(0).getEffect().value(),
                 "source Fermented Spider Eye sets inversion instead of toggling it off");
         assertSame(MobEffects.POISON.value(),
-                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.GHAST_TEAR)).get(0).getEffect().value(),
+                Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.GHAST_TEAR)).get(0).getEffect().value(),
                 "Ghast Tear owns the source Regeneration/Poison inversion pair");
         assertEquals(25, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.SPIDER_EYE)),
                 "source Fermented Spider Eye modifier costs 25 altar power");
@@ -102,23 +120,23 @@ class BrewLogicTest {
     @Test
     void sourceVanillaPotionIngredientsUseOldDurationsInversionsAndCosts() {
         Brews.bootstrap();
-        List<MobEffectInstance> sugar = Brews.buildEffects(List.of(Items.SUGAR));
+        List<MobEffectInstance> sugar = Brews.buildEffects(level2(Items.SUGAR));
         assertSame(MobEffects.SPEED.value(), sugar.get(0).getEffect().value(), "Sugar makes Move Speed");
         assertEquals(3600, sugar.get(0).getDuration(), "Sugar source duration is three minutes");
         assertEquals(100, Brews.powerCost(List.of(Items.SUGAR)), "Sugar source altar cost");
 
-        List<MobEffectInstance> slow = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.SUGAR));
+        List<MobEffectInstance> slow = Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.SUGAR));
         assertSame(MobEffects.SLOWNESS.value(), slow.get(0).getEffect().value(), "inverted Sugar makes Slowness");
         assertEquals(1800, slow.get(0).getDuration(), "source Slowness duration is ninety seconds");
         assertEquals(125, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.SUGAR)),
                 "inverted Sugar counts Fermented Spider Eye plus Sugar power");
 
-        assertEquals(900, Brews.buildEffects(List.of(Items.SPIDER_EYE)).get(0).getDuration(),
+        assertEquals(900, Brews.buildEffects(level2(Items.SPIDER_EYE)).get(0).getDuration(),
                 "Spider Eye source poison duration is forty-five seconds");
         assertEquals(100, Brews.powerCost(List.of(Items.PUFFERFISH)), "Pufferfish source altar cost");
         assertEquals(100, Brews.powerCost(List.of(Items.MAGMA_CREAM)), "Magma Cream source altar cost");
         assertSame(MobEffects.INVISIBILITY.value(),
-                Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.GOLDEN_CARROT)).get(0).getEffect().value(),
+                Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.GOLDEN_CARROT)).get(0).getEffect().value(),
                 "Golden Carrot inverts to Invisibility in source");
         assertEquals(200, Brews.powerCost(List.of(Items.GOLDEN_CARROT)), "Golden Carrot source altar cost");
         assertEquals(200, Brews.powerCost(List.of(Items.GHAST_TEAR)), "Ghast Tear source altar cost");
@@ -127,21 +145,21 @@ class BrewLogicTest {
     @Test
     void glisteringMelonUsesSourceInstantHealingAndHarming() {
         Brews.bootstrap();
-        List<MobEffectInstance> healing = Brews.buildEffects(List.of(Items.GLISTERING_MELON_SLICE));
+        List<MobEffectInstance> healing = Brews.buildEffects(level2(Items.GLISTERING_MELON_SLICE));
         assertSame(MobEffects.INSTANT_HEALTH.value(), healing.get(0).getEffect().value(),
                 "Glistering Melon makes source Healing");
         assertEquals(0, healing.get(0).getDuration(), "source Healing is instant");
         assertEquals(200, Brews.powerCost(List.of(Items.GLISTERING_MELON_SLICE)),
                 "Glistering Melon source altar cost");
 
-        List<MobEffectInstance> harming = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE,
+        List<MobEffectInstance> harming = Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE,
                 Items.GLISTERING_MELON_SLICE));
         assertSame(MobEffects.INSTANT_DAMAGE.value(), harming.get(0).getEffect().value(),
                 "inverted Glistering Melon makes source Harming");
         assertEquals(225, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.GLISTERING_MELON_SLICE)),
                 "inverted Glistering Melon counts Fermented Spider Eye plus source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
                 "source Healing/Harming keeps the old strength ceiling of one");
     }
@@ -149,14 +167,14 @@ class BrewLogicTest {
     @Test
     void blazePowderRestoresSourceDamageBoostAndWeakness() {
         Brews.bootstrap();
-        List<MobEffectInstance> strength = Brews.buildEffects(List.of(Items.BLAZE_POWDER));
+        List<MobEffectInstance> strength = Brews.buildEffects(level2(Items.BLAZE_POWDER));
         assertEquals(1, strength.size(), "Blaze Powder resolves as an effect ingredient");
         assertSame(MobEffects.STRENGTH.value(), strength.get(0).getEffect().value(),
                 "Blaze Powder makes source Damage Boost / Strength");
         assertEquals(3600, strength.get(0).getDuration(), "source Damage Boost lasts three minutes");
         assertEquals(200, Brews.powerCost(List.of(Items.BLAZE_POWDER)), "Blaze Powder source effect power");
 
-        List<MobEffectInstance> weakness = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.BLAZE_POWDER));
+        List<MobEffectInstance> weakness = Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.BLAZE_POWDER));
         assertSame(MobEffects.WEAKNESS.value(), weakness.get(0).getEffect().value(),
                 "inverted Blaze Powder makes Weakness");
         assertEquals(1800, weakness.get(0).getDuration(), "source Weakness duration is ninety seconds");
@@ -167,14 +185,14 @@ class BrewLogicTest {
     @Test
     void leatherRestoresSourceJumpBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> jump = Brews.buildEffects(List.of(Items.LEATHER));
+        List<MobEffectInstance> jump = Brews.buildEffects(level2(Items.LEATHER));
         assertEquals(1, jump.size(), "Leather resolves as the old Jump effect ingredient");
         assertSame(MobEffects.JUMP_BOOST.value(), jump.get(0).getEffect().value(),
                 "source Jump uses the vanilla Jump Boost potion");
         assertEquals(3600, jump.get(0).getDuration(), "source Jump lasts three minutes");
         assertEquals(200, Brews.powerCost(List.of(Items.LEATHER)), "Leather source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.LEATHER)).get(0).getAmplifier(),
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.LEATHER)).get(0).getAmplifier(),
                 "source Jump accepts the normal strength modifier path");
         assertFalse(Brews.isIngredient(Items.RABBIT_FOOT),
                 "Rabbit Foot is a modern vanilla brewing item, not the old Witchery Jump ingredient");
@@ -183,14 +201,14 @@ class BrewLogicTest {
     @Test
     void featherRestoresSourceFeatherFallBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> featherFall = Brews.buildEffects(List.of(Items.FEATHER));
+        List<MobEffectInstance> featherFall = Brews.buildEffects(level2(Items.FEATHER));
         assertEquals(1, featherFall.size(), "Feather resolves as the old Feather Fall effect ingredient");
         assertSame(WitcheryMobEffects.FEATHER_FALL.value(), featherFall.get(0).getEffect().value(),
                 "Feather uses Witchery's source Feather Fall effect instead of vanilla Slow Falling");
         assertEquals(1200, featherFall.get(0).getDuration(), "source Feather Fall lasts one minute");
         assertEquals(100, Brews.powerCost(List.of(Items.FEATHER)), "Feather Fall source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.FEATHER)).get(0).getAmplifier(),
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.FEATHER)).get(0).getAmplifier(),
                 "source Feather Fall accepts the normal strength modifier path");
         assertFalse(Brews.isIngredient(Items.PHANTOM_MEMBRANE),
                 "Phantom Membrane is a modern placeholder, not the old Witchery Feather Fall ingredient");
@@ -211,7 +229,7 @@ class BrewLogicTest {
     @Test
     void brambleRestoresSourceRepellAttackerBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> repell = Brews.buildEffects(List.of(WitcheryItems.BRAMBLE.get()));
+        List<MobEffectInstance> repell = Brews.buildEffects(level2(WitcheryItems.BRAMBLE.get()));
         assertEquals(1, repell.size(), "Bramble resolves as the old Repell Attacker effect ingredient");
         assertSame(WitcheryMobEffects.REPELL_ATTACKER.value(), repell.get(0).getEffect().value(),
                 "source Bramble uses Witchery's Repell Attacker potion");
@@ -219,7 +237,7 @@ class BrewLogicTest {
         assertEquals(250, Brews.powerCost(List.of(WitcheryItems.BRAMBLE.get())),
                 "Repell Attacker source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, WitcheryItems.BRAMBLE.get()))
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, WitcheryItems.BRAMBLE.get()))
                         .get(0).getAmplifier(),
                 "source Repell Attacker accepts the normal strength modifier path");
     }
@@ -227,14 +245,14 @@ class BrewLogicTest {
     @Test
     void sugarCaneRestoresSourceFloatingBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> floating = Brews.buildEffects(List.of(Items.SUGAR_CANE));
+        List<MobEffectInstance> floating = Brews.buildEffects(level2(Items.SUGAR_CANE));
         assertEquals(1, floating.size(), "Sugar Cane resolves as the old Floating effect ingredient");
         assertSame(WitcheryMobEffects.FLOATING.value(), floating.get(0).getEffect().value(),
                 "source Sugar Cane uses Witchery's Floating potion");
         assertEquals(1800, floating.get(0).getDuration(), "source Floating lasts ninety seconds");
         assertEquals(250, Brews.powerCost(List.of(Items.SUGAR_CANE)), "Floating source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.SUGAR_CANE))
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.SUGAR_CANE))
                         .get(0).getAmplifier(),
                 "source Floating accepts the normal strength modifier path");
     }
@@ -251,14 +269,14 @@ class BrewLogicTest {
     @Test
     void redMushroomRestoresSourcePoisonWeaponsBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> poisonWeapons = Brews.buildEffects(List.of(Items.RED_MUSHROOM));
+        List<MobEffectInstance> poisonWeapons = Brews.buildEffects(level2(Items.RED_MUSHROOM));
         assertEquals(1, poisonWeapons.size(), "Red Mushroom resolves as the old Poison Weapons effect ingredient");
         assertSame(WitcheryMobEffects.POISON_WEAPONS.value(), poisonWeapons.get(0).getEffect().value(),
                 "source Red Mushroom uses Witchery's Poison Weapons potion");
         assertEquals(1800, poisonWeapons.get(0).getDuration(), "source Poison Weapons lasts ninety seconds");
         assertEquals(200, Brews.powerCost(List.of(Items.RED_MUSHROOM)), "Poison Weapons source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.RED_MUSHROOM))
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.RED_MUSHROOM))
                         .get(0).getAmplifier(),
                 "source Poison Weapons accepts the normal strength modifier path");
     }
@@ -289,14 +307,14 @@ class BrewLogicTest {
     @Test
     void cobwebRestoresSourceProjectileBrewPair() {
         Brews.bootstrap();
-        List<MobEffectInstance> reflect = Brews.buildEffects(List.of(Items.COBWEB));
+        List<MobEffectInstance> reflect = Brews.buildEffects(level2(Items.COBWEB));
         assertEquals(1, reflect.size(), "Cobweb resolves as the old Reflect Projectiles effect ingredient");
         assertSame(WitcheryMobEffects.REFLECT_PROJECTILES.value(), reflect.get(0).getEffect().value(),
                 "source Cobweb uses Witchery's Reflect Projectiles potion");
         assertEquals(1800, reflect.get(0).getDuration(), "source Reflect Projectiles lasts ninety seconds");
         assertEquals(250, Brews.powerCost(List.of(Items.COBWEB)), "Reflect Projectiles source effect power");
 
-        List<MobEffectInstance> attract = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.COBWEB));
+        List<MobEffectInstance> attract = Brews.buildEffects(level2(Items.FERMENTED_SPIDER_EYE, Items.COBWEB));
         assertSame(WitcheryMobEffects.ATTRACT_PROJECTILES.value(), attract.get(0).getEffect().value(),
                 "inverted source Cobweb uses Witchery's Attract Projectiles potion");
         assertEquals(900, attract.get(0).getDuration(), "source Attract Projectiles lasts forty-five seconds");
@@ -307,7 +325,7 @@ class BrewLogicTest {
     @Test
     void enderDewRestoresSourceEnderInhibitionBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> effects = Brews.buildEffects(List.of(WitcheryItems.ENDER_DEW.get()));
+        List<MobEffectInstance> effects = Brews.buildEffects(level1(WitcheryItems.ENDER_DEW.get()));
         assertEquals(1, effects.size(), "Ender Dew resolves as the old Ender Inhibition effect ingredient");
         assertSame(WitcheryMobEffects.ENDER_INHIBITION.value(), effects.get(0).getEffect().value(),
                 "source Ender Dew uses Witchery's Ender Inhibition potion");
@@ -319,27 +337,27 @@ class BrewLogicTest {
     @Test
     void skullAndApplesRestoreSourceVanillaEffectBrews() {
         Brews.bootstrap();
-        List<MobEffectInstance> wither = Brews.buildEffects(List.of(Items.WITHER_SKELETON_SKULL));
+        List<MobEffectInstance> wither = Brews.buildEffects(level4(Items.WITHER_SKELETON_SKULL));
         assertEquals(1, wither.size(), "Wither Skeleton Skull resolves as the old Wither brew ingredient");
         assertSame(MobEffects.WITHER.value(), wither.get(0).getEffect().value(),
                 "source skull metadata 1 makes vanilla Wither");
         assertEquals(300, wither.get(0).getDuration(), "source Wither brew lasts fifteen seconds");
         assertEquals(200, Brews.powerCost(List.of(Items.WITHER_SKELETON_SKULL)), "Wither source effect power");
 
-        List<MobEffectInstance> absorption = Brews.buildEffects(List.of(Items.GOLDEN_APPLE));
+        List<MobEffectInstance> absorption = Brews.buildEffects(level4(Items.GOLDEN_APPLE));
         assertSame(MobEffects.ABSORPTION.value(), absorption.get(0).getEffect().value(),
                 "source Golden Apple metadata 0 makes Absorption");
         assertEquals(600, absorption.get(0).getDuration(), "source Absorbsion brew lasts thirty seconds");
         assertEquals(1000, Brews.powerCost(List.of(Items.GOLDEN_APPLE)), "Absorption source effect power");
 
-        List<MobEffectInstance> healthBoost = Brews.buildEffects(List.of(Items.ENCHANTED_GOLDEN_APPLE));
+        List<MobEffectInstance> healthBoost = Brews.buildEffects(level4(Items.ENCHANTED_GOLDEN_APPLE));
         assertSame(MobEffects.HEALTH_BOOST.value(), healthBoost.get(0).getEffect().value(),
                 "source Golden Apple metadata 1 maps to modern Enchanted Golden Apple and Health Boost");
         assertEquals(2400, healthBoost.get(0).getDuration(), "source Health Boost brew lasts two minutes");
         assertEquals(1000, Brews.powerCost(List.of(Items.ENCHANTED_GOLDEN_APPLE)),
                 "Health Boost source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.WITHER_SKELETON_SKULL))
+        assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, Items.WITHER_SKELETON_SKULL))
                         .get(0).getAmplifier(),
                 "these vanilla effect brews use the normal source strength modifier path");
     }
@@ -347,14 +365,14 @@ class BrewLogicTest {
     @Test
     void inkSacRestoresSourceBlindnessBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> blindness = Brews.buildEffects(List.of(Items.INK_SAC));
+        List<MobEffectInstance> blindness = Brews.buildEffects(level4(Items.INK_SAC));
         assertEquals(1, blindness.size(), "Ink Sac resolves as the old Blindness brew ingredient");
         assertSame(MobEffects.BLINDNESS.value(), blindness.get(0).getEffect().value(),
                 "source Dye.INK_SAC makes vanilla Blindness");
         assertEquals(300, blindness.get(0).getDuration(), "source Blindness brew lasts fifteen seconds");
         assertEquals(1000, Brews.powerCost(List.of(Items.INK_SAC)), "Blindness source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.INK_SAC)).get(0).getAmplifier(),
+        assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, Items.INK_SAC)).get(0).getAmplifier(),
                 "source Blindness accepts the normal strength modifier path");
     }
 
@@ -371,14 +389,14 @@ class BrewLogicTest {
     @Test
     void wheatRestoresSourceMoonshineBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> moonshine = Brews.buildEffects(List.of(Items.WHEAT));
+        List<MobEffectInstance> moonshine = Brews.buildEffects(level1(Items.WHEAT));
         assertEquals(1, moonshine.size(), "Wheat resolves as the old Moonshine effect ingredient");
         assertSame(WitcheryMobEffects.MOONSHINE.value(), moonshine.get(0).getEffect().value(),
                 "source Moonshine uses Witchery's Feel No Pain potion behavior");
         assertEquals(1800, moonshine.get(0).getDuration(), "source Moonshine lasts ninety seconds");
         assertEquals(0, Brews.powerCost(List.of(Items.WHEAT)), "Moonshine has no source altar cost");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.WHEAT)).get(0).getAmplifier(),
+        assertEquals(1, Brews.buildEffects(level1(Items.GLOWSTONE_DUST, Items.WHEAT)).get(0).getAmplifier(),
                 "source Moonshine accepts the normal strength modifier path");
         assertEquals(50, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.WHEAT)),
                 "only the source Glowstone modifier costs altar power");
@@ -387,7 +405,7 @@ class BrewLogicTest {
     @Test
     void wolfsbaneRestoresSourceBrewMarker() {
         Brews.bootstrap();
-        List<MobEffectInstance> wolfsbane = Brews.buildEffects(List.of(WitcheryItems.WOLFSBANE_FLOWER.get()));
+        List<MobEffectInstance> wolfsbane = Brews.buildEffects(level1(WitcheryItems.WOLFSBANE_FLOWER.get()));
         assertEquals(1, wolfsbane.size(), "Wolfsbane resolves as the old source potion marker");
         assertSame(WitcheryMobEffects.WOLFSBANE.value(), wolfsbane.get(0).getEffect().value(),
                 "source Wolfsbane uses Witchery's plain Wolfsbane potion marker");
@@ -399,7 +417,7 @@ class BrewLogicTest {
     @Test
     void foulFumeRestoresSourceStoutBellyBrew() {
         Brews.bootstrap();
-        List<MobEffectInstance> stoutBelly = Brews.buildEffects(List.of(WitcheryItems.FOUL_FUME.get()));
+        List<MobEffectInstance> stoutBelly = Brews.buildEffects(level4(WitcheryItems.FOUL_FUME.get()));
         assertEquals(1, stoutBelly.size(), "Foul Fume resolves as the old Stout Belly effect ingredient");
         assertSame(WitcheryMobEffects.STOUT_BELLY.value(), stoutBelly.get(0).getEffect().value(),
                 "source Foul Fume uses Witchery's Stout Belly potion");
@@ -407,7 +425,7 @@ class BrewLogicTest {
         assertEquals(1000, Brews.powerCost(List.of(WitcheryItems.FOUL_FUME.get())),
                 "Stout Belly source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, WitcheryItems.FOUL_FUME.get()))
+        assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, WitcheryItems.FOUL_FUME.get()))
                         .get(0).getAmplifier(),
                 "source Stout Belly accepts the normal strength modifier path");
     }
@@ -514,9 +532,9 @@ class BrewLogicTest {
     @Test
     void woolColorModifiersForceBottleTint() {
         Brews.bootstrap();
-        assertEquals(12464176, Brews.color(List.of(Items.RED_WOOL, Items.SPIDER_EYE)),
+        assertEquals(12464176, Brews.color(level2(Items.RED_WOOL, Items.SPIDER_EYE)),
                 "red wool uses the old Witchery dye RGB");
-        assertEquals(2247599, Brews.color(List.of(Items.RED_WOOL, Items.BLUE_WOOL, Items.SPIDER_EYE)),
+        assertEquals(2247599, Brews.color(level2(Items.RED_WOOL, Items.BLUE_WOOL, Items.SPIDER_EYE)),
                 "latest wool colour modifier wins");
     }
 
@@ -524,7 +542,7 @@ class BrewLogicTest {
     void modifiersResetBetweenEffects() {
         Brews.bootstrap();
         // Glowstone strengthens only the FIRST effect; the second resets to amplifier 0.
-        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.SPIDER_EYE, Items.SUGAR));
+        List<MobEffectInstance> fx = Brews.buildEffects(level4(Items.GLOWSTONE_DUST, Items.SPIDER_EYE, Items.SUGAR));
         assertEquals(2, fx.size(), "two effects");
         assertEquals(1, fx.get(0).getAmplifier(), "first strengthened");
         assertEquals(0, fx.get(1).getAmplifier(), "second reset");
@@ -548,6 +566,30 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceCapacityIngredientsGatePotionEffects() {
+        Brews.bootstrap();
+        Item tear = WitcheryItems.TEAR_OF_GODDESS.get();
+
+        assertFalse(Brews.canAdd(List.of(), Items.SPIDER_EYE),
+                "source level-2 potion effects cannot be stirred before any capacity modifier");
+        assertFalse(Brews.canAdd(List.of(WitcheryItems.MANDRAKE_ROOT.get()), Items.SPIDER_EYE),
+                "Mandrake Root alone only opens level 1, below Spider Eye's level-2 cost");
+        assertTrue(Brews.canAdd(List.of(Items.NETHER_WART), Items.SPIDER_EYE),
+                "Nether Wart opens enough level capacity for common level-2 potion effects");
+        assertFalse(Brews.canAdd(List.of(Items.NETHER_WART), Items.INK_SAC),
+                "Nether Wart alone is below the source level-4 Blindness cost");
+        assertTrue(Brews.canAdd(List.of(Items.NETHER_WART, tear), Items.INK_SAC),
+                "Nether Wart plus Tear of the Goddess reaches source level 4");
+
+        assertTrue(Brews.buildEffects(List.of(Items.SPIDER_EYE)).isEmpty(),
+                "under-capacity potion effects resolve inertly like source application skips");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.SPIDER_EYE)));
+        assertEquals(2, Brews.availableCapacity(level2()));
+        assertEquals(2, Brews.usedCapacity(level2(Items.SPIDER_EYE)));
+        assertEquals(0, Brews.remainingCapacity(level2(Items.SPIDER_EYE)));
+    }
+
+    @Test
     void sourceModifierPowerCostsAreCounted() {
         Brews.bootstrap();
         assertEquals(250, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.SUGAR)),
@@ -560,9 +602,9 @@ class BrewLogicTest {
     @Test
     void sourceDrinkSpeedModifiersAreCounted() {
         Brews.bootstrap();
-        assertEquals(24, Brews.drinkDuration(List.of(WitcheryItems.ROWAN_BERRIES.get(), Items.SPIDER_EYE)),
+        assertEquals(24, Brews.drinkDuration(level2(WitcheryItems.ROWAN_BERRIES.get(), Items.SPIDER_EYE)),
                 "Rowan Berries subtract eight ticks from the source drink time");
-        assertEquals(16, Brews.drinkDuration(List.of(WitcheryItems.ROWAN_BERRIES.get(),
+        assertEquals(16, Brews.drinkDuration(level2(WitcheryItems.ROWAN_BERRIES.get(),
                         WitcheryItems.EXHALE_OF_HORNED_ONE.get(), WitcheryItems.SPANISH_MOSS.get(), Items.SPIDER_EYE)),
                 "Rowan Berries, Exhale of the Horned One, and Spanish Moss stack as source fast-drink modifiers");
         assertEquals(100, Brews.powerCost(List.of(WitcheryItems.ROWAN_BERRIES.get(),
@@ -575,13 +617,13 @@ class BrewLogicTest {
     @Test
     void sourceImpactExtentModifiersUseCappedTiers() {
         Brews.bootstrap();
-        assertEquals(1, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), WitcheryItems.WOOD_ASH.get(),
+        assertEquals(1, Brews.impactExtent(level2(WitcheryItems.WOOD_ASH.get(), WitcheryItems.WOOD_ASH.get(),
                         Items.SPIDER_EYE)),
                 "repeated Wood Ash is capped at source extent tier 1");
-        assertEquals(2, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
+        assertEquals(2, Brews.impactExtent(level2(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
                         Items.SPIDER_EYE)),
                 "Cocoa Beans open source extent tier 2");
-        assertEquals(3, Brews.impactExtent(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
+        assertEquals(3, Brews.impactExtent(level2(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
                         WitcheryItems.WISPY_COTTON.get(), Items.SPIDER_EYE)),
                 "Wispy Cotton opens source extent tier 3");
         assertEquals(400, Brews.powerCost(List.of(WitcheryItems.WOOD_ASH.get(), Items.COCOA_BEANS,
@@ -592,7 +634,7 @@ class BrewLogicTest {
     @Test
     void sourceNoParticlesModifierMarksNextEffectAmbientOnly() {
         Brews.bootstrap();
-        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.GOLD_NUGGET, Items.SPIDER_EYE, Items.SUGAR));
+        List<MobEffectInstance> fx = Brews.buildEffects(level4(Items.GOLD_NUGGET, Items.SPIDER_EYE, Items.SUGAR));
         assertEquals(2, fx.size(), "Gold Nugget modifies the next effect without removing later effects");
         assertTrue(fx.get(0).isAmbient(), "source noParticles flag maps to the old ambient potion-effect flag");
         assertTrue(fx.get(0).isVisible(), "Resurrected preserved visible potion particles while marking the effect ambient");
@@ -609,11 +651,11 @@ class BrewLogicTest {
     @Test
     void sourceDisablePowerLimitBypassesEffectStrengthCeiling() {
         Brews.bootstrap();
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
                 "source Healing/Harming normally caps at strength ceiling one");
 
-        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
+        List<MobEffectInstance> fx = Brews.buildEffects(level2(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
                 Items.BLAZE_ROD, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE));
         assertEquals(3, fx.get(0).getAmplifier(),
                 "old fish metadata 2 disables the effect strength ceiling for the following potion effect");
@@ -625,7 +667,7 @@ class BrewLogicTest {
     @Test
     void sourceDisablePowerLimitPersistsThroughEffectReset() {
         Brews.bootstrap();
-        List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH,
+        List<MobEffectInstance> fx = Brews.buildEffects(level4(Items.TROPICAL_FISH,
                 Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.GLISTERING_MELON_SLICE,
                 Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.GLISTERING_MELON_SLICE));
         assertEquals(2, fx.size(), "two Healing effects resolve");
