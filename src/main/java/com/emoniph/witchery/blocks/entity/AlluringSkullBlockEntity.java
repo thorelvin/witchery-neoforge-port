@@ -25,8 +25,11 @@ public class AlluringSkullBlockEntity extends BlockEntity {
     private static final double RANGE = 64.0;
     private static final double VERTICAL_RANGE = 10.0;
     private static final double PATH_SPEED = 1.0;
-    private static final String KEY_ROTATION = "Rotation";
+    private static final String SOURCE_SKULL_TYPE_KEY = "SkullType";
+    private static final String SOURCE_ROTATION_KEY = "Rot";
+    private static final String LEGACY_PORT_ROTATION_KEY = "Rotation";
 
+    private int skullType = -1;
     private int rotationSegment;
     private int quadrant;
     private long ticks;
@@ -35,20 +38,37 @@ public class AlluringSkullBlockEntity extends BlockEntity {
         super(WitcheryBlockEntities.ALLURING_SKULL.get(), pos, state);
     }
 
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        applySkullTypeToBlockState();
+    }
+
     public int getRotationSegment() {
         return rotationSegment;
     }
 
-    public void setRotationSegment(int rotationSegment) {
-        if (this.rotationSegment == rotationSegment) {
+    public int getSkullType() {
+        return normalizeSkullType(skullType >= 0 ? skullType : skullTypeFromBlockState(getBlockState()));
+    }
+
+    public void setSkullType(int skullType) {
+        int normalized = normalizeSkullType(skullType);
+        if (this.skullType == normalized && skullTypeFromBlockState(getBlockState()) == normalized) {
             return;
         }
-        this.rotationSegment = rotationSegment;
-        setChanged();
-        if (level != null) {
-            BlockState state = getBlockState();
-            level.sendBlockUpdated(worldPosition, state, state, 3);
+        this.skullType = normalized;
+        applySkullTypeToBlockState();
+        sync();
+    }
+
+    public void setRotationSegment(int rotationSegment) {
+        int normalized = normalizeRotation(rotationSegment);
+        if (this.rotationSegment == normalized) {
+            return;
         }
+        this.rotationSegment = normalized;
+        sync();
     }
 
     @Nullable
@@ -65,13 +85,19 @@ public class AlluringSkullBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putInt(KEY_ROTATION, rotationSegment);
+        tag.putByte(SOURCE_SKULL_TYPE_KEY, (byte) getSkullType());
+        tag.putByte(SOURCE_ROTATION_KEY, (byte) rotationSegment);
+        tag.putInt(LEGACY_PORT_ROTATION_KEY, rotationSegment);
     }
 
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        rotationSegment = tag.getIntOr(KEY_ROTATION, 0);
+        int defaultSkullType = skullTypeFromBlockState(getBlockState());
+        skullType = normalizeSkullType(Byte.toUnsignedInt(tag.getByteOr(SOURCE_SKULL_TYPE_KEY, (byte) defaultSkullType)));
+        int legacyRotation = tag.getIntOr(LEGACY_PORT_ROTATION_KEY, 0);
+        rotationSegment = normalizeRotation(Byte.toUnsignedInt(tag.getByteOr(SOURCE_ROTATION_KEY, (byte) legacyRotation)));
+        applySkullTypeToBlockState();
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, AlluringSkullBlockEntity blockEntity) {
@@ -99,6 +125,40 @@ public class AlluringSkullBlockEntity extends BlockEntity {
         } else {
             ticks++;
         }
+    }
+
+    private void applySkullTypeToBlockState() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        BlockState state = getBlockState();
+        if (!state.hasProperty(AlluringSkullBlock.ON)) {
+            return;
+        }
+        boolean on = getSkullType() == 1;
+        if (state.getValue(AlluringSkullBlock.ON) != on) {
+            level.setBlock(worldPosition, state.setValue(AlluringSkullBlock.ON, on), 3);
+        }
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
+    }
+
+    private static int normalizeSkullType(int skullType) {
+        return skullType == 1 ? 1 : 0;
+    }
+
+    private static int normalizeRotation(int rotation) {
+        return rotation & 15;
+    }
+
+    private static int skullTypeFromBlockState(BlockState state) {
+        return state.hasProperty(AlluringSkullBlock.ON) && state.getValue(AlluringSkullBlock.ON) ? 1 : 0;
     }
 
     private static AABB quadrantBounds(BlockPos pos, int quadrant) {

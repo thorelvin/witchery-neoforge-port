@@ -97,11 +97,14 @@ public class AlluringSkullBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level.isClientSide() || state.getValue(FACING) != Direction.UP || !(level.getBlockEntity(pos) instanceof AlluringSkullBlockEntity skull)) {
+        if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof AlluringSkullBlockEntity skull)) {
             return;
         }
-        float rotation = placer != null ? placer.getYRot() : 0.0F;
-        skull.setRotationSegment(RotationSegment.convertToSegment(rotation));
+        skull.setSkullType(state.getValue(ON) ? 1 : 0);
+        if (state.getValue(FACING) == Direction.UP) {
+            float rotation = placer != null ? placer.getYRot() : 0.0F;
+            skull.setRotationSegment(RotationSegment.convertToSegment(rotation));
+        }
     }
 
     @Override
@@ -148,7 +151,11 @@ public class AlluringSkullBlock extends BaseEntityBlock {
         }
 
         if (!state.getValue(ON)) {
-            level.setBlock(pos, state.setValue(ON, true), 3);
+            if (level.getBlockEntity(pos) instanceof AlluringSkullBlockEntity skull) {
+                skull.setSkullType(1);
+            } else {
+                level.setBlock(pos, state.setValue(ON, true), 3);
+            }
             playFeedback(level, pos, ParticleTypes.FLAME, SoundEvents.SKELETON_HORSE_DEATH);
         } else {
             playFeedback(level, pos, ParticleTypes.EXPLOSION, SoundEvents.SKELETON_HORSE_HURT);
