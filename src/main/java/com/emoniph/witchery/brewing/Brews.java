@@ -213,6 +213,8 @@ public final class Brews {
                 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x3F825D, 0, 1));
         register(Items.COD, Ingredient.effect(WitcheryMobEffects.SWIMMING,
                 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x0AC3A3, 0, 1));
+        register(Items.CLAY_BALL, Ingredient.effect(WitcheryMobEffects.FORTUNE,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5C3EBB, 1000, 6));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
                 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200, 2));
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100, 2));

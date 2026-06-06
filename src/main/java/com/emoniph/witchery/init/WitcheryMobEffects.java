@@ -5,6 +5,7 @@ import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
@@ -66,6 +67,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> SWIMMING =
             MOB_EFFECTS.register("swimming", () -> new SwimmingMobEffect(0x0AC3A3));
+
+    public static final DeferredHolder<MobEffect, MobEffect> FORTUNE =
+            MOB_EFFECTS.register("fortune", () -> new FortuneMobEffect(0x5C3EBB));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

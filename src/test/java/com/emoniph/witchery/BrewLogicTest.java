@@ -5,6 +5,7 @@ import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
+import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
@@ -45,6 +46,10 @@ class BrewLogicTest {
 
     private static List<Item> level4(Item... ingredients) {
         return withCapacity(List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get()), ingredients);
+    }
+
+    private static List<Item> level6(Item... ingredients) {
+        return withCapacity(List.of(WitcheryItems.PENTACLE.get()), ingredients);
     }
 
     private static List<Item> withCapacity(List<Item> capacity, Item... ingredients) {
@@ -474,6 +479,35 @@ class BrewLogicTest {
         assertFalse(SwimmingMobEffect.shouldBoostPlayer(true, true, true));
         assertTrue(SwimmingMobEffect.shouldBoostNonPlayer(13L, true, true));
         assertFalse(SwimmingMobEffect.shouldBoostNonPlayer(12L, true, true));
+    }
+
+    @Test
+    void clayBallRestoresSourceFortuneBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> fortune = Brews.buildEffects(level6(Items.CLAY_BALL));
+        assertEquals(1, fortune.size(), "Clay Ball resolves as the old Fortune effect ingredient");
+        assertSame(WitcheryMobEffects.FORTUNE.value(), fortune.get(0).getEffect().value(),
+                "source Clay Ball uses Witchery's Fortune potion");
+        assertEquals(3600, fortune.get(0).getDuration(), "source Fortune lasts three minutes");
+        assertEquals(2000, Brews.powerCost(level6(Items.CLAY_BALL)),
+                "Fortune source effect power plus Pentacle capacity power");
+        assertTrue(Brews.blockedByCapacity(level4(Items.CLAY_BALL)),
+                "source Fortune requires effect level 6 capacity");
+
+        assertEquals(1, Brews.buildEffects(level6(Items.GLOWSTONE_DUST, Items.CLAY_BALL)).get(0).getAmplifier(),
+                "source Fortune accepts the normal strength modifier path");
+    }
+
+    @Test
+    void fortuneEffectUsesSourceDropRules() {
+        assertTrue(FortuneMobEffect.shouldReplaceDrops(false, false, true));
+        assertFalse(FortuneMobEffect.shouldReplaceDrops(true, false, true));
+        assertFalse(FortuneMobEffect.shouldReplaceDrops(false, true, true));
+        assertFalse(FortuneMobEffect.shouldReplaceDrops(false, false, false));
+        assertEquals(1, FortuneMobEffect.sourceFortuneBonus(0));
+        assertEquals(1, FortuneMobEffect.sourceFortuneBonus(2));
+        assertEquals(2, FortuneMobEffect.sourceFortuneBonus(3));
+        assertEquals(4, FortuneMobEffect.boostedFortuneLevel(2, 3));
     }
 
     @Test
