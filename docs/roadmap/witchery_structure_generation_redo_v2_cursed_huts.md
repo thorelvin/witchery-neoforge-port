@@ -3,7 +3,7 @@
 **Target:** Minecraft 1.21.11 / NeoForge 21.11  
 **Project context:** This document is for adding new structure/world-generation gameplay to an already ported Witchery mod. It should extend existing Witchery systems, not redefine Witchery’s core gameplay.
 
-**Read this first:** start with [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md). This document is supporting detail for structure and worldgen implementation. It should not override the current handoff on scope, naming, or implementation order.
+**Read this first:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This document is supporting detail for structure and worldgen implementation. It should not override the current handoff on scope, naming, or implementation order.
 
 ---
 
@@ -818,7 +818,7 @@ Structure integrations:
 
 ## 14. Current Scope Note
 
-Read [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md) before using this file for implementation.
+Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) before using this file for implementation.
 
 This document now serves as supporting detail for:
 
@@ -826,7 +826,7 @@ This document now serves as supporting detail for:
 - hut states and cursed hut behavior
 - structure clues, chains, and ritual value
 
-Current implementation order, naming resolution, and Claude-facing constraints are centralized in the handoff file and the additive gameplay spec.
+Current implementation order, naming resolution, and agent-facing constraints are centralized in the handoff file and the additive gameplay spec.
 
 ---
 

@@ -32,12 +32,30 @@ bin/
 ### Python ###
 __pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
 
-### Claude / local agent notes ###
+### Local one-off scripts ###
+/fix_*.py
+/gen_*.py
+/generate_*.py
+
+### Local agent notes ###
 .claude/
 CLAUDE.md
 CLAUDE.local.md
 CLAUDE.*.md
+/README_DOCS.md
+/MERGE_CHANGELOG.md
+/docs/archive/original_CLAUDE*.md
+/docs/archive/original_*_for_claude.md
+/docs/archive/original_DOCS_MERGE_RECOMMENDATIONS.md
 
 ### Mac OS ###
 .DS_Store

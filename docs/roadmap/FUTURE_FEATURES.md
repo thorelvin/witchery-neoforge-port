@@ -2,7 +2,7 @@
 
 These ideas are for after the faithful 1.7.10-style port is stable. Do not implement during normal port tasks unless explicitly asked.
 
-**Current scope note:** start with [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md). This file is backlog-only and should not be used to widen current implementation scope.
+**Current scope note:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This file is backlog-only and should not be used to widen current implementation scope.
 
 ## Rule
 

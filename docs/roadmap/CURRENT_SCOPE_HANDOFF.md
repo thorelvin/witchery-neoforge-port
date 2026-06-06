@@ -1,7 +1,7 @@
-# Claude Handoff Pack - Current Witchery Scope
+# Current Scope Handoff - Witchery Port
 
 **Target:** Minecraft 1.21.11 / NeoForge 21.11
-**Purpose:** This file is the clean handoff for Claude. Read this first, then use the supporting roadmap files in the order and scope described below.
+**Purpose:** This file is the clean implementation handoff. Read this first, then use the supporting roadmap files in the order and scope described below.
 
 ---
 
@@ -301,7 +301,7 @@ Not approved for current build-out unless explicitly requested:
 
 ---
 
-## 7. Execution Checklist For Claude
+## 7. Execution Checklist
 
 Before coding a feature, verify all of the following:
 
@@ -317,7 +317,7 @@ If a feature needs new terminology, first check whether the main additive gamepl
 
 ---
 
-## 8. Short Claude Instruction
+## 8. Short Implementation Instruction
 
 Implement this as a Witchery expansion, not as a second mod hiding inside Witchery.
 

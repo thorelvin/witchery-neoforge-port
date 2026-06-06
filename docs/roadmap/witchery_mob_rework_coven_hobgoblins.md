@@ -3,7 +3,7 @@
 **Target:** Minecraft 1.21.11 / NeoForge 21.11  
 **Project context:** This document is for adding new mob behavior and integration layers to an already ported Witchery mod. It should extend existing Witchery mobs and systems, not redefine Witchery’s core gameplay.
 
-**Read this first:** start with [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md). This document is supporting detail for mobs, trust, jobs, and reactions. It should not override the handoff on canonical naming, scope, or implementation order.
+**Read this first:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This document is supporting detail for mobs, trust, jobs, and reactions. It should not override the handoff on canonical naming, scope, or implementation order.
 
 ---
 
@@ -1010,7 +1010,7 @@ The player should feel:
 
 # 9. Current Scope Note
 
-Read [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md) before using this file for implementation.
+Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) before using this file for implementation.
 
 This document now serves as supporting detail for:
 

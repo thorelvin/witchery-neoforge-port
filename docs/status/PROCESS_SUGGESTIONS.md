@@ -1,4 +1,4 @@
-# Process Suggestions (Claude-logged, awaiting owner decision)
+# Process Suggestions (agent-logged, awaiting owner decision)
 
 These are workflow/quality suggestions surfaced during autonomous port work. They are
 **logged, not acted on** unless the project owner approves. Keep this list short; remove

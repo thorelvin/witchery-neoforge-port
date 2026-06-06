@@ -8,7 +8,7 @@ This is **not a remake** and **not a standalone mod design**. It is an expansion
 
 **Design promise:** every feature should feel like genuine Witchery: physical, eerie, useful, counterable, and story-generating.
 
-**Read this first:** start with [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md). This file remains the canonical feature-direction spec, but the handoff file resolves cross-document naming, scope, and source-priority decisions.
+**Read this first:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This file remains the canonical feature-direction spec, but the handoff file resolves cross-document naming, scope, and source-priority decisions.
 
 ---
 
@@ -77,9 +77,9 @@ These new features should not sit beside Witchery as a second mod. Each one shou
 | Witch Grove | Altar power, Rite of the Forest, Treefyd/plant systems, familiars | The Grove should be a late-game Witchery base upgrade, not a new dimension or settlement system. |
 | Barkbound teaser | Existing transformations/infusions, bark/nature mechanics | Keep it small at first: forest affinity, bark/heart interactions, weakness to axe/fire. Full path later. |
 
-### Integration rule for Claude
+### Integration Rule
 
-For every implementation task, Claude should answer this before coding:
+For every implementation task, answer this before coding:
 
 > Which existing Witchery system does this feature extend?
 
@@ -1758,7 +1758,7 @@ Build in this order:
 
 ### Genuine Witchery feel check
 
-The file now has the right direction, but Claude should enforce these constraints:
+The file now has the right direction, but implementation should enforce these constraints:
 
 - every new curse must be castable or strengthened by existing Witchery-style rites;
 - every blood feature must feed taglocks, poppets, or curses;
@@ -1781,9 +1781,9 @@ This is the right kind of gratification for Witchery: slow, physical, mischievou
 
 ---
 
-## 30. Final Claude Instruction
+## 30. Final Implementation Instruction
 
-Read [CLAUDE_HANDOFF_CURRENT_SCOPE.md](./CLAUDE_HANDOFF_CURRENT_SCOPE.md) first, then implement this as an **additive expansion** to the existing Witchery NeoForge 1.21.11 port.
+Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) first, then implement this as an **additive expansion** to the existing Witchery NeoForge 1.21.11 port.
 
 Prefer small PR-sized slices. Use the port’s current code style, registry patterns, data-gen conventions, configs, storage, and networking. If a new feature conflicts with an existing Witchery mechanic, adapt the new feature to the old mechanic rather than replacing the old mechanic.
 
