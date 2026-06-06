@@ -2,6 +2,7 @@ package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
+import com.emoniph.witchery.effect.ChilledMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
@@ -559,6 +560,41 @@ class BrewLogicTest {
         assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, WitcheryItems.DEMON_HEART.get()))
                         .get(0).getAmplifier(),
                 "source Paralysis accepts the normal strength modifier path");
+    }
+
+    @Test
+    void icyNeedleRestoresSourceChilledBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> chilled = Brews.buildEffects(level2(WitcheryItems.ICY_NEEDLE.get()));
+        assertEquals(1, chilled.size(), "Icy Needle resolves as the old Cold ingredient entity effect");
+        assertSame(WitcheryMobEffects.CHILLED.value(), chilled.get(0).getEffect().value(),
+                "source Icy Needle applies Witchery's Chilled potion to entities");
+        assertEquals(ChilledMobEffect.BREW_DURATION_TICKS, chilled.get(0).getDuration(),
+                "source Cold lasts three minutes");
+        assertEquals(250, Brews.powerCost(level2(WitcheryItems.ICY_NEEDLE.get())),
+                "Cold source effect power plus level-2 capacity power");
+        assertTrue(Brews.blockedByCapacity(level1(WitcheryItems.ICY_NEEDLE.get())),
+                "source Cold requires effect level 2 capacity");
+
+        assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, WitcheryItems.ICY_NEEDLE.get()))
+                        .get(0).getAmplifier(),
+                "source Cold accepts the normal strength modifier path");
+    }
+
+    @Test
+    void chilledEffectUsesSourceFireAndColdRules() {
+        assertEquals(25, ChilledMobEffect.coldDamageTickInterval(0));
+        assertEquals(12, ChilledMobEffect.coldDamageTickInterval(1));
+        assertEquals(6, ChilledMobEffect.coldDamageTickInterval(2));
+        assertEquals(1, ChilledMobEffect.coldDamageTickInterval(4));
+        assertEquals(0, ChilledMobEffect.coldDamageTickInterval(5));
+        assertTrue(ChilledMobEffect.shouldTakeColdDamage(true, 0));
+        assertFalse(ChilledMobEffect.shouldTakeColdDamage(false, 1));
+        assertTrue(ChilledMobEffect.shouldTakeColdDamage(false, 2));
+        assertEquals(3.0F, ChilledMobEffect.fireDamageAfterReduction(4.0F, 0));
+        assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(1.5F, 1));
+        assertEquals(1.0F, ChilledMobEffect.fireDamageAfterReduction(4.0F, 2));
+        assertEquals(0.0F, ChilledMobEffect.fireDamageAfterReduction(2.0F, 2));
     }
 
     @Test

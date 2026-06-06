@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.effect.ChilledMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.ParalyzedMobEffect;
@@ -88,6 +89,18 @@ public final class BrewMobEffectEvents {
 
         player.getFoodData().eat(-foodPenalty, 2.0F);
         event.setNewDamage(0.0F);
+    }
+
+    @SubscribeEvent
+    public static void onChilledFireDamage(LivingDamageEvent.Pre event) {
+        LivingEntity entity = event.getEntity();
+        if (entity.level().isClientSide() || !ChilledMobEffect.isSourceFireDamage(event.getSource())) {
+            return;
+        }
+        MobEffectInstance chilled = entity.getEffect(WitcheryMobEffects.CHILLED);
+        if (chilled != null) {
+            event.setNewDamage(ChilledMobEffect.fireDamageAfterReduction(event.getNewDamage(), chilled.getAmplifier()));
+        }
     }
 
     @SubscribeEvent

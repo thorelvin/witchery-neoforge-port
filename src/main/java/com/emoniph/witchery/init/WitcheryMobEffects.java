@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
+import com.emoniph.witchery.effect.ChilledMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
@@ -82,6 +83,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> QUEASY =
             MOB_EFFECTS.register("queasy", () -> new QueasyMobEffect(0x85AB4A6C));
+
+    public static final DeferredHolder<MobEffect, MobEffect> CHILLED =
+            MOB_EFFECTS.register("chilled", () -> new ChilledMobEffect(0x3535073D));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {
