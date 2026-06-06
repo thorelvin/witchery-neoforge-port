@@ -58,6 +58,10 @@ public record BrewContents(List<Item> items) {
         return Brews.powerCost(items);
     }
 
+    public int drinkDuration() {
+        return Brews.drinkDuration(items);
+    }
+
     public Component displayName() {
         return Brews.name(items);
     }

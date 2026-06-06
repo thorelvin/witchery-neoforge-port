@@ -158,6 +158,21 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceDrinkSpeedModifiersAreCounted() {
+        Brews.bootstrap();
+        assertEquals(24, Brews.drinkDuration(List.of(WitcheryItems.ROWAN_BERRIES.get(), Items.SPIDER_EYE)),
+                "Rowan Berries subtract eight ticks from the source drink time");
+        assertEquals(16, Brews.drinkDuration(List.of(WitcheryItems.ROWAN_BERRIES.get(),
+                        WitcheryItems.EXHALE_OF_HORNED_ONE.get(), WitcheryItems.SPANISH_MOSS.get(), Items.SPIDER_EYE)),
+                "Rowan Berries, Exhale of the Horned One, and Spanish Moss stack as source fast-drink modifiers");
+        assertEquals(100, Brews.powerCost(List.of(WitcheryItems.ROWAN_BERRIES.get(),
+                        WitcheryItems.EXHALE_OF_HORNED_ONE.get(), WitcheryItems.SPANISH_MOSS.get(), Items.SPIDER_EYE)),
+                "Rowan Berries and Spanish Moss cost 50 altar power each, while Exhale is free");
+        assertTrue(Brews.requiresExplicitStir(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                "Exhale stays available to the Mutandis cauldron trigger unless explicitly stirred");
+    }
+
+    @Test
     void dualPurposeCapacityIngredientsRequireExplicitStirring() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");

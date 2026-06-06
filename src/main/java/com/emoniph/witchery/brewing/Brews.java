@@ -55,47 +55,52 @@ public final class Brews {
     /** One brew ingredient: an effect/action, or a modifier that augments the next effect / the dispersal. */
     public record Ingredient(Kind kind, Holder<MobEffect> effect, Holder<MobEffect> inverted,
                              BrewAction action, int baseDuration, int strengthCeiling, int color,
-                             int modifierCeiling, int capacityIncrement, int capacityCeiling,
-                             int capacityRequired, int powerCost,
+                             int modifierCeiling, int drinkSpeedModifier, int capacityIncrement,
+                             int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
-        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR }
+        public enum Kind { EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED }
 
         public enum BrewAction { ANIMAL }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return new Ingredient(Kind.EFFECT, effect, null, null, baseDuration, ceiling, color,
-                    0, 0, 0, 0, 0, null, null);
+                    0, 0, 0, 0, 0, 0, null, null);
         }
 
         static Ingredient effect(Holder<MobEffect> effect, Holder<MobEffect> inverted, int baseDuration, int ceiling, int color) {
             return new Ingredient(Kind.EFFECT, effect, inverted, null, baseDuration, ceiling, color,
-                    0, 0, 0, 0, 0, null, null);
+                    0, 0, 0, 0, 0, 0, null, null);
         }
 
         static Ingredient action(BrewAction action, int capacityRequired, int powerCost, int color,
                                  String nameKey, String invertedNameKey) {
             return new Ingredient(Kind.ACTION, null, null, action, 0, 0, color,
-                    0, 0, 0, capacityRequired, powerCost, nameKey, invertedNameKey);
+                    0, 0, 0, 0, capacityRequired, powerCost, nameKey, invertedNameKey);
         }
 
         static Ingredient capacity(int increment, int ceiling, int powerCost) {
             return new Ingredient(Kind.CAPACITY, null, null, null, 0, 0, 0,
-                    0, increment, ceiling, 0, powerCost, null, null);
+                    0, 0, increment, ceiling, 0, powerCost, null, null);
         }
 
         static Ingredient color(int color) {
             return new Ingredient(Kind.COLOR, null, null, null, 0, 0, color,
-                    0, 0, 0, 0, 0, null, null);
+                    0, 0, 0, 0, 0, 0, null, null);
+        }
+
+        static Ingredient drinkSpeed(int modifier, int powerCost) {
+            return new Ingredient(Kind.DRINK_SPEED, null, null, null, 0, 0, 0,
+                    0, modifier, 0, 0, 0, powerCost, null, null);
         }
 
         static Ingredient modifier(Kind kind) {
             return new Ingredient(kind, null, null, null, 0, 0, 0,
-                    0, 0, 0, 0, 0, null, null);
+                    0, 0, 0, 0, 0, 0, null, null);
         }
 
         static Ingredient modifier(Kind kind, int ceiling, int powerCost) {
             return new Ingredient(kind, null, null, null, 0, 0, 0,
-                    ceiling, 0, 0, 0, powerCost, null, null);
+                    ceiling, 0, 0, 0, 0, powerCost, null, null);
         }
     }
 
@@ -193,6 +198,9 @@ public final class Brews {
         register(Items.OBSIDIAN, Ingredient.modifier(Ingredient.Kind.DURATION, 2, 100));
         register(WitcheryItems.MINDRAKE_BULB.get(), Ingredient.modifier(Ingredient.Kind.DURATION, 3, 150));
         register(Items.FERMENTED_SPIDER_EYE, Ingredient.modifier(Ingredient.Kind.INVERT, 0, 25));
+        register(WitcheryItems.ROWAN_BERRIES.get(), Ingredient.drinkSpeed(-8, 50));
+        registerExplicit(WitcheryItems.EXHALE_OF_HORNED_ONE.get(), Ingredient.drinkSpeed(-4, 0));
+        register(WitcheryItems.SPANISH_MOSS.get(), Ingredient.drinkSpeed(-4, 50));
         register(Items.GUNPOWDER, Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
@@ -270,7 +278,7 @@ public final class Brews {
                     }
                 }
                 case INVERT -> mods.inverted = true;
-                case SPLASH, GAS, COLOR -> { /* presentation/dispersal only */ }
+                case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EFFECT -> {
                     Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
                     int amplifier = Math.min(mods.strength, ing.strengthCeiling());
@@ -599,6 +607,16 @@ public final class Brews {
         }
         appliedStrength = Math.max(appliedStrength, strength);
         return Math.clamp(1 + appliedStrength, 1, 5);
+    }
+
+    public static int drinkDuration(List<Item> items) {
+        int duration = 32;
+        for (Ingredient ing : resolve(items)) {
+            if (ing.kind() == Ingredient.Kind.DRINK_SPEED) {
+                duration += ing.drinkSpeedModifier();
+            }
+        }
+        return Math.max(duration, 2);
     }
 
     public static Identifier id() {

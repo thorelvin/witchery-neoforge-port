@@ -48,7 +48,7 @@ public class CustomBrewItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 32;
+        return contents(stack).drinkDuration();
     }
 
     @Override
@@ -81,6 +81,11 @@ public class CustomBrewItem extends Item {
         if (brew.isEmpty()) {
             return;
         }
+        int drinkDuration = brew.drinkDuration();
+        if (drinkDuration != 32) {
+            tooltip.accept(Component.translatable("witchery.brew.drink_speed",
+                    Component.translatable(drinkSpeedKey(drinkDuration))).withStyle(ChatFormatting.GRAY));
+        }
         for (var effect : com.emoniph.witchery.brewing.Brews.buildEffects(brew.items())) {
             Component name = Component.translatable(effect.getEffect().value().getDescriptionId());
             if (effect.getAmplifier() > 0) {
@@ -103,5 +108,18 @@ public class CustomBrewItem extends Item {
     private static Component formatDuration(int ticks) {
         int seconds = ticks / 20;
         return Component.literal(String.format("%d:%02d", seconds / 60, seconds % 60));
+    }
+
+    private static String drinkSpeedKey(int drinkDuration) {
+        if (drinkDuration > 48) {
+            return "witchery.brew.drink_speed.very_slow";
+        }
+        if (drinkDuration > 32) {
+            return "witchery.brew.drink_speed.slow";
+        }
+        if (drinkDuration < 16) {
+            return "witchery.brew.drink_speed.very_fast";
+        }
+        return "witchery.brew.drink_speed.fast";
     }
 }
