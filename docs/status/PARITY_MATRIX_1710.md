@@ -187,7 +187,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | blood_rose / ember_moss / glint_weed / spanish_moss | ✅ Done | Blood Rose now writes/reads source `WITCPlayers` player-name storage beside modern UUID data |
 | bramble / void_bramble | ✅ Done | |
 | leaping_lily | ✅ Done | |
-| grassper | ✅ Done | |
+| grassper | ✅ Done | One-slot stash now also round-trips through a source-style `Items` list |
 | glowglobe | ✅ Done | |
 | critter_snare | ✅ Done | |
 | plant_mine | ✅ Done | Source `BlockPlantMine` parity restored: twelve rose/dandelion/shrub + webs/ink/thorns/sprouting variants, source 6.0F/1000F toughness, support/light survival, compact collision/outline, no normal drops, pick-block variant stacks, and source trap activation using the same web/ink/cactus/sprouting effect family. |

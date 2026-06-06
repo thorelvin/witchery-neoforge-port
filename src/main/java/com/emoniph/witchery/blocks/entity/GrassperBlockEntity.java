@@ -3,10 +3,12 @@ package com.emoniph.witchery.blocks.entity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +56,9 @@ public class GrassperBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         if (!stack.isEmpty()) {
             tag.store("Item", ItemStack.CODEC, stack);
+            NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+            items.set(0, stack);
+            ContainerHelper.saveAllItems(tag, items);
         }
     }
 
@@ -61,6 +66,11 @@ public class GrassperBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
         stack = tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        if (stack.isEmpty()) {
+            NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+            ContainerHelper.loadAllItems(tag, items);
+            stack = items.getFirst();
+        }
     }
 
     private void sync() {
