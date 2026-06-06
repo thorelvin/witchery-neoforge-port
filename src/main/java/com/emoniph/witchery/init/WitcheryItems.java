@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.item.*;
 import com.emoniph.witchery.item.BrewOfErosionItem;
 import com.emoniph.witchery.item.BrewOfFoamingItem;
@@ -905,6 +906,8 @@ public class WitcheryItems {
             id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), false));
     public static final DeferredItem<Item> LINGERING_BREW_BOTTLE = ITEMS.register("lingering_brew_bottle",
             id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), true));
+    public static final DeferredItem<Item> LIQUID_BREW_BOTTLE = ITEMS.register("liquid_brew_bottle",
+            id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), Brews.Dispersal.LIQUID));
 
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
         LinkedHashMap<String, DeferredItem<Item>> placeholders = new LinkedHashMap<>();

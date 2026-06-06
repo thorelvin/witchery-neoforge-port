@@ -827,13 +827,13 @@ class BrewLogicTest {
     }
 
     @Test
-    void liquidDispersalBottlesAsDrinkUntilFluidBlocksExist() {
+    void liquidDispersalBottlesAsLiquidBrew() {
         Brews.bootstrap();
         assertEquals(Brews.Dispersal.LIQUID,
                 Brews.dispersal(List.of(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)));
-        assertEquals(Brews.Dispersal.DRINK,
+        assertEquals(Brews.Dispersal.LIQUID,
                 Brews.bottledDispersal(List.of(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)),
-                "liquid brew block/container transport is not implemented yet");
+                "Wormwood-selected brews now use the moving brew liquid block spine");
     }
 
     @Test
@@ -1536,7 +1536,7 @@ class BrewLogicTest {
     }
 
     @Test
-    void sourceImpactLifetimeFeedsCurrentGasCloudFallback() {
+    void sourceImpactLifetimeFeedsFluidDecayAndLegacyCloudHelper() {
         Brews.bootstrap();
         assertEquals(5, Brews.sourceBrewFluidDecayDenominator(0),
                 "source TileEntityBrewFluid default decay denominator is 5");
@@ -1548,17 +1548,25 @@ class BrewLogicTest {
                 "source lifetime tier 3 yields 5 + 3^2 * 5");
         assertEquals(50, Brews.sourceBrewFluidDecayDenominator(4),
                 "modern helper clamps to the source maximum lifetime tier");
+        assertEquals(4, Brews.sourceBrewFluidExpansion(0),
+                "source TileEntityBrewFluid default expansion is 4");
+        assertEquals(5, Brews.sourceBrewFluidExpansion(1),
+                "source expansion is 4 + extent tier");
+        assertEquals(7, Brews.sourceBrewFluidExpansion(3),
+                "source extent tier 3 expands to distance 7");
+        assertEquals(10, Brews.sourceBrewFluidExpansion(9),
+                "modern helper clamps to the source maximum expansion");
 
         assertEquals(600, Brews.gasCloudDurationTicks(List.of(Items.SUGAR)),
-                "the current gas-cloud fallback keeps the existing base lifetime without impact modifiers");
+                "the legacy gas-cloud helper keeps the existing base lifetime without impact modifiers");
         assertEquals(1200, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(), Items.SUGAR)),
-                "Belladonna scales the fallback cloud by the source tier-1 decay ratio");
+                "Belladonna scales legacy cloud duration by the source tier-1 decay ratio");
         assertEquals(3000, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(),
                         Items.LAPIS_LAZULI, Items.SUGAR)),
-                "Lapis Lazuli scales the fallback cloud by the source tier-2 decay ratio");
+                "Lapis Lazuli scales legacy cloud duration by the source tier-2 decay ratio");
         assertEquals(6000, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(),
                         Items.LAPIS_LAZULI, Items.HAY_BLOCK, Items.SUGAR)),
-                "Hay Block scales the fallback cloud by the source tier-3 decay ratio");
+                "Hay Block scales legacy cloud duration by the source tier-3 decay ratio");
         assertEquals(-0.001F, Brews.gasCloudRadiusPerTick(3000), 0.000001F,
                 "longer fallback clouds shrink over their full configured lifetime");
     }

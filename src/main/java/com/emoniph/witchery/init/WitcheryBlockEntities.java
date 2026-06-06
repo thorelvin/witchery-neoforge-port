@@ -100,4 +100,7 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("blood_crucible", () -> new BlockEntityType<>(
                     com.emoniph.witchery.blocks.entity.BloodCrucibleBlockEntity::new,
                     Set.of(WitcheryBlocks.BLOOD_CRUCIBLE.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrewFluidBlockEntity>> BREW_FLUID =
+            BLOCK_ENTITIES.register("brew_fluid", () -> new BlockEntityType<>(BrewFluidBlockEntity::new,
+                    Set.of(WitcheryBlocks.BREW_GAS.get(), WitcheryBlocks.BREW_LIQUID.get())));
 }

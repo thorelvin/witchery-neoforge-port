@@ -28,7 +28,7 @@ final class ThrowableBrewSupport {
         if (stack.getItem() instanceof CustomThrownBrewItem brewItem) {
             BrewContents contents = stack.getOrDefault(WitcheryDataComponents.BREW_CONTENTS.get(), BrewContents.EMPTY);
             if (!contents.isEmpty()) {
-                return new ThrownBrewEntity(level, player, contents, brewItem.isGas());
+                return new ThrownBrewEntity(level, player, contents, brewItem.dispersal());
             }
         }
         return null;

@@ -490,4 +490,14 @@ public class WitcheryBlocks {
             HollowTearsBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)
                     .strength(100.0F).noOcclusion().noCollision().noLootTable());
+    public static final DeferredBlock<BrewFluidBlock.Gas> BREW_GAS = registerBlock("brewgas",
+            BrewFluidBlock.Gas::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS)
+                    .replaceable().noOcclusion().noCollision().noLootTable()
+                    .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
+    public static final DeferredBlock<BrewFluidBlock.Liquid> BREW_LIQUID = registerBlock("brewliquid",
+            BrewFluidBlock.Liquid::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)
+                    .replaceable().noOcclusion().noCollision().noLootTable()
+                    .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
 }

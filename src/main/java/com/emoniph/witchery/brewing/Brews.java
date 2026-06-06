@@ -13,6 +13,7 @@ import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
@@ -48,6 +49,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -227,6 +229,8 @@ public final class Brews {
     private static final double SOURCE_PULL_VERTICAL_MOTION = 0.4D;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
+    private static final double SOURCE_BREW_FLUID_CONTACT_POWER = 0.25;
+    private static final double SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE = 0.5;
     private static final int SOURCE_GAS_CLOUD_BASE_DURATION_TICKS = 600;
     private static final int SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR = 5;
     private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
@@ -584,8 +588,39 @@ public final class Brews {
     }
 
     public static Dispersal bottledDispersal(List<Item> items) {
-        Dispersal dispersal = dispersal(items);
-        return dispersal == Dispersal.LIQUID ? Dispersal.DRINK : dispersal;
+        return dispersal(items);
+    }
+
+    public static boolean placeMovingBrewFluid(ServerLevel level, BlockPos pos, List<Item> items,
+                                               Dispersal dispersal, Entity source) {
+        if ((dispersal != Dispersal.GAS && dispersal != Dispersal.LIQUID) || !hasEffect(items)) {
+            return false;
+        }
+        if (!sourceMayModify(level, pos, source)) {
+            return false;
+        }
+        BlockState existing = level.getBlockState(pos);
+        if (!existing.is(WitcheryBlocks.BREW_GAS.get())
+                && !existing.is(WitcheryBlocks.BREW_LIQUID.get())
+                && !com.emoniph.witchery.blocks.BrewFluidBlock.canDisplace(existing)) {
+            return false;
+        }
+        BlockState state = (dispersal == Dispersal.GAS
+                ? WitcheryBlocks.BREW_GAS.get()
+                : WitcheryBlocks.BREW_LIQUID.get()).defaultBlockState();
+        level.setBlock(pos, state, Block.UPDATE_ALL);
+        if (level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity fluid) {
+            fluid.initialise(items, source);
+        }
+        level.scheduleTick(pos, state.getBlock(),
+                dispersal == Dispersal.GAS
+                        ? com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_GAS_TICK_RATE
+                        : com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_LIQUID_TICK_RATE);
+        level.sendParticles(dispersal == Dispersal.GAS ? ParticleTypes.WITCH : ParticleTypes.SPLASH,
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                dispersal == Dispersal.GAS ? 24 : 16,
+                0.4D, 0.4D, 0.4D, 0.04D);
+        return true;
     }
 
     /** Whether the brew contains at least one real effect (otherwise it's a mundane brew). */
@@ -629,6 +664,27 @@ public final class Brews {
         }
     }
 
+    public static void applyFluidContact(ServerLevel level, LivingEntity target, List<Item> items,
+                                         Entity source, BlockPos fluidPos) {
+        Resolution resolved = resolveBrew(items);
+        if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
+            return;
+        }
+        for (EffectApplication application : resolved.effects) {
+            if (!application.disableEntityTarget()) {
+                applyEffect(target, application.effect(), source, SOURCE_BREW_FLUID_CONTACT_POWER,
+                        SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE);
+            }
+        }
+        Vec3 impactPos = Vec3.atCenterOf(fluidPos);
+        for (ActionApplication action : resolved.actions) {
+            if (!action.disableEntityTarget()) {
+                applyAction(level, target, action, SOURCE_BREW_FLUID_CONTACT_POWER,
+                        SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE, source, impactPos);
+            }
+        }
+    }
+
     public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal) {
         applyToArea(level, pos, items, dispersal, null);
     }
@@ -648,45 +704,31 @@ public final class Brews {
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
         }
-        if (dispersal == Brews.Dispersal.LIQUID) {
+        if (dispersal == Brews.Dispersal.GAS || dispersal == Brews.Dispersal.LIQUID) {
+            placeMovingBrewFluid(level, BlockPos.containing(pos), items, dispersal, source);
             return;
         }
         List<EffectApplication> entityEffects = resolved.effects.stream()
                 .filter(application -> !application.disableEntityTarget())
                 .toList();
-        if (dispersal == Brews.Dispersal.GAS && !entityEffects.isEmpty()) {
-            AreaEffectCloud cloud = new AreaEffectCloud(level, pos.x, pos.y, pos.z);
-            int duration = gasCloudDurationTicks(resolved.lifetime);
-            cloud.setRadius(3.0F);
-            cloud.setDuration(duration);
-            cloud.setRadiusPerTick(gasCloudRadiusPerTick(duration));
-            cloud.setWaitTime(10);
-            tagSourceBrewGasCloud(cloud);
-            for (EffectApplication application : entityEffects) {
-                cloud.addEffect(new MobEffectInstance(application.effect()));
-            }
-            level.addFreshEntity(cloud);
-            level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 24, 1.0, 0.5, 1.0, 0.05);
-        } else {
-            double instantRadius = SOURCE_INSTANT_RADIUS + resolved.extent;
-            AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
-                    pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
-            if (!entityEffects.isEmpty()) {
-                for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
-                    double distance = Math.sqrt(entity.distanceToSqr(pos));
-                    if (distance <= instantRadius) {
-                        boolean directHit = entity == directTarget;
-                        double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
-                        double durationFactor = SOURCE_SPLASH_DURATION_SCALE * powerFactor;
-                        for (EffectApplication application : entityEffects) {
-                            applyEffect(entity, application.effect(), source, powerFactor, durationFactor);
-                        }
+        double instantRadius = SOURCE_INSTANT_RADIUS + resolved.extent;
+        AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
+                pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
+        if (!entityEffects.isEmpty()) {
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
+                double distance = Math.sqrt(entity.distanceToSqr(pos));
+                if (distance <= instantRadius) {
+                    boolean directHit = entity == directTarget;
+                    double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
+                    double durationFactor = SOURCE_SPLASH_DURATION_SCALE * powerFactor;
+                    for (EffectApplication application : entityEffects) {
+                        applyEffect(entity, application.effect(), source, powerFactor, durationFactor);
                     }
                 }
             }
-            level.sendParticles(ParticleTypes.SPLASH, pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.1);
-            level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
         }
+        level.sendParticles(ParticleTypes.SPLASH, pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.1);
+        level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
         if (dispersal == Brews.Dispersal.SPLASH && blockHit && !resolved.effects.isEmpty()) {
             applyBlockImpactEffects(level, BlockPos.containing(pos), resolved.effects, source);
         }
@@ -925,6 +967,18 @@ public final class Brews {
     private static void dissipateGasClouds(ServerLevel level, BlockPos center, int radius, int strength) {
         AABB area = new AABB(center).inflate(radius);
         Set<Long> sourceColumns = sourceCircleColumns(center, radius);
+        for (BlockPos mutablePos : BlockPos.betweenClosed(
+                center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            BlockPos pos = mutablePos.immutable();
+            if (!sourceColumns.contains(BlockPos.asLong(pos.getX(), center.getY(), pos.getZ()))) {
+                continue;
+            }
+            if (sourceDissipateRemovesGas(level.getBlockState(pos).is(WitcheryBlocks.BREW_GAS.get()), false, strength)) {
+                level.removeBlock(pos, false);
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 2.0F);
+            }
+        }
         for (AreaEffectCloud cloud : level.getEntitiesOfClass(AreaEffectCloud.class, area)) {
             BlockPos pos = cloud.blockPosition();
             if (pos.getY() < center.getY() - radius || pos.getY() > center.getY() + radius) {
@@ -1655,6 +1709,10 @@ public final class Brews {
     public static int sourceBrewFluidDecayDenominator(int lifetime) {
         int clamped = Math.clamp(lifetime, 0, 3);
         return SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR + clamped * clamped * 5;
+    }
+
+    public static int sourceBrewFluidExpansion(int extent) {
+        return Math.min(4 + Math.max(0, extent), 10);
     }
 
     public static int gasCloudDurationTicks(List<Item> items) {

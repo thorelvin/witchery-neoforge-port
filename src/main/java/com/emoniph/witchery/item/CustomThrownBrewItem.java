@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.entity.ThrownBrewEntity;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import net.minecraft.ChatFormatting;
@@ -28,15 +29,23 @@ import java.util.function.Consumer;
  */
 public class CustomThrownBrewItem extends Item {
 
-    private final boolean gas;
+    private final Brews.Dispersal dispersal;
 
     public CustomThrownBrewItem(Properties properties, boolean gas) {
+        this(properties, gas ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH);
+    }
+
+    public CustomThrownBrewItem(Properties properties, Brews.Dispersal dispersal) {
         super(properties.stacksTo(16));
-        this.gas = gas;
+        this.dispersal = dispersal == Brews.Dispersal.DRINK ? Brews.Dispersal.SPLASH : dispersal;
     }
 
     boolean isGas() {
-        return gas;
+        return dispersal == Brews.Dispersal.GAS;
+    }
+
+    Brews.Dispersal dispersal() {
+        return dispersal;
     }
 
     private static BrewContents contents(ItemStack stack) {
@@ -63,7 +72,7 @@ public class CustomThrownBrewItem extends Item {
                 SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide()) {
-            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, gas);
+            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, dispersal);
             projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.5F, 1.0F);
             level.addFreshEntity(projectile);
             if (!player.isCreative()) {
@@ -85,7 +94,7 @@ public class CustomThrownBrewItem extends Item {
         if (brew.isEmpty()) {
             return;
         }
-        tooltip.accept(Component.translatable(gas ? "witchery.brew.dispersal.gas" : "witchery.brew.dispersal.splash")
+        tooltip.accept(Component.translatable(dispersalTooltipKey())
                 .withStyle(ChatFormatting.GRAY));
         for (var effect : com.emoniph.witchery.brewing.Brews.buildEffects(brew.items())) {
             Component name = Component.translatable(effect.getEffect().value().getDescriptionId());
@@ -103,5 +112,13 @@ public class CustomThrownBrewItem extends Item {
             }
             tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
         }
+    }
+
+    private String dispersalTooltipKey() {
+        return switch (dispersal) {
+            case GAS -> "witchery.brew.dispersal.gas";
+            case LIQUID -> "witchery.brew.dispersal.liquid";
+            default -> "witchery.brew.dispersal.splash";
+        };
     }
 }

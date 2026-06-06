@@ -1,9 +1,11 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.blocks.BrewFluidBlock;
 import com.emoniph.witchery.brewing.BrewContents;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.item.BrewType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,6 +35,7 @@ public class ThrownBrewEntity extends ThrowableProjectile {
 
     /** Non-empty when carrying a composed custom brew (overrides the fixed BrewType path). */
     private BrewContents composed = BrewContents.EMPTY;
+    private Brews.Dispersal composedDispersal = Brews.Dispersal.SPLASH;
 
     public ThrownBrewEntity(EntityType<? extends ThrownBrewEntity> type, Level level) {
         super(type, level);
@@ -46,11 +50,16 @@ public class ThrownBrewEntity extends ThrowableProjectile {
     }
 
     public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, boolean gas) {
+        this(level, owner, contents, gas ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH);
+    }
+
+    public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, Brews.Dispersal dispersal) {
         super(WitcheryEntities.THROWN_BREW.get(), owner.getX(), owner.getEyeY() - 0.1, owner.getZ(), level);
         setOwner(owner);
         this.composed = contents;
+        this.composedDispersal = sanitizeComposedDispersal(dispersal);
         setBrewType(0);
-        setGas(gas);
+        setGas(this.composedDispersal == Brews.Dispersal.GAS);
         setPower(contents.power());
     }
 
@@ -96,8 +105,13 @@ public class ThrownBrewEntity extends ThrowableProjectile {
             if (!composed.isEmpty()) {
                 LivingEntity directTarget = result instanceof EntityHitResult entityHit
                         && entityHit.getEntity() instanceof LivingEntity living ? living : null;
-                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH,
-                        directTarget, getOwner(), result.getType() == HitResult.Type.BLOCK);
+                if (composedDispersal == Brews.Dispersal.GAS || composedDispersal == Brews.Dispersal.LIQUID) {
+                    Brews.placeMovingBrewFluid(serverLevel, movingBrewFluidPos(result, serverLevel),
+                            composed.items(), composedDispersal, getOwner());
+                } else {
+                    composed.applyToArea(serverLevel, pos, Brews.Dispersal.SPLASH,
+                            directTarget, getOwner(), result.getType() == HitResult.Type.BLOCK);
+                }
             } else {
                 BrewType type = getBrewType();
                 int tier = getPower();
@@ -116,6 +130,7 @@ public class ThrownBrewEntity extends ThrowableProjectile {
         super.addAdditionalSaveData(tag);
         if (!composed.isEmpty()) {
             tag.store("Composed", BrewContents.CODEC, composed);
+            tag.putString("ComposedDispersal", composedDispersal.name());
         }
     }
 
@@ -123,5 +138,30 @@ public class ThrownBrewEntity extends ThrowableProjectile {
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
+        composedDispersal = readComposedDispersal(tag.getStringOr("ComposedDispersal",
+                isGas() ? Brews.Dispersal.GAS.name() : Brews.Dispersal.SPLASH.name()));
+        setGas(composedDispersal == Brews.Dispersal.GAS);
+    }
+
+    private static BlockPos movingBrewFluidPos(HitResult result, Level level) {
+        if (result instanceof BlockHitResult blockHit) {
+            BlockPos hitPos = blockHit.getBlockPos();
+            return BrewFluidBlock.canDisplace(level.getBlockState(hitPos))
+                    ? hitPos
+                    : hitPos.relative(blockHit.getDirection());
+        }
+        return BlockPos.containing(result.getLocation());
+    }
+
+    private static Brews.Dispersal readComposedDispersal(String name) {
+        try {
+            return sanitizeComposedDispersal(Brews.Dispersal.valueOf(name));
+        } catch (IllegalArgumentException ex) {
+            return Brews.Dispersal.SPLASH;
+        }
+    }
+
+    private static Brews.Dispersal sanitizeComposedDispersal(Brews.Dispersal dispersal) {
+        return dispersal == Brews.Dispersal.DRINK ? Brews.Dispersal.SPLASH : dispersal;
     }
 }
