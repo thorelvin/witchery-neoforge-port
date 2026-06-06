@@ -6,11 +6,13 @@ import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -221,6 +223,9 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
         super.saveAdditional(tag);
         if (!stored.isEmpty()) {
             tag.store("Item", ItemStack.CODEC, stored);
+            NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+            items.set(SLOT, stored);
+            ContainerHelper.saveAllItems(tag, items);
         }
         for (int i = 0; i < lastStackSizes.length; i++) {
             tag.putInt("LastStackSize" + i, lastStackSizes[i]);
@@ -231,6 +236,11 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
         stored = tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        if (stored.isEmpty()) {
+            NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+            ContainerHelper.loadAllItems(tag, items);
+            stored = items.get(SLOT);
+        }
         int legacyStoredSilver = tag.getIntOr("StoredSilver", 0);
         if (stored.isEmpty() && legacyStoredSilver > 0) {
             stored = new ItemStack(WitcheryItems.SILVER_DEPOSITS.get(), Math.min(legacyStoredSilver, STACK_LIMIT));

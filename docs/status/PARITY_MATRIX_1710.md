@@ -200,7 +200,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | alluringskull | ✅ Done | |
 | demon_heart | ✅ Done | |
 | mirror / mirror_wall | ✅ Done | |
-| silver_vat | ✅ Done | |
+| silver_vat | ✅ Done | Stored deposits now also round-trip through the source one-slot `Items` list |
 | statue_goddess | ✅ Done | |
 | fetish family (scarecrow/trent/ladder) | ✅ Done | |
 | stockade (wood) | 🔶 Partial | `witchery:stockade` restores a first-pass source `BlockStockade(false)` slice with low stockade collision, 25/20 toughness, cactus contact damage, self/Iron Bars/Ice Gate connections, oak-log models, self loot, and the old logs + `Exhale of the Horned One` shaped recipe for 9. Direct Brew of Frost / `brew_of_ice` use on a wooden stockade now converts that block into `witchery:ice_stockade` as part of the first practical single-click Ice World conversion slice. Remaining: per-wood metadata variants and the full old radius/custom-brew Ice World action. |
