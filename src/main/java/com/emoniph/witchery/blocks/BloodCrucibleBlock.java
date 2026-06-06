@@ -30,7 +30,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
     public static final MapCodec<BloodCrucibleBlock> CODEC = simpleCodec(BloodCrucibleBlock::new);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 5, 12);
+    private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 4.96, 12.0);
 
     public BloodCrucibleBlock(BlockBehaviour.Properties props) {
         super(props);
