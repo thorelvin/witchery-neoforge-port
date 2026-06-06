@@ -309,7 +309,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<GlintWeedBlock> GLINT_WEED = registerBlock("glint_weed",
             GlintWeedBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
-                    .strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 15).randomTicks());
+                    .strength(0.0f).noOcclusion().noCollision().lightLevel(s -> 14).randomTicks());
     public static final DeferredBlock<SpanishMossBlock> SPANISH_MOSS = registerBlock("spanish_moss",
             SpanishMossBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
