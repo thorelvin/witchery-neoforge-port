@@ -83,7 +83,7 @@ public final class Brews {
 
         public enum BrewAction {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
-            STEAL_BUFFS
+            STEAL_BUFFS, DURATION_BOOST
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -193,6 +193,9 @@ public final class Brews {
     private static final Method MOB_EFFECT_INSTANCE_GET_CURES = findMobEffectInstanceGetCures();
     private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
     private static final int SOURCE_WEAKEN_VAMPIRES_WEAKNESS_TICKS = 90 * 20;
+    private static final int SOURCE_POTION_LONGEVITY_BOOST_TICKS = 3 * 60 * 20;
+    private static final int SOURCE_POTION_LONGEVITY_HUNGER_TICKS = 2 * 60 * 20;
+    private static final int SOURCE_POTION_LONGEVITY_NAUSEA_TICKS = 5 * 60 * 20;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
 
@@ -283,6 +286,9 @@ public final class Brews {
         register(Items.SKELETON_SKULL, Ingredient.action(Ingredient.BrewAction.STEAL_BUFFS,
                 6, 100, 0xD6D6D6,
                 "witchery.brew.stealbuffs", null));
+        register(WitcheryItems.CREEPER_HEART.get(), Ingredient.action(Ingredient.BrewAction.DURATION_BOOST,
+                6, 5000, 0x5A8F3F,
+                "witchery.brew.durationboost", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -670,6 +676,8 @@ public final class Brews {
                     action.strengthCeilingDisabled(), powerFactor);
         } else if (action.action() == Ingredient.BrewAction.STEAL_BUFFS) {
             stealBuffs(level, target, action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.DURATION_BOOST) {
+            applyPotionLongevity(target, action.strength(), powerFactor, source);
         }
     }
 
@@ -832,6 +840,42 @@ public final class Brews {
         }
     }
 
+    private static void applyPotionLongevity(LivingEntity target, int strength, double powerFactor, Entity source) {
+        if (target.hasEffect(WitcheryMobEffects.QUEASY)) {
+            if (target.getRandom().nextInt(3) == 0) {
+                target.addEffect(new MobEffectInstance(MobEffects.HUNGER,
+                        SOURCE_POTION_LONGEVITY_HUNGER_TICKS, 0, true, true, true), source);
+            } else {
+                target.addEffect(new MobEffectInstance(MobEffects.NAUSEA,
+                        SOURCE_POTION_LONGEVITY_NAUSEA_TICKS, 0, true, true, true), source);
+            }
+            return;
+        }
+
+        List<MobEffectInstance> activeEffects = new ArrayList<>(target.getActiveEffects());
+        if (activeEffects.isEmpty()) {
+            return;
+        }
+
+        List<MobEffectInstance> boostedEffects = new ArrayList<>();
+        for (MobEffectInstance effect : activeEffects) {
+            if (!effect.getEffect().value().isInstantenous()) {
+                boostedEffects.add(new MobEffectInstance(effect.getEffect(),
+                        sourcePotionLongevityDuration(effect.getDuration(), powerFactor),
+                        effect.getAmplifier(), effect.isAmbient(), true, true));
+            }
+        }
+
+        for (MobEffectInstance effect : activeEffects) {
+            target.removeEffect(effect.getEffect());
+        }
+        for (MobEffectInstance effect : boostedEffects) {
+            target.addEffect(effect, source);
+        }
+        target.addEffect(new MobEffectInstance(WitcheryMobEffects.QUEASY,
+                sourcePotionLongevityQueasyDuration(strength), 0, true, true, true), source);
+    }
+
     public static boolean shouldRemoveBuff(MobEffectInstance effect, int strength) {
         return shouldRemoveBuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
     }
@@ -874,6 +918,24 @@ public final class Brews {
         }
         return currentDuration < 0
                 || (currentDuration <= donorDuration && currentAmplifier <= donorAmplifier);
+    }
+
+    public static int sourcePotionLongevityBoostTicks(double powerFactor) {
+        return Mth.ceil(powerFactor * (double) SOURCE_POTION_LONGEVITY_BOOST_TICKS);
+    }
+
+    public static int sourcePotionLongevityDuration(int remainingTicks, double powerFactor) {
+        int clampedRemaining = Math.max(0, remainingTicks);
+        int boost = Math.min(clampedRemaining, sourcePotionLongevityBoostTicks(powerFactor));
+        return (int) Math.min((long) clampedRemaining + boost, (long) Integer.MAX_VALUE);
+    }
+
+    public static int sourcePotionLongevityQueasyDuration(int strength) {
+        return 3 * Math.max(1, 4 - strength) * 60 * 20;
+    }
+
+    public static int sourcePotionLongevityBackfireDuration(boolean hungerRoll) {
+        return hungerRoll ? SOURCE_POTION_LONGEVITY_HUNGER_TICKS : SOURCE_POTION_LONGEVITY_NAUSEA_TICKS;
     }
 
     private static boolean isCurableByModernApi(MobEffectInstance effect) {

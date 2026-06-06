@@ -1058,6 +1058,66 @@ class BrewLogicTest {
     }
 
     @Test
+    void creeperHeartRestoresSourcePotionLongevityAction() {
+        Brews.bootstrap();
+        Item heart = WitcheryItems.CREEPER_HEART.get();
+        List<Item> level6 = withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get()), heart);
+
+        assertFalse(Brews.canAdd(level4(), heart),
+                "source Potion Longevity requires level-6 capacity");
+        assertTrue(Brews.canAdd(withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get())), heart),
+                "Nether Wart + Tear of the Goddess + Diamond Vapour opens enough capacity for Potion Longevity");
+        assertTrue(Brews.blockedByCapacity(List.of(heart)),
+                "under-capacity Potion Longevity resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level6);
+        assertEquals(1, actions.size(), "Creeper Heart resolves as source Potion Longevity");
+        assertEquals(Brews.Ingredient.BrewAction.DURATION_BOOST, actions.get(0).action());
+        assertEquals("witchery.brew.durationboost", actions.get(0).nameKey());
+        assertEquals(5300, Brews.powerCost(level6),
+                "source capacity route cost plus Creeper Heart altar cost");
+
+        assertEquals(1, Brews.buildActions(withCapacity(List.of(Items.NETHER_WART,
+                        WitcheryItems.TEAR_OF_GODDESS.get(), WitcheryItems.DIAMOND_VAPOUR.get()),
+                Items.GLOWSTONE_DUST, heart)).get(0).strength(),
+                "Glowstone raises Potion Longevity strength for shorter Queasy aftermath");
+    }
+
+    @Test
+    void potionLongevityUsesSourceDurationAndQueasyMath() {
+        assertEquals(3600, Brews.sourcePotionLongevityBoostTicks(1.0),
+                "source Potion Longevity can add up to three minutes on full power");
+        assertEquals(1800, Brews.sourcePotionLongevityBoostTicks(0.5),
+                "splash power factor scales the maximum added duration");
+        assertEquals(2000, Brews.sourcePotionLongevityDuration(1000, 1.0),
+                "short effects can at most double their remaining duration");
+        assertEquals(9600, Brews.sourcePotionLongevityDuration(6000, 1.0),
+                "long effects gain at most the three-minute source cap");
+        assertEquals(7800, Brews.sourcePotionLongevityDuration(6000, 0.5),
+                "non-direct splash falloff lowers the added duration cap");
+
+        assertEquals(14400, Brews.sourcePotionLongevityQueasyDuration(0),
+                "base Potion Longevity leaves twelve minutes of Queasy");
+        assertEquals(10800, Brews.sourcePotionLongevityQueasyDuration(1),
+                "Glowstone strength lowers Queasy to nine minutes");
+        assertEquals(7200, Brews.sourcePotionLongevityQueasyDuration(2),
+                "higher source strength lowers Queasy to six minutes");
+        assertEquals(3600, Brews.sourcePotionLongevityQueasyDuration(3),
+                "full source strength floors Queasy at three minutes");
+        assertEquals(3600, Brews.sourcePotionLongevityQueasyDuration(99),
+                "extra strength cannot reduce Queasy below the source floor");
+
+        assertEquals(2400, Brews.sourcePotionLongevityBackfireDuration(true),
+                "using Potion Longevity while Queasy can add two minutes of Hunger");
+        assertEquals(6000, Brews.sourcePotionLongevityBackfireDuration(false),
+                "using Potion Longevity while Queasy otherwise adds five minutes of Nausea");
+    }
+
+    @Test
     void garlicRestoresSourceWeakenVampiresAction() {
         Brews.bootstrap();
         Item garlic = WitcheryItems.GARLIC.get();
