@@ -1,5 +1,6 @@
 package com.emoniph.witchery.effect;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -12,6 +13,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,8 @@ public class SnowTrailMobEffect extends MobEffect {
     public static final int SNOW_GOLEM_EXPLOSION_ROLL = 20;
     public static final float SNOW_GOLEM_EXPLOSION_POWER = 3.0F;
     public static final int SNOW_GOLEM_COVER_RADIUS = 8;
+    private static final PerlinSimplexNoise SOURCE_TEMPERATURE_NOISE =
+            new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(1234L)), ImmutableList.of(0));
 
     public SnowTrailMobEffect(int color) {
         super(MobEffectCategory.BENEFICIAL, color);
@@ -82,6 +88,10 @@ public class SnowTrailMobEffect extends MobEffect {
         return biomeTemperature;
     }
 
+    public static float sourceTemperatureNoise(BlockPos pos) {
+        return (float) SOURCE_TEMPERATURE_NOISE.getValue((double) pos.getX() / 8.0D, (double) pos.getZ() / 8.0D, false);
+    }
+
     public static boolean sourceFootprintAllowsSnow(boolean targetAir, float biomeTemperature, boolean snowCanSurvive) {
         return targetAir && allowsSnowTrail(biomeTemperature) && snowCanSurvive;
     }
@@ -132,7 +142,7 @@ public class SnowTrailMobEffect extends MobEffect {
         Biome biome = level.getBiome(pos).value();
         Biome.ClimateSettings climate = biome.getModifiedClimateSettings();
         float modifiedTemperature = climate.temperatureModifier().modifyTemperature(pos, climate.temperature());
-        return sourceHeightAdjustedTemperature(modifiedTemperature, pos.getY(), 0.0F);
+        return sourceHeightAdjustedTemperature(modifiedTemperature, pos.getY(), sourceTemperatureNoise(pos));
     }
 
     private static void createSnowAtColumn(ServerLevel level, BlockPos origin) {

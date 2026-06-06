@@ -458,6 +458,15 @@ class BrewLogicTest {
         assertEquals(2.0F, SnowTrailMobEffect.sourceHeightAdjustedTemperature(2.0F, 64, 0.0F));
         assertEquals(1.6F, SnowTrailMobEffect.sourceHeightAdjustedTemperature(2.0F, 304, 0.0F), 0.000001F,
                 "source high-altitude temperature adjustment uses the old y > 64 formula");
+        BlockPos noiseSample = new BlockPos(16, 304, 24);
+        float sourceNoise = SnowTrailMobEffect.sourceTemperatureNoise(noiseSample);
+        assertTrue(Math.abs(sourceNoise) <= 1.0F,
+                "source temperature noise should stay in the vanilla simplex range");
+        assertEquals(sourceNoise, SnowTrailMobEffect.sourceTemperatureNoise(noiseSample),
+                "source temperature noise is deterministic for a coordinate");
+        assertEquals(2.0F - (sourceNoise * 4.0F + 240.0F) * 0.05F / 30.0F,
+                SnowTrailMobEffect.sourceHeightAdjustedTemperature(2.0F, 304, sourceNoise), 0.000001F,
+                "source temperature noise is scaled with the old 1.7 snow-trail formula");
         assertTrue(SnowTrailMobEffect.sourceFootprintAllowsSnow(true, 1.599F, true),
                 "source footprints need air, cool-enough biome temperature, and snow survivability");
         assertFalse(SnowTrailMobEffect.sourceFootprintAllowsSnow(false, 1.599F, true));
