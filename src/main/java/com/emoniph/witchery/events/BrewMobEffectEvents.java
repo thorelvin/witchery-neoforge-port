@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
@@ -60,5 +62,22 @@ public final class BrewMobEffectEvents {
         }
 
         target.addEffect(PoisonWeaponsMobEffect.attackEffect(poisonWeapons.getAmplifier()));
+    }
+
+    @SubscribeEvent
+    public static void onEnderEntityTeleport(EntityTeleportEvent.EnderEntity event) {
+        cancelIfEnderInhibited(event, event.getEntityLiving());
+    }
+
+    @SubscribeEvent
+    public static void onEnderPearlTeleport(EntityTeleportEvent.EnderPearl event) {
+        cancelIfEnderInhibited(event, event.getPlayer());
+    }
+
+    private static void cancelIfEnderInhibited(EntityTeleportEvent event, LivingEntity entity) {
+        MobEffectInstance effect = entity.getEffect(WitcheryMobEffects.ENDER_INHIBITION);
+        if (effect != null && !EnderInhibitionMobEffect.canTeleport(effect.getAmplifier(), 0)) {
+            event.setCanceled(true);
+        }
     }
 }

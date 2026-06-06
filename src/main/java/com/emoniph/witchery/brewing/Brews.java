@@ -175,6 +175,8 @@ public final class Brews {
         register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200));
         register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.INSTANT_HEALTH, MobEffects.INSTANT_DAMAGE,
                 0, 0, 1, 0xBC1A1A, 200));
+        register(WitcheryItems.ENDER_DEW.get(), Ingredient.effect(WitcheryMobEffects.ENDER_INHIBITION,
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200));
         registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
                 3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100));

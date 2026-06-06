@@ -2,6 +2,7 @@ package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
+import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
@@ -299,6 +300,28 @@ class BrewLogicTest {
         assertEquals(900, attract.get(0).getDuration(), "source Attract Projectiles lasts forty-five seconds");
         assertEquals(275, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.COBWEB)),
                 "inverted Cobweb counts Fermented Spider Eye plus source effect power");
+    }
+
+    @Test
+    void enderDewRestoresSourceEnderInhibitionBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> effects = Brews.buildEffects(List.of(WitcheryItems.ENDER_DEW.get()));
+        assertEquals(1, effects.size(), "Ender Dew resolves as the old Ender Inhibition effect ingredient");
+        assertSame(WitcheryMobEffects.ENDER_INHIBITION.value(), effects.get(0).getEffect().value(),
+                "source Ender Dew uses Witchery's Ender Inhibition potion");
+        assertEquals(1800, effects.get(0).getDuration(), "source Ender Inhibition lasts ninety seconds");
+        assertEquals(200, Brews.powerCost(List.of(WitcheryItems.ENDER_DEW.get())),
+                "Ender Inhibition source effect power");
+    }
+
+    @Test
+    void enderInhibitionUsesSourceAmplifierGate() {
+        assertFalse(EnderInhibitionMobEffect.canTeleport(0, 0),
+                "an active level-I effect blocks ordinary ender teleport checks");
+        assertTrue(EnderInhibitionMobEffect.canTeleport(0, 1),
+                "source helper only blocks checks at or below the active amplifier");
+        assertFalse(EnderInhibitionMobEffect.canTeleport(2, 2));
+        assertTrue(EnderInhibitionMobEffect.canTeleport(2, 3));
     }
 
     @Test
