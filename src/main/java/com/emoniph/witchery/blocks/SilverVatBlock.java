@@ -30,7 +30,7 @@ public class SilverVatBlock extends BaseEntityBlock {
 
     public static final MapCodec<SilverVatBlock> CODEC = simpleCodec(SilverVatBlock::new);
     public static final BooleanProperty HAS_DEPOSITS = BooleanProperty.create("has_deposits");
-    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 10.25, 16.0);
+    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 10.24, 16.0);
 
     public SilverVatBlock(BlockBehaviour.Properties props) {
         super(props);
