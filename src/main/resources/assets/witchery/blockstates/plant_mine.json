@@ -1,5 +1,16 @@
 {
   "variants": {
-    "": { "model": "witchery:block/plant_mine" }
+    "disguise=rose,effect=webs": { "model": "witchery:block/plant_mine_rose" },
+    "disguise=rose,effect=ink": { "model": "witchery:block/plant_mine_rose" },
+    "disguise=rose,effect=thorns": { "model": "witchery:block/plant_mine_rose" },
+    "disguise=rose,effect=sprouting": { "model": "witchery:block/plant_mine_rose" },
+    "disguise=dandelion,effect=webs": { "model": "witchery:block/plant_mine_dandelion" },
+    "disguise=dandelion,effect=ink": { "model": "witchery:block/plant_mine_dandelion" },
+    "disguise=dandelion,effect=thorns": { "model": "witchery:block/plant_mine_dandelion" },
+    "disguise=dandelion,effect=sprouting": { "model": "witchery:block/plant_mine_dandelion" },
+    "disguise=shrub,effect=webs": { "model": "witchery:block/plant_mine_shrub" },
+    "disguise=shrub,effect=ink": { "model": "witchery:block/plant_mine_shrub" },
+    "disguise=shrub,effect=thorns": { "model": "witchery:block/plant_mine_shrub" },
+    "disguise=shrub,effect=sprouting": { "model": "witchery:block/plant_mine_shrub" }
   }
 }

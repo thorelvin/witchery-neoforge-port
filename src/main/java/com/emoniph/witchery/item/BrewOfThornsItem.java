@@ -104,7 +104,11 @@ public class BrewOfThornsItem extends BrewItem {
         return player != null && FamiliarHelper.hasActiveToadFamiliar(player);
     }
 
-    private static boolean plantCactus(ServerLevel level, BlockPos pos, int height) {
+    public static boolean plantCactus(ServerLevel level, BlockPos pos, int height) {
+        return plantCactus(level, pos, height, true);
+    }
+
+    public static boolean plantCactus(ServerLevel level, BlockPos pos, int height, boolean feedback) {
         BlockPos ground = pos;
         if (!level.getBlockState(ground).isSolid()) {
             ground = ground.below();
@@ -121,20 +125,22 @@ public class BrewOfThornsItem extends BrewItem {
             }
         } else {
             level.setBlock(ground, Blocks.SAND.defaultBlockState(), 3);
-            level.sendParticles(ParticleTypes.POOF,
-                    ground.getX() + 0.5D, ground.getY() + 0.5D, ground.getZ() + 0.5D,
-                    6, 0.2D, 0.2D, 0.2D, 0.02D);
+            if (feedback) {
+                level.sendParticles(ParticleTypes.POOF,
+                        ground.getX() + 0.5D, ground.getY() + 0.5D, ground.getZ() + 0.5D,
+                        6, 0.2D, 0.2D, 0.2D, 0.02D);
+            }
         }
 
         int placed = 0;
         for (int i = 1; i <= height && ground.getY() + i < level.getMaxY(); i++) {
             BlockPos cactusPos = ground.above(i);
-            if (!setCactusIfNotSolid(level, cactusPos)) {
+            if (!setCactusIfNotSolid(level, cactusPos, feedback)) {
                 break;
             }
             placed++;
         }
-        if (placed > 0) {
+        if (placed > 0 && feedback) {
             level.playSound(null, ground, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 0.8F);
         }
         return placed > 0;
@@ -149,7 +155,7 @@ public class BrewOfThornsItem extends BrewItem {
                 && state.getDestroySpeed(level, pos) >= 0.0F);
     }
 
-    private static boolean setCactusIfNotSolid(ServerLevel level, BlockPos pos) {
+    private static boolean setCactusIfNotSolid(ServerLevel level, BlockPos pos, boolean feedback) {
         BlockState current = level.getBlockState(pos);
         BlockState cactus = Blocks.CACTUS.defaultBlockState();
         if (current.isSolid()
@@ -160,9 +166,11 @@ public class BrewOfThornsItem extends BrewItem {
         }
 
         level.setBlock(pos, cactus, 3);
-        level.sendParticles(ParticleTypes.POOF,
-                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                8, 0.2D, 0.35D, 0.2D, 0.02D);
+        if (feedback) {
+            level.sendParticles(ParticleTypes.POOF,
+                    pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                    8, 0.2D, 0.35D, 0.2D, 0.02D);
+        }
         return true;
     }
 

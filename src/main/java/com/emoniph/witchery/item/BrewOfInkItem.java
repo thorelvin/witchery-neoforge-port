@@ -78,12 +78,19 @@ public class BrewOfInkItem extends BrewItem {
         return pos;
     }
 
-    private static void explodeInk(ServerLevel level, double x, double y, double z,
-                                   LivingEntity directTarget, boolean enhanced) {
+    public static void explodeInk(ServerLevel level, double x, double y, double z,
+                                  LivingEntity directTarget, boolean enhanced) {
+        explodeInk(level, x, y, z, directTarget,
+                new AABB(x - 0.5D, y - 0.5D, z - 0.5D, x + 0.5D, y + 0.5D, z + 0.5D),
+                enhanced, true);
+    }
+
+    public static void explodeInk(ServerLevel level, double x, double y, double z,
+                                  LivingEntity directTarget, AABB boundingBox,
+                                  boolean enhanced, boolean feedback) {
         double radius = enhanced ? ENHANCED_RADIUS : NORMAL_RADIUS;
         double radiusSq = radius * radius;
-        AABB area = new AABB(x - 0.5D, y - 0.5D, z - 0.5D, x + 0.5D, y + 0.5D, z + 0.5D)
-                .inflate(radius, 2.0D, radius);
+        AABB area = boundingBox.inflate(radius, 2.0D, radius);
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area)) {
             double distanceSq = target.distanceToSqr(x, y, z);
             if (distanceSq >= radiusSq) {
@@ -106,8 +113,10 @@ public class BrewOfInkItem extends BrewItem {
                     target.getBbWidth() * 0.35D, 0.02D);
         }
 
-        level.playSound(null, x, y, z, SoundEvents.GLOW_SQUID_SQUIRT, SoundSource.PLAYERS, 1.0F, 0.8F);
-        level.sendParticles(ParticleTypes.SQUID_INK, x, y, z, 16, 1.0D, 0.6D, 1.0D, 0.03D);
+        if (feedback) {
+            level.playSound(null, x, y, z, SoundEvents.GLOW_SQUID_SQUIRT, SoundSource.PLAYERS, 1.0F, 0.8F);
+            level.sendParticles(ParticleTypes.SQUID_INK, x, y, z, 16, 1.0D, 0.6D, 1.0D, 0.03D);
+        }
     }
 
     private static void consumeBrew(Player player, InteractionHand hand, ItemStack stack) {

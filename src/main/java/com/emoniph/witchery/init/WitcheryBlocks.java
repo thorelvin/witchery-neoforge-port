@@ -456,7 +456,10 @@ public class WitcheryBlocks {
     public static final DeferredBlock<BeartrapBlock> WOLFTRAP = registerBlock("wolftrap",
             props -> new BeartrapBlock(props, true),
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 10.0f).noOcclusion().noCollision());
-    public static final DeferredBlock<Block> PLANT_MINE       = registerSimpleBlock("plant_mine",       BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.0f).noOcclusion().noCollision());
+    public static final DeferredBlock<PlantMineBlock> PLANT_MINE = registerBlock("plant_mine",
+            PlantMineBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)
+                    .strength(6.0f, 1000.0f).noOcclusion().randomTicks().noLootTable());
     public static final DeferredBlock<DoorBlock> WITCH_DOOR = registerBlock("witch_door",
             props -> new DoorBlock(BlockSetType.OAK, props.mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.0f).noOcclusion()),
             BlockBehaviour.Properties.of());

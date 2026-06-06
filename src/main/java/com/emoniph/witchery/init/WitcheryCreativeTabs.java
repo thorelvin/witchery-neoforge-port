@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.ChaliceBlock;
+import com.emoniph.witchery.blocks.PlantMineBlock;
 import com.emoniph.witchery.blocks.ShadedGlassBlock;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -172,7 +173,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.INFINITY_EGG.get(),
                 WitcheryItems.CRITTER_SNARE.get(),
                 WitcheryItems.BEARTRAP.get(),
-                WitcheryItems.WOLFTRAP.get(),
+                WitcheryItems.WOLFTRAP.get());
+        addPlantMineVariants(output);
+        add(output,
                 WitcheryItems.WITCH_DOOR.get(),
                 WitcheryItems.PERPETUAL_ICE.get(),
                 WitcheryItems.ICE_STAIRS.get(),
@@ -567,6 +570,14 @@ public class WitcheryCreativeTabs {
     private static void add(CreativeModeTab.Output output, ItemLike... items) {
         for (ItemLike item : items) {
             output.accept(item);
+        }
+    }
+
+    private static void addPlantMineVariants(CreativeModeTab.Output output) {
+        for (PlantMineBlock.PlantMineDisguise disguise : PlantMineBlock.PlantMineDisguise.values()) {
+            for (PlantMineBlock.PlantMineEffect effect : PlantMineBlock.PlantMineEffect.values()) {
+                output.accept(PlantMineBlock.stackFor(disguise, effect));
+            }
         }
     }
 

@@ -80,7 +80,11 @@ public class BrewOfSproutingItem extends BrewItem {
         return player != null && FamiliarHelper.hasActiveToadFamiliar(player);
     }
 
-    private static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent) {
+    public static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent) {
+        return growBranch(level, clickedPos, face, extent, true);
+    }
+
+    public static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent, boolean feedback) {
         BlockState clickedState = level.getBlockState(clickedPos);
         BranchBlocks blocks = chooseBranchBlocks(clickedState, level.random);
         BlockState log = orientLog(blocks.log().defaultBlockState(), face);
@@ -94,16 +98,18 @@ public class BrewOfSproutingItem extends BrewItem {
             if (pos.getY() < level.getMinY() || pos.getY() >= level.getMaxY()) {
                 break;
             }
-            if (!setBranchBlock(level, pos, log)) {
+            if (!setBranchBlock(level, pos, log, feedback)) {
                 break;
             }
 
             placed++;
-            placeRandomLeaf(level, pos, face, leaves);
+            placeRandomLeaf(level, pos, face, leaves, feedback);
         }
 
-        if (placed > 0) {
+        if (placed > 0 && feedback) {
             level.playSound(null, clickedPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.8F, 1.0F);
+        }
+        if (placed > 0) {
             if (face == Direction.UP) {
                 moveNearbyEntitiesToTip(level, clickedPos, placed + 1);
             }
@@ -118,26 +124,28 @@ public class BrewOfSproutingItem extends BrewItem {
         return state;
     }
 
-    private static void placeRandomLeaf(ServerLevel level, BlockPos pos, Direction face, BlockState leaves) {
+    private static void placeRandomLeaf(ServerLevel level, BlockPos pos, Direction face, BlockState leaves, boolean feedback) {
         RandomSource random = level.random;
         int lx = face.getAxis() != Direction.Axis.X && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         int ly = face.getAxis() != Direction.Axis.Y && lx == 0 && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         int lz = face.getAxis() != Direction.Axis.Z && lx == 0 && ly == 0 && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         if (lx != 0 || ly != 0 || lz != 0) {
-            setBranchBlock(level, pos.offset(lx, ly, lz), leaves);
+            setBranchBlock(level, pos.offset(lx, ly, lz), leaves, feedback);
         }
     }
 
-    private static boolean setBranchBlock(ServerLevel level, BlockPos pos, BlockState state) {
+    private static boolean setBranchBlock(ServerLevel level, BlockPos pos, BlockState state, boolean feedback) {
         BlockState current = level.getBlockState(pos);
         if (current.isSolid() || current.hasBlockEntity()) {
             return false;
         }
 
         level.setBlock(pos, state, 3);
-        level.sendParticles(ParticleTypes.POOF,
-                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                4, 0.2D, 0.2D, 0.2D, 0.02D);
+        if (feedback) {
+            level.sendParticles(ParticleTypes.POOF,
+                    pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                    4, 0.2D, 0.2D, 0.2D, 0.02D);
+        }
         return true;
     }
 

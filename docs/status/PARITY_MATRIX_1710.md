@@ -190,7 +190,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | grassper | ✅ Done | |
 | glowglobe | ✅ Done | |
 | critter_snare | ✅ Done | |
-| plant_mine | ✅ Done | |
+| plant_mine | ✅ Done | Source `BlockPlantMine` parity restored: twelve rose/dandelion/shrub + webs/ink/thorns/sprouting variants, source 6.0F/1000F toughness, support/light survival, compact collision/outline, no normal drops, pick-block variant stacks, and source trap activation using the same web/ink/cactus/sprouting effect family. |
 | beartrap / wolftrap | ✅ Done | Full source renderer, trap logic |
 | wolf_altar | ✅ Done | |
 | wicker_bundle / bloodied_wicker_bundle | ✅ Done | |

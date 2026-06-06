@@ -302,6 +302,8 @@ public class WitcheryItems {
     public static final DeferredItem<BlockItem> CRITTER_SNARE = ITEMS.registerSimpleBlockItem(WitcheryBlocks.CRITTER_SNARE);
     public static final DeferredItem<BlockItem> BEARTRAP = ITEMS.registerSimpleBlockItem(WitcheryBlocks.BEARTRAP);
     public static final DeferredItem<BlockItem> WOLFTRAP = ITEMS.registerSimpleBlockItem(WitcheryBlocks.WOLFTRAP);
+    public static final DeferredItem<BlockItem> PLANT_MINE = ITEMS.register("plant_mine",
+            id -> new PlantMineBlockItem(WitcheryBlocks.PLANT_MINE.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> WITCH_DOOR = ITEMS.register("witch_door", id -> new net.minecraft.world.item.DoubleHighBlockItem(WitcheryBlocks.WITCH_DOOR.get(), itemProps(id)));
     public static final DeferredItem<Item> COTTON = ITEMS.register("cotton", id -> new BlockItem(WitcheryBlocks.COTTON_CROP.get(), itemProps(id)));
 

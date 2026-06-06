@@ -76,14 +76,20 @@ public class BrewOfWebsItem extends BrewItem {
         return pos;
     }
 
-    private static void explodeWeb(ServerLevel level, BlockPos center) {
-        for (BlockPos offset : WEB_OFFSETS) {
-            setWebIfNotSolid(level, center.offset(offset));
-        }
-        level.playSound(null, center, SoundEvents.SPIDER_AMBIENT, SoundSource.PLAYERS, 0.8F, 0.6F);
+    public static void explodeWeb(ServerLevel level, BlockPos center) {
+        explodeWeb(level, center, true);
     }
 
-    private static boolean setWebIfNotSolid(ServerLevel level, BlockPos pos) {
+    public static void explodeWeb(ServerLevel level, BlockPos center, boolean feedback) {
+        for (BlockPos offset : WEB_OFFSETS) {
+            setWebIfNotSolid(level, center.offset(offset), feedback);
+        }
+        if (feedback) {
+            level.playSound(null, center, SoundEvents.SPIDER_AMBIENT, SoundSource.PLAYERS, 0.8F, 0.6F);
+        }
+    }
+
+    private static boolean setWebIfNotSolid(ServerLevel level, BlockPos pos, boolean feedback) {
         BlockState state = level.getBlockState(pos);
         if (state.isSolid()
                 || state.liquid()
@@ -92,9 +98,11 @@ public class BrewOfWebsItem extends BrewItem {
         }
 
         level.setBlock(pos, Blocks.COBWEB.defaultBlockState(), 3);
-        level.sendParticles(ParticleTypes.POOF,
-                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                8, 0.25D, 0.25D, 0.25D, 0.02D);
+        if (feedback) {
+            level.sendParticles(ParticleTypes.POOF,
+                    pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                    8, 0.25D, 0.25D, 0.25D, 0.02D);
+        }
         return true;
     }
 
