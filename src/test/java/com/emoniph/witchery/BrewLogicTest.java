@@ -893,6 +893,59 @@ class BrewLogicTest {
     }
 
     @Test
+    void pumpkinAndBlueOrchidRestoreSourceBaneActions() {
+        Brews.bootstrap();
+
+        assertFalse(Brews.canAdd(List.of(), Items.PUMPKIN),
+                "source Undeadbane requires level-2 capacity");
+        assertTrue(Brews.canAdd(level2(), Items.PUMPKIN),
+                "Nether Wart opens enough capacity for source Undeadbane");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.PUMPKIN)),
+                "under-capacity Undeadbane resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> undead = Brews.buildActions(level2(Items.PUMPKIN));
+        assertEquals(1, undead.size(), "Pumpkin resolves as source Undeadbane");
+        assertEquals(Brews.Ingredient.BrewAction.BANE_UNDEAD, undead.get(0).action());
+        assertEquals("witchery.brew.harmundead", undead.get(0).nameKey());
+        assertEquals(250, Brews.powerCost(level2(Items.PUMPKIN)),
+                "source Nether Wart capacity cost plus Pumpkin altar cost");
+
+        assertFalse(Brews.canAdd(List.of(), Items.BLUE_ORCHID),
+                "source Insectbane requires level-2 capacity");
+        List<Brews.ActionApplication> insects = Brews.buildActions(level2(Items.BLUE_ORCHID));
+        assertEquals(1, insects.size(), "Blue Orchid resolves as source Insectbane");
+        assertEquals(Brews.Ingredient.BrewAction.BANE_ARTHROPODS, insects.get(0).action());
+        assertEquals("witchery.brew.harminsects", insects.get(0).nameKey());
+        assertEquals(250, Brews.powerCost(level2(Items.BLUE_ORCHID)),
+                "source Nether Wart capacity cost plus Blue Orchid altar cost");
+
+        assertEquals(1, Brews.buildActions(level2(Items.GLOWSTONE_DUST, Items.PUMPKIN)).get(0).strength(),
+                "Glowstone raises bane action strength");
+        assertTrue(Brews.buildActions(level2(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
+                        Items.BLAZE_ROD, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.PUMPKIN))
+                .get(0).strengthCeilingDisabled(),
+                "Tropical Fish carries source strength-ceiling bypass into bane actions");
+    }
+
+    @Test
+    void baneDamageUsesSourceStrengthCeilingAndSplashScaling() {
+        assertEquals(10, Brews.sourceBaneDamage(true, 0, false, 1.0),
+                "base matching bane damage is 10");
+        assertEquals(20, Brews.sourceBaneDamage(true, 3, false, 1.0),
+                "ordinary bane strength caps at level II damage");
+        assertEquals(80, Brews.sourceBaneDamage(true, 3, true, 1.0),
+                "ceiling-disabled bane strength reaches source level IV damage");
+        assertEquals(3, Brews.sourceBaneDamage(false, 0, false, 1.0),
+                "nonmatching targets still take the source lesser damage");
+        assertEquals(6, Brews.sourceBaneDamage(false, 3, false, 1.0),
+                "nonmatching ordinary strength also caps at level II damage");
+        assertEquals(40, Brews.sourceBaneDamage(true, 3, true, 0.5),
+                "source splash power factor scales bane damage before ceiling");
+        assertEquals(2, Brews.sourceBaneDamage(false, 0, false, 0.5),
+                "source fractional lesser damage is rounded up");
+    }
+
+    @Test
     void sourceCapacityIngredientsGatePotionEffects() {
         Brews.bootstrap();
         Item tear = WitcheryItems.TEAR_OF_GODDESS.get();

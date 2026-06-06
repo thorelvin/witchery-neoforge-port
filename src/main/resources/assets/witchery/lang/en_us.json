@@ -1493,6 +1493,8 @@
   "witchery.brew.animal_repulsion": "Animal Repulsion",
   "witchery.brew.removebuffs": "Cure Buffs",
   "witchery.brew.removedebuffs": "Cure Debuffs",
+  "witchery.brew.harmundead": "Undeadbane",
+  "witchery.brew.harminsects": "Insectbane",
   "item.witchery.endless_water_brew": "Endless Water Brew",
   "item.witchery.hunts_horn": "Horn of the Hunt",
   "item.witchery.hunts_horn.tip": "Calls forth the Horned Huntsman, then vanishes.",

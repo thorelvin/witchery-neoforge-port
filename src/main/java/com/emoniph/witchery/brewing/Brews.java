@@ -1,6 +1,8 @@
 package com.emoniph.witchery.brewing;
 
+import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.core.BlockPos;
@@ -9,7 +11,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -67,7 +71,7 @@ public final class Brews {
             EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
         }
 
-        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS }
+        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
@@ -145,7 +149,8 @@ public final class Brews {
         }
     }
 
-    public record ActionApplication(Ingredient.BrewAction action, boolean inverted, int strength, String nameKey) {}
+    public record ActionApplication(Ingredient.BrewAction action, boolean inverted, int strength,
+                                    boolean strengthCeilingDisabled, String nameKey) {}
 
     private static final class Resolution {
         final List<MobEffectInstance> effects = new ArrayList<>();
@@ -249,6 +254,12 @@ public final class Brews {
         registerExplicit(WitcheryItems.PURIFIED_MILK.get(), Ingredient.action(Ingredient.BrewAction.REMOVE_DEBUFFS,
                 2, 200, 0x3DCB04,
                 "witchery.brew.removedebuffs", null));
+        register(Items.PUMPKIN, Ingredient.action(Ingredient.BrewAction.BANE_UNDEAD,
+                2, 200, 0xD9801F,
+                "witchery.brew.harmundead", null));
+        register(Items.BLUE_ORCHID, Ingredient.action(Ingredient.BrewAction.BANE_ARTHROPODS,
+                2, 200, 0x39A8B8,
+                "witchery.brew.harminsects", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -399,7 +410,8 @@ public final class Brews {
                     if (hasAvailableCapacity(resolved, ing)) {
                         boolean inverted = mods.inverted && ing.invertedNameKey() != null;
                         String nameKey = inverted ? ing.invertedNameKey() : ing.nameKey();
-                        resolved.actions.add(new ActionApplication(ing.action(), inverted, mods.strength, nameKey));
+                        resolved.actions.add(new ActionApplication(ing.action(), inverted, mods.strength,
+                                mods.strengthCeilingDisabled, nameKey));
                         resolved.usedCapacity += ing.capacityRequired();
                         mods.reset();
                     } else {
@@ -483,7 +495,7 @@ public final class Brews {
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
-                applyAction(serverLevel, target, action);
+                applyAction(serverLevel, target, action, 1.0, source);
             }
         }
     }
@@ -534,7 +546,7 @@ public final class Brews {
             level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
         }
         if (!resolved.actions.isEmpty()) {
-            applyAreaActions(level, pos, directTarget, resolved.actions);
+            applyAreaActions(level, pos, directTarget, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
         }
     }
 
@@ -597,30 +609,74 @@ public final class Brews {
         }
     }
 
-    private static void applyAreaActions(ServerLevel level, Vec3 pos, LivingEntity directTarget, List<ActionApplication> actions) {
+    private static void applyAreaActions(ServerLevel level, Vec3 pos, LivingEntity directTarget,
+                                         List<ActionApplication> actions, Entity source, double instantRadius) {
         if (directTarget != null && directTarget.isAlive()) {
             for (ActionApplication action : actions) {
-                applyAction(level, directTarget, action);
+                applyAction(level, directTarget, action, 1.0, source);
             }
             return;
         }
 
-        AABB area = new AABB(pos.x - 4, pos.y - 2, pos.z - 4, pos.x + 4, pos.y + 2, pos.z + 4);
+        AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
+                pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area, LivingEntity::isAlive)) {
+            double distance = Math.sqrt(target.distanceToSqr(pos));
+            if (distance > instantRadius) {
+                continue;
+            }
+            double powerFactor = splashPowerFactor(distance, false, instantRadius);
             for (ActionApplication action : actions) {
-                applyAction(level, target, action);
+                applyAction(level, target, action, powerFactor, source);
             }
         }
     }
 
-    private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action) {
+    private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action,
+                                    double powerFactor, Entity source) {
         if (action.action() == Ingredient.BrewAction.ANIMAL) {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
             removeBuffs(target, action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_DEBUFFS) {
             removeDebuffs(target, action.strength());
+        } else if (action.action() == Ingredient.BrewAction.BANE_UNDEAD) {
+            applyBaneDamage(level, target, source, isSourceUndead(target), action.strength(),
+                    action.strengthCeilingDisabled(), powerFactor);
+        } else if (action.action() == Ingredient.BrewAction.BANE_ARTHROPODS) {
+            applyBaneDamage(level, target, source, isSourceArthropod(target), action.strength(),
+                    action.strengthCeilingDisabled(), powerFactor);
         }
+    }
+
+    private static void applyBaneDamage(ServerLevel level, LivingEntity target, Entity source, boolean matchingTarget,
+                                        int strength, boolean strengthCeilingDisabled, double powerFactor) {
+        int damage = sourceBaneDamage(matchingTarget, strength, strengthCeilingDisabled, powerFactor);
+        if (damage > 0) {
+            target.hurtServer(level, sourceBaneDamageSource(level, source), damage);
+        }
+    }
+
+    private static DamageSource sourceBaneDamageSource(ServerLevel level, Entity source) {
+        return source == null ? level.damageSources().magic() : level.damageSources().indirectMagic(source, source);
+    }
+
+    public static int sourceBaneDamage(boolean matchingTarget, int strength, boolean strengthCeilingDisabled,
+                                       double powerFactor) {
+        int cappedStrength = Math.min(strength, strengthCeilingDisabled ? 3 : 1);
+        int baseDamage = matchingTarget ? 10 : 3;
+        return Mth.ceil((double) (baseDamage << cappedStrength) * powerFactor);
+    }
+
+    public static boolean isSourceUndead(LivingEntity target) {
+        if (target.getType().is(EntityTypeTags.UNDEAD) || target instanceof VampireEntity) {
+            return true;
+        }
+        return target instanceof Player player && WitcheryAttachments.get(player).isVampire();
+    }
+
+    public static boolean isSourceArthropod(LivingEntity target) {
+        return target.getType().is(EntityTypeTags.ARTHROPOD);
     }
 
     private static void removeBuffs(LivingEntity target, int strength) {
