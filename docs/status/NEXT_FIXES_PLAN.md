@@ -26,6 +26,7 @@ Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA che
 12. Finish Spirit World parity around corpse/state transitions, flowing spirit interactions, and demonic nightmare edge cases.
 13. Finish machine screen parity so Distillery, Witch's Oven, and Spinning Wheel GUI rendering matches their textures cleanly.
 14. Restore deferred systems that still need real implementation, especially Custom Brews, Mirror World work, and remaining rite coverage.
+    Custom Brews now need an architecture pass on the old `EffectLevelCounter` model: source capacity modifiers (`Mandrake Root`, `Nether Wart`, `Tear of the Goddess`, `Diamond Vapour`, `Diamond`, `Nether Star`, `Koboldite Pentacle`) raise available effect levels, and potion/action ingredients consume those levels before they can apply. The port has a partial action capacity route and many source potion-effect ingredients, including Ink Sac Blindness, but potion-effect capacity gating is still not source-complete.
 15. Add a repeatable regression checklist so future parity work can be verified subsystem-by-subsystem instead of rediscovered manually.
 
 ## Architecture and maintenance backlog

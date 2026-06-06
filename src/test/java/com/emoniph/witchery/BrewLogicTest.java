@@ -345,6 +345,20 @@ class BrewLogicTest {
     }
 
     @Test
+    void inkSacRestoresSourceBlindnessBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> blindness = Brews.buildEffects(List.of(Items.INK_SAC));
+        assertEquals(1, blindness.size(), "Ink Sac resolves as the old Blindness brew ingredient");
+        assertSame(MobEffects.BLINDNESS.value(), blindness.get(0).getEffect().value(),
+                "source Dye.INK_SAC makes vanilla Blindness");
+        assertEquals(300, blindness.get(0).getDuration(), "source Blindness brew lasts fifteen seconds");
+        assertEquals(1000, Brews.powerCost(List.of(Items.INK_SAC)), "Blindness source effect power");
+
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.INK_SAC)).get(0).getAmplifier(),
+                "source Blindness accepts the normal strength modifier path");
+    }
+
+    @Test
     void enderInhibitionUsesSourceAmplifierGate() {
         assertFalse(EnderInhibitionMobEffect.canTeleport(0, 0),
                 "an active level-I effect blocks ordinary ender teleport checks");

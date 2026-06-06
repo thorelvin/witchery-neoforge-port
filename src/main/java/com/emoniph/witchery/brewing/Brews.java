@@ -181,6 +181,8 @@ public final class Brews {
                 600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2552A5, 1000));
         register(Items.ENCHANTED_GOLDEN_APPLE, Ingredient.effect(MobEffects.HEALTH_BOOST,
                 2400, SOURCE_DEFAULT_STRENGTH_CEILING, 0xF87D23, 1000));
+        register(Items.INK_SAC, Ingredient.effect(MobEffects.BLINDNESS,
+                300, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1F23, 1000));
         register(WitcheryItems.ENDER_DEW.get(), Ingredient.effect(WitcheryMobEffects.ENDER_INHIBITION,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200));
         register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,
