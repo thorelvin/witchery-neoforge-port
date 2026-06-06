@@ -25,9 +25,11 @@ import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -113,6 +115,7 @@ public final class Brews {
     }
 
     private static final Map<Item, Ingredient> REGISTRY = new LinkedHashMap<>();
+    private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
 
     private Brews() {
@@ -123,9 +126,9 @@ public final class Brews {
             return;
         }
         // ── Effect ingredients (potion, base duration ticks, strength ceiling, name/tint color) ──
-        // NOTE: ingredients consumed by the cauldron's hardcoded recipes (Nether Wart, Blaze Powder,
-        // Mandrake Root, Gold Nugget, Ender Pearl, Dirt, Egg, Dandelion, Wheat Seeds, Tear of the
-        // Goddess) are deliberately NOT brew ingredients, so composition never steals them.
+        // NOTE: ingredients consumed by the cauldron's hardcoded recipes are not auto-stirred from
+        // dropped item entities. The old dual-purpose capacity trio below is registered for composed
+        // brews, but requires the explicit player stir path so source offerings remain intact.
         register(Items.SPIDER_EYE, Ingredient.effect(MobEffects.POISON, MobEffects.REGENERATION, 300, 1, 0x4E9331));
         register(Items.MAGMA_CREAM, Ingredient.effect(MobEffects.FIRE_RESISTANCE, 3600, 0, 0xE49A3A));
         register(Items.SUGAR, Ingredient.effect(MobEffects.SPEED, MobEffects.SLOWNESS, 1800, 2, 0x7CAFC6));
@@ -141,9 +144,12 @@ public final class Brews {
                 4, 500, 0xF2C94C,
                 "witchery.brew.animal_attraction", "witchery.brew.animal_repulsion"));
 
-        // Source capacity modifiers that do not collide with the port's dropped-offering recipes.
-        // Mandrake Root, Nether Wart, and Tear of the Goddess stay reserved for existing cauldron
-        // recipes until the resolver can disambiguate those old dual-purpose ingredients.
+        // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
+        // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
+        // sneaking with the item explicitly stirs it as custom-brew capacity.
+        registerExplicit(WitcheryItems.MANDRAKE_ROOT.get(), Ingredient.capacity(1, 1, 0));
+        registerExplicit(Items.NETHER_WART, Ingredient.capacity(2, 2, 50));
+        registerExplicit(WitcheryItems.TEAR_OF_GODDESS.get(), Ingredient.capacity(2, 4, 100));
         register(WitcheryItems.DIAMOND_VAPOUR.get(), Ingredient.capacity(2, 6, 150));
         register(Items.DIAMOND, Ingredient.capacity(2, 8, 150));
         register(Items.NETHER_STAR, Ingredient.capacity(4, 10, 150));
@@ -164,9 +170,30 @@ public final class Brews {
         }
     }
 
+    private static void registerExplicit(Item item, Ingredient ingredient) {
+        register(item, ingredient);
+        if (item != null && item != Items.AIR) {
+            EXPLICIT_STIR_ONLY.add(item);
+        }
+    }
+
     public static boolean isIngredient(Item item) {
         bootstrap();
         return REGISTRY.containsKey(item);
+    }
+
+    public static boolean requiresExplicitStir(Item item) {
+        bootstrap();
+        return EXPLICIT_STIR_ONLY.contains(item);
+    }
+
+    public static boolean isAutomaticIngredient(Item item) {
+        bootstrap();
+        return REGISTRY.containsKey(item) && !EXPLICIT_STIR_ONLY.contains(item);
+    }
+
+    public static boolean canAddAutomatically(List<Item> currentItems, Item candidate) {
+        return isAutomaticIngredient(candidate) && canAdd(currentItems, candidate);
     }
 
     public static Ingredient get(Item item) {

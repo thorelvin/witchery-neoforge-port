@@ -1091,6 +1091,7 @@
   "witchery.cauldron.chalk.support": "The cauldron lacks the support ingredients for a stronger chalk.",
   "witchery.cauldron.chalk.no_power": "A nearby altar lacks the power to transform the chalk.",
   "witchery.cauldron.brew.no_power": "A nearby altar lacks the %s power needed to bottle this brew.",
+  "witchery.cauldron.brew.cannot_add": "The brew cannot accept that ingredient right now.",
   "witchery.cauldron.chalk.golden.success": "Golden chalk settles from the cauldron.",
   "witchery.cauldron.chalk.infernal.success": "Infernal chalk drinks in the heat of the cauldron.",
   "witchery.cauldron.chalk.otherwhere.success": "Otherwhere chalk twists free from the cauldron's surface.",

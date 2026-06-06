@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -217,6 +219,11 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
+        InteractionResult explicitBrewResult = tryExplicitlyStirBrewIngredient(stack, state, level, pos, player);
+        if (explicitBrewResult.consumesAction()) {
+            return explicitBrewResult;
+        }
+
         InteractionResult chalkResult = tryUpgradeChalk(stack, state, level, pos, player);
         if (chalkResult.consumesAction()) {
             return chalkResult;
@@ -253,6 +260,35 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
 
         return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    private InteractionResult tryExplicitlyStirBrewIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!player.isShiftKeyDown()
+                || state.getValue(LEVEL) <= 0
+                || !isHeated(level.getBlockState(pos.below()))
+                || !Brews.requiresExplicitStir(stack.getItem())) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!(level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe)) {
+            return InteractionResult.PASS;
+        }
+        if (!brewBe.tryAddIngredient(stack.getItem())) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.cannot_add"), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 1.4F);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5, pos.getY() + 0.85, pos.getZ() + 0.5,
+                    8, 0.2, 0.05, 0.2, 0.02);
+        }
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        return InteractionResult.CONSUME;
     }
 
     @Override

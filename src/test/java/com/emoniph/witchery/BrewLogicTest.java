@@ -1,15 +1,19 @@
 package com.emoniph.witchery;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Plain-JVM verification of the custom-brew composition engine ({@link Brews}). Runs via
@@ -58,5 +62,33 @@ class BrewLogicTest {
         assertEquals(2, fx.size(), "two effects");
         assertEquals(1, fx.get(0).getAmplifier(), "first strengthened");
         assertEquals(0, fx.get(1).getAmplifier(), "second reset");
+    }
+
+    @Test
+    void sourceCapacityIngredientsUnlockHeartOfGold() {
+        Brews.bootstrap();
+        Item tear = WitcheryItems.TEAR_OF_GODDESS.get();
+        Item heart = WitcheryItems.GOLDEN_HEART.get();
+
+        assertFalse(Brews.canAdd(List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.NETHER_WART), heart),
+                "Mandrake + Nether Wart leaves Heart of Gold below its level-4 requirement");
+        assertTrue(Brews.canAdd(List.of(Items.NETHER_WART, tear), heart),
+                "Nether Wart + Tear of the Goddess reaches the old level-4 capacity threshold");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(List.of(Items.NETHER_WART, tear, heart));
+        assertEquals(1, actions.size(), "Heart of Gold action resolves after old capacity modifiers");
+        assertEquals(Brews.Ingredient.BrewAction.ANIMAL, actions.get(0).action(), "animal attraction action");
+        assertEquals(650, Brews.powerCost(List.of(Items.NETHER_WART, tear, heart)), "source capacity + Heart altar cost");
+    }
+
+    @Test
+    void dualPurposeCapacityIngredientsRequireExplicitStirring() {
+        Brews.bootstrap();
+        assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");
+        assertTrue(Brews.requiresExplicitStir(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root keeps dropped-offering behavior");
+        assertFalse(Brews.canAddAutomatically(List.of(), WitcheryItems.MANDRAKE_ROOT.get()),
+                "dropped Mandrake Root must remain available to hardcoded cauldron offerings");
+        assertTrue(Brews.canAddAutomatically(List.of(), WitcheryItems.DIAMOND_VAPOUR.get()),
+                "non-conflicting capacity ingredients still auto-stir when dropped");
     }
 }

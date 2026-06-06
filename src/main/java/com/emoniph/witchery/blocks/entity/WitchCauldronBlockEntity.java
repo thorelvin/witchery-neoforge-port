@@ -57,9 +57,13 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         }
     }
 
-    private void addIngredient(Item item) {
+    public boolean tryAddIngredient(Item item) {
+        if (ingredients.size() >= Brews.MAX_CAPACITY || !Brews.canAdd(ingredients, item)) {
+            return false;
+        }
         ingredients.add(item);
         setChanged();
+        return true;
     }
 
     @Override
@@ -96,10 +100,12 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                 continue;
             }
             ItemStack itemStack = entity.getItem();
-            if (!Brews.isIngredient(itemStack.getItem()) || !Brews.canAdd(be.getIngredients(), itemStack.getItem())) {
+            if (!Brews.canAddAutomatically(be.getIngredients(), itemStack.getItem())) {
                 continue;
             }
-            be.addIngredient(itemStack.getItem());
+            if (!be.tryAddIngredient(itemStack.getItem())) {
+                continue;
+            }
             itemStack.shrink(1);
             if (itemStack.isEmpty()) {
                 entity.discard();
