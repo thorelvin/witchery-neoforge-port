@@ -67,7 +67,7 @@ public final class Brews {
             EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
         }
 
-        public enum BrewAction { ANIMAL, REMOVE_BUFFS }
+        public enum BrewAction { ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
@@ -246,6 +246,9 @@ public final class Brews {
         registerExplicit(WitcheryItems.REEK_OF_MISFORTUNE.get(), Ingredient.action(Ingredient.BrewAction.REMOVE_BUFFS,
                 2, 250, 0x210425,
                 "witchery.brew.removebuffs", null));
+        registerExplicit(WitcheryItems.PURIFIED_MILK.get(), Ingredient.action(Ingredient.BrewAction.REMOVE_DEBUFFS,
+                2, 200, 0x3DCB04,
+                "witchery.brew.removedebuffs", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -615,6 +618,8 @@ public final class Brews {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
             removeBuffs(target, action.strength());
+        } else if (action.action() == Ingredient.BrewAction.REMOVE_DEBUFFS) {
+            removeDebuffs(target, action.strength());
         }
     }
 
@@ -630,6 +635,18 @@ public final class Brews {
         }
     }
 
+    private static void removeDebuffs(LivingEntity target, int strength) {
+        List<Holder<MobEffect>> effectsToRemove = new ArrayList<>();
+        for (MobEffectInstance effect : target.getActiveEffects()) {
+            if (shouldRemoveDebuff(effect, strength)) {
+                effectsToRemove.add(effect.getEffect());
+            }
+        }
+        for (Holder<MobEffect> effect : effectsToRemove) {
+            target.removeEffect(effect);
+        }
+    }
+
     public static boolean shouldRemoveBuff(MobEffectInstance effect, int strength) {
         return shouldRemoveBuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
     }
@@ -637,6 +654,16 @@ public final class Brews {
     public static boolean shouldRemoveBuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
         return amplifier <= strength
                 && effect.value().getCategory() != MobEffectCategory.HARMFUL
+                && curable;
+    }
+
+    public static boolean shouldRemoveDebuff(MobEffectInstance effect, int strength) {
+        return shouldRemoveDebuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
+    }
+
+    public static boolean shouldRemoveDebuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
+        return amplifier <= strength
+                && effect.value().getCategory() == MobEffectCategory.HARMFUL
                 && curable;
     }
 
