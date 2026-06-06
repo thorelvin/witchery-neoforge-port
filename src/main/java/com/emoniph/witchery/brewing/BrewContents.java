@@ -54,6 +54,10 @@ public record BrewContents(List<Item> items) {
         return Brews.power(items);
     }
 
+    public int powerCost() {
+        return Brews.powerCost(items);
+    }
+
     public Component displayName() {
         return Brews.name(items);
     }
@@ -64,5 +68,9 @@ public record BrewContents(List<Item> items) {
 
     public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal) {
         Brews.applyToArea(level, pos, items, dispersal);
+    }
+
+    public void applyToArea(ServerLevel level, Vec3 pos, Brews.Dispersal dispersal, LivingEntity directTarget) {
+        Brews.applyToArea(level, pos, items, dispersal, directTarget);
     }
 }

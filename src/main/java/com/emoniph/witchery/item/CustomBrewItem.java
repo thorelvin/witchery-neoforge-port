@@ -90,6 +90,14 @@ public class CustomBrewItem extends Item {
             name = Component.translatable("potion.withDuration", name, formatDuration(effect.getDuration()));
             tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
         }
+        for (var action : com.emoniph.witchery.brewing.Brews.buildActions(brew.items())) {
+            Component name = Component.translatable(action.nameKey());
+            if (action.strength() > 0) {
+                name = Component.translatable("potion.withAmplifier", name,
+                        Component.translatable("potion.potency." + action.strength()));
+            }
+            tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
+        }
     }
 
     private static Component formatDuration(int ticks) {

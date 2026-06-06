@@ -15,6 +15,7 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -93,7 +94,9 @@ public class ThrownBrewEntity extends ThrowableProjectile {
         if (level() instanceof ServerLevel serverLevel) {
             Vec3 pos = result.getLocation();
             if (!composed.isEmpty()) {
-                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH);
+                LivingEntity directTarget = result instanceof EntityHitResult entityHit
+                        && entityHit.getEntity() instanceof LivingEntity living ? living : null;
+                composed.applyToArea(serverLevel, pos, isGas() ? Brews.Dispersal.GAS : Brews.Dispersal.SPLASH, directTarget);
             } else {
                 BrewType type = getBrewType();
                 int tier = getPower();
@@ -121,4 +124,3 @@ public class ThrownBrewEntity extends ThrowableProjectile {
         composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
     }
 }
-

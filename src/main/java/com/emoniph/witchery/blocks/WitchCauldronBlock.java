@@ -316,6 +316,18 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                                      Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
         com.emoniph.witchery.brewing.BrewContents contents =
                 new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
+        int powerCost = contents.powerCost();
+        if (powerCost > 0) {
+            AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+            if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost) {
+                player.displayClientMessage(Component.translatable("witchery.cauldron.brew.no_power", powerCost), false);
+                return;
+            }
+            if (!altar.consumePower(powerCost)) {
+                player.displayClientMessage(Component.translatable("witchery.cauldron.brew.no_power", powerCost), false);
+                return;
+            }
+        }
         Item resultItem = switch (contents.dispersal()) {
             case SPLASH -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
             case GAS -> WitcheryItems.LINGERING_BREW_BOTTLE.get();

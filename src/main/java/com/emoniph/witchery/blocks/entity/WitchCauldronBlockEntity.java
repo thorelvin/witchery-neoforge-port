@@ -96,7 +96,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                 continue;
             }
             ItemStack itemStack = entity.getItem();
-            if (!Brews.isIngredient(itemStack.getItem())) {
+            if (!Brews.isIngredient(itemStack.getItem()) || !Brews.canAdd(be.getIngredients(), itemStack.getItem())) {
                 continue;
             }
             be.addIngredient(itemStack.getItem());

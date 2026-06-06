@@ -84,5 +84,13 @@ public class CustomThrownBrewItem extends Item {
             }
             tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
         }
+        for (var action : com.emoniph.witchery.brewing.Brews.buildActions(brew.items())) {
+            Component name = Component.translatable(action.nameKey());
+            if (action.strength() > 0) {
+                name = Component.translatable("potion.withAmplifier", name,
+                        Component.translatable("potion.potency." + action.strength()));
+            }
+            tooltip.accept(name.copy().withStyle(ChatFormatting.BLUE));
+        }
     }
 }
