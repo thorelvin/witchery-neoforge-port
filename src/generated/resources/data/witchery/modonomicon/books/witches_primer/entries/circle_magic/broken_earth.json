@@ -1,0 +1,50 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_of_erosion"
+  },
+  "name": "Rite of Broken Earth",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A small working that tears open the ground beyond the circle — rough, practical witchcraft for a trench, a hazard, or a sudden gap where there was solid ground.[#]()",
+      "title": "Rite of Broken Earth",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Offer a **Brew of Erosion** on a small circle; the crevice carves ahead of the casting point, so choose your direction first.[#]()",
+      "title": "The Working",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Use it to disrupt pursuers, split a battlefield, or make a sudden barrier. Blunt magic — effective, noisy, and inclined to ruin the ground.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 10,
+  "x": 0,
+  "y": 0
+}

@@ -16,4 +16,9 @@ public final class WitcheryBookOpener {
     public static void open(Identifier bookId) {
         BookGuiManager.get().openBook(BookAddress.defaultFor(bookId));
     }
+
+    /** Opens a book straight to a specific category/entry (e.g. a topic guide item). */
+    public static void openEntry(Identifier bookId, Identifier categoryId, Identifier entryId) {
+        BookGuiManager.get().openBook(BookAddress.of(bookId, categoryId, entryId, 0));
+    }
 }

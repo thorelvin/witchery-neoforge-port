@@ -1,0 +1,64 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "creatures",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:koboldite_ingot"
+  },
+  "name": "Hobgoblins",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron.[#]()",
+      "title": "Hobgoblins",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)They live in woodland huts and trade in koboldite, a metal found only through their commerce.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Statue of the Hobgoblin Patron is a fine decoration — but right-clicking it has consequences. You have been told.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "witchery:hobgoblin",
+      "name": "Hobgoblin",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": "[#](53341a)Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work upward. The koboldite at the end is genuinely useful.[#]()"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

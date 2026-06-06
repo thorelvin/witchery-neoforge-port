@@ -1,0 +1,127 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brazier"
+  },
+  "name": "The Brazier",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Fire is one of the oldest working tools in the craft, and the brazier is how you direct it.[#]()",
+      "title": "The Brazier",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Load up to three ingredients by right-clicking, ignite it, then step back and let it burn.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Most brazier workings draw power from a nearby altar, and the effect releases when the burning is complete.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Patience is required — and occasionally a safe distance.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:brazier",
+      "text": "[#](53341a)Iron ingots and a stick. The brazier need not be complicated; what burns inside it often is.[#]()",
+      "title1": "Brazier",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)**Conjure Spectres** — Wormwood, Bat Wool, and Graveyard Dust. Something emerges.[#]()",
+      "title": "Named Workings",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Anguish of the Dead** — Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Deathly Veil** — Fermented Eye, Ender Pearl, and Diamond. Light passes through.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Fortification of the Corpse** — Tear of the Goddess, Diamond, and Golden Apple. Resistance for those nearby.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Graveyard Mist** — Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

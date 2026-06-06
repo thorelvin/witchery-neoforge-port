@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "D#F",
+    " E "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "B": "minecraft:white_wool",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "E": "minecraft:string"
+  },
+  "result": {
+    "id": "witchery:book_poppets",
+    "count": 1
+  }
+}

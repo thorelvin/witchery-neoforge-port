@@ -9,6 +9,111 @@ Current target:
 
 ---
 
+## 2026-06-05 Guidebook progression — book-aligned unlock chain
+
+Turned the finished 51-entry Primer into **one growing book** unlocked by crafting topic books.
+Final shape: **12 categories** (Getting Started always open + 11 gated), 51 content entries +
+11 "What Comes Next" recipe entries. Linear chain: Primer → Herbology → Brews & Infusions →
+Collecting Fumes → Distilling → Circle Magic → Conjuration → Symbology → Poppets → Spirit World →
+Creatures → Transformations.
+
+Gotchas / decisions (Modonomicon 1.121.0):
+- **Category locking = `BookCategoryModel.withCondition(BookAdvancementConditionModel.create()
+  .withAdvancementId(id))`.** There is **no `hideWhileLocked` on categories** (only on entries).
+- **To HIDE a locked category, the BOOK must be in INDEX display mode**
+  (`BookModel.withDisplayMode(BookDisplayMode.INDEX)`). Confirmed by decompiling
+  `BookParentIndexScreen` — its `init` filters categories through a `isUnlockedFor(player, category)`
+  predicate (`lambda$init$3`), so an unmet condition removes the category button entirely. The NODE
+  parent screen does not filter the same way.
+- **Do NOT use `withShowCategoryButton(false)` for conditional hiding** — it is a *static* flag that
+  hides the button permanently, even after unlock. It is unrelated to conditions.
+- **Chain via advancements** under `data/witchery/advancement/guide/<key>.json`: criterion
+  `minecraft:inventory_changed` on the held book → `rewards.recipes` unlocks the *next* book's recipe
+  in the player's recipe book. Same advancement id is the category's unlock condition. `parent`:
+  `minecraft:recipes/root` (so it behaves like a recipe-unlock advancement, no toast spam). The last
+  link (transformations) has no reward.
+- **First-join gift**: dedicated boolean attachment `WitcheryAttachments.RECEIVED_PRIMER`
+  (`AttachmentType.builder(() -> FALSE).serialize(Codec.BOOL.fieldOf("value")).copyOnDeath()`) — a
+  standalone attachment avoids the `WitcheryPlayerData` RecordCodecBuilder **16-field cap**.
+  `serialize(...)` needs a `MapCodec`, so wrap a primitive codec with `.fieldOf(...)`.
+- **Debug**: `/witchery guide unlock [all|<book>]` / `/witchery guide reset` grant/revoke the
+  `witchery:guide/*` advancements via `player.getAdvancements().award/revoke(holder, "has_book")`,
+  `holder` from `src.getServer().getAdvancements().get(id)`.
+- Primer recipe is now cheap/recoverable: shapeless Book + black dye + feather (was witch_hand+Book).
+- Cauldron Book + Observations stay **standalone** Modonomicon books, outside the chain.
+
+Polish pass (same day):
+- **Gating-order fix (the real one).** The reagents `odour_of_purity` / `breath_of_goddess` /
+  `whiff_of_magic` are **Witches' Oven products** (sapling → fume: hawthorn→odour, birch→breath,
+  rowan→whiff), *not* cauldron brews (corrected after the first pass got this wrong). `book_infusions`
+  needs Odour of Purity, so it depends on the **Oven** — but Collecting Fumes (the oven book) sat at
+  chain #3, *after* Brews & Infusions at #2: a deadlock. Fix: **reordered Collecting Fumes → #2,
+  before Brews & Infusions (#3)** (swap `sort_number`s + the three affected advancement `rewards`:
+  herbology→book_oven, oven→book_infusions, infusions→book_distilling). New chain: Herbology →
+  Collecting Fumes → Brews & Infusions → Distilling → Circle Magic → … Audited end-to-end: every
+  book's reagents are obtainable from strictly-earlier knowledge or vanilla.
+- (Kept the cauldron/`anointing_paste` entry in Herbology — thematic, and Herbology's prose already
+  used the cauldron — but it is *not* the gating fix; nothing in the chain needs cauldron products.)
+- "What Comes Next" captions now correctly name the **Witches' Oven** sapling source for each brew.
+- **Station recipe images.** Modonomicon's crafting page only renders vanilla 3×3 recipes, so custom
+  station recipes (`witchery:oven`, `witchery:distillery`, kettle, cauldron) can't use it. Built
+  `tools/recipe_image.py`: it composites the real station GUI (`textures/gui/witches_oven.png` /
+  `distillery.png`) with item sprites placed at the **menu's own slot coordinates** (read from
+  `WitchesOvenMenu`/`DistilleryMenu` `addSlot` calls), crops the panel, scales 2×, and centres it in a
+  256×256 PNG (Modonomicon `BookImagePageRenderer` draws the top-left ~200×200 region). Witchery
+  sprites resolve via each item model's `layer0`; vanilla sprites are pulled straight from the
+  `*client-extra*.jar`. Output → `assets/witchery/textures/gui/book/<name>.png`, shown via
+  `BookImagePageModel.create().withImages(id("textures/gui/book/<name>.png"))` (full texture-path
+  identifier, **not** an item id). `withImages(Identifier...)` accepts multiple frames that cycle —
+  room to animate alternates (e.g. Diamond Vapour vs Diamond) later, like the FTB wiki templates.
+  Wired oven brews into Collecting Fumes and the distillery run into Distilling.
+- **Kettle / Witch's Cauldron cards.** Those vessels have no slot GUI (you right-click items into the
+  brew), so `vessel_card()` composites onto the original cauldron panel
+  (`tools/recipe_assets/witch_cauldron_panel.png`): ingredient sprites in a row up top, result in the
+  output slot, count badge drawn for stacks. The brew surface is **tinted to the brew's own colour**
+  (the `color` field on `witchery:kettle_brewing` recipes; e.g. Brew of Sleeping → purple). Kettle
+  cards build straight from the recipe JSON (`kettle_from_recipe`); the Witch's Cauldron *workings*
+  (Mutandis / Mutandis Extremis / Drop of Luck) are **hardcoded in `WitchCauldronEvents`, not recipe
+  JSON**, so their ingredient lists are specified by hand (the right-click trigger is just shown as the
+  last item in the row, matching the FTB `Cg/Witches Cauldron` template). The panel is 2× scale, so it
+  is scaled to fit Modonomicon's ~200px display width. Wired cauldron workings into Herbology's
+  cauldron entry, Redstone Soup into the Kettle entry, Brew of Sleeping into Spirit World.
+- **Custom page for live recipes + tooltips.** Baked recipe PNGs can't show item tooltips. Modonomicon
+  is extensible, so the station recipes now use a custom page `witchery:station_recipe`
+  (`book/page/StationRecipePage` + `StationRecipePageModel` datagen + client
+  `StationRecipePageRenderer`). The page stores a background texture + a list of `(ItemStack, x, y)`
+  slots; the renderer blits the empty GUI panel (`textures/gui/book/bg_{oven,distillery,cauldron}.png`,
+  emitted by `tools/recipe_image.py::emit_backgrounds`) then calls
+  `parentScreen.renderItemStack(g, x, y, mouseX, mouseY, stack)` per slot — a default method on
+  Modonomicon's `ContentRenderingScreen` that draws the item **with its stack count and a deferred
+  hover tooltip**. So every recipe item now has a real tooltip and count (Mutandis ×6, etc.).
+  Registration: `LoaderRegistry.registerPageLoader(TYPE, ::fromJson, ::fromNetwork)` in
+  `WitcheryMod.commonSetup` (via `enqueueWork`), and
+  `PageRendererRegistry.registerPageRenderer(TYPE, page -> new StationRecipePageRenderer(...))` in
+  `WitcheryClient.registerBookPageRenderers` (an `FMLClientSetupEvent` listener, mod bus, Dist.CLIENT).
+  Network: write own fields then `super.toNetwork` (base writes anchor+condition last); `fromNetwork`
+  reads fields, then anchor, then condition — matching `BookPage.toNetwork` order exactly (mismatch
+  breaks book sync). **Why a page needs network code at all:** Modonomicon books are datapack-driven
+  and loaded **server-side** (like recipes/advancements); the client renders them, so the server
+  serializes every parsed book and ships it to clients via `SyncBooksMessage` on join / datapack
+  reload — `toNetwork`/`fromNetwork` are that wire format. This runs in **singleplayer too** (the
+  integrated server syncs over the loopback), so there is no client-only shortcut and a byte-order
+  mismatch fails the same way in single- and multiplayer. Slot coords come from the station menus'
+  `addSlot` calls (oven/distillery);
+  cauldron/kettle ingredients are laid out in a row over the pot. This replaced the baked
+  `recipeImage(...)` pages (PNGs deleted; the bg panels remain).
+- **Image-page sizing gotcha (from in-game QA):** `BookImagePageRenderer` draws the **full 256×256
+  texture** into the page frame (Patchouli-style), *not* a top-left 200×200 sub-region — the `200`s in
+  its `blit` are the on-screen quad size, with `texWidth/texHeight = 256`. So content centred in a
+  200×200 box lands **top-left with empty space to the right and below**. Fix: `_fit_center()` scales
+  the panel to ~236px and centres it in the whole 256×256 canvas, so the recipe reads large and
+  centred and the frame isn't mostly empty. Keep recipe-image captions short (1–2 sentences) — the
+  image dominates the page and long text gets cramped underneath.
+- **Art pass**: the 4 new books got dedicated 16×16 textures on the shared purple guide-book base
+  (`ingredient.book_oven` as clean base) with thematic emblems — poppets = cream voodoo doll + red
+  pin, spirit_world = pale-cyan wisp, creatures = amber familiar-eye, transformations = blood-moon
+  (pale crescent + red drop). Matches the existing 7-book family (purple book + colored emblem).
+
 ## 2026-06-04 Modonomicon guidebook — Patchouli → Modonomicon migration (Phase 1)
 
 Began replacing the (dead) Patchouli "Witches' Primer" with a native **Modonomicon** book.

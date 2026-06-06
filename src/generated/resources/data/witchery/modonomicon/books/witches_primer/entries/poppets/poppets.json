@@ -1,0 +1,94 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "poppets",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:voodoo_poppet"
+  },
+  "name": "Poppets",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)An effigy shaped to resemble a person and bound to them through a taglock carries a thread of the sympathy that connects all things.[#]()",
+      "title": "Poppets",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)What happens to the effigy tends to happen to its subject — and it works in both directions.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Bind a poppet by right-clicking it with a filled taglock. Then place it on a Poppet Shelf, or carry a protection poppet in your own inventory.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:voodoo_poppet",
+      "text": "[#](53341a)The Voodoo Poppet is the foundation of this practice. From it, other forms follow.[#]()",
+      "title1": "Voodoo Poppet",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Protection poppets are consumed when triggered — they give themselves to prevent something worse happening to you.[#]()",
+      "title": "On Protection",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Death, Earth, Water, Fire, Hunger; each covers a different category of misfortune, and Voodoo Protection counters hostile poppet workings.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Keep spares. The shelf holds nine.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

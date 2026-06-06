@@ -1,0 +1,149 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "transformations",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_of_infection"
+  },
+  "name": "Vampirism",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)There are those who choose this path and those who have it chosen for them.[#]()",
+      "title": "Vampirism",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Either way, the nature of vampirism is not subtle: you are sustained by blood, strengthened by it, and diminished without it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Drain blood from living creatures by right-clicking them. A vampire at full blood is formidable; one running dry is much less so.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Speed, strength, and reach all scale with your blood level. Night vision is always yours, and your bite takes blood from the living.[#]()",
+      "title": "What the Blood Gives",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)You resist most damage, and you can sleep through daylight in a coffin — its own kind of grace.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Sunlight burns; direct daylight is a constant danger. Silver wounds heal slowly and hurt more. Witch Hunters treat you as a professional priority.[#]()",
+      "title": "What the Blood Costs",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Blood drains constantly — feed regularly. And there is no going back, not easily.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Woven Cruor is the base cloth.[#]()",
+      "title": "Vampire Clothing",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)At level 4+, spend 125 Blood Power with a **Bone Needle** on placed White Wool to make Blood-stained Wool, then smelt it to Woven Cruor and tailor the light set.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Two light pieces make your bite draw more blood; three extend mesmerise and grant a chance to survive lethal fire, which all four make much stronger.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A Stake is simple and final: craft one from a Stick ringed with Garlic, then use it on a sleeping vampire to destroy them.[#]()",
+      "title": "The Stake",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Glass Goblet is the other path — a level-9 vampire can fill it with 125 Blood Power, and drinking a filled goblet begins vampirism unless the drinker is a werewolf.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

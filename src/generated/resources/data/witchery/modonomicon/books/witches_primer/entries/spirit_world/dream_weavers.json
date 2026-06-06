@@ -1,0 +1,105 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "spirit_world",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:dream_catcher"
+  },
+  "name": "Dream Weavers",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Sleep is not passive, and the spirit world is not a waiting room.[#]()",
+      "title": "Dream Weavers",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A Dream Catcher placed near the sleeping body shapes what happens when consciousness crosses the boundary and returns.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Different weavings give different effects on waking. Only one catcher near you takes effect — choose deliberately.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:weave_fleet_foot",
+      "text": "[#](53341a)The old quickness weaving: Item Frame, Fanciful Thread, feathers, Diamond Vapour, Tormented Twine, and long swiftness/slowness splash potions.[#]()",
+      "title1": "Fleet Foot",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:weave_iron_arm",
+      "text": "[#](53341a)The same weave frame, but swaps in long strength and weakness splash potions.[#]()",
+      "title1": "Iron Arm",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:weave_fasting",
+      "text": "[#](53341a)A long poison splash potion and Mellifluous Hunger in the opposing potion slot.[#]()",
+      "title1": "Fasting",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:weave_nightmares",
+      "text": "[#](53341a)The harsher Tormented Twine frame, woven with Diamond Vapour and long poison/night-vision splash potions.[#]()",
+      "title1": "Nightmares",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:weave_intensity",
+      "text": "[#](53341a)Keeps the old frame but binds Brew of Flowing Spirit against Brew of Sleeping.[#]()",
+      "title1": "Intensity",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

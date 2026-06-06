@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "poppets",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:poppet_shelf"
+  },
+  "name": "The Poppet Shelf",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A poppet in a pocket is useful. A poppet on a shelf that activates itself when needed is more useful still.[#]()",
+      "title": "The Poppet Shelf",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Poppet Shelf holds up to nine. When you take damage or are killed, it scans nearby shelves for poppets bound to you and triggers the right protection.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)You need not be watching — that is the point.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:poppet_shelf",
+      "text": "[#](53341a)Build it, fill it, and stop thinking about it. It will think for itself when the time comes.[#]()",
+      "title1": "Poppet Shelf",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

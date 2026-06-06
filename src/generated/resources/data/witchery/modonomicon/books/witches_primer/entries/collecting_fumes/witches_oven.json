@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "collecting_fumes",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:witches_oven"
+  },
+  "name": "The Witches' Oven",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Not everything useful comes from a kettle. Some ingredients must be rendered down first — reduced, transformed, made into something the craft can use.[#]()",
+      "title": "The Witches' Oven",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Witches' Oven smolders logs into witches' ash, coaxes nether wart into **Exhale of the Horned One**, and works quartz into quicklime.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Place a clay jar to catch the rising fumes.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:witches_oven",
+      "text": "[#](53341a)Iron and netherbrick, shaped with intent. The oven needs only a fire beneath and materials worth its attention.[#]()",
+      "title1": "Witches' Oven",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

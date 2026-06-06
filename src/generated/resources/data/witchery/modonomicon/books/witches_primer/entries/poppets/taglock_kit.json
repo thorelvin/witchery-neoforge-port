@@ -1,0 +1,72 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "poppets",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:taglock_kit"
+  },
+  "name": "Taglock Kit",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A taglock is a thread of sympathy connecting a practitioner to their subject.[#]()",
+      "title": "Taglock Kit",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Without one, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Right-click a living creature directly, or steal a player's sample by crouching up behind them.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Blood Roses, Leech Chests, and a freshly slept-in bed can hold the same sample for later theft — guard your own sleep accordingly.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:taglock_kit",
+      "text": "[#](53341a)A glass bottle and a pin. Simple, and deliberately so — the difficulty is in what you do with it afterward.[#]()",
+      "title1": "Taglock Kit",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

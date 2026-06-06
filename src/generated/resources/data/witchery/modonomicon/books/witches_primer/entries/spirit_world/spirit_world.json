@@ -1,0 +1,143 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "spirit_world",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_of_sleeping"
+  },
+  "name": "The Spirit World",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The world you walk in is not the only world that exists.[#]()",
+      "title": "The Spirit World",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Spirit World lies beside it, separated by a boundary that thins around places of power and at the edges of sleep.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)To enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. You will leave your body behind.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It will wait for you — try to come back before something finds it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:brew_of_sleeping"
+      },
+      "text": "[#](53341a)Carries you across, leaving your inventory behind. Only the Icy Needle and a few other items transfer with you.[#]()",
+      "title": "Brew of Sleeping"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:icy_needle"
+      },
+      "text": "[#](53341a)Brings you back at once, used up. Dying also returns you, less comfortably. In emergencies: **/witchery exit**.[#]()",
+      "title": "Icy Needle"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 3,
+          "item": "witchery:brew_of_sleeping",
+          "x": 89,
+          "y": 33
+        },
+        {
+          "count": 1,
+          "item": "witchery:purified_milk",
+          "x": 6,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:cookie",
+          "x": 23,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_love",
+          "x": 40,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:whiff_of_magic",
+          "x": 57,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:icy_needle",
+          "x": 74,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:artichoke",
+          "x": 91,
+          "y": 2
+        }
+      ],
+      "text": "[#](53341a)Brew it from **Purified Milk**, a **Cookie**, **Brew of Love**, **Whiff of Magic**, an **Icy Needle**, and an **Artichoke** — three bottles per working.[#]()",
+      "title": "Kettle: Brew of Sleeping"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

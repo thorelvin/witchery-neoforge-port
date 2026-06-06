@@ -1,0 +1,194 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "herbology",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:anointing_paste"
+  },
+  "name": "The Witch's Cauldron",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Before kettles and distilleries, every witch learns the cauldron.[#]()",
+      "title": "The Witch's Cauldron",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Anointing Paste is what wakes an ordinary cauldron into a Witch's Cauldron — the vessel behind the cauldron paths already mentioned above.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It is the earliest real progression gate in the craft, because so many foundational brews begin in its bowl.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:anointing_paste",
+      "text": "[#](53341a)**Water Artichoke**, **Mandrake**, **Belladonna**, and **Snowbell** seeds make four paste. Grass and ferns drop those seeds again.[#]()",
+      "title1": "Anointing Paste",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "minecraft:cauldron"
+      },
+      "text": "[#](53341a)Apply the paste to a placed cauldron, then give it a fire and water. Drop reagents in the bowl and trigger the working with the last item by hand — the cauldron workings named throughout this primer follow.[#]()",
+      "title": "Witch's Cauldron"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 6,
+          "item": "witchery:mutandis",
+          "x": 89,
+          "y": 33
+        },
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 31,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 48,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:egg",
+          "x": 65,
+          "y": 2
+        }
+      ],
+      "text": "[#](53341a)Drop a **Mandrake Root** and an **Egg** in a heated, filled cauldron, then right-click with **Exhale of the Horned One** — six Mutandis rise from the bowl.[#]()",
+      "title": "Cauldron: Mutandis"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 89,
+          "y": 33
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 40,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis",
+          "x": 57,
+          "y": 2
+        }
+      ],
+      "text": "[#](53341a)Drop a **Nether Wart** in and right-click with **Mutandis** to condense one Mutandis Extremis — the stronger powder.[#]()",
+      "title": "Cauldron: Mutandis Extremis"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:drop_of_luck",
+          "x": 89,
+          "y": 33
+        },
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 14,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 31,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 48,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 65,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 82,
+          "y": 2
+        }
+      ],
+      "text": "[#](53341a)Drop the four reagents with an altar near, then use **Mutandis Extremis** on the cauldron — one Drop of Luck.[#]()",
+      "title": "Cauldron: Drop of Luck"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

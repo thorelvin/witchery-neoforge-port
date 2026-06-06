@@ -1,0 +1,74 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:necro_stone"
+  },
+  "name": "Necromantic Stone",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A Necromantic Stone is the witch's first true token of authority over death-working.[#]()",
+      "title": "Necromantic Stone",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Many later rites ask for one, and an **Alluring Skull** answers only to it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:necro_stone"
+      },
+      "text": "[#](53341a)On a small circle at night, offer an Attuned Stone, Bone, Rotten Flesh, Wood Ash, Gunpowder, and Spectral Dust, with **1000 altar power**.[#]()",
+      "title": "Necromantic Stone"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Today the stone has two dependable roles: it is consumed or preserved by later rites such as Prior Incarnation, Manifestation, fetish binding, and Spectral[#]()",
+      "title": "Current Use",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Stone work, and it can wake or silence an Alluring Skull.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 3,
+  "x": 0,
+  "y": 0
+}

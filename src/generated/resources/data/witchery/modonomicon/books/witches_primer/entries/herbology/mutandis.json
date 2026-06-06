@@ -1,0 +1,160 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "herbology",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:mutandis"
+  },
+  "name": "Mutandis",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Mutandis is the old hedge-breaking powder, scattered over living growth to force a plant into some stranger relation — one of the first ways a witch steps[#]()",
+      "title": "Mutandis",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)outside ordinary farming.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It can be compounded by hand, or brewed in the **Witch's Cauldron** by the older path.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:mutandis",
+      "text": "[#](53341a)Compound eight portions from **Wood Ash**, **Hint of Rebirth**, a **Mandrake Root**, an **Egg**, **Bone Meal**, and **Green Dye**.[#]()",
+      "title1": "Mutandis",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The original path also works: heat and fill the **Witch's Cauldron**, drop in a **Mandrake Root** and an **Egg**, then right-click with **Exhale of the[#]()",
+      "title": "Cauldron Path",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Horned One** for six portions.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Drop **Nether Wart** in and right-click with Mutandis to condense one **Mutandis Extremis**.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Use Mutandis on natural plants or saplings.[#]()",
+      "title": "Hedge Mutations",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It can roll Witchery plants and saplings, **Alder** and **Hawthorn Saplings**, vanilla saplings, flowers, fern, grass, dead bush, and the small bush.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)In the Spirit World it can also reveal Nether Wart. It is a mutating powder, not a fertilizer — expect transformation, not growth.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:mutandis_extremis",
+      "text": "[#](53341a)Surround a **Nether Wart** with eight ordinary Mutandis for eight portions — or use the cauldron path above.[#]()",
+      "title1": "Mutandis Extremis",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Extremis pushes the art further: it mutates crops as well as wild growth, flips grass and dirt, and turns sand under water or ice into clay.[#]()",
+      "title": "Extremis",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It is also the bridge into heavier progressions like Treefyd Seeds. Treat it as the serious version of hedgecraft.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

@@ -1,0 +1,50 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:mandrake_root"
+  },
+  "name": "Mandrake",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Mandrake is never a polite harvest. A mature root sometimes comes quietly, and sometimes wakes as a shrieking creature instead — especially at night.[#]()",
+      "title": "Mandrake",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)When the crop awakens, the living root keeps nearby players sickened until it is killed.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:earmuffs",
+      "text": "[#](53341a)Leather and white wool. Worn on the head, they block the nausea scream — and blunt a Banshee's cry — so large harvests are far less miserable.[#]()",
+      "title1": "Earmuffs",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 5,
+  "x": 0,
+  "y": 0
+}

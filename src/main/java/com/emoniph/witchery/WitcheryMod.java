@@ -63,6 +63,7 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerRangeSelectItemModelProperties);
             modEventBus.addListener(WitcheryClient::registerLayerDefinitions);
             modEventBus.addListener(WitcheryClient::registerScreens);
+            modEventBus.addListener(WitcheryClient::registerBookPageRenderers);
             modEventBus.addListener(WitcheryClient::registerBlockColors);
             modEventBus.addListener(WitcheryClient::onAddLayers);
             modEventBus.addListener(WitcheryClient::registerRenderers);
@@ -75,6 +76,11 @@ public class WitcheryMod {
         com.emoniph.witchery.symbol.EffectRegistry.bootstrap();
         // Build the custom-brew ingredient table.
         com.emoniph.witchery.brewing.Brews.bootstrap();
+        // Register the custom Modonomicon page that renders live station recipes (with tooltips).
+        event.enqueueWork(() -> com.klikli_dev.modonomicon.data.LoaderRegistry.registerPageLoader(
+                com.emoniph.witchery.book.page.StationRecipePage.TYPE,
+                com.emoniph.witchery.book.page.StationRecipePage::fromJson,
+                com.emoniph.witchery.book.page.StationRecipePage::fromNetwork));
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

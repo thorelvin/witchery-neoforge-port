@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 public class WitchesPrimerItem extends Item {
     private final String tooltipKey;
     private final Identifier bookId;
+    private final Identifier categoryId;
+    private final Identifier entryId;
 
     public WitchesPrimerItem(Properties props) {
         this(props, null, WitcheryBooks.PRIMER);
@@ -32,9 +34,17 @@ public class WitchesPrimerItem extends Item {
     }
 
     public WitchesPrimerItem(Properties props, String tooltipKey, Identifier bookId) {
+        this(props, tooltipKey, bookId, null, null);
+    }
+
+    /** Opens {@code bookId} directly at {@code entryId} (within {@code categoryId}) — for topic guides. */
+    public WitchesPrimerItem(Properties props, String tooltipKey, Identifier bookId,
+                             Identifier categoryId, Identifier entryId) {
         super(props);
         this.tooltipKey = tooltipKey;
         this.bookId = bookId;
+        this.categoryId = categoryId;
+        this.entryId = entryId;
     }
 
     @Override
@@ -42,7 +52,11 @@ public class WitchesPrimerItem extends Item {
         // The Modonomicon book GUI is purely client-side (book data is datapack-synced), so open it
         // directly on the logical client. The opener lives in a client-only class.
         if (level.isClientSide()) {
-            com.emoniph.witchery.client.WitcheryBookOpener.open(bookId);
+            if (categoryId != null && entryId != null) {
+                com.emoniph.witchery.client.WitcheryBookOpener.openEntry(bookId, categoryId, entryId);
+            } else {
+                com.emoniph.witchery.client.WitcheryBookOpener.open(bookId);
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS_SERVER;

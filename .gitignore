@@ -29,6 +29,10 @@ bin/
 ### VS Code ###
 .vscode/
 
+### Python ###
+__pycache__/
+*.pyc
+
 ### Claude / local agent notes ###
 .claude/
 CLAUDE.md

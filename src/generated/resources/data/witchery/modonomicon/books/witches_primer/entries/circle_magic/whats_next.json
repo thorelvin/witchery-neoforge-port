@@ -1,0 +1,39 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:book_burning"
+  },
+  "name": "What Comes Next",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Your studies here are done. The next chapter — **Conjuration & Fetishes** — opens once you craft and read its book.[#]()",
+      "title": "What Comes Next",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:book_burning",
+      "text": "[#](53341a)Craft it to continue your studies.[#]()",
+      "title1": "Witchcraft: Conjuration & Fetishes",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 17,
+  "x": 0,
+  "y": 0
+}

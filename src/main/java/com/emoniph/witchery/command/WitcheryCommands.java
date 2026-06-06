@@ -427,7 +427,71 @@ public class WitcheryCommands {
                         .executes(ctx -> buildWalls(ctx.getSource()))
                         .then(Commands.literal("reset")
                                 .executes(ctx -> resetWalls(ctx.getSource()))))
+
+                // Debug: unlock/relock Witches' Primer guide sections (the guide/* advancements).
+                // /witchery guide unlock [all|<book>]   /witchery guide reset
+                .then(Commands.literal("guide")
+                        .then(Commands.literal("unlock")
+                                .executes(ctx -> guideUnlock(ctx.getSource(), "all"))
+                                .then(Commands.argument("book", StringArgumentType.word())
+                                        .suggests((ctx, b) -> SharedSuggestionProvider.suggest(GUIDE_UNLOCK_SUGGEST, b))
+                                        .executes(ctx -> guideUnlock(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "book")))))
+                        .then(Commands.literal("reset")
+                                .executes(ctx -> guideReset(ctx.getSource()))))
         );
+    }
+
+    // ── Guide progression (debug) ───────────────────────────────────────────────
+
+    /** Guide-section keys, matching the {@code witchery:guide/<key>} chain advancements. */
+    private static final List<String> GUIDE_BOOKS = List.of(
+            "primer", "herbology", "infusions", "oven", "distilling", "circle_magic",
+            "burning", "wands", "poppets", "spirit_world", "creatures", "transformations");
+    private static final List<String> GUIDE_UNLOCK_SUGGEST;
+    static {
+        java.util.List<String> s = new java.util.ArrayList<>();
+        s.add("all");
+        s.addAll(GUIDE_BOOKS);
+        GUIDE_UNLOCK_SUGGEST = List.copyOf(s);
+    }
+
+    private static int guideUnlock(CommandSourceStack src, String book)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        String key = book.toLowerCase(java.util.Locale.ROOT);
+        List<String> targets = key.equals("all") ? GUIDE_BOOKS : List.of(key);
+        if (!key.equals("all") && !GUIDE_BOOKS.contains(key)) {
+            src.sendFailure(Component.literal("Unknown guide '" + book + "'. Options: all, "
+                    + String.join(", ", GUIDE_BOOKS)));
+            return 0;
+        }
+        int n = 0;
+        for (String name : targets) if (setGuideAdvancement(src, p, name, true)) n++;
+        final int count = n;
+        src.sendSuccess(() -> Component.literal("[Guide] Unlocked " + count + " section(s) for "
+                + p.getName().getString() + "."), false);
+        return n;
+    }
+
+    private static int guideReset(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        int n = 0;
+        for (String name : GUIDE_BOOKS) if (setGuideAdvancement(src, p, name, false)) n++;
+        final int count = n;
+        src.sendSuccess(() -> Component.literal("[Guide] Re-locked " + count + " section(s) for "
+                + p.getName().getString() + "."), false);
+        return n;
+    }
+
+    /** Grants or revokes the {@code witchery:guide/<name>} advancement (criterion {@code has_book}). */
+    private static boolean setGuideAdvancement(CommandSourceStack src, ServerPlayer p, String name, boolean grant) {
+        net.minecraft.advancements.AdvancementHolder holder = src.getServer().getAdvancements()
+                .get(Identifier.fromNamespaceAndPath("witchery", "guide/" + name));
+        if (holder == null) return false;
+        return grant ? p.getAdvancements().award(holder, "has_book")
+                     : p.getAdvancements().revoke(holder, "has_book");
     }
 
     // ── Player state ──────────────────────────────────────────────────────────

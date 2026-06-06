@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "creatures",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:beartrap"
+  },
+  "name": "Creature Traps",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Some creatures are better studied after they have stopped moving.[#]()",
+      "title": "Creature Traps",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The traps are low metal plates: place one, give it a moment to arm, and keep your own feet clear.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:beartrap",
+      "text": "[#](53341a)Iron and shears. Once armed it catches living creatures, snaps shut for four damage, and applies strong slowness. Right-click to open or close it.[#]()",
+      "title1": "Beartrap",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:wolftrap",
+      "text": "[#](53341a)Upgrade a Beartrap with Silver, Null Catalysts, and Wolfsbane. Werewolves trigger it; others do not. It drops nothing when broken.[#]()",
+      "title1": "Wolftrap",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 4,
+  "x": 0,
+  "y": 0
+}

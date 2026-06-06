@@ -1,0 +1,94 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:bloodied_wicker_bundle"
+  },
+  "name": "The Wicker Man",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A Wicker Man is an invitation written in dry bundles and bad judgment. Rebuilt from Bloodied Wicker Bundles and burned, it calls the Horned Huntsman.[#]()",
+      "title": "The Wicker Man",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The shape matters — a near miss is only a bonfire.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:wicker_bundle",
+      "text": "[#](53341a)Nine saplings. Witchery saplings — rowan, alder, hawthorn — count too, once grown.[#]()",
+      "title1": "Wicker Bundle",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:bloodied_wicker_bundle",
+      "text": "[#](53341a)Five bundles and one **Demonic Blood** make five bloodied bundles. You need twenty for the figure.[#]()",
+      "title1": "Bloodied Wicker",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Build a flat, human-shaped wall from exactly twenty Bloodied Wicker Bundles: two-wide legs, a four-wide body and arms, then a two-wide head, each row centered above the last.[#]()",
+      "title": "The Figure",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Leave the surrounding cells empty — stray bloodied wicker spoils the match.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Then use flint and steel on any bundle to summon the Horned Huntsman at its base.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 6,
+  "x": 0,
+  "y": 0
+}

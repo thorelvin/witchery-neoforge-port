@@ -26,9 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)A red flower and another filled goblet open the path to higher mastery.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -37,9 +37,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Flight follows; distance and village walls matter less than before.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -48,9 +48,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Transfixed victims can be guided into cages for careful feeding.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -59,9 +59,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Power over blood becomes power over making new vampires.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -70,9 +70,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)The final note describes a coffin, a goblet, and an unwilling rebirth.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

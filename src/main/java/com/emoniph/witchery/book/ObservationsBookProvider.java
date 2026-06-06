@@ -6,10 +6,8 @@ import com.klikli_dev.modonomicon.api.datagen.book.BookCategoryModel;
 import com.klikli_dev.modonomicon.api.datagen.book.BookEntryModel;
 import com.klikli_dev.modonomicon.api.datagen.book.BookIconModel;
 import com.klikli_dev.modonomicon.api.datagen.book.BookModel;
-import com.klikli_dev.modonomicon.api.datagen.book.page.BookTextPageModel;
 import com.klikli_dev.modonomicon.book.BookDisplayMode;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.BiConsumer;
@@ -27,11 +25,6 @@ public class ObservationsBookProvider implements BookSubProvider {
 
     public static final Identifier BOOK_ID = WitcheryBooks.OBSERVATIONS;
 
-    private static BookTextPageModel lore(String title, String body) {
-        BookTextPageModel page = BookTextPageModel.create().withText(WitcheryBooks.ink(body));
-        return title == null ? page : page.withTitle(Component.literal(title));
-    }
-
     @Override
     public void generate(BiConsumer<Identifier, BookModel> consumer, HolderLookup.Provider registries) {
         BookIconModel icon = BookIconModel.create(WitcheryItems.VAMPIRE_BOOK.get());
@@ -47,15 +40,15 @@ public class ObservationsBookProvider implements BookSubProvider {
                 .withCategory(record)
                 .withIcon(icon)
                 .withLocation(0, 0)
-                .withPages(
-                        lore("A Scholar's Warning",
-                                "The first pages warn that the author studied an immortal predator and wrote for "
-                                        + "those who would survive the lesson."),
-                        lore(null, "A chicken, a skull, a boline, and a glass goblet begin the old blood rite."),
-                        lore(null, "A night rite calls string, red dust, torches, and a skull beneath open stars."),
-                        lore(null, "Blood poured over the skull draws Lilith's attention and sends the seeker "
-                                + "toward the Nether."),
-                        lore(null, "Strength is proven to her in battle; the filled goblet begins the curse."))
+                .withPages(WitcheryBooks.prose("A Scholar's Warning",
+                        "The first pages warn that the author studied an immortal predator and wrote for "
+                                + "those who would survive the lesson."
+                                + "\n\nA chicken, a skull, a boline, and a glass goblet begin the old blood rite."
+                                + "\n\nA night rite calls string, red dust, torches, and a skull beneath open "
+                                + "stars."
+                                + "\n\nBlood poured over the skull draws Lilith's attention and sends the seeker "
+                                + "toward the Nether."
+                                + "\n\nStrength is proven to her in battle; the filled goblet begins the curse."))
                 .withSortNumber(0);
 
         BookEntryModel curse = BookEntryModel.create(
@@ -64,14 +57,15 @@ public class ObservationsBookProvider implements BookSubProvider {
                 .withIcon(icon)
                 .withLocation(0, 1)
                 .withParent(rite)
-                .withPages(
-                        lore("The Curse Takes Hold",
-                                "The first hunger fades only after feeding, and the body starts to change."),
-                        lore(null, "Mesmerised victims can be held still, but draining too deeply has consequences."),
-                        lore(null, "After mastery, the vampire begins to sense time, hunger, and sunlight "
-                                + "differently."),
-                        lore(null, "Sunlight can be collected and turned back on the curse until the burning dulls."),
-                        lore(null, "Blazes and fortress fire mark the next trial of endurance."))
+                .withPages(WitcheryBooks.prose("The Curse Takes Hold",
+                        "The first hunger fades only after feeding, and the body starts to change."
+                                + "\n\nMesmerised victims can be held still, but draining too deeply has "
+                                + "consequences."
+                                + "\n\nAfter mastery, the vampire begins to sense time, hunger, and sunlight "
+                                + "differently."
+                                + "\n\nSunlight can be collected and turned back on the curse until the burning "
+                                + "dulls."
+                                + "\n\nBlazes and fortress fire mark the next trial of endurance."))
                 .withSortNumber(1);
 
         BookEntryModel mastery = BookEntryModel.create(
@@ -80,14 +74,13 @@ public class ObservationsBookProvider implements BookSubProvider {
                 .withIcon(icon)
                 .withLocation(0, 2)
                 .withParent(curse)
-                .withPages(
-                        lore("Mastery Over Blood",
-                                "Greater strength brings stone-breaking power and a second appeal to Lilith."),
-                        lore(null, "A red flower and another filled goblet open the path to higher mastery."),
-                        lore(null, "Flight follows; distance and village walls matter less than before."),
-                        lore(null, "Transfixed victims can be guided into cages for careful feeding."),
-                        lore(null, "Power over blood becomes power over making new vampires."),
-                        lore(null, "The final note describes a coffin, a goblet, and an unwilling rebirth."))
+                .withPages(WitcheryBooks.prose("Mastery Over Blood",
+                        "Greater strength brings stone-breaking power and a second appeal to Lilith."
+                                + "\n\nA red flower and another filled goblet open the path to higher mastery."
+                                + "\n\nFlight follows; distance and village walls matter less than before."
+                                + "\n\nTransfixed victims can be guided into cages for careful feeding."
+                                + "\n\nPower over blood becomes power over making new vampires."
+                                + "\n\nThe final note describes a coffin, a goblet, and an unwilling rebirth."))
                 .withSortNumber(2);
 
         record.withEntries(rite, curse, mastery);
@@ -96,6 +89,8 @@ public class ObservationsBookProvider implements BookSubProvider {
                 .withCreativeTab(WitcheryBooks.id("witchery_tab"))
                 .withGenerateBookItem(false)
                 .withDefaultTitleColor(WitcheryBooks.INK_COLOR)
+                .withBookTextOffsetX(WitcheryBooks.TEXT_OFFSET_X)
+                .withBookTextOffsetWidth(WitcheryBooks.TEXT_OFFSET_WIDTH)
                 .withCategories(record);
 
         consumer.accept(book.getId(), book);

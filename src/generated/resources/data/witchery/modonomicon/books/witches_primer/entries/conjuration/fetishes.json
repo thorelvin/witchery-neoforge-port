@@ -1,0 +1,94 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:fetish_scarecrow"
+  },
+  "name": "Fetishes",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A spirit bound to a physical object becomes something useful — the scarecrow that watches with intent, the effigy that senses intrusion, the ladder that extends a boundary.[#]()",
+      "title": "Fetishes",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)To make a fetish, place the host object in a medium circle with an Attuned Stone, a Necromantic Stone, and a Boline, then sacrifice the required spirits near the circle.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The rite binds them to the vessel.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)**Voodoo Protection** makes carried protection poppets more effective nearby. **Sentinel** sends spectres against uninvited guests.[#]()",
+      "title": "What a Fetish Does",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Shrieking** emits a redstone pulse and a banshee's cry. **Disorientation** leaves armed or armored trespassers with unreliable senses.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Ghost Walking** spares those walking the spirit world nearby from being hurried back.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Use a Boline to cycle the trigger mode, and a Taglock Kit to say who counts as an intruder.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

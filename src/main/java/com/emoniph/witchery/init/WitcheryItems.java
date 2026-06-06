@@ -36,6 +36,16 @@ public class WitcheryItems {
                 net.minecraft.core.registries.Registries.ITEM, id));
     }
 
+    /** A topic guide book that opens the Witches' Primer straight to the given category/entry. */
+    private static com.emoniph.witchery.item.WitchesPrimerItem primerGuide(
+            net.minecraft.resources.Identifier id, String category, String entry) {
+        return new com.emoniph.witchery.item.WitchesPrimerItem(
+                itemProps(id).stacksTo(1), null,
+                com.emoniph.witchery.book.WitcheryBooks.PRIMER,
+                com.emoniph.witchery.book.WitcheryBooks.id(category),
+                com.emoniph.witchery.book.WitcheryBooks.id(entry));
+    }
+
     private static Item vampireArmor(net.minecraft.resources.Identifier id,
                                      net.minecraft.world.item.equipment.ArmorMaterial material,
                                      net.minecraft.world.item.equipment.ArmorType armorType,
@@ -267,13 +277,19 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      WITCHES_PRIMER       = ITEMS.register("witches_primer", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
     // Resurrected duplicate guide-book ids removed 2026-06-04 (kept the source-faithful book_* ids
     // below; their recipes/bookshop loot were migrated onto the book_* / cauldron_book ids).
-    public static final DeferredItem<Item>      BOOK_OVEN            = ITEMS.register("book_oven", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_DISTILLING      = ITEMS.register("book_distilling", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_CIRCLE_MAGIC    = ITEMS.register("book_circle_magic", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_INFUSIONS       = ITEMS.register("book_infusions", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_HERBOLOGY       = ITEMS.register("book_herbology", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_WANDS           = ITEMS.register("book_wands", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
-    public static final DeferredItem<Item>      BOOK_BURNING         = ITEMS.register("book_burning", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1)));
+    // Each guide book opens the Witches' Primer at its category (and gates that category until crafted).
+    public static final DeferredItem<Item>      BOOK_HERBOLOGY       = ITEMS.register("book_herbology", id -> primerGuide(id, "herbology", "herbology/rowan_tree"));
+    public static final DeferredItem<Item>      BOOK_INFUSIONS       = ITEMS.register("book_infusions", id -> primerGuide(id, "brews_infusions", "brews_infusions/kettle"));
+    public static final DeferredItem<Item>      BOOK_OVEN            = ITEMS.register("book_oven", id -> primerGuide(id, "collecting_fumes", "collecting_fumes/witches_oven"));
+    public static final DeferredItem<Item>      BOOK_DISTILLING      = ITEMS.register("book_distilling", id -> primerGuide(id, "distilling", "distilling/distillery"));
+    public static final DeferredItem<Item>      BOOK_CIRCLE_MAGIC    = ITEMS.register("book_circle_magic", id -> primerGuide(id, "circle_magic", "circle_magic/chalk"));
+    public static final DeferredItem<Item>      BOOK_BURNING         = ITEMS.register("book_burning", id -> primerGuide(id, "conjuration", "conjuration/brazier"));
+    public static final DeferredItem<Item>      BOOK_WANDS           = ITEMS.register("book_wands", id -> primerGuide(id, "symbology", "symbology/mystic_branch"));
+    // New guide books invented for topics the original mod had no book for.
+    public static final DeferredItem<Item>      BOOK_POPPETS         = ITEMS.register("book_poppets", id -> primerGuide(id, "poppets", "poppets/taglock_kit"));
+    public static final DeferredItem<Item>      BOOK_SPIRIT_WORLD    = ITEMS.register("book_spirit_world", id -> primerGuide(id, "spirit_world", "spirit_world/spirit_world"));
+    public static final DeferredItem<Item>      BOOK_CREATURES       = ITEMS.register("book_creatures", id -> primerGuide(id, "creatures", "creatures/familiars"));
+    public static final DeferredItem<Item>      BOOK_TRANSFORMATIONS = ITEMS.register("book_transformations", id -> primerGuide(id, "transformations", "transformations/vampirism"));
     public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip", com.emoniph.witchery.book.WitcheryBooks.CAULDRON));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));

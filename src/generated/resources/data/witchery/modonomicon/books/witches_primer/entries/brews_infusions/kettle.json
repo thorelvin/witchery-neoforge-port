@@ -1,0 +1,128 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brews_infusions",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:kettle"
+  },
+  "name": "The Kettle",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting.[#]()",
+      "title": "The Kettle",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Right-click to add reagents one by one, then light a fire beneath it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It draws power from the nearest altar to complete the working, and the ingredients decide what emerges.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Keep records of what you try — the craft does not always announce itself.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:kettle",
+      "text": "[#](53341a)Iron and a modicum of patience. That is all a kettle needs to be born.[#]()",
+      "title1": "Kettle",
+      "title2": ""
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:redstone_soup",
+          "x": 89,
+          "y": 33
+        },
+        {
+          "count": 1,
+          "item": "minecraft:redstone",
+          "x": 6,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:drop_of_luck",
+          "x": 23,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:bat_wool",
+          "x": 40,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tongue_of_dog",
+          "x": 57,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:belladonna",
+          "x": 74,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 91,
+          "y": 2
+        }
+      ],
+      "text": "[#](53341a)Six reagents in a lit kettle over **1000 altar power**. Redstone Soup is the base of every lasting infusion.[#]()",
+      "title": "Kettle: Redstone Soup"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

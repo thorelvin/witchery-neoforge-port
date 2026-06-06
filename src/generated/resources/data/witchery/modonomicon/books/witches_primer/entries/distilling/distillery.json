@@ -1,0 +1,128 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "distilling",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:distillery"
+  },
+  "name": "The Distillery",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Some essences cannot be coaxed directly from raw materials.[#]()",
+      "title": "The Distillery",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)They must be drawn out through heat and pressure — concentrated and refined until only the potent core remains.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Distillery takes two inputs and fuel, and needs no altar.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Feed it condensed fear, refined evil, the leavings of dark workings, and it rewards you with something more useful.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:distillery",
+      "text": "[#](53341a)Iron, glass, and a brewing stand. The distillery is not complicated; what you put inside it often is.[#]()",
+      "title1": "Distillery",
+      "title2": ""
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 68,
+      "bg_width": 102,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ghast_tear",
+          "x": 8,
+          "y": 27
+        },
+        {
+          "count": 3,
+          "item": "witchery:clay_jar",
+          "x": 8,
+          "y": 49
+        },
+        {
+          "count": 1,
+          "item": "witchery:odour_of_purity",
+          "x": 64,
+          "y": 20
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 82,
+          "y": 20
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 64,
+          "y": 38
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 82,
+          "y": 38
+        }
+      ],
+      "text": "[#](53341a)**Diamond Vapour** and a **Ghast Tear** distil at once into Odour of Purity, Reek of Misfortune, Foul Fume, and Refined Evil — three clay jars catch the run. A second way to the Odour, if saplings are scarce.[#]()",
+      "title": "Two In, Four Out"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

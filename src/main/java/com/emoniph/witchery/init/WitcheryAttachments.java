@@ -43,6 +43,18 @@ public class WitcheryAttachments {
                             .serialize(LearnedSymbols.CODEC)
                             .build());
 
+    /**
+     * One-shot flag: has this player already been given the Witches' Primer on first join? Kept as a
+     * standalone attachment (not a {@link WitcheryPlayerData} field) to avoid the RecordCodecBuilder
+     * 16-field cap, and copied across death so a respawn+relog never re-gifts.
+     */
+    public static final Supplier<AttachmentType<Boolean>> RECEIVED_PRIMER =
+            ATTACHMENT_TYPES.register("received_primer", () ->
+                    AttachmentType.builder(() -> Boolean.FALSE)
+                            .serialize(Codec.BOOL.fieldOf("value"))
+                            .copyOnDeath()
+                            .build());
+
     // Convenience helpers — call these server-side only unless data has been synced
     public static WitcheryPlayerData get(net.minecraft.world.entity.player.Player player) {
         return player.getData(PLAYER_DATA.get());
@@ -50,5 +62,13 @@ public class WitcheryAttachments {
 
     public static LearnedSymbols learned(net.minecraft.world.entity.player.Player player) {
         return player.getData(LEARNED_SYMBOLS.get());
+    }
+
+    public static boolean hasReceivedPrimer(net.minecraft.world.entity.player.Player player) {
+        return player.getData(RECEIVED_PRIMER.get());
+    }
+
+    public static void setReceivedPrimer(net.minecraft.world.entity.player.Player player) {
+        player.setData(RECEIVED_PRIMER.get(), Boolean.TRUE);
     }
 }

@@ -10,20 +10,6 @@
   "name": "Brewing in the Cauldron",
   "pages": [
     {
-      "type": "modonomicon:image",
-      "anchor": "",
-      "border": true,
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "images": [
-        "witchery:textures/patchouli/brewing.png"
-      ],
-      "text": "[#](53341a)The heart of every working — a cauldron of water over a steady fire.[#]()",
-      "title": "",
-      "use_legacy_rendering": false
-    },
-    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {
@@ -40,9 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time. When the brew suits you, dip an empty bottle and draw it off.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -62,9 +48,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again. Lay these *before* the reagent they shape — the cauldron remembers only forward.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -84,9 +70,20 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
-      "text": "[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby. **Dragon's breath** leaves a slow, drifting fog. With neither, the draught is yours alone.[#]()",
-      "title": "",
+      "show_title_separator": false,
+      "text": "[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby. **Dragon's breath** leaves a slow, drifting fog.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)With neither, the draught is yours alone.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {

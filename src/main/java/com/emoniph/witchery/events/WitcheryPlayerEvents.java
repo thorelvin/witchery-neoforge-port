@@ -111,7 +111,18 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            giveFirstJoinPrimer(player);
             syncToClient(player);
+        }
+    }
+
+    /** Hands every player the Witches' Primer once — the entry point of the guide-book progression. */
+    private static void giveFirstJoinPrimer(ServerPlayer player) {
+        if (WitcheryAttachments.hasReceivedPrimer(player)) return;
+        WitcheryAttachments.setReceivedPrimer(player);
+        ItemStack primer = new ItemStack(WitcheryItems.WITCHES_PRIMER.get());
+        if (!player.getInventory().add(primer)) {
+            player.drop(primer, false);
         }
     }
 

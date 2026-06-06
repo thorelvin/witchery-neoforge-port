@@ -1,0 +1,83 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "conjuration",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:treefyd_seeds"
+  },
+  "name": "Treefyd",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred.[#]()",
+      "title": "Treefyd",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The witch prepares Treefyd Seeds, then plants them on living grass so the rooted thing may wake and walk.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:treefyd_seeds",
+      "text": "[#](53341a)Two seeds from **Mutandis Extremis**, **Reek of Misfortune**, **Ember Moss**, **Artichoke**, **Mandrake Root**, and a **Tear of the Goddess**.[#]()",
+      "title1": "Treefyd Seeds",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Use the seed on the top of a grass block; it rises as your own guardian. Feeding an owned Treefyd another seed splits off a fresh one.[#]()",
+      "title": "Planting the Seed",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A **Creeper Heart** hardens it, a **Demon Heart** more so, and a **Boline** toggles whether it wanders when idle.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A filled **Taglock Kit** teaches it to ignore a named player or one creature.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 4,
+  "x": 0,
+  "y": 0
+}

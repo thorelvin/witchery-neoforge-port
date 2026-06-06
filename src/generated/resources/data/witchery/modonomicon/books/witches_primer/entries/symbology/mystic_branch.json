@@ -1,0 +1,85 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "symbology",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:mystic_branch"
+  },
+  "name": "Mystic Branch",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The Mystic Branch is the witch's focus for stolen creature force.[#]()",
+      "title": "Mystic Branch",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Old tales call it a wand for tracing spells in the air, but in the live port its role is simpler: it releases the creature power you have already stored within yourself.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:mystic_branch"
+      },
+      "text": "[#](53341a)Work the night-only rite that turns an Ent Twig and Mystic Unguent into a branch on paired circles, for **3000 altar power**.[#]()",
+      "title": "Mystic Branch"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Hold stored creature-power charges and use the branch to spend one, releasing your bound power directly — swiftness, impossible leaps, healing,[#]()",
+      "title": "Current Use",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)transposition, or bat-light levitation, depending on what you carry.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The older air-glyph spellcasting is not fully restored, so treat the branch as a creature-power focus first.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

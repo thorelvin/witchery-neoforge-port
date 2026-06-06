@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "D#F",
+    " E "
+  ],
+  "key": {
+    "#": "minecraft:book",
+    "B": "minecraft:bone",
+    "D": "minecraft:black_dye",
+    "F": "minecraft:feather",
+    "E": "minecraft:spider_eye"
+  },
+  "result": {
+    "id": "witchery:book_creatures",
+    "count": 1
+  }
+}

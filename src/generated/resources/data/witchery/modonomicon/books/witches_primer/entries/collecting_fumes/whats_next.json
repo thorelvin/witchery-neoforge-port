@@ -1,0 +1,39 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "collecting_fumes",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:book_infusions"
+  },
+  "name": "What Comes Next",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Your studies here are done. The next chapter — **Brews & Infusions** — opens once you craft and read its book.[#]()",
+      "title": "What Comes Next",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:book_infusions",
+      "text": "[#](53341a)The bottom reagent, **Odour of Purity**, comes from the Witches' Oven you just built — bake a Hawthorn Sapling.[#]()",
+      "title1": "Witchcraft: Brews & Infusions",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

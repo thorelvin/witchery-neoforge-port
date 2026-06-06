@@ -1,0 +1,102 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brews_infusions",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:ghost_of_the_light"
+  },
+  "name": "Infusion Sources",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The four lasting infusions begin in the kettle, not the circle.[#]()",
+      "title": "Infusion Sources",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Each source uses **Redstone Soup** as a base and asks a nearby altar for **4000 power**, preparing the essence for one branch of permanent transformation.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Otherwhere and Infernal brews also accept their splash-potion twins, if that is what you have to hand.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:ghost_of_the_light"
+      },
+      "text": "[#](53341a)The Light infusion: Redstone Soup with Long Invisibility, Long Fire Resistance, a Fire Protection Poppet, a torch, and Tongue of Dog.[#]()",
+      "title": "Ghost of the Light"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:soul_of_the_world"
+      },
+      "text": "[#](53341a)The Overworld infusion: Redstone Soup with Long Regeneration, an Enchanted Golden Apple, an Attuned Stone, a Mandrake Root, and a Rowan Sapling.[#]()",
+      "title": "Soul of the World"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:spirit_of_otherwhere"
+      },
+      "text": "[#](53341a)The Otherwhere infusion: Redstone Soup with a Long Swiftness potion, two Ender Eyes, a Drop of Luck, and Wool of Bat.[#]()",
+      "title": "Spirit of Otherwhere"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:infernal_animus"
+      },
+      "text": "[#](53341a)The Infernal infusion: Redstone Soup with a Strong Harming potion, a Voodoo Poppet, a Demon Heart, Refined Evil, and a Blaze Rod.[#]()",
+      "title": "Infernal Animus"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

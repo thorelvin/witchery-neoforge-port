@@ -1,0 +1,76 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "spirit_world",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:crystal_ball"
+  },
+  "name": "The Crystal Ball",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The crystal ball does not tell you what you want to hear. It tells you what it perceives — oblique, contextual, and occasionally alarming.[#]()",
+      "title": "The Crystal Ball",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Right-click it empty-handed near an altar holding at least 500 power for a reading.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)There is a cooldown between readings; the ball will not repeat itself. Whether that is a limitation or a mercy is a matter of interpretation.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:quartz_sphere"
+      },
+      "text": "[#](53341a)Infuse it at night on a small circle. Offer a Gold Ingot and Happenstance Oil, and keep 2000 altar power ready.[#]()",
+      "title": "Quartz Sphere"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:crystal_ball"
+      },
+      "text": "[#](53341a)The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or focus it with waystones and taglocks.[#]()",
+      "title": "Crystal Ball"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

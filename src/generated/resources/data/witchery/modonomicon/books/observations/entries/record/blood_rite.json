@@ -26,9 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)A chicken, a skull, a boline, and a glass goblet begin the old blood rite.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -37,9 +37,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)A night rite calls string, red dust, torches, and a skull beneath open stars.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -48,9 +48,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Blood poured over the skull draws Lilith's attention and sends the seeker toward the Nether.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -59,9 +59,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Strength is proven to her in battle; the filled goblet begins the curse.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

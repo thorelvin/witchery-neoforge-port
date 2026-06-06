@@ -26,9 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Mesmerised victims can be held still, but draining too deeply has consequences.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -37,9 +37,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)After mastery, the vampire begins to sense time, hunger, and sunlight differently.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -48,9 +48,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Sunlight can be collected and turned back on the curse until the burning dulls.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -59,9 +59,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "show_title_separator": false,
       "text": "[#](53341a)Blazes and fortress fire mark the next trial of endurance.[#]()",
-      "title": "",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

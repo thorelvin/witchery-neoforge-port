@@ -1,0 +1,92 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "creatures",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:owl_spawn_egg"
+  },
+  "name": "Familiars",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A familiar is not merely a tame animal — it is a companion bound to you through ritual, carrying part of your craft onward after the binding is done.[#]()",
+      "title": "Familiars",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)You may have one at a time. Tame the creature, then perform the Rite of Familiar Binding.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The binding also leaves it strangely resilient to fire, falls, and drowning.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "witchery:owl",
+      "name": "The Owl",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": "[#](53341a)Reads the air and warns of what approaches. At full speed on a broomstick, an owl grants a significant bonus — they seem to enjoy the height.[#]()"
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "witchery:familiar_cat",
+      "name": "The Cat",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": "[#](53341a)Indifferent to most things, hostile to supernatural intrusion. Curses find less purchase near a cat, and your own circle malice takes deeper root.[#]()"
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "witchery:toad",
+      "name": "The Toad",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": "[#](53341a)Patient, damp, and helpful to a brewer. It gathers what falls, coaxes the odd extra bottle from the kettle, and strengthens brews you drink yourself.[#]()"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}
