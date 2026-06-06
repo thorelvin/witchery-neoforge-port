@@ -44,14 +44,14 @@ class BrewLogicTest {
         assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))
                         .get(0).getAmplifier(),
                 "repeated Glowstone Dust is capped at source strength tier 1");
-        assertEquals(2, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR))
+        assertEquals(2, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.SUGAR))
                         .get(0).getAmplifier(),
-                "Blaze Powder opens source strength tier 2");
-        assertEquals(3, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+                "Blaze Rod opens source strength tier 2");
+        assertEquals(3, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR))
                         .get(0).getAmplifier(),
                 "vanilla potion effects use the old default strength ceiling");
-        assertEquals(4, Brews.power(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+        assertEquals(4, Brews.power(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SUGAR)),
                 "Charged Attuned Stone contributes the third source strength modifier tier");
     }
@@ -130,9 +130,27 @@ class BrewLogicTest {
         assertEquals(225, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.GLISTERING_MELON_SLICE)),
                 "inverted Glistering Melon counts Fermented Spider Eye plus source effect power");
 
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
                 "source Healing/Harming keeps the old strength ceiling of one");
+    }
+
+    @Test
+    void blazePowderRestoresSourceDamageBoostAndWeakness() {
+        Brews.bootstrap();
+        List<MobEffectInstance> strength = Brews.buildEffects(List.of(Items.BLAZE_POWDER));
+        assertEquals(1, strength.size(), "Blaze Powder resolves as an effect ingredient");
+        assertSame(MobEffects.STRENGTH.value(), strength.get(0).getEffect().value(),
+                "Blaze Powder makes source Damage Boost / Strength");
+        assertEquals(3600, strength.get(0).getDuration(), "source Damage Boost lasts three minutes");
+        assertEquals(200, Brews.powerCost(List.of(Items.BLAZE_POWDER)), "Blaze Powder source effect power");
+
+        List<MobEffectInstance> weakness = Brews.buildEffects(List.of(Items.FERMENTED_SPIDER_EYE, Items.BLAZE_POWDER));
+        assertSame(MobEffects.WEAKNESS.value(), weakness.get(0).getEffect().value(),
+                "inverted Blaze Powder makes Weakness");
+        assertEquals(1800, weakness.get(0).getDuration(), "source Weakness duration is ninety seconds");
+        assertEquals(225, Brews.powerCost(List.of(Items.FERMENTED_SPIDER_EYE, Items.BLAZE_POWDER)),
+                "inverted Blaze Powder counts Fermented Spider Eye plus source effect power");
     }
 
     @Test
@@ -204,8 +222,8 @@ class BrewLogicTest {
     @Test
     void sourceModifierPowerCostsAreCounted() {
         Brews.bootstrap();
-        assertEquals(250, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.SUGAR)),
-                "Glowstone Dust plus Blaze Powder plus Sugar use source altar costs");
+        assertEquals(250, Brews.powerCost(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.SUGAR)),
+                "Glowstone Dust plus Blaze Rod plus Sugar use source altar costs");
         assertEquals(300, Brews.powerCost(List.of(Items.REDSTONE, Items.OBSIDIAN,
                         WitcheryItems.MINDRAKE_BULB.get(), Items.SPIDER_EYE)),
                 "Redstone, Obsidian, and old Mindrake seed tier costs are counted");
@@ -263,16 +281,16 @@ class BrewLogicTest {
     @Test
     void sourceDisablePowerLimitBypassesEffectStrengthCeiling() {
         Brews.bootstrap();
-        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_POWDER,
+        assertEquals(1, Brews.buildEffects(List.of(Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
                         Items.GLISTERING_MELON_SLICE)).get(0).getAmplifier(),
                 "source Healing/Harming normally caps at strength ceiling one");
 
         List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
-                Items.BLAZE_POWDER, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE));
+                Items.BLAZE_ROD, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE));
         assertEquals(3, fx.get(0).getAmplifier(),
                 "old fish metadata 2 disables the effect strength ceiling for the following potion effect");
         assertEquals(700, Brews.powerCost(List.of(Items.TROPICAL_FISH, Items.GLOWSTONE_DUST,
-                        Items.BLAZE_POWDER, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE)),
+                        Items.BLAZE_ROD, WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.GLISTERING_MELON_SLICE)),
                 "the secret source ceiling-bypass modifier costs 200 altar power");
     }
 
@@ -280,8 +298,8 @@ class BrewLogicTest {
     void sourceDisablePowerLimitPersistsThroughEffectReset() {
         Brews.bootstrap();
         List<MobEffectInstance> fx = Brews.buildEffects(List.of(Items.TROPICAL_FISH,
-                Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.GLISTERING_MELON_SLICE,
-                Items.GLOWSTONE_DUST, Items.BLAZE_POWDER, Items.GLISTERING_MELON_SLICE));
+                Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.GLISTERING_MELON_SLICE,
+                Items.GLOWSTONE_DUST, Items.BLAZE_ROD, Items.GLISTERING_MELON_SLICE));
         assertEquals(2, fx.size(), "two Healing effects resolve");
         assertEquals(2, fx.get(0).getAmplifier(),
                 "the first Healing effect uses the disabled ceiling");
@@ -298,8 +316,15 @@ class BrewLogicTest {
                 "dropped Mandrake Root must remain available to hardcoded cauldron offerings");
         assertTrue(Brews.canAddAutomatically(List.of(), WitcheryItems.DIAMOND_VAPOUR.get()),
                 "non-conflicting capacity ingredients still auto-stir when dropped");
-        assertTrue(Brews.isIngredient(Items.BLAZE_POWDER), "Blaze Powder is a source strength modifier");
+        assertTrue(Brews.isIngredient(Items.BLAZE_ROD), "Blaze Rod is the source strength tier 2 modifier");
+        assertFalse(Brews.requiresExplicitStir(Items.BLAZE_ROD),
+                "Blaze Rod has no current cauldron-offering conflict");
+        assertTrue(Brews.canAddAutomatically(List.of(), Items.BLAZE_ROD),
+                "dropped Blaze Rod can auto-stir as the source strength modifier");
+        assertTrue(Brews.isIngredient(Items.BLAZE_POWDER), "Blaze Powder is the source Damage Boost effect");
         assertTrue(Brews.requiresExplicitStir(Items.BLAZE_POWDER),
                 "Blaze Powder stays available to the Infernal Chalk cauldron offering path when dropped");
+        assertFalse(Brews.canAddAutomatically(List.of(), Items.BLAZE_POWDER),
+                "dropped Blaze Powder must remain available to hardcoded cauldron offerings");
     }
 }

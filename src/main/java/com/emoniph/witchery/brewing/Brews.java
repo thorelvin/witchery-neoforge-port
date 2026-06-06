@@ -173,6 +173,8 @@ public final class Brews {
         register(Items.GOLDEN_CARROT, Ingredient.effect(MobEffects.NIGHT_VISION, MobEffects.INVISIBILITY, 3600, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x1F1FA1, 200));
         register(Items.GLISTERING_MELON_SLICE, Ingredient.effect(MobEffects.INSTANT_HEALTH, MobEffects.INSTANT_DAMAGE,
                 0, 0, 1, 0xBC1A1A, 200));
+        registerExplicit(Items.BLAZE_POWDER, Ingredient.effect(MobEffects.STRENGTH, MobEffects.WEAKNESS,
+                3600, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x932423, 200));
         register(Items.PHANTOM_MEMBRANE, Ingredient.effect(MobEffects.SLOW_FALLING, 1800, 0, 0xCAC5B6));
         register(WitcheryItems.WORMWOOD.get(),
                 Ingredient.effect(MobEffects.INVISIBILITY, 1800, 0, 0x7F8392));
@@ -212,7 +214,7 @@ public final class Brews {
 
         // ── Modifier ingredients ──
         register(Items.GLOWSTONE_DUST, Ingredient.modifier(Ingredient.Kind.STRENGTH, 1, 50));
-        registerExplicit(Items.BLAZE_POWDER, Ingredient.modifier(Ingredient.Kind.STRENGTH, 2, 100));
+        register(Items.BLAZE_ROD, Ingredient.modifier(Ingredient.Kind.STRENGTH, 2, 100));
         register(WitcheryItems.ATTUNED_STONE_CHARGED.get(), Ingredient.modifier(Ingredient.Kind.STRENGTH, 3, 150));
         register(Items.REDSTONE, Ingredient.modifier(Ingredient.Kind.DURATION, 1, 50));
         register(Items.OBSIDIAN, Ingredient.modifier(Ingredient.Kind.DURATION, 2, 100));
