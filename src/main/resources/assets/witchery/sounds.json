@@ -43,5 +43,10 @@
     "sounds": [
       "witchery:entity/egassy/fart"
     ]
+  },
+  "random.heartbeat": {
+    "sounds": [
+      "witchery:random/heartbeat1"
+    ]
   }
 }

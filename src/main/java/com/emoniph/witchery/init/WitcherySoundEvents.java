@@ -21,6 +21,7 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_4 = register("entity.raven.idle4");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_5 = register("entity.raven.idle5");
     public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_EGASSY_FART = register("entity.egassy.fart");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HEARTBEAT = register("random.heartbeat");
 
     private WitcherySoundEvents() {}
 
