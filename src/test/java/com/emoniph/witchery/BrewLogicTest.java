@@ -1536,6 +1536,37 @@ class BrewLogicTest {
     }
 
     @Test
+    void sourceBrickTargetModifiersPersistThroughEffectReset() {
+        Brews.bootstrap();
+        List<Brews.EffectApplication> blockOnlyEffects = Brews.buildEffectApplications(
+                level4(Items.BRICK, Items.SNOWBALL, Items.SUGAR));
+        assertEquals(2, blockOnlyEffects.size(), "two effects resolve after the Brick target modifier");
+        assertFalse(blockOnlyEffects.get(0).disableBlockTarget(), "Brick keeps block targeting available");
+        assertTrue(blockOnlyEffects.get(0).disableEntityTarget(), "Brick disables entity targeting");
+        assertTrue(blockOnlyEffects.get(1).disableEntityTarget(),
+                "source ModifiersEffect.reset does not clear disableEntityTarget");
+
+        List<Brews.EffectApplication> entityOnlyEffects = Brews.buildEffectApplications(
+                level4(Items.NETHER_BRICK, Items.SNOWBALL, Items.SUGAR));
+        assertEquals(2, entityOnlyEffects.size(), "two effects resolve after the Nether Brick target modifier");
+        assertTrue(entityOnlyEffects.get(0).disableBlockTarget(), "Nether Brick disables block targeting");
+        assertFalse(entityOnlyEffects.get(0).disableEntityTarget(), "Nether Brick keeps entity targeting available");
+        assertTrue(entityOnlyEffects.get(1).disableBlockTarget(),
+                "source ModifiersEffect.reset does not clear disableBlockTarget");
+
+        Brews.ActionApplication blockOnlyAction = Brews.buildActions(level2(Items.BRICK, Items.SLIME_BALL)).get(0);
+        assertFalse(blockOnlyAction.disableBlockTarget(), "Brick keeps block-target action delivery available");
+        assertTrue(blockOnlyAction.disableEntityTarget(), "Brick disables entity-target action delivery");
+
+        Brews.ActionApplication entityOnlyAction = Brews.buildActions(level2(Items.NETHER_BRICK, Items.SLIME_BALL)).get(0);
+        assertTrue(entityOnlyAction.disableBlockTarget(), "Nether Brick disables block-target action delivery");
+        assertFalse(entityOnlyAction.disableEntityTarget(), "Nether Brick keeps entity-target action delivery available");
+
+        assertEquals(100, Brews.powerCost(List.of(Items.BRICK, Items.NETHER_BRICK)),
+                "Brick and Nether Brick each cost 50 source altar power as target modifiers");
+    }
+
+    @Test
     void dualPurposeCapacityIngredientsRequireExplicitStirring() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");

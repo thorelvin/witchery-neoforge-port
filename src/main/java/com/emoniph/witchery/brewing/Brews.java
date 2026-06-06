@@ -93,7 +93,7 @@ public final class Brews {
                              String nameKey, String invertedNameKey) {
         public enum Kind {
             EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, COLOR, DRINK_SPEED,
-            EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
+            EXTENT, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET, DISABLE_STRENGTH_CEILING
         }
 
         public enum BrewAction {
@@ -168,6 +168,8 @@ public final class Brews {
         int duration;
         boolean noParticles;
         boolean inverted;
+        boolean disableBlockTarget;
+        boolean disableEntityTarget;
         boolean strengthCeilingDisabled;
 
         void reset() {
@@ -178,11 +180,15 @@ public final class Brews {
         }
     }
 
+    public record EffectApplication(MobEffectInstance effect, boolean disableBlockTarget,
+                                    boolean disableEntityTarget) {}
+
     public record ActionApplication(Ingredient.BrewAction action, boolean inverted, int strength, int duration,
-                                    boolean noParticles, boolean strengthCeilingDisabled, String nameKey) {}
+                                    boolean noParticles, boolean disableBlockTarget, boolean disableEntityTarget,
+                                    boolean strengthCeilingDisabled, String nameKey) {}
 
     private static final class Resolution {
-        final List<MobEffectInstance> effects = new ArrayList<>();
+        final List<EffectApplication> effects = new ArrayList<>();
         final List<ActionApplication> actions = new ArrayList<>();
         int capacity;
         int usedCapacity;
@@ -392,6 +398,8 @@ public final class Brews {
         register(Items.COCOA_BEANS, Ingredient.modifier(Ingredient.Kind.EXTENT, 2, 100));
         register(WitcheryItems.WISPY_COTTON.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 3, 150));
         registerExplicit(Items.GOLD_NUGGET, Ingredient.modifier(Ingredient.Kind.NO_PARTICLES, 0, 50));
+        register(Items.NETHER_BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_BLOCK_TARGET, 0, 50));
+        register(Items.BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_ENTITY_TARGET, 0, 50));
         register(Items.TROPICAL_FISH, Ingredient.modifier(Ingredient.Kind.DISABLE_STRENGTH_CEILING, 0, 200));
         register(Items.GUNPOWDER, Ingredient.modifier(Ingredient.Kind.SPLASH));
         register(WitcheryItems.ARTICHOKE.get(), Ingredient.modifier(Ingredient.Kind.SPLASH));
@@ -471,6 +479,8 @@ public final class Brews {
                 }
                 case INVERT -> mods.inverted = true;
                 case NO_PARTICLES -> mods.noParticles = true;
+                case DISABLE_BLOCK_TARGET -> mods.disableBlockTarget = true;
+                case DISABLE_ENTITY_TARGET -> mods.disableEntityTarget = true;
                 case DISABLE_STRENGTH_CEILING -> mods.strengthCeilingDisabled = true;
                 case SPLASH, GAS, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EXTENT -> {
@@ -485,7 +495,10 @@ public final class Brews {
                         int strengthCeiling = mods.strengthCeilingDisabled ? SOURCE_DEFAULT_STRENGTH_CEILING : ing.strengthCeiling();
                         int amplifier = Math.min(mods.strength, strengthCeiling);
                         int duration = baseDuration * (mods.duration + 1);
-                        resolved.effects.add(new MobEffectInstance(effect, duration, amplifier, mods.noParticles, true, true));
+                        MobEffectInstance instance = new MobEffectInstance(effect, duration, amplifier,
+                                mods.noParticles, true, true);
+                        resolved.effects.add(new EffectApplication(instance, mods.disableBlockTarget,
+                                mods.disableEntityTarget));
                         resolved.usedCapacity += ing.capacityRequired();
                         mods.reset();
                     } else {
@@ -497,7 +510,8 @@ public final class Brews {
                         boolean inverted = mods.inverted && ing.invertedNameKey() != null;
                         String nameKey = inverted ? ing.invertedNameKey() : ing.nameKey();
                         resolved.actions.add(new ActionApplication(ing.action(), inverted, mods.strength,
-                                mods.duration, mods.noParticles, mods.strengthCeilingDisabled, nameKey));
+                                mods.duration, mods.noParticles, mods.disableBlockTarget, mods.disableEntityTarget,
+                                mods.strengthCeilingDisabled, nameKey));
                         resolved.usedCapacity += ing.capacityRequired();
                         mods.reset();
                     } else {
@@ -563,6 +577,12 @@ public final class Brews {
 
     /** Build the resolved effect instances the brew will apply (used for drink, splash and gas). */
     public static List<MobEffectInstance> buildEffects(List<Item> items) {
+        return resolveBrew(items).effects.stream()
+                .map(EffectApplication::effect)
+                .toList();
+    }
+
+    public static List<EffectApplication> buildEffectApplications(List<Item> items) {
         return List.copyOf(resolveBrew(items).effects);
     }
 
@@ -576,12 +596,16 @@ public final class Brews {
 
     public static void applyToEntity(LivingEntity target, List<Item> items, Entity source) {
         Resolution resolved = resolveBrew(items);
-        for (MobEffectInstance effect : resolved.effects) {
-            applyEffect(target, effect, source, 1.0, 1.0);
+        for (EffectApplication application : resolved.effects) {
+            if (!application.disableEntityTarget()) {
+                applyEffect(target, application.effect(), source, 1.0, 1.0);
+            }
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
-                applyAction(serverLevel, target, action, 1.0, 1.0, source, target.position());
+                if (!action.disableEntityTarget()) {
+                    applyAction(serverLevel, target, action, 1.0, 1.0, source, target.position());
+                }
             }
         }
     }
@@ -605,15 +629,18 @@ public final class Brews {
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
         }
-        if (dispersal == Brews.Dispersal.GAS && !resolved.effects.isEmpty()) {
+        List<EffectApplication> entityEffects = resolved.effects.stream()
+                .filter(application -> !application.disableEntityTarget())
+                .toList();
+        if (dispersal == Brews.Dispersal.GAS && !entityEffects.isEmpty()) {
             AreaEffectCloud cloud = new AreaEffectCloud(level, pos.x, pos.y, pos.z);
             cloud.setRadius(3.0F);
             cloud.setDuration(600);
             cloud.setRadiusPerTick(-0.005F);
             cloud.setWaitTime(10);
             tagSourceBrewGasCloud(cloud);
-            for (MobEffectInstance effect : resolved.effects) {
-                cloud.addEffect(new MobEffectInstance(effect));
+            for (EffectApplication application : entityEffects) {
+                cloud.addEffect(new MobEffectInstance(application.effect()));
             }
             level.addFreshEntity(cloud);
             level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 24, 1.0, 0.5, 1.0, 0.05);
@@ -621,15 +648,15 @@ public final class Brews {
             double instantRadius = SOURCE_INSTANT_RADIUS + resolved.extent;
             AABB area = new AABB(pos.x - instantRadius, pos.y - instantRadius, pos.z - instantRadius,
                     pos.x + instantRadius, pos.y + instantRadius, pos.z + instantRadius);
-            if (!resolved.effects.isEmpty()) {
+            if (!entityEffects.isEmpty()) {
                 for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
                     double distance = Math.sqrt(entity.distanceToSqr(pos));
                     if (distance <= instantRadius) {
                         boolean directHit = entity == directTarget;
                         double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
                         double durationFactor = SOURCE_SPLASH_DURATION_SCALE * powerFactor;
-                        for (MobEffectInstance effect : resolved.effects) {
-                            applyEffect(entity, effect, source, powerFactor, durationFactor);
+                        for (EffectApplication application : entityEffects) {
+                            applyEffect(entity, application.effect(), source, powerFactor, durationFactor);
                         }
                     }
                 }
@@ -719,7 +746,9 @@ public final class Brews {
             boolean directHit = target == directTarget;
             double powerFactor = splashPowerFactor(distance, directHit, instantRadius);
             for (ActionApplication action : actions) {
-                applyAction(level, target, action, powerFactor, SOURCE_SPLASH_DURATION_SCALE * powerFactor, source, pos);
+                if (!action.disableEntityTarget()) {
+                    applyAction(level, target, action, powerFactor, SOURCE_SPLASH_DURATION_SCALE * powerFactor, source, pos);
+                }
             }
         }
     }
@@ -761,9 +790,13 @@ public final class Brews {
         }
     }
 
-    private static void applyBlockImpactEffects(ServerLevel level, BlockPos impactPos, List<MobEffectInstance> effects,
+    private static void applyBlockImpactEffects(ServerLevel level, BlockPos impactPos, List<EffectApplication> effects,
                                                 Entity source) {
-        for (MobEffectInstance effect : effects) {
+        for (EffectApplication application : effects) {
+            if (application.disableBlockTarget()) {
+                continue;
+            }
+            MobEffectInstance effect = application.effect();
             MobEffect mobEffect = effect.getEffect().value();
             if (mobEffect == WitcheryMobEffects.SNOW_TRAIL.value()) {
                 applySnowTrailBlockHit(level, impactPos, effect.getAmplifier(), source);
@@ -778,6 +811,9 @@ public final class Brews {
         BlockPos blockImpact = BlockPos.containing(impactPos);
         int blockRadius = Mth.ceil(instantRadius);
         for (ActionApplication action : actions) {
+            if (action.disableBlockTarget()) {
+                continue;
+            }
             if (action.action() == Ingredient.BrewAction.PULL) {
                 applyPullToNonLivingEntities(level, impactPos, action.strength(), source, instantRadius);
             } else if (action.action() == Ingredient.BrewAction.EXTINGUISH) {
