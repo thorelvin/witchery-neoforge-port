@@ -11,6 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -27,6 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,7 +67,7 @@ public final class Brews {
             EXTENT, NO_PARTICLES, DISABLE_STRENGTH_CEILING
         }
 
-        public enum BrewAction { ANIMAL }
+        public enum BrewAction { ANIMAL, REMOVE_BUFFS }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
             return effect(effect, null, baseDuration, baseDuration, ceiling, color, 0, 0);
@@ -170,6 +172,7 @@ public final class Brews {
     private static final Map<Item, Ingredient> REGISTRY = new LinkedHashMap<>();
     private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
+    private static final Method MOB_EFFECT_INSTANCE_GET_CURES = findMobEffectInstanceGetCures();
     private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
@@ -240,6 +243,9 @@ public final class Brews {
         register(WitcheryItems.GOLDEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ANIMAL,
                 4, 500, 0xF2C94C,
                 "witchery.brew.animal_attraction", "witchery.brew.animal_repulsion"));
+        registerExplicit(WitcheryItems.REEK_OF_MISFORTUNE.get(), Ingredient.action(Ingredient.BrewAction.REMOVE_BUFFS,
+                2, 250, 0x210425,
+                "witchery.brew.removebuffs", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -578,6 +584,16 @@ public final class Brews {
         }
     }
 
+    private static Method findMobEffectInstanceGetCures() {
+        try {
+            Method method = MobEffectInstance.class.getMethod("getCures");
+            method.setAccessible(true);
+            return method;
+        } catch (ReflectiveOperationException ignored) {
+            return null;
+        }
+    }
+
     private static void applyAreaActions(ServerLevel level, Vec3 pos, LivingEntity directTarget, List<ActionApplication> actions) {
         if (directTarget != null && directTarget.isAlive()) {
             for (ActionApplication action : actions) {
@@ -597,6 +613,42 @@ public final class Brews {
     private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action) {
         if (action.action() == Ingredient.BrewAction.ANIMAL) {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
+        } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
+            removeBuffs(target, action.strength());
+        }
+    }
+
+    private static void removeBuffs(LivingEntity target, int strength) {
+        List<Holder<MobEffect>> effectsToRemove = new ArrayList<>();
+        for (MobEffectInstance effect : target.getActiveEffects()) {
+            if (shouldRemoveBuff(effect, strength)) {
+                effectsToRemove.add(effect.getEffect());
+            }
+        }
+        for (Holder<MobEffect> effect : effectsToRemove) {
+            target.removeEffect(effect);
+        }
+    }
+
+    public static boolean shouldRemoveBuff(MobEffectInstance effect, int strength) {
+        return shouldRemoveBuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
+    }
+
+    public static boolean shouldRemoveBuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
+        return amplifier <= strength
+                && effect.value().getCategory() != MobEffectCategory.HARMFUL
+                && curable;
+    }
+
+    private static boolean isCurableByModernApi(MobEffectInstance effect) {
+        if (MOB_EFFECT_INSTANCE_GET_CURES == null) {
+            return true;
+        }
+        try {
+            Object cures = MOB_EFFECT_INSTANCE_GET_CURES.invoke(effect);
+            return !(cures instanceof Collection<?> collection) || !collection.isEmpty();
+        } catch (ReflectiveOperationException ignored) {
+            return true;
         }
     }
 

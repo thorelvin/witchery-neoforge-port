@@ -803,6 +803,51 @@ class BrewLogicTest {
     }
 
     @Test
+    void reekOfMisfortuneRestoresSourceRemoveBuffsAction() {
+        Brews.bootstrap();
+        Item reek = WitcheryItems.REEK_OF_MISFORTUNE.get();
+
+        assertFalse(Brews.canAdd(List.of(), reek),
+                "source Remove Buffs requires level-2 capacity");
+        assertTrue(Brews.canAdd(level2(), reek),
+                "Nether Wart opens enough capacity for the source Reek action");
+        assertTrue(Brews.blockedByCapacity(List.of(reek)),
+                "under-capacity Reek resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level2(reek));
+        assertEquals(1, actions.size(), "Reek resolves as the old Cure Buffs action");
+        assertEquals(Brews.Ingredient.BrewAction.REMOVE_BUFFS, actions.get(0).action());
+        assertFalse(actions.get(0).inverted(), "source Reek action has no inverted Cure Debuffs branch");
+        assertEquals(300, Brews.powerCost(level2(reek)),
+                "source Nether Wart capacity cost plus Reek altar cost");
+
+        assertEquals(1, Brews.buildActions(level2(Items.GLOWSTONE_DUST, reek)).get(0).strength(),
+                "Glowstone raises the removable buff amplifier by one");
+        assertTrue(Brews.requiresExplicitStir(reek),
+                "Reek remains available to existing dropped-item kettle recipes unless explicitly stirred");
+        assertFalse(Brews.canAddAutomatically(level2(), reek),
+                "dropped Reek must not be stolen from current kettle recipes");
+    }
+
+    @Test
+    void removeBuffsUsesSourceCurablePositiveLevelGate() {
+        MobEffectInstance speedOne = new MobEffectInstance(MobEffects.SPEED, 200, 0);
+        MobEffectInstance speedTwo = new MobEffectInstance(MobEffects.SPEED, 200, 1);
+        MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 200, 0);
+
+        assertTrue(Brews.shouldRemoveBuff(speedOne, 0),
+                "base source strength removes level-I positive curable effects");
+        assertFalse(Brews.shouldRemoveBuff(speedTwo, 0),
+                "higher-amplifier positive effects survive unless the brew is strengthened");
+        assertTrue(Brews.shouldRemoveBuff(speedTwo, 1),
+                "strengthened Cure Buffs removes matching higher amplifiers");
+        assertFalse(Brews.shouldRemoveBuff(poison, 3),
+                "negative effects are not buffs");
+        assertFalse(Brews.shouldRemoveBuff(MobEffects.SPEED, 0, false, 3),
+                "source Cure Buffs does not remove incurable effects");
+    }
+
+    @Test
     void sourceCapacityIngredientsGatePotionEffects() {
         Brews.bootstrap();
         Item tear = WitcheryItems.TEAR_OF_GODDESS.get();
