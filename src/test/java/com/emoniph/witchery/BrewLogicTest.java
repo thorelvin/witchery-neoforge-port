@@ -992,6 +992,59 @@ class BrewLogicTest {
     }
 
     @Test
+    void silverDepositsRestoresSourceHarmWerewolvesAction() {
+        Brews.bootstrap();
+        Item deposits = WitcheryItems.SILVER_DEPOSITS.get();
+
+        assertFalse(Brews.canAdd(level2(), deposits),
+                "source Harm Werewolves requires level-4 capacity");
+        assertTrue(Brews.canAdd(level4(), deposits),
+                "Nether Wart plus Tear of the Goddess reaches the old level-4 silver-deposit action");
+        assertTrue(Brews.blockedByCapacity(List.of(deposits)),
+                "under-capacity Harm Werewolves resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level4(deposits));
+        assertEquals(1, actions.size(), "Silver Deposits resolves as source Harm Werewolves");
+        assertEquals(Brews.Ingredient.BrewAction.HARM_WEREWOLVES, actions.get(0).action());
+        assertEquals("witchery.brew.harmwerewolves", actions.get(0).nameKey());
+        assertEquals(1150, Brews.powerCost(level4(deposits)),
+                "source capacity route cost plus Silver Deposits altar cost");
+
+        Brews.ActionApplication modified = Brews.buildActions(level4(Items.TROPICAL_FISH,
+                Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                WitcheryItems.ATTUNED_STONE_CHARGED.get(), deposits)).get(0);
+        assertEquals(3, modified.strength(),
+                "Harm Werewolves carries the normal source strength modifiers");
+        assertTrue(modified.strengthCeilingDisabled(),
+                "Tropical Fish opens the old Harm Werewolves strength ceiling to level IV damage");
+    }
+
+    @Test
+    void harmWerewolvesUsesSourceDamageAndTransformedPlayerGate() {
+        assertEquals(3, Brews.sourceHarmWerewolvesDamage(true, 0, false, 1.0),
+                "base matching Harm Werewolves damage is 3 before silver hooks");
+        assertEquals(6, Brews.sourceHarmWerewolvesDamage(true, 3, false, 1.0),
+                "ordinary Harm Werewolves strength caps at level II damage");
+        assertEquals(24, Brews.sourceHarmWerewolvesDamage(true, 3, true, 1.0),
+                "ceiling-disabled Harm Werewolves reaches source level IV damage");
+        assertEquals(1, Brews.sourceHarmWerewolvesDamage(false, 0, false, 1.0),
+                "non-werewolf targets take the source minor damage");
+        assertEquals(2, Brews.sourceHarmWerewolvesDamage(false, 3, false, 1.0),
+                "nonmatching ordinary strength also caps at level II damage");
+        assertEquals(12, Brews.sourceHarmWerewolvesDamage(true, 3, true, 0.5),
+                "source splash power factor scales Harm Werewolves damage before ceiling");
+        assertEquals(1, Brews.sourceHarmWerewolvesDamage(false, 0, false, 0.5),
+                "source fractional minor damage is rounded up");
+
+        assertTrue(Brews.sourceWerewolfPlayerMatches(true, true),
+                "source includeUnshifted=false route matches transformed werewolf players");
+        assertFalse(Brews.sourceWerewolfPlayerMatches(true, false),
+                "untransformed werewolf players are not on the strong source branch");
+        assertFalse(Brews.sourceWerewolfPlayerMatches(false, true),
+                "transformation state alone is not enough without lycanthropy");
+    }
+
+    @Test
     void skeletonSkullRestoresSourceStealBuffsAction() {
         Brews.bootstrap();
         List<Item> level6 = withCapacity(List.of(Items.NETHER_WART,

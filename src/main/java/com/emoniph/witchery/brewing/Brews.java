@@ -7,10 +7,13 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.VampireEntity;
+import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
+import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -83,7 +86,7 @@ public final class Brews {
 
         public enum BrewAction {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
-            STEAL_BUFFS, DURATION_BOOST
+            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -283,6 +286,9 @@ public final class Brews {
         register(Items.ICE, Ingredient.action(Ingredient.BrewAction.BANE_DEMONS,
                 5, 500, 0x8AD7FF,
                 "witchery.brew.harmdemons", null));
+        register(WitcheryItems.SILVER_DEPOSITS.get(), Ingredient.action(Ingredient.BrewAction.HARM_WEREWOLVES,
+                4, 1000, 0xC0C0C0,
+                "witchery.brew.harmwerewolves", null));
         register(Items.SKELETON_SKULL, Ingredient.action(Ingredient.BrewAction.STEAL_BUFFS,
                 6, 100, 0xD6D6D6,
                 "witchery.brew.stealbuffs", null));
@@ -674,6 +680,9 @@ public final class Brews {
         } else if (action.action() == Ingredient.BrewAction.BANE_DEMONS) {
             applyDemonbaneDamage(level, target, source, action.strength(),
                     action.strengthCeilingDisabled(), powerFactor);
+        } else if (action.action() == Ingredient.BrewAction.HARM_WEREWOLVES) {
+            applyHarmWerewolvesDamage(level, target, source, action.strength(),
+                    action.strengthCeilingDisabled(), powerFactor);
         } else if (action.action() == Ingredient.BrewAction.STEAL_BUFFS) {
             stealBuffs(level, target, action.strength(), powerFactor, source);
         } else if (action.action() == Ingredient.BrewAction.DURATION_BOOST) {
@@ -720,6 +729,22 @@ public final class Brews {
         }
     }
 
+    private static void applyHarmWerewolvesDamage(ServerLevel level, LivingEntity target, Entity source,
+                                                  int strength, boolean strengthCeilingDisabled,
+                                                  double powerFactor) {
+        boolean matchingTarget = isSourceWerewolf(target);
+        int damage = sourceHarmWerewolvesDamage(matchingTarget, strength, strengthCeilingDisabled, powerFactor);
+        if (damage <= 0) {
+            return;
+        }
+        DamageSource damageSource = sourceBaneDamageSource(level, source);
+        if (matchingTarget) {
+            SilverEvents.hurtWithBrewSilver(level, target, damageSource, damage);
+        } else {
+            target.hurtServer(level, damageSource, damage);
+        }
+    }
+
     private static DamageSource sourceBaneDamageSource(ServerLevel level, Entity source) {
         return source == null ? level.damageSources().magic() : level.damageSources().indirectMagic(source, source);
     }
@@ -728,6 +753,13 @@ public final class Brews {
                                        double powerFactor) {
         int cappedStrength = Math.min(strength, strengthCeilingDisabled ? 3 : 1);
         int baseDamage = matchingTarget ? 10 : 3;
+        return Mth.ceil((double) (baseDamage << cappedStrength) * powerFactor);
+    }
+
+    public static int sourceHarmWerewolvesDamage(boolean matchingTarget, int strength,
+                                                 boolean strengthCeilingDisabled, double powerFactor) {
+        int cappedStrength = Math.min(strength, strengthCeilingDisabled ? 3 : 1);
+        int baseDamage = matchingTarget ? 3 : 1;
         return Mth.ceil((double) (baseDamage << cappedStrength) * powerFactor);
     }
 
@@ -747,6 +779,21 @@ public final class Brews {
             return true;
         }
         return target instanceof Player player && WitcheryAttachments.get(player).isVampire();
+    }
+
+    public static boolean isSourceWerewolf(LivingEntity target) {
+        if (target instanceof WolfmanEntity) {
+            return true;
+        }
+        if (target instanceof Player player) {
+            WitcheryPlayerData data = WitcheryAttachments.get(player);
+            return sourceWerewolfPlayerMatches(data.isWerewolf(), WerewolfShiftUtil.isTransformed(data));
+        }
+        return false;
+    }
+
+    public static boolean sourceWerewolfPlayerMatches(boolean werewolf, boolean transformed) {
+        return werewolf && transformed;
     }
 
     public static boolean isSourceDemonic(LivingEntity target) {

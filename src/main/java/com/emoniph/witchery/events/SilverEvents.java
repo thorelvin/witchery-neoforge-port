@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItemTags;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -39,6 +40,7 @@ public class SilverEvents {
     private static final float SILVERED_WEREWOLF_DAMAGE_SCALE = 0.6F;
     private static final float HUNTER_MAGIC_PROTECTION_CHANCE = 0.25F;
     private static final float HUNTER_CURSE_PROTECTION_CHANCE = 0.9F;
+    private static final ThreadLocal<Boolean> BREW_SILVER_DAMAGE = ThreadLocal.withInitial(() -> false);
 
     // ── Silver damage bonus (vampires + werewolves) ───────────────────────────
 
@@ -46,6 +48,10 @@ public class SilverEvents {
     public static void onSilverDamage(LivingDamageEvent.Pre event) {
         if (!isSilverSource(event.getSource())) return;
         if (!isVampireOrWerewolf(event.getEntity())) return;
+        if (BREW_SILVER_DAMAGE.get() && event.getEntity() instanceof WolfmanEntity) return;
+        if (BREW_SILVER_DAMAGE.get()
+                && event.getSource().getDirectEntity() instanceof LivingEntity direct
+                && isBrewSourceWerewolf(direct)) return;
         // +5 silver bonus (source parity: GenericEvents adds +5 for werewolf players)
         event.setNewDamage(event.getNewDamage() + 5.0f);
     }
@@ -123,6 +129,7 @@ public class SilverEvents {
      * OR the direct projectile is a silver BoltEntity.
      */
     public static boolean isSilverSource(net.minecraft.world.damagesource.DamageSource source) {
+        if (BREW_SILVER_DAMAGE.get() && isMagicSource(source)) return true;
         // Silver bolt projectile
         if (source.getDirectEntity() instanceof BoltEntity bolt && bolt.isSilver()) return true;
         // Silver weapon held by attacker
@@ -132,6 +139,16 @@ public class SilverEvents {
                     || held.is(WitcheryItems.SILVER_INGOT.get()); // bare ingot still counts
         }
         return false;
+    }
+
+    public static boolean hurtWithBrewSilver(ServerLevel level, LivingEntity target, DamageSource source, float amount) {
+        boolean previous = BREW_SILVER_DAMAGE.get();
+        BREW_SILVER_DAMAGE.set(true);
+        try {
+            return target.hurtServer(level, source, amount);
+        } finally {
+            BREW_SILVER_DAMAGE.set(previous);
+        }
     }
 
     public static boolean hasHunterCurseProtection(LivingEntity entity) {
@@ -163,6 +180,14 @@ public class SilverEvents {
     private static boolean isWerewolf(LivingEntity entity) {
         if (entity instanceof ServerPlayer sp) {
             return WitcheryAttachments.get(sp).isWerewolf();
+        }
+        return entity instanceof WolfmanEntity;
+    }
+
+    private static boolean isBrewSourceWerewolf(LivingEntity entity) {
+        if (entity instanceof ServerPlayer sp) {
+            WitcheryPlayerData data = WitcheryAttachments.get(sp);
+            return data.isWerewolf() && WerewolfShiftUtil.isTransformed(data);
         }
         return entity instanceof WolfmanEntity;
     }
