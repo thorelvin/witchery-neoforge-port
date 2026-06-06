@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class SnowTrailMobEffect extends MobEffect {
     public static final int TICK_INTERVAL = 10;
     public static final float MAX_TRAIL_TEMPERATURE = 1.6F;
+    public static final int SNOW_COVERING_SEARCH_LIMIT = 8;
     public static final int SNOW_GOLEM_EXPLOSION_ROLL = 20;
     public static final float SNOW_GOLEM_EXPLOSION_POWER = 3.0F;
     public static final int SNOW_GOLEM_COVER_RADIUS = 8;
@@ -38,7 +40,9 @@ public class SnowTrailMobEffect extends MobEffect {
     public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
         for (int l = 0; l < 4; l++) {
             BlockPos pos = footprintPos(entity.getX(), entity.getY(), entity.getZ(), l);
-            if (level.isEmptyBlock(pos) && isBiomeCoolEnough(level, pos) && canPlaceSnow(level, pos)) {
+            if (sourceFootprintAllowsSnow(level.isEmptyBlock(pos),
+                    sourceBiomeTemperature(level, pos),
+                    canPlaceSnow(level, pos))) {
                 level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState());
             }
         }
@@ -69,6 +73,21 @@ public class SnowTrailMobEffect extends MobEffect {
 
     public static boolean allowsSnowTrail(float biomeTemperature) {
         return biomeTemperature < MAX_TRAIL_TEMPERATURE;
+    }
+
+    public static float sourceHeightAdjustedTemperature(float biomeTemperature, int y, float sourceTemperatureNoise) {
+        if (y > 64) {
+            return biomeTemperature - (sourceTemperatureNoise * 4.0F + (float) y - 64.0F) * 0.05F / 30.0F;
+        }
+        return biomeTemperature;
+    }
+
+    public static boolean sourceFootprintAllowsSnow(boolean targetAir, float biomeTemperature, boolean snowCanSurvive) {
+        return targetAir && allowsSnowTrail(biomeTemperature) && snowCanSurvive;
+    }
+
+    public static boolean sourceSnowCoveringSupportAllowsSnow(boolean opaqueCube, boolean iceMaterial) {
+        return opaqueCube || iceMaterial;
     }
 
     public static void createSnowCovering(ServerLevel level, BlockPos center, int radius) {
@@ -109,13 +128,16 @@ public class SnowTrailMobEffect extends MobEffect {
         }
     }
 
-    private static boolean isBiomeCoolEnough(ServerLevel level, BlockPos pos) {
-        return allowsSnowTrail(level.getBiome(pos).value().getBaseTemperature());
+    private static float sourceBiomeTemperature(ServerLevel level, BlockPos pos) {
+        Biome biome = level.getBiome(pos).value();
+        Biome.ClimateSettings climate = biome.getModifiedClimateSettings();
+        float modifiedTemperature = climate.temperatureModifier().modifyTemperature(pos, climate.temperature());
+        return sourceHeightAdjustedTemperature(modifiedTemperature, pos.getY(), 0.0F);
     }
 
     private static void createSnowAtColumn(ServerLevel level, BlockPos origin) {
         if (level.isEmptyBlock(origin)) {
-            for (int i = 1; i < 8; i++) {
+            for (int i = 1; i < SNOW_COVERING_SEARCH_LIMIT; i++) {
                 BlockPos below = origin.below(i);
                 BlockState support = level.getBlockState(below);
                 if (!support.isAir()) {
@@ -124,7 +146,7 @@ public class SnowTrailMobEffect extends MobEffect {
                 }
             }
         } else {
-            for (int i = 1; i < 8; i++) {
+            for (int i = 1; i < SNOW_COVERING_SEARCH_LIMIT; i++) {
                 BlockPos above = origin.above(i);
                 if (level.isEmptyBlock(above)) {
                     setBlockToSnow(level, above, level.getBlockState(above.below()));
@@ -139,7 +161,8 @@ public class SnowTrailMobEffect extends MobEffect {
     }
 
     private static void setBlockToSnow(ServerLevel level, BlockPos pos, BlockState support) {
-        if ((support.isSolid() || support.is(BlockTags.ICE)) && canPlaceSnow(level, pos)) {
+        if (sourceSnowCoveringSupportAllowsSnow(support.isSolidRender(), support.is(BlockTags.ICE))
+                && canPlaceSnow(level, pos)) {
             level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState());
         }
     }

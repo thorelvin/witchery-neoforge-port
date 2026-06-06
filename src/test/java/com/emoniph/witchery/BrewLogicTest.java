@@ -455,6 +455,21 @@ class BrewLogicTest {
         assertEquals(0.25D, SnowTrailMobEffect.footprintOffsetZ(2));
         assertTrue(SnowTrailMobEffect.allowsSnowTrail(1.599F));
         assertFalse(SnowTrailMobEffect.allowsSnowTrail(1.6F));
+        assertEquals(2.0F, SnowTrailMobEffect.sourceHeightAdjustedTemperature(2.0F, 64, 0.0F));
+        assertEquals(1.6F, SnowTrailMobEffect.sourceHeightAdjustedTemperature(2.0F, 304, 0.0F), 0.000001F,
+                "source high-altitude temperature adjustment uses the old y > 64 formula");
+        assertTrue(SnowTrailMobEffect.sourceFootprintAllowsSnow(true, 1.599F, true),
+                "source footprints need air, cool-enough biome temperature, and snow survivability");
+        assertFalse(SnowTrailMobEffect.sourceFootprintAllowsSnow(false, 1.599F, true));
+        assertFalse(SnowTrailMobEffect.sourceFootprintAllowsSnow(true, 1.6F, true));
+        assertFalse(SnowTrailMobEffect.sourceFootprintAllowsSnow(true, 1.599F, false));
+        assertEquals(8, SnowTrailMobEffect.SNOW_COVERING_SEARCH_LIMIT,
+                "source snow covering searches i = 1..7");
+        assertTrue(SnowTrailMobEffect.sourceSnowCoveringSupportAllowsSnow(true, false),
+                "source snow covering accepts opaque-cube support");
+        assertTrue(SnowTrailMobEffect.sourceSnowCoveringSupportAllowsSnow(false, true),
+                "source snow covering accepts ice-material support");
+        assertFalse(SnowTrailMobEffect.sourceSnowCoveringSupportAllowsSnow(false, false));
         assertEquals(8, SnowTrailMobEffect.SNOW_GOLEM_COVER_RADIUS);
         assertEquals(3.0F, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_POWER);
         assertEquals(20, SnowTrailMobEffect.SNOW_GOLEM_EXPLOSION_ROLL);
