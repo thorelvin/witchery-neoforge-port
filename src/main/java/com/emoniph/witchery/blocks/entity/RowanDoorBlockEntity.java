@@ -15,6 +15,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /** Stores the UUID that identifies this door instance — placed on the LOWER half only. */
 public class RowanDoorBlockEntity extends BlockEntity {
+    private static final String DOOR_UUID_MOST_KEY = "DoorUUIDMost";
+    private static final String DOOR_UUID_LEAST_KEY = "DoorUUIDLeast";
 
     @Nullable private UUID doorUUID;
 
@@ -35,16 +37,18 @@ public class RowanDoorBlockEntity extends BlockEntity {
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
         super.saveAdditional(tag);
         if (doorUUID != null) {
-            tag.putLong("DoorUUIDMost",  doorUUID.getMostSignificantBits());
-            tag.putLong("DoorUUIDLeast", doorUUID.getLeastSignificantBits());
+            tag.putLong(DOOR_UUID_MOST_KEY, doorUUID.getMostSignificantBits());
+            tag.putLong(DOOR_UUID_LEAST_KEY, doorUUID.getLeastSignificantBits());
         }
     }
 
     @Override
     protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
         super.loadAdditional(tag);
-        if (tag.getInt("DoorUUIDMost").isPresent()) {
-            doorUUID = new UUID(tag.getLongOr("DoorUUIDMost", 0L), tag.getLongOr("DoorUUIDLeast", 0L));
+        if (tag.keySet().contains(DOOR_UUID_MOST_KEY) && tag.keySet().contains(DOOR_UUID_LEAST_KEY)) {
+            doorUUID = new UUID(tag.getLongOr(DOOR_UUID_MOST_KEY, 0L), tag.getLongOr(DOOR_UUID_LEAST_KEY, 0L));
+        } else {
+            doorUUID = null;
         }
     }
 }
