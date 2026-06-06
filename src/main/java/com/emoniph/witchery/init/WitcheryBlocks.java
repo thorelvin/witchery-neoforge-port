@@ -417,19 +417,19 @@ public class WitcheryBlocks {
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorWallBlock> MIRROR_WALL = registerBlock("mirror_wall",
             com.emoniph.witchery.blocks.MirrorWallBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
-                    .strength(-1.0F, 3_600_000.0F).noLootTable().lightLevel(s -> 4));
+                    .strength(-1.0F, 3_600_000.0F).noLootTable());
     public static final DeferredBlock<com.emoniph.witchery.blocks.MirrorBlock> MIRROR = registerBlock("mirror",
             com.emoniph.witchery.blocks.MirrorBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.ICE).sound(SoundType.GLASS)
-                    .strength(1.5f, 6.0f).noOcclusion().lightLevel(s -> 8));
+                    .strength(1.5f, 6.0f).noOcclusion().lightLevel(s -> 10));
 
     // Portals / Dimensional
     public static final DeferredBlock<SpiritPortalBlock> SPIRIT_PORTAL = registerBlock("spirit_portal", SpiritPortalBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 10).noOcclusion().noCollision().noLootTable());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GLASS).strength(-1.0f).lightLevel(s -> 11).noOcclusion().noCollision().noLootTable());
     public static final DeferredBlock<Block> TORMENT_STONE = registerSimpleBlock("torment_stone",
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(-1.0F, 3600000.0F).noLootTable());
     public static final DeferredBlock<TormentPortalBlock> TORMENT_PORTAL = registerBlock("torment_portal", TormentPortalBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 3600000.0F).lightLevel(s -> 12).noOcclusion().noCollision().noLootTable());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GLASS).strength(-1.0F, 3600000.0F).lightLevel(s -> 11).noOcclusion().noCollision().noLootTable());
     public static final DeferredBlock<com.emoniph.witchery.blocks.SunCollectorBlock> SUN_COLLECTOR = registerBlock("sun_collector",
             com.emoniph.witchery.blocks.SunCollectorBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).sound(SoundType.GLASS).strength(3.5f, 17.5f).lightLevel(s -> 4).noOcclusion());
