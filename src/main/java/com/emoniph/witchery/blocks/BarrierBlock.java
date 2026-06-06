@@ -65,7 +65,7 @@ public class BarrierBlock extends BaseEntityBlock {
         Entity entity = context instanceof EntityCollisionContext entityContext ? entityContext.getEntity() : null;
         if (entity instanceof Player player
                 && level.getBlockEntity(pos) instanceof BarrierBlockEntity barrier
-                && (!barrier.blocksPlayers() || player.isCreative() && player.isShiftKeyDown())) {
+                && (!barrier.blocksPlayers() || player.isCreative() && player.isShiftKeyDown() || barrier.isOwner(player))) {
             return Shapes.empty();
         }
         return COLLISION_SHAPE;
@@ -85,6 +85,10 @@ public class BarrierBlock extends BaseEntityBlock {
     }
 
     public static void setBarrier(Level level, BlockPos pos, int ticksUntilExpiration, boolean blocksPlayers) {
+        setBarrier(level, pos, ticksUntilExpiration, blocksPlayers, "");
+    }
+
+    public static void setBarrier(Level level, BlockPos pos, int ticksUntilExpiration, boolean blocksPlayers, String ownerName) {
         BlockState existing = level.getBlockState(pos);
         FluidState fluidState = existing.getFluidState();
         boolean alreadyBarrier = existing.is(WitcheryBlocks.BARRIER.get());
@@ -97,7 +101,7 @@ public class BarrierBlock extends BaseEntityBlock {
         }
 
         if (level.getBlockEntity(pos) instanceof BarrierBlockEntity barrier) {
-            barrier.refresh(ticksUntilExpiration, blocksPlayers);
+            barrier.refresh(ticksUntilExpiration, blocksPlayers, ownerName);
         }
     }
 }

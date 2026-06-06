@@ -13,14 +13,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class BarrierBlockEntity extends BlockEntity {
     private static final String KEY_REMAINING_TICKS = "remainingTicks";
     private static final String KEY_BLOCKS_PLAYERS = "blocksPlayers";
+    private static final String KEY_OWNER_NAME = "owner";
 
     private int remainingTicks = 60;
     private boolean blocksPlayers;
+    private String ownerName = "";
 
     public BarrierBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.BARRIER.get(), pos, state);
@@ -37,17 +40,22 @@ public class BarrierBlockEntity extends BlockEntity {
     }
 
     public void refresh(int ticksUntilExpiration, boolean blocksPlayers) {
+        refresh(ticksUntilExpiration, blocksPlayers, "");
+    }
+
+    public void refresh(int ticksUntilExpiration, boolean blocksPlayers, String ownerName) {
         this.remainingTicks = ticksUntilExpiration;
         this.blocksPlayers = blocksPlayers;
-        setChanged();
-        if (level != null) {
-            BlockState state = getBlockState();
-            level.sendBlockUpdated(worldPosition, state, state, 3);
-        }
+        this.ownerName = ownerName == null ? "" : ownerName;
+        sync();
     }
 
     public boolean blocksPlayers() {
         return blocksPlayers;
+    }
+
+    public boolean isOwner(Player player) {
+        return player != null && !ownerName.isEmpty() && ownerName.equals(player.getScoreboardName());
     }
 
     @Nullable
@@ -66,6 +74,7 @@ public class BarrierBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         tag.putInt(KEY_REMAINING_TICKS, remainingTicks);
         tag.putBoolean(KEY_BLOCKS_PLAYERS, blocksPlayers);
+        tag.putString(KEY_OWNER_NAME, ownerName);
     }
 
     @Override
@@ -73,5 +82,14 @@ public class BarrierBlockEntity extends BlockEntity {
         super.loadAdditional(tag);
         remainingTicks = tag.getIntOr(KEY_REMAINING_TICKS, 60);
         blocksPlayers = tag.getBooleanOr(KEY_BLOCKS_PLAYERS, false);
+        ownerName = tag.getStringOr(KEY_OWNER_NAME, "");
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 }

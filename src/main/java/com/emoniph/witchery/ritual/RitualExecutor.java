@@ -213,6 +213,7 @@ public class RitualExecutor {
         private final boolean enhanced;
         private final ItemStack sacrificedIngredient;
         private final List<ItemStack> supplementalSacrifices;
+        private final String ownerName;
         private final List<BlockPos> path = new ArrayList<>();
         private final int heading;
         private int stage;
@@ -225,7 +226,7 @@ public class RitualExecutor {
                              BlockPos effectCenter, int circleVariant,
                              int minRadius, int maxRadius, int targetStage, int pulseInterval,
                              int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
-                             ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices) {
+                             ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices, String ownerName) {
             this.type = type;
             this.center = center.immutable();
             this.effectCenter = effectCenter.immutable();
@@ -242,6 +243,7 @@ public class RitualExecutor {
             this.nextGameTime = nextGameTime;
             this.sacrificedIngredient = sacrificedIngredient;
             this.supplementalSacrifices = supplementalSacrifices;
+            this.ownerName = ownerName == null ? "" : ownerName;
         }
     }
 
@@ -278,6 +280,7 @@ public class RitualExecutor {
             Codec.LONG.fieldOf("next_game_time").forGetter(r -> r.nextGameTime),
             ItemStack.OPTIONAL_CODEC.fieldOf("sacrificed").forGetter(r -> r.sacrificedIngredient),
             ItemStack.CODEC.listOf().fieldOf("supplemental").forGetter(r -> r.supplementalSacrifices),
+            Codec.STRING.optionalFieldOf("owner", "").forGetter(r -> r.ownerName),
             BlockPos.CODEC.listOf().fieldOf("path").forGetter(r -> r.path),
             Codec.INT.fieldOf("stage").forGetter(r -> r.stage),
             Codec.FLOAT.fieldOf("upkeep_debt").forGetter(r -> r.upkeepDebt)
@@ -285,11 +288,11 @@ public class RitualExecutor {
 
     private static ActiveRitual activeRitualFromCodec(ActiveRitualType type, BlockPos center, BlockPos effectCenter,
             RitualCircleDetector.CircleSize circleSize, RitualGeometry geom, float upkeepCost, boolean enhanced,
-            long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, List<BlockPos> path,
-            int stage, float upkeepDebt) {
+            long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, String ownerName,
+            List<BlockPos> path, int stage, float upkeepDebt) {
         ActiveRitual r = new ActiveRitual(type, center, circleSize, effectCenter, geom.circleVariant(),
                 geom.minRadius(), geom.maxRadius(), geom.targetStage(), geom.pulseInterval(), geom.covenSize(),
-                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental));
+                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental), ownerName);
         r.stage = stage;
         r.upkeepDebt = upkeepDebt;
         r.path.addAll(path);
@@ -348,7 +351,7 @@ public class RitualExecutor {
         RitualSavedData data = new RitualSavedData();
         data.activeRituals.add(new ActiveRitual(ActiveRitualType.SANCTITY_CIRCLE, BlockPos.ZERO,
                 RitualCircleDetector.CircleSize.SMALL, BlockPos.ZERO, 1, 0, 4, 0, 20, 2, 0.8f, false, 0,
-                100L, new ItemStack(Items.DIAMOND), List.of(new ItemStack(Items.REDSTONE, 3))));
+                100L, new ItemStack(Items.DIAMOND), List.of(new ItemStack(Items.REDSTONE, 3)), "Tester"));
         return data;
     }
 
@@ -1256,7 +1259,8 @@ public class RitualExecutor {
                 ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
                 : List.of();
         if (!queueActiveRitual(sl, ActiveRitualType.PROTECTION_BARRIER, RitualCircleDetector.CircleSize.MEDIUM,
-                center, relocation.effectCenter(), 6, 6, 0, 20, 0, 1.4f, 0, supplementalSacrifices)) {
+                center, relocation.effectCenter(), 6, 6, 0, 20, 0, 1.4f, 0,
+                supplementalSacrifices, player.getScoreboardName())) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1306,7 +1310,8 @@ public class RitualExecutor {
                 ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
                 : List.of();
         if (!queueActiveRitual(sl, type, circleSize, center, relocation.effectCenter(),
-                radius, height, targetStage, 20, 0, upkeepCost, 0, supplementalSacrifices)) {
+                radius, height, targetStage, 20, 0, upkeepCost, 0,
+                supplementalSacrifices, player.getScoreboardName())) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -2575,7 +2580,7 @@ public class RitualExecutor {
         }
 
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true, ritual.ownerName);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 16);
         }
@@ -2590,7 +2595,7 @@ public class RitualExecutor {
         }
 
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, false);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, false, ritual.ownerName);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
@@ -2599,7 +2604,7 @@ public class RitualExecutor {
 
     private static boolean tickProtectionBarrierPortableRitual(ServerLevel level, ActiveRitual ritual) {
         ritual.stage++;
-        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true);
+        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true, ritual.ownerName);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
@@ -2649,27 +2654,27 @@ public class RitualExecutor {
         return true;
     }
 
-    private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {
+    private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers, String ownerName) {
         BlockPos circlePlaneCenter = center.above();
-        drawBarrierFilledCircle(level, circlePlaneCenter.below(), radius, blocksPlayers);
-        drawBarrierCircleCylinder(level, circlePlaneCenter, radius, height, blocksPlayers);
-        drawBarrierFilledCircle(level, circlePlaneCenter.above(height), radius, blocksPlayers);
+        drawBarrierFilledCircle(level, circlePlaneCenter.below(), radius, blocksPlayers, ownerName);
+        drawBarrierCircleCylinder(level, circlePlaneCenter, radius, height, blocksPlayers, ownerName);
+        drawBarrierFilledCircle(level, circlePlaneCenter.above(height), radius, blocksPlayers, ownerName);
     }
 
-    private static void drawBarrierCircleCylinder(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers) {
+    private static void drawBarrierCircleCylinder(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers, String ownerName) {
         int x = radius;
         int z = 0;
         int radiusError = 1 - radius;
 
         while (x >= z) {
-            drawBarrierPixelColumn(level, center, x, z, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, z, x, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, -x, z, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, -z, x, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, -x, -z, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, -z, -x, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, x, -z, height, blocksPlayers);
-            drawBarrierPixelColumn(level, center, z, -x, height, blocksPlayers);
+            drawBarrierPixelColumn(level, center, x, z, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, z, x, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, -x, z, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, -z, x, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, -x, -z, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, -z, -x, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, x, -z, height, blocksPlayers, ownerName);
+            drawBarrierPixelColumn(level, center, z, -x, height, blocksPlayers, ownerName);
 
             z++;
             if (radiusError < 0) {
@@ -2681,22 +2686,22 @@ public class RitualExecutor {
         }
     }
 
-    private static void drawBarrierPixelColumn(ServerLevel level, BlockPos center, int dx, int dz, int height, boolean blocksPlayers) {
+    private static void drawBarrierPixelColumn(ServerLevel level, BlockPos center, int dx, int dz, int height, boolean blocksPlayers, String ownerName) {
         for (int dy = 0; dy < height; dy++) {
-            drawBarrierPixel(level, center.offset(dx, dy, dz), blocksPlayers);
+            drawBarrierPixel(level, center.offset(dx, dy, dz), blocksPlayers, ownerName);
         }
     }
 
-    private static void drawBarrierFilledCircle(ServerLevel level, BlockPos center, int radius, boolean blocksPlayers) {
+    private static void drawBarrierFilledCircle(ServerLevel level, BlockPos center, int radius, boolean blocksPlayers, String ownerName) {
         int x = radius;
         int z = 0;
         int radiusError = 1 - radius;
 
         while (x >= z) {
-            drawBarrierLine(level, center, -x, x, z, blocksPlayers);
-            drawBarrierLine(level, center, -z, z, x, blocksPlayers);
-            drawBarrierLine(level, center, -x, x, -z, blocksPlayers);
-            drawBarrierLine(level, center, -z, z, -x, blocksPlayers);
+            drawBarrierLine(level, center, -x, x, z, blocksPlayers, ownerName);
+            drawBarrierLine(level, center, -z, z, x, blocksPlayers, ownerName);
+            drawBarrierLine(level, center, -x, x, -z, blocksPlayers, ownerName);
+            drawBarrierLine(level, center, -z, z, -x, blocksPlayers, ownerName);
 
             z++;
             if (radiusError < 0) {
@@ -2708,14 +2713,14 @@ public class RitualExecutor {
         }
     }
 
-    private static void drawBarrierLine(ServerLevel level, BlockPos center, int x1, int x2, int z, boolean blocksPlayers) {
+    private static void drawBarrierLine(ServerLevel level, BlockPos center, int x1, int x2, int z, boolean blocksPlayers, String ownerName) {
         for (int x = x1; x <= x2; x++) {
-            drawBarrierPixel(level, center.offset(x, 0, z), blocksPlayers);
+            drawBarrierPixel(level, center.offset(x, 0, z), blocksPlayers, ownerName);
         }
     }
 
-    private static void drawBarrierPixel(ServerLevel level, BlockPos pos, boolean blocksPlayers) {
-        com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, pos, 30, blocksPlayers);
+    private static void drawBarrierPixel(ServerLevel level, BlockPos pos, boolean blocksPlayers, String ownerName) {
+        com.emoniph.witchery.blocks.BarrierBlock.setBarrier(level, pos, 30, blocksPlayers, ownerName);
     }
 
     private static boolean tickSanctityCircleRitual(ServerLevel level, ActiveRitual ritual) {
@@ -2806,6 +2811,14 @@ public class RitualExecutor {
                                              BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices, boolean enhanced) {
+        return queueActiveRitual(level, type, circleSize, center, effectCenter, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices, enhanced, "");
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading,
+                                             List<ItemStack> supplementalSacrifices, boolean enhanced, String ownerName) {
         List<ActiveRitual> rituals = activeRituals(level);
         if (hasActiveRitualAt(level, center)) {
             return false;
@@ -2817,9 +2830,17 @@ public class RitualExecutor {
                 covenSize, upkeepCost, enhanced, heading,
                 level.getGameTime() + pulseInterval,
                 sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
-                List.copyOf(supplementalSacrifices)));
+                List.copyOf(supplementalSacrifices), ownerName));
         markRitualsDirty(level);
         return true;
+    }
+
+    private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
+                                             BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
+                                             int pulseInterval, int covenSize, float upkeepCost, int heading,
+                                             List<ItemStack> supplementalSacrifices, String ownerName) {
+        return queueActiveRitual(level, type, circleSize, center, effectCenter, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, heading, supplementalSacrifices, false, ownerName);
     }
 
     private static boolean hasActiveRitualAt(ServerLevel level, BlockPos center) {
