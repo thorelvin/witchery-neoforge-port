@@ -2013,130 +2013,7 @@ public class RitualExecutor {
 
     private record FamiliarBindTarget(ServerPlayer player, TamableAnimal candidate) {}
 
-    private record InventoryConsumption(ServerPlayer player, int slot) {}
-
-    private record RitualOffering(ItemEntity itemEntity, GrassperBlockEntity grassper) {
-        static RitualOffering dropped(ItemEntity itemEntity) {
-            return new RitualOffering(itemEntity, null);
-        }
-
-        static RitualOffering grassper(GrassperBlockEntity grassper) {
-            return new RitualOffering(null, grassper);
-        }
-
-        void consumeOne() {
-            if (itemEntity != null) {
-                consumeOfferedItem(itemEntity);
-                return;
-            }
-            ItemStack stack = grassper.getItem().copy();
-            stack.shrink(1);
-            grassper.setItem(stack);
-        }
-    }
-
-    private static final class RitualTransaction {
-        private final ServerLevel level;
-        private final BlockPos center;
-        private final int altarRadius;
-        private final int altarPowerCost;
-        private final String noPowerMessageKey;
-        private final List<ItemEntity> offerings = new ArrayList<>();
-        private final List<RitualOffering> ritualOfferings = new ArrayList<>();
-        private final List<InventoryConsumption> inventoryConsumptions = new ArrayList<>();
-
-        private RitualTransaction(ServerLevel level, BlockPos center, int altarRadius, int altarPowerCost,
-                                  String noPowerMessageKey) {
-            this.level = level;
-            this.center = center;
-            this.altarRadius = altarRadius;
-            this.altarPowerCost = altarPowerCost;
-            this.noPowerMessageKey = noPowerMessageKey;
-        }
-
-        private RitualTransaction offer(ItemEntity offering) {
-            if (offering != null) {
-                offerings.add(offering);
-            }
-            return this;
-        }
-
-        private RitualTransaction offer(RitualOffering offering) {
-            if (offering != null) {
-                ritualOfferings.add(offering);
-            }
-            return this;
-        }
-
-        private RitualTransaction offerInventory(ServerPlayer player, int slot) {
-            inventoryConsumptions.add(new InventoryConsumption(player, slot));
-            return this;
-        }
-
-        /** Peek whether the altar can pay this rite's startup power, without consuming anything. */
-        private boolean hasSufficientPower() {
-            if (altarPowerCost <= 0) {
-                return true;
-            }
-            AltarBlockEntity altar = findNearbyRitualAltar(level, center, altarRadius);
-            return altar != null && altar.hasValidStructure()
-                    && altar.getPower() >= scaleRitualPowerCost(altarPowerCost);
-        }
-
-        private boolean reportNoPower(Player player) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable(noPowerMessageKey), false);
-            return false;
-        }
-
-        /** Actually spend power + offerings. Only called once a rite is committed to succeeding. */
-        private void consumeAll() {
-            if (altarPowerCost > 0) {
-                consumeNearbyRitualAltarPower(level, center, altarRadius, altarPowerCost);
-            }
-            for (ItemEntity offering : offerings) {
-                consumeOfferedItem(offering);
-            }
-            for (RitualOffering offering : ritualOfferings) {
-                offering.consumeOne();
-            }
-            for (InventoryConsumption inventoryConsumption : inventoryConsumptions) {
-                consumeInventoryItem(inventoryConsumption.player(), inventoryConsumption.slot());
-            }
-        }
-
-        /**
-         * Validate, then consume. Use for rites whose effect cannot fail after this point.
-         * (Power is now peeked before any offering is consumed, so a no-power result never
-         * leaves a half-consumed offering.)
-         */
-        private boolean commit(Player player) {
-            if (!hasSufficientPower()) {
-                return reportNoPower(player);
-            }
-            consumeAll();
-            return true;
-        }
-
-        /**
-         * Rollback-safe commit: validate → applyEffect → consume only on success. If {@code effect}
-         * returns false (or the altar cannot pay), NOTHING is consumed, so a post-validation effect
-         * failure can no longer silently eat altar power or sacrifices. This is the target pattern
-         * for any rite whose effect can fail.
-         */
-        private boolean commit(Player player, BooleanSupplier effect) {
-            if (!hasSufficientPower()) {
-                return reportNoPower(player);
-            }
-            if (!effect.getAsBoolean()) {
-                return false;
-            }
-            consumeAll();
-            return true;
-        }
-    }
-
-    private static boolean consumeNearbyRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
+    static boolean consumeNearbyRitualAltarPower(ServerLevel level, BlockPos center, int radius, int powerCost) {
         return consumeNearbyRawRitualAltarPower(level, center, radius, scaleRitualPowerCost(powerCost));
     }
 
@@ -2145,7 +2022,7 @@ public class RitualExecutor {
         return altar != null && altar.hasValidStructure() && altar.consumePower(powerCost);
     }
 
-    private static int scaleRitualPowerCost(int powerCost) {
+    static int scaleRitualPowerCost(int powerCost) {
         if (powerCost <= 0) {
             return 0;
         }
@@ -2179,7 +2056,7 @@ public class RitualExecutor {
         return true;
     }
 
-    private static AltarBlockEntity findNearbyRitualAltar(Level level, BlockPos center, int radius) {
+    static AltarBlockEntity findNearbyRitualAltar(Level level, BlockPos center, int radius) {
         return AltarPowerSourceLookup.findClosest(level, center);
     }
 
@@ -5688,7 +5565,7 @@ public class RitualExecutor {
                                             ItemEntity necroStone, Zombie zombie) {}
 
     /** Consume one item from the given inventory slot after the ritual target has been validated. */
-    private static void consumeInventoryItem(Player player, int slot) {
+    static void consumeInventoryItem(Player player, int slot) {
         var inv = player.getInventory();
         if (slot < 0 || slot >= inv.getContainerSize()) return;
         ItemStack stack = inv.getItem(slot);
@@ -6810,7 +6687,7 @@ public class RitualExecutor {
         return Optional.of(new ChargeStoneOfferings(glowstone.get(), redstone.get(), woodAsh.get(), quicklime.get()));
     }
 
-    private static void consumeOfferedItem(ItemEntity itemEntity) {
+    static void consumeOfferedItem(ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
         stack.shrink(1);
         if (stack.isEmpty()) {
