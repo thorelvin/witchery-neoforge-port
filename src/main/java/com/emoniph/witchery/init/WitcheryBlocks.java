@@ -319,7 +319,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(20.0f, 1000.0f).noOcclusion().noCollision());
     public static final DeferredBlock<VoidBrambleBlock> VOID_BRAMBLE = registerBlock("void_bramble",
             VoidBrambleBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(-1.0f, 1000.0f).noOcclusion().noCollision().lightLevel(s -> 2));
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS).strength(-1.0f, 1000.0f).noOcclusion().noCollision().lightLevel(s -> 1));
     public static final DeferredBlock<BlightHeartBlock> BLIGHT_HEART = registerBlock("blight_heart",
             BlightHeartBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.WART_BLOCK)
@@ -381,7 +381,7 @@ public class WitcheryBlocks {
     public static final DeferredBlock<DreamCatcherBlock> DREAM_CATCHER = registerBlock("dream_catcher", DreamCatcherBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.0f, 5.0f).noOcclusion());
     public static final DeferredBlock<AlluringSkullBlock> ALLURING_SKULL = registerBlock("alluring_skull",
             AlluringSkullBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0f, 1000.0f).lightLevel(state -> 8).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(-1.0f, 1000.0f).lightLevel(state -> 7).noOcclusion());
     public static final DeferredBlock<DemonHeartBlock> DEMON_HEART = registerBlock("demon_heart",
             DemonHeartBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.STONE).strength(1.0f, 5.0f).lightLevel(state -> 3).noOcclusion());
