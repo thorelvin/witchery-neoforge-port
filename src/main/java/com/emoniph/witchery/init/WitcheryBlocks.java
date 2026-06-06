@@ -464,7 +464,7 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().strength(-1.0f, 3_600_000.0f).noOcclusion().noLootTable());
     public static final DeferredBlock<ForceBlock> FORCE      = registerBlock("force", ForceBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
-                    .strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
+                    .strength(-1.0F, 9999.0F).noOcclusion().noLootTable()
                     .isRedstoneConductor((state, level, pos) -> false)
                     .isSuffocating((state, level, pos) -> false)
                     .isViewBlocking((state, level, pos) -> false));
