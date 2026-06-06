@@ -143,6 +143,8 @@ public final class Brews {
     private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
     private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
+    private static final double SOURCE_INSTANT_RADIUS = 3.0;
+    private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
 
     private Brews() {
     }
@@ -371,7 +373,7 @@ public final class Brews {
     public static void applyToEntity(LivingEntity target, List<Item> items, Entity source) {
         Resolution resolved = resolveBrew(items);
         for (MobEffectInstance effect : resolved.effects) {
-            applyEffect(target, effect, source, 1.0);
+            applyEffect(target, effect, source, 1.0, 1.0);
         }
         if (target.level() instanceof ServerLevel serverLevel) {
             for (ActionApplication action : resolved.actions) {
@@ -406,11 +408,18 @@ public final class Brews {
             level.addFreshEntity(cloud);
             level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 24, 1.0, 0.5, 1.0, 0.05);
         } else {
-            AABB area = new AABB(pos.x - 4, pos.y - 2, pos.z - 4, pos.x + 4, pos.y + 2, pos.z + 4);
+            AABB area = new AABB(pos.x - SOURCE_INSTANT_RADIUS, pos.y - SOURCE_INSTANT_RADIUS, pos.z - SOURCE_INSTANT_RADIUS,
+                    pos.x + SOURCE_INSTANT_RADIUS, pos.y + SOURCE_INSTANT_RADIUS, pos.z + SOURCE_INSTANT_RADIUS);
             if (!resolved.effects.isEmpty()) {
                 for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
-                    for (MobEffectInstance effect : resolved.effects) {
-                        applyEffect(entity, effect, source, 1.0);
+                    double distance = Math.sqrt(entity.distanceToSqr(pos));
+                    if (distance <= SOURCE_INSTANT_RADIUS) {
+                        boolean directHit = entity == directTarget;
+                        double powerFactor = splashPowerFactor(distance, directHit);
+                        double durationFactor = SOURCE_SPLASH_DURATION_SCALE * powerFactor;
+                        for (MobEffectInstance effect : resolved.effects) {
+                            applyEffect(entity, effect, source, powerFactor, durationFactor);
+                        }
                     }
                 }
             }
@@ -422,14 +431,27 @@ public final class Brews {
         }
     }
 
-    private static void applyEffect(LivingEntity target, MobEffectInstance effect, Entity source, double factor) {
+    static double splashPowerFactor(double distance, boolean directHit) {
+        return directHit ? 1.0 : Math.max(0.0, 1.0 - distance / SOURCE_INSTANT_RADIUS);
+    }
+
+    static int scaledSplashDuration(int baseDuration, double powerFactor) {
+        return Math.min(Mth.ceil(SOURCE_SPLASH_DURATION_SCALE * powerFactor * (double) baseDuration), Integer.MAX_VALUE);
+    }
+
+    private static void applyEffect(LivingEntity target, MobEffectInstance effect, Entity source,
+                                    double powerFactor, double durationFactor) {
         MobEffect mobEffect = effect.getEffect().value();
         if (mobEffect.isInstantenous()) {
             if (target.level() instanceof ServerLevel serverLevel) {
-                mobEffect.applyInstantenousEffect(serverLevel, source, source, target, effect.getAmplifier(), factor);
+                mobEffect.applyInstantenousEffect(serverLevel, source, source, target, effect.getAmplifier(), powerFactor);
             }
         } else {
-            target.addEffect(new MobEffectInstance(effect), source);
+            int duration = Math.min(Mth.ceil(durationFactor * (double) effect.getDuration()), Integer.MAX_VALUE);
+            if (duration > 0) {
+                target.addEffect(new MobEffectInstance(effect.getEffect(), duration, effect.getAmplifier(),
+                        effect.isAmbient(), effect.isVisible(), effect.showIcon()), source);
+            }
         }
     }
 

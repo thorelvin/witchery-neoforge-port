@@ -298,7 +298,7 @@ This is the largest structural gap. The port has 35 brew items but does NOT have
 |---|---|---|
 | WitcheryBrewRegistry (ingredient → action mapping) | 🔶 Partial | Practical composed-brew registry exists for vanilla potion entries, source capacity/modifier/drink-speed/color/dispersal slices, and Heart of Gold Animal Attraction / Repulsion; full old action roster still missing |
 | BrewAction base + dispatch | 🔶 Partial | Ordered ingredient resolver and drink/splash/gas dispatch exist for current effects/actions; source action class hierarchy/serializers are not complete |
-| BrewActionDispersal (instant/liquid/gas/triggered) | 🔶 Partial | Gunpowder/Water Artichoke instant-splash and Bat Wool gas aliases work for supported composed bottles; liquid/triggered dispersal and moving brew fluids remain missing |
+| BrewActionDispersal (instant/liquid/gas/triggered) | 🔶 Partial | Gunpowder/Water Artichoke instant-splash and Bat Wool gas aliases work for supported composed bottles; instant splash potion effects use source 3-block sphere and distance falloff. Liquid/triggered dispersal and moving brew fluids remain missing |
 | BrewActionEffect (direct hit effects) | 🔶 Partial | Source vanilla potion subset restored for Spider Eye, Sugar, Pufferfish, Magma Cream, Golden Carrot, Ghast Tear, and Glistering Melon; many block/entity custom actions remain direct-brew item stand-ins |
 | BrewActionModifier / ImpactModifier | 🔶 Partial | Source capacity, strength/duration/invert, drink-speed, and wool-color modifiers are live; block/entity target toggles, no-particles, strength-ceiling disable, and impact modifiers remain open |
 | BrewActionRitual* (cauldron ritual summons) | ❌ Missing | Summon Leonard via cauldron |
