@@ -152,7 +152,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | crystal_ball | ✅ Done | |
 | dream_catcher | ✅ Done | |
 | circle / circle_glyph / circle_otherwhere / circle_infernal | ✅ Done | Thin glyph block path restored; ritual/otherwhere/infernal glyphs now carry the source-style 12-way visual metadata/state and same-chalk use rerolls the visible symbol |
-| blood_crucible | 🔶 Partial | Block/BE/render, vampire fill path, source recipe, and level-10 ultimate selection are live; broader Blood Power/late vampire gates remain under Vampirism |
+| blood_crucible | 🔶 Partial | Block/BE/render, vampire fill path, source recipe, and level-10 ultimate selection are live with source success/failure feedback and item consumption; broader Blood Power/late vampire gates remain under Vampirism |
 | shaded_glass (off/on) | 🔶 Partial | Source `BlockShadedGlass` restored as `witchery:shaded_glass` with 16 color states, old off/on textures, redstone-powered light blocking, no normal drops, creative color stacks, and stained-glass + Redstone recipes. Modern port uses a `powered` blockstate instead of the old hidden active block ID; needs in-game redstone/light QA. |
 | decurse_teleport | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaTeleportPullProtect) — area curse protection |
 | decurse_directed | ❌ Missing | Source: `BlockAreaMarker` (TileEntityAreaCurseProtect) |
@@ -415,7 +415,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 | Brazier | 🔶 Partial | Ingredient automation restored; hopper QA needed |
 | Silver Vat | 🔶 Partial | 3D model, deposit byproduct, recipes; furnace/hopper QA needed |
 | Sun Collector | 🔶 Partial | Charge loop, power state, item render; in-game verification needed |
-| Blood Crucible | 🔶 Partial | Source block, BE, renderer, recipe, filling, and level-10 ultimate selection are live; broader Blood Power/late vampire progression remains open |
+| Blood Crucible | 🔶 Partial | Source block, BE, renderer, recipe, filling, level-10 ultimate selection, success/failure feedback, and item consumption are live; broader Blood Power/late vampire progression remains open |
 | Poppet Shelf | 🔶 Partial | Slot clearing, facing-aware rendering; in-game spacing QA needed |
 | Leech Chest | 🔶 Partial | Storage and player queue; broader parity verify open |
 | Refilling Chest | ✅ Done | Source refill logic, unbreakable, Torment-only |
@@ -447,7 +447,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 
 1. **Dynamic cauldron brew action system** — gates Brew Bag, Leonard summon, ~60 missing brews
 2. **Late vampire progression gates** — broader Blood Power, level storage, conversion/cure, levels 8-10
-3. **Blood Crucible QA/polish** — block/BE/recipe/ultimate path live; needs in-game fill/use verification and particle/sound exactness
+3. **Blood Crucible QA/polish** — block/BE/recipe/ultimate path live; needs in-game fill/use verification of restored red-dust/fizz success and smoke/snare failure cues
 4. **Wolftrap entity-backed summon/capture** — `WolfmanEntity` exists; trap wiring still needs source behavior
 
 ### High value (large surface area)
@@ -464,7 +464,7 @@ Infusion (Light/Overworld/Otherwhere/Infernal), Total Eclipse, Fertility, Portab
 11. Perpetual ice/snow follow-up: cursed snow pressure plate brew payload/conversion hooks and brew/rite placement hooks
 12. Stockade follow-up: per-wood wooden stockade variants plus future freezing conversion from wood to ice
 13. Shaded glass (2 block states)
-14. Blood Crucible in-game fill/use QA and particle/sound exactness
+14. Blood Crucible in-game fill/use QA for restored red-dust/fizz success, smoke/snare failure, and wrong-item consume behavior
 15. Baba Yaga boss in-game QA / non-source hut decision
 16. Fresh village structure QA for guards, walls, watch towers, keeps, bookshops, apothecaries, and witch huts
 17. Goblin entity family (`EntityGoblin` base remains; Gulg/Mog bosses are ported)

@@ -6,6 +6,9 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -70,6 +73,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
         boolean hasVampireAccess = data.isVampire() && data.getVampireLevel() >= 10;
 
         if (!hasVampireAccess) {
+            sourceFailureFeedback(level, pos);
             player.displayClientMessage(
                     net.minecraft.network.chat.Component.translatable("witchery.blood_crucible.not_ready"),
                     true);
@@ -77,6 +81,7 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
         }
 
         if (!be.isFull() && !player.getAbilities().instabuild) {
+            sourceFailureFeedback(level, pos);
             player.displayClientMessage(
                     net.minecraft.network.chat.Component.translatable("witchery.blood_crucible.not_full"),
                     true);
@@ -92,14 +97,17 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
             chosen = WitcheryPlayerData.VampireUltimate.FARM;
         }
 
-        if (chosen == null) return InteractionResult.PASS;
+        if (chosen == null) {
+            sourceFailureFeedback(level, pos);
+            return InteractionResult.CONSUME;
+        }
 
         data.setVampireUltimate(chosen, 5);
         be.drainAll(level);
 
-        if (!player.getAbilities().instabuild) stack.shrink(1);
+        stack.shrink(1);
 
-        level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 0.5F);
+        sourceSuccessFeedback(level, pos);
         player.displayClientMessage(
                 net.minecraft.network.chat.Component.translatable(
                         "witchery.blood_crucible.ultimate." + chosen.name().toLowerCase(java.util.Locale.ROOT)),
@@ -111,5 +119,29 @@ public class BloodCrucibleBlock extends BaseEntityBlock {
                 (net.minecraft.server.level.ServerPlayer) player, payload);
 
         return InteractionResult.CONSUME;
+    }
+
+    private static void sourceSuccessFeedback(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(DustParticleOptions.REDSTONE,
+                    pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D,
+                    16, 0.5D, 0.5D, 0.5D, 0.0D);
+        }
+        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+                0.5F, sourcePitch(level));
+    }
+
+    private static void sourceFailureFeedback(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SMOKE,
+                    pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D,
+                    16, 0.5D, 0.5D, 0.5D, 0.0D);
+        }
+        level.playSound(null, pos, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS,
+                0.5F, sourcePitch(level));
+    }
+
+    private static float sourcePitch(Level level) {
+        return 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F);
     }
 }
