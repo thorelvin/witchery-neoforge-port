@@ -10,7 +10,7 @@
 
 An unofficial modern NeoForge port and continuation of the classic **Witchery** mod for Minecraft `1.21.11`.
 
-The aim is to restore the *feel* and mechanics of original Witchery first — the altar's hum, the cauldron's patience, the weight of a rite — then lean on Witchery: Resurrected and other references where they help close visual, item, or registry parity gaps.
+The aim is to restore the *feel* and mechanics of original Witchery first — the altar's hum, the cauldron's patience, the weight of a rite — then lean on community fan-mod inspiration and other references where they help close visual, item, or registry parity gaps.
 
 ## Contents
 
@@ -51,7 +51,7 @@ Substantial restored or in-progress systems include:
 - Many mobs and renderers restored or polished toward old Witchery visuals — ravens, spirits, nightmares, flying monkeys, imps, Ents, Mandrakes, Banshees, Poltergeists, and others.
 - The **Witches' Primer** as a native Modonomicon guidebook that grows as the witch does: every player is handed the Primer on first join, and crafting a topic book unlocks that chapter and reveals the next book's recipe — a guided path from Herbology through to the transformations. Station recipes (oven, distillery, kettle, cauldron) are shown in-book with live items and hover tooltips.
 - Vanilla villages now receive Witchery village buildings and adaptive town walls: apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA.
-- A large exact-ID cleanup pass has promoted many Resurrected/source aliases out of placeholder status, including guidebooks, hunter gear, brews, contracts, waystones, special wearables, utility tools, and several old food/ingredient items.
+- A large exact-ID cleanup pass has promoted many source and community fan-mod aliases out of placeholder status, including guidebooks, hunter gear, brews, contracts, waystones, special wearables, utility tools, and several old food/ingredient items.
 - Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are restored or partially restored, with current QA notes in the status docs.
 - JEI and Patchouli are declared optional; dependency wiring may lag current Minecraft/NeoForge availability.
 
