@@ -82,7 +82,8 @@ public final class Brews {
         }
 
         public enum BrewAction {
-            ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS
+            ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
+            STEAL_BUFFS
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -279,6 +280,9 @@ public final class Brews {
         register(Items.ICE, Ingredient.action(Ingredient.BrewAction.BANE_DEMONS,
                 5, 500, 0x8AD7FF,
                 "witchery.brew.harmdemons", null));
+        register(Items.SKELETON_SKULL, Ingredient.action(Ingredient.BrewAction.STEAL_BUFFS,
+                6, 100, 0xD6D6D6,
+                "witchery.brew.stealbuffs", null));
 
         // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
         // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
@@ -664,6 +668,8 @@ public final class Brews {
         } else if (action.action() == Ingredient.BrewAction.BANE_DEMONS) {
             applyDemonbaneDamage(level, target, source, action.strength(),
                     action.strengthCeilingDisabled(), powerFactor);
+        } else if (action.action() == Ingredient.BrewAction.STEAL_BUFFS) {
+            stealBuffs(level, target, action.strength(), powerFactor, source);
         }
     }
 
@@ -791,6 +797,41 @@ public final class Brews {
         }
     }
 
+    private static void stealBuffs(ServerLevel level, LivingEntity target, int strength, double powerFactor,
+                                   Entity source) {
+        double radius = sourceStealBuffsRadius(strength);
+        double radiusSq = radius * radius;
+        AABB bounds = target.getBoundingBox().inflate(radius, radius, radius);
+        int maxBuffs = sourceStealBuffsMaxBuffs(strength, powerFactor);
+        if (maxBuffs <= 0) {
+            return;
+        }
+
+        for (LivingEntity other : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (other == target || other.distanceToSqr(target) >= radiusSq) {
+                continue;
+            }
+            List<Holder<MobEffect>> effectsToRemove = new ArrayList<>();
+            for (MobEffectInstance effect : other.getActiveEffects()) {
+                MobEffectInstance current = target.getEffect(effect.getEffect());
+                if (shouldStealBuff(effect, current, strength)) {
+                    target.addEffect(new MobEffectInstance(effect), source);
+                    effectsToRemove.add(effect.getEffect());
+                    maxBuffs--;
+                    if (maxBuffs <= 0) {
+                        break;
+                    }
+                }
+            }
+            for (Holder<MobEffect> effect : effectsToRemove) {
+                other.removeEffect(effect);
+            }
+            if (maxBuffs <= 0) {
+                break;
+            }
+        }
+    }
+
     public static boolean shouldRemoveBuff(MobEffectInstance effect, int strength) {
         return shouldRemoveBuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
     }
@@ -809,6 +850,30 @@ public final class Brews {
         return amplifier <= strength
                 && effect.value().getCategory() == MobEffectCategory.HARMFUL
                 && curable;
+    }
+
+    public static double sourceStealBuffsRadius(int strength) {
+        return (double) (strength + 1) * 8.0;
+    }
+
+    public static int sourceStealBuffsMaxBuffs(int strength, double powerFactor) {
+        return Mth.ceil(((double) strength + 1.0) * 2.0 * powerFactor);
+    }
+
+    public static boolean shouldStealBuff(MobEffectInstance donor, MobEffectInstance current, int strength) {
+        return shouldStealBuff(donor.getEffect(), donor.getDuration(), donor.getAmplifier(),
+                isCurableByModernApi(donor), current == null ? -1 : current.getDuration(),
+                current == null ? -1 : current.getAmplifier(), strength);
+    }
+
+    public static boolean shouldStealBuff(Holder<MobEffect> effect, int donorDuration, int donorAmplifier,
+                                          boolean curable, int currentDuration, int currentAmplifier,
+                                          int strength) {
+        if (!shouldRemoveBuff(effect, donorAmplifier, curable, strength)) {
+            return false;
+        }
+        return currentDuration < 0
+                || (currentDuration <= donorDuration && currentAmplifier <= donorAmplifier);
     }
 
     private static boolean isCurableByModernApi(MobEffectInstance effect) {

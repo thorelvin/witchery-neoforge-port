@@ -992,6 +992,72 @@ class BrewLogicTest {
     }
 
     @Test
+    void skeletonSkullRestoresSourceStealBuffsAction() {
+        Brews.bootstrap();
+        List<Item> level6 = withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get()), Items.SKELETON_SKULL);
+
+        assertFalse(Brews.canAdd(level4(), Items.SKELETON_SKULL),
+                "source Steal Buffs requires level-6 capacity");
+        assertTrue(Brews.canAdd(withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get())), Items.SKELETON_SKULL),
+                "Nether Wart + Tear of the Goddess + Diamond Vapour opens enough capacity for Steal Buffs");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.SKELETON_SKULL)),
+                "under-capacity Steal Buffs resolves inertly like other source actions");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level6);
+        assertEquals(1, actions.size(), "Skeleton Skull resolves as source Steal Buffs");
+        assertEquals(Brews.Ingredient.BrewAction.STEAL_BUFFS, actions.get(0).action());
+        assertEquals("witchery.brew.stealbuffs", actions.get(0).nameKey());
+        assertEquals(400, Brews.powerCost(level6),
+                "source capacity route cost plus Skeleton Skull altar cost");
+
+        assertEquals(1, Brews.buildActions(withCapacity(List.of(Items.NETHER_WART,
+                        WitcheryItems.TEAR_OF_GODDESS.get(), WitcheryItems.DIAMOND_VAPOUR.get()),
+                Items.GLOWSTONE_DUST, Items.SKELETON_SKULL)).get(0).strength(),
+                "Glowstone raises the stolen-buff amplifier gate");
+    }
+
+    @Test
+    void stealBuffsUsesSourceRadiusMaxAndReplacementGate() {
+        MobEffectInstance speedOne = new MobEffectInstance(MobEffects.SPEED, 200, 0);
+        MobEffectInstance speedTwo = new MobEffectInstance(MobEffects.SPEED, 200, 1);
+        MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 200, 0);
+
+        assertEquals(8.0, Brews.sourceStealBuffsRadius(0),
+                "base source Steal Buffs radius is 8 blocks");
+        assertEquals(16.0, Brews.sourceStealBuffsRadius(1),
+                "strengthened source Steal Buffs radius grows by 8 blocks per tier");
+        assertEquals(2, Brews.sourceStealBuffsMaxBuffs(0, 1.0),
+                "base source Steal Buffs takes up to two effects");
+        assertEquals(4, Brews.sourceStealBuffsMaxBuffs(1, 1.0),
+                "strengthened source Steal Buffs takes more effects");
+        assertEquals(1, Brews.sourceStealBuffsMaxBuffs(0, 0.5),
+                "source splash power factor scales the maximum stolen effects");
+        assertEquals(0, Brews.sourceStealBuffsMaxBuffs(0, 0.0),
+                "zero source splash power steals no effects");
+
+        assertTrue(Brews.shouldStealBuff(speedOne, null, 0),
+                "base source Steal Buffs steals level-I positive curable effects");
+        assertFalse(Brews.shouldStealBuff(speedTwo, null, 0),
+                "higher-amplifier positive effects survive unless the brew is strengthened");
+        assertTrue(Brews.shouldStealBuff(speedTwo, null, 1),
+                "strengthened Steal Buffs steals matching higher amplifiers");
+        assertFalse(Brews.shouldStealBuff(poison, null, 3),
+                "negative effects are not stolen");
+        assertFalse(Brews.shouldStealBuff(MobEffects.SPEED, 200, 0, false, -1, -1, 3),
+                "source Steal Buffs does not steal incurable effects");
+        assertTrue(Brews.shouldStealBuff(MobEffects.SPEED, 400, 1, true, 200, 0, 1),
+                "source Steal Buffs replaces weaker or shorter matching buffs");
+        assertFalse(Brews.shouldStealBuff(MobEffects.SPEED, 200, 0, true, 400, 0, 1),
+                "source Steal Buffs keeps a longer existing same-amplifier buff");
+        assertFalse(Brews.shouldStealBuff(MobEffects.SPEED, 400, 0, true, 200, 1, 1),
+                "source Steal Buffs keeps a stronger existing buff");
+    }
+
+    @Test
     void garlicRestoresSourceWeakenVampiresAction() {
         Brews.bootstrap();
         Item garlic = WitcheryItems.GARLIC.get();
