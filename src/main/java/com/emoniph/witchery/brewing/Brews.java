@@ -22,6 +22,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
@@ -44,6 +46,8 @@ import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -93,6 +97,7 @@ public final class Brews {
         }
 
         public enum BrewAction {
+            EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL
         }
@@ -213,6 +218,22 @@ public final class Brews {
     private static final double SOURCE_PULL_VERTICAL_MOTION = 0.4D;
     private static final double SOURCE_INSTANT_RADIUS = 3.0;
     private static final double SOURCE_SPLASH_DURATION_SCALE = 0.5;
+    private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
+    private static final String PORT_SUMMONED_UNDEAD_OWNER_TAG = "witchery_enslaver_uuid";
+    private static final String SOURCE_BREW_GAS_TAG = "WITCBrewGas";
+    private static final String PORT_BREW_GAS_TAG = "witchery_brew_gas";
+    private static final BlockState[] SOURCE_FLOWER_STATES = new BlockState[] {
+            Blocks.DANDELION.defaultBlockState(),
+            Blocks.POPPY.defaultBlockState(),
+            Blocks.BLUE_ORCHID.defaultBlockState(),
+            Blocks.ALLIUM.defaultBlockState(),
+            Blocks.AZURE_BLUET.defaultBlockState(),
+            Blocks.RED_TULIP.defaultBlockState(),
+            Blocks.ORANGE_TULIP.defaultBlockState(),
+            Blocks.WHITE_TULIP.defaultBlockState(),
+            Blocks.PINK_TULIP.defaultBlockState(),
+            Blocks.OXEYE_DAISY.defaultBlockState()
+    };
 
     private Brews() {
     }
@@ -249,6 +270,18 @@ public final class Brews {
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5B1983, 200, 1));
         register(Items.WHEAT, Ingredient.effect(WitcheryMobEffects.MOONSHINE,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x7D3083, 0, 1));
+        registerExplicit(Items.COAL, Ingredient.action(Ingredient.BrewAction.EXTINGUISH,
+                1, 0, 0x2E2E2E,
+                "witchery.brew.extinguish", null));
+        registerExplicit(Blocks.STONE.asItem(), Ingredient.action(Ingredient.BrewAction.DISSIPATE,
+                1, 0, 0x8B8B8B,
+                "witchery.brew.dissipate", null));
+        registerExplicit(Items.DANDELION, Ingredient.action(Ingredient.BrewAction.GROW_FLOWERS,
+                1, 200, 0xF2D447,
+                "witchery.brew.flowers", null));
+        registerExplicit(Items.BONE_MEAL, Ingredient.action(Ingredient.BrewAction.FERTILIZE,
+                1, 250, 0xEDE8D0,
+                "witchery.brew.fertilization", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -578,6 +611,7 @@ public final class Brews {
             cloud.setDuration(600);
             cloud.setRadiusPerTick(-0.005F);
             cloud.setWaitTime(10);
+            tagSourceBrewGasCloud(cloud);
             for (MobEffectInstance effect : resolved.effects) {
                 cloud.addEffect(new MobEffectInstance(effect));
             }
@@ -692,7 +726,11 @@ public final class Brews {
 
     private static void applyAction(ServerLevel level, LivingEntity target, ActionApplication action,
                                     double powerFactor, double durationFactor, Entity source, Vec3 impactPos) {
-        if (action.action() == Ingredient.BrewAction.ANIMAL) {
+        if (action.action() == Ingredient.BrewAction.EXTINGUISH) {
+            applyExtinguish(level, target, action.strength(), source);
+        } else if (action.action() == Ingredient.BrewAction.DISSIPATE) {
+            applyDissipateToEntity(level, target, action.strength(), source);
+        } else if (action.action() == Ingredient.BrewAction.ANIMAL) {
             applyAnimalAttraction(level, target, action.inverted(), action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
             removeBuffs(target, action.strength());
@@ -737,9 +775,19 @@ public final class Brews {
 
     private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, List<ActionApplication> actions,
                                                 Entity source, double instantRadius) {
+        BlockPos blockImpact = BlockPos.containing(impactPos);
+        int blockRadius = Mth.ceil(instantRadius);
         for (ActionApplication action : actions) {
             if (action.action() == Ingredient.BrewAction.PULL) {
                 applyPullToNonLivingEntities(level, impactPos, action.strength(), source, instantRadius);
+            } else if (action.action() == Ingredient.BrewAction.EXTINGUISH) {
+                extinguishFires(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.DISSIPATE) {
+                dissipateGasClouds(level, blockImpact, blockRadius, action.strength());
+            } else if (action.action() == Ingredient.BrewAction.GROW_FLOWERS) {
+                growFlowers(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.FERTILIZE) {
+                fertilizeBlocks(level, blockImpact, blockRadius, action.strength(), source);
             }
         }
     }
@@ -779,6 +827,124 @@ public final class Brews {
                 }
             }
         }
+    }
+
+    private static void applyExtinguish(ServerLevel level, LivingEntity target, int strength, Entity source) {
+        if (!sourceExtinguishApplies(level, strength)) {
+            return;
+        }
+        if (strength > 0 && target instanceof Blaze) {
+            target.hurtServer(level, sourceBaneDamageSource(level, source), sourceExtinguishBlazeDamage(strength));
+        }
+        if (target.isOnFire()) {
+            target.clearFire();
+        }
+    }
+
+    private static void applyDissipateToEntity(ServerLevel level, LivingEntity target, int strength, Entity source) {
+        if (isSourceSummonedUndead(target)) {
+            target.hurtServer(level, sourceBaneDamageSource(level, source), sourceDissipateUndeadDamage(strength));
+        }
+    }
+
+    private static void extinguishFires(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        if (!sourceExtinguishApplies(level, strength)) {
+            return;
+        }
+        int effectiveRadius = radius;
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effectiveRadius)) {
+            for (int y = center.getY() - effectiveRadius; y <= center.getY() + effectiveRadius; y++) {
+                BlockPos pos = new BlockPos(column.getX(), y, column.getZ());
+                if (level.getBlockState(pos).is(Blocks.FIRE) && sourceMayModify(level, pos, source)) {
+                    level.removeBlock(pos, false);
+                    level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 2.0F);
+                }
+            }
+        }
+    }
+
+    private static void dissipateGasClouds(ServerLevel level, BlockPos center, int radius, int strength) {
+        AABB area = new AABB(center).inflate(radius);
+        Set<Long> sourceColumns = sourceCircleColumns(center, radius);
+        for (AreaEffectCloud cloud : level.getEntitiesOfClass(AreaEffectCloud.class, area)) {
+            BlockPos pos = cloud.blockPosition();
+            if (pos.getY() < center.getY() - radius || pos.getY() > center.getY() + radius) {
+                continue;
+            }
+            if (!sourceColumns.contains(BlockPos.asLong(pos.getX(), center.getY(), pos.getZ()))) {
+                continue;
+            }
+            if (sourceDissipateRemovesGas(isWitcheryBrewGasCloud(cloud), false, strength)) {
+                cloud.discard();
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 2.0F);
+            }
+        }
+    }
+
+    private static void growFlowers(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int effectiveRadius = sourceBlockCircleRadius(radius, strength);
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effectiveRadius)) {
+            for (int dy = -1; dy <= 1; dy++) {
+                BlockPos pos = column.above(dy);
+                if (sourceCanGrowFlowerAt(level, pos, source)
+                        && level.random.nextInt(sourceGrowFlowersChanceBound(strength)) == 0) {
+                    level.setBlockAndUpdate(pos, SOURCE_FLOWER_STATES[level.random.nextInt(SOURCE_FLOWER_STATES.length)]);
+                }
+            }
+        }
+    }
+
+    private static void fertilizeBlocks(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int effectiveRadius = sourceBlockCircleRadius(radius, strength);
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effectiveRadius)) {
+            for (int dy = 1; dy >= -1; dy--) {
+                BlockPos pos = column.above(dy);
+                BlockState state = level.getBlockState(pos);
+                if (sourceCanFertilize(state, level, pos, source)) {
+                    for (int i = 0; i < sourceFertilizationApplications(strength); i++) {
+                        BlockState current = level.getBlockState(pos);
+                        if (current.getBlock() instanceof BonemealableBlock bonemealable
+                                && bonemealable.isValidBonemealTarget(level, pos, current)
+                                && bonemealable.isBonemealSuccess(level, level.random, pos, current)) {
+                            bonemealable.performBonemeal(level, level.random, pos, current);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private static Set<Long> sourceCircleColumns(BlockPos center, int radius) {
+        Set<Long> columns = new HashSet<>();
+        for (BlockPos pos : SnowTrailMobEffect.sourceFilledCircle(center, radius)) {
+            columns.add(BlockPos.asLong(pos.getX(), center.getY(), pos.getZ()));
+        }
+        return columns;
+    }
+
+    private static boolean isWitcheryBrewGasCloud(AreaEffectCloud cloud) {
+        return cloud.getPersistentData().getBooleanOr(SOURCE_BREW_GAS_TAG, false)
+                || cloud.getPersistentData().getBooleanOr(PORT_BREW_GAS_TAG, false);
+    }
+
+    public static void tagSourceBrewGasCloud(AreaEffectCloud cloud) {
+        cloud.getPersistentData().putBoolean(SOURCE_BREW_GAS_TAG, true);
+        cloud.getPersistentData().putBoolean(PORT_BREW_GAS_TAG, true);
+    }
+
+    private static boolean sourceCanGrowFlowerAt(ServerLevel level, BlockPos pos, Entity source) {
+        BlockState state = level.getBlockState(pos);
+        return state.canBeReplaced()
+                && !state.liquid()
+                && Blocks.DANDELION.defaultBlockState().canSurvive(level, pos)
+                && sourceMayModify(level, pos, source);
+    }
+
+    private static boolean sourceCanFertilize(BlockState state, ServerLevel level, BlockPos pos, Entity source) {
+        return state.getBlock() instanceof BonemealableBlock bonemealable
+                && bonemealable.isValidBonemealTarget(level, pos, state)
+                && sourceMayModify(level, pos, source);
     }
 
     private static void applyPullToNonLivingEntities(ServerLevel level, Vec3 impactPos, int strength,
@@ -928,6 +1094,42 @@ public final class Brews {
         return 2 + 2 * strength;
     }
 
+    public static boolean sourceExtinguishApplies(ServerLevel level, int strength) {
+        return sourceExtinguishAppliesInDimension(level.dimension() == Level.NETHER, strength);
+    }
+
+    public static boolean sourceExtinguishAppliesInDimension(boolean nether, int strength) {
+        return strength > 1 || !nether;
+    }
+
+    public static float sourceExtinguishBlazeDamage(int strength) {
+        return strength > 0 ? (float) (strength + 1) * 4.0F : 0.0F;
+    }
+
+    public static float sourceDissipateUndeadDamage(int strength) {
+        return (float) (strength + 1) * 5.0F;
+    }
+
+    public static boolean sourceDissipateRemovesGas(boolean witcheryBrewGas, boolean gaseousFluidBlock, int strength) {
+        return witcheryBrewGas || gaseousFluidBlock && strength >= 1;
+    }
+
+    public static int sourceBlockCircleRadius(int radius, int strength) {
+        return radius + strength;
+    }
+
+    public static int sourceGrowFlowersChanceBound(int strength) {
+        return 8 - strength;
+    }
+
+    public static int sourceFlowerVariantCount() {
+        return SOURCE_FLOWER_STATES.length;
+    }
+
+    public static int sourceFertilizationApplications(int strength) {
+        return strength + 1;
+    }
+
     public static boolean sourceColdBlockHitShouldFreeze(BlockState state) {
         return state.is(Blocks.WATER);
     }
@@ -982,6 +1184,12 @@ public final class Brews {
                 || target instanceof FlameImpEntity
                 || target instanceof LilithEntity
                 || target instanceof WitherBoss;
+    }
+
+    public static boolean isSourceSummonedUndead(LivingEntity target) {
+        return target.getType().is(EntityTypeTags.UNDEAD)
+                && (target.getPersistentData().contains(SOURCE_SUMMONED_UNDEAD_OWNER_TAG)
+                || target.getPersistentData().contains(PORT_SUMMONED_UNDEAD_OWNER_TAG));
     }
 
     public static int sourceWeakenVampiresBloodLoss(int strength) {

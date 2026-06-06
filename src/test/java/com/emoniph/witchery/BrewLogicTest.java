@@ -820,6 +820,90 @@ class BrewLogicTest {
     }
 
     @Test
+    void lowLevelBlockActionsRestoreSourceEntries() {
+        Brews.bootstrap();
+        Item stone = Blocks.STONE.asItem();
+
+        assertFalse(Brews.canAdd(List.of(), Items.COAL),
+                "source Extinguish requires level-1 capacity");
+        assertFalse(Brews.canAdd(List.of(), stone),
+                "source Dissipate requires level-1 capacity");
+        assertFalse(Brews.canAdd(List.of(), Items.DANDELION),
+                "source Grow Flowers requires level-1 capacity");
+        assertFalse(Brews.canAdd(List.of(), Items.BONE_MEAL),
+                "source Fertilization requires level-1 capacity");
+
+        List<Brews.ActionApplication> extinguish = Brews.buildActions(level1(Items.COAL));
+        assertEquals(1, extinguish.size(), "Coal resolves as source Extinguish");
+        assertEquals(Brews.Ingredient.BrewAction.EXTINGUISH, extinguish.get(0).action());
+        assertEquals("witchery.brew.extinguish", extinguish.get(0).nameKey());
+        assertEquals(0, Brews.powerCost(level1(Items.COAL)),
+                "Mandrake Root capacity plus Coal has no source altar cost");
+
+        List<Brews.ActionApplication> dissipate = Brews.buildActions(level1(stone));
+        assertEquals(Brews.Ingredient.BrewAction.DISSIPATE, dissipate.get(0).action());
+        assertEquals("witchery.brew.dissipate", dissipate.get(0).nameKey());
+        assertEquals(0, Brews.powerCost(level1(stone)),
+                "Stone Dissipate has no source altar cost beyond Mandrake capacity");
+
+        List<Brews.ActionApplication> flowers = Brews.buildActions(level1(Items.DANDELION));
+        assertEquals(Brews.Ingredient.BrewAction.GROW_FLOWERS, flowers.get(0).action());
+        assertEquals("witchery.brew.flowers", flowers.get(0).nameKey());
+        assertEquals(200, Brews.powerCost(level1(Items.DANDELION)),
+                "Dandelion Grow Flowers keeps source 200 altar power");
+
+        List<Brews.ActionApplication> fertilize = Brews.buildActions(level1(Items.BONE_MEAL));
+        assertEquals(Brews.Ingredient.BrewAction.FERTILIZE, fertilize.get(0).action());
+        assertEquals("witchery.brew.fertilization", fertilize.get(0).nameKey());
+        assertEquals(250, Brews.powerCost(level1(Items.BONE_MEAL)),
+                "Bone Meal Fertilization keeps source 250 altar power");
+
+        assertEquals(1, Brews.buildActions(level1(Items.GLOWSTONE_DUST, Items.COAL)).get(0).strength(),
+                "Glowstone carries into low-level source actions");
+        assertTrue(Brews.requiresExplicitStir(Items.COAL));
+        assertTrue(Brews.requiresExplicitStir(stone));
+        assertTrue(Brews.requiresExplicitStir(Items.DANDELION));
+        assertTrue(Brews.requiresExplicitStir(Items.BONE_MEAL));
+        assertFalse(Brews.canAddAutomatically(level1(), Items.DANDELION),
+                "dropped Dandelions remain available to current Pit Grass cauldron offerings");
+    }
+
+    @Test
+    void lowLevelBlockActionsUseSourceConstants() {
+        assertTrue(Brews.sourceExtinguishAppliesInDimension(false, 0),
+                "base Extinguish works outside the Nether");
+        assertFalse(Brews.sourceExtinguishAppliesInDimension(true, 0),
+                "base Extinguish is suppressed in the Nether like source");
+        assertFalse(Brews.sourceExtinguishAppliesInDimension(true, 1),
+                "one strength tier is still suppressed in the Nether");
+        assertTrue(Brews.sourceExtinguishAppliesInDimension(true, 2),
+                "source Extinguish breaks the Nether gate above strength I");
+        assertEquals(0.0F, Brews.sourceExtinguishBlazeDamage(0));
+        assertEquals(8.0F, Brews.sourceExtinguishBlazeDamage(1));
+        assertEquals(12.0F, Brews.sourceExtinguishBlazeDamage(2));
+
+        assertEquals(5.0F, Brews.sourceDissipateUndeadDamage(0));
+        assertEquals(10.0F, Brews.sourceDissipateUndeadDamage(1));
+        assertTrue(Brews.sourceDissipateRemovesGas(true, false, 0),
+                "base source Dissipate removes Witchery brew gas");
+        assertFalse(Brews.sourceDissipateRemovesGas(false, true, 0),
+                "base source Dissipate leaves non-Witchery gas alone");
+        assertTrue(Brews.sourceDissipateRemovesGas(false, true, 1),
+                "powered source Dissipate removes other gaseous fluid blocks");
+        assertFalse(Brews.sourceDissipateRemovesGas(false, false, 1),
+                "powered source Dissipate does not invent removal for unrelated cloud entities");
+
+        assertEquals(3, Brews.sourceBlockCircleRadius(3, 0));
+        assertEquals(4, Brews.sourceBlockCircleRadius(3, 1));
+        assertEquals(8, Brews.sourceGrowFlowersChanceBound(0));
+        assertEquals(7, Brews.sourceGrowFlowersChanceBound(1));
+        assertEquals(10, Brews.sourceFlowerVariantCount(),
+                "source Grow Flowers chooses Dandelion plus nine old red-flower variants");
+        assertEquals(1, Brews.sourceFertilizationApplications(0));
+        assertEquals(2, Brews.sourceFertilizationApplications(1));
+    }
+
+    @Test
     void reekOfMisfortuneRestoresSourceRemoveBuffsAction() {
         Brews.bootstrap();
         Item reek = WitcheryItems.REEK_OF_MISFORTUNE.get();

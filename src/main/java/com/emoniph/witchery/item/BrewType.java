@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.brewing.Brews;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -42,6 +43,7 @@ public enum BrewType {
             cloud.setDuration(duration);
             cloud.setRadiusPerTick(-0.005f);
             cloud.setWaitTime(10);
+            Brews.tagSourceBrewGasCloud(cloud);
             cloud.addEffect(new MobEffectInstance(MobEffects.NAUSEA, nausea, 0));
             cloud.addEffect(new MobEffectInstance(MobEffects.POISON, poison, 1));
             level.addFreshEntity(cloud);
@@ -104,6 +106,7 @@ public enum BrewType {
             cloud.setDuration(duration);
             cloud.setRadiusPerTick(-0.005f);
             cloud.setWaitTime(10);
+            Brews.tagSourceBrewGasCloud(cloud);
             cloud.addEffect(new MobEffectInstance(MobEffects.POISON,   poison,   2));
             cloud.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, weakness, 1));
             level.addFreshEntity(cloud);
