@@ -23,6 +23,8 @@ public class BloodRoseBlockEntity extends BlockEntity {
 
     private static final String KEY_UUID = "StoredUUID";
     private static final String KEY_NAME = "StoredName";
+    private static final String SOURCE_PLAYERS_KEY = "WITCPlayers";
+    private static final String SOURCE_PLAYER_KEY = "Player";
 
     @Nullable
     private UUID storedUuid;
@@ -33,7 +35,7 @@ public class BloodRoseBlockEntity extends BlockEntity {
     }
 
     public boolean hasStoredPlayer() {
-        return storedUuid != null && !storedName.isEmpty();
+        return !storedName.isEmpty();
     }
 
     public void storePlayer(Player player) {
@@ -58,7 +60,8 @@ public class BloodRoseBlockEntity extends BlockEntity {
 
         UUID usingUuid = usingPlayer.getUUID();
         String usingName = usingPlayer.getName().getString();
-        boolean ownStoredSample = storedUuid.equals(usingUuid) || storedName.equalsIgnoreCase(usingName);
+        boolean ownStoredSample = (storedUuid != null && storedUuid.equals(usingUuid))
+                || storedName.equalsIgnoreCase(usingName);
         if (ownStoredSample && !allowOwnTaglock) {
             return DrainResult.onlyOwn();
         }
@@ -70,7 +73,7 @@ public class BloodRoseBlockEntity extends BlockEntity {
             return DrainResult.success(result);
         }
 
-        ServerPlayer onlinePlayer = level.getServer() == null ? null : level.getServer().getPlayerList().getPlayer(storedUuid);
+        ServerPlayer onlinePlayer = findOnlineStoredPlayer();
         if (onlinePlayer != null && onlinePlayer.isAlive()) {
             StoredPlayer result = new StoredPlayer(onlinePlayer.getUUID(), onlinePlayer.getName().getString());
             storedUuid = null;
@@ -80,6 +83,17 @@ public class BloodRoseBlockEntity extends BlockEntity {
         }
 
         return DrainResult.missingPlayers(List.of(storedName));
+    }
+
+    @Nullable
+    private ServerPlayer findOnlineStoredPlayer() {
+        if (level == null || level.getServer() == null || storedName.isEmpty()) {
+            return null;
+        }
+        ServerPlayer player = storedUuid == null
+                ? null
+                : level.getServer().getPlayerList().getPlayer(storedUuid);
+        return player != null ? player : level.getServer().getPlayerList().getPlayerByName(storedName);
     }
 
     private void sync(boolean filled) {
@@ -115,6 +129,7 @@ public class BloodRoseBlockEntity extends BlockEntity {
         if (!storedName.isEmpty()) {
             tag.putString(KEY_NAME, storedName);
         }
+        saveSourcePlayer(tag);
     }
 
     @Override
@@ -130,6 +145,29 @@ public class BloodRoseBlockEntity extends BlockEntity {
             }
         }
         storedName = tag.getStringOr(KEY_NAME, "");
+        if (storedName.isEmpty()) {
+            loadSourcePlayer(tag);
+        }
+    }
+
+    private void saveSourcePlayer(ValueOutput tag) {
+        if (storedName.isEmpty()) {
+            return;
+        }
+        ValueOutput.ValueOutputList players = tag.childrenList(SOURCE_PLAYERS_KEY);
+        ValueOutput player = players.addChild();
+        player.putString(SOURCE_PLAYER_KEY, storedName);
+    }
+
+    private void loadSourcePlayer(ValueInput tag) {
+        for (ValueInput player : tag.childrenListOrEmpty(SOURCE_PLAYERS_KEY)) {
+            String name = player.getStringOr(SOURCE_PLAYER_KEY, "");
+            if (!name.isBlank()) {
+                storedName = name;
+                storedUuid = null;
+                return;
+            }
+        }
     }
 
     public record StoredPlayer(UUID uuid, String name) {}

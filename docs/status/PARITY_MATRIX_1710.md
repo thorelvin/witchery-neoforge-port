@@ -184,7 +184,7 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | All 8 crop types (belladonna/mandrake/etc.) | ✅ Done | |
 | garlic_garland | ✅ Done | Repulsion, facing |
 | wispy_cotton / disturbed_cotton | ✅ Done | |
-| blood_rose / ember_moss / glint_weed / spanish_moss | ✅ Done | |
+| blood_rose / ember_moss / glint_weed / spanish_moss | ✅ Done | Blood Rose now writes/reads source `WITCPlayers` player-name storage beside modern UUID data |
 | bramble / void_bramble | ✅ Done | |
 | leaping_lily | ✅ Done | |
 | grassper | ✅ Done | |
