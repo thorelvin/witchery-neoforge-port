@@ -204,12 +204,32 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         boline.add(recipe("boline", "Boline",
                 "Forge it from iron, bone, and an emerald. It fights no better than a wooden sword, but it "
                         + "endures like iron and matters far more as a tool."));
+        List<BookPageModel<?>> path = WitcheryBooks.prose("Path of the Craft",
+                "Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a "
+                        + "subject's book and its pages appear here. Here is the whole road, so you may see "
+                        + "where your feet are headed:"
+                        + "\n\n**Getting Started** — the altar, the boline, the first roots."
+                        + "\n**1. Herbology** — Mutandis, the Rowan, the Witch's Cauldron."
+                        + "\n**2. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders."
+                        + "\n**3. Brews & Infusions** — the Kettle, and the four paths of infusion."
+                        + "\n**4. Distilling** — drawing essences out by heat and patience."
+                        + "\n**5. Circle Magic** — chalk, circles, and the rites of power."
+                        + "\n**6. Conjuration** — the Brazier, fetishes, and the things you call."
+                        + "\n**7. Symbology** — the Mystic Branch and glyphs traced in the air."
+                        + "\n**8. Poppets** — taglocks, poppets, and binding from afar."
+                        + "\n**9. The Spirit World** — dreams, the dead, and the far country."
+                        + "\n**10. Creatures** — familiars and the beasts of the craft."
+                        + "\n**11. Transformations** — the deeper changes: the wolf, the night."
+                        + "\n\nThe order is a teacher's order, not a cage. Should a coven witch or a dusty "
+                        + "bookshop press a later chapter into your hands early, read it gladly — knowledge "
+                        + "found is knowledge still.");
 
         cat.withEntries(
                 entry(cat, "getting_started/first_steps", "witchery.book.entry.first_steps", WitcheryItems.WITCHES_PRIMER.get(), 0, firstSteps),
                 entry(cat, "getting_started/altar", "The Altar", WitcheryItems.ALTAR.get(), 1, altar),
                 entry(cat, "getting_started/boline", "The Boline", WitcheryItems.BOLINE.get(), 2, boline),
-                whatsNext(cat, "getting_started", 3, "book_herbology", "Witchcraft: Herbology", WitcheryItems.BOOK_HERBOLOGY.get(), "Herbology"));
+                entry(cat, "getting_started/path_of_the_craft", "Path of the Craft", WitcheryItems.CHALK_GOLDEN.get(), 3, path),
+                whatsNext(cat, "getting_started", 4, "book_herbology", "Witchcraft: Herbology", WitcheryItems.BOOK_HERBOLOGY.get(), "Herbology"));
         return cat;
     }
 
