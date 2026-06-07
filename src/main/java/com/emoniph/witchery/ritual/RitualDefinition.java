@@ -61,6 +61,17 @@ public final class RitualDefinition {
         boolean present(Level level, BlockPos center);
     }
 
+    /**
+     * A world condition that, when true, vetoes the rite — dispatch skips this definition and keeps
+     * looking (so the cast falls through to another rite, or to NO_MATCH). Used for the rites that the
+     * old chain handled with an inner "return NO_MATCH" guard, e.g. Crystal Ball deferring to the
+     * small Seer Stone rite, or large Climate Change deferring to the medium Charge Stone.
+     */
+    @FunctionalInterface
+    public interface Veto {
+        boolean vetoes(Level level, BlockPos center);
+    }
+
     private final String name;
     private final RitualCircleDetector.CircleSize ringSize;
     private final Predicate<ItemStack> trigger;
@@ -68,10 +79,12 @@ public final class RitualDefinition {
     private final Effect effect;
     private final List<CompanionRing> companionRings;
     private final List<OfferingRequirement> offeringRequirements;
+    private final List<Veto> vetoes;
 
     private RitualDefinition(String name, RitualCircleDetector.CircleSize ringSize,
                              Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
-                             List<CompanionRing> companionRings, List<OfferingRequirement> offeringRequirements) {
+                             List<CompanionRing> companionRings, List<OfferingRequirement> offeringRequirements,
+                             List<Veto> vetoes) {
         this.name = name;
         this.ringSize = ringSize;
         this.trigger = trigger;
@@ -79,13 +92,14 @@ public final class RitualDefinition {
         this.effect = effect;
         this.companionRings = companionRings;
         this.offeringRequirements = offeringRequirements;
+        this.vetoes = vetoes;
     }
 
     public static RitualDefinition of(String name, RitualCircleDetector.CircleSize ringSize,
                                       Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
                                       CompanionRing... companionRings) {
         return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect,
-                List.of(companionRings), List.of());
+                List.of(companionRings), List.of(), List.of());
     }
 
     /** Returns a copy of this definition that also requires the given offering to be present. */
@@ -93,7 +107,15 @@ public final class RitualDefinition {
         List<OfferingRequirement> updated = new ArrayList<>(offeringRequirements);
         updated.add(requirement);
         return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect,
-                companionRings, List.copyOf(updated));
+                companionRings, List.copyOf(updated), vetoes);
+    }
+
+    /** Returns a copy of this definition that does <em>not</em> match while {@code veto} holds. */
+    public RitualDefinition vetoedWhen(Veto veto) {
+        List<Veto> updated = new ArrayList<>(vetoes);
+        updated.add(veto);
+        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect,
+                companionRings, offeringRequirements, List.copyOf(updated));
     }
 
     public String name() {
@@ -112,6 +134,11 @@ public final class RitualDefinition {
     /** Offering presence checks that must all pass; the executor checks these against the world. */
     public List<OfferingRequirement> offeringRequirements() {
         return offeringRequirements;
+    }
+
+    /** Veto conditions; if any holds, the definition does not match. */
+    public List<Veto> vetoes() {
+        return vetoes;
     }
 
     /** Does a {@code item} dropped on a {@code size} ring of this {@code circleVariant} trigger this rite? */

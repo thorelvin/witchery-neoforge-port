@@ -182,6 +182,13 @@ class RitualDefinitionTest {
     }
 
     @Test
+    void vetoedRitesAreInTheTable() {
+        // Both carry a veto (checked at runtime); the trigger mapping still resolves to them.
+        assertEquals("crystal_ball", match(MEDIUM, new ItemStack(WitcheryItems.QUARTZ_SPHERE.get()), RITUAL));
+        assertEquals("climate_change", match(LARGE, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
+    }
+
+    @Test
     void largeCompanionGatedRitesAreInTheTable() {
         assertEquals("hell_on_earth", match(LARGE, new ItemStack(Items.NETHER_STAR), INFERNAL));
         assertEquals(List.of("MEDIUM:" + OTHERWHERE, "SMALL:" + INFERNAL),

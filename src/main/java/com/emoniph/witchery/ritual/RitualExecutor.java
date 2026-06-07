@@ -544,6 +544,16 @@ public class RitualExecutor {
                     item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
                     (player, level, center, trigger) -> riteOfCurseInsanity(player, level, center))
                     .requiringOffering((level, center) -> findCurseInsanityOfferings(level, center).isPresent()),
+            // Crystal Ball — but defer to the small Seer Stone rite when only Seer Stone offerings are
+            // present beneath a Small Ritual ring (the old inner NO_MATCH guard, now a veto).
+            RitualDefinition.of("crystal_ball", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.QUARTZ_SPHERE.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfuseCrystalBall(player, level, center))
+                    .vetoedWhen((level, center) ->
+                            findCrystalBallOfferings(level, center).isEmpty()
+                            && findSeerStoneOfferings(level, center).isPresent()
+                            && RitualCircleDetector.hasRing(level, center, RitualCircleDetector.CircleSize.SMALL)
+                            && RitualCircleDetector.detectVariant(level, center, RitualCircleDetector.CircleSize.SMALL) == VARIANT_RITUAL),
 
             // ── Large ring ──
             RitualDefinition.of("beastial_call", RitualCircleDetector.CircleSize.LARGE,
@@ -585,7 +595,13 @@ public class RitualExecutor {
             RitualDefinition.of("summon_wither", RitualCircleDetector.CircleSize.LARGE,
                     item -> item.is(Items.WITHER_SKELETON_SKULL), VARIANT_INFERNAL,
                     (player, level, center, trigger) -> riteOfSummonWither(player, level, center),
-                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)));
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)),
+            // Climate Change — but defer to the medium Charge Stone rite when that setup is present
+            // (the old shouldLetMediumChargeStoneHandle guard, now a veto).
+            RitualDefinition.of("climate_change", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(WitcheryItems.ATTUNED_STONE.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfClimateChange(player, level, center))
+                    .vetoedWhen(RitualExecutor::shouldLetMediumChargeStoneHandle));
 
     /**
      * Try the data-driven {@link RitualDefinition} table for the given ring. Returns the activation
@@ -597,7 +613,8 @@ public class RitualExecutor {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
             if (definition.matches(size, item, circleVariant)
                     && companionRingsPresent(definition, level, center)
-                    && offeringsPresent(definition, level, center)) {
+                    && offeringsPresent(definition, level, center)
+                    && notVetoed(definition, level, center)) {
                 return matchedResult(definition.run(player, level, center, item));
             }
         }
@@ -618,6 +635,16 @@ public class RitualExecutor {
     private static boolean offeringsPresent(RitualDefinition definition, Level level, BlockPos center) {
         for (RitualDefinition.OfferingRequirement requirement : definition.offeringRequirements()) {
             if (!requirement.present(level, center)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Whether no veto condition on the definition currently holds (a held veto skips the rite). */
+    private static boolean notVetoed(RitualDefinition definition, Level level, BlockPos center) {
+        for (RitualDefinition.Veto veto : definition.vetoes()) {
+            if (veto.vetoes(level, center)) {
                 return false;
             }
         }
@@ -660,22 +687,7 @@ public class RitualExecutor {
     private static ActivationResult dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.MEDIUM,
                 player, level, center, item, circleVariant);
-        if (byDefinition != null) {
-            return byDefinition;
-        }
-
-        if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (findCrystalBallOfferings(level, center).isEmpty()
-                    && findSeerStoneOfferings(level, center).isPresent()
-                    && RitualCircleDetector.hasRing(level, center, RitualCircleDetector.CircleSize.SMALL)
-                    && RitualCircleDetector.detectVariant(level, center, RitualCircleDetector.CircleSize.SMALL) == VARIANT_RITUAL) {
-                return ActivationResult.NO_MATCH;
-            }
-            return matchedResult(riteOfInfuseCrystalBall(player, level, center));
-        } else {
-            return ActivationResult.NO_MATCH;
-        }
+        return byDefinition != null ? byDefinition : ActivationResult.NO_MATCH;
     }
 
     // ── Large ring dispatch ────────────────────────────────────────────────────
@@ -683,18 +695,7 @@ public class RitualExecutor {
     private static ActivationResult dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.LARGE,
                 player, level, center, item, circleVariant);
-        if (byDefinition != null) {
-            return byDefinition;
-        }
-
-        if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (shouldLetMediumChargeStoneHandle(level, center)) {
-                return ActivationResult.NO_MATCH;
-            }
-            return matchedResult(riteOfClimateChange(player, level, center));
-        } else {
-            return ActivationResult.NO_MATCH;
-        }
+        return byDefinition != null ? byDefinition : ActivationResult.NO_MATCH;
     }
 
     private static boolean isFetishItem(ItemStack item) {
