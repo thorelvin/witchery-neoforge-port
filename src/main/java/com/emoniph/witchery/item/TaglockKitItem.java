@@ -364,14 +364,24 @@ public class TaglockKitItem extends Item {
     }
 
     private static boolean playerTaglockAttemptFails(Player user, Player target) {
+        return user.getRandom().nextDouble()
+                < playerTaglockFailChance(user.isCrouching(), isBehindTarget(user, target));
+    }
+
+    /**
+     * Chance a player-taglock grab fails: 0.2 base, +0.2 when not crouching, +0.4 when not behind the
+     * target. So success is 80% (behind + crouching), 60% (behind, standing), 40% (front, crouching),
+     * 20% (front, standing) — the odds the Book of Shadows quotes.
+     */
+    static double playerTaglockFailChance(boolean crouching, boolean behind) {
         double failChance = PLAYER_TAGLOCK_BASE_FAIL_CHANCE;
-        if (!user.isCrouching()) {
+        if (!crouching) {
             failChance += PLAYER_TAGLOCK_NOT_CROUCHING_PENALTY;
         }
-        if (!isBehindTarget(user, target)) {
+        if (!behind) {
             failChance += PLAYER_TAGLOCK_NOT_BEHIND_PENALTY;
         }
-        return user.getRandom().nextDouble() < failChance;
+        return failChance;
     }
 
     private static boolean isBehindTarget(Player user, Player target) {

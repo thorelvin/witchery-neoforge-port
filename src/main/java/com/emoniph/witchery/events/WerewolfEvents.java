@@ -167,11 +167,21 @@ public class WerewolfEvents {
 
     /** Phase 0 = full moon in vanilla's 8-phase moon cycle. */
     private static boolean isFullMoon(ServerLevel level) {
-        return (level.getDayTime() / 24000L) % 8L == 0;
+        return isFullMoon(level.getDayTime());
+    }
+
+    /** Full moon when the day count (dayTime / 24000) lands on moon phase 0. */
+    static boolean isFullMoon(long dayTime) {
+        return (dayTime / 24000L) % 8L == 0;
     }
 
     private static boolean isFullMoonNight(ServerLevel level) {
-        long dayTime = level.getDayTime() % 24000L;
-        return isFullMoon(level) && dayTime > 13000L && dayTime < 23000L;
+        return isFullMoonNight(level.getDayTime());
+    }
+
+    /** A full-moon night: full-moon day and the time-of-day is within the night window (13000–23000). */
+    static boolean isFullMoonNight(long dayTime) {
+        long timeOfDay = dayTime % 24000L;
+        return isFullMoon(dayTime) && timeOfDay > 13000L && timeOfDay < 23000L;
     }
 }
