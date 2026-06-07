@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -49,28 +50,50 @@ public final class RitualDefinition {
         }
     }
 
+    /**
+     * A presence check the offered sacrifices around the centre must satisfy for the rite to fire —
+     * e.g. "a Glowstone Dust is offered" or "any of the cure offering sets is complete". Needs the
+     * world, so it is checked by the executor (not by {@link #matches}). Consuming the offerings still
+     * happens inside the effect via {@link RitualTransaction}; this only gates dispatch.
+     */
+    @FunctionalInterface
+    public interface OfferingRequirement {
+        boolean present(Level level, BlockPos center);
+    }
+
     private final String name;
     private final RitualCircleDetector.CircleSize ringSize;
     private final Predicate<ItemStack> trigger;
     private final int requiredVariant;
     private final Effect effect;
     private final List<CompanionRing> companionRings;
+    private final List<OfferingRequirement> offeringRequirements;
 
     private RitualDefinition(String name, RitualCircleDetector.CircleSize ringSize,
                              Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
-                             List<CompanionRing> companionRings) {
+                             List<CompanionRing> companionRings, List<OfferingRequirement> offeringRequirements) {
         this.name = name;
         this.ringSize = ringSize;
         this.trigger = trigger;
         this.requiredVariant = requiredVariant;
         this.effect = effect;
         this.companionRings = companionRings;
+        this.offeringRequirements = offeringRequirements;
     }
 
     public static RitualDefinition of(String name, RitualCircleDetector.CircleSize ringSize,
                                       Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
                                       CompanionRing... companionRings) {
-        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect, List.of(companionRings));
+        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect,
+                List.of(companionRings), List.of());
+    }
+
+    /** Returns a copy of this definition that also requires the given offering to be present. */
+    public RitualDefinition requiringOffering(OfferingRequirement requirement) {
+        List<OfferingRequirement> updated = new ArrayList<>(offeringRequirements);
+        updated.add(requirement);
+        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect,
+                companionRings, List.copyOf(updated));
     }
 
     public String name() {
@@ -84,6 +107,11 @@ public final class RitualDefinition {
     /** Companion rings that must also be present; the executor checks these against the world. */
     public List<CompanionRing> companionRings() {
         return companionRings;
+    }
+
+    /** Offering presence checks that must all pass; the executor checks these against the world. */
+    public List<OfferingRequirement> offeringRequirements() {
+        return offeringRequirements;
     }
 
     /** Does a {@code item} dropped on a {@code size} ring of this {@code circleVariant} trigger this rite? */

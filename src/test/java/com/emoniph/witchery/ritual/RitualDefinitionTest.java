@@ -127,9 +127,28 @@ class RitualDefinitionTest {
         assertEquals("transpose_ores", match(LARGE, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), OTHERWHERE));
         assertNull(match(LARGE, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), INFERNAL));
         assertNull(match(SMALL, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), OTHERWHERE));
-        // Raise Column is data-driven for medium and large, but small raise-column is still in the if-chain.
+        // Raise Column is data-driven for all three rings.
+        assertEquals("raise_column_small", match(SMALL, new ItemStack(Items.COBBLESTONE), RITUAL));
         assertEquals("raise_column_medium", match(MEDIUM, new ItemStack(Items.COBBLESTONE), RITUAL));
         assertEquals("raise_column_large", match(LARGE, new ItemStack(Items.STONE), RITUAL));
-        assertNull(match(SMALL, new ItemStack(Items.COBBLESTONE), RITUAL));
+    }
+
+    @Test
+    void offeringGatedAndRemainingSmallRitesAreInTheTable() {
+        // Small stragglers (no offering) now data-driven.
+        assertEquals("total_eclipse", match(SMALL, new ItemStack(Items.IRON_AXE), RITUAL));
+        assertEquals("total_eclipse", match(SMALL, new ItemStack(Items.STONE_AXE), RITUAL));
+        assertEquals("spectral_stone", match(SMALL, new ItemStack(WitcheryItems.SPECTRAL_DUST.get()), RITUAL));
+        assertEquals("manifestation_dream", match(SMALL, new ItemStack(WitcheryItems.SPECTRAL_DUST.get()), OTHERWHERE));
+        // Blaze Powder disambiguates by ring variant.
+        assertEquals("blindness", match(SMALL, new ItemStack(Items.BLAZE_POWDER), INFERNAL));
+        assertEquals("banish_demon", match(SMALL, new ItemStack(Items.BLAZE_POWDER), RITUAL));
+
+        // Medium offering-gated rites (trigger mapping; the offering/companion are checked at runtime).
+        assertEquals("protection", match(MEDIUM, new ItemStack(Items.OBSIDIAN), RITUAL));
+        assertEquals("protection", match(MEDIUM, new ItemStack(Items.CRYING_OBSIDIAN), RITUAL));
+        assertEquals("charge_stone_medium", match(MEDIUM, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
+        // charge_stone_medium carries both a companion ring and an offering requirement.
+        assertEquals(List.of("SMALL:" + RITUAL), rings(MEDIUM, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
     }
 }
