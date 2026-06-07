@@ -321,39 +321,112 @@ public class RitualExecutor {
     // consulting definitions first yields exactly the rite the old ordered chain would have. Offerings
     // and altar power are still validated inside each effect via RitualTransaction.
     private static final List<RitualDefinition> RITUAL_DEFINITIONS = List.of(
+            // ── Small ring ──
             RitualDefinition.of("summon_witch", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(WitcheryItems.DIAMOND_VAPOUR.get()), VARIANT_INFERNAL,
-                    RitualExecutor::riteOfSummonWitch),
+                    (player, level, center, trigger) -> riteOfSummonWitch(player, level, center)),
             RitualDefinition.of("summon_familiar", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(WitcheryItems.DROP_OF_LUCK.get()), VARIANT_RITUAL,
-                    RitualExecutor::riteOfSummonFamiliar),
+                    (player, level, center, trigger) -> riteOfSummonFamiliar(player, level, center)),
             RitualDefinition.of("prior_incarnation", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.ROTTEN_FLESH), VARIANT_INFERNAL,
-                    RitualExecutor::riteOfPriorIncarnation),
+                    (player, level, center, trigger) -> riteOfPriorIncarnation(player, level, center)),
             RitualDefinition.of("ice_shell", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(WitcheryItems.FROZEN_HEART.get()), RitualDefinition.ANY_VARIANT,
-                    RitualExecutor::riteOfIceShell),
+                    (player, level, center, trigger) -> riteOfIceShell(player, level, center)),
             RitualDefinition.of("storm_base", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.SNOWBALL), VARIANT_RITUAL,
-                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.BASE)),
+                    (player, level, center, trigger) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.BASE)),
             RitualDefinition.of("storm_large", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.WATER_BUCKET), VARIANT_RITUAL,
-                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE)),
+                    (player, level, center, trigger) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE)),
             RitualDefinition.of("storm_portable", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.GUNPOWDER), VARIANT_RITUAL,
-                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE)),
+                    (player, level, center, trigger) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE)),
             RitualDefinition.of("sanctity", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.FEATHER), VARIANT_RITUAL,
-                    RitualExecutor::riteOfSanctity),
+                    (player, level, center, trigger) -> riteOfSanctity(player, level, center)),
             RitualDefinition.of("imprisonment", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.SLIME_BALL), VARIANT_RITUAL,
-                    RitualExecutor::riteOfImprisonment),
+                    (player, level, center, trigger) -> riteOfImprisonment(player, level, center)),
             RitualDefinition.of("cook_item", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.SUGAR), VARIANT_INFERNAL,
-                    RitualExecutor::riteOfCookItem),
+                    (player, level, center, trigger) -> riteOfCookItem(player, level, center)),
             RitualDefinition.of("infuse_seer_stone", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(WitcheryItems.QUARTZ_SPHERE.get()), VARIANT_RITUAL,
-                    RitualExecutor::riteOfInfuseSeerStone));
+                    (player, level, center, trigger) -> riteOfInfuseSeerStone(player, level, center)),
+
+            // ── Medium ring ──
+            RitualDefinition.of("whiff_of_magic_familiar", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.WHIFF_OF_MAGIC.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfWhiffOfMagicFamiliar(player, level, center)),
+            RitualDefinition.of("bind_familiar", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.TEAR_OF_GODDESS.get()) || item.is(WitcheryItems.ODOUR_OF_PURITY.get()),
+                    VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindFamiliar(player, level, center)),
+            RitualDefinition.of("call_familiar", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.BREATH_OF_GODDESS.get()) || item.is(WitcheryItems.HINT_OF_REBIRTH.get()),
+                    VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfCallFamiliar(player, level, center)),
+            RitualDefinition.of("the_forest", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(ItemTags.SAPLINGS), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfTheForest(player, level, center, trigger)),
+            RitualDefinition.of("rain_of_toads", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfRainOfToads(player, level, center)),
+            RitualDefinition.of("raise_column_medium", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(Items.COBBLESTONE) || item.is(Items.STONE), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM)),
+            RitualDefinition.of("natures_power", RitualCircleDetector.CircleSize.MEDIUM,
+                    WitcheryItems::isBrewOfSprouting, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfNaturesPower(player, level, center)),
+            RitualDefinition.of("blight", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(Items.WITHER_ROSE), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfBlight(player, level, center)),
+            RitualDefinition.of("corrupt_poppet", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCorruptPoppet(player, level, center)),
+            RitualDefinition.of("transposition_entity", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfTranspositionEntity(player, level, center, trigger)),
+            RitualDefinition.of("bind_spectral_stone", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.SPECTRAL_STONE.get()) && !SpectralStoneItem.isBound(item), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindSpectralStone(player, level, center, trigger)),
+            RitualDefinition.of("bind_fetish", RitualCircleDetector.CircleSize.MEDIUM,
+                    RitualExecutor::isFetishItem, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindSpiritsToFetish(player, level, center, trigger)),
+
+            // ── Large ring ──
+            RitualDefinition.of("beastial_call", RitualCircleDetector.CircleSize.LARGE,
+                    RitualExecutor::isBeastialCallTrigger, VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfBeastialCall(player, level, center)),
+            RitualDefinition.of("transpose_ores", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(WitcheryItems.DIAMOND_VAPOUR.get()), VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfTransposeOres(player, level, center)),
+            RitualDefinition.of("moving_earth", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfMovingEarth(player, level, center)),
+            RitualDefinition.of("volcano", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.LAVA_BUCKET), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfVolcano(player, level, center)),
+            RitualDefinition.of("broken_earth", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> { riteOfBrokenEarth(player, level, center); return true; }),
+            RitualDefinition.of("raise_column_large", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.COBBLESTONE) || item.is(Items.STONE), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE)),
+            RitualDefinition.of("curse_waking_nightmare", RitualCircleDetector.CircleSize.LARGE,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseWakingNightmare(player, level, center)),
+            RitualDefinition.of("summon_imp", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(WitcheryItems.REFINED_EVIL.get()), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfSummonImp(player, level, center)),
+            RitualDefinition.of("summon_demon", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(WitcheryItems.TORMENTED_TWINE.get()), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfSummonDemon(player, level, center)),
+            RitualDefinition.of("summoning_lord_of_torment", RitualCircleDetector.CircleSize.LARGE,
+                    WitcheryItems::isTormentContract, RitualDefinition.ANY_VARIANT,
+                    (player, level, center, trigger) -> riteOfSummoningLordOfTorment(player, level, center)));
 
     /**
      * Try the data-driven {@link RitualDefinition} table for the given ring. Returns the activation
@@ -364,7 +437,7 @@ public class RitualExecutor {
             Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
             if (definition.matches(size, item, circleVariant)) {
-                return matchedResult(definition.run(player, level, center));
+                return matchedResult(definition.run(player, level, center, item));
             }
         }
         return null;
@@ -481,19 +554,13 @@ public class RitualExecutor {
     // ── Medium ring dispatch ───────────────────────────────────────────────────
 
     private static ActivationResult dispatchMedium(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if (item.is(WitcheryItems.WHIFF_OF_MAGIC.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfWhiffOfMagicFamiliar(player, level, center));
-        } else if ((item.is(WitcheryItems.TEAR_OF_GODDESS.get())
-                || item.is(WitcheryItems.ODOUR_OF_PURITY.get()))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindFamiliar(player, level, center));
-        } else if ((item.is(WitcheryItems.BREATH_OF_GODDESS.get())
-                || item.is(WitcheryItems.HINT_OF_REBIRTH.get()))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfCallFamiliar(player, level, center));
-        } else if (item.is(ItemTags.SAPLINGS) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfTheForest(player, level, center, item));
-        } else if (isPotion(item, Potions.REGENERATION)
+        ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.MEDIUM,
+                player, level, center, item, circleVariant);
+        if (byDefinition != null) {
+            return byDefinition;
+        }
+
+        if (isPotion(item, Potions.REGENERATION)
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfInfusionRecharge(player, level, center));
@@ -527,18 +594,6 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
             return matchedResult(riteOfInfuseBrew(player, level, center));
-        } else if ((item.is(Items.LILY_PAD) || item.is(Items.FROGSPAWN))
-                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfRainOfToads(player, level, center));
-        } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.MEDIUM));
-        } else if (WitcheryItems.isBrewOfSprouting(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfNaturesPower(player, level, center));
-        } else if (item.is(Items.WITHER_ROSE) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfBlight(player, level, center));
-        } else if (item.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCorruptPoppet(player, level, center));
         } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {
@@ -555,16 +610,6 @@ public class RitualExecutor {
                 return matchedResult(riteOfCurseInsanity(player, level, center));
             }
             return ActivationResult.NO_MATCH;
-        } else if (TaglockKitItem.isTaglockKit(item)
-                && TaglockKitItem.isFilled(item)
-                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return matchedResult(riteOfTranspositionEntity(player, level, center, item));
-        } else if (item.is(WitcheryItems.SPECTRAL_STONE.get())
-                && !SpectralStoneItem.isBound(item)
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindSpectralStone(player, level, center, item));
-        } else if (isFetishItem(item) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindSpiritsToFetish(player, level, center, item));
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -573,47 +618,26 @@ public class RitualExecutor {
     // ── Large ring dispatch ────────────────────────────────────────────────────
 
     private static ActivationResult dispatchLarge(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
-        if (isBeastialCallTrigger(item)
-                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return matchedResult(riteOfBeastialCall(player, level, center));
-        } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return matchedResult(riteOfTransposeOres(player, level, center));
-        } else if ((item.is(Items.DIRT) || item.is(Items.GRAVEL) || item.is(Items.SAND))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfMovingEarth(player, level, center));
-        } else if (item.is(Items.LAVA_BUCKET) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfVolcano(player, level, center));
-        } else if ((item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            riteOfBrokenEarth(player, level, center);
-            return successResult();
-        } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE));
-        } else if (item.is(Items.NETHER_STAR)
+        ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.LARGE,
+                player, level, center, item, circleVariant);
+        if (byDefinition != null) {
+            return byDefinition;
+        }
+
+        if (item.is(Items.NETHER_STAR)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)) {
             return matchedResult(riteOfCurseHellOnEarth(player, level, center));
-        } else if (TaglockKitItem.isTaglockKit(item)
-                && TaglockKitItem.isFilled(item)
-                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseWakingNightmare(player, level, center));
         } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (shouldLetMediumChargeStoneHandle(level, center)) {
                 return ActivationResult.NO_MATCH;
             }
             return matchedResult(riteOfClimateChange(player, level, center));
-        } else if (item.is(WitcheryItems.REFINED_EVIL.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfSummonImp(player, level, center));
-        } else if (item.is(WitcheryItems.TORMENTED_TWINE.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfSummonDemon(player, level, center));
         } else if (item.is(Items.WITHER_SKELETON_SKULL)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
             return matchedResult(riteOfSummonWither(player, level, center));
-        } else if (WitcheryItems.isTormentContract(item)) {
-            return matchedResult(riteOfSummoningLordOfTorment(player, level, center));
         } else {
             return ActivationResult.NO_MATCH;
         }

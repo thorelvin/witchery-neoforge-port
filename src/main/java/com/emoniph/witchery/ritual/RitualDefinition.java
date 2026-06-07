@@ -23,10 +23,15 @@ import java.util.function.Predicate;
  */
 public final class RitualDefinition {
 
-    /** The effect a matched rite runs; returns whether it succeeded (as the old {@code riteOf*} booleans). */
+    /**
+     * The effect a matched rite runs; returns whether it succeeded (as the old {@code riteOf*}
+     * booleans). The triggering dropped {@code item} is passed through for the rites that consume it
+     * (e.g. the sapling for Rite of the Forest, the taglock for entity transposition); rites that do
+     * not need it simply ignore the argument.
+     */
     @FunctionalInterface
     public interface Effect {
-        boolean run(Player player, Level level, BlockPos center);
+        boolean run(Player player, Level level, BlockPos center, ItemStack item);
     }
 
     /** Sentinel for "any circle variant" — the rite does not gate on Ritual/Infernal/Otherwhere. */
@@ -67,7 +72,7 @@ public final class RitualDefinition {
                 && trigger.test(item);
     }
 
-    public boolean run(Player player, Level level, BlockPos center) {
-        return effect.run(player, level, center);
+    public boolean run(Player player, Level level, BlockPos center, ItemStack item) {
+        return effect.run(player, level, center, item);
     }
 }
