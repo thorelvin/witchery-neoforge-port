@@ -315,9 +315,80 @@ public class RitualExecutor {
         return false;
     }
 
+    // ── Data-driven rite definitions ───────────────────────────────────────────
+    // The simple "trigger item (+ ring variant) -> riteOf..." rites are dispatched from this table
+    // instead of the if-chains below. Each migrated trigger is unique within its ring's dispatch, so
+    // consulting definitions first yields exactly the rite the old ordered chain would have. Offerings
+    // and altar power are still validated inside each effect via RitualTransaction.
+    private static final List<RitualDefinition> RITUAL_DEFINITIONS = List.of(
+            RitualDefinition.of("summon_witch", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.DIAMOND_VAPOUR.get()), VARIANT_INFERNAL,
+                    RitualExecutor::riteOfSummonWitch),
+            RitualDefinition.of("summon_familiar", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.DROP_OF_LUCK.get()), VARIANT_RITUAL,
+                    RitualExecutor::riteOfSummonFamiliar),
+            RitualDefinition.of("prior_incarnation", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.ROTTEN_FLESH), VARIANT_INFERNAL,
+                    RitualExecutor::riteOfPriorIncarnation),
+            RitualDefinition.of("ice_shell", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.FROZEN_HEART.get()), RitualDefinition.ANY_VARIANT,
+                    RitualExecutor::riteOfIceShell),
+            RitualDefinition.of("storm_base", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.SNOWBALL), VARIANT_RITUAL,
+                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.BASE)),
+            RitualDefinition.of("storm_large", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.WATER_BUCKET), VARIANT_RITUAL,
+                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE)),
+            RitualDefinition.of("storm_portable", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.GUNPOWDER), VARIANT_RITUAL,
+                    (player, level, center) -> riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE)),
+            RitualDefinition.of("sanctity", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.FEATHER), VARIANT_RITUAL,
+                    RitualExecutor::riteOfSanctity),
+            RitualDefinition.of("imprisonment", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.SLIME_BALL), VARIANT_RITUAL,
+                    RitualExecutor::riteOfImprisonment),
+            RitualDefinition.of("cook_item", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.SUGAR), VARIANT_INFERNAL,
+                    RitualExecutor::riteOfCookItem),
+            RitualDefinition.of("infuse_seer_stone", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.QUARTZ_SPHERE.get()), VARIANT_RITUAL,
+                    RitualExecutor::riteOfInfuseSeerStone));
+
+    /**
+     * Try the data-driven {@link RitualDefinition} table for the given ring. Returns the activation
+     * result if a definition matched (success or matched-but-failed), or {@code null} if no definition
+     * applies and the caller should fall through to the remaining {@code if}-chain.
+     */
+    private static ActivationResult tryRitualDefinitions(RitualCircleDetector.CircleSize size,
+            Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+        for (RitualDefinition definition : RITUAL_DEFINITIONS) {
+            if (definition.matches(size, item, circleVariant)) {
+                return matchedResult(definition.run(player, level, center));
+            }
+        }
+        return null;
+    }
+
+    /** Test hook: the name of the rite definition the dropped item would trigger, or {@code null}. */
+    static String matchingRitualDefinitionName(RitualCircleDetector.CircleSize size, ItemStack item, int circleVariant) {
+        for (RitualDefinition definition : RITUAL_DEFINITIONS) {
+            if (definition.matches(size, item, circleVariant)) {
+                return definition.name();
+            }
+        }
+        return null;
+    }
+
     // ── Small ring dispatch ────────────────────────────────────────────────────
 
     private static ActivationResult dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
+        ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.SMALL,
+                player, level, center, item, circleVariant);
+        if (byDefinition != null) {
+            return byDefinition;
+        }
+
         // Infusion brew bases take priority — each grants a specific infusion type
         if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
@@ -355,10 +426,6 @@ public class RitualExecutor {
             return matchedResult(riteOfBreathOfTheGoddessCure(player, level, center));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
             return matchedResult(riteOfBlindness(player, level, center));
-        } else if (item.is(WitcheryItems.DIAMOND_VAPOUR.get()) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfSummonWitch(player, level, center));
-        } else if (item.is(WitcheryItems.DROP_OF_LUCK.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfSummonFamiliar(player, level, center));
         } else if (WaystoneItem.isBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
@@ -391,20 +458,6 @@ public class RitualExecutor {
             return matchedResult(riteOfSpectralStone(player, level, center));
         } else if (item.is(WitcheryItems.SPECTRAL_DUST.get()) && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfManifestationDream(player, level, center));
-        } else if (item.is(Items.ROTTEN_FLESH) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfPriorIncarnation(player, level, center));
-        } else if (item.is(WitcheryItems.FROZEN_HEART.get())) {
-            return matchedResult(riteOfIceShell(player, level, center));
-        } else if (item.is(Items.SNOWBALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.BASE));
-        } else if (item.is(Items.WATER_BUCKET) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.LARGE));
-        } else if (item.is(Items.GUNPOWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfWeatherCallStorm(player, level, center, StormRiteVariant.PORTABLE));
-        } else if (item.is(Items.FEATHER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfSanctity(player, level, center));
-        } else if (item.is(Items.SLIME_BALL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfImprisonment(player, level, center));
         } else if (item.is(Items.OBSIDIAN.asItem()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE)).isEmpty()
                     && findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())).isPresent()) {
@@ -417,14 +470,9 @@ public class RitualExecutor {
                     RitualCircleDetector.CircleSize.SMALL, 4, 5));
         } else if (item.is(Items.BLAZE_POWDER) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBanishDemon(player, level, center, false));
-        } else if (item.is(Items.SUGAR) && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCookItem(player, level, center));
         } else if ((item.is(Items.COBBLESTONE) || item.is(Items.STONE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.SMALL));
-        } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfuseSeerStone(player, level, center));
         } else {
             return ActivationResult.NO_MATCH;
         }
