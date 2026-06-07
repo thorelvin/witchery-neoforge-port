@@ -119,6 +119,18 @@
       ],
       "text": "[#](53341a)**Diamond Vapour** and a **Ghast Tear** distil at once into Odour of Purity, Reek of Misfortune, Foul Fume, and Refined Evil — three clay jars catch the run. A second way to the Odour, if saplings are scarce.[#]()",
       "title": "Two In, Four Out"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:advancement",
+        "advancement_id": "witchery:guide/obtained/diamond_vapour"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)You have drawn your first Diamond Vapour, pupil — the Distillery has taken to your hand. Feed it well, and its essences need never run dry.[#]()",
+      "title": "First Distillation",
+      "use_markdown_in_title": false
     }
   ],
   "show_when_any_parent_unlocked": false,

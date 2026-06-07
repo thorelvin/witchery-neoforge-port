@@ -7,6 +7,7 @@ import com.klikli_dev.modonomicon.api.datagen.book.BookEntryModel;
 import com.klikli_dev.modonomicon.api.datagen.book.BookIconModel;
 import com.klikli_dev.modonomicon.api.datagen.book.BookModel;
 import com.klikli_dev.modonomicon.api.datagen.book.condition.BookAdvancementConditionModel;
+import com.klikli_dev.modonomicon.api.datagen.book.page.BookTextPageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookCraftingRecipePageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookEntityPageModel;
 import com.emoniph.witchery.book.page.StationRecipePageModel;
@@ -470,6 +471,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 WitcheryItems.DIAMOND_VAPOUR.get(), Items.GHAST_TEAR,
                 WitcheryItems.ODOUR_OF_PURITY.get(), WitcheryItems.REEK_OF_MISFORTUNE.get(),
                 WitcheryItems.FOUL_FUME.get(), WitcheryItems.REFINED_EVIL.get()));
+        // Page-level reveal: this page stays hidden until the witch has actually produced Diamond
+        // Vapour at the distillery (the guide/obtained/diamond_vapour advancement fires on pickup).
+        distillery.add(BookTextPageModel.create()
+                .withTitle(Component.literal("First Distillation"))
+                .withText(WitcheryBooks.ink(
+                        "You have drawn your first Diamond Vapour, pupil — the Distillery has taken to your "
+                                + "hand. Feed it well, and its essences need never run dry."))
+                .withCondition(BookAdvancementConditionModel.create()
+                        .withAdvancementId(id("guide/obtained/diamond_vapour"))));
         cat.withEntries(
                 entry(cat, "distilling/distillery", "The Distillery", WitcheryItems.DISTILLERY.get(), 0, distillery),
                 whatsNext(cat, "distilling", 1, "book_circle_magic", "Witchcraft: Circle Magic", WitcheryItems.BOOK_CIRCLE_MAGIC.get(), "Circle Magic",
