@@ -401,6 +401,46 @@ public class RitualExecutor {
                             || findCureSinkingOfferings(level, center).isPresent()
                             || findCureOverheatingOfferings(level, center).isPresent()
                             || findCureWakingNightmareOfferings(level, center).isPresent()),
+            // Bone Meal: Portable Fertility (with offerings) else plain Fertility.
+            RitualDefinition.of("portable_fertility", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.BONE_MEAL), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfPortableFertility(player, level, center))
+                    .requiringOffering((level, center) -> findPortableFertilityOfferings(level, center).isPresent()),
+            RitualDefinition.of("fertility", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.BONE_MEAL), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfFertility(player, level, center)),
+            // Attuned Stone: Charge Stone (Medium companion + offerings) else Necromantic Stone (offerings).
+            RitualDefinition.of("charge_stone_small", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.ATTUNED_STONE.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfChargeStone(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL))
+                    .requiringOffering((level, center) -> findChargeStoneOfferings(level, center).isPresent()),
+            RitualDefinition.of("necromantic_stone", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.ATTUNED_STONE.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfNecromanticStone(player, level, center))
+                    .requiringOffering((level, center) -> findNecromanticStoneOfferings(level, center).isPresent()),
+            // Charged Attuned Stone: portable Protection Barrier (with Obsidian offered) else Banish Demon.
+            RitualDefinition.of("protection_barrier_charged", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfProtectionBarrier(player, level, center,
+                            ActiveRitualType.PROTECTION_BARRIER_PORTABLE, RitualCircleDetector.CircleSize.SMALL, 6, 4))
+                    .requiringOffering((level, center) ->
+                            findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack).isPresent()),
+            RitualDefinition.of("banish_demon_charged", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBanishDemon(player, level, center, true)),
+            // Obsidian: portable Protection Barrier (Charged Stone offered, no Redstone) else Monsters Barrier.
+            RitualDefinition.of("obsidian_barrier_portable", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.OBSIDIAN), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfProtectionBarrier(player, level, center,
+                            ActiveRitualType.PROTECTION_BARRIER_PORTABLE, RitualCircleDetector.CircleSize.SMALL, 6, 4))
+                    .requiringOffering((level, center) ->
+                            findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE)).isEmpty()
+                            && findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())).isPresent()),
+            RitualDefinition.of("obsidian_barrier_monsters", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(Items.OBSIDIAN), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfProtectionBarrier(player, level, center,
+                            ActiveRitualType.PROTECTION_BARRIER_MONSTERS, RitualCircleDetector.CircleSize.SMALL, 4, 5)),
 
             // ── Medium ring ──
             // Companion-Small-ring rites (Ritual chalk inner ring).
@@ -470,6 +510,23 @@ public class RitualExecutor {
                     (player, level, center, trigger) -> riteOfProtection(player, level, center))
                     .requiringOffering((level, center) ->
                             findNearbyRitualOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST)).isPresent()),
+            // Filled taglock on an Infernal ring: the curse family, chosen by which curse offerings are present.
+            RitualDefinition.of("curse_creature", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseCreature(player, level, center))
+                    .requiringOffering((level, center) -> findCurseCreatureOfferings(level, center).isPresent()),
+            RitualDefinition.of("curse_sinking", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseSinking(player, level, center))
+                    .requiringOffering((level, center) -> findCurseSinkingOfferings(level, center).isPresent()),
+            RitualDefinition.of("curse_overheating", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseOverheating(player, level, center))
+                    .requiringOffering((level, center) -> findCurseOverheatingOfferings(level, center).isPresent()),
+            RitualDefinition.of("curse_insanity", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseInsanity(player, level, center))
+                    .requiringOffering((level, center) -> findCurseInsanityOfferings(level, center).isPresent()),
 
             // ── Large ring ──
             RitualDefinition.of("beastial_call", RitualCircleDetector.CircleSize.LARGE,
@@ -501,7 +558,17 @@ public class RitualExecutor {
                     (player, level, center, trigger) -> riteOfSummonDemon(player, level, center)),
             RitualDefinition.of("summoning_lord_of_torment", RitualCircleDetector.CircleSize.LARGE,
                     WitcheryItems::isTormentContract, RitualDefinition.ANY_VARIANT,
-                    (player, level, center, trigger) -> riteOfSummoningLordOfTorment(player, level, center)));
+                    (player, level, center, trigger) -> riteOfSummoningLordOfTorment(player, level, center)),
+            // Companion-ring-gated large rites (no offering, no disambiguation).
+            RitualDefinition.of("hell_on_earth", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.NETHER_STAR), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfCurseHellOnEarth(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)),
+            RitualDefinition.of("summon_wither", RitualCircleDetector.CircleSize.LARGE,
+                    item -> item.is(Items.WITHER_SKELETON_SKULL), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfSummonWither(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)));
 
     /**
      * Try the data-driven {@link RitualDefinition} table for the given ring. Returns the activation
@@ -572,30 +639,9 @@ public class RitualExecutor {
             return byDefinition;
         }
 
-        if (item.is(Items.BONE_MEAL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (findPortableFertilityOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfPortableFertility(player, level, center));
-            }
-            return matchedResult(riteOfFertility(player, level, center));
-        } else if (WaystoneItem.isBoundWaystone(item)
+        if (WaystoneItem.isBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (findNearbyRitualOffering(level, center, RitualExecutor::isObsidianStack).isPresent()) {
-                return matchedResult(riteOfProtectionBarrier(player, level, center,
-                        ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
-                        RitualCircleDetector.CircleSize.SMALL, 6, 4));
-            }
-            return matchedResult(riteOfBanishDemon(player, level, center, true));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)
-                    && findChargeStoneOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfChargeStone(player, level, center));
-            }
-            if (findNecromanticStoneOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfNecromanticStone(player, level, center));
-            }
-            return ActivationResult.NO_MATCH;
         } else if (WaystoneItem.isBlankWaystone(item)
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (findBindBloodedWaystoneOfferings(level, center).isPresent()) {
@@ -605,16 +651,6 @@ public class RitualExecutor {
         } else if (WaystoneItem.isAnyBoundWaystone(item)
                 && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
             return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
-        } else if (item.is(Items.OBSIDIAN.asItem()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (findNearbyRitualOffering(level, center, stack -> stack.is(Items.REDSTONE)).isEmpty()
-                    && findNearbyRitualOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())).isPresent()) {
-                return matchedResult(riteOfProtectionBarrier(player, level, center,
-                        ActiveRitualType.PROTECTION_BARRIER_PORTABLE,
-                        RitualCircleDetector.CircleSize.SMALL, 6, 4));
-            }
-            return matchedResult(riteOfProtectionBarrier(player, level, center,
-                    ActiveRitualType.PROTECTION_BARRIER_MONSTERS,
-                    RitualCircleDetector.CircleSize.SMALL, 4, 5));
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -638,22 +674,6 @@ public class RitualExecutor {
                 return ActivationResult.NO_MATCH;
             }
             return matchedResult(riteOfInfuseCrystalBall(player, level, center));
-        } else if (TaglockKitItem.isTaglockKit(item)
-                && TaglockKitItem.isFilled(item)
-                && hasVariant(circleVariant, VARIANT_INFERNAL)) {
-            if (findCurseCreatureOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfCurseCreature(player, level, center));
-            }
-            if (findCurseSinkingOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfCurseSinking(player, level, center));
-            }
-            if (findCurseOverheatingOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfCurseOverheating(player, level, center));
-            }
-            if (findCurseInsanityOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfCurseInsanity(player, level, center));
-            }
-            return ActivationResult.NO_MATCH;
         } else {
             return ActivationResult.NO_MATCH;
         }
@@ -668,20 +688,11 @@ public class RitualExecutor {
             return byDefinition;
         }
 
-        if (item.is(Items.NETHER_STAR)
-                && hasVariant(circleVariant, VARIANT_INFERNAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfCurseHellOnEarth(player, level, center));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
+        if (item.is(WitcheryItems.ATTUNED_STONE.get()) && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (shouldLetMediumChargeStoneHandle(level, center)) {
                 return ActivationResult.NO_MATCH;
             }
             return matchedResult(riteOfClimateChange(player, level, center));
-        } else if (item.is(Items.WITHER_SKELETON_SKULL)
-                && hasVariant(circleVariant, VARIANT_INFERNAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfSummonWither(player, level, center));
         } else {
             return ActivationResult.NO_MATCH;
         }

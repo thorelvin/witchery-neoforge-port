@@ -151,4 +151,25 @@ class RitualDefinitionTest {
         // charge_stone_medium carries both a companion ring and an offering requirement.
         assertEquals(List.of("SMALL:" + RITUAL), rings(MEDIUM, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
     }
+
+    @Test
+    void disambiguationOrderingListsTheOfferingGatedRiteFirst() {
+        // For a shared trigger, the offering-gated definition is listed before its fallback, so it
+        // wins when its offering is present (the trigger-match hook returns that first entry).
+        assertEquals("portable_fertility", match(SMALL, new ItemStack(Items.BONE_MEAL), RITUAL));
+        assertEquals("charge_stone_small", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
+        assertEquals("protection_barrier_charged", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()), RITUAL));
+        assertEquals("obsidian_barrier_portable", match(SMALL, new ItemStack(Items.OBSIDIAN), RITUAL));
+        // The small Charge Stone rite still requires its Medium companion ring.
+        assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
+    }
+
+    @Test
+    void largeCompanionGatedRitesAreInTheTable() {
+        assertEquals("hell_on_earth", match(LARGE, new ItemStack(Items.NETHER_STAR), INFERNAL));
+        assertEquals(List.of("MEDIUM:" + OTHERWHERE, "SMALL:" + INFERNAL),
+                rings(LARGE, new ItemStack(Items.NETHER_STAR), INFERNAL));
+        assertEquals("summon_wither", match(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
+        assertEquals(List.of("MEDIUM:" + INFERNAL), rings(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
+    }
 }
