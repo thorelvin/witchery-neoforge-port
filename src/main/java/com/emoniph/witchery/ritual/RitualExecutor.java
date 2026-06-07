@@ -632,6 +632,11 @@ public class RitualExecutor {
         return true;
     }
 
+    /** Test hook: every rite definition name in table order. */
+    static java.util.List<String> allRitualDefinitionNames() {
+        return RITUAL_DEFINITIONS.stream().map(RitualDefinition::name).toList();
+    }
+
     /** Test hook: the name of the rite definition the dropped item would trigger, or {@code null}. */
     static String matchingRitualDefinitionName(RitualCircleDetector.CircleSize size, ItemStack item, int circleVariant) {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {

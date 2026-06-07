@@ -196,4 +196,11 @@ class RitualDefinitionTest {
         assertEquals("summon_wither", match(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
         assertEquals(List.of("MEDIUM:" + INFERNAL), rings(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
     }
+
+    @Test
+    void definitionNamesAreUniqueAndRosterIsLocked() {
+        List<String> names = RitualExecutor.allRitualDefinitionNames();
+        assertEquals(70, names.size(), "ritual definition roster size");
+        assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
+    }
 }
