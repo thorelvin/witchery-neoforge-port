@@ -1,8 +1,11 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.WaystoneItem;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -162,6 +165,20 @@ class RitualDefinitionTest {
         assertEquals("obsidian_barrier_portable", match(SMALL, new ItemStack(Items.OBSIDIAN), RITUAL));
         // The small Charge Stone rite still requires its Medium companion ring.
         assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
+    }
+
+    @Test
+    void waystoneRitesResolveByBindingStateAndVariant() {
+        ItemStack bound = new ItemStack(WitcheryItems.WAYSTONE.get());
+        WaystoneItem.bindTo(bound, BlockPos.ZERO, Level.OVERWORLD);
+        assertEquals("bind_waystone_copy", match(SMALL, bound, RITUAL));
+        assertEquals("transposition_to_waystone", match(SMALL, bound, OTHERWHERE));
+
+        ItemStack blank = new ItemStack(WitcheryItems.WAYSTONE.get());
+        // Blank waystone on a Ritual ring: the offering-gated Blooded rite is listed before plain bind.
+        assertEquals("bind_blooded_waystone", match(SMALL, blank, RITUAL));
+        // Blank is not any-bound, so an Otherwhere ring transposes nothing.
+        assertNull(match(SMALL, blank, OTHERWHERE));
     }
 
     @Test

@@ -441,6 +441,23 @@ public class RitualExecutor {
                     item -> item.is(Items.OBSIDIAN), VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfProtectionBarrier(player, level, center,
                             ActiveRitualType.PROTECTION_BARRIER_MONSTERS, RitualCircleDetector.CircleSize.SMALL, 4, 5)),
+            // Waystones. Bound (location) -> copy on a Ritual ring; blank -> Blooded (with offerings)
+            // else plain bind; any bound (location or filled Blooded) -> transposition on an Otherwhere ring.
+            // isBoundWaystone/isBlankWaystone are disjoint and the variants separate copy from transposition,
+            // so order only matters for blooded-before-bind.
+            RitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isBoundWaystone, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindWaystoneCopy(player, level, center, trigger)),
+            RitualDefinition.of("bind_blooded_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isBlankWaystone, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindBloodedWaystone(player, level, center))
+                    .requiringOffering((level, center) -> findBindBloodedWaystoneOfferings(level, center).isPresent()),
+            RitualDefinition.of("bind_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isBlankWaystone, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindWaystone(player, level, center)),
+            RitualDefinition.of("transposition_to_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isAnyBoundWaystone, VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfTranspositionToWaystone(player, level, center, trigger)),
 
             // ── Medium ring ──
             // Companion-Small-ring rites (Ritual chalk inner ring).
@@ -635,25 +652,7 @@ public class RitualExecutor {
     private static ActivationResult dispatchSmall(Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         ActivationResult byDefinition = tryRitualDefinitions(RitualCircleDetector.CircleSize.SMALL,
                 player, level, center, item, circleVariant);
-        if (byDefinition != null) {
-            return byDefinition;
-        }
-
-        if (WaystoneItem.isBoundWaystone(item)
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            return matchedResult(riteOfBindWaystoneCopy(player, level, center, item));
-        } else if (WaystoneItem.isBlankWaystone(item)
-                && hasVariant(circleVariant, VARIANT_RITUAL)) {
-            if (findBindBloodedWaystoneOfferings(level, center).isPresent()) {
-                return matchedResult(riteOfBindBloodedWaystone(player, level, center));
-            }
-            return matchedResult(riteOfBindWaystone(player, level, center));
-        } else if (WaystoneItem.isAnyBoundWaystone(item)
-                && hasVariant(circleVariant, VARIANT_OTHERWHERE)) {
-            return matchedResult(riteOfTranspositionToWaystone(player, level, center, item));
-        } else {
-            return ActivationResult.NO_MATCH;
-        }
+        return byDefinition != null ? byDefinition : ActivationResult.NO_MATCH;
     }
 
     // ── Medium ring dispatch ───────────────────────────────────────────────────
