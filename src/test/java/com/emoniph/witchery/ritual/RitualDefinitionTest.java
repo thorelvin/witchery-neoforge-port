@@ -5,6 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -30,6 +32,10 @@ class RitualDefinitionTest {
 
     private static String match(RitualCircleDetector.CircleSize size, ItemStack item, int variant) {
         return RitualExecutor.matchingRitualDefinitionName(size, item, variant);
+    }
+
+    private static List<String> rings(RitualCircleDetector.CircleSize size, ItemStack item, int variant) {
+        return RitualExecutor.matchingRitualDefinitionCompanionRings(size, item, variant);
     }
 
     @Test
@@ -92,6 +98,26 @@ class RitualDefinitionTest {
         assertEquals("broken_earth", match(LARGE, new ItemStack(Items.FLINT), RITUAL));
         assertEquals("summon_imp", match(LARGE, new ItemStack(WitcheryItems.REFINED_EVIL.get()), INFERNAL));
         assertEquals("summon_demon", match(LARGE, new ItemStack(WitcheryItems.TORMENTED_TWINE.get()), INFERNAL));
+    }
+
+    @Test
+    void companionGatedRitesAreInTheTableWithTheirRings() {
+        // Small infusion bases require a Medium companion ring in the matching chalk family.
+        assertEquals("infuse_light", match(SMALL, new ItemStack(WitcheryItems.GHOST_OF_THE_LIGHT.get()), RITUAL));
+        assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.GHOST_OF_THE_LIGHT.get()), RITUAL));
+        assertEquals("infuse_overworld", match(SMALL, new ItemStack(WitcheryItems.SOUL_OF_THE_WORLD.get()), RITUAL));
+        assertEquals("infuse_otherwhere", match(SMALL, new ItemStack(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()), OTHERWHERE));
+        assertEquals(List.of("MEDIUM:" + OTHERWHERE), rings(SMALL, new ItemStack(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()), OTHERWHERE));
+        assertEquals("infuse_infernal", match(SMALL, new ItemStack(WitcheryItems.INFERNAL_ANIMUS.get()), INFERNAL));
+
+        // Medium rites gated on a companion Small ring.
+        assertEquals("enchant_broom", match(MEDIUM, new ItemStack(WitcheryItems.FLYING_OINTMENT.get()), RITUAL));
+        assertEquals(List.of("SMALL:" + RITUAL), rings(MEDIUM, new ItemStack(WitcheryItems.FLYING_OINTMENT.get()), RITUAL));
+        assertEquals("mystic_branch", match(MEDIUM, new ItemStack(WitcheryItems.ENT_TWIG.get()), RITUAL));
+        assertEquals("infuse_brew", match(MEDIUM, new ItemStack(WitcheryItems.INFUSED_BREW_BASE.get()), RITUAL));
+
+        // A rite with no companion requirement reports none.
+        assertEquals(List.of(), rings(SMALL, new ItemStack(Items.FEATHER), RITUAL));
     }
 
     @Test

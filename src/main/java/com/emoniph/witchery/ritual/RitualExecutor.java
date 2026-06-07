@@ -322,6 +322,23 @@ public class RitualExecutor {
     // and altar power are still validated inside each effect via RitualTransaction.
     private static final List<RitualDefinition> RITUAL_DEFINITIONS = List.of(
             // ── Small ring ──
+            // Infusion brew bases — each needs a companion Medium ring in the matching chalk family.
+            RitualDefinition.of("infuse_light", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfusion(player, level, center, InfusionType.LIGHT),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)),
+            RitualDefinition.of("infuse_overworld", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.SOUL_OF_THE_WORLD.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfusion(player, level, center, InfusionType.OVERWORLD),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)),
+            RitualDefinition.of("infuse_otherwhere", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()), VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfInfusion(player, level, center, InfusionType.OTHERWHERE),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)),
+            RitualDefinition.of("infuse_infernal", RitualCircleDetector.CircleSize.SMALL,
+                    item -> item.is(WitcheryItems.INFERNAL_ANIMUS.get()), VARIANT_INFERNAL,
+                    (player, level, center, trigger) -> riteOfInfusion(player, level, center, InfusionType.INFERNAL),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)),
             RitualDefinition.of("summon_witch", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(WitcheryItems.DIAMOND_VAPOUR.get()), VARIANT_INFERNAL,
                     (player, level, center, trigger) -> riteOfSummonWitch(player, level, center)),
@@ -357,6 +374,23 @@ public class RitualExecutor {
                     (player, level, center, trigger) -> riteOfInfuseSeerStone(player, level, center)),
 
             // ── Medium ring ──
+            // Companion-Small-ring rites (Ritual chalk inner ring).
+            RitualDefinition.of("infusion_recharge", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> isPotion(item, Potions.REGENERATION), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfusionRecharge(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
+            RitualDefinition.of("enchant_broom", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.FLYING_OINTMENT.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfEnchantBroom(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
+            RitualDefinition.of("mystic_branch", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.ENT_TWIG.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfuseMysticBranch(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
+            RitualDefinition.of("infuse_brew", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.INFUSED_BREW_BASE.get()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfInfuseBrew(player, level, center),
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
             RitualDefinition.of("whiff_of_magic_familiar", RitualCircleDetector.CircleSize.MEDIUM,
                     item -> item.is(WitcheryItems.WHIFF_OF_MAGIC.get()), VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfWhiffOfMagicFamiliar(player, level, center)),
@@ -436,11 +470,21 @@ public class RitualExecutor {
     private static ActivationResult tryRitualDefinitions(RitualCircleDetector.CircleSize size,
             Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
-            if (definition.matches(size, item, circleVariant)) {
+            if (definition.matches(size, item, circleVariant) && companionRingsPresent(definition, level, center)) {
                 return matchedResult(definition.run(player, level, center, item));
             }
         }
         return null;
+    }
+
+    /** Whether every companion ring a definition requires is currently drawn around the centre. */
+    private static boolean companionRingsPresent(RitualDefinition definition, Level level, BlockPos center) {
+        for (RitualDefinition.CompanionRing ring : definition.companionRings()) {
+            if (!hasCompanionRing(level, center, ring.size(), ring.variant())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Test hook: the name of the rite definition the dropped item would trigger, or {@code null}. */
@@ -448,6 +492,19 @@ public class RitualExecutor {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
             if (definition.matches(size, item, circleVariant)) {
                 return definition.name();
+            }
+        }
+        return null;
+    }
+
+    /** Test hook: the {@code "SIZE:variant"} companion rings the matched rite requires, or {@code null}. */
+    static java.util.List<String> matchingRitualDefinitionCompanionRings(
+            RitualCircleDetector.CircleSize size, ItemStack item, int circleVariant) {
+        for (RitualDefinition definition : RITUAL_DEFINITIONS) {
+            if (definition.matches(size, item, circleVariant)) {
+                return definition.companionRings().stream()
+                        .map(ring -> ring.size() + ":" + ring.variant())
+                        .toList();
             }
         }
         return null;
@@ -462,24 +519,7 @@ public class RitualExecutor {
             return byDefinition;
         }
 
-        // Infusion brew bases take priority — each grants a specific infusion type
-        if (item.is(WitcheryItems.GHOST_OF_THE_LIGHT.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfusion(player, level, center, InfusionType.LIGHT));
-        } else if (item.is(WitcheryItems.SOUL_OF_THE_WORLD.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfusion(player, level, center, InfusionType.OVERWORLD));
-        } else if (item.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get())
-                && hasVariant(circleVariant, VARIANT_OTHERWHERE)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_OTHERWHERE)) {
-            return matchedResult(riteOfInfusion(player, level, center, InfusionType.OTHERWHERE));
-        } else if (item.is(WitcheryItems.INFERNAL_ANIMUS.get())
-                && hasVariant(circleVariant, VARIANT_INFERNAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
-            return matchedResult(riteOfInfusion(player, level, center, InfusionType.INFERNAL));
-        } else if ((item.is(Items.STONE_AXE) || item.is(Items.IRON_AXE))
+        if ((item.is(Items.STONE_AXE) || item.is(Items.IRON_AXE))
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             return matchedResult(riteOfTotalEclipse(player, level, center, item));
         } else if (item.is(Items.BONE_MEAL) && hasVariant(circleVariant, VARIANT_RITUAL)) {
@@ -560,11 +600,7 @@ public class RitualExecutor {
             return byDefinition;
         }
 
-        if (isPotion(item, Potions.REGENERATION)
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfusionRecharge(player, level, center));
-        } else if (item.is(WitcheryItems.ATTUNED_STONE.get())
+        if (item.is(WitcheryItems.ATTUNED_STONE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)
                 && findChargeStoneOfferings(level, center).isPresent()) {
@@ -573,14 +609,6 @@ public class RitualExecutor {
                 && hasVariant(circleVariant, VARIANT_RITUAL)
                 && findNearbyRitualOffering(level, center, stack -> stack.is(Items.GLOWSTONE_DUST)).isPresent()) {
             return matchedResult(riteOfProtection(player, level, center));
-        } else if (item.is(WitcheryItems.FLYING_OINTMENT.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
-            return matchedResult(riteOfEnchantBroom(player, level, center));
-        } else if (item.is(WitcheryItems.ENT_TWIG.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfuseMysticBranch(player, level, center));
         } else if (item.is(WitcheryItems.QUARTZ_SPHERE.get())
                 && hasVariant(circleVariant, VARIANT_RITUAL)) {
             if (findCrystalBallOfferings(level, center).isEmpty()
@@ -590,10 +618,6 @@ public class RitualExecutor {
                 return ActivationResult.NO_MATCH;
             }
             return matchedResult(riteOfInfuseCrystalBall(player, level, center));
-        } else if (item.is(WitcheryItems.INFUSED_BREW_BASE.get())
-                && hasVariant(circleVariant, VARIANT_RITUAL)
-                && hasCompanionRing(level, center, RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)) {
-            return matchedResult(riteOfInfuseBrew(player, level, center));
         } else if (TaglockKitItem.isTaglockKit(item)
                 && TaglockKitItem.isFilled(item)
                 && hasVariant(circleVariant, VARIANT_INFERNAL)) {

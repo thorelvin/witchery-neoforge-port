@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -37,24 +38,39 @@ public final class RitualDefinition {
     /** Sentinel for "any circle variant" — the rite does not gate on Ritual/Infernal/Otherwhere. */
     public static final int ANY_VARIANT = -1;
 
+    /**
+     * A companion ring that must also surround the same centre for the rite to fire: a ring of
+     * {@code size} drawn in the {@code variant} chalk family. Checked by the executor against the
+     * world (it needs the level + centre), not by {@link #matches}.
+     */
+    public record CompanionRing(RitualCircleDetector.CircleSize size, int variant) {
+        public static CompanionRing of(RitualCircleDetector.CircleSize size, int variant) {
+            return new CompanionRing(size, variant);
+        }
+    }
+
     private final String name;
     private final RitualCircleDetector.CircleSize ringSize;
     private final Predicate<ItemStack> trigger;
     private final int requiredVariant;
     private final Effect effect;
+    private final List<CompanionRing> companionRings;
 
     private RitualDefinition(String name, RitualCircleDetector.CircleSize ringSize,
-                             Predicate<ItemStack> trigger, int requiredVariant, Effect effect) {
+                             Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
+                             List<CompanionRing> companionRings) {
         this.name = name;
         this.ringSize = ringSize;
         this.trigger = trigger;
         this.requiredVariant = requiredVariant;
         this.effect = effect;
+        this.companionRings = companionRings;
     }
 
     public static RitualDefinition of(String name, RitualCircleDetector.CircleSize ringSize,
-                                      Predicate<ItemStack> trigger, int requiredVariant, Effect effect) {
-        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect);
+                                      Predicate<ItemStack> trigger, int requiredVariant, Effect effect,
+                                      CompanionRing... companionRings) {
+        return new RitualDefinition(name, ringSize, trigger, requiredVariant, effect, List.of(companionRings));
     }
 
     public String name() {
@@ -63,6 +79,11 @@ public final class RitualDefinition {
 
     public RitualCircleDetector.CircleSize ringSize() {
         return ringSize;
+    }
+
+    /** Companion rings that must also be present; the executor checks these against the world. */
+    public List<CompanionRing> companionRings() {
+        return companionRings;
     }
 
     /** Does a {@code item} dropped on a {@code size} ring of this {@code circleVariant} trigger this rite? */
