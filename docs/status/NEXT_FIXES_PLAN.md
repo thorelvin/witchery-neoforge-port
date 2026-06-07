@@ -77,6 +77,7 @@ This backlog is separate from pure feature parity. The port is now far enough al
    `neoforge.mods.toml` still carries development-template comments and placeholders, and the optional JEI/Patchouli metadata should be reconciled with the actual dependency state in `build.gradle`. This is lower priority than parity, but it should be finished before any serious public release packaging.
 11. Add tests around the risky systems.
    The next quality jump is not just "more green builds" but focused tests around the systems most likely to regress: circle detection, ring ordering, ritual dispatch, no-consumption-on-failure rules, active-rite refunds, player-data copy/persistence, kettle recipe matching, and altar 2x3 validation plus contributor caps. The existing `gameTestServer` run config makes GameTests the most natural fit.
+   Landed so far (plain JVM `unitTest`): `RitualDefinitionTest` (data-driven dispatch mappings/gating), `RitualRecipeMatchTest`, `RitualPersistenceTest`, and `AltarPowerTest` (locks the Appendix-A power-source classification — per-block power + group caps via the package-private `AltarBlockEntity.powerContribution`/`powerSourceCap` hooks). Still open: altar 2x3 structure validation and the per-group cap math in `calculateMaxPower` (need a `Level`, so GameTest or a light fake), circle detection/ring ordering, and kettle recipe matching.
 
 ## Documentation and discovery backlog
 

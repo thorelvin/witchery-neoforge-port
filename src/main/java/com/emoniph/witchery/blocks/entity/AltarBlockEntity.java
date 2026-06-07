@@ -219,6 +219,18 @@ public class AltarBlockEntity extends BlockEntity {
         return null;
     }
 
+    /** Test hook: the altar power one block of {@code state} contributes (0 if it is not a source). */
+    static int powerContribution(BlockState state) {
+        Cat cat = classify(state);
+        return cat == null ? 0 : cat.power;
+    }
+
+    /** Test hook: the cap on how many blocks of {@code state}'s group count (0 if it is not a source). */
+    static int powerSourceCap(BlockState state) {
+        Cat cat = classify(state);
+        return cat == null ? 0 : cat.maxBlocks;
+    }
+
     private static int calculateMaxPower(Level level, BlockPos center) {
         Map<String, Integer> counts = new HashMap<>();
 
