@@ -9,6 +9,46 @@ Current target:
 
 ---
 
+## 2026-06-07 RitualExecutor → declarative dispatch (monolith split)
+
+Replaced the `RitualExecutor` dispatch monolith (the docs' "biggest technical-debt hotspot")
+with a **data-driven `RitualDefinition` registry**, in 11 behaviour-preserving slices, each
+verified by `./gradlew test`. `RitualExecutor` went 7,423 → ~6,084 lines (−18%); the test suite
+grew 107 → 130.
+
+Architecture / gotchas:
+- **`RitualDefinition`** is a rite as data: name, ring size, trigger `Predicate<ItemStack>`,
+  required circle variant (`ANY_VARIANT` sentinel), `Effect` (`(Player, Level, BlockPos, ItemStack)
+  -> boolean`), plus fluent `requiringOffering(...)`, `vetoedWhen(...)`, and `CompanionRing`
+  varargs. The model is immutable: `requiringOffering`/`vetoedWhen` return copies.
+- **`RITUAL_DEFINITIONS`** (70 entries) lives in `RitualExecutor`; `tryRitualDefinitions(size,
+  item, variant)` checks, in order, `matches()` (size+variant+trigger) && companion rings present
+  && offerings present && not vetoed, then runs the first match. `execute` calls it directly — the
+  old `dispatch{Small,Medium,Large}` if-ladders are gone.
+- **Ordered disambiguation**: one trigger → several rites is expressed by listing the offering-gated
+  definition before its fallback (e.g. `bone_meal`: portable_fertility | fertility). Order in the
+  list is the precedence.
+- **Behaviour parity rule** used throughout: each migrated trigger is unique within its ring (or
+  disambiguated by variant/offering), so consulting the table first yields exactly what the old
+  chain would have; an absent companion/offering or a held veto skips the definition and falls
+  through to the same NO_MATCH.
+- **Extractions** (each its own file, same package): `RitualTransaction` + `RitualOffering`
+  (cost/sacrifice), `RitualSavedData` (active-ritual state + codecs), `RitualOfferingSets` (~50
+  `*Offerings` DTOs), `RitualOfferings` (the `findNearbyOffering` scan primitives + ~50
+  `find*Offerings` matchers). `RitualOfferings` was reached from `RitualExecutor` via
+  `import static …RitualOfferings.*` so the ~270 call sites (incl. `findNearbyOffering` ×213)
+  needed no edits — note that **`import static` of package-private members works within the same
+  package**, which kept the moved methods package-private.
+- **Tests** (plain-JVM `unitTest`): `RitualDefinitionTest` (dispatch mappings/gating across rings,
+  cross-ring disambiguation), `RitualDefinitionModelTest` (the data model directly), `AltarPowerTest`
+  (Appendix-A power-source values via package-private `AltarBlockEntity.powerContribution`/
+  `powerSourceCap` hooks), and a roster-integrity check (70 defs, unique names).
+- **Debug**: `/witchery rite list` / `/witchery rite <name>` (GAMEMASTERS) force-run a definition's
+  effect at the player, bypassing dispatch gating (held item = trigger); the rite's own internal
+  power/offering checks still apply, so run near a powered altar.
+
+Full slice-by-slice log is in `docs/status/NEXT_FIXES_PLAN.md` (architecture item #1).
+
 ## 2026-06-05 Guidebook progression — book-aligned unlock chain
 
 Turned the finished 51-entry Primer into **one growing book** unlocked by crafting topic books.

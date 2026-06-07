@@ -42,7 +42,7 @@ The long tail is mostly old Witchery edge cases, in-game QA, final visuals, cust
 Substantial restored or in-progress systems include:
 
 - Altar power, kettle brewing, Witch's Oven, Distillery, Spinning Wheel, Brazier recipes, and Witch's Cauldron workings.
-- Circle Magic with a broad restored rite roster, staged active rites, altar power costs, ring/chalk-family checks, curse routes, and many transaction/refund fixes.
+- Circle Magic with a broad restored rite roster, staged active rites, altar power costs, ring/chalk-family checks, curse routes, and many transaction/refund fixes. Rite dispatch is **data-driven**: a single declarative `RitualDefinition` registry (70 rites) keyed on trigger item, ring size, chalk variant, companion rings, offering requirements, ordered disambiguation, and veto conditions — replacing the old hand-ordered `if`/`else if` ladders. The old `RitualExecutor` monolith was split into focused files (`RitualDefinition`, `RitualOfferings`, `RitualOfferingSets`, `RitualSavedData`, `RitualTransaction`/`RitualOffering`), behaviour-preserving and covered by headless JVM tests.
 - The **Mystic Branch** — the witch's wand and spell focus — forged through a night-time rite from an Ent Twig and Mystic Unguent. Glyphs traced in the air spend infused energy and demon-soul knowledge learned from slain demons (each soul teaches its own sign), while the branch also channels creature powers stolen from the world's beasts — swiftness, impossible leaps, healing, transposition, and bat-light levitation among them. An infusion type and learned-glyph set gate what a witch can cast; glyph and creature-power coverage is actively expanding, with `/witchery learn` and `/witchery infuse` available for testing.
 - Poppets, taglocks, familiars, creature traps, belts, vampire clothing, and many source-backed item recipe paths.
 - Vampirism and lycanthropy foundations, including vampire clothing set bonuses for feeding, fire survival, and mesmerise behavior.
@@ -119,6 +119,7 @@ The mod includes a growing `/witchery` debug command suite (permission level 2).
 - `/witchery spawn <entity>` — spawns registered Witchery entities for model/behavior QA.
 - `/witchery spawn wickerman` — places a summon-valid bloodied Wicker Man structure for Horned Huntsman testing.
 - `/witchery ritual hitchcock [count]` — releases a raven flock without consuming a brew.
+- `/witchery rite list` and `/witchery rite <name>` — list the data-driven rite definitions and force-fire one at the player (bypassing the dispatch gating; held item used as the trigger) to smoke-test the dispatch table. The rite's own internal power/offering checks still apply, so run it near a powered altar.
 - `/witchery guide unlock [all|<book>]` and `/witchery guide reset` — unlock or re-lock Witches' Primer chapters for guidebook QA.
 - `/witchery dream`, `/witchery torment`, `/witchery mirror`, and `/witchery exit` — dimension QA shortcuts.
 - `/witchery vampire`, `/witchery werewolf`, `/witchery blood`, `/witchery infusion`, `/witchery familiar`, and `/witchery status` — player-state QA helpers.
