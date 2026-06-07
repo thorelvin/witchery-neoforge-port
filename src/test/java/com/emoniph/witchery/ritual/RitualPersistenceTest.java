@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Verifies that staged-ritual {@link RitualExecutor.RitualSavedData} survives a save/load round-trip
+ * Verifies that staged-ritual {@link RitualSavedData} survives a save/load round-trip
  * via its Codec (the persistence that lets active rites + their consumed sacrifices outlive a server
  * restart). Runs headlessly via ModDevGradle {@code unitTest}.
  */
@@ -30,12 +30,12 @@ class RitualPersistenceTest {
         HolderLookup.Provider provider = VanillaRegistries.createLookup();
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
 
-        RitualExecutor.RitualSavedData original = RitualExecutor.buildTestSavedData();
+        RitualSavedData original = RitualExecutor.buildTestSavedData();
 
-        Tag encodedOnce = RitualExecutor.RitualSavedData.CODEC.encodeStart(ops, original).getOrThrow();
-        RitualExecutor.RitualSavedData decoded =
-                RitualExecutor.RitualSavedData.CODEC.parse(ops, encodedOnce).getOrThrow();
-        Tag encodedTwice = RitualExecutor.RitualSavedData.CODEC.encodeStart(ops, decoded).getOrThrow();
+        Tag encodedOnce = RitualSavedData.CODEC.encodeStart(ops, original).getOrThrow();
+        RitualSavedData decoded =
+                RitualSavedData.CODEC.parse(ops, encodedOnce).getOrThrow();
+        Tag encodedTwice = RitualSavedData.CODEC.encodeStart(ops, decoded).getOrThrow();
 
         assertEquals(1, decoded.activeRitualCount(), "the staged ritual survives the round-trip");
         assertEquals(encodedOnce, encodedTwice, "ritual SavedData re-encodes identically after a load");
