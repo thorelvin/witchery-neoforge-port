@@ -2,8 +2,12 @@
   "background_u_index": 0,
   "background_v_index": 0,
   "category": "herbology",
+  "condition": {
+    "type": "modonomicon:advancement",
+    "advancement_id": "witchery:guide/obtained/mutandis"
+  },
   "description": "",
-  "hide_while_locked": false,
+  "hide_while_locked": true,
   "icon": {
     "item": "witchery:book_oven"
   },

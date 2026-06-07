@@ -2,8 +2,12 @@
   "background_u_index": 0,
   "background_v_index": 0,
   "category": "collecting_fumes",
+  "condition": {
+    "type": "modonomicon:advancement",
+    "advancement_id": "witchery:guide/obtained/exhale_of_horned_one"
+  },
   "description": "",
-  "hide_while_locked": false,
+  "hide_while_locked": true,
   "icon": {
     "item": "witchery:book_infusions"
   },

@@ -158,6 +158,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         return entry(cat, catId + "/whats_next", "What Comes Next", nextIcon, sort, pages);
     }
 
+    /** Hides a "What Comes Next" entry until the player has obtained the chapter's signature item. */
+    private BookEntryModel gatedByItem(String advancementPath, BookEntryModel next) {
+        return next.withCondition(BookAdvancementConditionModel.create().withAdvancementId(id(advancementPath)))
+                .hideWhileLocked(true);
+    }
+
     @Override
     public void generate(BiConsumer<Identifier, BookModel> consumer, HolderLookup.Provider registries) {
         BookModel book = BookModel.create(BOOK_ID, "witchery.book.title")
@@ -358,7 +364,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "herbology/anointing_paste", "The Witch's Cauldron", WitcheryItems.ANOINTING_PASTE.get(), 2, anointing),
                 entry(cat, "herbology/drop_of_luck", "Drop of Luck", WitcheryItems.DROP_OF_LUCK.get(), 3, drop),
                 entry(cat, "herbology/mutating_sprig", "Mutating Sprig", WitcheryItems.MUTATOR.get(), 4, sprig),
-                whatsNext(cat, "herbology", 5, "book_oven", "Witchcraft: Collecting Fumes", WitcheryItems.BOOK_OVEN.get(), "Collecting Fumes"));
+                gatedByItem("guide/obtained/mutandis", whatsNext(cat, "herbology", 5, "book_oven", "Witchcraft: Collecting Fumes", WitcheryItems.BOOK_OVEN.get(), "Collecting Fumes")));
         return cat;
     }
 
@@ -404,8 +410,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         cat.withEntries(
                 entry(cat, "brews_infusions/kettle", "The Kettle", WitcheryItems.KETTLE.get(), 0, kettle),
                 entry(cat, "brews_infusions/infusion_sources", "Infusion Sources", WitcheryItems.GHOST_OF_THE_LIGHT.get(), 1, infusion),
-                whatsNext(cat, "brews_infusions", 2, "book_distilling", "Witchcraft: Distilling", WitcheryItems.BOOK_DISTILLING.get(), "Distilling",
-                        "The bottom reagent, **Breath of the Goddess**, is baked from a Birch Sapling in the Witches' Oven."));
+                gatedByItem("guide/obtained/redstone_soup", whatsNext(cat, "brews_infusions", 2, "book_distilling", "Witchcraft: Distilling", WitcheryItems.BOOK_DISTILLING.get(), "Distilling",
+                        "The bottom reagent, **Breath of the Goddess**, is baked from a Birch Sapling in the Witches' Oven.")));
         return cat;
     }
 
@@ -447,8 +453,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         cat.withEntries(
                 entry(cat, "collecting_fumes/witches_oven", "The Witches' Oven", WitcheryItems.WITCHES_OVEN.get(), 0, oven),
                 entry(cat, "collecting_fumes/oven_recipes", "What the Oven Makes", WitcheryItems.ODOUR_OF_PURITY.get(), 1, ovenRecipes),
-                whatsNext(cat, "collecting_fumes", 2, "book_infusions", "Witchcraft: Brews & Infusions", WitcheryItems.BOOK_INFUSIONS.get(), "Brews & Infusions",
-                        "The bottom reagent, **Odour of Purity**, comes from the Witches' Oven you just built — bake a Hawthorn Sapling."));
+                gatedByItem("guide/obtained/exhale_of_horned_one", whatsNext(cat, "collecting_fumes", 2, "book_infusions", "Witchcraft: Brews & Infusions", WitcheryItems.BOOK_INFUSIONS.get(), "Brews & Infusions",
+                        "The bottom reagent, **Odour of Purity**, comes from the Witches' Oven you just built — bake a Hawthorn Sapling.")));
         return cat;
     }
 
@@ -482,8 +488,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         .withAdvancementId(id("guide/obtained/diamond_vapour"))));
         cat.withEntries(
                 entry(cat, "distilling/distillery", "The Distillery", WitcheryItems.DISTILLERY.get(), 0, distillery),
-                whatsNext(cat, "distilling", 1, "book_circle_magic", "Witchcraft: Circle Magic", WitcheryItems.BOOK_CIRCLE_MAGIC.get(), "Circle Magic",
-                        "The bottom reagent, **Whiff of Magic**, is baked from a Rowan Sapling in the Witches' Oven."));
+                gatedByItem("guide/obtained/diamond_vapour", whatsNext(cat, "distilling", 1, "book_circle_magic", "Witchcraft: Circle Magic", WitcheryItems.BOOK_CIRCLE_MAGIC.get(), "Circle Magic",
+                        "The bottom reagent, **Whiff of Magic**, is baked from a Rowan Sapling in the Witches' Oven.")));
         return cat;
     }
 
@@ -657,7 +663,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "pulled toward you, your inventory first. No answer to Keep Inventory or "
                                 + "another world — but the witch's answer to a bad death while the trail is "
                                 + "warm."),
-                whatsNext(cat, "circle_magic", 17, "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(), "Conjuration & Fetishes"));
+                gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", 17, "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(), "Conjuration & Fetishes")));
         return cat;
     }
 
@@ -787,8 +793,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "conjuration/mandrake", "Mandrake", WitcheryItems.MANDRAKE_ROOT.get(), 5, mandrake),
                 entry(cat, "conjuration/wicker_man", "The Wicker Man", WitcheryItems.BLOODIED_WICKER_BUNDLE.get(), 6, wicker),
                 entry(cat, "conjuration/shade_of_leonard", "Shade of Leonard", WitcheryItems.LEONARDS_URN.get(), 7, leonard),
-                whatsNext(cat, "conjuration", 8, "book_wands", "Witchcraft: Symbology", WitcheryItems.BOOK_WANDS.get(), "Symbology",
-                        "The top reagent, an **Ent Twig**, is shed by Ents — grow a grove with the Rite of the Forest."));
+                gatedByItem("guide/obtained/fetish_scarecrow", whatsNext(cat, "conjuration", 8, "book_wands", "Witchcraft: Symbology", WitcheryItems.BOOK_WANDS.get(), "Symbology",
+                        "The top reagent, an **Ent Twig**, is shed by Ents — grow a grove with the Rite of the Forest.")));
         return cat;
     }
 
@@ -810,7 +816,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "a creature-power focus first."));
         cat.withEntries(
                 entry(cat, "symbology/mystic_branch", "Mystic Branch", WitcheryItems.MYSTIC_BRANCH.get(), 0, mystic),
-                whatsNext(cat, "symbology", 1, "book_poppets", "Witchcraft: Poppets & Taglocks", WitcheryItems.BOOK_POPPETS.get(), "Poppets & Taglocks"));
+                gatedByItem("guide/obtained/mystic_branch", whatsNext(cat, "symbology", 1, "book_poppets", "Witchcraft: Poppets & Taglocks", WitcheryItems.BOOK_POPPETS.get(), "Poppets & Taglocks")));
         return cat;
     }
 
@@ -857,7 +863,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "poppets/taglock_kit", "Taglock Kit", WitcheryItems.TAGLOCK_KIT.get(), 0, taglock),
                 entry(cat, "poppets/poppets", "Poppets", WitcheryItems.VOODOO_POPPET.get(), 1, poppetsList),
                 entry(cat, "poppets/poppet_shelf", "The Poppet Shelf", WitcheryItems.POPPET_SHELF.get(), 2, shelf),
-                whatsNext(cat, "poppets", 3, "book_spirit_world", "Witchcraft: The Spirit World", WitcheryItems.BOOK_SPIRIT_WORLD.get(), "The Spirit World"));
+                gatedByItem("guide/obtained/poppet", whatsNext(cat, "poppets", 3, "book_spirit_world", "Witchcraft: The Spirit World", WitcheryItems.BOOK_SPIRIT_WORLD.get(), "The Spirit World")));
         return cat;
     }
 
@@ -920,7 +926,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "spirit_world/spirit_world", "The Spirit World", WitcheryItems.BREW_OF_SLEEPING.get(), 0, spirit),
                 entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 1, dream),
                 entry(cat, "spirit_world/crystal_ball", "The Crystal Ball", WitcheryItems.CRYSTAL_BALL.get(), 2, crystal),
-                whatsNext(cat, "spirit_world", 3, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures"));
+                gatedByItem("guide/obtained/brew_of_flowing_spirit", whatsNext(cat, "spirit_world", 3, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures")));
         return cat;
     }
 

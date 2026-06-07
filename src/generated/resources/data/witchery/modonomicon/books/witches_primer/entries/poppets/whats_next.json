@@ -2,8 +2,12 @@
   "background_u_index": 0,
   "background_v_index": 0,
   "category": "poppets",
+  "condition": {
+    "type": "modonomicon:advancement",
+    "advancement_id": "witchery:guide/obtained/poppet"
+  },
   "description": "",
-  "hide_while_locked": false,
+  "hide_while_locked": true,
   "icon": {
     "item": "witchery:book_spirit_world"
   },

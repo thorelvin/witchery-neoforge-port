@@ -2,8 +2,12 @@
   "background_u_index": 0,
   "background_v_index": 0,
   "category": "spirit_world",
+  "condition": {
+    "type": "modonomicon:advancement",
+    "advancement_id": "witchery:guide/obtained/brew_of_flowing_spirit"
+  },
   "description": "",
-  "hide_while_locked": false,
+  "hide_while_locked": true,
   "icon": {
     "item": "witchery:book_creatures"
   },
