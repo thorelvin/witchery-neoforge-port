@@ -224,19 +224,29 @@ public class VampireEvents {
         }
     }
 
+    /** Human-blood tier (bloodLevel 0–500), per the source thresholds documented at the top of this file. */
+    enum BloodTier { FRENZY, HUNGRY, NEUTRAL, WELL_FED }
+
+    static BloodTier bloodTier(int blood) {
+        if (blood <= 50) return BloodTier.FRENZY;
+        if (blood <= 150) return BloodTier.HUNGRY;
+        if (blood >= 350) return BloodTier.WELL_FED;
+        return BloodTier.NEUTRAL;
+    }
+
     private static void applyBloodEffects(ServerPlayer player, WitcheryPlayerData data) {
-        int blood = data.getBloodLevel();
-        if (blood <= 50) {
-            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 1, true, true));
-            player.addEffect(new MobEffectInstance(MobEffects.HUNGER,   EFFECT_DURATION, 1, true, true));
-        } else if (blood <= 150) {
-            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false));
-        } else if (blood >= 350) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false));
-            player.addEffect(new MobEffectInstance(MobEffects.SPEED,        EFFECT_DURATION, 0, true, false));
-            player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,     EFFECT_DURATION, 0, true, false));
-        } else {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false));
+        switch (bloodTier(data.getBloodLevel())) {
+            case FRENZY -> {
+                player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 1, true, true));
+                player.addEffect(new MobEffectInstance(MobEffects.HUNGER,   EFFECT_DURATION, 1, true, true));
+            }
+            case HUNGRY -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false));
+            case WELL_FED -> {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false));
+                player.addEffect(new MobEffectInstance(MobEffects.SPEED,        EFFECT_DURATION, 0, true, false));
+                player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,     EFFECT_DURATION, 0, true, false));
+            }
+            case NEUTRAL -> player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false));
         }
     }
 
