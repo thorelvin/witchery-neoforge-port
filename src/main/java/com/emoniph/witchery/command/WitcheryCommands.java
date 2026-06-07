@@ -30,6 +30,7 @@ import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
+import com.emoniph.witchery.ritual.RitualExecutor;
 import com.emoniph.witchery.predictions.Predictions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
@@ -439,6 +440,14 @@ public class WitcheryCommands {
                                                 StringArgumentType.getString(ctx, "book")))))
                         .then(Commands.literal("reset")
                                 .executes(ctx -> guideReset(ctx.getSource()))))
+                .then(Commands.literal("rite")
+                        .then(Commands.literal("list")
+                                .executes(ctx -> riteList(ctx.getSource())))
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
+                                        RitualExecutor.allRitualDefinitionNames(), b))
+                                .executes(ctx -> riteForce(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "name")))))
         );
     }
 
@@ -492,6 +501,31 @@ public class WitcheryCommands {
         if (holder == null) return false;
         return grant ? p.getAdvancements().award(holder, "has_book")
                      : p.getAdvancements().revoke(holder, "has_book");
+    }
+
+    // ── Rite force-fire (debug) ──────────────────────────
+
+    private static int riteList(CommandSourceStack src) {
+        var names = RitualExecutor.allRitualDefinitionNames();
+        src.sendSuccess(() -> Component.literal("[Rite] " + names.size() + " definitions: "
+                + String.join(", ", names)), false);
+        return names.size();
+    }
+
+    /** Force-runs a rite definition's effect by name at the player (bypasses dispatch gating). */
+    private static int riteForce(CommandSourceStack src, String name)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        if (!RitualExecutor.allRitualDefinitionNames().contains(name)) {
+            src.sendFailure(Component.literal("Unknown rite '" + name + "'. Try /witchery rite list."));
+            return 0;
+        }
+        var center = p.blockPosition();
+        boolean ok = RitualExecutor.forceRunRitualDefinition(name, p, p.level(), center, p.getMainHandItem());
+        src.sendSuccess(() -> Component.literal("[Rite] Force-ran '" + name + "' at " + center.toShortString()
+                + " -> " + (ok ? "SUCCESS"
+                : "no effect (the rite's own power/offering checks may have failed)")), false);
+        return ok ? 1 : 0;
     }
 
     // ── Player state ──────────────────────────────────────────────────────────

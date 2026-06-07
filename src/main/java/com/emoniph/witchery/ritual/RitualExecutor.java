@@ -632,9 +632,25 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Test hook: every rite definition name in table order. */
-    static java.util.List<String> allRitualDefinitionNames() {
+    /** Every rite definition name in table order (also a test hook). */
+    public static java.util.List<String> allRitualDefinitionNames() {
         return RITUAL_DEFINITIONS.stream().map(RitualDefinition::name).toList();
+    }
+
+    /**
+     * Debug: run a definition's effect by name, bypassing the dispatch gating (trigger/variant/
+     * companion/offering/veto). The {@code trigger} item is threaded into the effect for the rites
+     * that read it. Returns the effect's success flag, or {@code false} if no such definition exists.
+     * Note: a rite's <em>own</em> internal power/offering checks still apply.
+     */
+    public static boolean forceRunRitualDefinition(String name, Player player, Level level,
+                                                   BlockPos center, ItemStack trigger) {
+        for (RitualDefinition definition : RITUAL_DEFINITIONS) {
+            if (definition.name().equals(name)) {
+                return definition.run(player, level, center, trigger);
+            }
+        }
+        return false;
     }
 
     /** Test hook: the name of the rite definition the dropped item would trigger, or {@code null}. */
