@@ -974,6 +974,9 @@ public class RitualExecutor {
     /** Rite of Beastial Call — restores the staged coven-gated creature-allure loop instead of a one-shot teleport. */
     private static boolean riteOfBeastialCall(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        // Source RiteCallCreatures gates on a coven of 3. Its per-pulse `if (covenSize < 3)` check reads
+        // a value captured ONCE at cast (BlockCircle:217, persisted to NBT) — not a live re-count — so
+        // this upfront gate is functionally identical; no per-tick re-check is needed for parity.
         if (!requireCoven(player, level, center, 3)) return false;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
         if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {

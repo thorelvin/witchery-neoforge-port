@@ -59,7 +59,7 @@ bleeds). Glamour Bleed is that same physics, **inverted and controlled** — we 
 
 | Texture | Aura RGB | Halo radius | Notes |
 |---|---|---|---|
-| `block/blight_fibre.png` | `(150, 50, 210)` cold blight-violet | 2.2 px off strands | 2026-06-10, first live use. Cutout vine-style decal; aura painted into the transparent ring around the strands, opaque strands + alpha untouched. Tune via radius (tighter = subtler) / colour. |
+| `block/blight_fibre.png` | `(205, 95, 255)` luminous blight-violet | whole transparent field | 2026-06-10, first live use. Cutout vine-style decal; aura painted into the transparent pixels (alpha 0, so invisible up close — strands untouched). Strengthened from the initial `(150,50,210)` / 2.2 px ring to a brighter colour filling the full transparent field. Tune via colour brightness / how much of the field is filled. |
 - Requires mip-maps enabled (default). Players on Mipmap Levels = 0 won't see it.
 - **Does NOT work on particles.** Glamour Bleed is purely a mip artifact, and the particle atlas is
   built with 0 mip levels, so a coloured transparent margin on a particle sprite produces no halo. For an
