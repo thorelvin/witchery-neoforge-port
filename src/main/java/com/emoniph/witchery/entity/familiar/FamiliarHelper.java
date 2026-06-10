@@ -9,7 +9,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.monster.creaking.Creaking;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -46,6 +48,21 @@ public final class FamiliarHelper {
 
     @Nullable
     public static TamableAnimal findBoundFamiliar(Player player) {
+        LivingEntity familiar = findBoundFamiliarEntity(player);
+        return familiar instanceof TamableAnimal tameable ? tameable : null;
+    }
+
+    @Nullable
+    public static LivingEntity findBoundFamiliarEntity(Player player) {
+        TamableAnimal tameable = findBoundTamableFamiliar(player);
+        if (tameable != null) {
+            return tameable;
+        }
+        return CreakingFamiliarHelper.findBoundCreaking(player);
+    }
+
+    @Nullable
+    private static TamableAnimal findBoundTamableFamiliar(Player player) {
         if (!(player.level() instanceof ServerLevel serverLevel)) {
             return null;
         }
@@ -67,7 +84,7 @@ public final class FamiliarHelper {
     }
 
     public static int getActiveFamiliarType(Player player) {
-        TamableAnimal familiar = findBoundFamiliar(player);
+        LivingEntity familiar = findBoundFamiliarEntity(player);
         if (familiar instanceof CatFamiliarEntity) {
             return 1;
         }
@@ -79,6 +96,9 @@ public final class FamiliarHelper {
         }
         if (familiar instanceof OwlFamiliarEntity) {
             return 3;
+        }
+        if (familiar instanceof Creaking) {
+            return CreakingFamiliarHelper.FAMILIAR_TYPE_ID;
         }
         return 0;
     }
@@ -95,7 +115,15 @@ public final class FamiliarHelper {
         return getActiveFamiliarType(player) == 2;
     }
 
+    public static boolean hasActiveCreakingFamiliar(Player player) {
+        return getActiveFamiliarType(player) == CreakingFamiliarHelper.FAMILIAR_TYPE_ID;
+    }
+
     public static String describeFamiliar(@Nullable TamableAnimal familiar) {
+        return describeFamiliarEntity(familiar);
+    }
+
+    public static String describeFamiliarEntity(@Nullable LivingEntity familiar) {
         if (familiar instanceof CatFamiliarEntity) {
             return "cat";
         }
@@ -107,6 +135,9 @@ public final class FamiliarHelper {
         }
         if (familiar instanceof OwlFamiliarEntity) {
             return "owl";
+        }
+        if (familiar instanceof Creaking creaking && CreakingFamiliarHelper.isBound(creaking)) {
+            return "creaking";
         }
         return "";
     }
@@ -187,10 +218,14 @@ public final class FamiliarHelper {
     }
 
     @Nullable
-    public static TamableAnimal restoreBoundFamiliar(ServerPlayer player, ServerLevel level, double x, double y, double z) {
+    public static LivingEntity restoreBoundFamiliar(ServerPlayer player, ServerLevel level, double x, double y, double z) {
         String familiarType = WitcheryAttachments.get(player).getFamiliarType();
         if (familiarType == null || familiarType.isBlank()) {
             return null;
+        }
+
+        if (CreakingFamiliarHelper.matchesStoredType(familiarType)) {
+            return CreakingFamiliarHelper.restoreBound(player, level, x, y, z);
         }
 
         FamiliarEntity familiar = switch (familiarType.toLowerCase(Locale.ROOT)) {

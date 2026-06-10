@@ -11,10 +11,13 @@ import java.util.List;
 /**
  * Scans for chalk circle patterns around a given center position.
  *
- * All rings sit one block above the floor tile that was right-clicked.
- * The center tile itself is NOT a circle block — it's where the witch stands.
+ * All rings sit one block above the floor tile passed as {@code floorCenter}: the ring
+ * glyphs occupy {@code floorCenter.above()} at the perimeter offsets, while the centre of
+ * that same layer holds the golden activation glyph ({@code WitcheryBlocks.CIRCLE}).
  *
- * To activate: right-click the floor block at the center with the arthana.
+ * To activate (see {@code RitualEvents.onRightClickBlock}): right-click the golden centre
+ * glyph itself. The ring's chalk colour sets the rite variant (white = ritual, otherwhere,
+ * infernal); the centre is always golden regardless of variant.
  */
 public class RitualCircleDetector {
 

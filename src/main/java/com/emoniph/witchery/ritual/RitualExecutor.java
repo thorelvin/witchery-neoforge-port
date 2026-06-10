@@ -14,8 +14,10 @@ import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.WitchHunterEntity;
 import com.emoniph.witchery.entity.familiar.CatFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.CreakingFamiliarHelper;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import net.minecraft.world.entity.monster.creaking.Creaking;
 import com.emoniph.witchery.events.PoppetEvents;
 import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -87,6 +89,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -465,6 +469,10 @@ public class RitualExecutor {
                     item -> item.is(WitcheryItems.TEAR_OF_GODDESS.get()) || item.is(WitcheryItems.ODOUR_OF_PURITY.get()),
                     VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindFamiliar(player, level, center)),
+            RitualDefinition.of("bind_creaking_familiar", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(Blocks.CREAKING_HEART.asItem()), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindCreakingFamiliar(player, level, center))
+                    .requiringOffering((level, center) -> findBindCreakingFamiliarOfferings(level, center).isPresent()),
             RitualDefinition.of("call_familiar", RitualCircleDetector.CircleSize.MEDIUM,
                     item -> item.is(WitcheryItems.BREATH_OF_GODDESS.get()) || item.is(WitcheryItems.HINT_OF_REBIRTH.get()),
                     VARIANT_RITUAL,
@@ -811,6 +819,60 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.bind_familiar.success",
                 SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
         WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
+        return true;
+    }
+
+    /** Rite of the Creakening — binds a wild Creaking inside the circle using Pale Garden offerings. */
+    private static boolean riteOfBindCreakingFamiliar(Player player, Level level, BlockPos center) {
+        if (!(player instanceof ServerPlayer sp)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) {
+            return false;
+        }
+
+        Optional<BindCreakingFamiliarOfferings> offerings = findBindCreakingFamiliarOfferings(level, center);
+        if (offerings.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_creaking_familiar.support"), false);
+            return false;
+        }
+
+        if (FamiliarHelper.findBoundFamiliarEntity(sp) != null) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_creaking_familiar.already_bound"), false);
+            return false;
+        }
+
+        Creaking candidate = findBindableCreakingCandidate(sl, center, FAMILIAR_BIND_RADIUS);
+        if (candidate == null) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_creaking_familiar.no_creaking"), false);
+            return false;
+        }
+
+        Creaking boundCandidate = candidate;
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 10000,
+                "witchery.ritual.bind_creaking_familiar.no_power")
+                .offer(offerings.get().resinClump())
+                .offer(offerings.get().paleOakSapling())
+                .offer(offerings.get().whiffOfMagic())
+                .offer(offerings.get().tearOfTheGoddess())
+                .offer(offerings.get().mutandisExtremis());
+        if (!transaction.commit(player, () -> {
+            Creaking bound = CreakingFamiliarHelper.bind(sp, sl, boundCandidate);
+            if (bound == null) {
+                return false;
+            }
+            sl.sendParticles(ParticleTypes.SCULK_SOUL,
+                    bound.getX(), bound.getY() + 1.0, bound.getZ(),
+                    12, 0.35, 0.35, 0.35, 0.02);
+            return true;
+        })) {
+            return false;
+        }
+
+        success(player, level, center, "witchery.ritual.bind_creaking_familiar.success",
+                SoundEvents.CREAKING_AMBIENT, 0.8f, 1, 36);
+        WitcheryMod.LOGGER.info("Bound Creaking familiar for {} near {}", sp.getName().getString(), center);
         return true;
     }
 
@@ -1370,7 +1432,10 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+        // Source Rite of Protection = RiteProtectionCircleRepulsive(radius 4, upkeep 0.8): an every-tick
+        // outward push (mirror of Imprisonment's pull). pulseInterval=1 so the push is continuous — the
+        // old 20-tick cadence let mobs creep inward between pushes.
+        if (!queueActiveRitual(sl, ActiveRitualType.SANCTITY_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 1, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1395,7 +1460,10 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
             return false;
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 20, 0, 0.8f, 0)) {
+        // Source Rite of Imprisonment = RiteProtectionCircleAttractive(radius 4, upkeep 0.8): an
+        // every-tick inward pull (NOT the Barrier rite). pulseInterval=1 so the pull is continuous —
+        // the old 20-tick cadence let mobs walk out between pulls.
+        if (!queueActiveRitual(sl, ActiveRitualType.IMPRISONMENT_CIRCLE, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 1, 0, 0.8f, 0)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -2552,6 +2620,10 @@ public class RitualExecutor {
             return false;
         }
 
+        // Source RiteProtectionCircleAttractive.update -> attract(): every tick, each creature whose
+        // NEXT position reaches the boundary (radius - 1) is shoved back toward the centre (~0.22/axis,
+        // Y zeroed). Players and the Ender Dragon are exempt. Running this every tick (pulseInterval=1)
+        // is what actually holds mobs — the pull must counter their movement each tick, not once a second.
         int trapped = 0;
         AABB bounds = new AABB(ritual.center).inflate(ritual.minRadius);
         for (Mob mob : level.getEntitiesOfClass(Mob.class, bounds)) {
@@ -2559,7 +2631,6 @@ public class RitualExecutor {
                 continue;
             }
             if (pullProtectionMob(mob, ritual.center, ritual.minRadius)) {
-                mob.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 40, 1, true, false));
                 trapped++;
             }
         }
@@ -4673,6 +4744,11 @@ public class RitualExecutor {
         return true;
     }
 
+    /**
+     * Source RiteProtectionCircleAttractive.pull: if the mob's next position reaches the boundary
+     * (distance >= radius - 1), shove it back toward the centre at ~0.22/axis with Y zeroed. Returns
+     * whether a pull was applied (mob was at/beyond the boundary).
+     */
     private static boolean pullProtectionMob(Mob mob, BlockPos center, double radius) {
         double nextX = mob.getX() + mob.getDeltaMovement().x;
         double nextY = mob.getY() + mob.getDeltaMovement().y;
@@ -4802,7 +4878,7 @@ public class RitualExecutor {
         double y = center.getY() + 1.0;
         double z = center.getZ() + 0.5;
 
-        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(sp);
+        LivingEntity familiar = FamiliarHelper.findBoundFamiliarEntity(sp);
         if (familiar == null) {
             familiar = FamiliarHelper.restoreBoundFamiliar(sp, sl, x, y, z);
             if (familiar == null) {
@@ -4820,9 +4896,13 @@ public class RitualExecutor {
         }
 
         java.util.UUID familiarUuid = familiar.getUUID();
-        String familiarType = FamiliarHelper.describeFamiliar(familiar);
+        String familiarType = FamiliarHelper.describeFamiliarEntity(familiar);
         String familiarName = familiar.hasCustomName() ? familiar.getCustomName().getString() : "";
-        boolean familiarSitting = familiar.isOrderedToSit();
+        boolean familiarSitting = familiar instanceof TamableAnimal tameable
+                ? tameable.isOrderedToSit()
+                : familiar instanceof Creaking creaking && CreakingFamiliarHelper.isBound(creaking)
+                ? CreakingFamiliarHelper.getData(creaking).sitting()
+                : familiarData.isFamiliarSitting();
         boolean familiarNameVisible = familiar.isCustomNameVisible();
         boolean familiarChanged = familiarData.getFamiliarUUID().map(uuid -> !uuid.equals(familiarUuid)).orElse(true)
                 || !familiarType.equals(familiarData.getFamiliarType())
@@ -4844,11 +4924,37 @@ public class RitualExecutor {
             familiar.teleportTo(sl, x, y, z,
                     Set.of(), familiar.getYRot(), familiar.getXRot(), false);
         }
-        familiar.setOrderedToSit(familiarData.isFamiliarSitting());
+        if (familiar instanceof TamableAnimal tameable) {
+            tameable.setOrderedToSit(familiarData.isFamiliarSitting());
+        } else if (familiar instanceof Creaking creaking && CreakingFamiliarHelper.isBound(creaking)) {
+            CreakingFamiliarHelper.setData(creaking,
+                    CreakingFamiliarHelper.getData(creaking).withSitting(familiarData.isFamiliarSitting()));
+        }
 
         success(player, level, center, "witchery.ritual.call_familiar.success",
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 2, 20);
         return true;
+    }
+
+    @Nullable
+    private static Creaking findBindableCreakingCandidate(ServerLevel level, BlockPos center, double radius) {
+        AABB search = new AABB(center).inflate(radius, 2.0, radius);
+        List<Creaking> creakings = level.getEntitiesOfClass(Creaking.class, search);
+        Creaking best = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (Creaking creaking : creakings) {
+            if (!creaking.isAlive() || creaking.isRemoved() || CreakingFamiliarHelper.isBound(creaking)) {
+                continue;
+            }
+            double distance = creaking.distanceToSqr(center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5);
+            if (distance > radius * radius || distance >= bestDistance) {
+                continue;
+            }
+            bestDistance = distance;
+            best = creaking;
+        }
+        return best;
     }
 
     private static TamableAnimal findBindableFamiliarCandidate(ServerPlayer player, ServerLevel level, BlockPos center, double radius) {
@@ -5487,7 +5593,17 @@ public class RitualExecutor {
         return true;
     }
 
+    /**
+     * Consume one offered dropped item. Faithful to source {@code SacrificeItem}, this no longer removes
+     * the item instantly — it queues a staged pop (one sacrifice per 20 ticks, EXPLODE + pop sound) via
+     * {@link SacrificeConsumer}. The actual decrement happens at the pop in {@link #removeOfferedItemNow}.
+     */
     static void consumeOfferedItem(ItemEntity itemEntity) {
+        SacrificeConsumer.stage(RitualOffering.dropped(itemEntity));
+    }
+
+    /** The real decrement of a dropped offering's stack — called by {@link SacrificeConsumer} at the pop. */
+    static void removeOfferedItemNow(ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
         stack.shrink(1);
         if (stack.isEmpty()) {
@@ -5495,6 +5611,26 @@ public class RitualExecutor {
         } else {
             itemEntity.setItem(stack);
         }
+    }
+
+    /** Queue a dropped trigger/sacrifice item for staged consumption (entry point for other packages). */
+    public static void stageSacrificeConsumption(ItemEntity itemEntity) {
+        SacrificeConsumer.stage(RitualOffering.dropped(itemEntity));
+    }
+
+    /** Queue a grassper-held trigger/sacrifice for staged consumption (entry point for other packages). */
+    public static void stageSacrificeConsumption(com.emoniph.witchery.blocks.entity.GrassperBlockEntity grassper) {
+        SacrificeConsumer.stage(RitualOffering.grassper(grassper));
+    }
+
+    /** Whether a dropped item is awaiting a staged pop — offering/trigger scans skip these. */
+    public static boolean isPendingSacrifice(Level level, ItemEntity itemEntity) {
+        return SacrificeConsumer.isPending(level, itemEntity);
+    }
+
+    /** Tick the staged-sacrifice pops for a level (call once per server-level tick). */
+    public static void tickStagedSacrifices(ServerLevel level) {
+        SacrificeConsumer.tick(level);
     }
 
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
@@ -6089,6 +6225,7 @@ public class RitualExecutor {
      * silently lose consumed resources across server restarts.
      */
     public static void cancelAllWithRefund(ServerLevel level) {
+        SacrificeConsumer.flush(level); // consume any still-pending staged sacrifices before shutdown
         RitualSavedData data = RitualSavedData.get(level);
         for (ActiveRitual ritual : data.activeRituals) {
             refundRitualIngredient(level, ritual);
@@ -6096,5 +6233,29 @@ public class RitualExecutor {
         data.activeRituals.clear();
         data.climatePlans.clear();
         data.setDirty();
+    }
+
+    /**
+     * Cancel (with refund) every ongoing rite anchored at {@code center}. Mirrors source
+     * {@code TileEntityCircle.deactivate()} (ABORTED_REFUND): the consumed sacrifices are dropped
+     * back at the circle. Returns {@code true} if at least one rite was cancelled. Used by the
+     * right-click toggle in {@code RitualEvents}: re-clicking an active circle stops its working.
+     */
+    public static boolean cancelActiveRitualsAt(ServerLevel level, BlockPos center) {
+        RitualSavedData data = RitualSavedData.get(level);
+        boolean[] cancelled = {false};
+        data.activeRituals.removeIf(ritual -> {
+            if (!ritual.center.equals(center)) {
+                return false;
+            }
+            refundRitualIngredient(level, ritual);
+            clearClimateChangePlan(level, ritual.center);
+            cancelled[0] = true;
+            return true;
+        });
+        if (cancelled[0]) {
+            data.setDirty();
+        }
+        return cancelled[0];
     }
 }

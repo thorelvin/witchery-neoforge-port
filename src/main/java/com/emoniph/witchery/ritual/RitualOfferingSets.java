@@ -87,6 +87,10 @@ record SummonFamiliarOfferings(ItemEntity egg, ItemEntity goldIngot, ItemEntity 
 record BindFamiliarOfferings(ItemEntity tearOfTheGoddess, ItemEntity odourOfPurity,
                              ItemEntity whiffOfMagic, ItemEntity diamond, ItemEntity demonicBlood) {}
 
+record BindCreakingFamiliarOfferings(ItemEntity resinClump, ItemEntity paleOakSapling,
+                                     ItemEntity whiffOfMagic, ItemEntity tearOfTheGoddess,
+                                     ItemEntity mutandisExtremis) {}
+
 record CallFamiliarOfferings(ItemEntity breathOfTheGoddess, ItemEntity hintOfRebirth,
                              ItemEntity whiffOfMagic) {}
 

@@ -9,6 +9,130 @@ Current target:
 
 ---
 
+## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
+
+QA: rite offerings all vanished at once on activation; source pops them one at a time. Source
+`SacrificeItem.addSteps` adds **one `StepSacrificeItem` per required item**, run sequentially; each step's
+`process` only acts on `ticks % 20 == 0`, so it consumes **one sacrifice per 20 ticks**, emits an
+`EXPLODE` particle + `RANDOM_POP` sound at the item, copies the stack into `sacrificedItems` (for refund),
+decrements/removes the `EntityItem`, returns `COMPLETED` → next item; the rite's effect steps run only
+after all sacrifices are gone.
+
+The port consumed every offering instantly at the choke points `RitualExecutor.consumeOfferedItem`,
+`RitualOffering.consumeOne()`, and the dropped trigger in `RitualEvents`. Added a transient,
+per-dimension stager **`SacrificeConsumer`** those all route through: `stage(RitualOffering)` schedules
+each item to pop at `max(queue) + 20` ticks (sequential, one per second); `tick(level)` (wired into
+`RitualEvents.onLevelTick` beside `tickActiveRituals`) pops the due ones — `ParticleTypes.EXPLOSION` +
+`SoundEvents.ITEM_PICKUP` (modern `random.pop`) then the real decrement
+(`RitualExecutor.removeOfferedItemNow` / grassper shrink). The effect still applies immediately (the port's
+rites are atomic functions, not source's step machine) — only the *removal* is staggered.
+
+Two guards keep the still-present items from being reused: while pending, each item is non-pickable
+(`setPickUpDelay` covering its pop) and its entity id is in a pending set that **both** offering finders
+(`RitualOfferings.findNearbyOffering` ×2) and the `RitualEvents` trigger scan skip — so a rite cannot
+re-detect its own un-popped offerings to double-fire. `cancelAllWithRefund` (server stop) flushes pending
+pops so nothing is silently spared. **No refund dup:** ongoing-rite refunds store a *copy* at queue time
+and the original is still consumed via its pop (or the flush), so net consumption is unchanged from the
+instant path. Transient by design — a crash within the ~1–2 s pop window just leaves the items in world
+(cosmetic). Headless fallback: `stage` with no `ServerLevel` consumes immediately.
+
+## 2026-06-10 Rite of Imprisonment — every-tick inward pull (Attractive, not Barrier) — cadence fix
+
+QA: Imprisonment activated ("hold creatures fast") but zombies slowly inched out. **First attempt
+mis-identified the rite** (briefly ported it as a barrier cylinder); corrected after re-reading the
+source registration. The `setUnlocalizedName` is chained onto each `RiteRegistry.addRecipe(...)`, so the
+mapping in `WitcheryRecipes.java` (≈3042–3091) is:
+- `RiteProtectionCircleRepulsive(4, 0.8F, 0)` → **`witchery.rite.protection`** (pushes mobs away — the
+  port's Sanctity).
+- `RiteProtectionCircleAttractive(4, 0.8F, 0)` → **`witchery.rite.imprisonment`** (pulls mobs inward).
+- `RiteProtectionCircleBarrier(4, 5, 1.2F, false, 0)` → **`witchery.rite.barrier`** (a *separate* rite —
+  the solid barrier cylinder; already ported as the port's Protection Barrier rites via
+  `drawProtectionBarrier`).
+
+So **Imprisonment is the Attractive pull, not the Barrier.** `RiteProtectionCircleAttractive.update` →
+`attract()`: each tick, every `EntityCreature` whose **next** position (`pos + motion`) reaches the
+boundary (`distance >= radius - 1`) gets its motion set ~0.22/axis **toward the centre**, Y zeroed;
+players and the Ender Dragon are exempt. The base `RiteProtectionCircle.ProtectionCircleStep.process`
+returns `UPKEEP` and is ticked **every game tick**, so the pull is continuous.
+
+The port's pull logic (`pullProtectionMob` — same boundary gate + 0.22 toward-centre clamp) was already
+faithful; the **only** bug was cadence: the rite was queued at `pulseInterval=20`, so the pull fired once
+a second and mobs walked out in the other 19 ticks. Fix: `pulseInterval=1` (queue args `4,0,0,1,0,0.8f,0`
+— radius 4, upkeep 0.8 to match source), and dropped the non-source Slowness the approximation had added.
+**Lesson: protection-circle parity is mostly about the per-tick upkeep cadence — these `RiteProtectionCircle`
+subclasses all run `update()` every tick.** The sibling Sanctity (Repulsive) rite still queues at
+`pulseInterval=20` and has the same latent drift bug (left pending QA).
+
+## 2026-06-10 Ritual concurrency + re-click toggle-cancel (source parity)
+
+**Question raised in QA:** can multiple rites run at once? And why does an ongoing rite (Imprisonment)
+never stop with a strong altar?
+
+**Source model** (`BlockCircle.TileEntityCircle`, 1.7.10-0.24.1): each circle's tile entity holds two
+lists — `activeRituals` (running their step sequence, processed one-at-a-time at index 0) and
+`upkeepRituals` (ongoing maintained rites, *all* ticked each tick). `isRitualActive()` =
+`!activeRituals.isEmpty() || !upkeepRituals.isEmpty()`. Activation (`func_149727_a` → `activateBlock`):
+**if `isRitualActive()` → `deactivate()`** (toggle OFF — aborts the active rite via `abortNext`, clears
+ALL upkeep rituals, and `ABORTED_REFUND` drops the consumed sacrifices back). So source enforces **one
+ongoing rite per circle**, and **re-clicking an active circle cancels it**. Concurrency is achieved with
+**separate circles** — each tile entity is independent.
+
+**Port before this change:** active rites live in `RitualSavedData` keyed by `center`;
+`hasActiveRitualAt(center)` already scoped the block per-circle, so concurrency across separate circles
+already worked (matching source). The gap was the **re-click toggle** — the port *refused* re-activation
+("already at its work") and the only way to stop an ongoing rite was to break a chalk glyph (fail
+`hasSustainingCircle`). With a strong altar that out-recharges upkeep drain, that left ongoing rites
+effectively unstoppable.
+
+**Fix:** restored source's toggle in `RitualEvents.onRightClickBlock`. Added
+`RitualExecutor.cancelActiveRitualsAt(level, center)` — removes every active rite at that centre,
+refunds its `sacrificedIngredient` + `supplementalSacrifices` (mirrors source `ABORTED_REFUND`), clears
+any climate plan, returns whether anything was cancelled. The toggle is **gated on `NO_MATCH`**: re-click
+runs `execute(...)` first, and only if no new rite matched AND a rite is active at the centre does it
+cancel (lang `witchery.ritual.cancelled`). This is deliberately *better* than source's blanket
+deactivate-on-click: a valid new rite still runs instead of cancelling, so an **instant** rite (e.g.
+`riteOfSummonImp` — it spawns immediately, never registers active state or calls
+`ensureActiveRitualCenterAvailable`) can be cast on a concentric/second ring **while** an ongoing rite
+keeps running. Two *ongoing* rites on one centre are still refused (the ongoing rite's own
+`ensureActiveRitualCenterAvailable` returns `MATCHED_FAILED`, not `NO_MATCH`) — use separate circles,
+as in source. `already_active` lang updated to point at the empty-hand toggle and second-circle option.
+
+## 2026-06-10 Creaking familiar — Rite of the Creakening + trigger-selection gotcha
+
+New **additive** feature (a Pale Garden / 1.21 Creaking tie-in): a `bind_creaking_familiar`
+RitualDefinition (MEDIUM ring, `VARIANT_RITUAL`) binds a wild vanilla `Creaking` as a familiar.
+Because `Creaking` is **not** a `TamableAnimal`, it gets a parallel implementation rather than the
+`FamiliarEntity` path: per-entity attachment `WitcheryAttachments.CREAKING_FAMILIAR`
+(`CreakingFamiliarData` record), `CreakingFamiliarHelper` (bind/restore/dismiss/follow/defend/
+sit + the "freeze when a non-owner looks at it" tick), and `CreakingFamiliarEvents`
+(`EntityTickEvent.Post` driver, death cancel while `isTearingDown`, shift-interact sit/dismiss).
+The familiar API in `FamiliarHelper` was widened from `TamableAnimal` to `LivingEntity`
+(`findBoundFamiliarEntity`/`describeFamiliarEntity`; `restoreBoundFamiliar` now returns
+`LivingEntity`) so both paths flow through one set of callers (`FamiliarEvents`, `SeerStoneItem`,
+`RitualExecutor.call_familiar`). Familiar type id = 5; `/witchery familiar creaking`.
+
+**The activation gotcha (this is the reusable lesson).** A rite is triggered by `RitualEvents`
+picking ONE dropped item near the circle centre as the "ingredient", then matching it against the
+definitions. For a MEDIUM ritual ring with no special-cased trigger, `selectIngredientSource`
+falls through to **"nearest dropped item of any type"**. The existing `bind_familiar` rite is robust
+because its trigger items (Tear of the Goddess / Odour of Purity) are **also in its own offering
+list** — so whichever offering lands nearest centre still satisfies the trigger predicate.
+`bind_creaking_familiar`'s trigger is **Creaking Heart, which is NOT in its offering list**
+(resin clump, pale oak sapling, Whiff of Magic, Tear of the Goddess, Mutandis Extremis), so when any
+offering landed closer to centre, the wrong ingredient was selected, `matches()` failed, and the rite
+silently fell through to "unknown ritual" — it appeared dead.
+
+**Rule**: any rite whose trigger item is not one of its own required offerings MUST be preferred
+explicitly in `RitualEvents.selectIngredientSource` (like the obsidian protection branch), or it
+will only fire by luck of drop positions. Fixed by adding a Creaking-Heart-preferring
+`nearestOfferingSource` branch to the MEDIUM ritual-ring case. (All 6 items still must be within the
+1.5-block offering radius of centre — that constraint is shared by every rite.)
+
+Also note: `riteOfBindCreakingFamiliar`'s in-effect `.support` "missing offerings" hint is currently
+**unreachable** — the dispatch `.requiringOffering(...)` gate filters the definition out before the
+effect runs, so missing offerings show the generic "unknown ritual" instead. Left as-is for parity
+with the other offering-gated rites; revisit if per-rite "you're missing X" feedback is wanted.
+
 ## 2026-06-07 RitualExecutor → declarative dispatch (monolith split)
 
 Replaced the `RitualExecutor` dispatch monolith (the docs' "biggest technical-debt hotspot")

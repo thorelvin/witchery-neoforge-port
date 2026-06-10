@@ -42,7 +42,7 @@ final class RitualOfferings {
         double closestDistance = Double.MAX_VALUE;
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
             ItemStack stack = itemEntity.getItem();
-            if (!matcher.test(stack)) {
+            if (!matcher.test(stack) || RitualExecutor.isPendingSacrifice(level, itemEntity)) {
                 continue;
             }
             double distance = itemEntity.position().distanceToSqr(centerPoint);
@@ -73,7 +73,7 @@ final class RitualOfferings {
         double closestDistance = Double.MAX_VALUE;
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
             ItemStack stack = itemEntity.getItem();
-            if (!matcher.test(stack)) {
+            if (!matcher.test(stack) || RitualExecutor.isPendingSacrifice(level, itemEntity)) {
                 continue;
             }
             double distance = itemEntity.position().distanceToSqr(sourcePoint);
@@ -659,6 +659,24 @@ final class RitualOfferings {
                 whiffOfMagic.get(),
                 diamond.get(),
                 demonicBlood.get()));
+    }
+
+    static Optional<BindCreakingFamiliarOfferings> findBindCreakingFamiliarOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> resinClump = findNearbyOffering(level, center, stack -> stack.is(Items.RESIN_CLUMP));
+        Optional<ItemEntity> paleOakSapling = findNearbyOffering(level, center, stack -> stack.is(Blocks.PALE_OAK_SAPLING.asItem()));
+        Optional<ItemEntity> whiffOfMagic = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()));
+        Optional<ItemEntity> tearOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.TEAR_OF_GODDESS.get()));
+        Optional<ItemEntity> mutandisExtremis = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get()));
+        if (resinClump.isEmpty() || paleOakSapling.isEmpty() || whiffOfMagic.isEmpty()
+                || tearOfTheGoddess.isEmpty() || mutandisExtremis.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindCreakingFamiliarOfferings(
+                resinClump.get(),
+                paleOakSapling.get(),
+                whiffOfMagic.get(),
+                tearOfTheGoddess.get(),
+                mutandisExtremis.get()));
     }
 
     static Optional<CallFamiliarOfferings> findCallFamiliarOfferings(Level level, BlockPos center) {

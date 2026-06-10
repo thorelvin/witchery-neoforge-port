@@ -121,8 +121,8 @@ public class SeerStoneItem extends Item {
                     false);
         }
 
-        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(target);
-        String familiarType = familiar != null ? FamiliarHelper.describeFamiliar(familiar) : data.getFamiliarType();
+        var familiar = FamiliarHelper.findBoundFamiliarEntity(target);
+        String familiarType = familiar != null ? FamiliarHelper.describeFamiliarEntity(familiar) : data.getFamiliarType();
         String familiarName = familiar != null && familiar.hasCustomName()
                 ? familiar.getCustomName().getString()
                 : data.getFamiliarName();

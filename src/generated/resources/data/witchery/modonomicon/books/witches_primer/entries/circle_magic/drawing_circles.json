@@ -27,7 +27,29 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Place each glyph around the perimeter, set a golden center in the middle, drop the activating ingredient nearby, then right-click the golden center.[#]()",
+      "text": "[#](53341a)Place each glyph around the perimeter in the chalk the rite calls for — white for most, **Otherwhere** or **Infernal** where a rite demands it — then set a[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Golden** centre in the very middle. Drop the activating ingredient nearby and right-click that golden centre.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Whatever the ring, the centre is always gold.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

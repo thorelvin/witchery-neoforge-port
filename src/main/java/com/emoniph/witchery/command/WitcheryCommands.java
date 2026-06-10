@@ -119,7 +119,7 @@ public class WitcheryCommands {
     private static final List<String> INFUSION_TYPES =
             List.of("NONE", "LIGHT", "OVERWORLD", "OTHERWHERE", "INFERNAL");
     private static final List<String> FAMILIAR_TYPES =
-            List.of("none", "owl", "cat", "toad", "spectral");
+            List.of("none", "owl", "cat", "toad", "spectral", "creaking");
     private static final int SETUP_HOUSE_SIZE = 11;
     private static final int SETUP_FOUNDATION_DEPTH = 3;
     private static final int SETUP_CLEAR_HEIGHT = 7;
@@ -627,7 +627,7 @@ public class WitcheryCommands {
             d.clearFamiliar();
             sync(p, d);
             src.sendSuccess(() -> Component.literal("Familiar cleared."), false);
-        } else if (lower.equals("owl") || lower.equals("cat") || lower.equals("toad") || lower.equals("spectral")) {
+        } else if (lower.equals("owl") || lower.equals("cat") || lower.equals("toad") || lower.equals("spectral") || lower.equals("creaking")) {
             d.clearFamiliar();
             d.setFamiliarType(lower);
             sync(p, d);
@@ -641,7 +641,7 @@ public class WitcheryCommands {
             }
         } else {
             src.sendSuccess(() -> Component.literal(
-                    "Unknown familiar type '" + type + "'. Valid types: owl, cat, toad, spectral, none."), false);
+                    "Unknown familiar type '" + type + "'. Valid types: owl, cat, toad, spectral, creaking, none."), false);
         }
         return 1;
     }

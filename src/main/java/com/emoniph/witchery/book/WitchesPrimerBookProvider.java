@@ -501,24 +501,32 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Before a rite, you must prepare the ground. The circle is the structure that makes a "
                         + "working possible — a closed space where intention and power accumulate until "
                         + "released."
-                        + "\n\nRight-click chalk on flat stone or earth to draw glyphs around the perimeter. "
-                        + "Draw the golden center with Golden Chalk, drop the ingredients near it, then "
-                        + "right-click the golden circle."));
+                        + "\n\nRight-click chalk on flat stone or earth to lay a glyph. The ring is drawn in "
+                        + "ordinary white chalk, but the single mark at the very centre must be drawn with "
+                        + "**Golden Chalk**. That golden mark is the heart of the working: drop the ingredients "
+                        + "beside it, then right-click the **golden** centre to begin."
+                        + "\n\nMind this well, pupil — a white centre will not answer. Only the gold opens a "
+                        + "rite. Many a circle has been drawn whole and true and still lay dead, because the "
+                        + "witch forgot to gild its heart."));
         chalk.add(recipe("chalk", "Chalk",
                 "Drawn from simple stuff. The stronger families are crafted or brewed from it."));
         chalk.addAll(WitcheryBooks.prose("Stronger Chalks",
-                "From ritual chalk: **Golden** with a gold nugget, yellow dye, and redstone; **Otherwhere** "
-                        + "with artichoke, ender pearl, and lapis; **Infernal** with ember moss, blaze "
-                        + "powder, and red dye."
-                        + "\n\nGolden chalk opens demanding rites, Otherwhere draws across the boundary of "
-                        + "worlds, and Infernal speaks to things best not named lightly. Use each by need, "
-                        + "not to impress."));
+                "From ordinary chalk you may draw the stronger families: **Golden** with a gold nugget, yellow "
+                        + "dye, and redstone; **Otherwhere** with artichoke, ender pearl, and lapis; "
+                        + "**Infernal** with ember moss, blaze powder, and red dye."
+                        + "\n\nDo not mistake their use. **Golden** is for no single rite — every working is "
+                        + "begun from a golden centre, so keep some always at hand. It is the colour of the "
+                        + "**ring** that must suit the rite: plain white for common workings, **Otherwhere** "
+                        + "when the circle must reach across the boundary of worlds, **Infernal** for the "
+                        + "things best not named lightly. Match the ring to the rite, and set gold at its heart."));
 
         List<BookPageModel<?>> drawing = new ArrayList<>(WitcheryBooks.prose("Drawing Circles",
                 "The circle must be complete. A gap, even a small one, undoes the whole working — power "
                         + "spills, reagents are wasted, and the rite fails."
-                        + "\n\nPlace each glyph around the perimeter, set a golden center in the middle, drop "
-                        + "the activating ingredient nearby, then right-click the golden center."));
+                        + "\n\nPlace each glyph around the perimeter in the chalk the rite calls for — white "
+                        + "for most, **Otherwhere** or **Infernal** where a rite demands it — then set a "
+                        + "**Golden** centre in the very middle. Drop the activating ingredient nearby and "
+                        + "right-click that golden centre. Whatever the ring, the centre is always gold."));
         drawing.addAll(WitcheryBooks.prose("Three Sizes",
                 "**Small** (7x7, 16 glyphs) for infusions, familiar binding, and personal rites. **Medium** "
                         + "(11x11, 28 glyphs) for summoning, fertility, and most buff rites. **Large** "

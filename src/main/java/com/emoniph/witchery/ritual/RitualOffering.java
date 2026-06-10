@@ -3,6 +3,8 @@ package com.emoniph.witchery.ritual;
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * A single ritual sacrifice source — either a dropped {@link ItemEntity} resting on the circle, or one
@@ -20,13 +22,39 @@ record RitualOffering(ItemEntity itemEntity, GrassperBlockEntity grassper) {
         return new RitualOffering(null, grassper);
     }
 
+    /**
+     * Queue this offering for staged consumption — source {@code SacrificeItem} removes sacrifices one
+     * per 20 ticks with a pop, not all at once. The actual decrement happens at the pop via
+     * {@link #applyConsumption()}.
+     */
     void consumeOne() {
+        SacrificeConsumer.stage(this);
+    }
+
+    /** The real decrement of the backing stack — called by {@link SacrificeConsumer} at the staged pop. */
+    void applyConsumption() {
         if (itemEntity != null) {
-            RitualExecutor.consumeOfferedItem(itemEntity);
+            RitualExecutor.removeOfferedItemNow(itemEntity);
             return;
         }
-        ItemStack stack = grassper.getItem().copy();
-        stack.shrink(1);
-        grassper.setItem(stack);
+        if (grassper != null) {
+            ItemStack stack = grassper.getItem().copy();
+            stack.shrink(1);
+            grassper.setItem(stack);
+        }
+    }
+
+    Level level() {
+        if (itemEntity != null) {
+            return itemEntity.level();
+        }
+        return grassper != null ? grassper.getLevel() : null;
+    }
+
+    Vec3 position() {
+        if (itemEntity != null) {
+            return itemEntity.position();
+        }
+        return grassper != null ? Vec3.atCenterOf(grassper.getBlockPos()) : null;
     }
 }

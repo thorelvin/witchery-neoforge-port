@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Right-click chalk on flat stone or earth to draw glyphs around the perimeter.[#]()",
+      "text": "[#](53341a)Right-click chalk on flat stone or earth to lay a glyph.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -49,7 +49,40 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Draw the golden center with Golden Chalk, drop the ingredients near it, then right-click the golden circle.[#]()",
+      "text": "[#](53341a)The ring is drawn in ordinary white chalk, but the single mark at the very centre must be drawn with **Golden Chalk**.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)That golden mark is the heart of the working: drop the ingredients beside it, then right-click the **golden** centre to begin.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Mind this well, pupil — a white centre will not answer. Only the gold opens a rite.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Many a circle has been drawn whole and true and still lay dead, because the witch forgot to gild its heart.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -71,7 +104,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)From ritual chalk: **Golden** with a gold nugget, yellow dye, and redstone; **Otherwhere** with artichoke, ender pearl, and lapis; **Infernal** with ember[#]()",
+      "text": "[#](53341a)From ordinary chalk you may draw the stronger families: **Golden** with a gold nugget, yellow dye, and redstone; **Otherwhere** with artichoke, ender[#]()",
       "title": "Stronger Chalks",
       "use_markdown_in_title": false
     },
@@ -82,7 +115,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)moss, blaze powder, and red dye.[#]()",
+      "text": "[#](53341a)pearl, and lapis; **Infernal** with ember moss, blaze powder, and red dye.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -93,7 +126,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Golden chalk opens demanding rites, Otherwhere draws across the boundary of worlds, and Infernal speaks to things best not named lightly.[#]()",
+      "text": "[#](53341a)Do not mistake their use. **Golden** is for no single rite — every working is begun from a golden centre, so keep some always at hand.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -104,7 +137,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Use each by need, not to impress.[#]()",
+      "text": "[#](53341a)It is the colour of the **ring** that must suit the rite: plain white for common workings, **Otherwhere** when the circle must reach across the boundary of[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)worlds, **Infernal** for the things best not named lightly. Match the ring to the rite, and set gold at its heart.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

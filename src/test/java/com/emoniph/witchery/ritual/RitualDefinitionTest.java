@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -83,6 +84,7 @@ class RitualDefinitionTest {
         assertEquals("whiff_of_magic_familiar", match(MEDIUM, new ItemStack(WitcheryItems.WHIFF_OF_MAGIC.get()), RITUAL));
         assertEquals("bind_familiar", match(MEDIUM, new ItemStack(WitcheryItems.TEAR_OF_GODDESS.get()), RITUAL));
         assertEquals("bind_familiar", match(MEDIUM, new ItemStack(WitcheryItems.ODOUR_OF_PURITY.get()), RITUAL));
+        assertEquals("bind_creaking_familiar", match(MEDIUM, new ItemStack(Blocks.CREAKING_HEART.asItem()), RITUAL));
         assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()), RITUAL));
         assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()), RITUAL));
         assertEquals("rain_of_toads", match(MEDIUM, new ItemStack(Items.LILY_PAD), INFERNAL));
@@ -200,7 +202,7 @@ class RitualDefinitionTest {
     @Test
     void definitionNamesAreUniqueAndRosterIsLocked() {
         List<String> names = RitualExecutor.allRitualDefinitionNames();
-        assertEquals(70, names.size(), "ritual definition roster size");
+        assertEquals(71, names.size(), "ritual definition roster size");
         assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
     }
 }

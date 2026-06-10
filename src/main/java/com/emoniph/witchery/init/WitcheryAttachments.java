@@ -1,6 +1,7 @@
 package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.data.CreakingFamiliarData;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -53,6 +54,13 @@ public class WitcheryAttachments {
                     AttachmentType.builder(() -> Boolean.FALSE)
                             .serialize(Codec.BOOL.fieldOf("value"))
                             .copyOnDeath()
+                            .build());
+
+    /** Bound-familiar state for vanilla {@code minecraft:creaking} mobs. */
+    public static final Supplier<AttachmentType<CreakingFamiliarData>> CREAKING_FAMILIAR =
+            ATTACHMENT_TYPES.register("creaking_familiar", () ->
+                    AttachmentType.builder(() -> CreakingFamiliarData.EMPTY)
+                            .serialize(CreakingFamiliarData.CODEC)
                             .build());
 
     // Convenience helpers — call these server-side only unless data has been synced

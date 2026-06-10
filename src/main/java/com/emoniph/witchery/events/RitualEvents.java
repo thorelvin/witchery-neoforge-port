@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -70,6 +71,8 @@ public class RitualEvents {
         // Scan for a dropped ingredient item at the center (1.5-block radius, same Y ± 1)
         AABB ingredientArea = new AABB(floorCenter.above()).inflate(1.5, 1.0, 1.5);
         List<ItemEntity> nearbyItems = level.getEntitiesOfClass(ItemEntity.class, ingredientArea);
+        // Items mid staged-consumption from a rite that just fired must not be re-selected as a trigger.
+        nearbyItems.removeIf(item -> RitualExecutor.isPendingSacrifice(level, item));
 
         ItemStack ingredient = ItemStack.EMPTY;
         IngredientSource ingredientSource = selectIngredientSource(level, floorCenter, nearbyItems);
@@ -79,6 +82,16 @@ public class RitualEvents {
 
         RitualExecutor.ActivationResult activation = RitualExecutor.execute(player, level, floorCenter, presentCircles, ingredient);
         if (activation == RitualExecutor.ActivationResult.NO_MATCH) {
+            // Source-faithful toggle (BlockCircle.deactivate): re-clicking a circle that is already
+            // running an ongoing rite, with no new rite to start, ends that rite and refunds its
+            // sacrifices. A valid new rite (e.g. an instant Summon Imp on a concentric/second ring)
+            // matches above and runs instead, so ongoing rites can coexist with later castings.
+            if (level instanceof ServerLevel serverLevel
+                    && RitualExecutor.cancelActiveRitualsAt(serverLevel, floorCenter)) {
+                level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+                player.displayClientMessage(Component.translatable("witchery.ritual.cancelled"), false);
+                return;
+            }
             level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)
                     && hasBlightSupportOfferings(level, floorCenter)
@@ -128,6 +141,15 @@ public class RitualEvents {
         }
 
         if (isRitualRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM)) {
+            // The Rite of the Creakening's trigger (Creaking Heart) is NOT one of its own offerings,
+            // so it must be preferred explicitly — otherwise a nearer offering would be selected as
+            // the ingredient and the rite would silently fail to match.
+            IngredientSource creakingHeartSource = nearestOfferingSource(level, floorCenter, nearbyItems,
+                    stack -> stack.is(Blocks.CREAKING_HEART.asItem()));
+            if (creakingHeartSource != null) {
+                return creakingHeartSource;
+            }
+
             IngredientSource mediumProtectionSource = nearestOfferingSource(level, floorCenter, nearbyItems,
                     RitualEvents::isObsidianStack);
             if (mediumProtectionSource != null) {
@@ -143,13 +165,38 @@ public class RitualEvents {
             }
         }
 
-        ItemEntity nearest = nearestDroppedItem(floorCenter, nearbyItems, item -> true);
+        // When a Blight circle is armed (medium-infernal ring + its full offering set present) but the
+        // Wither Rose trigger is missing, do NOT let Blight's own offerings be grabbed as the ingredient.
+        // The Charged Attuned Stone in particular is the trigger for Banish Demon (charged) on a small
+        // ritual ring, so a forgotten Wither Rose would otherwise misfire Banish Demon's support message
+        // instead of the "needs a Wither Rose" hint. Excluding the offerings yields no ingredient → the
+        // execute() pass returns NO_MATCH → RitualEvents shows the blight.trigger hint.
+        Predicate<ItemStack> triggerFilter = stack -> true;
+        if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)
+                && hasBlightSupportOfferings(level, floorCenter)
+                && !hasBlightTrigger(floorCenter, nearbyItems)) {
+            triggerFilter = stack -> !isBlightOfferingItem(stack);
+        }
+
+        Predicate<ItemStack> filter = triggerFilter;
+        ItemEntity nearest = nearestDroppedItem(floorCenter, nearbyItems, item -> filter.test(item.getItem()));
         if (nearest != null) {
             return new IngredientSource(nearest, null);
         }
 
-        GrassperBlockEntity grassper = nearestGrassper(floorCenter, level, stack -> true);
+        GrassperBlockEntity grassper = nearestGrassper(floorCenter, level, triggerFilter);
         return grassper == null ? null : new IngredientSource(null, grassper);
+    }
+
+    /** The seven items a Blight rite consumes as offerings (not its trigger — that is a Wither Rose). */
+    private static boolean isBlightOfferingItem(ItemStack stack) {
+        return stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                || stack.is(WitcheryItems.REDSTONE_SOUP.get())
+                || stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get())
+                || stack.is(Items.FERMENTED_SPIDER_EYE)
+                || stack.is(Items.POISONOUS_POTATO)
+                || stack.is(Items.ROTTEN_FLESH)
+                || stack.is(Items.DIAMOND);
     }
 
     private static IngredientSource nearestOfferingSource(Level level, BlockPos floorCenter, List<ItemEntity> nearbyItems,
@@ -259,22 +306,15 @@ public class RitualEvents {
         }
 
         void consumeOne() {
+            // Stage the trigger like every other sacrifice — source consumes it one-per-20-ticks with a pop.
             if (itemEntity != null) {
                 if (!itemEntity.isAlive()) {
                     return;
                 }
-                ItemStack current = itemEntity.getItem();
-                if (current.getCount() > 1) {
-                    current.shrink(1);
-                    itemEntity.setItem(current);
-                } else {
-                    itemEntity.discard();
-                }
+                RitualExecutor.stageSacrificeConsumption(itemEntity);
                 return;
             }
-            ItemStack current = grassper.getItem().copy();
-            current.shrink(1);
-            grassper.setItem(current);
+            RitualExecutor.stageSacrificeConsumption(grassper);
         }
     }
 
@@ -282,6 +322,7 @@ public class RitualEvents {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             RitualExecutor.tickActiveRituals(serverLevel);
+            RitualExecutor.tickStagedSacrifices(serverLevel);
         }
     }
 

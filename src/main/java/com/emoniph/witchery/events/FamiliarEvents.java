@@ -1,9 +1,12 @@
 package com.emoniph.witchery.events;
 
+import com.emoniph.witchery.entity.familiar.CreakingFamiliarHelper;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.monster.creaking.Creaking;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -29,7 +32,7 @@ public final class FamiliarEvents {
             return;
         }
 
-        TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(player);
+        LivingEntity familiar = FamiliarHelper.findBoundFamiliarEntity(player);
         if (familiar == null || !familiar.isAlive()) {
             return;
         }
@@ -48,9 +51,11 @@ public final class FamiliarEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            TamableAnimal familiar = FamiliarHelper.findBoundFamiliar(player);
-            if (familiar != null) {
-                FamiliarHelper.markFamiliarDismissed(player, familiar, true);
+            LivingEntity familiar = FamiliarHelper.findBoundFamiliarEntity(player);
+            if (familiar instanceof TamableAnimal tameable) {
+                FamiliarHelper.markFamiliarDismissed(player, tameable, true);
+            } else if (familiar instanceof Creaking creaking) {
+                CreakingFamiliarHelper.markDismissed(player, creaking, true);
             }
             return;
         }
