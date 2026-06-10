@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A large Otherwhere working that draws animal life into the circle from the countryside.[#]()",
+      "text": "[#](53341a)A large Otherwhere working that draws animal life into the circle from far across the countryside — up to a hundred paces and more.[#]()",
       "title": "Rite of Beastial Call",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Less a summoning than a lure — it coaxes creatures to answer a call they do not understand, wild or pastured alike.[#]()",
+      "text": "[#](53341a)Less a summoning than a lure: it coaxes creatures to answer a call they do not understand, and they arrive a few at a time over long minutes, not all at once.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Be patient, and have beasts within range to call.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -60,7 +71,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A coven of three or more suits the old craft. Do not cast it near a village ranch unless you can explain yourself.[#]()",
+      "text": "[#](53341a)**It demands a coven of three.** Three witches or more must keep the circle, or the call goes unanswered and the rite collapses — this is no solitary working.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Do not cast it near a village ranch unless you can explain yourself.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

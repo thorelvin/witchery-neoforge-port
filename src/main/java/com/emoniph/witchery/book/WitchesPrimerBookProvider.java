@@ -569,14 +569,17 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "Portal** to emerge in the Overworld as a ghostly traveler. End it early "
                                 + "with an Icy Needle."),
                 rite(cat, "circle_magic/beastial_call", "Rite of Beastial Call", Items.HAY_BLOCK, 5,
-                        "A large Otherwhere working that draws animal life into the circle from the "
-                                + "countryside. Less a summoning than a lure — it coaxes creatures to answer a "
-                                + "call they do not understand, wild or pastured alike.",
+                        "A large Otherwhere working that draws animal life into the circle from far across "
+                                + "the countryside — up to a hundred paces and more. Less a summoning than a "
+                                + "lure: it coaxes creatures to answer a call they do not understand, and they "
+                                + "arrive a few at a time over long minutes, not all at once. Be patient, and "
+                                + "have beasts within range to call.",
                         "Offer barn and field bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, "
                                 + "carrot, and seeds, plus **6000 altar power**. It favors pigs, chickens, "
-                                + "cows, sheep, mooshrooms, wolves, and ocelots.\n\nA coven of three or more "
-                                + "suits the old craft. Do not cast it near a village ranch unless you can "
-                                + "explain yourself."),
+                                + "cows, sheep, mooshrooms, wolves, and ocelots.\n\n**It demands a coven of "
+                                + "three.** Three witches or more must keep the circle, or the call goes "
+                                + "unanswered and the rite collapses — this is no solitary working. Do not cast "
+                                + "it near a village ranch unless you can explain yourself."),
                 rite(cat, "circle_magic/sky_wrath", "Rite of Sky's Wrath", Items.IRON_SWORD, 6,
                         "A small-circle storm working for calling lightning where you choose. The inner "
                                 + "branch gathers the storm in the circle, the outer lashes the ground around "
