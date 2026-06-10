@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/witchery_rewoven.png" alt="Witchery: Rewoven" width="100%">
+</p>
+
 # Witchery NeoForge Port
 
 > *The old craft, transcribed for a new age of Minecraft.*
