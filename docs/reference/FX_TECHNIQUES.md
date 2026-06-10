@@ -54,4 +54,17 @@ bleeds). Glamour Bleed is that same physics, **inverted and controlled** — we 
   2026-06-10). If we ever want it on a specific plant, re-introduce a coloured transparent ring on *that*
   texture only — and **do not run the alpha-bleed pass over it** or it will be "fixed" away. Mark any
   intentional-bleed texture in a comment / this doc so a future cleanup doesn't strip it.
+
+### Intentional-bleed textures (DO NOT alpha-bleed these)
+
+| Texture | Aura RGB | Halo radius | Notes |
+|---|---|---|---|
+| `block/blight_fibre.png` | `(150, 50, 210)` cold blight-violet | 2.2 px off strands | 2026-06-10, first live use. Cutout vine-style decal; aura painted into the transparent ring around the strands, opaque strands + alpha untouched. Tune via radius (tighter = subtler) / colour. |
 - Requires mip-maps enabled (default). Players on Mipmap Levels = 0 won't see it.
+- **Does NOT work on particles.** Glamour Bleed is purely a mip artifact, and the particle atlas is
+  built with 0 mip levels, so a coloured transparent margin on a particle sprite produces no halo. For an
+  eerie *aura on a particle*, either (a) **paint** the soft halo straight into a custom particle sprite's
+  alpha gradient (the baked equivalent — works everywhere, no mip dependence), or (b) co-locate a second
+  glow particle with the effect. (We tried (b) on the Blight Heart's obsidian-tear "lava drops" — a
+  co-located `SCULK_SOUL` wisp per tear — but it didn't read well and was reverted; the painted-sprite
+  route (a) is the better bet if revisited.)
