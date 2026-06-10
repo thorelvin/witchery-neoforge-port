@@ -9,6 +9,26 @@ Current target:
 
 ---
 
+## 2026-06-10 Sky's Wrath focus = sword tiers (decode obfuscated 1.7.10 item ids; cross-check Resurrected)
+
+The port triggered the three Sky's Wrath storm variants on Snowball / Water Bucket / Gunpowder. Source
+`WitcheryRecipes` registers them as `SacrificeItem(Items.field_151041_m, itemAshWood)` (base),
+`Items.field_151052_q + ash` (large), `Items.field_151040_l + ash + chargedStone` (portable) — those
+obfuscated ids are **wooden / stone / iron sword**, not snowball/water/gunpowder. Confirmed two ways:
+`field_151040_l` appears in `EntityGoblin`'s blacksmith sell list + watch-tower chest loot (= iron_sword),
+and Witchery Resurrected's data-driven `data/witchery/rites/nature/{sky_wrath,large_sky_wrath,
+portable_sky_wrath}.json` spell it out literally (`minecraft:wooden_sword` / `stone_sword` / `iron_sword`,
+`data: 32767` = any damage, + `witchery:wood_ash`, optional `bound_waystone`, portable adds
+`charged_attuned_stone`). The port's radii/bolts/power already matched; only the focus item was wrong.
+
+**Lesson:** when a 1.7.10 sacrifice uses a bare `Items.field_######` id, *decode it* — don't infer the
+modern item from the rite's flavour. The fastest confirmation is Resurrected's JSON rites (readable item
+ids) and/or a second source usage of the same field. Here the project's own `Book_of_Shadows.html` had the
+swords right all along; the code was the outlier. (`item.is(Items.WOODEN_SWORD)` matches any durability,
+covering the source `data:32767`.) Also added the focus swords to `RitualEvents.selectIngredientSource`'s
+small-ritual preference so the sword is picked as the trigger over the Wood Ash offering — same
+offering-vs-trigger rule as the Creaking/Blight fixes.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

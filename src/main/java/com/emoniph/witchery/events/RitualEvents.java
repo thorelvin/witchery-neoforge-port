@@ -134,7 +134,11 @@ public class RitualEvents {
                     stack -> stack.is(Items.FEATHER)
                             || stack.is(Items.SLIME_BALL)
                             || stack.is(Items.BLAZE_POWDER)
-                            || stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+                            || stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                            // Sky's Wrath focus swords — preferred over the Wood Ash offering as trigger.
+                            || stack.is(Items.WOODEN_SWORD)
+                            || stack.is(Items.STONE_SWORD)
+                            || stack.is(Items.IRON_SWORD));
             if (smallRitualSource != null) {
                 return smallRitualSource;
             }

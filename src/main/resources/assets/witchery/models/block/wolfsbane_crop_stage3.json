@@ -1,6 +1,1 @@
-﻿{
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "cross": "witchery:block/wolfsbane_stage_3"
-  }
-}
+{"render_type":"minecraft:cutout","parent":"minecraft:block/cross","textures":{"cross":"witchery:block/wolfsbane_stage_3"}}

@@ -1002,12 +1002,14 @@ final class RitualOfferings {
     }
 
     static Optional<ItemEntity> findStormWeatherFocus(Level level, BlockPos center, StormRiteVariant variant) {
+        // Source/Resurrected Sky's Wrath focus is the sword tier (any damage value): wooden -> base,
+        // stone -> large, iron -> portable.
         if (variant == StormRiteVariant.BASE) {
-            return findNearbyOffering(level, center, stack -> stack.is(Items.SNOWBALL));
+            return findNearbyOffering(level, center, stack -> stack.is(Items.WOODEN_SWORD));
         }
         return variant == StormRiteVariant.LARGE
-                ? findNearbyOffering(level, center, stack -> stack.is(Items.WATER_BUCKET))
-                : findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
+                ? findNearbyOffering(level, center, stack -> stack.is(Items.STONE_SWORD))
+                : findNearbyOffering(level, center, stack -> stack.is(Items.IRON_SWORD));
     }
 
     static Optional<ChargeStoneOfferings> findChargeStoneOfferings(Level level, BlockPos center) {

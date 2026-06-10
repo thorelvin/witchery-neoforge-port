@@ -577,13 +577,16 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "cows, sheep, mooshrooms, wolves, and ocelots.\n\nA coven of three or more "
                                 + "suits the old craft. Do not cast it near a village ranch unless you can "
                                 + "explain yourself."),
-                rite(cat, "circle_magic/sky_wrath", "Rite of Sky's Wrath", Items.SNOWBALL, 6,
+                rite(cat, "circle_magic/sky_wrath", "Rite of Sky's Wrath", Items.IRON_SWORD, 6,
                         "A small-circle storm working for calling lightning where you choose. The inner "
                                 + "branch gathers the storm in the circle, the outer lashes the ground around "
-                                + "it, and the portable branch can be cast far from home without altar power.",
-                        "**Snowball** and **Wood Ash** call the inner storm (1000 power). **Water Bucket** "
-                                + "and **Wood Ash** call the outer storm (2000 power). **Gunpowder**, **Wood "
-                                + "Ash**, and a **Charged Attuned Stone** restore the portable branch.\n\nA "
+                                + "it, and the portable branch can be cast far from home without altar power. "
+                                + "A sword laid in the circle is the lightning's focus — the better the steel, "
+                                + "the wider its wrath.",
+                        "A **Wooden Sword** and **Wood Ash** call the inner storm (1000 power). A **Stone "
+                                + "Sword** and **Wood Ash** call the outer storm (2000 power). An **Iron "
+                                + "Sword**, **Wood Ash**, and a **Charged Attuned Stone** restore the portable "
+                                + "branch. Any worn blade serves — its edge is spent, not its temper.\n\nA "
                                 + "bound waystone in range moves the storm to its location — safer than "
                                 + "standing under your own lightning."),
                 rite(cat, "circle_magic/sanctity", "Rite of Sanctity", Items.FEATHER, 7,
