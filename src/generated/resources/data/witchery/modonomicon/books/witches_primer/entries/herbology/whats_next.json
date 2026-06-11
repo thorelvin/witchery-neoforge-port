@@ -9,7 +9,7 @@
   "description": "",
   "hide_while_locked": true,
   "icon": {
-    "item": "witchery:book_oven"
+    "item": "witchery:book_infusions"
   },
   "name": "What Comes Next",
   "pages": [
@@ -20,7 +20,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Your studies here are done. The next chapter — **Collecting Fumes** — opens once you craft and read its book.[#]()",
+      "text": "[#](53341a)Your studies here are done. The next chapter — **Brews & Infusions** — opens once you craft and read its book.[#]()",
       "title": "What Comes Next",
       "use_markdown_in_title": false
     },
@@ -30,9 +30,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "recipe_id_1": "witchery:book_oven",
-      "text": "[#](53341a)Craft it to continue your studies.[#]()",
-      "title1": "Witchcraft: Collecting Fumes",
+      "recipe_id_1": "witchery:book_infusions",
+      "text": "[#](53341a)With Mutandis in hand the green craft is yours. Next comes the Kettle — and its lasting infusions lean on **Odour of Purity**, baked from a Hawthorn Sapling your Mutandis can now roll.[#]()",
+      "title1": "Witchcraft: Brews & Infusions",
       "title2": ""
     }
   ],

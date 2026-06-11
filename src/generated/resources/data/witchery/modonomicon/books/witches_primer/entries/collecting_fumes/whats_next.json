@@ -9,7 +9,7 @@
   "description": "",
   "hide_while_locked": true,
   "icon": {
-    "item": "witchery:book_infusions"
+    "item": "witchery:book_herbology"
   },
   "name": "What Comes Next",
   "pages": [
@@ -20,7 +20,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Your studies here are done. The next chapter — **Brews & Infusions** — opens once you craft and read its book.[#]()",
+      "text": "[#](53341a)Your studies here are done. The next chapter — **Herbology** — opens once you craft and read its book.[#]()",
       "title": "What Comes Next",
       "use_markdown_in_title": false
     },
@@ -30,9 +30,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "recipe_id_1": "witchery:book_infusions",
-      "text": "[#](53341a)The bottom reagent, **Odour of Purity**, comes from the Witches' Oven you just built — bake a Hawthorn Sapling.[#]()",
-      "title1": "Witchcraft: Brews & Infusions",
+      "recipe_id_1": "witchery:book_herbology",
+      "text": "[#](53341a)Now that the Oven smokes, Herbology is yours to learn — its Mutandis is compounded from the **Wood Ash** you just rendered.[#]()",
+      "title1": "Witchcraft: Herbology",
       "title2": ""
     }
   ],

@@ -27,7 +27,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A few of these brews are exactly what your next books ask for.[#]()",
+      "text": "[#](53341a)Start with what lies to hand: **Wood Ash** from any log, **Exhale** from an oak, **Breath** from a birch.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Hawthorn and Rowan come later, once Herbology gives you Mutandis and the Rowan tree.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -72,7 +83,7 @@
           "y": 45
         }
       ],
-      "text": "[#](53341a)A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. Coal fuels it; a clay jar catches the fume.[#]()",
+      "text": "[#](53341a)A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. Hawthorn saplings are rolled from Herbology's Mutandis, so this fume waits for the next chapter; coal fuels it, a clay jar catches it.[#]()",
       "title": "Odour of Purity"
     },
     {
@@ -160,7 +171,7 @@
           "y": 45
         }
       ],
-      "text": "[#](53341a)A **Rowan Sapling** gives Whiff of Magic — the reagent for the **Circle Magic** book.[#]()",
+      "text": "[#](53341a)A **Rowan Sapling** gives Whiff of Magic — the reagent for the **Circle Magic** book. Rowans are grown or found wild in Herbology, so this one waits a little too.[#]()",
       "title": "Whiff of Magic"
     },
     {

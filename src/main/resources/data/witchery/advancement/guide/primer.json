@@ -18,6 +18,8 @@
     ]
   ],
   "rewards": {
-    "recipes": ["witchery:book_herbology"]
+    "recipes": [
+      "witchery:book_oven"
+    ]
   }
 }

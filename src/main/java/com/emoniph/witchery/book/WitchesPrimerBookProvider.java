@@ -174,7 +174,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 .withBookTextOffsetX(WitcheryBooks.TEXT_OFFSET_X)
                 .withBookTextOffsetWidth(WitcheryBooks.TEXT_OFFSET_WIDTH)
                 .withCategories(
-                        gettingStarted(), herbology(), brewsAndInfusions(), collectingFumes(), distilling(),
+                        gettingStarted(), collectingFumes(), herbology(), brewsAndInfusions(), distilling(),
                         circleMagic(), conjuration(), symbology(), poppets(), spiritWorld(), creatures(),
                         transformations());
 
@@ -216,8 +216,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "subject's book and its pages appear here. Here is the whole road, so you may see "
                         + "where your feet are headed:"
                         + "\n\n**Getting Started** — the altar, the boline, the first roots."
-                        + "\n**1. Herbology** — Mutandis, the Rowan, the Witch's Cauldron."
-                        + "\n**2. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders."
+                        + "\n**1. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders."
+                        + "\n**2. Herbology** — Mutandis, the Rowan, the Witch's Cauldron."
                         + "\n**3. Brews & Infusions** — the Kettle, and the four paths of infusion."
                         + "\n**4. Distilling** — drawing essences out by heat and patience."
                         + "\n**5. Circle Magic** — chalk, circles, and the rites of power."
@@ -236,13 +236,14 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "getting_started/altar", "The Altar", WitcheryItems.ALTAR.get(), 1, altar),
                 entry(cat, "getting_started/boline", "The Boline", WitcheryItems.BOLINE.get(), 2, boline),
                 entry(cat, "getting_started/path_of_the_craft", "Path of the Craft", WitcheryItems.CHALK_GOLDEN.get(), 3, path),
-                whatsNext(cat, "getting_started", 4, "book_herbology", "Witchcraft: Herbology", WitcheryItems.BOOK_HERBOLOGY.get(), "Herbology"));
+                whatsNext(cat, "getting_started", 4, "book_oven", "Witchcraft: Collecting Fumes", WitcheryItems.BOOK_OVEN.get(), "Collecting Fumes",
+                        "The Witches' Oven is the first station a witch builds — and you build it before all else, because Herbology's Mutandis is compounded from the **Wood Ash** the Oven renders. Learn the smoke first, then the green."));
         return cat;
     }
 
     // ── 1. Herbology ────────────────────────────────────────────────────────────
     private BookCategoryModel herbology() {
-        BookCategoryModel cat = gated("herbology", "Herbology", WitcheryItems.MANDRAKE_ROOT.get(), 1, "herbology");
+        BookCategoryModel cat = gated("herbology", "Herbology", WitcheryItems.MANDRAKE_ROOT.get(), 2, "herbology");
 
         List<BookPageModel<?>> rowan = new ArrayList<>(WitcheryBooks.prose("The Rowan Tree",
                 "The rowan is unremarkable to look at — a slender tree with silver bark, prone to growing "
@@ -364,7 +365,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "herbology/anointing_paste", "The Witch's Cauldron", WitcheryItems.ANOINTING_PASTE.get(), 2, anointing),
                 entry(cat, "herbology/drop_of_luck", "Drop of Luck", WitcheryItems.DROP_OF_LUCK.get(), 3, drop),
                 entry(cat, "herbology/mutating_sprig", "Mutating Sprig", WitcheryItems.MUTATOR.get(), 4, sprig),
-                gatedByItem("guide/obtained/mutandis", whatsNext(cat, "herbology", 5, "book_oven", "Witchcraft: Collecting Fumes", WitcheryItems.BOOK_OVEN.get(), "Collecting Fumes")));
+                gatedByItem("guide/obtained/mutandis", whatsNext(cat, "herbology", 5, "book_infusions", "Witchcraft: Brews & Infusions", WitcheryItems.BOOK_INFUSIONS.get(), "Brews & Infusions",
+                        "With Mutandis in hand the green craft is yours. Next comes the Kettle — and its lasting infusions lean on **Odour of Purity**, baked from a Hawthorn Sapling your Mutandis can now roll.")));
         return cat;
     }
 
@@ -417,7 +419,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
     // ── 3. Collecting Fumes ─────────────────────────────────────────────────────
     private BookCategoryModel collectingFumes() {
-        BookCategoryModel cat = gated("collecting_fumes", "Collecting Fumes", WitcheryItems.WITCHES_OVEN.get(), 2, "oven");
+        BookCategoryModel cat = gated("collecting_fumes", "Collecting Fumes", WitcheryItems.WITCHES_OVEN.get(), 1, "oven");
         List<BookPageModel<?>> oven = new ArrayList<>(WitcheryBooks.prose("The Witches' Oven",
                 "Not everything useful comes from a kettle. Some ingredients must be rendered down first — "
                         + "reduced, transformed, made into something the craft can use."
@@ -430,18 +432,21 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
         List<BookPageModel<?>> ovenRecipes = new ArrayList<>(WitcheryBooks.prose("What the Oven Makes",
                 "Feed it a sapling and it renders the wood down into a fume, caught in a clay jar — each "
-                        + "tree gives a different essence. A few of these brews are exactly what your next "
-                        + "books ask for."));
+                        + "tree gives a different essence. Start with what lies to hand: **Wood Ash** from any "
+                        + "log, **Exhale** from an oak, **Breath** from a birch. The Hawthorn and Rowan come "
+                        + "later, once Herbology gives you Mutandis and the Rowan tree."));
         ovenRecipes.add(ovenRecipe("Odour of Purity",
                 "A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. "
-                        + "Coal fuels it; a clay jar catches the fume.",
+                        + "Hawthorn saplings are rolled from Herbology's Mutandis, so this fume waits for the "
+                        + "next chapter; coal fuels it, a clay jar catches it.",
                 WitcheryItems.HAWTHORN_SAPLING.get(), WitcheryItems.ODOUR_OF_PURITY.get()));
         ovenRecipes.add(ovenRecipe("Breath of the Goddess",
                 "A **Birch Sapling** gives Breath of the Goddess — the **Distilling** reagent, and the "
                         + "base of countless brews.",
                 Items.BIRCH_SAPLING, WitcheryItems.BREATH_OF_GODDESS.get()));
         ovenRecipes.add(ovenRecipe("Whiff of Magic",
-                "A **Rowan Sapling** gives Whiff of Magic — the reagent for the **Circle Magic** book.",
+                "A **Rowan Sapling** gives Whiff of Magic — the reagent for the **Circle Magic** book. "
+                        + "Rowans are grown or found wild in Herbology, so this one waits a little too.",
                 WitcheryItems.ROWAN_SAPLING.get(), WitcheryItems.WHIFF_OF_MAGIC.get()));
         ovenRecipes.add(ovenRecipe("Exhale of the Horned One",
                 "An **Oak Sapling** gives Exhale of the Horned One, used in Mutandis and darker workings.",
@@ -453,8 +458,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         cat.withEntries(
                 entry(cat, "collecting_fumes/witches_oven", "The Witches' Oven", WitcheryItems.WITCHES_OVEN.get(), 0, oven),
                 entry(cat, "collecting_fumes/oven_recipes", "What the Oven Makes", WitcheryItems.ODOUR_OF_PURITY.get(), 1, ovenRecipes),
-                gatedByItem("guide/obtained/exhale_of_horned_one", whatsNext(cat, "collecting_fumes", 2, "book_infusions", "Witchcraft: Brews & Infusions", WitcheryItems.BOOK_INFUSIONS.get(), "Brews & Infusions",
-                        "The bottom reagent, **Odour of Purity**, comes from the Witches' Oven you just built — bake a Hawthorn Sapling.")));
+                gatedByItem("guide/obtained/exhale_of_horned_one", whatsNext(cat, "collecting_fumes", 2, "book_herbology", "Witchcraft: Herbology", WitcheryItems.BOOK_HERBOLOGY.get(), "Herbology",
+                        "Now that the Oven smokes, Herbology is yours to learn — its Mutandis is compounded from the **Wood Ash** you just rendered.")));
         return cat;
     }
 
