@@ -437,16 +437,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "later, once Herbology gives you Mutandis and the Rowan tree."));
         ovenRecipes.add(ovenRecipe("Odour of Purity",
                 "A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. "
-                        + "Hawthorn saplings are rolled from Herbology's Mutandis, so this fume waits for the "
-                        + "next chapter; coal fuels it, a clay jar catches it.",
+                        + "Hawthorn comes from Herbology's Mutandis, so this fume waits a chapter.",
                 WitcheryItems.HAWTHORN_SAPLING.get(), WitcheryItems.ODOUR_OF_PURITY.get()));
         ovenRecipes.add(ovenRecipe("Breath of the Goddess",
                 "A **Birch Sapling** gives Breath of the Goddess — the **Distilling** reagent, and the "
                         + "base of countless brews.",
                 Items.BIRCH_SAPLING, WitcheryItems.BREATH_OF_GODDESS.get()));
         ovenRecipes.add(ovenRecipe("Whiff of Magic",
-                "A **Rowan Sapling** gives Whiff of Magic — the reagent for the **Circle Magic** book. "
-                        + "Rowans are grown or found wild in Herbology, so this one waits a little too.",
+                "A **Rowan Sapling** gives Whiff of Magic — the **Circle Magic** reagent. Rowans come "
+                        + "with Herbology, so this waits a little too.",
                 WitcheryItems.ROWAN_SAPLING.get(), WitcheryItems.WHIFF_OF_MAGIC.get()));
         ovenRecipes.add(ovenRecipe("Exhale of the Horned One",
                 "An **Oak Sapling** gives Exhale of the Horned One, used in Mutandis and darker workings.",
@@ -476,9 +475,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Iron, glass, and a brewing stand. The distillery is not complicated; what you put inside it "
                         + "often is."));
         distillery.add(distilleryRecipe("Two In, Four Out",
-                "**Diamond Vapour** and a **Ghast Tear** distil at once into Odour of Purity, Reek of "
-                        + "Misfortune, Foul Fume, and Refined Evil — three clay jars catch the run. A second "
-                        + "way to the Odour, if saplings are scarce.",
+                "**Diamond Vapour** + a **Ghast Tear**, with three clay jars, yield Odour of Purity, Reek "
+                        + "of Misfortune, Foul Fume, and Refined Evil at once.",
                 WitcheryItems.DIAMOND_VAPOUR.get(), Items.GHAST_TEAR,
                 WitcheryItems.ODOUR_OF_PURITY.get(), WitcheryItems.REEK_OF_MISFORTUNE.get(),
                 WitcheryItems.FOUL_FUME.get(), WitcheryItems.REFINED_EVIL.get()));

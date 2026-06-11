@@ -13,6 +13,16 @@ import net.minecraft.client.renderer.RenderPipelines;
  */
 public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePage> {
 
+    /**
+     * Station GUI panels are 60–70px tall — taller than a book page (PAGE_HEIGHT 155) can spare once the
+     * title (y=24) and a caption are placed, so at native size they leave too little room and the caption
+     * overflows the bottom. Cap the drawn panel height and scale the whole composite (background + items)
+     * to fit, so every recipe page keeps room for its text.
+     */
+    private static final int MAX_PANEL_HEIGHT = 52;
+    private static final int PANEL_TOP = 24;
+    private static final int TEXT_GAP = 6;
+
     public StationRecipePageRenderer(StationRecipePage page) {
         super(page);
     }
@@ -26,17 +36,28 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
 
         int bgWidth = this.page.getBgWidth();
         int bgHeight = this.page.getBgHeight();
-        int bgX = (pageWidth - bgWidth) / 2;
-        int bgY = 24;
+        float scale = Math.min(1.0F, MAX_PANEL_HEIGHT / (float) bgHeight);
+        int drawnW = Math.round(bgWidth * scale);
+        int drawnH = Math.round(bgHeight * scale);
+        int bgX = (pageWidth - drawnW) / 2;
 
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(this.left + bgX, this.top + PANEL_TOP);
+        graphics.pose().scale(scale, scale);
         graphics.blit(RenderPipelines.GUI_TEXTURED, this.page.getBackground(),
-                this.left + bgX, this.top + bgY, 0.0F, 0.0F, bgWidth, bgHeight, bgWidth, bgHeight);
-
+                0, 0, 0.0F, 0.0F, bgWidth, bgHeight, bgWidth, bgHeight);
+        // Map the mouse into the panel's pre-scale space so item hover/tooltips still line up.
+        int localMouseX = Math.round((mouseX - (this.left + bgX)) / scale);
+        int localMouseY = Math.round((mouseY - (this.top + PANEL_TOP)) / scale);
         for (StationRecipePage.Slot slot : this.page.getSlots()) {
-            this.parentScreen.renderItemStack(graphics,
-                    this.left + bgX + slot.x(), this.top + bgY + slot.y(), mouseX, mouseY, slot.stack());
+            this.parentScreen.renderItemStack(graphics, slot.x(), slot.y(), localMouseX, localMouseY, slot.stack());
         }
+        graphics.pose().popMatrix();
 
-        this.renderBookTextHolder(graphics, this.page.getText(), 0, bgY + bgHeight + 6, pageWidth);
+        // Auto-fit the caption into the space left below the panel: the height-bounded overload shrinks
+        // the text just enough to fit (down a size or two on long captions), so nothing overflows the page.
+        int textY = PANEL_TOP + drawnH + TEXT_GAP;
+        int textHeight = BookEntryScreen.PAGE_HEIGHT - textY - 2;
+        this.renderBookTextHolder(graphics, this.page.getText(), 0, textY, pageWidth, textHeight);
     }
 }
