@@ -52,8 +52,14 @@ public class WitchesPrimerItem extends Item {
         // The Modonomicon book GUI is purely client-side (book data is datapack-synced), so open it
         // directly on the logical client. The opener lives in a client-only class.
         if (level.isClientSide()) {
-            if (categoryId != null && entryId != null) {
-                com.emoniph.witchery.client.WitcheryBookOpener.openEntry(bookId, categoryId, entryId);
+            if (categoryId != null) {
+                // Topic guides (book_oven, book_herbology, …) open straight to their chapter's entries list.
+                com.emoniph.witchery.client.WitcheryBookOpener.openCategoryList(bookId, categoryId);
+            } else if (bookId.equals(WitcheryBooks.PRIMER)) {
+                // The Primer resumes the last page read, or opens the first entry on first use.
+                com.emoniph.witchery.client.WitcheryBookOpener.openResumingOrFirst(bookId,
+                        Identifier.fromNamespaceAndPath("witchery", "getting_started"),
+                        Identifier.fromNamespaceAndPath("witchery", "getting_started/first_steps"));
             } else {
                 com.emoniph.witchery.client.WitcheryBookOpener.open(bookId);
             }
