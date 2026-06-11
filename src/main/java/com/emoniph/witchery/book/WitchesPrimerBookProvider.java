@@ -66,6 +66,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     private static final Identifier BG_OVEN = id("textures/gui/book/bg_oven.png");
     private static final Identifier BG_DISTILLERY = id("textures/gui/book/bg_distillery.png");
     private static final Identifier BG_CAULDRON = id("textures/gui/book/bg_cauldron.png");
+    private static final Identifier BG_CIRCLE = id("textures/gui/book/bg_circle.png");
 
     /** Witches' Oven: sapling/log → fume, with coal fuel, a clay jar, and wood-ash byproduct. */
     private static StationRecipePageModel ovenRecipe(String title, String caption, ItemLike input, ItemLike result) {
@@ -104,6 +105,29 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         return model;
     }
 
+    /**
+     * Circle Magic ritual recipe card (modelled on the cauldron recipe): the chalk ring background, the
+     * dropped trigger/offering items as real tooltip-bearing slots, and the circle size, chalk type,
+     * altar power and coven requirement as the caption — the book equivalent of the FTB Grid/Circle_Magic.
+     */
+    private static StationRecipePageModel ritualRecipe(String size, String chalk, String power, int coven,
+                                                       ItemLike... inputs) {
+        StringBuilder info = new StringBuilder();
+        info.append("**").append(size).append("** ring · **").append(chalk).append("** chalk · **")
+                .append(power).append("** altar power");
+        if (coven > 0) {
+            info.append(" · Coven of **").append(coven).append("**");
+        }
+        StationRecipePageModel model = StationRecipePageModel.create()
+                .withTitle(Component.literal("The Circle"))
+                .withText(WitcheryBooks.ink(info.toString()))
+                .withBackground(BG_CIRCLE, 100, 58);
+        for (int i = 0; i < inputs.length; i++) {
+            model.withSlot(inputs[i], 1, 58 + (i % 3) * 18, 8 + (i / 3) * 20);
+        }
+        return model;
+    }
+
     private static BookEntityPageModel creature(String entityId, String name, String caption) {
         return BookEntityPageModel.create()
                 .withEntityId(entityId)
@@ -124,6 +148,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     private BookEntryModel rite(BookCategoryModel cat, String path, String name, ItemLike icon, int sort,
                                 String description, String working) {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose(name, description));
+        pages.addAll(WitcheryBooks.prose("The Working", working));
+        return entry(cat, path, name, icon, sort, pages);
+    }
+
+    /** As {@link #rite}, but with a ritual recipe card (size/chalk/power/coven + offerings) after the description. */
+    private BookEntryModel rite(BookCategoryModel cat, String path, String name, ItemLike icon, int sort,
+                                String description, StationRecipePageModel recipe, String working) {
+        List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose(name, description));
+        pages.add(recipe);
         pages.addAll(WitcheryBooks.prose("The Working", working));
         return entry(cat, path, name, icon, sort, pages);
     }
@@ -608,6 +641,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         "The sister-working to Sanctity. Where Sanctity presses creatures away, Imprisonment "
                                 + "draws them back and pens them within the circle. A snare, not a "
                                 + "killing-circle.",
+                        ritualRecipe("7×7", "Ritual", "500 (+16/s)", 0, Items.SLIME_BALL, Items.REDSTONE),
                         "Offer a **Slime Ball** with **Redstone** on a small circle, with **500 altar "
                                 + "power**. For the safer inverse, study Sanctity.\n\nUseful for holding "
                                 + "sacrificial beasts or summoned nuisances in one patch while you prepare the "
