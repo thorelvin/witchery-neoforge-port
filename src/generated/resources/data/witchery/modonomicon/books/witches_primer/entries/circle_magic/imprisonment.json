@@ -32,30 +32,18 @@
       "use_markdown_in_title": false
     },
     {
-      "type": "witchery:station_recipe",
+      "type": "modonomicon:image",
       "anchor": "",
-      "background": "witchery:textures/gui/book/bg_circle.png",
-      "bg_height": 58,
-      "bg_width": 100,
+      "border": false,
       "condition": {
         "type": "modonomicon:none"
       },
-      "slots": [
-        {
-          "count": 1,
-          "item": "minecraft:slime_ball",
-          "x": 58,
-          "y": 8
-        },
-        {
-          "count": 1,
-          "item": "minecraft:redstone",
-          "x": 76,
-          "y": 8
-        }
+      "images": [
+        "witchery:textures/gui/book/ritual_imprisonment.png"
       ],
       "text": "[#](53341a)**7×7** ring · **Ritual** chalk · **500 (+16/s)** altar power[#]()",
-      "title": "The Circle"
+      "title": "",
+      "use_legacy_rendering": false
     },
     {
       "type": "modonomicon:text",

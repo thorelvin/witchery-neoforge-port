@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  * Coven Witch: a friendly wandering merchant that sells witchery ingredients.
  * Skin is randomly assigned on spawn (0-4 -> covenwitch1-5.png).
  */
-public class CovenWitchEntity extends AbstractVillager {
+public class CovenWitchEntity extends AbstractVillager implements CovenMember {
 
     private static final String TAG_SKIN = "Skin";
     private static final EntityDataAccessor<Integer> SKIN =

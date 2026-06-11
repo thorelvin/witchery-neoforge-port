@@ -92,6 +92,7 @@ class RitualDefinitionTest {
         assertEquals("blight", match(MEDIUM, new ItemStack(Items.WITHER_ROSE), INFERNAL));
         assertEquals("corrupt_poppet", match(MEDIUM, new ItemStack(WitcheryItems.VOODOO_PROTECTION_POPPET.get()), INFERNAL));
         assertEquals("bind_fetish", match(MEDIUM, new ItemStack(WitcheryItems.FETISH_SCARECROW.get()), RITUAL));
+        assertEquals("gathered_lives", match(MEDIUM, new ItemStack(WitcheryItems.MELLIFLUOUS_HUNGER.get()), OTHERWHERE));
     }
 
     @Test
@@ -202,7 +203,7 @@ class RitualDefinitionTest {
     @Test
     void definitionNamesAreUniqueAndRosterIsLocked() {
         List<String> names = RitualExecutor.allRitualDefinitionNames();
-        assertEquals(71, names.size(), "ritual definition roster size");
+        assertEquals(72, names.size(), "ritual definition roster size");
         assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
     }
 }

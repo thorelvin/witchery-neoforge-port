@@ -14,12 +14,16 @@ import net.minecraft.client.renderer.RenderPipelines;
 public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePage> {
 
     /**
-     * Station GUI panels are 60–70px tall — taller than a book page (PAGE_HEIGHT 155) can spare once the
-     * title (y=24) and a caption are placed, so at native size they leave too little room and the caption
-     * overflows the bottom. Cap the drawn panel height and scale the whole composite (background + items)
-     * to fit, so every recipe page keeps room for its text.
+     * Panels are drawn at native 1:1 scale. They must be authored to fit a book page: ≤ {@code PAGE_WIDTH}
+     * wide and short enough to leave room for the caption below (all current panels are ≤112×70).
+     * <p>
+     * We deliberately do <em>not</em> shrink panels to a max height: {@code GuiGraphics.renderItem} only
+     * honours the <em>translation</em> of the 2D pose, not its scale (the item model always draws at 16px),
+     * so a downscaled background leaves full-size 16px items overflowing the shrunken slots — the alignment
+     * bug this replaces. At scale 1.0 the 16px items land exactly in the 16px slots. The only fallback is a
+     * width clamp, so an over-wide panel shrinks rather than running off the page (its items would then
+     * overflow, but no real recipe panel exceeds the page width).
      */
-    private static final int MAX_PANEL_HEIGHT = 52;
     private static final int PANEL_TOP = 24;
     private static final int TEXT_GAP = 6;
 
@@ -36,7 +40,7 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
 
         int bgWidth = this.page.getBgWidth();
         int bgHeight = this.page.getBgHeight();
-        float scale = Math.min(1.0F, MAX_PANEL_HEIGHT / (float) bgHeight);
+        float scale = Math.min(1.0F, pageWidth / (float) bgWidth);
         int drawnW = Math.round(bgWidth * scale);
         int drawnH = Math.round(bgHeight * scale);
         int bgX = (pageWidth - drawnW) / 2;

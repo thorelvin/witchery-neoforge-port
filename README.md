@@ -31,21 +31,22 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 ## Current State
 
-The port is playable and well beyond prototype stage, but it remains an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused heavily on village generation stability, exact ID promotion, the native guidebook, and closing visible parity gaps from the old mod.
+The port is playable and well beyond prototype stage, but it remains an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused heavily on village generation stability, exact ID promotion, the native Modonomicon guidebook, ritual dispatcher safety, custom brew parity, and closing visible parity gaps from the old mod.
 
 High-level estimate:
 
-- Mechanical porting: roughly `80-85%`
-- Release-ready parity/polish: roughly `60-70%`
-- Best source of truth: [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md)
+- Mechanical porting: roughly `88-92%`
+- Release-ready parity/polish: roughly `70-75%`
+- Best source of truth: [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md)
 
-The long tail is mostly old Witchery edge cases, in-game QA, final visuals, custom brew parity, and family-by-family promotion of remaining legacy placeholder items. The cauldron is lit; the brew is still thickening.
+The long tail is mostly old Witchery edge cases, in-game QA, final visuals, full custom brew and moving-fluid parity, and polish on promoted exact IDs. The live legacy placeholder roster is empty; the remaining work is making those promoted systems feel finished. The cauldron is lit; the brew is still thickening.
 
 ## Feature Highlights
 
 Substantial restored or in-progress systems include:
 
 - Altar power, kettle brewing, Witch's Oven, Distillery, Spinning Wheel, Brazier recipes, and Witch's Cauldron workings.
+- Custom brews now have a real composed-brew spine: capacity ingredients, strength/duration/inversion modifiers, drink/splash/gas/liquid containers, many restored source action ingredients, and a large set of fixed direct brews. Exact moving gas/liquid behavior, triggered dispersal, generic buckets, Gas Mask protection, renderer/color polish, and source projectile transport remain active parity work.
 - Circle Magic with a broad restored rite roster, staged active rites, altar power costs, ring/chalk-family checks, curse routes, and many transaction/refund fixes. Rite dispatch is **data-driven**: a single declarative `RitualDefinition` registry (70 rites) keyed on trigger item, ring size, chalk variant, companion rings, offering requirements, ordered disambiguation, and veto conditions — replacing the old hand-ordered `if`/`else if` ladders. The old `RitualExecutor` monolith was split into focused files (`RitualDefinition`, `RitualOfferings`, `RitualOfferingSets`, `RitualSavedData`, `RitualTransaction`/`RitualOffering`), behaviour-preserving and covered by headless JVM tests.
 - The **Mystic Branch** — the witch's wand and spell focus — forged through a night-time rite from an Ent Twig and Mystic Unguent. Glyphs traced in the air spend infused energy and demon-soul knowledge learned from slain demons (each soul teaches its own sign), while the branch also channels creature powers stolen from the world's beasts — swiftness, impossible leaps, healing, transposition, and bat-light levitation among them. An infusion type and learned-glyph set gate what a witch can cast; glyph and creature-power coverage is actively expanding, with `/witchery learn` and `/witchery infuse` available for testing.
 - Poppets, taglocks, familiars, creature traps, belts, vampire clothing, and many source-backed item recipe paths.
@@ -54,19 +55,19 @@ Substantial restored or in-progress systems include:
 - Torment dimension boss flow and legacy-style maze restoration, with server-side `/witchery verify torment` QA support.
 - Mirror World work with mirror portal blocks, room generation, reflection guardian flow, and fresh-world/dimension-folder QA caveats.
 - Many mobs and renderers restored or polished toward old Witchery visuals — ravens, spirits, nightmares, flying monkeys, imps, Ents, Mandrakes, Banshees, Poltergeists, and others.
-- The **Witches' Primer** as a native Modonomicon guidebook that grows as the witch does: every player is handed the Primer on first join, and crafting a topic book unlocks that chapter and reveals the next book's recipe — a guided path from Herbology through to the transformations. Station recipes (oven, distillery, kettle, cauldron) are shown in-book with live items and hover tooltips.
+- The **Witches' Primer** as a native Modonomicon guidebook that grows as the witch does: every player is handed the Primer on first join, and crafting a topic book unlocks that chapter and reveals the next book's recipe — a guided path from Getting Started through Collecting Fumes, Herbology, Circle Magic, and the transformations. Station recipes (oven, distillery, kettle, cauldron) are shown in-book with live items and hover tooltips, and Circle Magic is gaining source-style rite recipe cards.
 - Vanilla villages now receive Witchery village buildings and adaptive town walls: apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA.
-- A large exact-ID cleanup pass has promoted many source and community fan-mod aliases out of placeholder status, including guidebooks, hunter gear, brews, contracts, waystones, special wearables, utility tools, and several old food/ingredient items.
+- A large exact-ID cleanup pass has promoted or removed the former legacy placeholder roster. Source and community fan-mod aliases now cover guidebooks, hunter gear, brew containers, contracts, waystones, special wearables, utility tools, mounted trophy heads, and many old food/ingredient items; deeper behavior and visual QA continue family by family.
 - Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are restored or partially restored, with current QA notes in the status docs.
-- The in-game guidebook is powered by **Modonomicon**; JEI integration is declared optional. Dependency wiring may lag current Minecraft/NeoForge availability.
+- The in-game guidebook is powered by **Modonomicon** as a required dependency. JEI integration is declared optional and can be wired in as current Minecraft/NeoForge availability allows.
 
 ## Not Done Yet
 
 Every grimoire has blank pages. Important remaining work includes:
 
-- Some legacy placeholder items are still intentionally inert TODO markers, even though their IDs/models are visible and tracked.
 - Some systems marked "Done" in status docs are implementation slices rather than full old-Witchery parity, especially transformations, machines, custom brews, Torment/Mirror World fresh-dimension checks, and armor/equipment feel.
-- Custom Brew parity is still an evolving area: Foulness/Foaming/Poison tier scaling exists, but original dynamic cauldron action composition, generic brew containers, and moving brew dispersals remain open.
+- The legacy placeholder map is empty, but promotion is not the same as finished parity. Several exact IDs, aliases, wearables, contracts, blocks, and brew paths still need source-feel polish, in-game QA, or deeper behavior.
+- Custom Brew parity is still an evolving area: the composed-brew core and many source actions exist, but exact moving gas/liquid flow, triggered dispersal, generic buckets, Gas Mask protection, renderer/color polish, source projectile transport, and obscure old action routes remain open.
 - The latest parity-scan backlog is merged into [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md), with status corrections reflected in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs careful QA around room generation, reflection behavior, stale generated chunks, and player-skin/equipment behavior.
 - Village additions are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
@@ -80,7 +81,7 @@ Consult these before choosing what to work on next — they hold the project's t
 - [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md) — feature-level parity matrix.
 - [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) — current plan, quick verify items, and next-session priorities.
 - [docs/status/BUGS.md](docs/status/BUGS.md) — active/fixed bug board and parity notes.
-- [docs/status/ITEM_REVIEW.md](docs/status/ITEM_REVIEW.md) — item roster, placeholder tracking, and promotion decisions.
+- [docs/status/ITEM_REVIEW.md](docs/status/ITEM_REVIEW.md) — item roster, exact-ID promotions, and follow-up decisions.
 - [docs/reference/PORTING_NOTES.md](docs/reference/PORTING_NOTES.md) — chronological implementation notes and reference findings.
 
 ## Build

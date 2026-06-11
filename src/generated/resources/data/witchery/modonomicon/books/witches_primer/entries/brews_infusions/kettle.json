@@ -65,60 +65,18 @@
       "title2": ""
     },
     {
-      "type": "witchery:station_recipe",
+      "type": "modonomicon:image",
       "anchor": "",
-      "background": "witchery:textures/gui/book/bg_cauldron.png",
-      "bg_height": 60,
-      "bg_width": 112,
+      "border": false,
       "condition": {
         "type": "modonomicon:none"
       },
-      "slots": [
-        {
-          "count": 1,
-          "item": "witchery:redstone_soup",
-          "x": 89,
-          "y": 33
-        },
-        {
-          "count": 1,
-          "item": "minecraft:redstone",
-          "x": 6,
-          "y": 2
-        },
-        {
-          "count": 1,
-          "item": "witchery:drop_of_luck",
-          "x": 23,
-          "y": 2
-        },
-        {
-          "count": 1,
-          "item": "witchery:bat_wool",
-          "x": 40,
-          "y": 2
-        },
-        {
-          "count": 1,
-          "item": "witchery:tongue_of_dog",
-          "x": 57,
-          "y": 2
-        },
-        {
-          "count": 1,
-          "item": "witchery:belladonna",
-          "x": 74,
-          "y": 2
-        },
-        {
-          "count": 1,
-          "item": "witchery:mandrake_root",
-          "x": 91,
-          "y": 2
-        }
+      "images": [
+        "witchery:textures/gui/book/kettle_redstone_soup.png"
       ],
       "text": "[#](53341a)Six reagents in a lit kettle over **1000 altar power**. Redstone Soup is the base of every lasting infusion.[#]()",
-      "title": "Kettle: Redstone Soup"
+      "title": "Kettle: Redstone Soup",
+      "use_legacy_rendering": false
     }
   ],
   "show_when_any_parent_unlocked": false,

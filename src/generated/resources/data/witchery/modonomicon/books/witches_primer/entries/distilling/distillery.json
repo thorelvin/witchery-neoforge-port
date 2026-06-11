@@ -65,60 +65,18 @@
       "title2": ""
     },
     {
-      "type": "witchery:station_recipe",
+      "type": "modonomicon:image",
       "anchor": "",
-      "background": "witchery:textures/gui/book/bg_distillery.png",
-      "bg_height": 68,
-      "bg_width": 102,
+      "border": false,
       "condition": {
         "type": "modonomicon:none"
       },
-      "slots": [
-        {
-          "count": 1,
-          "item": "witchery:diamond_vapour",
-          "x": 8,
-          "y": 9
-        },
-        {
-          "count": 1,
-          "item": "minecraft:ghast_tear",
-          "x": 8,
-          "y": 27
-        },
-        {
-          "count": 3,
-          "item": "witchery:clay_jar",
-          "x": 8,
-          "y": 49
-        },
-        {
-          "count": 1,
-          "item": "witchery:odour_of_purity",
-          "x": 64,
-          "y": 20
-        },
-        {
-          "count": 1,
-          "item": "witchery:reek_of_misfortune",
-          "x": 82,
-          "y": 20
-        },
-        {
-          "count": 1,
-          "item": "witchery:foul_fume",
-          "x": 64,
-          "y": 38
-        },
-        {
-          "count": 1,
-          "item": "witchery:refined_evil",
-          "x": 82,
-          "y": 38
-        }
+      "images": [
+        "witchery:textures/gui/book/distillery_odour.png"
       ],
       "text": "[#](53341a)**Diamond Vapour** + a **Ghast Tear**, with three clay jars, yield Odour of Purity, Reek of Misfortune, Foul Fume, and Refined Evil at once.[#]()",
-      "title": "Two In, Four Out"
+      "title": "Two In, Four Out",
+      "use_legacy_rendering": false
     },
     {
       "type": "modonomicon:text",

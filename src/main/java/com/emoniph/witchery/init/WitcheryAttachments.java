@@ -56,6 +56,26 @@ public class WitcheryAttachments {
                             .copyOnDeath()
                             .build());
 
+    /**
+     * Bitmask of which of the 12 in-world story books a player has found (bit {@code 1 << (id-1)}).
+     * Finding 5 distinct stories unlocks the Spectral Coven (Rite of the Gathered Lives). Copied across
+     * death so progress is never lost on respawn.
+     */
+    public static final Supplier<AttachmentType<Integer>> STORIES_FOUND =
+            ATTACHMENT_TYPES.register("stories_found", () ->
+                    AttachmentType.builder(() -> 0)
+                            .serialize(Codec.INT.fieldOf("value"))
+                            .copyOnDeath()
+                            .build());
+
+    /** One-shot flag: has this player crossed the 5-story threshold and unlocked the Gathered Lives rite? */
+    public static final Supplier<AttachmentType<Boolean>> GATHERED_LIVES_UNLOCKED =
+            ATTACHMENT_TYPES.register("gathered_lives_unlocked", () ->
+                    AttachmentType.builder(() -> Boolean.FALSE)
+                            .serialize(Codec.BOOL.fieldOf("value"))
+                            .copyOnDeath()
+                            .build());
+
     /** Bound-familiar state for vanilla {@code minecraft:creaking} mobs. */
     public static final Supplier<AttachmentType<CreakingFamiliarData>> CREAKING_FAMILIAR =
             ATTACHMENT_TYPES.register("creaking_familiar", () ->
@@ -78,5 +98,28 @@ public class WitcheryAttachments {
 
     public static void setReceivedPrimer(net.minecraft.world.entity.player.Player player) {
         player.setData(RECEIVED_PRIMER.get(), Boolean.TRUE);
+    }
+
+    /** Number of distinct story books (1-12) this player has found. */
+    public static int storiesFoundCount(net.minecraft.world.entity.player.Player player) {
+        return Integer.bitCount(player.getData(STORIES_FOUND.get()));
+    }
+
+    /** Records story book {@code id} (1-12) as found; returns true if it was newly added. */
+    public static boolean addStoryFound(net.minecraft.world.entity.player.Player player, int id) {
+        if (id < 1 || id > 12) return false;
+        int mask = player.getData(STORIES_FOUND.get());
+        int bit = 1 << (id - 1);
+        if ((mask & bit) != 0) return false;
+        player.setData(STORIES_FOUND.get(), mask | bit);
+        return true;
+    }
+
+    public static boolean isGatheredLivesUnlocked(net.minecraft.world.entity.player.Player player) {
+        return player.getData(GATHERED_LIVES_UNLOCKED.get());
+    }
+
+    public static void setGatheredLivesUnlocked(net.minecraft.world.entity.player.Player player) {
+        player.setData(GATHERED_LIVES_UNLOCKED.get(), Boolean.TRUE);
     }
 }

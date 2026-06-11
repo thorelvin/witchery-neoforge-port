@@ -80,7 +80,9 @@ OVEN_SLOTS = {"input": (56, 17), "fuel": (56, 53), "jars": (83, 53),
 OVEN_CROP = (48, 8, 144, 78)
 DISTILLERY_SLOTS = {"input1": (56, 15), "input2": (56, 33), "jars": (56, 55),
                     "out1": (112, 26), "out2": (130, 26), "out3": (112, 44), "out4": (130, 44)}
-DISTILLERY_CROP = (48, 6, 150, 74)
+# Recipe content spans the steam dots (~x44) and input column (x56) on the left to the output grid
+# (right frame ~x147) on the right, y14..72. Crop with even margins so nothing is clipped.
+DISTILLERY_CROP = (40, 8, 154, 78)
 
 
 # Modonomicon's image page renders the FULL 256x256 texture into the page frame (Patchouli-style),
@@ -180,6 +182,24 @@ def vessel_card(name, ingredients, result, count=1, color=None, per_row=3):
     _save(name, _fit_center(base))
 
 
+# Rite recipes: the raw, uncropped original Witchery "Circle Magic" GUI art (2x scale), with the
+# trigger + offerings composited at 2x into the top row of slots. The whole image is then fit-centred,
+# so Modonomicon scales it uniformly and the items stay aligned (no live 16px-item scaling problem).
+RITUAL_ART = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recipe_assets/ritual_circle_magic.png")
+RITUAL_SLOTS = [(103, 41), (146, 41), (189, 41), (232, 41), (275, 41)]  # top-row interior top-lefts (2x)
+RITUAL_SCALE = 2
+
+
+def ritual(name, items):
+    """Rite recipe card: items dropped into the top-row slots of the original Circle Magic GUI."""
+    base = Image.open(RITUAL_ART).convert("RGBA").copy()
+    sz = 16 * RITUAL_SCALE
+    for i, item in enumerate(items[:len(RITUAL_SLOTS)]):
+        s = sprite(item).resize((sz, sz), Image.NEAREST)
+        base.alpha_composite(s, RITUAL_SLOTS[i])
+    _save(name, _fit_center(base))
+
+
 def _argb_to_rgb(v):
     v &= 0xFFFFFF
     return (v >> 16 & 0xFF, v >> 8 & 0xFF, v & 0xFF)
@@ -262,6 +282,10 @@ def main():
                 ["witchery:mandrake_root", "minecraft:nether_wart", "witchery:tear_of_goddess",
                  "witchery:refined_evil", "witchery:mutandis_extremis"],
                 "witchery:drop_of_luck", count=1, color=GOLD)
+    # Rite recipes (raw Circle Magic GUI art + baked items)
+    ritual("ritual_imprisonment", ["minecraft:slime_ball", "minecraft:redstone"])
+    ritual("ritual_gathered_lives",
+           ["witchery:mellifluous_hunger", "witchery:mandrake_root", "witchery:wormwood"])
 
 
 if __name__ == "__main__":

@@ -17,6 +17,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:1}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "Every village has a bell, and every bell has a job. Ours calls folk to market, warns of fire, marks a wedding, and counts the dead into the ground. I have rung it since my father's hands grew too stiff to climb the tower ladder, and in thirty-two years I have learned this: iron speaks plain, but it",
@@ -51,6 +55,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:2}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "The village thinks my work happens at midnight.\n\nThat is because the village sleeps at midnight and can safely imagine anything it likes. They picture knives, smoke, red circles, perhaps a skull polished bright enough to see tomorrow in. I do not blame them. Midnight has theater in it.",
@@ -81,6 +89,10 @@
               "title": "The Mayor's Black Cat",
               "author": "Tollen Reed, clerk to Mayor Amabel Firth",
               "generation": 0
+            },
+            {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:3}"
             },
             {
               "function": "minecraft:set_written_book_pages",
@@ -116,6 +128,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:4}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "My mistress says a clean floor is the first circle.\n\nI thought she meant it as a lesson in humility. Apprentices are always being handed humility in buckets. Sweep the floor, Mara. Scrub the jars, Mara. Pick the slugs off the wolfsbane, Mara. Do not ask the skull whether it is bored, Mara.",
@@ -149,6 +165,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:5}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "There is rowan over my door, tied with red thread and my wife's hair.\n\nI did not put it there. I came home from the north wood with frost in my beard and found the sprig fixed above the lintel. My first thought was thieves. My second was worse: witches.\n\nMy wife told me to leave it.",
@@ -179,6 +199,10 @@
               "title": "The Guard Who Counted Candles",
               "author": "Sella Brant, village guard",
               "generation": 0
+            },
+            {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:6}"
             },
             {
               "function": "minecraft:set_written_book_pages",
@@ -215,6 +239,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:7}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "My first apprentice turned a cabbage into a frog.\n\nNot with skill. With panic.",
@@ -246,6 +274,10 @@
               "title": "The Midwife and the Mirror",
               "author": "Annis Crowe, midwife",
               "generation": 0
+            },
+            {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:8}"
             },
             {
               "function": "minecraft:set_written_book_pages",
@@ -280,6 +312,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:9}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "Silver is an honest metal until witches touch it.\n\nIron tells you what it is. Copper complains but behaves. Gold is soft, vain, and useful for making rich men poorer. Silver watches. Leave it by the forge overnight and it looks back at you in the morning as if it knows what you dreamed.",
@@ -309,6 +345,10 @@
               "title": "When the Broom Came Home",
               "author": "Nettie Vale, witch of no fixed roof",
               "generation": 0
+            },
+            {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:10}"
             },
             {
               "function": "minecraft:set_written_book_pages",
@@ -345,6 +385,10 @@
               "generation": 0
             },
             {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:11}"
+            },
+            {
               "function": "minecraft:set_written_book_pages",
               "pages": [
                 "I was there when Tom Brindle pulled the mandrake.",
@@ -379,6 +423,10 @@
               "title": "The Knots on Widow Fen's Door",
               "author": "Captain Oren Vale, village guard",
               "generation": 0
+            },
+            {
+              "function": "minecraft:set_custom_data",
+              "tag": "{witchery_story:12}"
             },
             {
               "function": "minecraft:set_written_book_pages",

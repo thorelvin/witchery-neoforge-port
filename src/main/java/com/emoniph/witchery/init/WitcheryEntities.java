@@ -69,6 +69,11 @@ public class WitcheryEntities {
                     EntityType.Builder.of(CovenWitchEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "coven_witch"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SpectralWitchEntity>> SPECTRAL_WITCH =
+            ENTITY_TYPES.register("spectral_witch", () ->
+                    EntityType.Builder.of(SpectralWitchEntity::new, MobCategory.MISC)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).updateInterval(2).fireImmune().noSave().noSummon().build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spectral_witch"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CrazyCatLadyEntity>> CRAZY_CAT_LADY =
             ENTITY_TYPES.register("crazy_cat_lady", () ->
                     EntityType.Builder.of(CrazyCatLadyEntity::new, MobCategory.MONSTER)
@@ -391,6 +396,7 @@ public class WitcheryEntities {
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
         event.put(PARASYTIC_LOUSE.get(), ParasyticLouseEntity.createAttributes().build());
         event.put(COVEN_WITCH.get(),   CovenWitchEntity.createAttributes().build());
+        event.put(SPECTRAL_WITCH.get(), SpectralWitchEntity.createAttributes().build());
         event.put(CRAZY_CAT_LADY.get(), CrazyCatLadyEntity.createAttributes().build());
         event.put(THROWN_CAT.get(),     ThrownCatEntity.createAttributes().build());
         event.put(WITCH_HUNTER.get(),  WitchHunterEntity.createAttributes().build());

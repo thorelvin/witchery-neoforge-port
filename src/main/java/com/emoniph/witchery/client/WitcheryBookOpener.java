@@ -29,7 +29,16 @@ public final class WitcheryBookOpener {
         BookGuiManager.get().openBook(BookAddress.of(bookId, categoryId, entryId, 0));
     }
 
-    /** Open a book straight to one chapter's entries list (the category screen). */
+    /**
+     * Open a book straight to one chapter's entries list (the category screen).
+     * <p>
+     * Routes through {@link BookGuiManager#openBook(BookAddress)} rather than {@code openCategory}:
+     * {@code openBook} first creates the {@code BookParentIndexScreen} (setting the manager's
+     * {@code openBookParentScreen}) and only then navigates to the addressed category, whereas calling
+     * {@code openCategory} directly leaves the parent screen null and NPEs inside {@code BookEntryScreen}'s
+     * constructor. {@link BookAddress#defaultFor(BookCategory)} carries the book + category (no entry), so
+     * the manager lands on the category's index screen with its default/saved entry opened.
+     */
     public static void openCategoryList(Identifier bookId, Identifier categoryId) {
         Book book = BookDataManager.get().getBook(bookId);
         BookCategory category = book == null ? null : book.getCategory(categoryId);
@@ -37,6 +46,6 @@ public final class WitcheryBookOpener {
             open(bookId);
             return;
         }
-        BookGuiManager.get().openCategory(category, BookAddress.defaultFor(category));
+        BookGuiManager.get().openBook(BookAddress.defaultFor(category));
     }
 }

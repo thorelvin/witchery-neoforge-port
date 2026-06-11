@@ -12,6 +12,7 @@ import com.klikli_dev.modonomicon.api.datagen.book.page.BookCraftingRecipePageMo
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookEntityPageModel;
 import com.emoniph.witchery.book.page.StationRecipePageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookPageModel;
+import com.klikli_dev.modonomicon.api.datagen.book.page.BookImagePageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookSpotlightPageModel;
 import com.klikli_dev.modonomicon.book.BookDisplayMode;
 import net.minecraft.core.HolderLookup;
@@ -59,73 +60,43 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 .withText(WitcheryBooks.ink(caption));
     }
 
-    // ── Live station-recipe pages (real ItemStacks → hover tooltips + counts) ──────────────────────
-    // Modonomicon's crafting page only renders vanilla 3x3 recipes, so StationRecipePage draws the
-    // station GUI background and the real items at slot coordinates. Empty backgrounds + the slot
-    // coordinates below are produced/verified by tools/recipe_image.py (emit_backgrounds()).
-    private static final Identifier BG_OVEN = id("textures/gui/book/bg_oven.png");
-    private static final Identifier BG_DISTILLERY = id("textures/gui/book/bg_distillery.png");
-    private static final Identifier BG_CAULDRON = id("textures/gui/book/bg_cauldron.png");
-    private static final Identifier BG_CIRCLE = id("textures/gui/book/bg_circle.png");
-
-    /** Witches' Oven: sapling/log → fume, with coal fuel, a clay jar, and wood-ash byproduct. */
-    private static StationRecipePageModel ovenRecipe(String title, String caption, ItemLike input, ItemLike result) {
-        return StationRecipePageModel.create()
-                .withTitle(Component.literal(title)).withText(WitcheryBooks.ink(caption))
-                .withBackground(BG_OVEN, 96, 70)
-                .withSlot(input, 1, 8, 9)
-                .withSlot(Items.COAL, 1, 8, 45)
-                .withSlot(WitcheryItems.CLAY_JAR.get(), 1, 35, 45)
-                .withSlot(result, 1, 70, 13)
-                .withSlot(WitcheryItems.WOOD_ASH.get(), 1, 70, 45);
-    }
-
-    /** Distillery: two inputs + three clay jars → four jarred outputs. */
-    private static StationRecipePageModel distilleryRecipe(String title, String caption, ItemLike in1,
-                                                           ItemLike in2, ItemLike o1, ItemLike o2, ItemLike o3, ItemLike o4) {
-        return StationRecipePageModel.create()
-                .withTitle(Component.literal(title)).withText(WitcheryBooks.ink(caption))
-                .withBackground(BG_DISTILLERY, 102, 68)
-                .withSlot(in1, 1, 8, 9).withSlot(in2, 1, 8, 27).withSlot(WitcheryItems.CLAY_JAR.get(), 3, 8, 49)
-                .withSlot(o1, 1, 64, 20).withSlot(o2, 1, 82, 20).withSlot(o3, 1, 64, 38).withSlot(o4, 1, 82, 38);
-    }
-
-    /** Kettle / Witch's Cauldron: ingredients dropped in the brew (a row up top) → result in the output slot. */
-    private static StationRecipePageModel vesselRecipe(String title, String caption, ItemLike result, int count,
-                                                       ItemLike... ingredients) {
-        StationRecipePageModel model = StationRecipePageModel.create()
-                .withTitle(Component.literal(title)).withText(WitcheryBooks.ink(caption))
-                .withBackground(BG_CAULDRON, 112, 60)
-                .withSlot(result, count, 89, 33);
-        int pitch = 17;
-        int startX = 56 - (ingredients.length * pitch - 1) / 2;
-        for (int i = 0; i < ingredients.length; i++) {
-            model.withSlot(ingredients[i], 1, startX + i * pitch, 2);
-        }
-        return model;
+    // ── Station-recipe pages (pre-baked images) ────────────────────────────────────────────────────
+    // Each station recipe (oven / distillery / cauldron / kettle) is a static image of the real station
+    // GUI with the item sprites composited into its slots, baked at the correct scale by
+    // tools/recipe_image.py. We use baked images rather than live item rendering because 1.21.11's
+    // GuiGraphics.renderItem ignores the GUI pose scale (items always draw at 16px), so any panel that
+    // must scale down to fit the page leaves full-size items overflowing the slots. A baked image scales
+    // uniformly, keeping everything pixel-aligned. (See reference: GUI renderItem scale.)
+    private static BookImagePageModel recipeImage(String image, String title, String caption) {
+        return BookImagePageModel.create()
+                .withTitle(Component.literal(title))
+                .withImages(id("textures/gui/book/" + image + ".png"))
+                .withText(WitcheryBooks.ink(caption))
+                .withBorder(false);
     }
 
     /**
-     * Circle Magic ritual recipe card (modelled on the cauldron recipe): the chalk ring background, the
-     * dropped trigger/offering items as real tooltip-bearing slots, and the circle size, chalk type,
-     * altar power and coven requirement as the caption — the book equivalent of the FTB Grid/Circle_Magic.
+     * Circle Magic rite recipe card. Uses a pre-baked image of the original Witchery "Circle Magic" GUI
+     * (the full, uncropped circle diagram + slot grid) with the trigger/offering items composited into its
+     * slots by {@code tools/recipe_image.py} ({@code ritual(...)}). It's a static image — not the live
+     * {@link StationRecipePageModel} — because the raw art is 318px wide and must scale down to fit the
+     * page, and live GUI items don't scale (they'd overflow); baking keeps everything pixel-aligned. The
+     * circle size, chalk family, altar power and coven requirement are the caption beneath.
+     *
+     * @param image the baked image's name under {@code textures/gui/book/} (without extension)
      */
-    private static StationRecipePageModel ritualRecipe(String size, String chalk, String power, int coven,
-                                                       ItemLike... inputs) {
+    private static BookImagePageModel ritualRecipe(String size, String chalk, String power, int coven,
+                                                   String image) {
         StringBuilder info = new StringBuilder();
         info.append("**").append(size).append("** ring · **").append(chalk).append("** chalk · **")
                 .append(power).append("** altar power");
         if (coven > 0) {
             info.append(" · Coven of **").append(coven).append("**");
         }
-        StationRecipePageModel model = StationRecipePageModel.create()
-                .withTitle(Component.literal("The Circle"))
+        return BookImagePageModel.create()
+                .withImages(id("textures/gui/book/" + image + ".png"))
                 .withText(WitcheryBooks.ink(info.toString()))
-                .withBackground(BG_CIRCLE, 100, 58);
-        for (int i = 0; i < inputs.length; i++) {
-            model.withSlot(inputs[i], 1, 58 + (i % 3) * 18, 8 + (i / 3) * 20);
-        }
-        return model;
+                .withBorder(false);
     }
 
     private static BookEntityPageModel creature(String entityId, String name, String caption) {
@@ -154,7 +125,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
     /** As {@link #rite}, but with a ritual recipe card (size/chalk/power/coven + offerings) after the description. */
     private BookEntryModel rite(BookCategoryModel cat, String path, String name, ItemLike icon, int sort,
-                                String description, StationRecipePageModel recipe, String working) {
+                                String description, BookImagePageModel recipe, String working) {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose(name, description));
         pages.add(recipe);
         pages.addAll(WitcheryBooks.prose("The Working", working));
@@ -375,22 +346,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Apply the paste to a placed cauldron, then give it a fire and water. Drop reagents in the "
                         + "bowl and trigger the working with the last item by hand — the cauldron workings "
                         + "named throughout this primer follow."));
-        anointing.add(vesselRecipe("Cauldron: Mutandis",
+        anointing.add(recipeImage("cauldron_mutandis", "Cauldron: Mutandis",
                 "Drop a **Mandrake Root** and an **Egg** in a heated, filled cauldron, then right-click with "
-                        + "**Exhale of the Horned One** — six Mutandis rise from the bowl.",
-                WitcheryItems.MUTANDIS.get(), 6,
-                WitcheryItems.MANDRAKE_ROOT.get(), WitcheryItems.EXHALE_OF_HORNED_ONE.get(), Items.EGG));
-        anointing.add(vesselRecipe("Cauldron: Mutandis Extremis",
+                        + "**Exhale of the Horned One** — six Mutandis rise from the bowl."));
+        anointing.add(recipeImage("cauldron_mutandis_extremis", "Cauldron: Mutandis Extremis",
                 "Drop a **Nether Wart** in and right-click with **Mutandis** to condense one Mutandis "
-                        + "Extremis — the stronger powder.",
-                WitcheryItems.MUTANDIS_EXTREMIS.get(), 1,
-                Items.NETHER_WART, WitcheryItems.MUTANDIS.get()));
-        anointing.add(vesselRecipe("Cauldron: Drop of Luck",
+                        + "Extremis — the stronger powder."));
+        anointing.add(recipeImage("cauldron_drop_of_luck", "Cauldron: Drop of Luck",
                 "Drop the four reagents with an altar near, then use **Mutandis Extremis** on the "
-                        + "cauldron — one Drop of Luck.",
-                WitcheryItems.DROP_OF_LUCK.get(), 1,
-                WitcheryItems.MANDRAKE_ROOT.get(), Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(),
-                WitcheryItems.REFINED_EVIL.get(), WitcheryItems.MUTANDIS_EXTREMIS.get()));
+                        + "cauldron — one Drop of Luck."));
 
         cat.withEntries(
                 entry(cat, "herbology/rowan_tree", "The Rowan Tree", WitcheryItems.ROWAN_LOG.get(), 0, rowan),
@@ -416,12 +380,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "itself."));
         kettle.add(recipe("kettle", "Kettle",
                 "Iron and a modicum of patience. That is all a kettle needs to be born."));
-        kettle.add(vesselRecipe("Kettle: Redstone Soup",
+        kettle.add(recipeImage("kettle_redstone_soup", "Kettle: Redstone Soup",
                 "Six reagents in a lit kettle over **1000 altar power**. Redstone Soup is the base of "
-                        + "every lasting infusion.",
-                WitcheryItems.REDSTONE_SOUP.get(), 1,
-                Items.REDSTONE, WitcheryItems.DROP_OF_LUCK.get(), WitcheryItems.BAT_WOOL.get(),
-                WitcheryItems.TONGUE_OF_DOG.get(), WitcheryItems.BELLADONNA.get(), WitcheryItems.MANDRAKE_ROOT.get()));
+                        + "every lasting infusion."));
 
         List<BookPageModel<?>> infusion = new ArrayList<>(WitcheryBooks.prose("Infusion Sources",
                 "The four lasting infusions begin in the kettle, not the circle. Each source uses **Redstone "
@@ -468,24 +429,19 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "tree gives a different essence. Start with what lies to hand: **Wood Ash** from any "
                         + "log, **Exhale** from an oak, **Breath** from a birch. The Hawthorn and Rowan come "
                         + "later, once Herbology gives you Mutandis and the Rowan tree."));
-        ovenRecipes.add(ovenRecipe("Odour of Purity",
+        ovenRecipes.add(recipeImage("oven_odour_of_purity", "Odour of Purity",
                 "A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. "
-                        + "Hawthorn comes from Herbology's Mutandis, so this fume waits a chapter.",
-                WitcheryItems.HAWTHORN_SAPLING.get(), WitcheryItems.ODOUR_OF_PURITY.get()));
-        ovenRecipes.add(ovenRecipe("Breath of the Goddess",
+                        + "Hawthorn comes from Herbology's Mutandis, so this fume waits a chapter."));
+        ovenRecipes.add(recipeImage("oven_breath_of_goddess", "Breath of the Goddess",
                 "A **Birch Sapling** gives Breath of the Goddess — the **Distilling** reagent, and the "
-                        + "base of countless brews.",
-                Items.BIRCH_SAPLING, WitcheryItems.BREATH_OF_GODDESS.get()));
-        ovenRecipes.add(ovenRecipe("Whiff of Magic",
+                        + "base of countless brews."));
+        ovenRecipes.add(recipeImage("oven_whiff_of_magic", "Whiff of Magic",
                 "A **Rowan Sapling** gives Whiff of Magic — the **Circle Magic** reagent. Rowans come "
-                        + "with Herbology, so this waits a little too.",
-                WitcheryItems.ROWAN_SAPLING.get(), WitcheryItems.WHIFF_OF_MAGIC.get()));
-        ovenRecipes.add(ovenRecipe("Exhale of the Horned One",
-                "An **Oak Sapling** gives Exhale of the Horned One, used in Mutandis and darker workings.",
-                Items.OAK_SAPLING, WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        ovenRecipes.add(ovenRecipe("Charcoal & Wood Ash",
-                "Any **log** smolders down to charcoal, always leaving wood ash — fuel and reagent both.",
-                Items.OAK_LOG, Items.CHARCOAL));
+                        + "with Herbology, so this waits a little too."));
+        ovenRecipes.add(recipeImage("oven_exhale", "Exhale of the Horned One",
+                "An **Oak Sapling** gives Exhale of the Horned One, used in Mutandis and darker workings."));
+        ovenRecipes.add(recipeImage("oven_charcoal", "Charcoal & Wood Ash",
+                "Any **log** smolders down to charcoal, always leaving wood ash — fuel and reagent both."));
 
         cat.withEntries(
                 entry(cat, "collecting_fumes/witches_oven", "The Witches' Oven", WitcheryItems.WITCHES_OVEN.get(), 0, oven),
@@ -507,12 +463,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         distillery.add(recipe("distillery", "Distillery",
                 "Iron, glass, and a brewing stand. The distillery is not complicated; what you put inside it "
                         + "often is."));
-        distillery.add(distilleryRecipe("Two In, Four Out",
+        distillery.add(recipeImage("distillery_odour", "Two In, Four Out",
                 "**Diamond Vapour** + a **Ghast Tear**, with three clay jars, yield Odour of Purity, Reek "
-                        + "of Misfortune, Foul Fume, and Refined Evil at once.",
-                WitcheryItems.DIAMOND_VAPOUR.get(), Items.GHAST_TEAR,
-                WitcheryItems.ODOUR_OF_PURITY.get(), WitcheryItems.REEK_OF_MISFORTUNE.get(),
-                WitcheryItems.FOUL_FUME.get(), WitcheryItems.REFINED_EVIL.get()));
+                        + "of Misfortune, Foul Fume, and Refined Evil at once."));
         // Page-level reveal: this page stays hidden until the witch has actually produced Diamond
         // Vapour at the distillery (the guide/obtained/diamond_vapour advancement fires on pickup).
         distillery.add(BookTextPageModel.create()
@@ -641,7 +594,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         "The sister-working to Sanctity. Where Sanctity presses creatures away, Imprisonment "
                                 + "draws them back and pens them within the circle. A snare, not a "
                                 + "killing-circle.",
-                        ritualRecipe("7×7", "Ritual", "500 (+16/s)", 0, Items.SLIME_BALL, Items.REDSTONE),
+                        ritualRecipe("7×7", "Ritual", "500 (+16/s)", 0, "ritual_imprisonment"),
                         "Offer a **Slime Ball** with **Redstone** on a small circle, with **500 altar "
                                 + "power**. For the safer inverse, study Sanctity.\n\nUseful for holding "
                                 + "sacrificial beasts or summoned nuisances in one patch while you prepare the "
@@ -714,8 +667,58 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "pulled toward you, your inventory first. No answer to Keep Inventory or "
                                 + "another world — but the witch's answer to a bad death while the trail is "
                                 + "warm."),
-                gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", 17, "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(), "Conjuration & Fetishes")));
+                gatheredLivesEntry(cat),
+                gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", 18, "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(), "Conjuration & Fetishes")));
         return cat;
+    }
+
+    /**
+     * The Spectral Coven — a hidden Circle Magic rite, revealed only once the player has gathered five of
+     * the old village story books (advancement {@code guide/gathered_lives}). The short story is the lore
+     * reward; the recipe card teaches the Rite of the Gathered Lives.
+     */
+    private BookEntryModel gatheredLivesEntry(BookCategoryModel cat) {
+        List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("The Gathered Lives",
+                "You found them, then — five of the old village tales, copied out in trembling hands and "
+                        + "left to yellow in chest and cellar. I felt you reading. A tale is a kind of taglock, "
+                        + "pupil: a knot tied around a life, holding it fast against forgetting."
+                        + "\n\nMost witches work a coven of the living. Three sisters at a circle, five, "
+                        + "seven — voices stacked until the working is loud enough to be heard. But a witch "
+                        + "alone, far from any sister, learns a quieter trick. She does not gather the living. "
+                        + "She gathers the remembered."));
+        pages.addAll(WitcheryBooks.prose("The Telling",
+                "I learned it the winter I was the last witch in three valleys. The others were under the "
+                        + "rowans by then — Mistress Vale, who taught bells to listen; Selene of the cracked "
+                        + "mirror; old Mother Hem, who tied malice backward; the broom-witch Nettie; and the "
+                        + "midwife Annis, whose shard grew warm before a child ever turned."
+                        + "\n\nI had no coven. I had their stories. So I read them aloud over the circle, one "
+                        + "after another, until the air went the second kind of silent — not empty, but "
+                        + "listening. And then they came. Not the women. The shape the women left in the world. "
+                        + "Pale, footless, drifting a hand's breadth above the chalk."));
+        pages.addAll(WitcheryBooks.prose("What They Are",
+                "Do not mistake them for the dead returned. The dead have better things to do than stand in "
+                        + "your draughty barn. What rises is the coven-shape itself — the weight of five lives "
+                        + "well-remembered, lent to your working as if the sisters stood beside you again. "
+                        + "They do not speak. They do not walk. They turn slowly to face the altar and wait, "
+                        + "and while they wait, the circle counts them as kin."
+                        + "\n\nThat is the whole of the gift: a witch alone may now cast what only a coven "
+                        + "could. Call a familiar's beast, summon what needs more than one voice — the spectral "
+                        + "sisters make up the number. They fade by themselves before long. Tales tire of "
+                        + "being told, and so do the told."));
+        pages.add(ritualRecipe("9×9", "Otherwhere", "2000", 0, "ritual_gathered_lives"));
+        pages.addAll(WitcheryBooks.prose("The Working",
+                "Draw a **medium Otherwhere circle** and lay an altar near with **2000 power** to spend. "
+                        + "Offer a **Mellifluous Hunger** — the token that calls them — together with a "
+                        + "**Mandrake Root** and a sprig of **Wormwood**. The hunger draws the shapes; the root "
+                        + "and the wormwood give them somewhere to stand."
+                        + "\n\nFive spectral witches rise and drift about the circle. They count toward any "
+                        + "coven a later rite demands, so cast your coven-working while they linger. They keep "
+                        + "no altar long — when they fade, simply gather the lives again."));
+        return entry(cat, "circle_magic/gathered_lives", "The Spectral Coven",
+                        WitcheryItems.MELLIFLUOUS_HUNGER.get(), 17, pages)
+                .withCondition(BookAdvancementConditionModel.create()
+                        .withAdvancementId(id("guide/gathered_lives")))
+                .hideWhileLocked(true);
     }
 
     // ── 6. Conjuration & Fetishes ───────────────────────────────────────────────
@@ -934,12 +937,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         spirit.add(spotlight(WitcheryItems.ICY_NEEDLE.get(), "Icy Needle",
                 "Brings you back at once, used up. Dying also returns you, less comfortably. In emergencies: "
                         + "**/witchery exit**."));
-        spirit.add(vesselRecipe("Kettle: Brew of Sleeping",
+        spirit.add(recipeImage("kettle_brew_of_sleeping", "Kettle: Brew of Sleeping",
                 "Brew it from **Purified Milk**, a **Cookie**, **Brew of Love**, **Whiff of Magic**, an "
-                        + "**Icy Needle**, and an **Artichoke** — three bottles per working.",
-                WitcheryItems.BREW_OF_SLEEPING.get(), 3,
-                WitcheryItems.PURIFIED_MILK.get(), Items.COOKIE, WitcheryItems.BREW_OF_LOVE.get(),
-                WitcheryItems.WHIFF_OF_MAGIC.get(), WitcheryItems.ICY_NEEDLE.get(), WitcheryItems.ARTICHOKE.get()));
+                        + "**Icy Needle**, and an **Artichoke** — three bottles per working."));
 
         List<BookPageModel<?>> dream = new ArrayList<>(WitcheryBooks.prose("Dream Weavers",
                 "Sleep is not passive, and the spirit world is not a waiting room. A Dream Catcher placed "

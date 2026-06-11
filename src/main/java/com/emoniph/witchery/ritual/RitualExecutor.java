@@ -502,6 +502,11 @@ public class RitualExecutor {
             RitualDefinition.of("bind_spectral_stone", RitualCircleDetector.CircleSize.MEDIUM,
                     item -> item.is(WitcheryItems.SPECTRAL_STONE.get()) && !SpectralStoneItem.isBound(item), VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindSpectralStone(player, level, center, trigger)),
+            // Spectral Coven — unlocked by finding 5 village story books. Summons 5 floating spectral
+            // witches that count as a coven. Gated in-rite on the per-player unlock flag.
+            RitualDefinition.of("gathered_lives", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> item.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()), VARIANT_OTHERWHERE,
+                    (player, level, center, trigger) -> riteOfGatheredLives(player, level, center)),
             RitualDefinition.of("bind_fetish", RitualCircleDetector.CircleSize.MEDIUM,
                     RitualExecutor::isFetishItem, VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindSpiritsToFetish(player, level, center, trigger)),
@@ -1994,9 +1999,12 @@ public class RitualExecutor {
     }
 
     static int countNearbyCovenWitches(Level level, BlockPos center) {
+        // Counts both wandering Coven Witches and conjured Spectral Witches (the Gathered Lives coven),
+        // so a solo caster who has summoned a spectral coven can meet a rite's coven requirement.
         return level.getEntitiesOfClass(
-                com.emoniph.witchery.entity.CovenWitchEntity.class,
-                new AABB(center).inflate(16.0)
+                net.minecraft.world.entity.Entity.class,
+                new AABB(center).inflate(16.0),
+                e -> e instanceof com.emoniph.witchery.entity.CovenMember
         ).size();
     }
 
@@ -5129,6 +5137,75 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.summon_imp.success",
                 SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
         WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
+        return true;
+    }
+
+    /** Number of spectral witches a Gathered Lives coven raises. */
+    private static final int GATHERED_LIVES_COVEN = 5;
+
+    /**
+     * Rite of the Gathered Lives — unlocked by collecting 5 of the village story books. Raises a coven of
+     * five translucent, floating Spectral Witches that orbit the altar and count toward the coven size of
+     * higher rites, letting a solo caster meet coven requirements.
+     */
+    private static boolean riteOfGatheredLives(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        if (!com.emoniph.witchery.init.WitcheryAttachments.isGatheredLivesUnlocked(player)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.gathered_lives.locked"), false);
+            return false;
+        }
+
+        // Refuse to stack a second coven on an altar that already keeps one.
+        int existing = level.getEntitiesOfClass(
+                com.emoniph.witchery.entity.SpectralWitchEntity.class, new AABB(center).inflate(16.0)).size();
+        if (existing >= GATHERED_LIVES_COVEN) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.gathered_lives.already"), false);
+            return false;
+        }
+
+        Optional<RitualOffering> hunger = findNearbyRitualOffering(level, center,
+                stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()));
+        Optional<RitualOffering> mandrake = findNearbyRitualOffering(level, center,
+                stack -> stack.is(WitcheryItems.MANDRAKE_ROOT.get()));
+        Optional<RitualOffering> wormwood = findNearbyRitualOffering(level, center,
+                stack -> stack.is(WitcheryItems.WORMWOOD.get()));
+        if (hunger.isEmpty() || mandrake.isEmpty() || wormwood.isEmpty()) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.gathered_lives.support"), false);
+            return false;
+        }
+
+        if (!consumeNearbyRitualAltarPower(sl, center, 16, 2000)) {
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.gathered_lives.no_power"), false);
+            return false;
+        }
+
+        hunger.get().consumeOne();
+        mandrake.get().consumeOne();
+        wormwood.get().consumeOne();
+
+        for (int i = 0; i < GATHERED_LIVES_COVEN; i++) {
+            com.emoniph.witchery.entity.SpectralWitchEntity witch =
+                    WitcheryEntities.SPECTRAL_WITCH.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            if (witch == null) continue;
+            double angle = 2.0 * Math.PI * i / GATHERED_LIVES_COVEN;
+            witch.setPos(center.getX() + 0.5 + Math.cos(angle) * 2.4,
+                    center.getY() + 1.1,
+                    center.getZ() + 0.5 + Math.sin(angle) * 2.4);
+            witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            witch.setSkin(i);
+            witch.bindToAltar(center, i, GATHERED_LIVES_COVEN);
+            sl.addFreshEntity(witch);
+        }
+
+        success(player, level, center, "witchery.ritual.gathered_lives.success",
+                SoundEvents.EVOKER_PREPARE_SUMMON, 0.8f, 4, 64);
+        WitcheryMod.LOGGER.info("Rite of the Gathered Lives cast by {}", player.getName().getString());
         return true;
     }
 

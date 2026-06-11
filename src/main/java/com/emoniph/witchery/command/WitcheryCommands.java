@@ -356,6 +356,12 @@ public class WitcheryCommands {
                                 .executes(ctx -> setupStations(ctx.getSource())))
                         .then(Commands.literal("rite")
                                 .executes(ctx -> setupRite(ctx.getSource()))))
+                // ── Spectral Coven (debug timesavers) ─────────────────────────
+                .then(Commands.literal("coven")
+                        .then(Commands.literal("unlock")
+                                .executes(ctx -> unlockGatheredLives(ctx.getSource())))
+                        .then(Commands.literal("summon")
+                                .executes(ctx -> summonSpectralCoven(ctx.getSource()))))
                 .then(Commands.literal("ritual")
                         .then(Commands.literal("circle")
                                 .executes(ctx -> inspectRitualCircle(ctx.getSource())))
@@ -492,6 +498,45 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal("[Guide] Re-locked " + count + " section(s) for "
                 + p.getName().getString() + "."), false);
         return n;
+    }
+
+    /** Debug timesaver: unlock the Spectral Coven without hunting down five story books. */
+    private static int unlockGatheredLives(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        com.emoniph.witchery.init.WitcheryAttachments.setGatheredLivesUnlocked(p);
+        net.minecraft.advancements.AdvancementHolder holder = src.getServer().getAdvancements()
+                .get(Identifier.fromNamespaceAndPath("witchery", "guide/gathered_lives"));
+        if (holder != null) {
+            p.getAdvancements().award(holder, "unlocked");
+        }
+        src.sendSuccess(() -> Component.literal("[Coven] Unlocked the Rite of the Gathered Lives for "
+                + p.getName().getString() + "."), false);
+        return 1;
+    }
+
+    /** Debug timesaver: spawn a spectral coven orbiting the caster, skipping the rite setup. */
+    private static int summonSpectralCoven(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        ServerLevel level = (ServerLevel) p.level();
+        net.minecraft.core.BlockPos anchor = p.blockPosition();
+        int total = 5;
+        for (int i = 0; i < total; i++) {
+            com.emoniph.witchery.entity.SpectralWitchEntity witch =
+                    WitcheryEntities.SPECTRAL_WITCH.get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+            if (witch == null) continue;
+            double angle = 2.0 * Math.PI * i / total;
+            witch.setPos(anchor.getX() + 0.5 + Math.cos(angle) * 2.4,
+                    anchor.getY() + 1.1,
+                    anchor.getZ() + 0.5 + Math.sin(angle) * 2.4);
+            witch.setSkin(i);
+            witch.bindToAltar(anchor, i, total);
+            level.addFreshEntity(witch);
+        }
+        src.sendSuccess(() -> Component.literal("[Coven] Summoned " + total
+                + " spectral witches around " + p.getName().getString() + "."), false);
+        return total;
     }
 
     /** Grants or revokes the {@code witchery:guide/<name>} advancement (criterion {@code has_book}). */

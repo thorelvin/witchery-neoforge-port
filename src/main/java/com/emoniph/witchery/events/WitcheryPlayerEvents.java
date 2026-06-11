@@ -282,6 +282,10 @@ public class WitcheryPlayerEvents {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
+        if (player.tickCount % 40 == 0) {
+            tickStoryBookCollection(player);
+        }
+
         WitcheryPlayerData dataEveryTick = WitcheryAttachments.get(player);
         if (dataEveryTick.hasSoaringBuff()) dataEveryTick.tickSoaring();
         if (dataEveryTick.getHowlCooldown() > 0) dataEveryTick.setHowlCooldown(dataEveryTick.getHowlCooldown() - 1);
@@ -550,6 +554,55 @@ public class WitcheryPlayerEvents {
                 }
             }
         }
+    }
+
+    /** Distinct story books a player must collect to unlock the Spectral Coven. */
+    private static final int STORY_UNLOCK_THRESHOLD = 5;
+
+    /**
+     * Scans the player's inventory for in-world story books (vanilla written books tagged with a hidden
+     * {@code witchery_story} id 1-12) and records which distinct stories have been found. Crossing the
+     * {@link #STORY_UNLOCK_THRESHOLD} unlocks the Rite of the Gathered Lives and reveals the Spectral
+     * Coven entry in the Primer. Stops scanning once unlocked.
+     */
+    private static void tickStoryBookCollection(ServerPlayer player) {
+        if (WitcheryAttachments.isGatheredLivesUnlocked(player)) return;
+
+        int before = WitcheryAttachments.storiesFoundCount(player);
+        var inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.isEmpty() || !stack.is(net.minecraft.world.item.Items.WRITTEN_BOOK)) continue;
+            int id = stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                            net.minecraft.world.item.component.CustomData.EMPTY)
+                    .copyTag().getIntOr("witchery_story", 0);
+            if (id >= 1 && id <= 12) {
+                WitcheryAttachments.addStoryFound(player, id);
+            }
+        }
+
+        int after = WitcheryAttachments.storiesFoundCount(player);
+        if (after > before && after < STORY_UNLOCK_THRESHOLD) {
+            player.displayClientMessage(Component.translatable("witchery.gathered_lives.progress",
+                    after, STORY_UNLOCK_THRESHOLD).withStyle(ChatFormatting.GRAY), true);
+        }
+        if (before < STORY_UNLOCK_THRESHOLD && after >= STORY_UNLOCK_THRESHOLD) {
+            unlockGatheredLives(player);
+        }
+    }
+
+    private static void unlockGatheredLives(ServerPlayer player) {
+        WitcheryAttachments.setGatheredLivesUnlocked(player);
+        net.minecraft.advancements.AdvancementHolder holder = player.level().getServer().getAdvancements()
+                .get(Identifier.fromNamespaceAndPath("witchery", "guide/gathered_lives"));
+        if (holder != null) {
+            player.getAdvancements().award(holder, "unlocked");
+        }
+        player.displayClientMessage(Component.translatable("witchery.gathered_lives.unlocked")
+                .withStyle(ChatFormatting.DARK_PURPLE), false);
+        player.level().playSound(null, player.blockPosition(),
+                net.minecraft.sounds.SoundEvents.ILLUSIONER_CAST_SPELL,
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, 0.8F);
     }
 
     public static void syncToClient(ServerPlayer player) {
