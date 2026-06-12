@@ -113,11 +113,22 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     public VillageGuardEntity(EntityType<? extends VillageGuardEntity> type, Level level) {
         super(type, level);
+        setPersistenceRequired();
         setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
         setItemSlot(EquipmentSlot.FEET,  new ItemStack(Items.LEATHER_BOOTS));
         setItemSlot(EquipmentSlot.LEGS,  new ItemStack(Items.LEATHER_LEGGINGS));
         setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
         setItemSlot(EquipmentSlot.HEAD,  new ItemStack(Items.LEATHER_HELMET));
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return true;
     }
 
     // ── Attributes ────────────────────────────────────────────────────────────

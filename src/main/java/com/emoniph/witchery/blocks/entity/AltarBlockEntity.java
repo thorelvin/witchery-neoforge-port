@@ -354,6 +354,7 @@ public class AltarBlockEntity extends BlockEntity {
         int skullRechargeBonus = 0;
         int candleRechargeBonus = 0;
         int chalicePowerBonus = 0;
+        boolean bookFound = false;
         boolean arthanaFound = false;
         boolean mysticBranchFound = false;
         boolean pentacleFound = false;
@@ -377,6 +378,10 @@ public class AltarBlockEntity extends BlockEntity {
                 candleRechargeBonus = Math.max(candleRechargeBonus, 1);
             } else if (above.is(WitcheryBlocks.CHALICE.get())) {
                 chalicePowerBonus = Math.max(chalicePowerBonus, above.getValue(ChaliceBlock.FILLED) ? 2 : 1);
+            } else if (above.is(WitcheryBlocks.PLACED_MODONOMICON.get())
+                    && level.getBlockEntity(altarPos.above()) instanceof PlacedModonomiconBlockEntity placedBook
+                    && !placedBook.getBookStack().isEmpty()) {
+                bookFound = true;
             } else if (above.is(WitcheryBlocks.INFINITY_EGG.get())) {
                 infinityEggFound = true;
             } else if (above.getBlock() instanceof PlacedItemBlock
@@ -392,13 +397,10 @@ public class AltarBlockEntity extends BlockEntity {
         }
 
         int powerScale = 1 + skullPowerBonus + chalicePowerBonus;
-        int rechargeScale = 1 + skullRechargeBonus + candleRechargeBonus;
-        if (pentacleFound) {
-            rechargeScale *= 2;
-        }
+        int rechargeScale = calculateRechargeScale(skullRechargeBonus, candleRechargeBonus,
+                bookFound, pentacleFound, infinityEggFound);
         if (infinityEggFound) {
             powerScale *= 10;
-            rechargeScale *= 10;
         }
 
         return new UpgradeInfo(
@@ -407,6 +409,18 @@ public class AltarBlockEntity extends BlockEntity {
                 arthanaFound ? 2 : 1,
                 mysticBranchFound ? 1 : 0
         );
+    }
+
+    static int calculateRechargeScale(int skullRechargeBonus, int candleRechargeBonus,
+                                      boolean bookFound, boolean pentacleFound, boolean infinityEggFound) {
+        int rechargeScale = 1 + skullRechargeBonus + candleRechargeBonus + (bookFound ? 1 : 0);
+        if (pentacleFound) {
+            rechargeScale *= 2;
+        }
+        if (infinityEggFound) {
+            rechargeScale *= 10;
+        }
+        return rechargeScale;
     }
 
     private static void applyJoinedState(Level level, BlockPos pos, Direction.Axis axis, AltarBlock.JoinedPart part) {

@@ -176,7 +176,7 @@ public class WitcheryVillageElement extends StructurePoolElement {
         try {
             piece.postProcess(level, structureMgr, generator, random, box, chunkPos, pos);
             debugLog("Finished placing {} at {} for generation box {}.", building, offset, box);
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             WitcheryMod.LOGGER.error("[VillageBuildings] Failed to place {} at {} in generation box {}; skipping this slice.",
                     building, offset, box, e);
         }

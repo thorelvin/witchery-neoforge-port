@@ -1993,7 +1993,7 @@ public class WitcheryCommands {
     private static void placeSetupContents(ServerLevel level, SetupHouseLayout layout) {
         placeAltarRig(level, layout.pos(1, 0, 7), layout.depth(), layout.width());
         placeKettleRig(level, layout.pos(2, 0, 5), layout.frontFacing());
-        placeMachine(level, layout.pos(1, 0, 4), Blocks.WATER_CAULDRON.defaultBlockState());
+        placeWitchCauldronRig(level, layout.pos(1, 0, 4));
         placeMachine(level, layout.pos(4, 0, 3), Blocks.CRAFTING_TABLE.defaultBlockState());
         placeMachine(level, layout.pos(8, 0, 5),
                 WitcheryBlocks.DISTILLERY.get().defaultBlockState().setValue(DistilleryBlock.FACING, layout.left()));
@@ -2141,7 +2141,6 @@ public class WitcheryCommands {
 
         supplies.add(stack(Items.GLASS_BOTTLE, 64));
         supplies.add(stack(Items.WATER_BUCKET, 1));
-        supplies.add(stack(Items.BUCKET, 1));
         supplies.add(stack(Items.EMERALD, 32));
         supplies.add(stack(Items.GOLD_NUGGET, 64));
         supplies.add(stack(Items.GOLD_INGOT, 32));
@@ -2149,7 +2148,6 @@ public class WitcheryCommands {
         supplies.add(stack(Items.CLAY_BALL, 64));
         supplies.add(stack(WitcheryItems.CLAY_JAR_SOFT.get(), 64));
         supplies.add(stack(WitcheryItems.CLAY_JAR.get(), 64));
-        supplies.add(stack(WitcheryItems.GLASS_GOBLET.get(), 16));
         supplies.add(stack(WitcheryItems.ARTHANA.get(), 1));
         supplies.add(stack(WitcheryItems.BOLINE.get(), 1));
         supplies.add(stack(WitcheryItems.PENTACLE.get(), 1));
@@ -2196,6 +2194,13 @@ public class WitcheryCommands {
         supplies.add(stack(WitcheryItems.MUTANDIS.get(), 32));
         supplies.add(stack(WitcheryItems.MUTANDIS_EXTREMIS.get(), 16));
         supplies.add(stack(Items.FLINT_AND_STEEL, 1));
+
+        // Custom-brew testers: Mandrake Root (above) gives a free +1 capacity; Snowball is a clear,
+        // zero-power capacity-1 effect; Spider Eye + Diamond Vapour (above, +2 capacity) makes a visible
+        // 2-capacity Poison brew; Gunpowder turns it into a splash brew.
+        supplies.add(stack(Items.SNOWBALL, 64));
+        supplies.add(stack(Items.SPIDER_EYE, 64));
+        supplies.add(stack(Items.GUNPOWDER, 64));
 
         return supplies;
     }
@@ -2273,6 +2278,17 @@ public class WitcheryCommands {
 
     private static void placeMachine(ServerLevel level, BlockPos pos, BlockState state) {
         level.setBlock(pos, state, 3);
+    }
+
+    /**
+     * Places a ready-to-brew Witch's Cauldron: pre-anointed, filled with water, and sitting on a
+     * Magma Block heat source so a custom brew can be composed immediately (no anoint/fill/light steps).
+     */
+    private static void placeWitchCauldronRig(ServerLevel level, BlockPos pos) {
+        placeMachine(level, pos.below(), Blocks.MAGMA_BLOCK.defaultBlockState());
+        level.setBlock(pos, WitcheryBlocks.WITCH_CAULDRON.get().defaultBlockState()
+                .setValue(com.emoniph.witchery.blocks.WitchCauldronBlock.LEVEL,
+                        com.emoniph.witchery.blocks.WitchCauldronBlock.MAX_FILL_LEVEL), 3);
     }
 
     private static void clearBox(ServerLevel level, BlockPos min, BlockPos max) {

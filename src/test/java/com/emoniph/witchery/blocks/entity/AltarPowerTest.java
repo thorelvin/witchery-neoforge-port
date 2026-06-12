@@ -59,4 +59,10 @@ class AltarPowerTest {
         assertEquals(0, power(Blocks.COBBLESTONE));
         assertEquals(0, power(Blocks.AIR));
     }
+
+    @Test
+    void placedGuideBookAddsOneRechargeScaleBeforeMultipliers() {
+        assertEquals(2, AltarBlockEntity.calculateRechargeScale(0, 0, true, false, false));
+        assertEquals(80, AltarBlockEntity.calculateRechargeScale(0, 2, true, true, true));
+    }
 }

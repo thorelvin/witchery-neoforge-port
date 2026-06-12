@@ -1,5 +1,7 @@
 package com.emoniph.witchery.worldgen;
 
+import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -66,6 +68,7 @@ public class ApothecaryPiece extends StructurePiece {
         BlockState glassFront = VillageBuildingMaterials.paneEastWest();
         BlockState glassSide = VillageBuildingMaterials.paneNorthSouth();
 
+        debugLog("Apothecary shell start at {} for generation box {}.", boundingBox, box);
         generateBox(level, box, 1, 1, 1, 7, 5, 4, air, air, false);
         generateBox(level, box, 0, 0, 0, 8, 0, 5, stone, stone, false);
         generateBox(level, box, 0, 5, 0, 8, 5, 5, roof, roof, false);
@@ -123,37 +126,62 @@ public class ApothecaryPiece extends StructurePiece {
         placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.LOWER), 1, 1, 0, box);
         placeBlock(level, materials.door(Direction.SOUTH, DoubleBlockHalf.UPPER), 1, 2, 0, box);
         placeFrontStep(level, box, materials);
+        debugLog("Apothecary shell finished at {} for generation box {}.", boundingBox, box);
 
+        debugLog("Apothecary decor start at {} for generation box {}.", boundingBox, box);
         placeBlock(level, Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), 7, 1, 1, box);
         placeBlock(level, upperStair(materials, Direction.SOUTH), 5, 1, 1, box);
         placeBlock(level, upperStair(materials, Direction.NORTH), 5, 1, 3, box);
         placeBlock(level, Blocks.POTTED_DEAD_BUSH.defaultBlockState(), 5, 1, 2, box);
         placeBlock(level, Blocks.TORCH.defaultBlockState(), 5, 2, 3, box);
         placeBlock(level, Blocks.SKELETON_SKULL.defaultBlockState().setValue(SkullBlock.ROTATION, 9), 5, 2, 1, box);
-        createChest(level, box, random, 7, 0, 1, LOOT_TABLE);
+        debugLog("Apothecary decor finished at {} for generation box {}.", boundingBox, box);
 
-        placeApothecarySign(level, box);
+        tryCreateApothecaryChest(level, box, random);
+        placeApothecarySignSafely(level, box);
 
+        debugLog("Apothecary foundation start at {} for generation box {}.", boundingBox, box);
         for (int z = 0; z < 6; z++) {
             for (int x = 0; x < 9; x++) {
                 fillColumnDown(level, stone, x, -1, z, box);
             }
         }
+        debugLog("Apothecary foundation finished at {} for generation box {}.", boundingBox, box);
 
+        spawnApothecary(level, box);
+        debugLog("Apothecary resident phase finished at {} for generation box {}.", boundingBox, box);
+    }
+
+    private void tryCreateApothecaryChest(WorldGenLevel level, BoundingBox box, RandomSource random) {
+        try {
+            createChest(level, box, random, 7, 0, 1, LOOT_TABLE);
+            debugLog("Apothecary chest phase finished at {} for generation box {}.", boundingBox, box);
+        } catch (Throwable e) {
+            WitcheryMod.LOGGER.error("[VillageBuildings] Failed to create apothecary chest at {}; continuing without it.",
+                    getWorldPos(7, 0, 1), e);
+        }
+    }
+
+    private void spawnApothecary(WorldGenLevel level, BoundingBox box) {
         BlockPos spawnPos = new BlockPos(
                 boundingBox.minX() + 2,
                 boundingBox.minY() + 1,
                 boundingBox.minZ() + 2);
         if (!box.isInside(spawnPos)) return;
 
-        Villager villager = EntityType.VILLAGER.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
-        if (villager != null) {
-            villager.setPersistenceRequired();
-            villager.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            villager.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
-                    EntitySpawnReason.STRUCTURE, null);
-            ApothecaryVillager.configure(villager, level);
-            level.addFreshEntityWithPassengers(villager);
+        try {
+            Villager villager = EntityType.VILLAGER.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            if (villager != null) {
+                villager.setPersistenceRequired();
+                villager.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                villager.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
+                        EntitySpawnReason.STRUCTURE, null);
+                ApothecaryVillager.configure(villager, level);
+                level.addFreshEntityWithPassengers(villager);
+            }
+        } catch (Throwable e) {
+            WitcheryMod.LOGGER.error("[VillageBuildings] Failed to spawn apothecary villager at {}; continuing without resident.",
+                    spawnPos, e);
         }
     }
 
@@ -169,6 +197,16 @@ public class ApothecaryPiece extends StructurePiece {
         }
     }
 
+    private void placeApothecarySignSafely(WorldGenLevel level, BoundingBox box) {
+        try {
+            placeApothecarySign(level, box);
+            debugLog("Apothecary sign phase finished at {} for generation box {}.", boundingBox, box);
+        } catch (Throwable e) {
+            WitcheryMod.LOGGER.error("[VillageBuildings] Failed to place apothecary sign at {}; continuing without it.",
+                    getWorldPos(1, 3, -1), e);
+        }
+    }
+
     private void placeApothecarySign(WorldGenLevel level, BoundingBox box) {
         BlockPos signWorld = getWorldPos(1, 3, -1);
         if (!box.isInside(signWorld)) return;
@@ -180,6 +218,12 @@ public class ApothecaryPiece extends StructurePiece {
             if (sign.getLevel() == null) sign.setLevel(level.getLevel());
             SignText text = new SignText().setMessage(1, Component.literal("~ Apothecary ~"));
             sign.setText(text, true);
+        }
+    }
+
+    private static void debugLog(String message, Object... args) {
+        if (WitcheryConfig.DEBUG.get()) {
+            WitcheryMod.LOGGER.info("[VillageBuildings:Debug] " + message, args);
         }
     }
 }
