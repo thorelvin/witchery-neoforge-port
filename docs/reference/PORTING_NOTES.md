@@ -9,6 +9,69 @@ Current target:
 
 ---
 
+## 2026-06-12 Placed guide book altar focus; custom brew liquid must be finite and non-displacing
+
+- **Placed guide book altar bonus:** a `PLACED_MODONOMICON` block with a stored book directly on one of the
+  six altar footprint blocks counts as a small "knowledge/focus" upgrade: +1 recharge scale, counted once,
+  added beside skull/candle recharge bonuses, then multiplied by Pentacle and Infinity Egg. It deliberately
+  does **not** add raw altar power/capacity. Because the book stack lives in `PlacedModonomiconBlockEntity`,
+  changing empty/non-empty state must call `AltarBlockEntity.invalidate(level)` on the block below so the
+  altar readout updates immediately instead of waiting for the periodic rescan.
+- **Custom brew liquid flow:** source-style liquid brew is still a custom block, but its world behaviour must
+  read as vanilla flowing liquid: never displace non-empty vanilla fluids, only the placed cell is a source,
+  flowing cells carry decaying `DISTANCE`, require support/continuity, and evaporate when cut off. Rendering
+  should use lower/tinted distance-state models so non-source cells do not look like full cubes. Keep item,
+  cauldron, liquid, and particle colour derived from the same `BrewContents.color()` value.
+- **Placed Modonomicon page rendering:** the block-book must use the same page list as the item Primer, not a
+  duplicated static page table. Render page items through `ItemStackRenderState` in GUI display context and
+  submit those flat layers to the page collector; falling back to block particle sprites makes logs,
+  machines, stone blocks, and Distillery/Oven art diverge from the Primer. Counts are a separate text overlay.
+- **Placed book model axes:** when viewing the open book from the player side, the debug move
+  `x=+1, y=+2, z=+3` mapped visually to: x moved the right cover left, y moved it upward, and z pushed it
+  deeper into the book/back cover. For the final right-cover alignment, reset bad x/y experiments and use
+  z+ nudges. Do not rename visual left/right without checking the renderer's handedness first.
+- **Apothecary goto crash breadcrumbs:** world-load crashes around `/witchery goto apothecary` may not leave a
+  crash report if the integrated server dies during structure placement. `WitcheryVillageElement` should catch
+  `Throwable` around individual piece placement and log the element id/box; `ApothecaryPiece` now logs guarded
+  shell/decor/foundation/chest/sign/resident phases so the last log line identifies the failing phase.
+
+## 2026-06-12 Modern MobEffects need icon textures (1.7.10 potions had none); Snow Trail continuity
+
+- **Effect icons:** 1.7.10 `PotionBase` potions left `statusIconIndex = -1`, so the HUD drew no icon at
+  all. Modern MC always resolves `textures/mob_effect/<id>.png` and shows the magenta/black checker when
+  missing. Every custom `MobEffect` therefore needs an 18×18-ish PNG. The canonical Witchery icon set is
+  in `decompiled/witcherycompanion-0.36.1-beta/assets/witchery/textures/mob_effect/` — copy from there
+  (filenames mostly match our registry ids; `swim_boost.png` → our `swimming`). `sun_allergy` has no
+  companion equivalent and is still iconless.
+- **Snow Trail trail continuity (deliberate deviation):** source `PotionSnowTrail` stamps 4 footprints at
+  the feet every 10 ticks and only on **air** foot blocks — so it skips tall-grass/fern columns and dots
+  ~2 blocks apart at walk speed. The port keeps the temperature gate (`temp < 1.6`, hot biomes stay bare)
+  but now stores the last foot pos in `entity.getPersistentData()` (`witchery_snowtrail_last`) and draws a
+  continuous line between ticks, covering replaceable plants and following ±1–2 terrain steps. Use
+  `getPersistentData().getLongOr(key, default)` / `putLong` for per-entity transient effect state.
+
+## 2026-06-11 A block's `useItemOn` is SKIPPED when the player sneaks with a non-empty hand
+
+Confirmed in `ServerPlayerGameMode#useItemOn` (MC 1.21.11):
+```java
+boolean flag = !mainHand.isEmpty() || !offHand.isEmpty();
+boolean flag1 = (player.isSecondaryUseActive() && flag)
+        && !(mainHand.doesSneakBypassUse(...) && offHand.doesSneakBypassUse(...));
+if (event.getUseBlock().isTrue() || (event.getUseBlock().isDefault() && !flag1)) {
+    blockstate.useItemOn(...);   // ← not reached when flag1 is true
+}
+```
+So any block interaction designed as **"sneak + right-click with an item"** in `BlockBehaviour.useItemOn`
+is unreachable for normal items (a plain `Item` returns `false` from `doesSneakBypassUse`). This bit the
+Witch's Cauldron explicit-stir gesture (capacity ingredients like Mandrake Root could never be stirred).
+
+**Fix pattern:** handle the sneak+item gesture in a `PlayerInteractEvent.RightClickBlock` listener — it
+fires via `CommonHooks.onRightClickBlock` *before* that `flag1` gate (`if (event.isCanceled()) return
+event.getCancellationResult();`). Gate the listener on `player.isSecondaryUseActive()`, do the work, then
+`event.setCanceled(true)` + `event.setCancellationResult(...)`. Leave the non-sneak case uncancelled so the
+block's own `useItemOn` still handles normal clicks. See `events/WitchCauldronEvents.onSneakStirBrew` →
+`WitchCauldronBlock.stirExplicitIngredient`.
+
 ## 2026-06-10 Sky's Wrath focus = sword tiers (decode obfuscated 1.7.10 item ids; cross-check Resurrected)
 
 The port triggered the three Sky's Wrath storm variants on Snowball / Water Bucket / Gunpowder. Source
