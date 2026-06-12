@@ -65,18 +65,108 @@
       "title2": ""
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/distillery_odour.png"
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "witchery:quicklime",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "witchery:gypsum",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:oil_of_vitriol",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:slime_ball",
+          "x": 72,
+          "y": 36
+        }
       ],
-      "text": "[#](53341a)**Diamond Vapour** + a **Ghast Tear**, with three clay jars, yield Odour of Purity, Reek of Misfortune, Foul Fume, and Refined Evil at once.[#]()",
-      "title": "Two In, Four Out",
-      "use_legacy_rendering": false
+      "text": "[#](53341a)**Foul Fume** + **Quicklime**, with one clay jar, yields Gypsum, Oil of Vitriol, and a Slimeball.[#]()",
+      "title": "Oil of Vitriol"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:diamond",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 3,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "witchery:oil_of_vitriol",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:odour_of_purity",
+          "x": 72,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Diamond** + **Oil of Vitriol**, with three clay jars, yields two Diamond Vapours and Odour of Purity.[#]()",
+      "title": "Diamond Vapour"
     },
     {
       "type": "modonomicon:text",
@@ -89,6 +179,388 @@
       "text": "[#](53341a)You have drawn your first Diamond Vapour, pupil — the Distillery has taken to your hand. Feed it well, and its essences need never run dry.[#]()",
       "title": "First Distillation",
       "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 3,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ghast_tear",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "witchery:odour_of_purity",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 72,
+          "y": 36
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 90,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Diamond Vapour** + **Ghast Tear**, with three clay jars, yields Odour of Purity, Reek of Misfortune, Foul Fume, and Refined Evil.[#]()",
+      "title": "Four Essences"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:breath_of_goddess",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 3,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "minecraft:lapis_lazuli",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:whiff_of_magic",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:slime_ball",
+          "x": 72,
+          "y": 36
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 90,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Breath of the Goddess** + **Lapis Lazuli**, with three clay jars, yields Tear of the Goddess, Whiff of Magic, Slimeball, and Foul Fume.[#]()",
+      "title": "Tear of the Goddess"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glowstone_dust",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glowstone_dust",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 72,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Blaze Powder** + **Gunpowder**, with one clay jar, yields two Glowstone Dust and Reek of Misfortune.[#]()",
+      "title": "Glowstone Dust"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:ender_pearl",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 6,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 2,
+          "item": "witchery:ender_dew",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 2,
+          "item": "witchery:ender_dew",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:ender_dew",
+          "x": 72,
+          "y": 36
+        },
+        {
+          "count": 1,
+          "item": "witchery:whiff_of_magic",
+          "x": 90,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Ender Pearl** alone, with six clay jars, yields five Ender Dew and Whiff of Magic.[#]()",
+      "title": "Ender Dew"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:brew_of_flowing_spirit",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 2,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "witchery:oil_of_vitriol",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "witchery:focused_will",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:condensed_fear",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 4,
+          "item": "witchery:brew_of_hollow_tears",
+          "x": 72,
+          "y": 36
+        },
+        {
+          "count": 4,
+          "item": "witchery:brew_of_hollow_tears",
+          "x": 90,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Brew of Flowing Spirit** + **Oil of Vitriol**, with two clay jars, yields Focused Will, Condensed Fear, and two batches of Hollow Tears.[#]()",
+      "title": "Condensed Fear"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:demon_heart",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 2,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "minecraft:netherrack",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 1,
+          "item": "minecraft:soul_sand",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:demonic_blood",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:demonic_blood",
+          "x": 72,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Demonic Blood.[#]()",
+      "title": "Demonic Blood: Netherrack"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_distillery.png",
+      "bg_height": 70,
+      "bg_width": 114,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "distillery_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:demon_heart",
+          "x": 16,
+          "y": 7
+        },
+        {
+          "count": 4,
+          "item": "witchery:clay_jar",
+          "x": 16,
+          "y": 47
+        },
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 16,
+          "y": 25
+        },
+        {
+          "count": 2,
+          "item": "witchery:demonic_blood",
+          "x": 72,
+          "y": 18
+        },
+        {
+          "count": 2,
+          "item": "witchery:demonic_blood",
+          "x": 90,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 72,
+          "y": 36
+        }
+      ],
+      "text": "[#](53341a)**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Demonic Blood and Refined Evil.[#]()",
+      "title": "Demonic Blood: Vapour"
     }
   ],
   "show_when_any_parent_unlocked": false,

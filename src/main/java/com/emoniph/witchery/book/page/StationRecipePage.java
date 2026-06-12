@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A custom Modonomicon page that renders a station GUI background (Witches' Oven / Distillery /
- * Witch's Cauldron) with <b>live {@link ItemStack}s</b> placed at slot coordinates. Because the items
+ * A custom Modonomicon page that renders station recipe notes with <b>live {@link ItemStack}s</b>
+ * placed at slot coordinates. A page may draw an old station background, or omit it and use only
+ * small book-style cues such as arrows and fuel marks. Because the items
  * are real, the renderer shows proper hover tooltips and stack counts — which the baked recipe-image
  * pages could not. Modonomicon only renders vanilla 3x3 crafting recipes natively, so this fills the
  * gap for the data-driven station recipes.
@@ -43,16 +44,23 @@ public class StationRecipePage extends BookPage {
     protected final Identifier background;
     protected final int bgWidth;
     protected final int bgHeight;
+    protected final boolean showBackground;
+    protected final boolean ovenCues;
+    protected final boolean distilleryCues;
     protected final List<Slot> slots;
 
     public StationRecipePage(BookTextHolder title, BookTextHolder text, Identifier background,
-                             int bgWidth, int bgHeight, List<Slot> slots, String anchor, BookCondition condition) {
+                             int bgWidth, int bgHeight, boolean showBackground, boolean ovenCues,
+                             boolean distilleryCues, List<Slot> slots, String anchor, BookCondition condition) {
         super(anchor, condition);
         this.title = title;
         this.text = text;
         this.background = background;
         this.bgWidth = bgWidth;
         this.bgHeight = bgHeight;
+        this.showBackground = showBackground;
+        this.ovenCues = ovenCues;
+        this.distilleryCues = distilleryCues;
         this.slots = slots;
     }
 
@@ -85,6 +93,18 @@ public class StationRecipePage extends BookPage {
         return bgHeight;
     }
 
+    public boolean shouldShowBackground() {
+        return showBackground;
+    }
+
+    public boolean hasOvenCues() {
+        return ovenCues;
+    }
+
+    public boolean hasDistilleryCues() {
+        return distilleryCues;
+    }
+
     public List<Slot> getSlots() {
         return slots;
     }
@@ -106,6 +126,9 @@ public class StationRecipePage extends BookPage {
         Identifier background = Identifier.parse(GsonHelper.getAsString(json, "background"));
         int w = GsonHelper.getAsInt(json, "bg_width");
         int h = GsonHelper.getAsInt(json, "bg_height");
+        boolean showBackground = GsonHelper.getAsBoolean(json, "show_background", true);
+        boolean ovenCues = GsonHelper.getAsBoolean(json, "oven_cues", false);
+        boolean distilleryCues = GsonHelper.getAsBoolean(json, "distillery_cues", false);
         List<Slot> slots = new ArrayList<>();
         for (var element : GsonHelper.getAsJsonArray(json, "slots")) {
             JsonObject s = element.getAsJsonObject();
@@ -118,7 +141,8 @@ public class StationRecipePage extends BookPage {
                 ? BookCondition.fromJson(id, GsonHelper.getAsJsonObject(json, "condition"), provider)
                 : new BookNoneCondition();
         String anchor = GsonHelper.getAsString(json, "anchor", "");
-        return new StationRecipePage(title, text, background, w, h, slots, anchor, condition);
+        return new StationRecipePage(title, text, background, w, h, showBackground, ovenCues, distilleryCues,
+                slots, anchor, condition);
     }
 
     public static StationRecipePage fromNetwork(RegistryFriendlyByteBuf buffer) {
@@ -127,6 +151,9 @@ public class StationRecipePage extends BookPage {
         Identifier background = Identifier.parse(buffer.readUtf());
         int w = buffer.readVarInt();
         int h = buffer.readVarInt();
+        boolean showBackground = buffer.readBoolean();
+        boolean ovenCues = buffer.readBoolean();
+        boolean distilleryCues = buffer.readBoolean();
         int n = buffer.readVarInt();
         List<Slot> slots = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -136,7 +163,8 @@ public class StationRecipePage extends BookPage {
         // Base BookPage.toNetwork writes anchor then condition, last — read them in that order.
         String anchor = buffer.readUtf();
         BookCondition condition = BookCondition.fromNetwork(buffer);
-        return new StationRecipePage(title, text, background, w, h, slots, anchor, condition);
+        return new StationRecipePage(title, text, background, w, h, showBackground, ovenCues, distilleryCues,
+                slots, anchor, condition);
     }
 
     @Override
@@ -152,6 +180,9 @@ public class StationRecipePage extends BookPage {
         buffer.writeUtf(this.background.toString());
         buffer.writeVarInt(this.bgWidth);
         buffer.writeVarInt(this.bgHeight);
+        buffer.writeBoolean(this.showBackground);
+        buffer.writeBoolean(this.ovenCues);
+        buffer.writeBoolean(this.distilleryCues);
         buffer.writeVarInt(this.slots.size());
         for (Slot slot : this.slots) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, slot.stack());

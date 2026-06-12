@@ -5,6 +5,7 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -26,30 +27,44 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 public abstract class BrewFluidBlock extends BaseEntityBlock {
     public static final IntegerProperty DISTANCE = IntegerProperty.create("distance", 0, 10);
+    public static final EnumProperty<Direction> FLOW = BlockStateProperties.HORIZONTAL_FACING;
     public static final int SOURCE_GAS_TICK_RATE = 5;
     public static final int SOURCE_LIQUID_TICK_RATE = 5;
     public static final int SOURCE_GAS_MAX_RUN_TICKS = 120;
     public static final int SOURCE_LIQUID_QUANTA_PER_BLOCK = 6;
+    public static final int SOURCE_FLOW_COST_MAX = 1000;
+    public static final int SOURCE_FLOW_RECURSE_LIMIT = 4;
+    public static final int DEFAULT_BREW_COLOR = 0xFFFFFF;
     private static final double[] SOURCE_GAS_EXPANSION_CHANCES = {0.2D, 0.4D, 0.8D, 0.8D, 0.8D, 0.8D};
     private static final Direction[] SOURCE_GAS_DIRECTIONS = {
             Direction.UP, Direction.DOWN, Direction.EAST, Direction.WEST, Direction.SOUTH, Direction.NORTH
     };
+    private static final int[] SOURCE_LIQUID_HEIGHT_PIXELS = {16, 14, 12, 10, 8, 6, 4, 3, 2, 1, 1};
+    private static final VoxelShape[] SOURCE_LIQUID_SHAPES = createLiquidShapes();
 
     private final boolean gas;
 
     protected BrewFluidBlock(BlockBehaviour.Properties properties, boolean gas) {
         super(properties);
         this.gas = gas;
-        registerDefaultState(stateDefinition.any().setValue(DISTANCE, 0));
+        registerDefaultState(stateDefinition.any()
+                .setValue(DISTANCE, 0)
+                .setValue(FLOW, Direction.NORTH));
     }
 
     public boolean isGas() {
@@ -62,7 +77,7 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(DISTANCE);
+        builder.add(DISTANCE, FLOW);
     }
 
     @Nullable
@@ -155,7 +170,22 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
 
     private void tickLiquid(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, BrewFluidBlockEntity brew) {
         int distance = state.getValue(DISTANCE);
-        if (distance == 0) {
+        if (distance > 0) {
+            int supportedDistance = supportedLiquidDistance(level, pos);
+            if (supportedDistance < 0) {
+                level.removeBlock(pos, false);
+                return;
+            }
+            if (supportedDistance != distance) {
+                distance = supportedDistance;
+                state = state.setValue(DISTANCE, distance);
+                level.setBlock(pos, state, Block.UPDATE_CLIENTS);
+            }
+        }
+
+        // Source BlockBrewLiquidEffect: each tick the pool may apply its block actions to neighbours.
+        brew.applyAdjacentBlockPulse(level);
+        if (distance == 0 && !brew.isPersistentSource()) {
             brew.incUpdateCount();
             if (brew.getUpdateCount() > 3 && brew.getDuration() != 0 && random.nextInt(brew.getDuration()) == 0) {
                 level.removeBlock(pos, false);
@@ -165,30 +195,127 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
 
         int nextDistance = Math.min(distance + 1, SOURCE_LIQUID_QUANTA_PER_BLOCK - 1);
         BlockPos below = pos.below();
-        if (trySpread(level, below, 1, brew, false)) {
+        if (trySpread(level, below, 1, brew, false, state.getValue(FLOW))) {
             level.scheduleTick(pos, this, tickRate());
             return;
         }
         if (distance < SOURCE_LIQUID_QUANTA_PER_BLOCK - 1) {
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
-                trySpread(level, pos.relative(direction), nextDistance, brew, false);
+            // Source optimal flow: only spread toward the nearest reachable drop (vanilla-water style).
+            // With no drop in range every direction ties, so it falls back to an even spread.
+            for (Direction direction : optimalFlowDirections(pos,
+                    target -> canFlowInto(level, target), target -> isSourceBlock(level, target))) {
+                trySpread(level, pos.relative(direction), nextDistance, brew, false, direction);
             }
         }
         level.scheduleTick(pos, this, tickRate());
     }
 
+    /** Whether brew liquid can flow into a position (air / replaceable / same-fluid). */
+    private boolean canFlowInto(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof BrewFluidBlock fluid && !fluid.isGas()) {
+            return true;
+        }
+        return canDisplace(state);
+    }
+
+    /** A brew-liquid source block (distance 0) — never flowed back into. */
+    private boolean isSourceBlock(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.getBlock() instanceof BrewFluidBlock fluid && !fluid.isGas()
+                && state.getValue(DISTANCE) == 0;
+    }
+
+    private int supportedLiquidDistance(ServerLevel level, BlockPos pos) {
+        if (isBrewLiquid(level.getBlockState(pos.above()))) {
+            return 1;
+        }
+
+        int bestDistance = Integer.MAX_VALUE;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockState neighbor = level.getBlockState(pos.relative(direction));
+            if (isBrewLiquid(neighbor)) {
+                bestDistance = Math.min(bestDistance, neighbor.getValue(DISTANCE) + 1);
+            }
+        }
+        return bestDistance < SOURCE_LIQUID_QUANTA_PER_BLOCK ? Math.max(1, bestDistance) : -1;
+    }
+
+    private static boolean isBrewLiquid(BlockState state) {
+        return state.getBlock() instanceof BrewFluidBlock fluid && !fluid.isGas();
+    }
+
+    /**
+     * Source {@code getOptimalFlowDirections}: returns the horizontal directions whose flow cost (the
+     * shortest horizontal distance, up to {@link #SOURCE_FLOW_RECURSE_LIMIT}, to a block the liquid can
+     * fall through) is minimal. Pure for testability — the world is supplied via the two predicates.
+     */
+    static List<Direction> optimalFlowDirections(BlockPos origin, Predicate<BlockPos> canFlowInto,
+                                                 Predicate<BlockPos> isSource) {
+        Direction[] dirs = {Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
+        int[] cost = new int[4];
+        int min = SOURCE_FLOW_COST_MAX;
+        for (int i = 0; i < dirs.length; i++) {
+            cost[i] = SOURCE_FLOW_COST_MAX;
+            BlockPos target = origin.relative(dirs[i]);
+            if (canFlowInto.test(target) && !isSource.test(target)) {
+                cost[i] = canFlowInto.test(target.below())
+                        ? 0
+                        : calculateFlowCost(target, 1, dirs[i], canFlowInto, isSource);
+            }
+            min = Math.min(min, cost[i]);
+        }
+        List<Direction> optimal = new ArrayList<>(4);
+        for (int i = 0; i < dirs.length; i++) {
+            if (cost[i] == min) {
+                optimal.add(dirs[i]);
+            }
+        }
+        return optimal;
+    }
+
+    /** Source {@code calculateFlowCost}: BFS toward the nearest drop, never reversing back the way we came. */
+    private static int calculateFlowCost(BlockPos pos, int depth, Direction fromDir,
+                                         Predicate<BlockPos> canFlowInto, Predicate<BlockPos> isSource) {
+        int cost = SOURCE_FLOW_COST_MAX;
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            if (dir == fromDir.getOpposite()) {
+                continue;
+            }
+            BlockPos target = pos.relative(dir);
+            if (canFlowInto.test(target) && !isSource.test(target)) {
+                if (canFlowInto.test(target.below())) {
+                    return depth;
+                }
+                if (depth < SOURCE_FLOW_RECURSE_LIMIT) {
+                    cost = Math.min(cost, calculateFlowCost(target, depth + 1, dir, canFlowInto, isSource));
+                }
+            }
+        }
+        return cost;
+    }
+
     private boolean trySpread(ServerLevel level, BlockPos target, int distance, BrewFluidBlockEntity source, boolean gas) {
+        return trySpread(level, target, distance, source, gas, Direction.NORTH);
+    }
+
+    private boolean trySpread(ServerLevel level, BlockPos target, int distance, BrewFluidBlockEntity source, boolean gas,
+                              Direction flowDirection) {
         BlockState targetState = level.getBlockState(target);
         if (targetState.getBlock() instanceof BrewFluidBlock fluid && fluid.isGas() == gas) {
             if (targetState.getValue(DISTANCE) <= distance) {
                 return false;
             }
-            level.setBlock(target, targetState.setValue(DISTANCE, distance), Block.UPDATE_ALL);
+            level.setBlock(target, targetState
+                    .setValue(DISTANCE, distance)
+                    .setValue(FLOW, horizontal(flowDirection)), Block.UPDATE_ALL);
         } else {
             if (!canDisplace(targetState)) {
                 return false;
             }
-            level.setBlock(target, defaultBlockState().setValue(DISTANCE, distance), Block.UPDATE_ALL);
+            level.setBlock(target, defaultBlockState()
+                    .setValue(DISTANCE, distance)
+                    .setValue(FLOW, horizontal(flowDirection)), Block.UPDATE_ALL);
         }
         if (level.getBlockEntity(target) instanceof BrewFluidBlockEntity targetFluid) {
             targetFluid.copyFrom(source);
@@ -197,10 +324,21 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
         return true;
     }
 
+    private static Direction horizontal(Direction direction) {
+        return direction.getAxis().isHorizontal() ? direction : Direction.NORTH;
+    }
+
     public static boolean canDisplace(BlockState state) {
-        return state.isAir()
-                || state.canBeReplaced()
-                || (!state.isSolid() && !state.hasBlockEntity());
+        return canDisplaceForBrew(state.isAir(), state.canBeReplaced(), state.isSolid(),
+                state.hasBlockEntity(), !state.getFluidState().isEmpty());
+    }
+
+    static boolean canDisplaceForBrew(boolean air, boolean replaceable, boolean solid,
+                                      boolean hasBlockEntity, boolean hasFluid) {
+        if (hasFluid) {
+            return false;
+        }
+        return air || replaceable || (!solid && !hasBlockEntity);
     }
 
     @Override
@@ -227,12 +365,13 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return gas ? Shapes.empty() : Shapes.block();
+        return gas ? Shapes.empty() : SOURCE_LIQUID_SHAPES[liquidHeightIndex(state.getValue(DISTANCE))];
     }
 
     @Override
     protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
-        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
+        return adjacentState.is(this) && adjacentState.getValue(DISTANCE).equals(state.getValue(DISTANCE))
+                || super.skipRendering(state, adjacentState, direction);
     }
 
     @Override
@@ -243,18 +382,55 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (gas && random.nextInt(2) == 0) {
+            DustParticleOptions brewDust = new DustParticleOptions(brewColor(level, pos), 1.1F);
+            level.addParticle(brewDust,
+                    pos.getX() + random.nextDouble(),
+                    pos.getY() + random.nextDouble(),
+                    pos.getZ() + random.nextDouble(),
+                    0.0D, 0.01D, 0.0D);
             level.addParticle(ParticleTypes.WITCH,
                     pos.getX() + random.nextDouble(),
                     pos.getY() + random.nextDouble(),
                     pos.getZ() + random.nextDouble(),
                     0.0D, 0.01D, 0.0D);
         } else if (!gas && random.nextInt(4) == 0) {
-            level.addParticle(ParticleTypes.SPLASH,
+            double y = pos.getY() + (liquidHeightPixels(state.getValue(DISTANCE)) / 16.0D) + 0.02D;
+            level.addParticle(new DustParticleOptions(brewColor(level, pos), 0.75F),
                     pos.getX() + random.nextDouble(),
-                    pos.getY() + 0.05D,
+                    y,
                     pos.getZ() + random.nextDouble(),
-                    0.0D, 0.0D, 0.0D);
+                    0.0D, 0.015D, 0.0D);
+            if (random.nextInt(3) == 0) {
+                level.addParticle(ParticleTypes.SPLASH,
+                        pos.getX() + random.nextDouble(),
+                        y,
+                        pos.getZ() + random.nextDouble(),
+                        0.0D, 0.0D, 0.0D);
+            }
         }
+    }
+
+    private static VoxelShape[] createLiquidShapes() {
+        VoxelShape[] shapes = new VoxelShape[SOURCE_LIQUID_HEIGHT_PIXELS.length];
+        for (int i = 0; i < shapes.length; i++) {
+            shapes[i] = Block.box(0.0D, 0.0D, 0.0D, 16.0D, SOURCE_LIQUID_HEIGHT_PIXELS[i], 16.0D);
+        }
+        return shapes;
+    }
+
+    private static int liquidHeightIndex(int distance) {
+        return Math.clamp(distance, 0, SOURCE_LIQUID_HEIGHT_PIXELS.length - 1);
+    }
+
+    private static int liquidHeightPixels(int distance) {
+        return SOURCE_LIQUID_HEIGHT_PIXELS[liquidHeightIndex(distance)];
+    }
+
+    private static int brewColor(Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof BrewFluidBlockEntity brew && brew.getColor() != 0) {
+            return brew.getColor() & 0xFFFFFF;
+        }
+        return DEFAULT_BREW_COLOR;
     }
 
     @Override

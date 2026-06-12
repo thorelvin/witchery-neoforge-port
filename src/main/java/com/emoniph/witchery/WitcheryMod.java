@@ -13,12 +13,14 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryCreativeTabs;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryFeatures;
+import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.init.WitcheryRecipeSerializers;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
+import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
@@ -37,6 +39,8 @@ public class WitcheryMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WitcheryMod(IEventBus modEventBus, ModContainer modContainer) {
+        WitcheryFluids.FLUID_TYPES.register(modEventBus);
+        WitcheryFluids.FLUIDS.register(modEventBus);
         WitcheryBlocks.BLOCKS.register(modEventBus);
         WitcheryItems.ITEMS.register(modEventBus);
         WitcheryCreativeTabs.TABS.register(modEventBus);
@@ -65,6 +69,7 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerScreens);
             modEventBus.addListener(WitcheryClient::registerBookPageRenderers);
             modEventBus.addListener(WitcheryClient::registerBlockColors);
+            modEventBus.addListener(WitcheryClient::registerClientExtensions);
             modEventBus.addListener(WitcheryClient::onAddLayers);
             modEventBus.addListener(WitcheryClient::registerRenderers);
             modEventBus.addListener(WitcheryClient::registerSpecialModelRenderers);
@@ -97,6 +102,10 @@ public class WitcheryMod {
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,
                         HowlPayload::handleOnServer)
+                .playToServer(
+                        PlacedModonomiconPageTurnPayload.TYPE,
+                        PlacedModonomiconPageTurnPayload.STREAM_CODEC,
+                        PlacedModonomiconPageTurnPayload::handleOnServer)
                 .playToServer(
                         com.emoniph.witchery.network.SpellPreparedPayload.TYPE,
                         com.emoniph.witchery.network.SpellPreparedPayload.STREAM_CODEC,

@@ -59,6 +59,8 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("altar", () -> new BlockEntityType<>(AltarBlockEntity::new, Set.of(WitcheryBlocks.ALTAR.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlacedItemBlockEntity>> PLACED_ITEM =
             BLOCK_ENTITIES.register("placed_item", () -> new BlockEntityType<>(PlacedItemBlockEntity::new, Set.of(WitcheryBlocks.PLACED_ITEM.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlacedModonomiconBlockEntity>> PLACED_MODONOMICON =
+            BLOCK_ENTITIES.register("placed_modonomicon", () -> new BlockEntityType<>(PlacedModonomiconBlockEntity::new, Set.of(WitcheryBlocks.PLACED_MODONOMICON.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BarrierBlockEntity>> BARRIER =
             BLOCK_ENTITIES.register("barrier", () -> new BlockEntityType<>(BarrierBlockEntity::new, Set.of(WitcheryBlocks.BARRIER.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrassperBlockEntity>> GRASSPER =

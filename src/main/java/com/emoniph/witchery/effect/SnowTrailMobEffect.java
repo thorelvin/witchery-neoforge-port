@@ -33,6 +33,15 @@ public class SnowTrailMobEffect extends MobEffect {
     private static final PerlinSimplexNoise SOURCE_TEMPERATURE_NOISE =
             new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(1234L)), ImmutableList.of(0));
 
+    // Port enhancement: remember the last foot position per entity so the trail is drawn as a continuous
+    // line (every integer column between ticks) instead of the source's sparse one-shot footprints. The
+    // 1.7.10 effect only stamped 4 footprints at the current feet every 10 ticks, which at walking speed
+    // left ~2-block gaps and skipped any column whose foot block was tall grass/ferns (not air).
+    private static final String LAST_TRAIL_KEY = "witchery_snowtrail_last";
+    private static final long NO_LAST_TRAIL = Long.MIN_VALUE;
+    private static final int MAX_INTERPOLATE_DIST_SQR = 64 * 64;
+    private static final int[] TRAIL_VERTICAL_WINDOW = {1, 0, -1, -2};
+
     public SnowTrailMobEffect(int color) {
         super(MobEffectCategory.BENEFICIAL, color);
     }
@@ -44,14 +53,19 @@ public class SnowTrailMobEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
-        for (int l = 0; l < 4; l++) {
-            BlockPos pos = footprintPos(entity.getX(), entity.getY(), entity.getZ(), l);
-            if (sourceFootprintAllowsSnow(level.isEmptyBlock(pos),
-                    sourceBiomeTemperature(level, pos),
-                    canPlaceSnow(level, pos))) {
-                level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState());
+        BlockPos current = new BlockPos(Mth.floor(entity.getX()), Mth.floor(entity.getY()), Mth.floor(entity.getZ()));
+        long lastPacked = entity.getPersistentData().getLongOr(LAST_TRAIL_KEY, NO_LAST_TRAIL);
+        if (lastPacked != NO_LAST_TRAIL) {
+            BlockPos last = BlockPos.of(lastPacked);
+            if (last.distSqr(current) <= MAX_INTERPOLATE_DIST_SQR) {
+                placeTrailBetween(level, last, current);
+            } else {
+                placeTrailAtColumn(level, current.getX(), current.getZ(), current.getY());
             }
+        } else {
+            placeTrailAtColumn(level, current.getX(), current.getZ(), current.getY());
         }
+        entity.getPersistentData().putLong(LAST_TRAIL_KEY, current.asLong());
 
         if (entity instanceof SnowGolem && level.random.nextInt(SNOW_GOLEM_EXPLOSION_ROLL) == 0) {
             level.explode(entity, entity.getX(), entity.getY(), entity.getZ(),
@@ -61,6 +75,44 @@ public class SnowTrailMobEffect extends MobEffect {
         }
 
         return true;
+    }
+
+    /** Lays a continuous 1-wide snow trail along every integer column between two foot positions. */
+    private void placeTrailBetween(ServerLevel level, BlockPos from, BlockPos to) {
+        int dx = to.getX() - from.getX();
+        int dz = to.getZ() - from.getZ();
+        int dy = to.getY() - from.getY();
+        int steps = Math.max(Math.abs(dx), Math.abs(dz));
+        if (steps == 0) {
+            placeTrailAtColumn(level, to.getX(), to.getZ(), to.getY());
+            return;
+        }
+        for (int i = 0; i <= steps; i++) {
+            double t = (double) i / steps;
+            int x = from.getX() + (int) Math.round(dx * t);
+            int z = from.getZ() + (int) Math.round(dz * t);
+            int y = from.getY() + (int) Math.round(dy * t);
+            placeTrailAtColumn(level, x, z, y);
+        }
+    }
+
+    /**
+     * Places one snow layer at the walkable surface near {@code baseY} in column (x, z), following small
+     * terrain steps and covering replaceable plants (grass/ferns) the way natural snowfall does. The
+     * source temperature gate is preserved, so hot biomes (temperature &gt;= 1.6) stay bare.
+     */
+    private void placeTrailAtColumn(ServerLevel level, int x, int z, int baseY) {
+        for (int dy : TRAIL_VERTICAL_WINDOW) {
+            BlockPos pos = new BlockPos(x, baseY + dy, z);
+            BlockState state = level.getBlockState(pos);
+            boolean coverable = state.isAir() || (state.canBeReplaced() && state.getFluidState().isEmpty());
+            if (coverable
+                    && allowsSnowTrail(sourceBiomeTemperature(level, pos))
+                    && canPlaceSnow(level, pos)) {
+                level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState());
+                return;
+            }
+        }
     }
 
     public static BlockPos footprintPos(double x, double y, double z, int index) {

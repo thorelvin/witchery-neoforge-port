@@ -401,6 +401,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.SPLASH_BREW_BOTTLE.get(),
                 WitcheryItems.LINGERING_BREW_BOTTLE.get(),
                 WitcheryItems.LIQUID_BREW_BOTTLE.get(),
+                WitcheryItems.BREW_BUCKET.get(),
                 WitcheryItems.BREW_OF_RAISING.get(),
                 WitcheryItems.RAISING_BREW.get(),
                 WitcheryItems.BREW_OF_SLEEPING.get(),

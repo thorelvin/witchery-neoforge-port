@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/bucket_brew_overlay",
+    "layer1": "witchery:item/bucket_brew"
+  }
+}

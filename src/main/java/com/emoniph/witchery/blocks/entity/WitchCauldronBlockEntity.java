@@ -5,7 +5,13 @@ import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.blocks.WitchCauldronBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +37,11 @@ import java.util.List;
 public class WitchCauldronBlockEntity extends BlockEntity {
 
     private static final String KEY_BREW = "Brew";
+    private static final String KEY_COLOR = "Color";
     private static final int STIR_INTERVAL = 6;
 
     private final List<Item> ingredients = new ArrayList<>();
+    private int color;
 
     public WitchCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.WITCH_CAULDRON.get(), pos, state);
@@ -51,9 +60,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public void clear() {
-        if (!ingredients.isEmpty()) {
+        if (!ingredients.isEmpty() || color != 0) {
             ingredients.clear();
-            setChanged();
+            color = 0;
+            sync();
         }
     }
 
@@ -62,8 +72,13 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             return false;
         }
         ingredients.add(item);
-        setChanged();
+        color = Brews.color(ingredients);
+        sync();
         return true;
+    }
+
+    public int getColor() {
+        return color;
     }
 
     @Override
@@ -72,6 +87,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         if (!ingredients.isEmpty()) {
             tag.store(KEY_BREW, BrewContents.CODEC, new BrewContents(List.copyOf(ingredients)));
         }
+        tag.putInt(KEY_COLOR, color);
     }
 
     @Override
@@ -79,6 +95,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         super.loadAdditional(tag);
         ingredients.clear();
         tag.read(KEY_BREW, BrewContents.CODEC).ifPresent(contents -> ingredients.addAll(contents.items()));
+        color = tag.getIntOr(KEY_COLOR, ingredients.isEmpty() ? 0 : Brews.color(ingredients));
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, WitchCauldronBlockEntity be) {
@@ -113,9 +130,33 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                 entity.setItem(itemStack);
             }
             serverLevel.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 1.4F);
+            int color = be.getColor();
+            if (color != 0) {
+                serverLevel.sendParticles(new DustParticleOptions(color, 0.8F),
+                        pos.getX() + 0.5, pos.getY() + 0.85, pos.getZ() + 0.5,
+                        10, 0.18, 0.05, 0.18, 0.01);
+            }
             serverLevel.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5, pos.getY() + 0.85, pos.getZ() + 0.5,
                     8, 0.2, 0.05, 0.2, 0.02);
             return;
+        }
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
 }

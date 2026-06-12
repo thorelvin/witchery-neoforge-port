@@ -291,7 +291,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      BOOK_SPIRIT_WORLD    = ITEMS.register("book_spirit_world", id -> primerGuide(id, "spirit_world", "spirit_world/spirit_world"));
     public static final DeferredItem<Item>      BOOK_CREATURES       = ITEMS.register("book_creatures", id -> primerGuide(id, "creatures", "creatures/familiars"));
     public static final DeferredItem<Item>      BOOK_TRANSFORMATIONS = ITEMS.register("book_transformations", id -> primerGuide(id, "transformations", "transformations/vampirism"));
-    public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip", com.emoniph.witchery.book.WitcheryBooks.CAULDRON));
+    public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip", com.emoniph.witchery.book.WitcheryBooks.CAULDRON, com.emoniph.witchery.book.WitcheryBooks.id("brewing"), com.emoniph.witchery.book.WitcheryBooks.id("brewing/the_cauldron")));
     public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
@@ -908,6 +908,8 @@ public class WitcheryItems {
             id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), true));
     public static final DeferredItem<Item> LIQUID_BREW_BOTTLE = ITEMS.register("liquid_brew_bottle",
             id -> new com.emoniph.witchery.item.CustomThrownBrewItem(itemProps(id), Brews.Dispersal.LIQUID));
+    public static final DeferredItem<Item> BREW_BUCKET = ITEMS.register("brew_bucket",
+            id -> new com.emoniph.witchery.item.BrewBucketItem(itemProps(id)));
 
     private static Map<String, DeferredItem<Item>> registerLegacyPlaceholderItems(String... ids) {
         LinkedHashMap<String, DeferredItem<Item>> placeholders = new LinkedHashMap<>();

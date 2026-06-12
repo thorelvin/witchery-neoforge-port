@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east": { "model": "witchery:block/placed_modonomicon" },
+    "facing=north": { "model": "witchery:block/placed_modonomicon" },
+    "facing=south": { "model": "witchery:block/placed_modonomicon" },
+    "facing=west": { "model": "witchery:block/placed_modonomicon" }
+  }
+}

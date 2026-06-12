@@ -67,46 +67,124 @@
       "title": "Witch's Cauldron"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/cauldron_mutandis.png"
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:egg",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 6,
+          "item": "witchery:mutandis",
+          "x": 89,
+          "y": 33
+        }
       ],
       "text": "[#](53341a)Drop a **Mandrake Root** and an **Egg** in a heated, filled cauldron, then right-click with **Exhale of the Horned One** — six Mutandis rise from the bowl.[#]()",
-      "title": "Cauldron: Mutandis",
-      "use_legacy_rendering": false
+      "title": "Cauldron: Mutandis"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/cauldron_mutandis_extremis.png"
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 35,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis",
+          "x": 51,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 89,
+          "y": 33
+        }
       ],
       "text": "[#](53341a)Drop a **Nether Wart** in and right-click with **Mutandis** to condense one Mutandis Extremis — the stronger powder.[#]()",
-      "title": "Cauldron: Mutandis Extremis",
-      "use_legacy_rendering": false
+      "title": "Cauldron: Mutandis Extremis"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/cauldron_drop_of_luck.png"
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:drop_of_luck",
+          "x": 89,
+          "y": 33
+        }
       ],
       "text": "[#](53341a)Drop the four reagents with an altar near, then use **Mutandis Extremis** on the cauldron — one Drop of Luck.[#]()",
-      "title": "Cauldron: Drop of Luck",
-      "use_legacy_rendering": false
+      "title": "Cauldron: Drop of Luck"
     }
   ],
   "show_when_any_parent_unlocked": false,

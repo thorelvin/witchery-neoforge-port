@@ -820,6 +820,23 @@ class BrewLogicTest {
     }
 
     @Test
+    void triggeredDispersalFromZombieHeadAlwaysWins() {
+        Brews.bootstrap();
+        // A Zombie Head selects the source triggered dispersal...
+        assertEquals(Brews.Dispersal.TRIGGERED,
+                Brews.dispersal(List.of(Items.ZOMBIE_HEAD, Items.SPIDER_EYE)));
+        // ...and it nullifies/overrides any other dispersal modifier regardless of order.
+        assertEquals(Brews.Dispersal.TRIGGERED,
+                Brews.dispersal(List.of(Items.GUNPOWDER, Items.ZOMBIE_HEAD, Items.SPIDER_EYE)),
+                "triggered beats splash");
+        assertEquals(Brews.Dispersal.TRIGGERED,
+                Brews.dispersal(List.of(Items.ZOMBIE_HEAD, WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE)),
+                "triggered beats liquid even when added first");
+        assertEquals(Brews.Dispersal.TRIGGERED,
+                Brews.bottledDispersal(List.of(Items.ZOMBIE_HEAD, Items.SPIDER_EYE)));
+    }
+
+    @Test
     void wormwoodIsNotPotionEffectIngredient() {
         Brews.bootstrap();
         assertFalse(Brews.hasEffect(List.of(WitcheryItems.WORMWOOD.get())));

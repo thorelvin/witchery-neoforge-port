@@ -27,18 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The Witches' Oven smolders logs into witches' ash, coaxes nether wart into **Exhale of the Horned One**, and works quartz into quicklime.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Place a clay jar to catch the rising fumes.[#]()",
+      "text": "[#](53341a)The Witches' Oven smolders saplings into wood ash and jarred fumes, while logs cook down into charcoal. Place a clay jar to catch the rising fumes.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

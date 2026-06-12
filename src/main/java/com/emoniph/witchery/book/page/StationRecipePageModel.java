@@ -23,6 +23,9 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
     private Identifier background;
     private int bgWidth;
     private int bgHeight;
+    private boolean showBackground = true;
+    private boolean ovenCues = false;
+    private boolean distilleryCues = false;
     private final List<SlotModel> slots = new ArrayList<>();
 
     protected StationRecipePageModel() {
@@ -50,6 +53,21 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
         return this;
     }
 
+    public StationRecipePageModel withShowBackground(boolean showBackground) {
+        this.showBackground = showBackground;
+        return this;
+    }
+
+    public StationRecipePageModel withOvenCues(boolean ovenCues) {
+        this.ovenCues = ovenCues;
+        return this;
+    }
+
+    public StationRecipePageModel withDistilleryCues(boolean distilleryCues) {
+        this.distilleryCues = distilleryCues;
+        return this;
+    }
+
     public StationRecipePageModel withSlot(ItemLike item, int count, int x, int y) {
         this.slots.add(new SlotModel(BuiltInRegistries.ITEM.getKey(item.asItem()), count, x, y));
         return this;
@@ -63,6 +81,15 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
         json.addProperty("background", this.background.toString());
         json.addProperty("bg_width", this.bgWidth);
         json.addProperty("bg_height", this.bgHeight);
+        if (!this.showBackground) {
+            json.addProperty("show_background", false);
+        }
+        if (this.ovenCues) {
+            json.addProperty("oven_cues", true);
+        }
+        if (this.distilleryCues) {
+            json.addProperty("distillery_cues", true);
+        }
         JsonArray slotArray = new JsonArray();
         for (SlotModel slot : this.slots) {
             JsonObject s = new JsonObject();

@@ -1,7 +1,20 @@
 {
-  "multipart": [
-    {
-      "apply": { "model": "witchery:block/brewliquid" }
-    }
-  ]
+  "variants": {
+    "level=0": { "model": "witchery:block/brewliquid" },
+    "level=1": { "model": "witchery:block/brewliquid" },
+    "level=2": { "model": "witchery:block/brewliquid" },
+    "level=3": { "model": "witchery:block/brewliquid" },
+    "level=4": { "model": "witchery:block/brewliquid" },
+    "level=5": { "model": "witchery:block/brewliquid" },
+    "level=6": { "model": "witchery:block/brewliquid" },
+    "level=7": { "model": "witchery:block/brewliquid" },
+    "level=8": { "model": "witchery:block/brewliquid" },
+    "level=9": { "model": "witchery:block/brewliquid" },
+    "level=10": { "model": "witchery:block/brewliquid" },
+    "level=11": { "model": "witchery:block/brewliquid" },
+    "level=12": { "model": "witchery:block/brewliquid" },
+    "level=13": { "model": "witchery:block/brewliquid" },
+    "level=14": { "model": "witchery:block/brewliquid" },
+    "level=15": { "model": "witchery:block/brewliquid" }
+  }
 }

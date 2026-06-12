@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Start with what lies to hand: **Wood Ash** from any log, **Exhale** from an oak, **Breath** from a birch.[#]()",
+      "text": "[#](53341a)Start with what lies to hand: **Wood Ash** from saplings, **Exhale** from an oak, **Breath** from a birch.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -43,74 +43,464 @@
       "use_markdown_in_title": false
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/oven_odour_of_purity.png"
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:hawthorn_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:odour_of_purity",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
       ],
       "text": "[#](53341a)A **Hawthorn Sapling** bakes into Odour of Purity — the **Brews & Infusions** reagent. Hawthorn comes from Herbology's Mutandis, so this fume waits a chapter.[#]()",
-      "title": "Odour of Purity",
-      "use_legacy_rendering": false
+      "title": "Odour of Purity"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/oven_breath_of_goddess.png"
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:birch_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:breath_of_goddess",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
       ],
       "text": "[#](53341a)A **Birch Sapling** gives Breath of the Goddess — the **Distilling** reagent, and the base of countless brews.[#]()",
-      "title": "Breath of the Goddess",
-      "use_legacy_rendering": false
+      "title": "Breath of the Goddess"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/oven_whiff_of_magic.png"
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:rowan_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:whiff_of_magic",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
       ],
       "text": "[#](53341a)A **Rowan Sapling** gives Whiff of Magic — the **Circle Magic** reagent. Rowans come with Herbology, so this waits a little too.[#]()",
-      "title": "Whiff of Magic",
-      "use_legacy_rendering": false
+      "title": "Whiff of Magic"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/oven_exhale.png"
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:oak_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
       ],
       "text": "[#](53341a)An **Oak Sapling** gives Exhale of the Horned One, used in Mutandis and darker workings.[#]()",
-      "title": "Exhale of the Horned One",
-      "use_legacy_rendering": false
+      "title": "Exhale of the Horned One"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/oven_charcoal.png"
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:spruce_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:hint_of_rebirth",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
       ],
-      "text": "[#](53341a)Any **log** smolders down to charcoal, always leaving wood ash — fuel and reagent both.[#]()",
-      "title": "Charcoal & Wood Ash",
-      "use_legacy_rendering": false
+      "text": "[#](53341a)A **Spruce Sapling** gives Hint of Rebirth, caught in a clay jar beside the wood ash.[#]()",
+      "title": "Hint of Rebirth"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:alder_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
+      ],
+      "text": "[#](53341a)An **Alder Sapling** gives Reek of Misfortune, another jarred fume from the witch trees.[#]()",
+      "title": "Reek of Misfortune"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:acacia_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
+      ],
+      "text": "[#](53341a)An **Acacia Sapling** gives Foul Fume.[#]()",
+      "title": "Foul Fume: Acacia"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:dark_oak_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
+      ],
+      "text": "[#](53341a)A **Dark Oak Sapling** gives Foul Fume.[#]()",
+      "title": "Foul Fume: Dark Oak"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:jungle_sapling",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 70,
+          "y": 45
+        }
+      ],
+      "text": "[#](53341a)A **Jungle Sapling** gives Foul Fume.[#]()",
+      "title": "Foul Fume: Jungle"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_oven.png",
+      "bg_height": 70,
+      "bg_width": 96,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "oven_cues": true,
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:oak_log",
+          "x": 8,
+          "y": 9
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 8,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "witchery:clay_jar",
+          "x": 35,
+          "y": 45
+        },
+        {
+          "count": 1,
+          "item": "minecraft:charcoal",
+          "x": 70,
+          "y": 13
+        },
+        {
+          "count": 1,
+          "item": "witchery:foul_fume",
+          "x": 70,
+          "y": 45
+        }
+      ],
+      "text": "[#](53341a)Any **log** smolders down to charcoal. With a clay jar present, it may also catch Foul Fume.[#]()",
+      "title": "Charcoal & Foul Fume"
     }
   ],
   "show_when_any_parent_unlocked": false,

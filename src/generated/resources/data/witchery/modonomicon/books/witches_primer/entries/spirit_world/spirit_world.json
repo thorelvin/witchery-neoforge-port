@@ -80,18 +80,60 @@
       "title": "Icy Needle"
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/kettle_brew_of_sleeping.png"
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:purified_milk",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:cookie",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_love",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:whiff_of_magic",
+          "x": 27,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:icy_needle",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:artichoke",
+          "x": 59,
+          "y": 18
+        },
+        {
+          "count": 3,
+          "item": "witchery:brew_of_sleeping",
+          "x": 89,
+          "y": 33
+        }
       ],
       "text": "[#](53341a)Brew it from **Purified Milk**, a **Cookie**, **Brew of Love**, **Whiff of Magic**, an **Icy Needle**, and an **Artichoke** — three bottles per working.[#]()",
-      "title": "Kettle: Brew of Sleeping",
-      "use_legacy_rendering": false
+      "title": "Kettle: Brew of Sleeping"
     }
   ],
   "show_when_any_parent_unlocked": false,

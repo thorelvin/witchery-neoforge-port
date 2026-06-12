@@ -3,7 +3,6 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +45,10 @@ public class ImmortalsObservationsBookItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         // Client: open the native Modonomicon "Observations of an Immortal" book (datapack-synced).
         if (level.isClientSide()) {
-            com.emoniph.witchery.client.WitcheryBookOpener.open(com.emoniph.witchery.book.WitcheryBooks.OBSERVATIONS);
+            com.emoniph.witchery.client.WitcheryBookOpener.openEntry(
+                    com.emoniph.witchery.book.WitcheryBooks.OBSERVATIONS,
+                    com.emoniph.witchery.book.WitcheryBooks.id("record"),
+                    com.emoniph.witchery.book.WitcheryBooks.id("record/blood_rite"));
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {

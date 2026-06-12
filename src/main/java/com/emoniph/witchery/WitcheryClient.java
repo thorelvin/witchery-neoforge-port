@@ -28,16 +28,21 @@ import com.emoniph.witchery.client.renderer.SpiritRenderer;
 import com.emoniph.witchery.client.screen.DistilleryScreen;
 import com.emoniph.witchery.client.screen.SpinningWheelScreen;
 import com.emoniph.witchery.client.screen.WitchesOvenScreen;
+import com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity;
+import com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.fluid.BrewLiquidFluid;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.renderer.BiomeColors;
@@ -55,6 +60,8 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -77,6 +84,7 @@ public class WitcheryClient {
         Map.entry(DreamCatcherModel.LAYER_LOCATION,    DreamCatcherModel::createBodyLayer),
         Map.entry(FumeFunnelModel.LAYER_LOCATION,      FumeFunnelModel::createBodyLayer),
         Map.entry(GrassperModel.LAYER_LOCATION,        GrassperModel::createBodyLayer),
+        Map.entry(PlacedModonomiconBookModel.LAYER_LOCATION, PlacedModonomiconBookModel::createBodyLayer),
         Map.entry(SpinningWheelModel.LAYER_LOCATION,   SpinningWheelModel::createBodyLayer),
         Map.entry(LeechChestModel.LAYER_LOCATION,      LeechChestModel::createBodyLayer),
         Map.entry(FetishModel.LAYER_LOCATION,          FetishModel::createBodyLayer),
@@ -143,9 +151,28 @@ public class WitcheryClient {
     }
 
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
-        event.register((state, level, pos, tintIndex) ->
-                tintIndex == 0 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
+        event.register((state, level, pos, tintIndex) -> {
+                    if (tintIndex != 0 || level == null || pos == null) {
+                        return -1;
+                    }
+                    if (level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brew && brew.getColor() != 0) {
+                        return brew.getColor();
+                    }
+                    return BiomeColors.getAverageWaterColor(level, pos);
+                },
                 WitcheryBlocks.WITCH_CAULDRON.get());
+        event.register((state, level, pos, tintIndex) -> {
+                    if (tintIndex != 0) {
+                        return -1;
+                    }
+                    if (level != null && pos != null
+                            && level.getBlockEntity(pos) instanceof BrewFluidBlockEntity brew
+                            && brew.getColor() != 0) {
+                        return brew.getColor();
+                    }
+                    return com.emoniph.witchery.blocks.BrewFluidBlock.DEFAULT_BREW_COLOR;
+                },
+                WitcheryBlocks.BREW_LIQUID.get());
         event.register((state, level, pos, tintIndex) ->
                 tintIndex == 0 ? (level != null && pos != null ? 0x208030 : 0x71C35C) : -1,
                 WitcheryBlocks.LEAPING_LILY.get());
@@ -154,6 +181,44 @@ public class WitcheryClient {
                         ? (level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : GrassColor.getDefaultColor())
                         : -1,
                 WitcheryBlocks.BLIGHTED_SOIL.get());
+    }
+
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            private static final Identifier WATER_STILL = Identifier.withDefaultNamespace("block/water_still");
+            private static final Identifier WATER_FLOW = Identifier.withDefaultNamespace("block/water_flow");
+            private static final Identifier WATER_OVERLAY = Identifier.withDefaultNamespace("block/water_overlay");
+
+            @Override
+            public Identifier getStillTexture() {
+                return WATER_STILL;
+            }
+
+            @Override
+            public Identifier getFlowingTexture() {
+                return WATER_FLOW;
+            }
+
+            @Override
+            public Identifier getOverlayTexture() {
+                return WATER_OVERLAY;
+            }
+
+            @Override
+            public int getTintColor() {
+                return 0xFF8A4FCF;
+            }
+
+            @Override
+            public int getTintColor(net.minecraft.world.level.material.FluidState state,
+                                    net.minecraft.world.level.BlockAndTintGetter getter,
+                                    BlockPos pos) {
+                if (getter == null || pos == null) {
+                    return getTintColor();
+                }
+                return 0xFF000000 | BrewLiquidFluid.brewColor(getter, pos);
+            }
+        }, WitcheryFluids.BREW_LIQUID_TYPE.value());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
@@ -213,6 +278,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.FETISH.get(),          FetishRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.COFFIN.get(),          CoffinRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.PLACED_ITEM.get(),     PlacedItemRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.PLACED_MODONOMICON.get(), PlacedModonomiconRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.BEARTRAP.get(),        BeartrapRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
@@ -251,7 +317,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.SOULFIRE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.THROWN_BREW.get(),
-                net.minecraft.client.renderer.entity.NoopRenderer::new);
+                net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SUN_GRENADE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPELL_EFFECT.get(),

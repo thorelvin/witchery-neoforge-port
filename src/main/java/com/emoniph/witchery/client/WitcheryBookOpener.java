@@ -30,6 +30,15 @@ public final class WitcheryBookOpener {
     }
 
     /**
+     * Open a concrete entry and ignore the reader's saved category/entry/page.
+     * Topic guide items are physical shortcuts to a specific Primer chapter, so they should never
+     * inherit a stale saved address from the full Primer.
+     */
+    public static void openEntry(Identifier bookId, Identifier categoryId, Identifier entryId) {
+        BookGuiManager.get().openBook(BookAddress.ignoreSaved(bookId, categoryId, entryId, 0));
+    }
+
+    /**
      * Open a book straight to one chapter's entries list (the category screen).
      * <p>
      * Routes through {@link BookGuiManager#openBook(BookAddress)} rather than {@code openCategory}:

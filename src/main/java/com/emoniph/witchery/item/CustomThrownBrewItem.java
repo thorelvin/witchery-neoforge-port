@@ -94,7 +94,7 @@ public class CustomThrownBrewItem extends Item {
         if (brew.isEmpty()) {
             return;
         }
-        tooltip.accept(Component.translatable(dispersalTooltipKey())
+        tooltip.accept(Component.translatable(dispersalTooltipKey(brew))
                 .withStyle(ChatFormatting.GRAY));
         for (var effect : com.emoniph.witchery.brewing.Brews.buildEffects(brew.items())) {
             Component name = Component.translatable(effect.getEffect().value().getDescriptionId());
@@ -114,8 +114,10 @@ public class CustomThrownBrewItem extends Item {
         }
     }
 
-    private String dispersalTooltipKey() {
-        return switch (dispersal) {
+    private String dispersalTooltipKey(BrewContents brew) {
+        // The contents' dispersal (e.g. a Zombie Head making it TRIGGERED) wins over the bottle's own kind.
+        return switch (brew.bottledDispersal()) {
+            case TRIGGERED -> "witchery.brew.dispersal.triggered";
             case GAS -> "witchery.brew.dispersal.gas";
             case LIQUID -> "witchery.brew.dispersal.liquid";
             default -> "witchery.brew.dispersal.splash";

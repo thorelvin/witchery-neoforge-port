@@ -20,6 +20,7 @@ import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -83,7 +84,7 @@ import java.util.UUID;
 public final class Brews {
 
     /** How a finished brew is delivered. */
-    public enum Dispersal { DRINK, SPLASH, GAS, LIQUID }
+    public enum Dispersal { DRINK, SPLASH, GAS, LIQUID, TRIGGERED }
 
     /** Maximum ingredients a single cauldron brew may hold. */
     public static final int MAX_CAPACITY = 8;
@@ -95,7 +96,7 @@ public final class Brews {
                              int capacityCeiling, int capacityRequired, int powerCost,
                              String nameKey, String invertedNameKey) {
         public enum Kind {
-            EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, LIQUID, COLOR, DRINK_SPEED,
+            EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, LIQUID, TRIGGER, COLOR, DRINK_SPEED,
             EXTENT, LIFETIME, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET,
             DISABLE_STRENGTH_CEILING
         }
@@ -233,6 +234,8 @@ public final class Brews {
     private static final double SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE = 0.5;
     private static final int SOURCE_GAS_CLOUD_BASE_DURATION_TICKS = 600;
     private static final int SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR = 5;
+    private static final double SOURCE_ADJACENT_BLOCK_PULSE_CHANCE = 0.01;
+    private static final double SOURCE_ADJACENT_BLOCK_PULSE_RADIUS = 1.0;
     private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
     private static final String PORT_SUMMONED_UNDEAD_OWNER_TAG = "witchery_enslaver_uuid";
     private static final String SOURCE_BREW_GAS_TAG = "WITCBrewGas";
@@ -416,6 +419,9 @@ public final class Brews {
         register(WitcheryItems.BAT_WOOL.get(), Ingredient.modifier(Ingredient.Kind.GAS));
         register(Items.DRAGON_BREATH, Ingredient.modifier(Ingredient.Kind.GAS));
         register(WitcheryItems.WORMWOOD.get(), Ingredient.modifier(Ingredient.Kind.LIQUID));
+        // Zombie Head = source triggered dispersal: the brew is not released on impact but stored as a
+        // delayed "curse" on items it splashes, released later when the cursed item is used.
+        register(Items.ZOMBIE_HEAD, Ingredient.modifier(Ingredient.Kind.TRIGGER));
     }
 
     private static void register(Item item, Ingredient ingredient) {
@@ -493,7 +499,7 @@ public final class Brews {
                 case DISABLE_BLOCK_TARGET -> mods.disableBlockTarget = true;
                 case DISABLE_ENTITY_TARGET -> mods.disableEntityTarget = true;
                 case DISABLE_STRENGTH_CEILING -> mods.strengthCeilingDisabled = true;
-                case SPLASH, GAS, LIQUID, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
+                case SPLASH, GAS, LIQUID, TRIGGER, COLOR, DRINK_SPEED -> { /* presentation/dispersal/use-time only */ }
                 case EXTENT -> {
                     if (resolved.extent < ing.modifierCeiling()) {
                         resolved.extent++;
@@ -575,6 +581,7 @@ public final class Brews {
 
     public static Dispersal dispersal(List<Item> items) {
         Dispersal result = Dispersal.DRINK;
+        boolean triggered = false;
         for (Ingredient ing : resolve(items)) {
             if (ing.kind() == Ingredient.Kind.SPLASH) {
                 result = Dispersal.SPLASH;
@@ -582,9 +589,12 @@ public final class Brews {
                 result = Dispersal.GAS;
             } else if (ing.kind() == Ingredient.Kind.LIQUID) {
                 result = Dispersal.LIQUID;
+            } else if (ing.kind() == Ingredient.Kind.TRIGGER) {
+                triggered = true;
             }
         }
-        return result;
+        // Source: the triggered key nullifies the splash/gas/liquid dispersals — it always wins.
+        return triggered ? Dispersal.TRIGGERED : result;
     }
 
     public static Dispersal bottledDispersal(List<Item> items) {
@@ -593,6 +603,11 @@ public final class Brews {
 
     public static boolean placeMovingBrewFluid(ServerLevel level, BlockPos pos, List<Item> items,
                                                Dispersal dispersal, Entity source) {
+        return placeMovingBrewFluid(level, pos, items, dispersal, source, false);
+    }
+
+    public static boolean placeMovingBrewFluid(ServerLevel level, BlockPos pos, List<Item> items,
+                                               Dispersal dispersal, Entity source, boolean persistentLiquidSource) {
         if ((dispersal != Dispersal.GAS && dispersal != Dispersal.LIQUID) || !hasEffect(items)) {
             return false;
         }
@@ -608,14 +623,22 @@ public final class Brews {
         BlockState state = (dispersal == Dispersal.GAS
                 ? WitcheryBlocks.BREW_GAS.get()
                 : WitcheryBlocks.BREW_LIQUID.get()).defaultBlockState();
-        level.setBlock(pos, state, Block.UPDATE_ALL);
-        if (level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity fluid) {
-            fluid.initialise(items, source);
+        level.setBlock(pos, state, Block.UPDATE_NONE);
+        if (!(level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity fluid)) {
+            level.removeBlock(pos, false);
+            return false;
         }
-        level.scheduleTick(pos, state.getBlock(),
-                dispersal == Dispersal.GAS
-                        ? com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_GAS_TICK_RATE
-                        : com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_LIQUID_TICK_RATE);
+        fluid.initialise(items, source, persistentLiquidSource && dispersal == Dispersal.LIQUID);
+        if (dispersal == Dispersal.GAS) {
+            level.scheduleTick(pos, state.getBlock(), com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_GAS_TICK_RATE);
+        } else {
+            level.scheduleTick(pos, state.getFluidState().getType(), state.getFluidState().getType().getTickDelay(level));
+        }
+        int brewColor = color(items);
+        level.sendParticles(new DustParticleOptions(brewColor, dispersal == Dispersal.GAS ? 1.2F : 0.9F),
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                dispersal == Dispersal.GAS ? 24 : 18,
+                0.4D, 0.4D, 0.4D, 0.03D);
         level.sendParticles(dispersal == Dispersal.GAS ? ParticleTypes.WITCH : ParticleTypes.SPLASH,
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                 dispersal == Dispersal.GAS ? 24 : 16,
@@ -727,6 +750,8 @@ public final class Brews {
                 }
             }
         }
+        level.sendParticles(new DustParticleOptions(color(items), 0.9F),
+                pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.03);
         level.sendParticles(ParticleTypes.SPLASH, pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.1);
         level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
         if (dispersal == Brews.Dispersal.SPLASH && blockHit && !resolved.effects.isEmpty()) {
@@ -891,6 +916,77 @@ public final class Brews {
                 fertilizeBlocks(level, blockImpact, blockRadius, action.strength(), source);
             }
         }
+    }
+
+    /**
+     * Source moving-brew-fluid adjacent-block pulse (liquid only, {@code BlockBrewLiquidEffect}): on each
+     * scheduled tick, every face of a brew-liquid block has a {@value #SOURCE_ADJACENT_BLOCK_PULSE_CHANCE}
+     * chance to apply the brew's BLOCK actions/effects to the neighbouring block at reduced strength
+     * (source {@code strengthPenalty++}). So a brew pool slowly grows flowers / fertilises / extinguishes
+     * fires / lays snow / freezes water around itself. Most brews carry no block action, so this no-ops.
+     */
+    public static void tickAdjacentBlockPulse(ServerLevel level, BlockPos fluidPos, List<Item> items, Entity source) {
+        Resolution resolved = resolveBrew(items);
+        if (resolved.actions.isEmpty() && resolved.effects.isEmpty()) {
+            return;
+        }
+        List<ActionApplication> weakActions = penaliseActionsForPulse(resolved.actions);
+        List<EffectApplication> weakEffects = penaliseEffectsForPulse(resolved.effects);
+        if (weakActions.isEmpty() && weakEffects.isEmpty()) {
+            return;
+        }
+        for (Direction direction : Direction.values()) {
+            if (level.random.nextDouble() >= SOURCE_ADJACENT_BLOCK_PULSE_CHANCE) {
+                continue;
+            }
+            BlockPos target = fluidPos.relative(direction);
+            if (!weakActions.isEmpty()) {
+                applyBlockImpactActions(level, Vec3.atCenterOf(target), weakActions, source,
+                        SOURCE_ADJACENT_BLOCK_PULSE_RADIUS);
+            }
+            if (!weakEffects.isEmpty()) {
+                applyBlockImpactEffects(level, target, weakEffects, source);
+            }
+        }
+    }
+
+    /** Reduced strength for the per-tick adjacent-block pulse (source {@code strengthPenalty++}). */
+    public static int pulsePenalisedStrength(int strength) {
+        return Math.max(0, strength - 1);
+    }
+
+    private static List<ActionApplication> penaliseActionsForPulse(List<ActionApplication> actions) {
+        List<ActionApplication> out = new ArrayList<>(actions.size());
+        for (ActionApplication action : actions) {
+            if (action.disableBlockTarget()) {
+                continue;
+            }
+            out.add(new ActionApplication(action.action(), action.inverted(),
+                    pulsePenalisedStrength(action.strength()), action.duration(), action.noParticles(),
+                    action.disableBlockTarget(), action.disableEntityTarget(), action.strengthCeilingDisabled(),
+                    action.nameKey()));
+        }
+        return out;
+    }
+
+    private static List<EffectApplication> penaliseEffectsForPulse(List<EffectApplication> effects) {
+        List<EffectApplication> out = new ArrayList<>();
+        for (EffectApplication application : effects) {
+            if (application.disableBlockTarget()) {
+                continue;
+            }
+            MobEffectInstance effect = application.effect();
+            MobEffect mob = effect.getEffect().value();
+            // Only Snow Trail and Chilled have a block-hit action; other effects act on entities only.
+            if (mob != WitcheryMobEffects.SNOW_TRAIL.value() && mob != WitcheryMobEffects.CHILLED.value()) {
+                continue;
+            }
+            MobEffectInstance weak = new MobEffectInstance(effect.getEffect(), effect.getDuration(),
+                    pulsePenalisedStrength(effect.getAmplifier()), effect.isAmbient(), effect.isVisible(),
+                    effect.showIcon());
+            out.add(new EffectApplication(weak, application.disableBlockTarget(), application.disableEntityTarget()));
+        }
+        return out;
     }
 
     private static void applySnowTrailBlockHit(ServerLevel level, BlockPos impactPos, int strength, Entity source) {

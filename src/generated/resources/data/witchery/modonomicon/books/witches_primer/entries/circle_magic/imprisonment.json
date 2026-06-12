@@ -32,18 +32,30 @@
       "use_markdown_in_title": false
     },
     {
-      "type": "modonomicon:image",
+      "type": "witchery:station_recipe",
       "anchor": "",
-      "border": false,
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 155,
+      "bg_width": 318,
       "condition": {
         "type": "modonomicon:none"
       },
-      "images": [
-        "witchery:textures/gui/book/ritual_imprisonment.png"
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:slime_ball",
+          "x": 103,
+          "y": 41
+        },
+        {
+          "count": 1,
+          "item": "minecraft:redstone",
+          "x": 146,
+          "y": 41
+        }
       ],
-      "text": "[#](53341a)**7×7** ring · **Ritual** chalk · **500 (+16/s)** altar power[#]()",
-      "title": "",
-      "use_legacy_rendering": false
+      "text": "[#](53341a)**7x7** ring - **Ritual** chalk - **500 (+16/s)** altar power[#]()",
+      "title": ""
     },
     {
       "type": "modonomicon:text",

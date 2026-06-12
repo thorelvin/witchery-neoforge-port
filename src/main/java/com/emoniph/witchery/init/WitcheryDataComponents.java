@@ -29,4 +29,12 @@ public class WitcheryDataComponents {
                             .persistent(com.emoniph.witchery.brewing.BrewContents.CODEC)
                             .networkSynchronized(com.emoniph.witchery.brewing.BrewContents.STREAM_CODEC)
                             .build());
+
+    /** A triggered-dispersal brew curse stored on an item: a delayed, charged release of the brew. */
+    public static final Supplier<DataComponentType<com.emoniph.witchery.brewing.BrewCurse>> BREW_CURSE =
+            DATA_COMPONENTS.register("brew_curse", () ->
+                    DataComponentType.<com.emoniph.witchery.brewing.BrewCurse>builder()
+                            .persistent(com.emoniph.witchery.brewing.BrewCurse.CODEC)
+                            .networkSynchronized(com.emoniph.witchery.brewing.BrewCurse.STREAM_CODEC)
+                            .build());
 }

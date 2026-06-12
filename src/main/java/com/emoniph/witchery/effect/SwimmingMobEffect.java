@@ -1,13 +1,19 @@
 package com.emoniph.witchery.effect;
 
+import com.emoniph.witchery.init.WitcheryMobEffects;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Source 1.7.10 Swim Boost: the player-side branch multiplies horizontal water motion
- * while the forward key is held.
+ * Source 1.7.10 Swim Boost ({@code PotionSwimming}). The player branch multiplies horizontal water
+ * motion while the forward key is held (delivered client-side from input in {@code WitcheryClientEvents}).
+ * The non-player branch boosts a paralysed creature thrashing in water every 10th tick — the source did
+ * this client-side; the port delivers it <em>server-side</em> via {@link #applyEffectTick} so the motion
+ * is authoritative (no client rubber-banding).
  */
 public class SwimmingMobEffect extends MobEffect {
     public static final int PLAYER_SOURCE_STRENGTH = 3;
@@ -18,6 +24,24 @@ public class SwimmingMobEffect extends MobEffect {
 
     public SwimmingMobEffect(int color) {
         super(MobEffectCategory.BENEFICIAL, color);
+    }
+
+    @Override
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        // The non-player branch checks game time / water / paralysis itself each tick (source parity).
+        return true;
+    }
+
+    @Override
+    public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
+        // Players are boosted client-side from their input; only the source non-player branch runs here.
+        if (!(entity instanceof Player)
+                && shouldBoostNonPlayer(level.getGameTime(), entity.isInWater(),
+                        entity.hasEffect(WitcheryMobEffects.PARALYSED))) {
+            entity.setDeltaMovement(boostHorizontal(entity.getDeltaMovement(), amplifier));
+            entity.hurtMarked = true;
+        }
+        return true;
     }
 
     public static boolean applyPlayerClientTick(Player player, boolean forwardDown, boolean paralyzed) {

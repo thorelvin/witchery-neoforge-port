@@ -404,6 +404,9 @@ public class WitcheryBlocks {
             props -> new WickerBundleBlock(props, true),
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f, 2.5f).noOcclusion());
     public static final DeferredBlock<PlacedItemBlock>  PLACED_ITEM    = registerBlock("placed_item",   PlacedItemBlock::new,   BlockBehaviour.Properties.of().strength(0.0f).noOcclusion());
+    public static final DeferredBlock<PlacedModonomiconBlock> PLACED_MODONOMICON = registerBlock("placed_modonomicon",
+            PlacedModonomiconBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0.2f).noOcclusion().noLootTable());
     public static final DeferredBlock<WolfAltarBlock>   WOLF_ALTAR     = registerBlock("wolf_altar",    WolfAltarBlock::new,    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f));
     public static final DeferredBlock<StatueHobgoblinPatronBlock> STATUE_HOBGOBLIN_PATRON = registerBlock("statue_hobgoblin_patron", StatueHobgoblinPatronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3.5f, 20.0f).noOcclusion());
     // 1.7.10 BlockSilverVat: Material.iron, setHardness(8.0F) -> resistance 8*5=40 (auto), metal sound.
@@ -495,9 +498,11 @@ public class WitcheryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS)
                     .replaceable().noOcclusion().noCollision().noLootTable()
                     .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
-    public static final DeferredBlock<BrewFluidBlock.Liquid> BREW_LIQUID = registerBlock("brewliquid",
-            BrewFluidBlock.Liquid::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)
-                    .replaceable().noOcclusion().noCollision().noLootTable()
+    public static final DeferredBlock<BrewLiquidBlock> BREW_LIQUID = registerBlock("brewliquid",
+            BrewLiquidBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.EMPTY)
+                    .replaceable().noCollision().strength(100.0F)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)
+                    .noLootTable().liquid()
                     .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
 }

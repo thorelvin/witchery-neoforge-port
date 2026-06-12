@@ -9,6 +9,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -165,6 +166,16 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
 
         if (stack.is(Items.BUCKET)) {
+            // A composed brew scoops into a brew bucket (the whole batch at once), taking all the water.
+            if (level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity brewBe
+                    && !brewBe.isEmpty()
+                    && fillLevel > 0
+                    && isHeated(level.getBlockState(pos.below()))) {
+                if (!level.isClientSide()) {
+                    collectBrewBucket(brewBe, state, level, pos, player, hand, stack);
+                }
+                return InteractionResult.SUCCESS;
+            }
             if (fillLevel < MAX_FILL_LEVEL) {
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
@@ -173,6 +184,10 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
                 setFillLevel(state, level, pos, 0);
+                // Scooping the cauldron empty with a bucket resets any seasoned brew back to plain water.
+                if (level.getBlockEntity(pos) instanceof com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity brewBe) {
+                    brewBe.clear();
+                }
                 level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
             }
@@ -263,8 +278,24 @@ public class WitchCauldronBlock extends BaseEntityBlock {
     }
 
     private InteractionResult tryExplicitlyStirBrewIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
-        if (!player.isShiftKeyDown()
-                || state.getValue(LEVEL) <= 0
+        // Only items that opt out of the sneak-bypass reach the block while sneaking; the usual
+        // sneak + right-click gesture is routed through WitchCauldronEvents instead (see below).
+        if (!player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        return stirExplicitIngredient(stack, state, level, pos, player);
+    }
+
+    /**
+     * Shared core that stirs a {@link Brews#requiresExplicitStir} ingredient into the composing brew.
+     *
+     * <p>The sneak + right-click gesture cannot be handled in {@link #useItemOn} because vanilla skips a
+     * block's interaction when the player sneaks with a non-empty hand
+     * ({@code ServerPlayerGameMode#useItemOn}). {@link com.emoniph.witchery.events.WitchCauldronEvents}
+     * catches that case on {@code RightClickBlock} and calls this; callers gate on sneaking themselves.
+     */
+    public static InteractionResult stirExplicitIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (state.getValue(LEVEL) <= 0
                 || !isHeated(level.getBlockState(pos.below()))
                 || !Brews.requiresExplicitStir(stack.getItem())) {
             return InteractionResult.PASS;
@@ -284,6 +315,12 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 1.4F);
         if (level instanceof ServerLevel serverLevel) {
+            int color = brewBe.getColor();
+            if (color != 0) {
+                serverLevel.sendParticles(new DustParticleOptions(color, 0.8F),
+                        pos.getX() + 0.5, pos.getY() + 0.85, pos.getZ() + 0.5,
+                        10, 0.18, 0.05, 0.18, 0.01);
+            }
             serverLevel.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5, pos.getY() + 0.85, pos.getZ() + 0.5,
                     8, 0.2, 0.05, 0.2, 0.02);
         }
@@ -322,6 +359,12 @@ public class WitchCauldronBlock extends BaseEntityBlock {
 
         if (random.nextInt(5) == 0) {
             level.addParticle(ParticleTypes.BUBBLE_POP, x, y, z, 0.0, 0.01, 0.0);
+        }
+        if (level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe
+                && brewBe.getColor() != 0
+                && random.nextInt(4) == 0) {
+            level.addParticle(new DustParticleOptions(brewBe.getColor(), 0.65F),
+                    x, y + 0.01, z, 0.0, 0.015, 0.0);
         }
         if (random.nextInt(10) == 0) {
             level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5, y + 0.12, pos.getZ() + 0.5, 0.0, 0.015, 0.0);
@@ -365,7 +408,8 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             }
         }
         Item resultItem = switch (contents.bottledDispersal()) {
-            case SPLASH -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
+            // A triggered brew is thrown like a splash; its delayed-curse behaviour comes from the contents.
+            case SPLASH, TRIGGERED -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
             case GAS -> WitcheryItems.LINGERING_BREW_BOTTLE.get();
             case LIQUID -> WitcheryItems.LIQUID_BREW_BOTTLE.get();
             default -> WitcheryItems.BREW_BOTTLE.get();
@@ -380,6 +424,9 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
+        // Each bottle drains one water level. When the last of the water is bottled the cauldron resets:
+        // the composed brew is cleared so the next water fill starts a fresh brew (and new ingredients can
+        // be stirred in). A Bucket scoop resets it early.
         int newLevel = Math.max(0, state.getValue(LEVEL) - 1);
         lowerFillLevel(state, level, pos);
         if (newLevel <= 0) {
@@ -388,6 +435,41 @@ public class WitchCauldronBlock extends BaseEntityBlock {
 
         level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.2F);
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 1.0F);
+        level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+    }
+
+    /**
+     * Scoops the whole composed brew into a {@link WitcheryItems#BREW_BUCKET} (one bucket = the entire
+     * batch), emptying the cauldron and clearing the brew. Charges the brew's power cost once.
+     */
+    private void collectBrewBucket(com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity be, BlockState state,
+                                   Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+        com.emoniph.witchery.brewing.BrewContents contents =
+                new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
+        int powerCost = contents.powerCost();
+        if (powerCost > 0) {
+            AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+            if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost
+                    || !altar.consumePower(powerCost)) {
+                player.displayClientMessage(Component.translatable("witchery.cauldron.brew.no_power", powerCost), false);
+                return;
+            }
+        }
+        ItemStack result = new ItemStack(WitcheryItems.BREW_BUCKET.get());
+        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), contents);
+        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_POWER.get(), contents.power());
+        result.set(DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(
+                List.of(), List.of(), List.of(), List.of(contents.color())));
+
+        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
+        player.awardStat(Stats.USE_CAULDRON);
+
+        // A bucket takes the entire batch: empty the cauldron and reset the brew.
+        setFillLevel(state, level, pos, 0);
+        be.clear();
+
+        level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 0.9F);
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
     }
 
