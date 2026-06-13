@@ -57,8 +57,8 @@ Legend: ✅ Done · 🔶 Partial · 🔲 Placeholder · ❌ Missing · ⚠️ Wr
 | attuned_stone / charged | ✅ Done | |
 | quartz_sphere / charged_quartz_sphere | ✅ Done | Sun Collector chain |
 | sun_grenade | ✅ Done | Throw, sustained hidden-light release, undead fire, final Nausea burst, Quartz Sphere return |
-| player_compass | ✅ Done | Taglock bind, direction report |
-| waystone (blank/bound/blooded) | ✅ Done | Blank, location-bound, and entity-bound source IDs live; bind/copy rites output `bound_waystone`, both blooded binding support sets output `blooded_waystone`, old saved bound blank stacks still work; scry route, transposition route, stack caps, and dropped blank Waystone Otherwhere auto-binding restored. Remaining polish is the old dropped bound/Blooded Waystone transposition item path |
+| player_compass | ✅ Done | Taglock bind, direction report, 32-frame source needle model |
+| waystone (blank/bound/blooded) | ✅ Done | Blank, location-bound, and entity-bound source IDs live; bind/copy rites output `bound_waystone`, both blooded binding support sets output `blooded_waystone`, old saved bound blank stacks still work; scry route, transposition route, stack caps, dropped blank Waystone Otherwhere auto-binding, and dropped bound/Blooded Waystone transposition restored. Remaining polish is in-game QA |
 | circle_talisman | ✅ Done | |
 | brew_bag | 🔶 Partial | Source recipe, one-stack item, eight stored throwable-brew slots, selected-slot cycling, other-hand brew insertion, stored-brew throwing, tooltip storage view, and non-empty composed custom splash/gas/liquid brew compatibility are live. Remaining: exact old GUI/radial gesture overlay and dye recoloring recipes |
 | leonards_urn | 🔶 Partial | Source `ItemLeonardsUrn` now stores current throwable splash/gas brews and non-empty composed custom splash/gas/liquid brew bottles in source-shaped custom data, shows selected/stored foci in tooltip, cycles focus, and releases the selected stored brew without consuming it. Remaining: old GUI and exact Leonard-symbol cost/cast integration. |

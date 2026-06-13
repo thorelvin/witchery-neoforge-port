@@ -2,18 +2,24 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.init.WitcheryBlockTags;
+import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -23,16 +29,18 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 /**
- * Restores the old EntityItemWaystone passive circle behavior for dropped blank Waystones.
+ * Restores the old EntityItemWaystone passive circle behavior for dropped Waystones.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class WaystoneItemEntityEvents {
     private static final int CHECK_START_AGE = 40;
     private static final int CHECK_INTERVAL = 40;
     private static final int BLOODED_POWER_COST = 4000;
+    private static final double DROPPED_TRANSPOSITION_RADIUS = 4.0D;
 
     @SubscribeEvent
     public static void onItemTick(EntityTickEvent.Post event) {
@@ -45,12 +53,16 @@ public class WaystoneItemEntityEvents {
         }
 
         ItemStack stack = itemEntity.getItem();
-        if (!WaystoneItem.isBlankWaystone(stack)) {
+        Optional<BlockPos> center = findSmallOtherwhereCircle(level, itemEntity.getOnPos());
+        if (center.isEmpty()) {
             return;
         }
 
-        Optional<BlockPos> center = findSmallOtherwhereCircle(level, itemEntity.getOnPos());
-        center.ifPresent(blockPos -> convertBlankWaystone(level, itemEntity, blockPos));
+        if (WaystoneItem.isBlankWaystone(stack)) {
+            convertBlankWaystone(level, itemEntity, center.get());
+        } else if (WaystoneItem.isAnyBoundWaystone(stack)) {
+            transposeWithDroppedWaystone(level, itemEntity, center.get());
+        }
     }
 
     private static Optional<BlockPos> findSmallOtherwhereCircle(ServerLevel level, BlockPos near) {
@@ -92,6 +104,122 @@ public class WaystoneItemEntityEvents {
                 3, 0.25, 0.25, 0.25, 0.0);
         level.playSound(null, center, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.45f, 1.2f);
         WitcheryMod.LOGGER.info("Dropped Waystone at {} bound itself through an Otherwhere circle.", center);
+    }
+
+    private static void transposeWithDroppedWaystone(ServerLevel level, ItemEntity itemEntity, BlockPos center) {
+        ItemStack original = itemEntity.getItem();
+        if (original.isEmpty()) {
+            return;
+        }
+
+        TeleportTarget target = teleportTarget(level, original).orElse(null);
+        if (target == null || isTranspositionDimensionBlocked(level.dimension(), target.level.dimension())) {
+            fail(level, center);
+            return;
+        }
+
+        ItemStack usedStone = original.copyWithCount(1);
+        int remainder = original.getCount() - 1;
+        List<Entity> targets = droppedTranspositionTargets(level, center, itemEntity);
+        itemEntity.discard();
+        spawnSameBoundRemainder(level, itemEntity, original, remainder);
+
+        int moved = 0;
+        for (Entity entity : targets) {
+            if (entity.isRemoved() || !EnderInhibitionMobEffect.canTeleport(entity, 1)) {
+                continue;
+            }
+            if (teleportEntityTo(entity, target.level, target.x, target.y, target.z)) {
+                moved++;
+            }
+        }
+
+        if (moved <= 0) {
+            fail(level, center);
+            WitcheryMod.LOGGER.info("Dropped bound Waystone at {} found no valid transposition targets.", center);
+            return;
+        }
+
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+                center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+                48, 0.75, 0.35, 0.75, 0.08);
+        level.playSound(null, center, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.8f, 1.0f);
+        WitcheryMod.LOGGER.info("Dropped {} transposed {} target(s) from Otherwhere circle at {}.",
+                usedStone.getHoverName().getString(), moved, center);
+    }
+
+    private static Optional<TeleportTarget> teleportTarget(ServerLevel sourceLevel, ItemStack waystone) {
+        if (WaystoneItem.isEntityBoundWaystone(waystone)) {
+            return WaystoneItem.findBoundEntity(sourceLevel.getServer(), waystone)
+                    .filter(LivingEntity::isAlive)
+                    .filter(entity -> entity.level() instanceof ServerLevel)
+                    .map(entity -> new TeleportTarget((ServerLevel) entity.level(),
+                            entity.getX(), entity.getY(), entity.getZ()));
+        }
+
+        Optional<BlockPos> dest = WaystoneItem.getBoundPos(waystone);
+        Optional<ResourceKey<Level>> dim = WaystoneItem.getBoundDim(waystone);
+        if (dest.isEmpty() || dim.isEmpty()) {
+            return Optional.empty();
+        }
+        ServerLevel targetLevel = sourceLevel.getServer().getLevel(dim.get());
+        if (targetLevel == null) {
+            return Optional.empty();
+        }
+        BlockPos pos = dest.get();
+        return Optional.of(new TeleportTarget(targetLevel, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D));
+    }
+
+    private static List<Entity> droppedTranspositionTargets(ServerLevel level, BlockPos center, ItemEntity source) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radiusSq = DROPPED_TRANSPOSITION_RADIUS * DROPPED_TRANSPOSITION_RADIUS;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(DROPPED_TRANSPOSITION_RADIUS);
+        return level.getEntitiesOfClass(Entity.class, bounds, entity -> {
+            if (entity == source || entity.isRemoved()) {
+                return false;
+            }
+            if (!(entity instanceof LivingEntity) && !(entity instanceof ItemEntity)) {
+                return false;
+            }
+            double dx = entity.getX() - centerPoint.x;
+            double dz = entity.getZ() - centerPoint.z;
+            return dx * dx + dz * dz <= radiusSq;
+        });
+    }
+
+    private static void spawnSameBoundRemainder(ServerLevel level, ItemEntity source, ItemStack original, int count) {
+        if (count <= 0) {
+            return;
+        }
+        ItemStack remainder = original.copyWithCount(count);
+        spawnStack(level, source, remainder);
+    }
+
+    private static boolean teleportEntityTo(Entity entity, ServerLevel targetLevel, double x, double y, double z) {
+        if (entity instanceof ServerPlayer player) {
+            if (player.level() == targetLevel) {
+                player.teleportTo(x, y, z);
+            } else {
+                player.teleportTo(targetLevel, x, y, z,
+                        java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
+            }
+            return true;
+        }
+
+        if (entity.level() == targetLevel) {
+            entity.teleportTo(x, y, z);
+        } else {
+            entity.teleportTo(targetLevel, x, y, z,
+                    java.util.Set.<net.minecraft.world.entity.Relative>of(), entity.getYRot(), entity.getXRot(), false);
+        }
+        return true;
+    }
+
+    private static boolean isTranspositionDimensionBlocked(ResourceKey<Level> source, ResourceKey<Level> target) {
+        return source.equals(WitcheryDimensions.SPIRIT_WORLD)
+                || target.equals(WitcheryDimensions.SPIRIT_WORLD)
+                || source.equals(WitcheryDimensions.MIRROR_WORLD)
+                || target.equals(WitcheryDimensions.MIRROR_WORLD);
     }
 
     private static Optional<LivingEntity> findTarget(ServerLevel level, BlockPos center) {
@@ -166,4 +294,6 @@ public class WaystoneItemEntityEvents {
                 12, 0.35, 0.2, 0.35, 0.02);
         level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.7f);
     }
+
+    private record TeleportTarget(ServerLevel level, double x, double y, double z) {}
 }

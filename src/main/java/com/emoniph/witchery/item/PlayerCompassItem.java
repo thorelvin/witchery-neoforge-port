@@ -2,9 +2,11 @@ package com.emoniph.witchery.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -22,21 +23,24 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * Player Compass — right-click a player to bind; right-click in air to reveal
- * direction and distance to the bound player (server-side lookup).
+ * Player Compass: right-click a player to bind; right-click in air to reveal
+ * direction and distance to the bound player through a server-side lookup.
  */
 public class PlayerCompassItem extends Item {
 
+    public static final int COMPASS_FRAMES = 32;
     private static final String TAG_UUID = "compass_uuid";
     private static final String TAG_NAME = "compass_name";
 
-    public PlayerCompassItem(Properties props) { super(props); }
-
-    // ── Binding ───────────────────────────────────────────────────────────────
+    public PlayerCompassItem(Properties props) {
+        super(props);
+    }
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity target, InteractionHand hand) {
-        if (user.level().isClientSide()) return InteractionResult.SUCCESS;
+        if (user.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
 
         if (isBound(stack)) {
             user.displayClientMessage(Component.translatable("witchery.player_compass.already_bound", getBoundName(stack))
@@ -56,12 +60,12 @@ public class PlayerCompassItem extends Item {
         return InteractionResult.CONSUME;
     }
 
-    // ── Use (in air) ──────────────────────────────────────────────────────────
-
     @Override
     public InteractionResult use(Level level, Player user, InteractionHand hand) {
         ItemStack stack = user.getItemInHand(hand);
-        if (level.isClientSide()) return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
+        }
 
         if (!isBound(stack)) {
             user.displayClientMessage(Component.translatable("witchery.player_compass.unbound")
@@ -70,7 +74,9 @@ public class PlayerCompassItem extends Item {
         }
 
         UUID targetUUID = getBoundUUID(stack).orElse(null);
-        if (targetUUID == null) return InteractionResult.PASS;
+        if (targetUUID == null) {
+            return InteractionResult.PASS;
+        }
 
         ServerPlayer target = ((ServerLevel) level).getServer().getPlayerList().getPlayer(targetUUID);
         if (target == null) {
@@ -94,11 +100,9 @@ public class PlayerCompassItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    // ── Tooltip ───────────────────────────────────────────────────────────────
-
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext ctx,
-                                net.minecraft.world.item.component.TooltipDisplay _display,
+                                net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
         if (isBound(stack)) {
             tooltip.accept(Component.translatable("witchery.player_compass.tooltip.bound", getBoundName(stack))
@@ -109,8 +113,6 @@ public class PlayerCompassItem extends Item {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     public static boolean bindFromTaglock(ItemStack stack, ItemStack taglock) {
         Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
         if (uuid.isEmpty() || !TaglockKitItem.isPlayerTaglock(taglock)) {
@@ -118,6 +120,19 @@ public class PlayerCompassItem extends Item {
         }
         bind(stack, uuid.get(), TaglockKitItem.getBoundName(taglock));
         return true;
+    }
+
+    public static float compassAngle(float visualYawDegrees, Vec3 ownerPos, Vec3 targetPos) {
+        return compassFrame(visualYawDegrees, ownerPos, targetPos) / (float) COMPASS_FRAMES;
+    }
+
+    public static int compassFrame(float visualYawDegrees, Vec3 ownerPos, Vec3 targetPos) {
+        double dx = targetPos.x - ownerPos.x;
+        double dz = targetPos.z - ownerPos.z;
+        double yaw = Mth.positiveModulo(visualYawDegrees, 360.0F);
+        double angle = -((yaw - 90.0D) * Math.PI / 180.0D - Math.atan2(dz, dx));
+        return Mth.positiveModulo((int) ((angle / (Math.PI * 2.0D) + 1.0D) * COMPASS_FRAMES),
+                COMPASS_FRAMES);
     }
 
     private static void bind(ItemStack stack, Player player) {
@@ -137,9 +152,14 @@ public class PlayerCompassItem extends Item {
 
     public static Optional<UUID> getBoundUUID(ItemStack stack) {
         String raw = getTag(stack).getStringOr(TAG_UUID, "");
-        if (raw.isEmpty()) return Optional.empty();
-        try { return Optional.of(UUID.fromString(raw)); }
-        catch (IllegalArgumentException e) { return Optional.empty(); }
+        if (raw.isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(UUID.fromString(raw));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     public static String getBoundName(ItemStack stack) {
@@ -151,16 +171,31 @@ public class PlayerCompassItem extends Item {
     }
 
     private static String getCardinal(double atan2) {
-        // atan2(z, x): East=0, South=π/2, West=π, North=-π/2
         double deg = Math.toDegrees(atan2);
-        if (deg < 0) deg += 360;
-        if (deg >= 337.5 || deg < 22.5)  return "E";
-        if (deg < 67.5)  return "SE";
-        if (deg < 112.5) return "S";
-        if (deg < 157.5) return "SW";
-        if (deg < 202.5) return "W";
-        if (deg < 247.5) return "NW";
-        if (deg < 292.5) return "N";
+        if (deg < 0) {
+            deg += 360;
+        }
+        if (deg >= 337.5 || deg < 22.5) {
+            return "E";
+        }
+        if (deg < 67.5) {
+            return "SE";
+        }
+        if (deg < 112.5) {
+            return "S";
+        }
+        if (deg < 157.5) {
+            return "SW";
+        }
+        if (deg < 202.5) {
+            return "W";
+        }
+        if (deg < 247.5) {
+            return "NW";
+        }
+        if (deg < 292.5) {
+            return "N";
+        }
         return "NE";
     }
 }

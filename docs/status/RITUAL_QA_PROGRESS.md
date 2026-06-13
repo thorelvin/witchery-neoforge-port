@@ -47,7 +47,7 @@ Last updated: 2026-06-13
 - Protection and Banish support checks now accept Grassper-held support items in the corrected branches.
 - Protection barrier blocks now render through the old translucent barrier texture instead of being forced invisible by the port. The source texture is very faint, so the intended visual is a subtle shimmer rather than a bright wall.
 - Protection barrier geometry now follows source `RiteProtectionCircleBarrier`: filled floor disk below the circle plane, one-block-thick Bresenham cylinder at the circle plane, and filled roof disk above it. This fixes the medium player-blocking path being interrupted by modern chalk glyph blocks.
-- 2026-06-13 Waystone/Transposition parity update: blank/bound/blooded Waystone source IDs, small bind/copy support, Blooded Waystone support sets, dropped blank Otherwhere auto-binding, small transposition to a bound Waystone, and medium taglock transposition are restored. Crystal Ball scrying now consumes the same bound/blooded/taglock data for source-style held scrying. Remaining ritual-side follow-up is the old dropped bound/Blooded Waystone transposition item behavior.
+- 2026-06-13 Waystone/Transposition parity update: blank/bound/blooded Waystone source IDs, small bind/copy support, Blooded Waystone support sets, dropped blank Otherwhere auto-binding, dropped bound/Blooded Waystone transposition, small transposition to a bound Waystone, and medium taglock transposition are restored. Crystal Ball scrying now consumes the same bound/blooded/taglock data for source-style held scrying, and Player Compass has its source-style 32-frame dynamic needle model.
 
 ## Remaining Ritual Risks
 
@@ -62,4 +62,4 @@ Last updated: 2026-06-13
 
 1. Medium Rite of Protection retest: medium ritual ring, Obsidian plus Glowstone Dust, 1000 altar power. It should create a sustained player-blocking barrier after the source-geometry fix.
 2. Rite of Banish Demon: small ritual ring, Blaze Powder plus blank Waystone, 2000 altar power; then portable branch with Charged Attuned Stone plus Blaze Powder and blank Waystone.
-3. Waystone route retest: bind a blank Waystone, copy it with another blank, create a Blooded Waystone with each support set, use small transposition to the bound location, use medium taglock transposition on a loaded target, and confirm Crystal Ball scrying accepts the same complete Waystone/Taglock data.
+3. Waystone route retest: bind a blank Waystone, copy it with another blank, create a Blooded Waystone with each support set, use small transposition to the bound location, drop a bound/Blooded Waystone on a small Otherwhere ring with a nearby mob/item stack, use medium taglock transposition on a loaded target, confirm Crystal Ball scrying accepts the same complete Waystone/Taglock data, and confirm Player Compass points at a visible bound player.

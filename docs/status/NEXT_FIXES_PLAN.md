@@ -4,7 +4,7 @@ This plan is ordered by mechanical parity value, not by how visible a bug is in 
 The goal is to make the NeoForge port behave like 1.7.10 Witchery first, then keep the codebase cleaner than the original where modern structure helps.
 Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA checklist covering mechanics, sound, and graphics parity.
 
-Current reconciliation (2026-06-13): placed Modonomicon live pages/navigation, triggered cursed-block dispersal, Waystone/Crystal Ball scrying, and Apothecary jobsite/trade repair have moved from active implementation into QA/polish. Keep the next brew pass pointed at gas-duration/Gas Mask/source projectile transport, old dropped bound/Blooded Waystone transposition item behavior, Player Compass needle/model polish, and broader Spirit World/familiar work.
+Current reconciliation (2026-06-13): placed Modonomicon live pages/navigation, triggered cursed-block dispersal, Waystone/Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle parity, and Apothecary jobsite/trade repair have moved from active implementation into QA/polish. Keep the next brew pass pointed at gas-duration/Gas Mask/source projectile transport and broader Spirit World/familiar work.
 
 ## 15-step roadmap
 

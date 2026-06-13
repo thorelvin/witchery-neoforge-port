@@ -228,7 +228,7 @@ Architecture / gotchas:
   required circle variant (`ANY_VARIANT` sentinel), `Effect` (`(Player, Level, BlockPos, ItemStack)
   -> boolean`), plus fluent `requiringOffering(...)`, `vetoedWhen(...)`, and `CompanionRing`
   varargs. The model is immutable: `requiringOffering`/`vetoedWhen` return copies.
-- **`RITUAL_DEFINITIONS`** (70 entries) lives in `RitualExecutor`; `tryRitualDefinitions(size,
+- **`RITUAL_DEFINITIONS`** (74 entries) lives in `RitualExecutor`; `tryRitualDefinitions(size,
   item, variant)` checks, in order, `matches()` (size+variant+trigger) && companion rings present
   && offerings present && not vetoed, then runs the first match. `execute` calls it directly — the
   old `dispatch{Small,Medium,Large}` if-ladders are gone.
@@ -1240,6 +1240,10 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - For living taglock/Blooded Waystone targets, third-person camera offset is safer than head possession: stay behind/above the target, terrain-clamp the camera so it does not clip below ground, hide the caster's held item while scrying, and restore the normal camera on release, full duration, invalid target, or timeout.
 - Waystone scrying accepts only complete same-dimension location bindings inside the old range. Blooded Waystones and filled Taglock Kits use the old 500-power Crystal Ball route and the 1200-tick held lifecycle.
 - Apothecary villagers must keep their Witchery identity separate from vanilla profession churn. Bind their jobsite to the building cauldron using the vanilla leatherworker POI only as the job anchor; on join/tick/right-click, repair name, trades, villager data, and remembered cauldron site if vanilla has stripped the custom appearance/trades.
+
+**Dropped Waystone transposition and Player Compass frames (2026-06-13)**
+- Source `EntityItemWaystone` has two passive dropped-item branches. Blank Waystones on a small Otherwhere circle bind themselves and clear the chalk; already-bound/Blooded Waystones on a small Otherwhere circle consume one stone, collect nearby living entities plus loose item entities in the old four-block radius, respect Ender Inhibition, and transpose those targets to the stored coordinate or live Blooded Waystone target. The bound branch does not clear the circle in source.
+- Player Compass uses the old `ItemEntityLocator` 32-frame formula: `frame = floor(((angle / TAU) + 1) * 32) % 32`, where `angle = -((visualYaw - 90) - atan2(dz, dx))`. The port exposes that math on `PlayerCompassItem`, registers a range-dispatch property, and uses the original `playercompass1..32` frame sprites for bound compasses while keeping the base sprite for unbound.
 
 **Brew fluids - vanilla-shaped flow with Witchery payloads (2026-06-13)**
 - The current practical model is still a Witchery brew payload in a custom block/entity, but the liquid behavior should mimic vanilla flow: source stays a source, flowing cells carry distance, slope models show direction/height, optimal-flow search prefers nearby drops, and non-empty vanilla fluids win contact instead of flickering with brew liquid.

@@ -3,7 +3,7 @@
 Last reconciled: 2026-06-13
 Source: feature matrix audit + FTB wiki scraped-file gap analysis.
 
-2026-06-13 reconciliation note: treat this file as the long-range milestone map; live status remains in `docs/status/FEATURE_MATRIX.md` and `docs/status/NEXT_TASKS.md`. Since the previous reconciliation, placed Modonomicon live pages/navigation, generic brew buckets, vanilla-shaped brew liquid flow, triggered cursed-block dispersal, source-ID Waystone/Blooded Waystone binding/copy/transposition, Crystal Ball Waystone/Taglock scrying, Ender Dew creative access, and Apothecary cauldron-jobsite/trade repair have landed. Remaining high-value follow-ups from this slice are Gas Mask/gas duration/source projectile transport, old dropped bound/Blooded Waystone transposition item behavior, Player Compass needle/model polish, and final scrying camera/apothecary reload QA.
+2026-06-13 reconciliation note: treat this file as the long-range milestone map; live status remains in `docs/status/FEATURE_MATRIX.md` and `docs/status/NEXT_TASKS.md`. Since the previous reconciliation, placed Modonomicon live pages/navigation, generic brew buckets, vanilla-shaped brew liquid flow, triggered cursed-block dispersal, source-ID Waystone/Blooded Waystone binding/copy/transposition, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Crystal Ball Waystone/Taglock scrying, Ender Dew creative access, and Apothecary cauldron-jobsite/trade repair have landed. Remaining high-value follow-ups from this slice are Gas Mask/gas duration/source projectile transport and final scrying camera/apothecary reload QA.
 
 ---
 
@@ -30,7 +30,7 @@ Two tightly related systems (curses target players via taglocks; waystones provi
   - 11×11 large + taglock: pull stored mob/player to witch's location (3000 altar power); 90% blocked by full Witch Hunter armor.
   - Large: transpose iron ore in surrounding area (ore-conversion variant).
 
-2026-06-13 status: blank/bound/blooded Waystone IDs are live; bind/copy rites output distinct `bound_waystone`; Blooded Waystone support routes output distinct `blooded_waystone`; small transposition to a bound waystone and medium taglock transposition are restored; dropped blank Otherwhere auto-binding is live; Crystal Ball scrying works with complete Bound Waystones, Blooded Waystones, and filled Taglock Kits. The remaining old gap here is dropped bound/Blooded Waystone transposition item behavior plus Player Compass dynamic needle/model polish.
+2026-06-13 status: blank/bound/blooded Waystone IDs are live; bind/copy rites output distinct `bound_waystone`; Blooded Waystone support routes output distinct `blooded_waystone`; small transposition to a bound waystone and medium taglock transposition are restored; dropped blank Otherwhere auto-binding is live; dropped bound/Blooded Waystones now consume one stone on a small Otherwhere ring and transpose nearby living entities plus loose item stacks; Crystal Ball scrying works with complete Bound Waystones, Blooded Waystones, and filled Taglock Kits; Player Compass binding uses player/taglock data and now has source-style 32-frame needle models.
 
 ### Curse system (12 curses)
 All curses are circle rites using taglock kits. Wire into `RitualExecutor` dispatch.

@@ -227,6 +227,8 @@ public class WitcheryClient {
                 ChaliceFilledProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "poppet_shelf_compass_signal"),
                 PoppetShelfCompassAngleProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "player_compass_angle"),
+                PlayerCompassAngleProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "blocking"),
                 HuntsmanSpearBlockingProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "deaths_hand_deployed"),
