@@ -102,6 +102,36 @@ class BrewLogicTest {
     }
 
     @Test
+    void dogTongueRitualReleaseValidatesFailurePathsBeforeStateChanges() {
+        Brews.bootstrap();
+
+        assertEquals(Brews.RitualDeliveryResult.NO_EFFECT,
+                Brews.validateRitualDelivery(List.of(Items.GUNPOWDER), true, true),
+                "empty/no-effect brews are not releasable rituals");
+        assertEquals(Brews.RitualDeliveryResult.NEEDS_SPLASH_DISPERSAL,
+                Brews.validateRitualDelivery(level2(Items.SPIDER_EYE), true, true),
+                "drink-only brews must be made splash/gas/liquid/triggered before ritual release");
+        assertEquals(Brews.RitualDeliveryResult.NO_TRIGGER_ITEM,
+                Brews.validateRitualDelivery(level2(Items.ZOMBIE_HEAD, Items.SPIDER_EYE), false, true),
+                "triggered brews need a dropped target item near the cauldron");
+        assertEquals(Brews.RitualDeliveryResult.BLOCKED,
+                Brews.validateRitualDelivery(level2(WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE), true, false),
+                "gas brews fail cleanly if the cauldron's release block cannot be replaced");
+        assertEquals(Brews.RitualDeliveryResult.BLOCKED,
+                Brews.validateRitualDelivery(level2(WitcheryItems.WORMWOOD.get(), Items.SPIDER_EYE), true, false),
+                "liquid brews fail cleanly if the cauldron's release block cannot be replaced");
+        assertEquals(Brews.RitualDeliveryResult.SUCCESS,
+                Brews.validateRitualDelivery(level2(Items.GUNPOWDER, Items.SPIDER_EYE), false, false),
+                "splash-style ritual release is valid without item or moving-block targets");
+        assertEquals(Brews.RitualDeliveryResult.SUCCESS,
+                Brews.validateRitualDelivery(level2(Items.ZOMBIE_HEAD, Items.SPIDER_EYE), true, true),
+                "triggered ritual release is valid when a target item exists");
+        assertEquals(Brews.RitualDeliveryResult.SUCCESS,
+                Brews.validateRitualDelivery(level2(WitcheryItems.BAT_WOOL.get(), Items.SPIDER_EYE), true, true),
+                "moving brew release is valid when its destination can be replaced");
+    }
+
+    @Test
     void sourceStrengthModifiersUseCappedTiers() {
         Brews.bootstrap();
         assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))

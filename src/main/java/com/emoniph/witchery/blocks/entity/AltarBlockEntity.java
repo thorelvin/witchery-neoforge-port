@@ -505,6 +505,13 @@ public class AltarBlockEntity extends BlockEntity {
         return true;
     }
 
+    public void refundPower(int amount) {
+        if (amount <= 0) return;
+        int cap = getEffectiveMaxPower();
+        power = cap > 0 ? Math.min(power + amount, cap) : power + amount;
+        setChanged();
+    }
+
     public void invalidate(Level level) {
         refreshState(level, getBlockState());
     }

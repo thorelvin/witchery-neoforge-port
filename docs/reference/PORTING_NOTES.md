@@ -9,6 +9,18 @@ Current target:
 
 ---
 
+## 2026-06-14 Dog Tongue ritualized brews must be state-safe on failure
+
+- The live-cauldron `Tongue of Dog` release is a ritual trigger, not a normal stir. Failed releases must
+  not consume the Tongue of Dog, empty the cauldron, clear the brew contents, or spend altar power.
+- Keep ritual delivery validation two-phase: first reject structural brew failures (no effects/actions,
+  drink-only dispersal), then run world checks for triggered item targets or gas/liquid placement. This
+  avoids probing placement or item targets for brews that are not releasable rituals in the first place.
+- The cauldron reserves altar power before final delivery because the delivery effect can mutate world
+  state. If final delivery still returns a failure, immediately refund the reserved power through
+  `AltarBlockEntity.refundPower(...)` before returning. Only shrink Dog Tongue and empty/clear the
+  cauldron after `SUCCESS`.
+
 ## 2026-06-12 Placed guide book altar focus; custom brew liquid must be finite and non-displacing
 
 - **Placed guide book altar bonus:** a `PLACED_MODONOMICON` block with a stored book directly on one of the

@@ -364,6 +364,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
 
         Brews.RitualDeliveryResult result = contents.applyRitualFromCauldron(serverLevel, pos, player);
         if (result != Brews.RitualDeliveryResult.SUCCESS) {
+            altar.refundPower(powerCost);
             player.displayClientMessage(Component.translatable(ritualDeliveryFailureKey(result)), false);
             return InteractionResult.CONSUME;
         }

@@ -774,18 +774,35 @@ public final class Brews {
     public static RitualDeliveryResult validateRitualFromCauldron(ServerLevel level, BlockPos center,
                                                                   List<Item> items, Entity source) {
         Resolution resolved = resolveBrew(items);
+        Dispersal delivery = dispersal(items);
+        RitualDeliveryResult base = validateRitualDelivery(resolved, delivery, true, true);
+        if (base != RitualDeliveryResult.SUCCESS) {
+            return base;
+        }
+        boolean triggeredItemPresent = delivery != Dispersal.TRIGGERED || hasTriggeredRitualItemTarget(level, center);
+        boolean movingBrewCanPlace = delivery != Dispersal.GAS && delivery != Dispersal.LIQUID
+                || canPlaceRitualMovingBrew(level, center.above(), source);
+        return validateRitualDelivery(resolved, delivery, triggeredItemPresent, movingBrewCanPlace);
+    }
+
+    public static RitualDeliveryResult validateRitualDelivery(List<Item> items, boolean triggeredItemPresent,
+                                                              boolean movingBrewCanPlace) {
+        return validateRitualDelivery(resolveBrew(items), dispersal(items), triggeredItemPresent, movingBrewCanPlace);
+    }
+
+    private static RitualDeliveryResult validateRitualDelivery(Resolution resolved, Dispersal delivery,
+                                                               boolean triggeredItemPresent,
+                                                               boolean movingBrewCanPlace) {
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return RitualDeliveryResult.NO_EFFECT;
         }
-        Dispersal delivery = dispersal(items);
         if (delivery == Dispersal.DRINK) {
             return RitualDeliveryResult.NEEDS_SPLASH_DISPERSAL;
         }
-        if (delivery == Dispersal.TRIGGERED && !hasTriggeredRitualItemTarget(level, center)) {
+        if (delivery == Dispersal.TRIGGERED && !triggeredItemPresent) {
             return RitualDeliveryResult.NO_TRIGGER_ITEM;
         }
-        if ((delivery == Dispersal.GAS || delivery == Dispersal.LIQUID)
-                && !canPlaceRitualMovingBrew(level, center.above(), source)) {
+        if ((delivery == Dispersal.GAS || delivery == Dispersal.LIQUID) && !movingBrewCanPlace) {
             return RitualDeliveryResult.BLOCKED;
         }
         return RitualDeliveryResult.SUCCESS;
