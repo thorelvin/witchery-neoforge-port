@@ -161,6 +161,25 @@ class BrewActionMathTest {
     }
 
     @Test
+    void ritualizedBrewDeliveryUsesSourceTriggerRadiusChargesAndRange() {
+        assertEquals(250, Brews.SOURCE_RITUAL_TRIGGER_POWER_COST);
+        assertEquals(3, Brews.sourceRitualInstantRadius(0));
+        assertEquals(6, Brews.sourceRitualInstantRadius(3));
+        assertEquals(1, Brews.sourceTriggeredRitualItemCharges(false));
+        assertEquals(2, Brews.sourceTriggeredRitualItemCharges(true));
+
+        assertTrue(Brews.sourceRitualDistanceAllowed(32.0 * 32.0, true, 0, false),
+                "coven size 0 allows the source 32-block same-dimension reach");
+        assertFalse(Brews.sourceRitualDistanceAllowed(33.0 * 33.0, true, 0, false),
+                "one block past the old range fails");
+        assertTrue(Brews.sourceRitualDistanceAllowed(1_000_000.0, true, 6, false),
+                "six coven witches lift same-dimension range");
+        assertFalse(Brews.sourceRitualDistanceAllowed(0.0, false, 6, false),
+                "cross-dimension ritual delivery still needs Leonard");
+        assertTrue(Brews.sourceRitualDistanceAllowed(0.0, false, 6, true));
+    }
+
+    @Test
     void diseaseBlockUsesSourceDecayAndContactOdds() {
         assertTrue(DiseaseBlock.shouldSourceRemove(0));
         assertFalse(DiseaseBlock.shouldSourceRemove(1));

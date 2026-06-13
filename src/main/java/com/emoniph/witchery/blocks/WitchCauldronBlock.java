@@ -295,6 +295,9 @@ public class WitchCauldronBlock extends BaseEntityBlock {
      * catches that case on {@code RightClickBlock} and calls this; callers gate on sneaking themselves.
      */
     public static InteractionResult stirExplicitIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (stack.is(WitcheryItems.TONGUE_OF_DOG.get())) {
+            return releaseRitualBrew(stack, state, level, pos, player);
+        }
         if (state.getValue(LEVEL) <= 0
                 || !isHeated(level.getBlockState(pos.below()))
                 || !Brews.requiresExplicitStir(stack.getItem())) {
@@ -326,6 +329,67 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         return InteractionResult.CONSUME;
+    }
+
+    private static InteractionResult releaseRitualBrew(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                                       Player player) {
+        if (state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!(level instanceof ServerLevel serverLevel)
+                || !(level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe)) {
+            return InteractionResult.PASS;
+        }
+        if (state.getValue(LEVEL) < MAX_FILL_LEVEL) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.not_full"), false);
+            return InteractionResult.CONSUME;
+        }
+        com.emoniph.witchery.brewing.BrewContents contents =
+                new com.emoniph.witchery.brewing.BrewContents(List.copyOf(brewBe.getIngredients()));
+        Brews.RitualDeliveryResult validation = Brews.validateRitualFromCauldron(serverLevel, pos, contents.items(), player);
+        if (validation != Brews.RitualDeliveryResult.SUCCESS) {
+            player.displayClientMessage(Component.translatable(ritualDeliveryFailureKey(validation)), false);
+            return InteractionResult.CONSUME;
+        }
+
+        int powerCost = Brews.ritualPowerCost(contents.items());
+        AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+        if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost || !altar.consumePower(powerCost)) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.no_power", powerCost), false);
+            return InteractionResult.CONSUME;
+        }
+
+        Brews.RitualDeliveryResult result = contents.applyRitualFromCauldron(serverLevel, pos, player);
+        if (result != Brews.RitualDeliveryResult.SUCCESS) {
+            player.displayClientMessage(Component.translatable(ritualDeliveryFailureKey(result)), false);
+            return InteractionResult.CONSUME;
+        }
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        setFillLevel(state, level, pos, 0);
+        brewBe.clear();
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.7F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS,
+                0.5F, 0.9F + level.random.nextFloat() * 0.2F);
+        serverLevel.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D,
+                24, 0.35D, 0.18D, 0.35D, 0.04D);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.success"), false);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        return InteractionResult.CONSUME;
+    }
+
+    private static String ritualDeliveryFailureKey(Brews.RitualDeliveryResult result) {
+        return switch (result) {
+            case NO_EFFECT -> "witchery.cauldron.brew.ritual.no_effect";
+            case NEEDS_SPLASH_DISPERSAL -> "witchery.cauldron.brew.ritual.needs_splash";
+            case NO_TRIGGER_ITEM -> "witchery.cauldron.brew.ritual.no_item";
+            case BLOCKED -> "witchery.cauldron.brew.ritual.blocked";
+            case SUCCESS -> "witchery.cauldron.brew.ritual.success";
+        };
     }
 
     @Override

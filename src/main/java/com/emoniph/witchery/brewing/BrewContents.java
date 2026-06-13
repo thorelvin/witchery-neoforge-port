@@ -95,4 +95,9 @@ public record BrewContents(List<Item> items) {
                             LivingEntity directTarget, Entity source, boolean blockHit) {
         Brews.applyToArea(level, pos, items, dispersal, directTarget, source, blockHit);
     }
+
+    public Brews.RitualDeliveryResult applyRitualFromCauldron(ServerLevel level, net.minecraft.core.BlockPos center,
+                                                             Entity source) {
+        return Brews.applyRitualFromCauldron(level, center, items, source);
+    }
 }

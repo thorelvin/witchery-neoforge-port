@@ -84,6 +84,24 @@ class BrewLogicTest {
     }
 
     @Test
+    void dogTongueMarksRitualTriggerWithoutChangingDispersal() {
+        Brews.bootstrap();
+        List<Item> ritualBrew = level2(Items.GUNPOWDER, Items.SPIDER_EYE, WitcheryItems.TONGUE_OF_DOG.get());
+        List<Item> liveCauldronBrew = level2(Items.GUNPOWDER, Items.SPIDER_EYE);
+
+        assertTrue(Brews.triggersRitual(ritualBrew), "Tongue of Dog is the source BrewActionRitual trigger");
+        assertFalse(Brews.triggersRitual(liveCauldronBrew),
+                "the live cauldron contents stay free of the trigger item until activation");
+        assertEquals(Brews.Dispersal.SPLASH, Brews.dispersal(ritualBrew),
+                "Dog Tongue does not replace Gunpowder's splash-style dispersal");
+        assertEquals(Brews.SOURCE_RITUAL_TRIGGER_POWER_COST + Brews.powerCost(liveCauldronBrew),
+                Brews.ritualPowerCost(liveCauldronBrew),
+                "releasing a live cauldron brew adds the source 250 altar-power ritual cost");
+        assertEquals(Brews.powerCost(ritualBrew), Brews.ritualPowerCost(ritualBrew),
+                "if Dog Tongue is already present, ritualPowerCost must not double-charge it");
+    }
+
+    @Test
     void sourceStrengthModifiersUseCappedTiers() {
         Brews.bootstrap();
         assertEquals(1, Brews.buildEffects(level2(Items.GLOWSTONE_DUST, Items.GLOWSTONE_DUST, Items.SUGAR))
