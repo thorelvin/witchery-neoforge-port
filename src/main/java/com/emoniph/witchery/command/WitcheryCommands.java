@@ -362,6 +362,9 @@ public class WitcheryCommands {
                                 .executes(ctx -> unlockGatheredLives(ctx.getSource())))
                         .then(Commands.literal("summon")
                                 .executes(ctx -> summonSpectralCoven(ctx.getSource()))))
+                // ── Cursed blocks (triggered dispersal QA timesaver) ──────────
+                .then(Commands.literal("curse")
+                        .executes(ctx -> giveTriggeredBrews(ctx.getSource())))
                 .then(Commands.literal("ritual")
                         .then(Commands.literal("circle")
                                 .executes(ctx -> inspectRitualCircle(ctx.getSource())))
@@ -537,6 +540,23 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal("[Coven] Summoned " + total
                 + " spectral witches around " + p.getName().getString() + "."), false);
         return total;
+    }
+
+    /** QA timesaver: hand the player triggered-dispersal splash brews to curse vanilla blocks with. */
+    private static int giveTriggeredBrews(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        com.emoniph.witchery.brewing.BrewContents brew = new com.emoniph.witchery.brewing.BrewContents(
+                java.util.List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
+        ItemStack stack = new ItemStack(WitcheryItems.SPLASH_BREW_BOTTLE.get(), 8);
+        stack.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), brew);
+        if (!p.getInventory().add(stack)) {
+            p.drop(stack, false);
+        }
+        src.sendSuccess(() -> Component.literal("[Curse] Gave triggered splash brews (Poison + Zombie Head). "
+                + "Throw one at a vanilla button / lever / pressure plate / door to curse it; activating the "
+                + "cursed block dumps the brew on whoever triggered it, then it reverts."), false);
+        return 1;
     }
 
     /** Grants or revokes the {@code witchery:guide/<name>} advancement (criterion {@code has_book}). */

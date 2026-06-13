@@ -148,6 +148,9 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
                 Brews.Dispersal effective = Brews.bottledDispersal(composed.items());
                 if (effective == Brews.Dispersal.TRIGGERED) {
                     curseNearbyItems(serverLevel, pos);
+                    if (result instanceof BlockHitResult blockHit) {
+                        com.emoniph.witchery.blocks.CursedBlocks.tryCurse(serverLevel, blockHit, composed, getOwner());
+                    }
                 } else if (effective == Brews.Dispersal.GAS || effective == Brews.Dispersal.LIQUID) {
                     Brews.placeMovingBrewFluid(serverLevel, movingBrewFluidPos(result, serverLevel),
                             composed.items(), effective, getOwner());
