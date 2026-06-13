@@ -41,6 +41,7 @@ import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
+import com.emoniph.witchery.network.ScryingCameraPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
@@ -322,6 +323,8 @@ public class WitcheryClient {
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPELL_EFFECT.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.SCRYING_EYE.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.EGASSY.get(),            EgassyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.HOBGOBLIN.get(),        HobgoblinRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);
@@ -377,5 +380,9 @@ public class WitcheryClient {
     public static void handleOpenObservationsBook(OpenObservationsBookPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> Minecraft.getInstance().setScreen(new BookViewScreen(
                 new BookViewScreen.BookAccess(ImmortalsObservationsBookItem.createReadablePages(payload.visiblePages())))));
+    }
+
+    public static void handleScryingCamera(ScryingCameraPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> com.emoniph.witchery.client.ScryingCameraState.handle(payload));
     }
 }

@@ -135,6 +135,28 @@ final class RitualOfferings {
                 enderDew.get(), slimeBall.get(), snowball.get(), null, null, true));
     }
 
+    static Optional<BindWaystonePortableOfferings> findBindWaystonePortableOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> woodAsh = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WOOD_ASH.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (enderDew.isEmpty() || woodAsh.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindWaystonePortableOfferings(enderDew.get(), woodAsh.get(), chargedStone.get()));
+    }
+
+    static Optional<BindWaystoneCopyPortableOfferings> findBindWaystoneCopyPortableOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> blankWaystone = findNearbyWaystoneOffering(level, center, false);
+        Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
+        Optional<ItemEntity> quicklime = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUICKLIME.get()));
+        Optional<ItemEntity> chargedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+        if (blankWaystone.isEmpty() || enderDew.isEmpty() || quicklime.isEmpty() || chargedStone.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new BindWaystoneCopyPortableOfferings(
+                blankWaystone.get(), enderDew.get(), quicklime.get(), chargedStone.get()));
+    }
+
     static Optional<LivingEntity> findBloodedWaystoneTarget(Level level, BlockPos center) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
         AABB bounds = new AABB(centerPoint, centerPoint).inflate(4.0, 2.0, 4.0);

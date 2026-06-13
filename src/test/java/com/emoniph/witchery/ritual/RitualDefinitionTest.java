@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Locks the data-driven small-ring {@link RitualDefinition} dispatch table: each migrated trigger
@@ -166,6 +167,9 @@ class RitualDefinitionTest {
         assertEquals("charge_stone_small", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
         assertEquals("protection_barrier_charged", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()), RITUAL));
         assertEquals("obsidian_barrier_portable", match(SMALL, new ItemStack(Items.OBSIDIAN), RITUAL));
+        ItemStack bound = new ItemStack(WitcheryItems.WAYSTONE.get());
+        WaystoneItem.bindTo(bound, BlockPos.ZERO, Level.OVERWORLD);
+        assertEquals("bind_waystone_copy_portable", match(SMALL, bound, RITUAL));
         // The small Charge Stone rite still requires its Medium companion ring.
         assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
     }
@@ -174,7 +178,7 @@ class RitualDefinitionTest {
     void waystoneRitesResolveByBindingStateAndVariant() {
         ItemStack bound = new ItemStack(WitcheryItems.WAYSTONE.get());
         WaystoneItem.bindTo(bound, BlockPos.ZERO, Level.OVERWORLD);
-        assertEquals("bind_waystone_copy", match(SMALL, bound, RITUAL));
+        assertEquals("bind_waystone_copy_portable", match(SMALL, bound, RITUAL));
         assertEquals("transposition_to_waystone", match(SMALL, bound, OTHERWHERE));
 
         ItemStack blank = new ItemStack(WitcheryItems.WAYSTONE.get());
@@ -203,7 +207,9 @@ class RitualDefinitionTest {
     @Test
     void definitionNamesAreUniqueAndRosterIsLocked() {
         List<String> names = RitualExecutor.allRitualDefinitionNames();
-        assertEquals(72, names.size(), "ritual definition roster size");
+        assertEquals(74, names.size(), "ritual definition roster size");
+        assertTrue(names.contains("bind_waystone_portable"));
+        assertTrue(names.contains("bind_waystone_copy_portable"));
         assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
     }
 }

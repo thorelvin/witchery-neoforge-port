@@ -21,6 +21,7 @@ import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
+import com.emoniph.witchery.network.ScryingCameraPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
@@ -98,6 +99,10 @@ public class WitcheryMod {
                         OpenObservationsBookPayload.TYPE,
                         OpenObservationsBookPayload.STREAM_CODEC,
                         WitcheryClient::handleOpenObservationsBook)
+                .playToClient(
+                        ScryingCameraPayload.TYPE,
+                        ScryingCameraPayload.STREAM_CODEC,
+                        WitcheryClient::handleScryingCamera)
                 .playToServer(
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,

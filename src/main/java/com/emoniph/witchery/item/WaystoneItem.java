@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.scrying.ScryingSessions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
@@ -52,27 +54,31 @@ public class WaystoneItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        if (level.isClientSide() || !(entity instanceof net.minecraft.world.entity.player.Player player) || !isAnyBoundWaystone(stack)) {
+        if (level.isClientSide() || !(entity instanceof ServerPlayer player) || !isAnyBoundWaystone(stack)) {
             return;
         }
 
         int elapsedTicks = getUseDuration(stack, entity) - remainingUseDuration;
-        if (elapsedTicks % SCRY_FEEDBACK_INTERVAL != 0) {
-            return;
-        }
+        ServerLevel serverLevel = (ServerLevel) level;
+        boolean feedbackTick = elapsedTicks % SCRY_FEEDBACK_INTERVAL == 0;
 
         if (isEntityBoundWaystone(stack)) {
-            Optional<LivingEntity> target = findBoundEntity(((ServerLevel) level).getServer(), stack);
+            Optional<LivingEntity> target = findBoundEntity(serverLevel.getServer(), stack);
             if (target.isEmpty() || !target.get().isAlive() || !target.get().level().dimension().equals(level.dimension())) {
+                ScryingSessions.stop(player);
                 player.stopUsingItem();
                 return;
             }
             LivingEntity living = target.get();
-            ((ServerLevel) level).sendParticles(ParticleTypes.WITCH,
+            ScryingSessions.focusLiving(player, serverLevel, living);
+            if (!feedbackTick) {
+                return;
+            }
+            serverLevel.sendParticles(ParticleTypes.WITCH,
                     living.getX(), living.getY() + living.getBbHeight() * 0.5, living.getZ(),
                     6, 0.35, 0.4, 0.35, 0.02);
             if (elapsedTicks == 0) {
-                ((ServerLevel) level).playSound(null, living.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                serverLevel.playSound(null, living.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
                         SoundSource.PLAYERS, 0.4f, 1.35f);
             }
             return;
@@ -81,12 +87,18 @@ public class WaystoneItem extends Item {
         Optional<BlockPos> targetPos = getBoundPos(stack);
         Optional<ResourceKey<Level>> targetDim = getBoundDim(stack);
         if (targetPos.isEmpty() || targetDim.isEmpty() || !targetDim.get().equals(level.dimension())) {
+            ScryingSessions.stop(player);
             player.stopUsingItem();
             return;
         }
 
-        ServerLevel serverLevel = (ServerLevel) level;
         BlockPos pos = targetPos.get();
+        ScryingSessions.focusEye(player, serverLevel,
+                pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                player.getYRot(), 90.0F);
+        if (!feedbackTick) {
+            return;
+        }
         serverLevel.sendParticles(ParticleTypes.PORTAL,
                 pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
                 6, 0.35, 0.4, 0.35, 0.05);
@@ -97,14 +109,25 @@ public class WaystoneItem extends Item {
 
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
-        if (!level.isClientSide() && entity instanceof net.minecraft.world.entity.player.Player player && isAnyBoundWaystone(stack)) {
+        if (!level.isClientSide() && entity instanceof ServerPlayer player && isAnyBoundWaystone(stack)) {
             int elapsedTicks = getUseDuration(stack, entity) - timeCharged;
+            ScryingSessions.stop(player);
             if (elapsedTicks > 0) {
                 player.displayClientMessage(Component.literal("The waystone vision fades.")
                         .withStyle(ChatFormatting.DARK_PURPLE), true);
             }
         }
         return true;
+    }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+        if (!level.isClientSide() && entity instanceof ServerPlayer player && isAnyBoundWaystone(stack)) {
+            ScryingSessions.stop(player);
+            player.displayClientMessage(Component.literal("The waystone vision fades.")
+                    .withStyle(ChatFormatting.DARK_PURPLE), true);
+        }
+        return stack;
     }
 
     @Override
@@ -199,4 +222,5 @@ public class WaystoneItem extends Item {
     private static net.minecraft.nbt.CompoundTag getTag(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
+
 }

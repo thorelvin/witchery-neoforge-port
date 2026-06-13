@@ -8,6 +8,7 @@ import com.emoniph.witchery.entity.FlyingMonkeyEntity;
 import com.emoniph.witchery.entity.TreefydEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.scrying.ScryingSessions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +17,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -63,41 +65,46 @@ public class TaglockKitItem extends Item {
     @Override
     public void onUseTick(net.minecraft.world.level.Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)
-                || !(entity instanceof Player player) || !isFilled(stack)) {
+                || !(entity instanceof ServerPlayer player) || !isFilled(stack)) {
             return;
         }
 
         int elapsedTicks = getUseDuration(stack, entity) - remainingUseDuration;
-        if (elapsedTicks % SCRY_FEEDBACK_INTERVAL != 0) {
-            return;
-        }
+        boolean feedbackTick = elapsedTicks % SCRY_FEEDBACK_INTERVAL == 0;
 
         Optional<UUID> uuid = getUUID(stack);
         if (uuid.isEmpty()) {
+            ScryingSessions.stop(player);
             player.stopUsingItem();
             return;
         }
 
         Optional<LivingEntity> target = PoppetItem.findLivingEntity(serverLevel.getServer(), uuid.get());
         if (target.isEmpty() || !target.get().isAlive()) {
-            if (elapsedTicks == 0) {
+            if (feedbackTick && elapsedTicks == 0) {
                 player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_missing",
                         getBoundName(stack)).withStyle(ChatFormatting.DARK_PURPLE), false);
             }
+            ScryingSessions.stop(player);
             player.stopUsingItem();
             return;
         }
 
         LivingEntity living = target.get();
         if (!living.level().dimension().equals(level.dimension())) {
-            if (elapsedTicks == 0) {
+            if (feedbackTick && elapsedTicks == 0) {
                 player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_other_dimension",
                         living.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE), false);
             }
+            ScryingSessions.stop(player);
             player.stopUsingItem();
             return;
         }
 
+        ScryingSessions.focusLiving(player, serverLevel, living);
+        if (!feedbackTick) {
+            return;
+        }
         serverLevel.sendParticles(ParticleTypes.WITCH,
                 living.getX(),
                 living.getY() + living.getBbHeight() * 0.5,
@@ -111,14 +118,25 @@ public class TaglockKitItem extends Item {
 
     @Override
     public boolean releaseUsing(ItemStack stack, net.minecraft.world.level.Level level, LivingEntity entity, int timeCharged) {
-        if (!level.isClientSide() && entity instanceof Player player && isFilled(stack)) {
+        if (!level.isClientSide() && entity instanceof ServerPlayer player && isFilled(stack)) {
             int elapsedTicks = getUseDuration(stack, entity) - timeCharged;
+            ScryingSessions.stop(player);
             if (elapsedTicks > 0) {
                 player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_fades")
                         .withStyle(ChatFormatting.DARK_PURPLE), true);
             }
         }
         return true;
+    }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, net.minecraft.world.level.Level level, LivingEntity entity) {
+        if (!level.isClientSide() && entity instanceof ServerPlayer player && isFilled(stack)) {
+            ScryingSessions.stop(player);
+            player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_fades")
+                    .withStyle(ChatFormatting.DARK_PURPLE), true);
+        }
+        return stack;
     }
 
     @Override
@@ -410,4 +428,5 @@ public class TaglockKitItem extends Item {
     private static CompoundTag getTag(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
+
 }

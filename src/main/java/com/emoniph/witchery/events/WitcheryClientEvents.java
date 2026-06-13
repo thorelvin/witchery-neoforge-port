@@ -25,7 +25,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.minecraft.client.gui.screens.worldselection.ExperimentsScreen;
 import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -43,7 +45,25 @@ public class WitcheryClientEvents {
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
+        com.emoniph.witchery.client.ScryingCameraState.clientTick();
         applySwimmingBoost();
+    }
+
+    @SubscribeEvent
+    public static void onRenderFramePre(RenderFrameEvent.Pre event) {
+        com.emoniph.witchery.client.ScryingCameraState.beforeRenderFrame();
+    }
+
+    @SubscribeEvent
+    public static void onRenderFramePost(RenderFrameEvent.Post event) {
+        com.emoniph.witchery.client.ScryingCameraState.afterRenderFrame();
+    }
+
+    @SubscribeEvent
+    public static void onRenderHand(RenderHandEvent event) {
+        if (com.emoniph.witchery.client.ScryingCameraState.isActive()) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

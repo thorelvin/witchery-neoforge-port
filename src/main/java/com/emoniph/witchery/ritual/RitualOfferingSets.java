@@ -44,6 +44,11 @@ record BindFetishOfferings(ItemEntity attunedStone, ItemEntity necroStone, ItemE
 record BindBloodedWaystoneOfferings(ItemEntity enderDew, ItemEntity slimeBall, ItemEntity snowball,
                                     ItemEntity icyNeedle, ItemEntity chargedStone, boolean needsPower) {}
 
+record BindWaystonePortableOfferings(ItemEntity enderDew, ItemEntity woodAsh, ItemEntity chargedStone) {}
+
+record BindWaystoneCopyPortableOfferings(ItemEntity blankWaystone, ItemEntity enderDew,
+                                         ItemEntity quicklime, ItemEntity chargedStone) {}
+
 record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
                               ItemEntity spiderEye, ItemEntity gunpowder,
                               ItemEntity brewGrotesque) {}

@@ -276,6 +276,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.HINT_OF_REBIRTH.get(),
                 WitcheryItems.BREATH_OF_GODDESS.get(),
                 WitcheryItems.WHIFF_OF_MAGIC.get(),
+                WitcheryItems.ENDER_DEW.get(),
                 WitcheryItems.FOUL_FUME.get(),
                 WitcheryItems.QUICKLIME.get(),
                 WitcheryItems.GYPSUM.get(),

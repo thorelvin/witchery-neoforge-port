@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.TradeWithVillagerEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber
 public final class ApothecaryVillagerEvents {
@@ -30,6 +31,16 @@ public final class ApothecaryVillagerEvents {
             return;
         }
         if (event.getTarget() instanceof Villager villager) {
+            ApothecaryVillager.refreshIfApothecary(villager);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityTick(EntityTickEvent.Post event) {
+        if (event.getEntity().level().isClientSide() || event.getEntity().tickCount % 40 != 0) {
+            return;
+        }
+        if (event.getEntity() instanceof Villager villager) {
             ApothecaryVillager.refreshIfApothecary(villager);
         }
     }

@@ -1,8 +1,15 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerData;
@@ -14,26 +21,45 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Optional;
 
 public final class ApothecaryVillager {
     public static final String APOTHECARY_TAG = "witchery_apothecary";
 
     private static final String TRADE_VERSION_TAG = "witchery_apothecary_trade_version";
+    private static final String JOB_SITE_X_TAG = "witchery_apothecary_job_site_x";
+    private static final String JOB_SITE_Y_TAG = "witchery_apothecary_job_site_y";
+    private static final String JOB_SITE_Z_TAG = "witchery_apothecary_job_site_z";
+    private static final ResourceKey<VillagerProfession> APOTHECARY_PROFESSION = VillagerProfession.LEATHERWORKER;
     private static final int TRADE_VERSION = 1;
+    private static final int PROFESSION_LOCK_XP = 1;
     private static final int CUSTOM_TRADE_XP = 10;
     private static final int TRADE_XP = 0;
+    private static final int JOB_SITE_SEARCH_RADIUS = 8;
+    private static final int JOB_SITE_SEARCH_VERTICAL = 3;
     private static final float PRICE_MULTIPLIER = 0.05F;
 
     private ApothecaryVillager() {
     }
 
     static void configure(Villager villager, WorldGenLevel level) {
+        configure(villager, level, null);
+    }
+
+    static void configure(Villager villager, WorldGenLevel level, BlockPos jobSite) {
         villager.getPersistentData().putBoolean(APOTHECARY_TAG, true);
         villager.setCustomName(Component.literal("Apothecary"));
         villager.setVillagerData(villager.getVillagerData()
-                .withProfession(level.getLevel().registryAccess(), VillagerProfession.LIBRARIAN)
+                .withProfession(level.getLevel().registryAccess(), APOTHECARY_PROFESSION)
                 .withLevel(1));
-        villager.setVillagerXp(0);
+        villager.setVillagerXp(PROFESSION_LOCK_XP);
+        if (jobSite != null) {
+            rememberJobSite(villager, jobSite);
+            ensureJobSite(villager, level.getLevel(), jobSite);
+        }
         replaceOffers(villager, 1);
     }
 
@@ -46,13 +72,39 @@ public final class ApothecaryVillager {
             return false;
         }
 
-        int level = clampLevel(villager.getVillagerData().level());
+        VillagerData currentData = villager.getVillagerData();
+        int level = clampLevel(currentData.level());
         int xp = Math.max(villager.getVillagerXp(), minXpForLevel(level));
-        villager.setCustomName(Component.literal("Apothecary"));
-        villager.setVillagerData(villager.getVillagerData()
-                .withProfession(villager.level().registryAccess(), VillagerProfession.LIBRARIAN)
-                .withLevel(level));
-        villager.setVillagerXp(xp);
+        ServerLevel serverLevel = villager.level() instanceof ServerLevel sl ? sl : null;
+        Optional<BlockPos> jobSite = rememberedJobSite(villager)
+                .or(() -> serverLevel == null ? Optional.empty() : findNearbyJobSite(villager, serverLevel));
+        boolean repaired = false;
+
+        if (!villager.hasCustomName()
+                || villager.getCustomName() == null
+                || !"Apothecary".equals(villager.getCustomName().getString())) {
+            villager.setCustomName(Component.literal("Apothecary"));
+            repaired = true;
+        }
+
+        if (!currentData.profession().is(APOTHECARY_PROFESSION) || currentData.level() != level) {
+            villager.setVillagerData(currentData
+                    .withProfession(villager.level().registryAccess(), APOTHECARY_PROFESSION)
+                    .withLevel(level));
+            if (serverLevel != null) {
+                villager.refreshBrain(serverLevel);
+            }
+            repaired = true;
+        }
+
+        if (serverLevel != null && jobSite.isPresent() && ensureJobSite(villager, serverLevel, jobSite.get())) {
+            repaired = true;
+        }
+
+        if (villager.getVillagerXp() < xp) {
+            villager.setVillagerXp(xp);
+            repaired = true;
+        }
 
         MerchantOffers expected = createOffers(level);
         if (villager.getPersistentData().getIntOr(TRADE_VERSION_TAG, 0) != TRADE_VERSION
@@ -61,7 +113,7 @@ public final class ApothecaryVillager {
             villager.getPersistentData().putInt(TRADE_VERSION_TAG, TRADE_VERSION);
             return true;
         }
-        return false;
+        return repaired;
     }
 
     public static boolean handleTrade(Villager villager) {
@@ -106,6 +158,75 @@ public final class ApothecaryVillager {
     private static void replaceOffers(Villager villager, int level) {
         villager.setOffers(createOffers(level));
         villager.getPersistentData().putInt(TRADE_VERSION_TAG, TRADE_VERSION);
+    }
+
+    private static void rememberJobSite(Villager villager, BlockPos jobSite) {
+        villager.getPersistentData().putInt(JOB_SITE_X_TAG, jobSite.getX());
+        villager.getPersistentData().putInt(JOB_SITE_Y_TAG, jobSite.getY());
+        villager.getPersistentData().putInt(JOB_SITE_Z_TAG, jobSite.getZ());
+    }
+
+    private static Optional<BlockPos> rememberedJobSite(Villager villager) {
+        if (!villager.getPersistentData().contains(JOB_SITE_X_TAG)
+                || !villager.getPersistentData().contains(JOB_SITE_Y_TAG)
+                || !villager.getPersistentData().contains(JOB_SITE_Z_TAG)) {
+            return Optional.empty();
+        }
+        return Optional.of(new BlockPos(
+                villager.getPersistentData().getIntOr(JOB_SITE_X_TAG, 0),
+                villager.getPersistentData().getIntOr(JOB_SITE_Y_TAG, 0),
+                villager.getPersistentData().getIntOr(JOB_SITE_Z_TAG, 0)));
+    }
+
+    private static Optional<BlockPos> findNearbyJobSite(Villager villager, ServerLevel level) {
+        BlockPos origin = villager.blockPosition();
+        BlockPos best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (BlockPos pos : BlockPos.betweenClosed(
+                origin.offset(-JOB_SITE_SEARCH_RADIUS, -JOB_SITE_SEARCH_VERTICAL, -JOB_SITE_SEARCH_RADIUS),
+                origin.offset(JOB_SITE_SEARCH_RADIUS, JOB_SITE_SEARCH_VERTICAL, JOB_SITE_SEARCH_RADIUS))) {
+            if (!isCauldron(level.getBlockState(pos))) {
+                continue;
+            }
+            double distance = pos.distSqr(origin);
+            if (distance < bestDistance) {
+                best = pos.immutable();
+                bestDistance = distance;
+            }
+        }
+        if (best != null) {
+            rememberJobSite(villager, best);
+        }
+        return Optional.ofNullable(best);
+    }
+
+    private static boolean ensureJobSite(Villager villager, ServerLevel level, BlockPos jobSite) {
+        if (!isCauldron(level.getBlockState(jobSite))) {
+            return false;
+        }
+
+        GlobalPos globalPos = GlobalPos.of(level.dimension(), jobSite);
+        Optional<GlobalPos> current = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
+        if (current.isPresent() && current.get().equals(globalPos)) {
+            return false;
+        }
+
+        PoiManager poiManager = level.getPoiManager();
+        if (poiManager.exists(jobSite, holder -> holder.is(PoiTypes.LEATHERWORKER))) {
+            poiManager.take(holder -> holder.is(PoiTypes.LEATHERWORKER),
+                    (holder, pos) -> pos.equals(jobSite), jobSite, 1);
+        }
+        villager.getBrain().eraseMemory(MemoryModuleType.POTENTIAL_JOB_SITE);
+        villager.getBrain().setMemory(MemoryModuleType.JOB_SITE, globalPos);
+        rememberJobSite(villager, jobSite);
+        return true;
+    }
+
+    private static boolean isCauldron(BlockState state) {
+        return state.is(Blocks.CAULDRON)
+                || state.is(Blocks.WATER_CAULDRON)
+                || state.is(Blocks.LAVA_CAULDRON)
+                || state.is(Blocks.POWDER_SNOW_CAULDRON);
     }
 
     private static MerchantOffers createOffers(int level) {
@@ -206,6 +327,8 @@ public final class ApothecaryVillager {
     }
 
     private static int minXpForLevel(int level) {
-        return level <= VillagerData.MIN_VILLAGER_LEVEL ? 0 : VillagerData.getMaxXpPerLevel(level - 1);
+        return level <= VillagerData.MIN_VILLAGER_LEVEL
+                ? PROFESSION_LOCK_XP
+                : Math.max(PROFESSION_LOCK_XP, VillagerData.getMaxXpPerLevel(level - 1));
     }
 }

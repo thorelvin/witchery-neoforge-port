@@ -172,7 +172,7 @@ public class ApothecaryPiece extends StructurePiece {
                 villager.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
                 villager.finalizeSpawn(level, new DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                         EntitySpawnReason.STRUCTURE, null);
-                ApothecaryVillager.configure(villager, level);
+                ApothecaryVillager.configure(villager, level, getWorldPos(7, 1, 1));
                 level.addFreshEntityWithPassengers(villager);
             }
         } catch (Throwable e) {

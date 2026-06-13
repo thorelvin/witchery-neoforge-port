@@ -8,6 +8,7 @@ import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
@@ -26,6 +27,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.CircleTalismanItem;
 import com.emoniph.witchery.item.BiomeNoteItem;
+import com.emoniph.witchery.item.PoppetItem;
 import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
@@ -427,10 +429,11 @@ public class RitualExecutor {
                     item -> item.is(Items.OBSIDIAN), VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfProtectionBarrier(player, level, center,
                             ActiveRitualType.PROTECTION_BARRIER_MONSTERS, RitualCircleDetector.CircleSize.SMALL, 4, 5)),
-            // Waystones. Bound (location) -> copy on a Ritual ring; blank -> Blooded (with offerings)
-            // else plain bind; any bound (location or filled Blooded) -> transposition on an Otherwhere ring.
-            // isBoundWaystone/isBlankWaystone are disjoint and the variants separate copy from transposition,
-            // so order only matters for blooded-before-bind.
+            // Waystones. Offering-gated source variants are listed before their fallbacks.
+            RitualDefinition.of("bind_waystone_copy_portable", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isBoundWaystone, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindWaystoneCopyPortable(player, level, center, trigger))
+                    .requiringOffering((level, center) -> findBindWaystoneCopyPortableOfferings(level, center).isPresent()),
             RitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
                     WaystoneItem::isBoundWaystone, VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindWaystoneCopy(player, level, center, trigger)),
@@ -438,6 +441,10 @@ public class RitualExecutor {
                     WaystoneItem::isBlankWaystone, VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindBloodedWaystone(player, level, center))
                     .requiringOffering((level, center) -> findBindBloodedWaystoneOfferings(level, center).isPresent()),
+            RitualDefinition.of("bind_waystone_portable", RitualCircleDetector.CircleSize.SMALL,
+                    WaystoneItem::isBlankWaystone, VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfBindWaystonePortable(player, level, center))
+                    .requiringOffering((level, center) -> findBindWaystonePortableOfferings(level, center).isPresent()),
             RitualDefinition.of("bind_waystone", RitualCircleDetector.CircleSize.SMALL,
                     WaystoneItem::isBlankWaystone, VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfBindWaystone(player, level, center)),
@@ -5563,7 +5570,8 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
+                "witchery.ritual.bind_waystone.no_power")
                 .offer(enderDew.get())
                 .offer(glowstone.get());
         if (!transaction.commit(player)) {
@@ -5582,6 +5590,40 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.bind_waystone.success",
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
         WitcheryMod.LOGGER.info("Waystone summoned and bound to ritual center {} for {}", center, player.getName().getString());
+        return true;
+    }
+
+    /** Portable Rite of Binding - source no-power route using Wood Ash and a Charged Attuned Stone. */
+    private static boolean riteOfBindWaystonePortable(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<BindWaystonePortableOfferings> offerings = findBindWaystonePortableOfferings(level, center);
+        if (offerings.isEmpty()) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_portable.support"), false);
+            return false;
+        }
+
+        BindWaystonePortableOfferings support = offerings.get();
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
+                .offer(support.enderDew())
+                .offer(support.woodAsh())
+                .offer(support.chargedStone());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
+        WaystoneItem.bindTo(boundWaystone, center, level.dimension());
+        ItemEntity entity = new ItemEntity(level,
+                center.getX() + 0.5,
+                center.getY() + 1.5,
+                center.getZ() + 0.5,
+                boundWaystone);
+        entity.setDeltaMovement(0.0, 0.3, 0.0);
+        level.addFreshEntity(entity);
+        success(player, level, center, "witchery.ritual.bind_waystone.success",
+                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+        WitcheryMod.LOGGER.info("Portable waystone binding summoned a bound waystone at {} for {}",
+                center, player.getName().getString());
         return true;
     }
 
@@ -5632,7 +5674,7 @@ public class RitualExecutor {
      * and duplicates the dropped bound waystone's location onto one extra offered unbound waystone.
      */
     private static boolean riteOfBindWaystoneCopy(Player player, Level level, BlockPos center, ItemStack sourceWaystone) {
-        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (!WaystoneItem.isBound(sourceWaystone)) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
             return false;
@@ -5650,7 +5692,8 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction((ServerLevel) level, center, 16, 0, null)
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
+                "witchery.ritual.bind_waystone_copy.no_power")
                 .offer(unboundWaystone.get())
                 .offer(enderDew.get())
                 .offer(diamond.get());
@@ -5671,6 +5714,46 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
                 SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
         WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
+        return true;
+    }
+
+    /** Portable copy route - no-power source variant using Quicklime and a Charged Attuned Stone. */
+    private static boolean riteOfBindWaystoneCopyPortable(Player player, Level level, BlockPos center, ItemStack sourceWaystone) {
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
+        if (!WaystoneItem.isBound(sourceWaystone)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
+            return false;
+        }
+
+        Optional<BindWaystoneCopyPortableOfferings> offerings = findBindWaystoneCopyPortableOfferings(level, center);
+        if (offerings.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_copy_portable.support"), false);
+            return false;
+        }
+
+        BindWaystoneCopyPortableOfferings support = offerings.get();
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
+                .offer(support.blankWaystone())
+                .offer(support.enderDew())
+                .offer(support.quicklime())
+                .offer(support.chargedStone());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
+                .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
+        ItemEntity entity = new ItemEntity(level,
+                center.getX() + 0.5,
+                center.getY() + 1.5,
+                center.getZ() + 0.5,
+                copiedWaystones);
+        entity.setDeltaMovement(0.0, 0.3, 0.0);
+        level.addFreshEntity(entity);
+
+        success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
+                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+        WitcheryMod.LOGGER.info("Portable copied bound waystone at {} for {}", center, sp.getName().getString());
         return true;
     }
 
@@ -5716,7 +5799,7 @@ public class RitualExecutor {
 
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
     private static boolean riteOfTranspositionToWaystone(Player player, Level level, BlockPos center, ItemStack waystone) {
-        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (WaystoneItem.isEntityBoundWaystone(waystone)) {
             return riteOfTranspositionToBloodedWaystone(sp, level, center, waystone);
         }
@@ -5726,28 +5809,26 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
             return false;
         }
-        ServerLevel targetLevel = ((net.minecraft.server.level.ServerLevel) sp.level()).getServer().getLevel(dim.get());
+        ServerLevel targetLevel = sl.getServer().getLevel(dim.get());
         if (targetLevel == null) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
             return false;
         }
-        BlockPos d = dest.get();
-        Vec3 centerPoint = Vec3.atCenterOf(center);
-        double radius = 3.0;
-        double radiusSq = radius * radius;
-        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
-        int moved = 0;
-        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
-            if (entity instanceof ItemEntity itemEntity
-                    && itemEntity.distanceToSqr(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5) <= 3.0) {
-                continue;
-            }
-            if (entity.position().distanceToSqr(centerPoint) >= radiusSq) {
-                continue;
-            }
-            teleportEntityToWaystone(entity, targetLevel, d);
-            moved++;
+        if (isTranspositionDimensionBlocked(sl.dimension(), targetLevel.dimension())) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.dimension_blocked"), false);
+            return false;
         }
+
+        BlockPos d = dest.get();
+        int moved = moveEntitiesInTranspositionCircle(sl, center, 3.0, 1, entity -> {
+            Vec3 destination = randomWaystoneDestination(targetLevel, d, 3);
+            return teleportEntityTo(entity, targetLevel, destination.x, destination.y, destination.z);
+        });
+        if (moved <= 0) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_targets"), false);
+            return false;
+        }
+
         success(player, level, center, "witchery.ritual.transposition.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to {}", moved, center, d);
@@ -5763,23 +5844,19 @@ public class RitualExecutor {
             return false;
         }
 
-        LivingEntity living = target.get();
-        Vec3 centerPoint = Vec3.atCenterOf(center);
-        double radius = 3.0;
-        double radiusSq = radius * radius;
-        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
-        int moved = 0;
-        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
-            if (entity instanceof ItemEntity itemEntity
-                    && itemEntity.distanceToSqr(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5) <= 3.0) {
-                continue;
-            }
-            if (entity.position().distanceToSqr(centerPoint) >= radiusSq) {
-                continue;
-            }
-            teleportEntityTo(entity, targetLevel, living.getX(), living.getY(), living.getZ());
-            moved++;
+        if (isTranspositionDimensionBlocked(sl.dimension(), targetLevel.dimension())) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.transposition.dimension_blocked"), false);
+            return false;
         }
+
+        LivingEntity living = target.get();
+        int moved = moveEntitiesInTranspositionCircle(sl, center, 3.0, 1,
+                entity -> teleportEntityTo(entity, targetLevel, living.getX(), living.getY(), living.getZ()));
+        if (moved <= 0) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_targets"), false);
+            return false;
+        }
+
         success(player, level, center, "witchery.ritual.transposition.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
         WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to blooded waystone target {}",
@@ -5787,14 +5864,42 @@ public class RitualExecutor {
         return true;
     }
 
-    private static void teleportEntityToWaystone(Entity entity, ServerLevel targetLevel, BlockPos dest) {
-        double x = dest.getX() + 0.5;
-        double y = dest.getY();
-        double z = dest.getZ() + 0.5;
-        teleportEntityTo(entity, targetLevel, x, y, z);
+    private static Vec3 randomWaystoneDestination(ServerLevel level, BlockPos dest, int radius) {
+        double x = dest.getX() + 0.5 + level.random.nextInt(radius * 2 + 1) - radius;
+        double z = dest.getZ() + 0.5 + level.random.nextInt(radius * 2 + 1) - radius;
+        return new Vec3(x, dest.getY(), z);
     }
 
-    private static void teleportEntityTo(Entity entity, ServerLevel targetLevel, double x, double y, double z) {
+    private static int moveEntitiesInTranspositionCircle(ServerLevel level, BlockPos center, double radius,
+                                                        int enderInhibitionThreshold,
+                                                        TranspositionMove move) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radiusSq = radius * radius;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
+        int moved = 0;
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds)) {
+            if (entity instanceof ItemEntity) {
+                continue;
+            }
+            if (entity.position().distanceToSqr(centerPoint) >= radiusSq) {
+                continue;
+            }
+            if (!EnderInhibitionMobEffect.canTeleport(entity, enderInhibitionThreshold)) {
+                continue;
+            }
+            if (move.apply(entity)) {
+                moved++;
+            }
+        }
+        return moved;
+    }
+
+    @FunctionalInterface
+    private interface TranspositionMove {
+        boolean apply(Entity entity);
+    }
+
+    private static boolean teleportEntityTo(Entity entity, ServerLevel targetLevel, double x, double y, double z) {
         if (entity instanceof ServerPlayer player) {
             if (player.level() == targetLevel) {
                 player.teleportTo(x, y, z);
@@ -5802,7 +5907,7 @@ public class RitualExecutor {
                 player.teleportTo(targetLevel, x, y, z,
                         java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
             }
-            return;
+            return true;
         }
 
         if (entity.level() == targetLevel) {
@@ -5811,6 +5916,14 @@ public class RitualExecutor {
             entity.teleportTo(targetLevel, x, y, z,
                     java.util.Set.<net.minecraft.world.entity.Relative>of(), entity.getYRot(), entity.getXRot(), false);
         }
+        return true;
+    }
+
+    private static boolean isTranspositionDimensionBlocked(ResourceKey<Level> source, ResourceKey<Level> target) {
+        return source.equals(WitcheryDimensions.SPIRIT_WORLD)
+                || target.equals(WitcheryDimensions.SPIRIT_WORLD)
+                || source.equals(WitcheryDimensions.MIRROR_WORLD)
+                || target.equals(WitcheryDimensions.MIRROR_WORLD);
     }
 
     /** Medium otherwhere transposition — teleports the bound taglock target to the circle center. */
@@ -5826,24 +5939,30 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.no_taglock"), false);
             return false;
         }
-        ServerPlayer target = ((ServerLevel) sp.level()).getServer().getPlayerList().getPlayer(uuid.get());
-        if (target == null) {
+        Optional<LivingEntity> target = PoppetItem.findLivingEntity(sl.getServer(), uuid.get());
+        if (target.isEmpty() || !target.get().isAlive() || !(target.get().level() instanceof ServerLevel targetLevel)) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.offline"), false);
             return false;
         }
-        if (sp.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
-                || target.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+        LivingEntity targetEntity = target.get();
+        if (isTranspositionDimensionBlocked(sl.dimension(), targetLevel.dimension())) {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.spirit_world"), false);
             return false;
         }
-        if (hasCurseProtection(target)) {
-            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+        if (!EnderInhibitionMobEffect.canTeleport(targetEntity, 3)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.inhibited"), false);
             return false;
         }
-        if (triggerVoodooProtection(target)) {
-            target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
-            sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
-            return false;
+        if (targetEntity instanceof ServerPlayer targetPlayer) {
+            if (hasCurseProtection(targetPlayer)) {
+                sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+                return false;
+            }
+            if (triggerVoodooProtection(targetPlayer)) {
+                targetPlayer.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+                sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+                return false;
+            }
         }
 
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
@@ -5851,21 +5970,19 @@ public class RitualExecutor {
                 .offer(offerings.get().waystone())
                 .offer(offerings.get().enderDew())
                 .offer(offerings.get().ironAxe());
-        if (!transaction.commit(player)) {
+        BlockPos destination = center.above();
+        if (!transaction.commit(player, () -> teleportEntityTo(targetEntity, sl,
+                destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5))) {
             return false;
         }
 
-        BlockPos destination = center.above();
-        if (target.level() == level) {
-            target.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);
-        } else {
-            target.teleportTo(sl, destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
-                    java.util.Set.<net.minecraft.world.entity.Relative>of(), target.getYRot(), target.getXRot(), false);
+        if (targetEntity instanceof ServerPlayer targetPlayer) {
+            targetPlayer.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
         }
-        target.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
         success(player, level, center, "witchery.ritual.transposition_entity.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Transposition Entity moved {} to {}", target.getName().getString(), destination);
+        WitcheryMod.LOGGER.info("Rite of Transposition Entity moved {} to {}",
+                targetEntity.getName().getString(), destination);
         return true;
     }
 
