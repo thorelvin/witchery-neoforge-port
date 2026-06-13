@@ -128,7 +128,7 @@ public class BrewBagItem extends Item {
             player.displayClientMessage(Component.translatable("item.witchery.brew_bag.empty"), true);
             return;
         }
-        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.5F, 1.0F);
+        projectile.shootFromSourceThrower(player);
         level.addFreshEntity(projectile);
 
         if (!player.getAbilities().instabuild) {

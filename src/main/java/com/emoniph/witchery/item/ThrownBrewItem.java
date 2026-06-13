@@ -43,7 +43,7 @@ public class ThrownBrewItem extends Item {
         if (!level.isClientSide()) {
             int tier = stack.getOrDefault(WitcheryDataComponents.BREW_POWER.get(), 1);
             ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brewType, gas, tier);
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
+            projectile.shootFromSourceThrower(player);
             level.addFreshEntity(projectile);
             if (!player.isCreative()) {
                 stack.shrink(1);

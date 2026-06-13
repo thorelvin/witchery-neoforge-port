@@ -1,13 +1,11 @@
 package com.emoniph.witchery.entity;
 
-import com.emoniph.witchery.blocks.BrewFluidBlock;
 import com.emoniph.witchery.brewing.BrewContents;
 import com.emoniph.witchery.brewing.BrewCurse;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.item.BrewType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -27,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.world.level.Level;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -38,6 +37,11 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplier {
+    public static final float SOURCE_THROW_PITCH_OFFSET = -20.0F;
+    public static final float SOURCE_THROW_VELOCITY = 0.75F;
+    public static final float SOURCE_THROW_INACCURACY = 1.0F;
+    public static final double SOURCE_GRAVITY = 0.05D;
+    private static final double SOURCE_THROW_ORIGIN_BACKSET = 0.16D;
 
     private static final EntityDataAccessor<Integer> BREW_TYPE =
             SynchedEntityData.defineId(ThrownBrewEntity.class, EntityDataSerializers.INT);
@@ -62,7 +66,8 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     }
 
     public ThrownBrewEntity(Level level, LivingEntity owner, BrewType brewType, boolean gas, int power) {
-        super(WitcheryEntities.THROWN_BREW.get(), owner.getX(), owner.getEyeY() - 0.1, owner.getZ(), level);
+        super(WitcheryEntities.THROWN_BREW.get(), sourceThrowX(owner), owner.getEyeY() - 0.1D,
+                sourceThrowZ(owner), level);
         setOwner(owner);
         setBrewType(brewType.ordinal());
         setGas(gas);
@@ -75,7 +80,8 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     }
 
     public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, Brews.Dispersal dispersal) {
-        super(WitcheryEntities.THROWN_BREW.get(), owner.getX(), owner.getEyeY() - 0.1, owner.getZ(), level);
+        super(WitcheryEntities.THROWN_BREW.get(), sourceThrowX(owner), owner.getEyeY() - 0.1D,
+                sourceThrowZ(owner), level);
         setOwner(owner);
         this.composed = contents;
         this.composedDispersal = sanitizeComposedDispersal(dispersal);
@@ -102,10 +108,17 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     public int getColor() { return entityData.get(COLOR); }
     public void setColor(int color) { entityData.set(COLOR, color); }
 
+    public void shootFromSourceThrower(LivingEntity thrower) {
+        shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), SOURCE_THROW_PITCH_OFFSET,
+                SOURCE_THROW_VELOCITY, SOURCE_THROW_INACCURACY);
+    }
+
     /** The bottle item the {@link net.minecraft.client.renderer.entity.ThrownItemRenderer} draws in flight. */
     @Override
     public ItemStack getItem() {
-        Item item = isGas() ? WitcheryItems.LINGERING_BREW_BOTTLE.get() : WitcheryItems.SPLASH_BREW_BOTTLE.get();
+        Item item = !composed.isEmpty() && composedDispersal == Brews.Dispersal.LIQUID
+                ? WitcheryItems.LIQUID_BREW_BOTTLE.get()
+                : isGas() ? WitcheryItems.LINGERING_BREW_BOTTLE.get() : WitcheryItems.SPLASH_BREW_BOTTLE.get();
         ItemStack stack = new ItemStack(item);
         stack.set(DataComponents.CUSTOM_MODEL_DATA,
                 new CustomModelData(List.of(), List.of(), List.of(), List.of(getColor())));
@@ -140,7 +153,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (level() instanceof ServerLevel serverLevel) {
-            Vec3 pos = result.getLocation();
+            Vec3 pos = position();
             playBottleBreak(serverLevel, pos);
             if (!composed.isEmpty()) {
                 // The true dispersal comes from the contents (e.g. a Zombie Head makes it TRIGGERED),
@@ -152,13 +165,13 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
                         com.emoniph.witchery.blocks.CursedBlocks.tryCurse(serverLevel, blockHit, composed, getOwner());
                     }
                 } else if (effective == Brews.Dispersal.GAS || effective == Brews.Dispersal.LIQUID) {
-                    Brews.placeMovingBrewFluid(serverLevel, movingBrewFluidPos(result, serverLevel),
+                    Brews.placeMovingBrewFluid(serverLevel, Brews.sourceMovingBrewFluidPos(result),
                             composed.items(), effective, getOwner());
                 } else {
                     LivingEntity directTarget = result instanceof EntityHitResult entityHit
                             && entityHit.getEntity() instanceof LivingEntity living ? living : null;
-                    composed.applyToArea(serverLevel, pos, Brews.Dispersal.SPLASH,
-                            directTarget, getOwner(), result.getType() == HitResult.Type.BLOCK);
+                    Brews.applyToArea(serverLevel, pos, composed.items(), Brews.Dispersal.SPLASH,
+                            directTarget, getOwner(), result instanceof BlockHitResult blockHit ? blockHit : null);
                 }
             } else {
                 BrewType type = getBrewType();
@@ -181,11 +194,19 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
             tag.store("Composed", BrewContents.CODEC, composed);
             tag.putString("ComposedDispersal", composedDispersal.name());
         }
+        tag.putInt("BrewType", getBrewTypeId());
+        tag.putBoolean("Gas", isGas());
+        tag.putInt("Power", getPower());
+        tag.putInt("Color", getColor());
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
+        setBrewType(tag.getIntOr("BrewType", getBrewTypeId()));
+        setGas(tag.getBooleanOr("Gas", isGas()));
+        setPower(tag.getIntOr("Power", getPower()));
+        setColor(tag.getIntOr("Color", getColor()));
         composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
         composedDispersal = readComposedDispersal(tag.getStringOr("ComposedDispersal",
                 isGas() ? Brews.Dispersal.GAS.name() : Brews.Dispersal.SPLASH.name()));
@@ -234,22 +255,17 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
                 0.8F, 0.9F + random.nextFloat() * 0.2F);
     }
 
+    @Override
+    protected double getDefaultGravity() {
+        return SOURCE_GRAVITY;
+    }
+
     private static void spawnImpactParticles(ServerLevel level, Vec3 pos, int color, boolean gas) {
         int count = gas ? 18 : 28;
         level.sendParticles(new DustParticleOptions(color, gas ? 1.2F : 0.9F),
                 pos.x, pos.y + 0.15D, pos.z, count, 0.7D, 0.35D, 0.7D, 0.02D);
         level.sendParticles(gas ? ParticleTypes.WITCH : ParticleTypes.SPLASH,
                 pos.x, pos.y + 0.15D, pos.z, gas ? 12 : 18, 0.6D, 0.25D, 0.6D, 0.04D);
-    }
-
-    private static BlockPos movingBrewFluidPos(HitResult result, Level level) {
-        if (result instanceof BlockHitResult blockHit) {
-            BlockPos hitPos = blockHit.getBlockPos();
-            return BrewFluidBlock.canDisplace(level.getBlockState(hitPos))
-                    ? hitPos
-                    : hitPos.relative(blockHit.getDirection());
-        }
-        return BlockPos.containing(result.getLocation());
     }
 
     private static Brews.Dispersal readComposedDispersal(String name) {
@@ -262,5 +278,13 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
 
     private static Brews.Dispersal sanitizeComposedDispersal(Brews.Dispersal dispersal) {
         return dispersal == Brews.Dispersal.DRINK ? Brews.Dispersal.SPLASH : dispersal;
+    }
+
+    private static double sourceThrowX(LivingEntity owner) {
+        return owner.getX() - Mth.cos(owner.getYRot() * Mth.DEG_TO_RAD) * SOURCE_THROW_ORIGIN_BACKSET;
+    }
+
+    private static double sourceThrowZ(LivingEntity owner) {
+        return owner.getZ() - Mth.sin(owner.getYRot() * Mth.DEG_TO_RAD) * SOURCE_THROW_ORIGIN_BACKSET;
     }
 }

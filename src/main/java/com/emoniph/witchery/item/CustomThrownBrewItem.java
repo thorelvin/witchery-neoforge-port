@@ -73,7 +73,7 @@ public class CustomThrownBrewItem extends Item {
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide()) {
             ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, dispersal);
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.5F, 1.0F);
+            projectile.shootFromSourceThrower(player);
             level.addFreshEntity(projectile);
             if (!player.isCreative()) {
                 stack.shrink(1);

@@ -54,6 +54,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.Method;
@@ -731,6 +734,12 @@ public final class Brews {
 
     public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal,
                                    LivingEntity directTarget, Entity source, boolean blockHit) {
+        applyToArea(level, pos, items, dispersal, directTarget, source,
+                blockHit ? new BlockHitResult(pos, Direction.UP, BlockPos.containing(pos), false) : null);
+    }
+
+    public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal,
+                                   LivingEntity directTarget, Entity source, BlockHitResult blockHit) {
         Resolution resolved = resolveBrew(items);
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
@@ -762,15 +771,26 @@ public final class Brews {
                 pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.03);
         level.sendParticles(ParticleTypes.SPLASH, pos.x, pos.y + 0.2, pos.z, 30, 1.0, 0.3, 1.0, 0.1);
         level.sendParticles(ParticleTypes.WITCH, pos.x, pos.y + 0.2, pos.z, 12, 0.8, 0.3, 0.8, 0.05);
-        if (dispersal == Brews.Dispersal.SPLASH && blockHit && !resolved.effects.isEmpty()) {
-            applyBlockImpactEffects(level, BlockPos.containing(pos), resolved.effects, source);
+        if (dispersal == Brews.Dispersal.SPLASH && blockHit != null && !resolved.effects.isEmpty()) {
+            applyBlockImpactEffects(level, blockHit.getBlockPos(), resolved.effects, source);
         }
         if (!resolved.actions.isEmpty()) {
             applyAreaActions(level, pos, directTarget, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
-            if (dispersal == Brews.Dispersal.SPLASH && blockHit) {
-                applyBlockImpactActions(level, pos, resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
+            if (dispersal == Brews.Dispersal.SPLASH && blockHit != null) {
+                applyBlockImpactActions(level, pos, blockHit.getBlockPos(), blockHit.getDirection(),
+                        resolved.actions, source, SOURCE_INSTANT_RADIUS + resolved.extent);
             }
         }
+    }
+
+    public static BlockPos sourceMovingBrewFluidPos(HitResult result) {
+        if (result instanceof BlockHitResult blockHit) {
+            return blockHit.getBlockPos().relative(blockHit.getDirection());
+        }
+        if (result instanceof EntityHitResult entityHit) {
+            return BlockPos.containing(entityHit.getEntity().position());
+        }
+        return BlockPos.containing(result.getLocation());
     }
 
     static double splashPowerFactor(double distance, boolean directHit) {
@@ -904,9 +924,9 @@ public final class Brews {
         }
     }
 
-    private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, List<ActionApplication> actions,
-                                                Entity source, double instantRadius) {
-        BlockPos blockImpact = BlockPos.containing(impactPos);
+    private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, BlockPos blockImpact,
+                                                Direction side, List<ActionApplication> actions, Entity source,
+                                                double instantRadius) {
         int blockRadius = Mth.ceil(instantRadius);
         for (ActionApplication action : actions) {
             if (action.disableBlockTarget()) {
@@ -949,7 +969,7 @@ public final class Brews {
             }
             BlockPos target = fluidPos.relative(direction);
             if (!weakActions.isEmpty()) {
-                applyBlockImpactActions(level, Vec3.atCenterOf(target), weakActions, source,
+                applyBlockImpactActions(level, Vec3.atCenterOf(target), target, direction.getOpposite(), weakActions, source,
                         SOURCE_ADJACENT_BLOCK_PULSE_RADIUS);
             }
             if (!weakEffects.isEmpty()) {

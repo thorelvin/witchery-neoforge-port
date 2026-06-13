@@ -132,7 +132,7 @@ public class LeonardsUrnItem extends Item {
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
             return;
         }
-        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
+        projectile.shootFromSourceThrower(player);
         level.addFreshEntity(projectile);
         player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
                 stored.getHoverName()), true);
@@ -161,7 +161,7 @@ public class LeonardsUrnItem extends Item {
                 player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
                 return false;
             }
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
+            projectile.shootFromSourceThrower(player);
             level.addFreshEntity(projectile);
             setStored(urn, slot, ItemStack.EMPTY);
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
