@@ -1,12 +1,12 @@
 # Active Bugs
 
-Last reconciled: 2026-06-12. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+Last reconciled: 2026-06-13. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
 **Open — custom brew gas duration QA (2026-06-12, in-game; verified good: Chilled freezes water, Grow Flowers blooms around the pool):**
 1. **Lingering Gas brew effect duration feels too short in-game.** The poison gas cloud worked but the applied effect wore off faster than expected. Check the gas path effect-duration scaling: `Brews.applyFluidContact` uses `SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE = 0.5` (halves duration on contact) and contact only fires every ~10 ticks (`entityInside` `nextInt(10)==4`); combined with the base effect duration that may read as too brief. Verify against source gas-contact duration and consider whether the gas cloud lifetime (`gasCloudDurationTicks`) vs per-contact reapplication is delivering the intended total. Tuning, not necessarily a hard bug.
 
-**Open - `/witchery goto apothecary` crash retest (2026-06-12):**
-1. **Client can still crash while loading into a world after `/witchery goto apothecary`.** Latest log evidence stopped inside Apothecary structure placement after the target was found, with no Java crash report written. The village element wrapper now catches `Throwable` around per-piece placement so one failing Witchery slice should log and skip instead of taking down the server tick, and `ApothecaryPiece` now logs shell/decor/foundation/chest/sign/resident phases with guarded chest/sign/resident placement. Retest by restarting, running `/witchery goto apothecary` toward an unseen village, and checking the log for the last `[Apothecary]` phase if it still fails.
+**Closed 2026-06-13 (`/witchery goto apothecary` crash/profession QA):**
+- ~~Client can still crash while loading into a world after `/witchery goto apothecary`~~ - QA confirmed goto worked after removing the generated sign placement from the apothecary slice. The villager follow-up is covered too: apothecaries now bind their jobsite to the building cauldron, repair their custom name/data/trade list on join/tick/right-click, and old saved apothecaries can recover the nearest cauldron jobsite.
 
 **Closed 2026-06-12 (placed Modonomicon block-book page rendering):**
 - ~~Block-book pages did not match the normal Modonomicon Primer item rendering for logs, Witch's Oven, stone brick, Distillery, and similar item/block stacks~~ - `PlacedModonomiconPages` now asks Minecraft for the same GUI `ItemStackRenderState` used by the Primer and submits those flat GUI layers to the page collector instead of flattening block items to particle sprites or 3D-ish silhouettes. Stack counts are drawn as page overlays. Re-QA item-heavy pages such as Altar, Witches' Oven, Distillery, and Apothecary.

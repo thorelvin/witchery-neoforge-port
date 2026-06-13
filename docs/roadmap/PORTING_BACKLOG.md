@@ -1,7 +1,9 @@
 # Porting Backlog — Milestone Roadmap
 
-Last reconciled: 2026-05-16  
+Last reconciled: 2026-06-13
 Source: feature matrix audit + FTB wiki scraped-file gap analysis.
+
+2026-06-13 reconciliation note: treat this file as the long-range milestone map; live status remains in `docs/status/FEATURE_MATRIX.md` and `docs/status/NEXT_TASKS.md`. Since the previous reconciliation, placed Modonomicon live pages/navigation, generic brew buckets, vanilla-shaped brew liquid flow, triggered cursed-block dispersal, source-ID Waystone/Blooded Waystone binding/copy/transposition, Crystal Ball Waystone/Taglock scrying, Ender Dew creative access, and Apothecary cauldron-jobsite/trade repair have landed. Remaining high-value follow-ups from this slice are Gas Mask/gas duration/source projectile transport, old dropped bound/Blooded Waystone transposition item behavior, Player Compass needle/model polish, and final scrying camera/apothecary reload QA.
 
 ---
 
@@ -27,6 +29,8 @@ Two tightly related systems (curses target players via taglocks; waystones provi
   - 7×7 small: teleport casting witch to Bound Waystone coordinates (0 altar power).
   - 11×11 large + taglock: pull stored mob/player to witch's location (3000 altar power); 90% blocked by full Witch Hunter armor.
   - Large: transpose iron ore in surrounding area (ore-conversion variant).
+
+2026-06-13 status: blank/bound/blooded Waystone IDs are live; bind/copy rites output distinct `bound_waystone`; Blooded Waystone support routes output distinct `blooded_waystone`; small transposition to a bound waystone and medium taglock transposition are restored; dropped blank Otherwhere auto-binding is live; Crystal Ball scrying works with complete Bound Waystones, Blooded Waystones, and filled Taglock Kits. The remaining old gap here is dropped bound/Blooded Waystone transposition item behavior plus Player Compass dynamic needle/model polish.
 
 ### Curse system (12 curses)
 All curses are circle rites using taglock kits. Wire into `RitualExecutor` dispatch.
@@ -176,7 +180,7 @@ All crafted from Perpetual Ice; standard Minecraft block family (fence/slab/stai
 
 ## Milestone 13 — Guidebook + Polish
 
-- **Patchouli guidebook** — `Book of Witchcraft`; one entry per major branch with recipe images; auto-unlock entries as player progresses.
+- **Patchouli/Modonomicon guidebook** — `Witches' Primer`; one entry per major branch with recipe images; auto-unlock entries as player progresses. 2026-06-13 status: the placed Primer block now projects live generated Primer pages directly onto the Hexerei-style open book, including entry index, gating, entry-click navigation, back-to-entry button, and Primer-matching page item renders.
 - **Sound pass** — replace placeholder sounds with proper Witchery sounds from original jar.
 - **Particle pass** — altar glow, kettle bubbles, ritual activation, curse cast effects.
 - **More rites** — push toward 80+ total; remaining missing: Nature's Power, Earth's Wrath, Sky's Wrath, Necromancy, Banishing, Sanctity fill, etc.

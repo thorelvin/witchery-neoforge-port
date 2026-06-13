@@ -57,6 +57,8 @@ Core behavior to eventually port:
 
 The custom brew system could apply effects to doors, buttons, levers, pressure plates, and items. This is a high-value later system.
 
+2026-06-13 port status: first practical triggered-dispersal parity is live. Triggered brews can curse dropped items and can store invisible saved-data curses on buttons, levers, pressure plates, and wooden doors without replacing the block, preserving modern wood/block variants. Remaining follow-up is the old ritual item-curse entry point and broader dynamic action coverage.
+
 Implementation notes:
 - Design brew effects as data-driven handlers.
 - Separate effect, dispersal, modifier, and trigger.
