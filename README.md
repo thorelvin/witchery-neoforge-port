@@ -31,15 +31,15 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 ## Current State
 
-The port is playable and well beyond prototype stage, but it remains an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, and exact-ID promotion.
+The port is playable and well beyond prototype stage, but it remains an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, and exact-ID promotion.
 
 High-level estimate:
 
-- Mechanical porting: roughly `94-96%`
-- Release-ready parity/polish: roughly `81-85%`
+- Mechanical porting: roughly `95-96%`
+- Release-ready parity/polish: roughly `82-86%`
 - Best source of truth: [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md)
 
-The long tail is mostly old Witchery edge cases, in-game QA, final visuals, custom-brew action gaps, transformation polish, and polish on promoted exact IDs. The live legacy placeholder roster is empty; the remaining work is making those promoted systems feel finished. The cauldron is lit; the brew is still thickening.
+The long tail is mostly old Witchery edge cases, in-game QA, final visuals, custom-brew action gaps, exact ritual pulse/backfire/target-modifier parity, transformation polish, and polish on promoted exact IDs. The live legacy placeholder roster is empty; the remaining work is making those promoted systems feel finished. The cauldron is lit; the brew is still thickening.
 
 ## Feature Highlights
 
