@@ -319,6 +319,8 @@ public final class Brews {
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100, 2));
         register(WitcheryItems.BRAMBLE.get(), Ingredient.effect(WitcheryMobEffects.REPELL_ATTACKER,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x233423, 250, 2));
+        register(Items.IRON_ORE, Ingredient.effect(WitcheryMobEffects.GAS_MASK,
+                1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x693FBF, 100, 2));
         register(Items.RED_MUSHROOM, Ingredient.effect(WitcheryMobEffects.POISON_WEAPONS,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2814C9, 200, 2));
         register(Items.COBWEB, Ingredient.effect(WitcheryMobEffects.REFLECT_PROJECTILES,
@@ -693,8 +695,10 @@ public final class Brews {
         if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
             return;
         }
+        boolean gasMaskProtected = target.hasEffect(WitcheryMobEffects.GAS_MASK);
         for (EffectApplication application : resolved.effects) {
-            if (!application.disableEntityTarget()) {
+            if (!application.disableEntityTarget()
+                    && shouldApplyGasContactEffect(application.effect(), gasMaskProtected)) {
                 applyEffect(target, application.effect(), source, SOURCE_BREW_FLUID_CONTACT_POWER,
                         SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE);
             }
@@ -706,6 +710,10 @@ public final class Brews {
                         SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE, source, impactPos);
             }
         }
+    }
+
+    public static boolean shouldApplyGasContactEffect(MobEffectInstance effect, boolean gasMaskProtected) {
+        return !gasMaskProtected || effect.getEffect().value().getCategory() != MobEffectCategory.HARMFUL;
     }
 
     public static void applyToArea(ServerLevel level, Vec3 pos, List<Item> items, Dispersal dispersal) {
@@ -1819,6 +1827,10 @@ public final class Brews {
         return SOURCE_GAS_CLOUD_BASE_DURATION_TICKS
                 * sourceBrewFluidDecayDenominator(lifetime)
                 / SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR;
+    }
+
+    public static int sourceBrewGasMaxRunTicks(int lifetime) {
+        return Math.max(1, gasCloudDurationTicks(lifetime) / 5);
     }
 
     public static float gasCloudRadiusPerTick(int durationTicks) {

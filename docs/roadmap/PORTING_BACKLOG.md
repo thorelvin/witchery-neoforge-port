@@ -3,7 +3,7 @@
 Last reconciled: 2026-06-13
 Source: feature matrix audit + FTB wiki scraped-file gap analysis.
 
-2026-06-13 reconciliation note: treat this file as the long-range milestone map; live status remains in `docs/status/FEATURE_MATRIX.md` and `docs/status/NEXT_TASKS.md`. Since the previous reconciliation, placed Modonomicon live pages/navigation, generic brew buckets, vanilla-shaped brew liquid flow, triggered cursed-block dispersal, source-ID Waystone/Blooded Waystone binding/copy/transposition, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Crystal Ball Waystone/Taglock scrying, Ender Dew creative access, and Apothecary cauldron-jobsite/trade repair have landed. Remaining high-value follow-ups from this slice are Gas Mask/gas duration/source projectile transport and final scrying camera/apothecary reload QA.
+2026-06-13 reconciliation note: treat this file as the long-range milestone map; live status remains in `docs/status/FEATURE_MATRIX.md` and `docs/status/NEXT_TASKS.md`. Since the previous reconciliation, placed Modonomicon live pages/navigation, generic brew buckets, vanilla-shaped brew liquid flow, triggered cursed-block dispersal, source-ID Waystone/Blooded Waystone binding/copy/transposition, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Crystal Ball Waystone/Taglock scrying, Ender Dew creative access, and Apothecary cauldron-jobsite/trade repair have landed. Remaining high-value follow-ups from this slice are source projectile transport, the wider dynamic brew action roster, and final scrying camera/apothecary reload QA.
 
 ---
 

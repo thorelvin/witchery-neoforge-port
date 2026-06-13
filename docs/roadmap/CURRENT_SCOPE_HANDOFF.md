@@ -3,7 +3,7 @@
 **Target:** Minecraft 1.21.11 / NeoForge 21.11
 **Purpose:** This file is the clean implementation handoff. Read this first, then use the supporting roadmap files in the order and scope described below.
 
-**2026-06-13 porting snapshot:** today's landed scope is still faithful-port work, not additive expansion: placed Modonomicon live pages/navigation, Waystone/Blooded Waystone/Taglock Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Apothecary cauldron-jobsite trade repair, triggered cursed-block brew dispersal, and vanilla-shaped custom brew liquid polish. Next faithful-port follow-ups from this cluster are Gas Mask/gas duration/source projectile transport and final scrying/apothecary reload QA.
+**2026-06-13 porting snapshot:** today's landed scope is still faithful-port work, not additive expansion: placed Modonomicon live pages/navigation, Waystone/Blooded Waystone/Taglock Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Apothecary cauldron-jobsite trade repair, triggered cursed-block brew dispersal, and vanilla-shaped custom brew liquid polish. Next faithful-port follow-ups from this cluster are source projectile transport, the wider dynamic brew action roster, and final scrying/apothecary reload QA.
 
 ---
 

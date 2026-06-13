@@ -45,7 +45,7 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FLOW = BlockStateProperties.HORIZONTAL_FACING;
     public static final int SOURCE_GAS_TICK_RATE = 5;
     public static final int SOURCE_LIQUID_TICK_RATE = 5;
-    public static final int SOURCE_GAS_MAX_RUN_TICKS = 120;
+    public static final int SOURCE_GAS_BASE_MAX_RUN_TICKS = 120;
     public static final int SOURCE_LIQUID_QUANTA_PER_BLOCK = 6;
     public static final int SOURCE_FLOW_COST_MAX = 1000;
     public static final int SOURCE_FLOW_RECURSE_LIMIT = 4;
@@ -139,7 +139,7 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     private void tickGas(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, BrewFluidBlockEntity brew) {
         int distance = state.getValue(DISTANCE);
         int expansion = brew.getExpansion();
-        if (brew.incRunTicks() > SOURCE_GAS_MAX_RUN_TICKS) {
+        if (brew.incRunTicks() > brew.getMaxRunTicks()) {
             level.removeBlock(pos, false);
             return;
         }
@@ -383,16 +383,14 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (gas && random.nextInt(2) == 0) {
             DustParticleOptions brewDust = new DustParticleOptions(brewColor(level, pos), 1.1F);
-            level.addParticle(brewDust,
-                    pos.getX() + random.nextDouble(),
-                    pos.getY() + random.nextDouble(),
-                    pos.getZ() + random.nextDouble(),
+            double x = pos.getX() + random.nextDouble();
+            double y = pos.getY() + random.nextDouble();
+            double z = pos.getZ() + random.nextDouble();
+            level.addParticle(brewDust, x, y, z,
                     0.0D, 0.01D, 0.0D);
-            level.addParticle(ParticleTypes.WITCH,
-                    pos.getX() + random.nextDouble(),
-                    pos.getY() + random.nextDouble(),
-                    pos.getZ() + random.nextDouble(),
-                    0.0D, 0.01D, 0.0D);
+            if (random.nextInt(3) == 0) {
+                level.addParticle(ParticleTypes.WITCH, x, y, z, 0.0D, 0.01D, 0.0D);
+            }
         } else if (!gas && random.nextInt(4) == 0) {
             double y = pos.getY() + (liquidHeightPixels(state.getValue(DISTANCE)) / 16.0D) + 0.02D;
             level.addParticle(new DustParticleOptions(brewColor(level, pos), 0.75F),

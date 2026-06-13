@@ -29,6 +29,7 @@ public class BrewFluidBlockEntity extends BlockEntity {
     private static final String KEY_EXPANSION = "Expansion";
     private static final String KEY_UPDATE_COUNT = "UpdateCount";
     private static final String KEY_RUN_TICKS = "RunTicks";
+    private static final String KEY_MAX_RUN_TICKS = "MaxRunTicks";
     private static final String KEY_PERSISTENT_SOURCE = "PersistentSource";
     private static final String KEY_THROWER = "Thrower";
     private static final String KEY_THROWER_UUID = "ThrowerUUID";
@@ -39,6 +40,7 @@ public class BrewFluidBlockEntity extends BlockEntity {
     private int expansion = Brews.sourceBrewFluidExpansion(0);
     private int updateCount;
     private int runTicks;
+    private int maxRunTicks = Brews.sourceBrewGasMaxRunTicks(0);
     private boolean persistentSource;
     private String throwerName = "";
     private UUID throwerUuid;
@@ -54,7 +56,9 @@ public class BrewFluidBlockEntity extends BlockEntity {
     public void initialise(List<net.minecraft.world.item.Item> items, Entity source, boolean persistentSource) {
         this.contents = new BrewContents(List.copyOf(items));
         this.color = Brews.color(items);
-        this.duration = Brews.sourceBrewFluidDecayDenominator(Brews.impactLifetime(items));
+        int lifetime = Brews.impactLifetime(items);
+        this.duration = Brews.sourceBrewFluidDecayDenominator(lifetime);
+        this.maxRunTicks = Brews.sourceBrewGasMaxRunTicks(lifetime);
         this.expansion = Brews.sourceBrewFluidExpansion(Brews.impactExtent(items));
         this.updateCount = 0;
         this.runTicks = 0;
@@ -74,6 +78,7 @@ public class BrewFluidBlockEntity extends BlockEntity {
         this.color = source.color;
         this.duration = source.duration;
         this.expansion = source.expansion;
+        this.maxRunTicks = source.maxRunTicks;
         this.throwerName = source.throwerName;
         this.throwerUuid = source.throwerUuid;
         this.persistentSource = source.persistentSource;
@@ -116,6 +121,10 @@ public class BrewFluidBlockEntity extends BlockEntity {
         runTicks++;
         setChanged();
         return runTicks;
+    }
+
+    public int getMaxRunTicks() {
+        return maxRunTicks;
     }
 
     public boolean isPersistentSource() {
@@ -170,6 +179,7 @@ public class BrewFluidBlockEntity extends BlockEntity {
         tag.putInt(KEY_EXPANSION, expansion);
         tag.putInt(KEY_UPDATE_COUNT, updateCount);
         tag.putInt(KEY_RUN_TICKS, runTicks);
+        tag.putInt(KEY_MAX_RUN_TICKS, maxRunTicks);
         tag.putBoolean(KEY_PERSISTENT_SOURCE, persistentSource);
         if (!throwerName.isEmpty()) {
             tag.putString(KEY_THROWER, throwerName);
@@ -188,6 +198,7 @@ public class BrewFluidBlockEntity extends BlockEntity {
         expansion = Math.clamp(tag.getIntOr(KEY_EXPANSION, Brews.sourceBrewFluidExpansion(0)), 0, 10);
         updateCount = tag.getIntOr(KEY_UPDATE_COUNT, 0);
         runTicks = tag.getIntOr(KEY_RUN_TICKS, 0);
+        maxRunTicks = Math.max(1, tag.getIntOr(KEY_MAX_RUN_TICKS, Brews.sourceBrewGasMaxRunTicks(0)));
         persistentSource = tag.getBooleanOr(KEY_PERSISTENT_SOURCE, false);
         throwerName = tag.getStringOr(KEY_THROWER, "");
         String uuid = tag.getStringOr(KEY_THROWER_UUID, "");

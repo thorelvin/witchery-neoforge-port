@@ -1589,6 +1589,28 @@ class BrewLogicTest {
     }
 
     @Test
+    void ironOreRestoresSourceGasMaskEffect() {
+        Brews.bootstrap();
+        List<Item> brew = level2(Items.IRON_ORE);
+
+        List<MobEffectInstance> fx = Brews.buildEffects(brew);
+        assertEquals(1, fx.size());
+        assertSame(WitcheryMobEffects.GAS_MASK.value(), fx.get(0).getEffect().value());
+        assertEquals(1800, fx.get(0).getDuration(), "source Gas Mask lasts 90 seconds");
+        assertEquals(150, Brews.powerCost(brew), "Nether Wart capacity plus Iron Ore's source cost");
+    }
+
+    @Test
+    void gasMaskProtectionFiltersOnlyNegativeGasPotionEffects() {
+        assertFalse(Brews.shouldApplyGasContactEffect(new MobEffectInstance(MobEffects.POISON, 100), true),
+                "Gas Mask blocks harmful potion effects from gas contact");
+        assertTrue(Brews.shouldApplyGasContactEffect(new MobEffectInstance(MobEffects.SPEED, 100), true),
+                "Gas Mask does not block beneficial potion effects");
+        assertTrue(Brews.shouldApplyGasContactEffect(new MobEffectInstance(MobEffects.POISON, 100), false),
+                "unmasked targets still receive harmful gas effects");
+    }
+
+    @Test
     void sourceNoParticlesModifierMarksNextEffectAmbientOnly() {
         Brews.bootstrap();
         List<MobEffectInstance> fx = Brews.buildEffects(level4(Items.GOLD_NUGGET, Items.SPIDER_EYE, Items.SUGAR));

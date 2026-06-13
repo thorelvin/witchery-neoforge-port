@@ -156,6 +156,10 @@ class BrewActionMathTest {
         assertEquals(1200, Brews.gasCloudDurationTicks(1));
         assertEquals(3000, Brews.gasCloudDurationTicks(2));
         assertEquals(6000, Brews.gasCloudDurationTicks(3));
+        assertEquals(120, Brews.sourceBrewGasMaxRunTicks(0));
+        assertEquals(240, Brews.sourceBrewGasMaxRunTicks(1));
+        assertEquals(600, Brews.sourceBrewGasMaxRunTicks(2));
+        assertEquals(1200, Brews.sourceBrewGasMaxRunTicks(3));
     }
 
     @Test

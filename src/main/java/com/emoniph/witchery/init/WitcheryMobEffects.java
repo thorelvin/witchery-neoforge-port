@@ -67,6 +67,9 @@ public final class WitcheryMobEffects {
     public static final DeferredHolder<MobEffect, MobEffect> WOLFSBANE =
             MOB_EFFECTS.register("wolfsbane", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x67FA11));
 
+    public static final DeferredHolder<MobEffect, MobEffect> GAS_MASK =
+            MOB_EFFECTS.register("gas_mask", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x693FBF));
+
     public static final DeferredHolder<MobEffect, MobEffect> SNOW_TRAIL =
             MOB_EFFECTS.register("snow_trail", () -> new SnowTrailMobEffect(0x3F825D));
 
