@@ -1,5 +1,6 @@
 package com.emoniph.witchery.brewing;
 
+import com.emoniph.witchery.blocks.DiseaseBlock;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
@@ -157,6 +158,17 @@ class BrewActionMathTest {
         assertEquals(0.25D, Brews.sourceRitualCureDebuffReapplyChance(1, 1), 1e-9);
         assertEquals(0.75D, Brews.sourceRitualCureDebuffReapplyChance(2, 1), 1e-9);
         assertEquals(3, Brews.sourceRitualCureDebuffAmplifierAfterBackfire(2));
+    }
+
+    @Test
+    void diseaseBlockUsesSourceDecayAndContactOdds() {
+        assertTrue(DiseaseBlock.shouldSourceRemove(0));
+        assertFalse(DiseaseBlock.shouldSourceRemove(1));
+        assertFalse(DiseaseBlock.shouldSourceRemove(DiseaseBlock.SOURCE_REMOVAL_CHANCE - 1));
+
+        assertTrue(DiseaseBlock.shouldSourceInfect(0));
+        assertFalse(DiseaseBlock.shouldSourceInfect(1));
+        assertFalse(DiseaseBlock.shouldSourceInfect(DiseaseBlock.SOURCE_CONTACT_CHANCE - 1));
     }
 
     @Test

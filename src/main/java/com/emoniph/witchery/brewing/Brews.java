@@ -3,8 +3,12 @@ package com.emoniph.witchery.brewing;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
+import com.emoniph.witchery.entity.BabaYagaEntity;
+import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.GoblinGulgEntity;
+import com.emoniph.witchery.entity.GoblinMogEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
@@ -42,6 +46,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
@@ -320,6 +326,8 @@ public final class Brews {
                 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5C3EBB, 1000, 6));
         register(Items.SALMON, Ingredient.effect(WitcheryMobEffects.SUN_ALLERGY,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x30A212, 1000, 6));
+        register(Items.ROTTEN_FLESH, Ingredient.effect(WitcheryMobEffects.DISEASED,
+                DiseasedMobEffect.BREW_DURATION_TICKS, SOURCE_DEFAULT_STRENGTH_CEILING, 0xB9AD7D, 2000, 4));
         register(WitcheryItems.DEMON_HEART.get(), Ingredient.effect(WitcheryMobEffects.PARALYSED,
                 200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x35BDB7BF, 750, 4));
         register(WitcheryItems.ICY_NEEDLE.get(), Ingredient.effect(WitcheryMobEffects.CHILLED,
@@ -815,6 +823,9 @@ public final class Brews {
     private static void applyEffect(LivingEntity target, MobEffectInstance effect, Entity source,
                                     double powerFactor, double durationFactor) {
         MobEffect mobEffect = effect.getEffect().value();
+        if (mobEffect == WitcheryMobEffects.DISEASED.value() && isSourceDiseaseImmune(target)) {
+            return;
+        }
         if (mobEffect.isInstantenous()) {
             if (target.level() instanceof ServerLevel serverLevel) {
                 mobEffect.applyInstantenousEffect(serverLevel, source, source, target, effect.getAmplifier(), powerFactor);
@@ -1428,6 +1439,23 @@ public final class Brews {
                 || target instanceof FlameImpEntity
                 || target instanceof LilithEntity
                 || target instanceof WitherBoss;
+    }
+
+    public static boolean isSourceDiseaseImmune(LivingEntity target) {
+        return isSourceUndead(target)
+                || isSourceDemonic(target)
+                || isSourceWerewolf(target)
+                || target instanceof EnderDragon
+                || target instanceof WitherBoss
+                || target instanceof IronGolem
+                || target instanceof SnowGolem
+                || target instanceof BabaYagaEntity
+                || target instanceof DeathEntity
+                || target instanceof GoblinGulgEntity
+                || target instanceof GoblinMogEntity
+                || target instanceof HornedHuntsmanEntity
+                || target instanceof LeonardEntity
+                || target instanceof LordOfTormentEntity;
     }
 
     public static boolean isSourceSummonedUndead(LivingEntity target) {

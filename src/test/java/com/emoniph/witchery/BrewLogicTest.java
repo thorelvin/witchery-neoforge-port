@@ -3,6 +3,7 @@ package com.emoniph.witchery;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.ChilledMobEffect;
+import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
@@ -574,6 +575,37 @@ class BrewLogicTest {
         assertFalse(SunAllergyMobEffect.shouldApplySun(40L, true, 0.9F, false, true, 0.45F));
         assertEquals(1.0F, SunAllergyMobEffect.playerDamage(2));
         assertEquals(2.0F, SunAllergyMobEffect.playerDamage(3));
+    }
+
+    @Test
+    void rottenFleshRestoresSourceDiseaseBrew() {
+        Brews.bootstrap();
+        List<MobEffectInstance> disease = Brews.buildEffects(level4(Items.ROTTEN_FLESH));
+        assertEquals(1, disease.size(), "Rotten Flesh resolves as the old Disease ingredient");
+        assertSame(WitcheryMobEffects.DISEASED.value(), disease.get(0).getEffect().value(),
+                "source Rotten Flesh uses Witchery's Diseased potion");
+        assertEquals(DiseasedMobEffect.BREW_DURATION_TICKS, disease.get(0).getDuration(),
+                "source Disease lasts three minutes");
+        assertEquals(2150, Brews.powerCost(level4(Items.ROTTEN_FLESH)),
+                "Disease source effect power plus level-4 capacity power");
+        assertTrue(Brews.blockedByCapacity(level2(Items.ROTTEN_FLESH)),
+                "source Disease requires effect level 4 capacity");
+
+        assertEquals(1, Brews.buildEffects(level4(Items.GLOWSTONE_DUST, Items.ROTTEN_FLESH))
+                        .get(0).getAmplifier(),
+                "source Disease accepts the normal strength modifier path");
+    }
+
+    @Test
+    void diseasedEffectUsesSourceSpreadAndWeaknessRules() {
+        assertTrue(DiseasedMobEffect.shouldSourceSpreadOnTick(4));
+        assertTrue(DiseasedMobEffect.shouldSourceSpreadOnTick(44));
+        assertFalse(DiseasedMobEffect.shouldSourceSpreadOnTick(5));
+        assertEquals(-0.5D, DiseasedMobEffect.sourceAttackDamagePenalty(0), 1e-9);
+        assertEquals(-1.0D, DiseasedMobEffect.sourceAttackDamagePenalty(1), 1e-9);
+        assertEquals(-1.0D, DiseasedMobEffect.sourceAttackDamagePenalty(6), 1e-9);
+        assertEquals(1200, DiseasedMobEffect.sourceContactDurationTicks(0));
+        assertEquals(4800, DiseasedMobEffect.sourceContactDurationTicks(3));
     }
 
     @Test

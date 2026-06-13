@@ -493,6 +493,13 @@ public class WitcheryBlocks {
             HollowTearsBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)
                     .strength(100.0F).noOcclusion().noCollision().noLootTable());
+    public static final DeferredBlock<DiseaseBlock> DISEASE = registerBlock("disease",
+            DiseaseBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).sound(SoundType.GRASS)
+                    .replaceable().noOcclusion().noCollision().strength(100.0F)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)
+                    .noLootTable()
+                    .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
     public static final DeferredBlock<BrewFluidBlock.Gas> BREW_GAS = registerBlock("brewgas",
             BrewFluidBlock.Gas::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.GRASS)

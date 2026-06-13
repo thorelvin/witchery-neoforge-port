@@ -39,6 +39,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.ScryingCameraPayload;
@@ -174,6 +175,9 @@ public class WitcheryClient {
                     return com.emoniph.witchery.blocks.BrewFluidBlock.DEFAULT_BREW_COLOR;
                 },
                 WitcheryBlocks.BREW_LIQUID.get());
+        event.register((state, level, pos, tintIndex) ->
+                tintIndex == 0 ? WitcheryMobEffects.DISEASED.value().getColor() : -1,
+                WitcheryBlocks.DISEASE.get());
         event.register((state, level, pos, tintIndex) ->
                 tintIndex == 0 ? (level != null && pos != null ? 0x208030 : 0x71C35C) : -1,
                 WitcheryBlocks.LEAPING_LILY.get());

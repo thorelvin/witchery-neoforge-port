@@ -2,6 +2,7 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.ChilledMobEffect;
+import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.ParalyzedMobEffect;
@@ -118,6 +119,8 @@ public final class BrewMobEffectEvents {
         MobEffectInstance effect = event.getEffectInstance();
         if (effect.is(WitcheryMobEffects.PARALYSED)) {
             ParalyzedMobEffect.syncSourceSpeedModifier(event.getEntity(), effect.getAmplifier());
+        } else if (effect.is(WitcheryMobEffects.DISEASED)) {
+            DiseasedMobEffect.syncSourceAttackDamageModifier(event.getEntity(), effect.getAmplifier());
         }
     }
 
@@ -125,6 +128,8 @@ public final class BrewMobEffectEvents {
     public static void onParalysedRemoved(MobEffectEvent.Remove event) {
         if (event.getEffect().is(WitcheryMobEffects.PARALYSED)) {
             ParalyzedMobEffect.removeSourceSpeedModifier(event.getEntity());
+        } else if (event.getEffect().is(WitcheryMobEffects.DISEASED)) {
+            DiseasedMobEffect.removeSourceAttackDamageModifier(event.getEntity());
         }
     }
 
@@ -139,6 +144,8 @@ public final class BrewMobEffectEvents {
                 entity.addEffect(new MobEffectInstance(WitcheryMobEffects.QUEASY,
                         ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS, 0, true, true));
             }
+        } else if (effect != null && effect.is(WitcheryMobEffects.DISEASED)) {
+            DiseasedMobEffect.removeSourceAttackDamageModifier(event.getEntity());
         }
     }
 
