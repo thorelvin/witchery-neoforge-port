@@ -3,6 +3,7 @@ package com.emoniph.witchery.init;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.ChilledMobEffect;
+import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
@@ -93,6 +94,9 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> GROTESQUE =
             MOB_EFFECTS.register("grotesque", () -> new GrotesqueMobEffect(0x669DC93D));
+
+    public static final DeferredHolder<MobEffect, MobEffect> DISEASED =
+            MOB_EFFECTS.register("diseased", () -> new DiseasedMobEffect(0xB9AD7D));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

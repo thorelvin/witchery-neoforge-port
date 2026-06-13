@@ -146,6 +146,20 @@ class BrewActionMathTest {
 
     // ── Moving brew fluid: gas-cloud lifetime + liquid decay + extent expansion ──
     @Test
+    void purifiedMilkDiseaseAndRitualDebuffCleanupUseSourceThresholds() {
+        assertFalse(Brews.sourcePurifiedMilkClearsDisease(1));
+        assertTrue(Brews.sourcePurifiedMilkClearsDisease(2));
+        assertFalse(Brews.sourcePurifiedMilkClearsDiseaseBlocks(2));
+        assertTrue(Brews.sourcePurifiedMilkClearsDiseaseBlocks(3));
+        assertEquals(9, Brews.SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_RADIUS);
+
+        assertEquals(0.01D, Brews.sourceRitualCureDebuffReapplyChance(0, 1), 1e-9);
+        assertEquals(0.25D, Brews.sourceRitualCureDebuffReapplyChance(1, 1), 1e-9);
+        assertEquals(0.75D, Brews.sourceRitualCureDebuffReapplyChance(2, 1), 1e-9);
+        assertEquals(3, Brews.sourceRitualCureDebuffAmplifierAfterBackfire(2));
+    }
+
+    @Test
     void fluidLifetimeDecayDenominatorAndGasDuration() {
         assertEquals(5, Brews.sourceBrewFluidDecayDenominator(0));
         assertEquals(10, Brews.sourceBrewFluidDecayDenominator(1));

@@ -1061,6 +1061,11 @@ class BrewLogicTest {
                 "positive effects are not debuffs");
         assertFalse(Brews.shouldRemoveDebuff(MobEffects.POISON, 0, false, 3),
                 "source Cure Debuffs does not remove incurable effects on the normal entity path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.DISEASED, 0, false, 1),
+                "source Diseased is the special Purified Milk branch, not a base-strength debuff cure");
+        assertTrue(Brews.shouldRemoveDebuff(WitcheryMobEffects.DISEASED, 5, false, 2),
+                "source Purified Milk II+ clears Diseased even though Diseased is incurable");
+        assertTrue(Brews.isSourceDiseaseEffect(WitcheryMobEffects.DISEASED));
     }
 
     @Test

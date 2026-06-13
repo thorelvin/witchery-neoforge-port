@@ -1,6 +1,7 @@
 package com.emoniph.witchery.brewing;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
@@ -20,6 +21,7 @@ import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -239,6 +241,11 @@ public final class Brews {
     private static final int SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR = 5;
     private static final double SOURCE_ADJACENT_BLOCK_PULSE_CHANCE = 0.01;
     private static final double SOURCE_ADJACENT_BLOCK_PULSE_RADIUS = 1.0;
+    public static final int SOURCE_PURIFIED_MILK_DISEASE_CURE_STRENGTH = DiseasedMobEffect.NORMAL_CURE_STRENGTH;
+    public static final int SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_STRENGTH =
+            DiseasedMobEffect.BLOCK_CLEANUP_STRENGTH;
+    public static final int SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_RADIUS =
+            DiseasedMobEffect.BLOCK_CLEANUP_RADIUS;
     private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
     private static final String PORT_SUMMONED_UNDEAD_OWNER_TAG = "witchery_enslaver_uuid";
     private static final String SOURCE_BREW_GAS_TAG = "WITCBrewGas";
@@ -882,7 +889,7 @@ public final class Brews {
         } else if (action.action() == Ingredient.BrewAction.REMOVE_BUFFS) {
             removeBuffs(target, action.strength());
         } else if (action.action() == Ingredient.BrewAction.REMOVE_DEBUFFS) {
-            removeDebuffs(target, action.strength());
+            removeDebuffs(level, target, action.strength(), source);
         } else if (action.action() == Ingredient.BrewAction.BANE_UNDEAD) {
             applyBaneDamage(level, target, source, isSourceUndead(target), action.strength(),
                     action.strengthCeilingDisabled(), powerFactor);
@@ -1461,7 +1468,7 @@ public final class Brews {
         }
     }
 
-    private static void removeDebuffs(LivingEntity target, int strength) {
+    private static void removeDebuffs(ServerLevel level, LivingEntity target, int strength, Entity source) {
         List<Holder<MobEffect>> effectsToRemove = new ArrayList<>();
         for (MobEffectInstance effect : target.getActiveEffects()) {
             if (shouldRemoveDebuff(effect, strength)) {
@@ -1470,6 +1477,9 @@ public final class Brews {
         }
         for (Holder<MobEffect> effect : effectsToRemove) {
             target.removeEffect(effect);
+        }
+        if (sourcePurifiedMilkClearsDiseaseBlocks(strength)) {
+            clearDiseaseBlocks(level, target.blockPosition(), source);
         }
     }
 
@@ -1559,9 +1569,35 @@ public final class Brews {
     }
 
     public static boolean shouldRemoveDebuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
+        if (isSourceDiseaseEffect(effect)) {
+            return sourcePurifiedMilkClearsDisease(strength);
+        }
         return amplifier <= strength
                 && effect.value().getCategory() == MobEffectCategory.HARMFUL
                 && curable;
+    }
+
+    public static boolean sourcePurifiedMilkClearsDisease(int strength) {
+        return strength >= SOURCE_PURIFIED_MILK_DISEASE_CURE_STRENGTH;
+    }
+
+    public static boolean sourcePurifiedMilkClearsDiseaseBlocks(int strength) {
+        return strength >= SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_STRENGTH;
+    }
+
+    public static double sourceRitualCureDebuffReapplyChance(int effectAmplifier, int modifiedStrength) {
+        if (effectAmplifier < modifiedStrength) {
+            return 0.01D;
+        }
+        return effectAmplifier == modifiedStrength ? 0.25D : 0.75D;
+    }
+
+    public static int sourceRitualCureDebuffAmplifierAfterBackfire(int effectAmplifier) {
+        return Math.max(0, effectAmplifier) + 1;
+    }
+
+    public static boolean sourceRitualCureDebuffsRemoves(MobEffectCategory category) {
+        return category == MobEffectCategory.HARMFUL;
     }
 
     public static double sourceStealBuffsRadius(int strength) {
@@ -1604,6 +1640,30 @@ public final class Brews {
 
     public static int sourcePotionLongevityBackfireDuration(boolean hungerRoll) {
         return hungerRoll ? SOURCE_POTION_LONGEVITY_HUNGER_TICKS : SOURCE_POTION_LONGEVITY_NAUSEA_TICKS;
+    }
+
+    public static boolean isSourceDiseaseEffect(Holder<MobEffect> effect) {
+        return effect.value() == WitcheryMobEffects.DISEASED.value();
+    }
+
+    public static boolean isSourceDiseaseBlock(BlockState state) {
+        Identifier id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        return "witchery".equals(id.getNamespace())
+                && ("disease".equals(id.getPath())
+                || "fluiddisease".equals(id.getPath())
+                || "disease_block".equals(id.getPath()));
+    }
+
+    private static void clearDiseaseBlocks(ServerLevel level, BlockPos center, Entity source) {
+        int radius = SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_RADIUS;
+        BlockPos.betweenClosed(center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius)).forEach(pos -> {
+            BlockPos immutable = pos.immutable();
+            if (isSourceDiseaseBlock(level.getBlockState(immutable))
+                    && sourceMayModify(level, immutable, source)) {
+                level.removeBlock(immutable, false);
+            }
+        });
     }
 
     private static boolean isCurableByModernApi(MobEffectInstance effect) {
