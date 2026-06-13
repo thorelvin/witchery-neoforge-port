@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The four lasting infusions begin in the kettle, not the circle.[#]()",
+      "text": "[#](53341a)The four lasting infusions begin in the kettle, not the circle. Each source uses **Redstone Soup** as a base and asks a nearby altar for **4000 power**, preparing the essence for one branch of permanent transformation.[#]()",
       "title": "Infusion Sources",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Each source uses **Redstone Soup** as a base and asks a nearby altar for **4000 power**, preparing the essence for one branch of permanent transformation.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

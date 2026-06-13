@@ -16,30 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some essences cannot be coaxed directly from raw materials.[#]()",
+      "text": "[#](53341a)Some essences cannot be coaxed directly from raw materials. They must be drawn out through heat and pressure — concentrated and refined until only the potent core remains.[#]()\n\n[#](53341a)The Distillery takes two inputs and fuel, and needs no altar.[#]()",
       "title": "The Distillery",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)They must be drawn out through heat and pressure — concentrated and refined until only the potent core remains.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The Distillery takes two inputs and fuel, and needs no altar.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

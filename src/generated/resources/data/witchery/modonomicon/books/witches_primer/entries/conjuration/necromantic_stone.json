@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A Necromantic Stone is the witch's first true token of authority over death-working.[#]()",
+      "text": "[#](53341a)A Necromantic Stone is the witch's first true token of authority over death-working. Many later rites ask for one, and an **Alluring Skull** answers only to it.[#]()",
       "title": "Necromantic Stone",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Many later rites ask for one, and an **Alluring Skull** answers only to it.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -51,19 +40,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Today the stone has two dependable roles: it is consumed or preserved by later rites such as Prior Incarnation, Manifestation, fetish binding, and Spectral[#]()",
+      "text": "[#](53341a)Today the stone has two dependable roles: it is consumed or preserved by later rites such as Prior Incarnation, Manifestation, fetish binding, and Spectral Stone work, and it can wake or silence an Alluring Skull.[#]()",
       "title": "Current Use",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Stone work, and it can wake or silence an Alluring Skull.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     }
   ],

@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A heated cauldron full of water is a patient thing. It takes whatever you give it, in the order you give it, and remembers.[#]()",
+      "text": "[#](53341a)A heated cauldron full of water is a patient thing. It takes whatever you give it, in the order you give it, and remembers.[#]()\n\n[#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time.[#]()",
       "title": "Brewing in the Cauldron",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time. When the brew suits you, dip an empty bottle and draw it off.[#]()",
+      "text": "[#](53341a)When the brew suits you, dip an empty bottle and draw it off.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some things you add are not the brew, but a hand laid upon it. **Glowstone** makes the next working stronger; **redstone** makes it last.[#]()",
+      "text": "[#](53341a)Some things you add are not the brew, but a hand laid upon it. **Glowstone** makes the next working stronger; **redstone** makes it last.[#]()\n\n[#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again.[#]()",
       "title": "A Hand Upon the Brew",
       "use_markdown_in_title": false
     },
@@ -49,7 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again. Lay these *before* the reagent they shape — the cauldron remembers only forward.[#]()",
+      "text": "[#](53341a)Lay these *before* the reagent they shape — the cauldron remembers only forward.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -60,7 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's tear for mending, and leather for leaping.[#]()",
+      "text": "[#](53341a)The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's tear for mending, and leather for leaping.[#]()\n\n[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby.[#]()",
       "title": "The Gift of the Reagent",
       "use_markdown_in_title": false
     },
@@ -71,18 +71,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby. **Dragon's breath** leaves a slow, drifting fog.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)With neither, the draught is yours alone.[#]()",
+      "text": "[#](53341a)**Dragon's breath** leaves a slow, drifting fog. With neither, the draught is yours alone.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

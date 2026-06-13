@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the world.[#]()",
+      "text": "[#](53341a)The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the world. It called a Spectral Familiar — a ghostly companion that seeks out shinies and strange things for its witch.[#]()",
       "title": "Spectral Familiar",
       "use_markdown_in_title": false
     },
@@ -26,31 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)It called a Spectral Familiar — a ghostly companion that seeks out shinies and strange things for its witch.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Feed it an Iron or Gold Ingot, Lapis, Redstone, Coal, an Emerald, or a Diamond.[#]()",
+      "text": "[#](53341a)Feed it an Iron or Gold Ingot, Lapis, Redstone, Coal, an Emerald, or a Diamond. The gift is spent, the familiar searches, and if it finds that ore below it will sit and call out the spot.[#]()",
       "title": "Searching for Ores",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The gift is spent, the familiar searches, and if it finds that ore below it will sit and call out the spot.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

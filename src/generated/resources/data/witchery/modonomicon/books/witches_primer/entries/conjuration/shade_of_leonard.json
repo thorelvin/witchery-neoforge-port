@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Leonard is an old, dark name — the black goat of the sabbath, the lord at the crossroads of infernal commerce.[#]()",
+      "text": "[#](53341a)Leonard is an old, dark name — the black goat of the sabbath, the lord at the crossroads of infernal commerce. His Shade does not wander freely; he must be forced into the world through the Witch's Cauldron.[#]()",
       "title": "Shade of Leonard",
       "use_markdown_in_title": false
     },
@@ -26,19 +26,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)His Shade does not wander freely; he must be forced into the world through the Witch's Cauldron.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Heat and fill the Witch's Cauldron, drop in **Refined Evil**, **Mandrake Root**, a **Tear of the Goddess**, and **Nether Wart**, then hold a **Witches'[#]()",
+      "text": "[#](53341a)Heat and fill the Witch's Cauldron, drop in **Refined Evil**, **Mandrake Root**, a **Tear of the Goddess**, and **Nether Wart**, then hold a **Witches' Hat** and right-click it. The altar must hold at least 10,000 power.[#]()",
       "title": "Summoning",
       "use_markdown_in_title": false
     },
@@ -48,19 +37,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Hat** and right-click it. The altar must hold at least 10,000 power.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Leonard is neutral until struck. Provoked, he retaliates and brands his attacker with a withering curse.[#]()",
+      "text": "[#](53341a)Leonard is neutral until struck. Provoked, he retaliates and brands his attacker with a withering curse.[#]()\n\n[#](53341a)At half strength he calls **Lost Souls**.[#]()",
       "title": "Behaviour",
       "use_markdown_in_title": false
     },
@@ -71,29 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)At half strength he calls **Lost Souls**.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Green souls take harm from anything; red resist all but fire and explosions; black resist all but magic and potions.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)While any remain, Leonard cannot be harmed.[#]()",
+      "text": "[#](53341a)Green souls take harm from anything; red resist all but fire and explosions; black resist all but magic and potions. While any remain, Leonard cannot be harmed.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -104,19 +60,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing.[#]()",
+      "text": "[#](53341a)A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its precise uses await further investigation — but the standing it confers among creatures of the night is real.[#]()",
       "title": "Reward",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Its precise uses await further investigation — but the standing it confers among creatures of the night is real.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     }
   ],

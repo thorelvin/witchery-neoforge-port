@@ -1,6 +1,7 @@
 package com.emoniph.witchery.book;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
@@ -19,8 +20,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 class PlacedModonomiconGeneratedBookTest {
-    private static final Path PRIMER_RELATIVE_PATH = Path.of(
-            "src", "generated", "resources", "data", "witchery", "modonomicon", "books", "witches_primer");
+    private static final Path BOOKS_RELATIVE_PATH = Path.of(
+            "src", "generated", "resources", "data", "witchery", "modonomicon", "books");
+    private static final List<String> PLACEABLE_BOOKS = List.of("witches_primer", "cauldron_book");
     private static final int PLACED_PAGE_WIDTH = 124;
     private static final int PLACED_PAGE_HEIGHT = 155;
     private static final int STATION_PANEL_TOP = 24;
@@ -40,6 +42,19 @@ class PlacedModonomiconGeneratedBookTest {
             "modonomicon:spotlight",
             "modonomicon:text",
             "witchery:station_recipe");
+    private static final List<GuideTarget> PLACEABLE_GUIDE_TARGETS = List.of(
+            new GuideTarget("witches_primer", "herbology", "herbology/rowan_tree"),
+            new GuideTarget("witches_primer", "brews_infusions", "brews_infusions/kettle"),
+            new GuideTarget("witches_primer", "collecting_fumes", "collecting_fumes/witches_oven"),
+            new GuideTarget("witches_primer", "distilling", "distilling/distillery"),
+            new GuideTarget("witches_primer", "circle_magic", "circle_magic/chalk"),
+            new GuideTarget("witches_primer", "conjuration", "conjuration/brazier"),
+            new GuideTarget("witches_primer", "symbology", "symbology/mystic_branch"),
+            new GuideTarget("witches_primer", "poppets", "poppets/taglock_kit"),
+            new GuideTarget("witches_primer", "spirit_world", "spirit_world/spirit_world"),
+            new GuideTarget("witches_primer", "creatures", "creatures/familiars"),
+            new GuideTarget("witches_primer", "transformations", "transformations/vampirism"),
+            new GuideTarget("cauldron_book", "brewing", "brewing/the_cauldron"));
 
     @Test
     void witchesPrimerHasMultipleEntriesForPlacedBookBrowsing() throws IOException {
@@ -52,26 +67,49 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     @Test
-    void placedRendererCoversEveryGeneratedPrimerPageType() throws IOException {
+    void placedRendererCoversEveryGeneratedPlaceableBookPageType() throws IOException {
         Set<String> pageTypes = new HashSet<>();
-        try (Stream<Path> entries = entryFiles()) {
-            for (Path entry : entries.toList()) {
-                JsonArray pages = readJson(entry).getAsJsonArray("pages");
-                if (pages == null) {
-                    continue;
-                }
-                for (var pageElement : pages) {
-                    JsonObject page = pageElement.getAsJsonObject();
-                    if (page.has("type")) {
-                        pageTypes.add(page.get("type").getAsString());
+        for (String book : PLACEABLE_BOOKS) {
+            try (Stream<Path> entries = entryFiles(book)) {
+                for (Path entry : entries.toList()) {
+                    JsonArray pages = readJson(entry).getAsJsonArray("pages");
+                    if (pages == null) {
+                        continue;
+                    }
+                    for (var pageElement : pages) {
+                        JsonObject page = pageElement.getAsJsonObject();
+                        if (page.has("type")) {
+                            pageTypes.add(page.get("type").getAsString());
+                        }
                     }
                 }
             }
         }
 
-        assertFalse(pageTypes.isEmpty(), "Primer entries should have renderable pages");
+        assertFalse(pageTypes.isEmpty(), "placeable Modonomicon books should have renderable pages");
         assertTrue(PLACED_PAGE_TYPES.containsAll(pageTypes),
-                () -> "unsupported placed Primer page types: " + difference(pageTypes, PLACED_PAGE_TYPES));
+                () -> "unsupported placed Modonomicon page types: " + difference(pageTypes, PLACED_PAGE_TYPES));
+    }
+
+    @Test
+    void placeableGuideTargetsExistInGeneratedBooks() throws IOException {
+        for (GuideTarget target : PLACEABLE_GUIDE_TARGETS) {
+            Path bookRoot = bookRoot(target.book());
+            Path categoryFile = bookRoot.resolve("categories").resolve(target.category() + ".json");
+            Path entryFile = bookRoot.resolve("entries").resolve(target.entry() + ".json");
+
+            assertTrue(Files.isRegularFile(categoryFile),
+                    () -> "placeable guide category missing: " + target.book() + "/" + target.category());
+            assertTrue(Files.isRegularFile(entryFile),
+                    () -> "placeable guide entry missing: " + target.book() + "/" + target.entry());
+
+            JsonObject entry = readJson(entryFile);
+            JsonArray pages = entry.getAsJsonArray("pages");
+            assertEquals(target.category(), entry.get("category").getAsString(),
+                    () -> "placeable guide entry category mismatch: " + target.book() + "/" + target.entry());
+            assertTrue(pages != null && !pages.isEmpty(),
+                    () -> "placeable guide entry has no pages: " + target.book() + "/" + target.entry());
+        }
     }
 
     @Test
@@ -101,6 +139,42 @@ class PlacedModonomiconGeneratedBookTest {
         assertTrue(bolineFirstPage % 2 == 0, "Boline entry should restart on a left page");
         assertTrue(bolineFirstPage - altarLastPage == 2,
                 "a blank right page should separate Altar's final page from Boline's first page");
+    }
+
+    @Test
+    void generatedFirstStepsIntroUsesAvailablePageSpace() throws IOException {
+        JsonArray pages = readJson(primerRoot()
+                .resolve("entries")
+                .resolve("getting_started")
+                .resolve("first_steps.json"))
+                .getAsJsonArray("pages");
+
+        assertEquals(1, pages.size(), "short First Steps intro should fit on one prose page");
+        assertTrue(pages.get(0).getAsJsonObject().get("text").getAsString().contains("The craft grows"),
+                "First Steps second paragraph should share the opening page");
+    }
+
+    @Test
+    void generatedTextPagesDoNotSplitBoldMarkdownAcrossPlacedPages() throws IOException {
+        try (Stream<Path> entries = entryFiles()) {
+            for (Path entry : entries.toList()) {
+                JsonArray pages = readJson(entry).getAsJsonArray("pages");
+                if (pages == null) {
+                    continue;
+                }
+                for (int pageIndex = 0; pageIndex < pages.size(); pageIndex++) {
+                    JsonObject page = pages.get(pageIndex).getAsJsonObject();
+                    if (!"modonomicon:text".equals(page.get("type").getAsString()) || !hasNonEmptyString(page, "text")) {
+                        continue;
+                    }
+
+                    String text = page.get("text").getAsString();
+                    int checkedPageIndex = pageIndex;
+                    assertEquals(0, countOccurrences(text, "**") % 2,
+                            () -> entry + " page " + checkedPageIndex + " splits bold markdown: " + text);
+                }
+            }
+        }
     }
 
     @Test
@@ -155,8 +229,12 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     private static Stream<Path> entryFiles() throws IOException {
-        Path entriesRoot = primerRoot().resolve("entries");
-        assertTrue(Files.isDirectory(entriesRoot), "generated Witches' Primer entries must exist");
+        return entryFiles("witches_primer");
+    }
+
+    private static Stream<Path> entryFiles(String book) throws IOException {
+        Path entriesRoot = bookRoot(book).resolve("entries");
+        assertTrue(Files.isDirectory(entriesRoot), () -> "generated " + book + " entries must exist");
         return Files.walk(entriesRoot)
                 .filter(path -> path.getFileName().toString().endsWith(".json"));
     }
@@ -182,15 +260,19 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     private static Path primerRoot() {
+        return bookRoot("witches_primer");
+    }
+
+    private static Path bookRoot(String book) {
         Path current = Path.of("").toAbsolutePath();
         while (current != null) {
-            Path candidate = current.resolve(PRIMER_RELATIVE_PATH);
+            Path candidate = current.resolve(BOOKS_RELATIVE_PATH).resolve(book);
             if (Files.isDirectory(candidate.resolve("entries"))) {
                 return candidate;
             }
             current = current.getParent();
         }
-        return PRIMER_RELATIVE_PATH;
+        return BOOKS_RELATIVE_PATH.resolve(book);
     }
 
     private static JsonObject readJson(Path path) throws IOException {
@@ -286,6 +368,18 @@ class PlacedModonomiconGeneratedBookTest {
         difference.removeAll(allowed);
         return difference;
     }
+
+    private static int countOccurrences(String text, String needle) {
+        int count = 0;
+        int index = 0;
+        while ((index = text.indexOf(needle, index)) >= 0) {
+            count++;
+            index += needle.length();
+        }
+        return count;
+    }
+
+    private record GuideTarget(String book, String category, String entry) {}
 
     private record EntrySummary(String path, int sortNumber, int pageCount) {}
 }

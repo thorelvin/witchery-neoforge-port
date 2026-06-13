@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The circle-working of buried fire made manifest.[#]()",
+      "text": "[#](53341a)The circle-working of buried fire made manifest. Where the land below hides a real lava pool, this rite drags that violence upward and forces the ground into a fresh volcano. Less control than a bargain with pressure and ruin.[#]()",
       "title": "Rite of Earth's Wrath",
       "use_markdown_in_title": false
     },
@@ -26,30 +26,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Where the land below hides a real lava pool, this rite drags that violence upward and forces the ground into a fresh volcano.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Less control than a bargain with pressure and ruin.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)A large staged terrain rite through a **Lava Bucket** trigger; the ground below must hold a sizable lava pool or it fails.[#]()",
+      "text": "[#](53341a)A large staged terrain rite through a **Lava Bucket** trigger; the ground below must hold a sizable lava pool or it fails. A nearby **Bound Waystone** can retarget the eruption.[#]()\n\n[#](53341a)The cone rises in pulses and opens its vent at the end.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -60,18 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A nearby **Bound Waystone** can retarget the eruption.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The cone rises in pulses and opens its vent at the end. Use it to scar the land or make a place no traveler mistakes for safe.[#]()",
+      "text": "[#](53341a)Use it to scar the land or make a place no traveler mistakes for safe.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

@@ -1,56 +1,57 @@
 package com.emoniph.witchery.blocks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 class PlacedModonomiconBlockTest {
-    private static final Vec3 PAGE_CENTER = new Vec3(0.0D, 0.55D, 0.0D);
-    private static final Vec3 FORWARD = new Vec3(0.0D, 0.0D, 1.0D);
-    private static final Vec3 EYE = new Vec3(0.0D, 1.6D, 3.0D);
-
     @Test
     void pageControlHitsBottomRightNextZone() {
-        assertEquals(1, directionToward(0.3D, 0.35D, 0.0D));
+        assertEquals(1, PlacedModonomiconBlock.pageControlDirection(
+                new PlacedModonomiconBlock.PageHit(false, 101.0D, 141.0D, 1.0D)));
     }
 
     @Test
     void pageControlHitsBottomLeftBackZone() {
-        assertEquals(-1, directionToward(-0.3D, 0.35D, 0.0D));
+        assertEquals(-1, PlacedModonomiconBlock.pageControlDirection(
+                new PlacedModonomiconBlock.PageHit(true, 16.0D, 141.0D, 1.0D)));
     }
 
     @Test
     void pageControlIgnoresPageBodyAndOuterMisses() {
-        assertEquals(0, directionToward(0.0D, 0.35D, 0.0D), "center fold is not a page control");
-        assertEquals(0, directionToward(0.3D, 0.55D, 0.0D), "upper page content is not a page control");
-        assertEquals(0, directionToward(0.6D, 0.35D, 0.0D), "outside the page is not a page control");
-    }
-
-    @Test
-    void pageControlIgnoresParallelLookRay() {
-        assertEquals(0, PlacedModonomiconBlock.pageControlDirection(FORWARD, PAGE_CENTER, EYE, new Vec3(1.0D, 0.0D, 0.0D)));
-    }
-
-    @Test
-    void pageControlsAreRelativeToReaderDirection() {
-        Vec3 forwardEast = new Vec3(1.0D, 0.0D, 0.0D);
-        Vec3 eyeEast = new Vec3(3.0D, 1.6D, 0.0D);
-
-        assertEquals(1, PlacedModonomiconBlock.pageControlDirection(
-                forwardEast, PAGE_CENTER, eyeEast, new Vec3(0.0D, 0.35D, -0.3D).subtract(eyeEast)));
-        assertEquals(-1, PlacedModonomiconBlock.pageControlDirection(
-                forwardEast, PAGE_CENTER, eyeEast, new Vec3(0.0D, 0.35D, 0.3D).subtract(eyeEast)));
-    }
-
-    @Test
-    void pageControlIgnoresLookRaysBehindThePlayer() {
+        assertEquals(0, PlacedModonomiconBlock.pageControlDirection(null), "misses are not page controls");
         assertEquals(0, PlacedModonomiconBlock.pageControlDirection(
-                FORWARD, PAGE_CENTER, EYE, new Vec3(0.0D, 0.0D, 1.0D)));
+                new PlacedModonomiconBlock.PageHit(false, 60.0D, 141.0D, 1.0D)), "bottom page body is not a page control");
+        assertEquals(0, PlacedModonomiconBlock.pageControlDirection(
+                new PlacedModonomiconBlock.PageHit(false, 101.0D, 20.0D, 1.0D)), "upper page content is not a page control");
+        assertEquals(0, PlacedModonomiconBlock.pageControlDirection(
+                new PlacedModonomiconBlock.PageHit(true, 101.0D, 141.0D, 1.0D)), "next control only lives on the right page");
     }
 
-    private static int directionToward(double x, double y, double z) {
-        Vec3 target = new Vec3(x, y, z);
-        return PlacedModonomiconBlock.pageControlDirection(FORWARD, PAGE_CENTER, EYE, target.subtract(EYE));
+    @Test
+    void centerBottomHitsEntriesButtonZone() {
+        assertTrue(PlacedModonomiconBlock.hitsIndexButton(new PlacedModonomiconBlock.PageHit(true, 114.0D, 142.0D, 1.0D)));
+        assertTrue(PlacedModonomiconBlock.hitsIndexButton(new PlacedModonomiconBlock.PageHit(false, 10.0D, 142.0D, 1.0D)));
+        assertFalse(PlacedModonomiconBlock.hitsIndexButton(new PlacedModonomiconBlock.PageHit(false, 60.0D, 142.0D, 1.0D)));
+        assertFalse(PlacedModonomiconBlock.hitsIndexButton(new PlacedModonomiconBlock.PageHit(false, 10.0D, 80.0D, 1.0D)));
+    }
+
+    @Test
+    void pageVerticalHitConvertsToBookPixels() {
+        assertEquals(0, PlacedModonomiconBlock.pagePixelY(0.0D));
+        assertEquals(78, PlacedModonomiconBlock.pagePixelY(78.0D));
+        assertEquals(155, PlacedModonomiconBlock.pagePixelY(155.0D));
+    }
+
+    @Test
+    void pageHorizontalHitConvertsToBookPixels() {
+        assertEquals(0, PlacedModonomiconBlock.pagePixelX(
+                new PlacedModonomiconBlock.PageHit(true, 0.0D, 0.0D, 1.0D)));
+        assertEquals(62, PlacedModonomiconBlock.pagePixelX(
+                new PlacedModonomiconBlock.PageHit(false, 62.0D, 0.0D, 1.0D)));
+        assertEquals(124, PlacedModonomiconBlock.pagePixelX(
+                new PlacedModonomiconBlock.PageHit(false, 124.0D, 0.0D, 1.0D)));
     }
 }

@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some witches redraw whole circles by hand; richer or lazier ones persuade the circle to rewrite itself.[#]()",
+      "text": "[#](53341a)Some witches redraw whole circles by hand; richer or lazier ones persuade the circle to rewrite itself. This changes an existing ring from one chalk family to another — it retunes marks already there.[#]()",
       "title": "Rite of Glyphic Transformation",
       "use_markdown_in_title": false
     },
@@ -26,31 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)This changes an existing ring from one chalk family to another — it retunes marks already there.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer the chalk family you want — **Chalk**, **Otherwhere Chalk**, or **Infernal Chalk** — plus **Gypsum**, an **Arthana**, and **1000 altar power**.[#]()",
+      "text": "[#](53341a)Offer the chalk family you want — **Chalk**, **Otherwhere Chalk**, or **Infernal Chalk** — plus **Gypsum**, an **Arthana**, and **1000 altar power**. The Arthana returns.[#]()",
       "title": "The Working",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The Arthana returns.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

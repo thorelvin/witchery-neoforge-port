@@ -15,12 +15,19 @@ import com.klikli_dev.modonomicon.book.page.BookTextPage;
 import com.klikli_dev.modonomicon.client.gui.book.entry.BookEntryScreen;
 import com.klikli_dev.modonomicon.client.gui.book.markdown.MarkdownComponentRenderUtils;
 import com.klikli_dev.modonomicon.data.BookDataManager;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.Model;
@@ -37,9 +44,11 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.data.AtlasIds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -47,6 +56,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
@@ -59,6 +69,7 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,16 +97,27 @@ public final class PlacedModonomiconPages {
     private static final float PAGE_PIXEL_SCALE = PAGE_MODEL_WIDTH / 16.0F / PAGE_WIDTH;
     private static final float PAGE_CONTENT_LIFT_PIXELS = 0.5F;
     private static final float PAGE_TEXT_Z_PIXELS = 1.0F;
-    private static final float PAGE_ICON_Z_PIXELS = 1.8F;
+    private static final float PAGE_ICON_Z_PIXELS = 1.2F;
     private static final float BODY_TEXT_SCALE = 0.56F;
+    private static final float STATION_TEXT_SCALE = 0.52F;
+    private static final float INDEX_TEXT_SCALE = STATION_TEXT_SCALE;
     private static final float TITLE_TEXT_SCALE = 0.72F;
     private static final float FOOTER_TEXT_SCALE = 0.48F;
     private static final float ITEM_COUNT_TEXT_SCALE = 0.48F;
     private static final float NATIVE_TEXT_SCALE_FACTOR = 1.0F;
+    private static final float FLAT_ITEM_DEPTH_SCALE = 0.01F;
+    private static final Map<Identifier, Boolean> ITEM_DEPTH_FLATTEN_CACHE = new ConcurrentHashMap<>();
     private static final int BODY_LINE_PADDING = 1;
+    private static final int PAGE_TEXT_BOTTOM = PAGE_HEIGHT - 22;
+    private static final int STATION_PANEL_TOP = 18;
+    private static final int STATION_PANEL_TOP_NO_TITLE = 7;
+    private static final int STATION_TEXT_GAP = 3;
+    private static final int STATION_ITEM_SIZE = 16;
     private static final float LEFT_PAGE_CONTENT_INSET_PIXELS = 6.0F;
     private static final float PAGE_TOP_X = 0.26F / 16.0F;
     private static final float PAGE_TOP_Y = -3.72F / 16.0F;
+    private static final Identifier GUI_ATLAS =
+            Identifier.withDefaultNamespace("textures/atlas/gui.png");
     private static final Identifier FURNACE_FLAME =
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
     // The page cubes are one pixel thick. The readable paper faces are the inner faces near z=0.
@@ -131,7 +153,7 @@ public final class PlacedModonomiconPages {
 
         ensureBooksBuilt(mc);
         List<PlacedModonomiconBookResolver.PlacedPage> pages =
-                PlacedModonomiconBookResolver.resolvePages(bookStack, mc.level);
+                PlacedModonomiconBookResolver.resolvePages(bookStack, mc.level, mc.player);
         if (pages.isEmpty()) {
             return null;
         }
@@ -174,7 +196,9 @@ public final class PlacedModonomiconPages {
             applyPagePixelPose(ps);
 
             BookPage page = placedPage.page();
-            if (page instanceof BookTextPage textPage) {
+            if (placedPage.indexPage() != null) {
+                submitIndexPage(placedPage.indexPage(), ps, collector, lightCoords);
+            } else if (page instanceof BookTextPage textPage) {
                 submitTextPage(textPage, ps, collector, lightCoords);
             } else if (page instanceof BookSpotlightPage spotlightPage) {
                 submitSpotlightPage(spotlightPage, ps, collector, lightCoords);
@@ -191,6 +215,7 @@ public final class PlacedModonomiconPages {
                 submitNavigationArrow(side == PageSide.RIGHT, ps, collector, lightCoords);
             }
             if (!placedPage.isBlank()) {
+                submitIndexButton(side, ps, collector, lightCoords);
                 submitPageNumber(side, pageNumber, pageCount, ps, collector, lightCoords);
             }
         } finally {
@@ -216,6 +241,31 @@ public final class PlacedModonomiconPages {
             ps.translate(-PAGE_MODEL_WIDTH / 16.0F + LEFT_PAGE_CONTENT_INSET_PIXELS * PAGE_PIXEL_SCALE, 0.0F, 0.0F);
         }
         ps.translate(0.0F, 0.0F, PAGE_CONTENT_LIFT_PIXELS * PAGE_PIXEL_SCALE);
+    }
+
+    private static void submitIndexPage(PlacedModonomiconBookResolver.PlacedIndexPage page, PoseStack ps,
+                                        SubmitNodeCollector collector, int lightCoords) {
+        submitCentered(Component.literal("Entries"), 0, PAGE_WIDTH, TITLE_TEXT_SCALE, ps, collector, lightCoords, PAGE_INK);
+        submitRect(ps, collector, lightCoords, 18, 12, PAGE_WIDTH - 18, 13, PAGE_INK_SOFT);
+
+        int y = PlacedModonomiconBookResolver.INDEX_START_Y_PIXELS;
+        int entryIndent = 6;
+        int lineHeight = PlacedModonomiconBookResolver.INDEX_LINE_HEIGHT_PIXELS;
+        for (PlacedModonomiconBookResolver.IndexLine line : page.lines()) {
+            String text = localized(line.text());
+            if (line.category()) {
+                y += y == PlacedModonomiconBookResolver.INDEX_START_Y_PIXELS
+                        ? 0
+                        : PlacedModonomiconBookResolver.INDEX_CATEGORY_GAP_PIXELS;
+                submitTextLine(ps, collector, PAGE_TEXT_MARGIN_X, y, text, INDEX_TEXT_SCALE, PAGE_INK_SOFT);
+            } else {
+                submitTextLine(ps, collector, PAGE_TEXT_MARGIN_X + entryIndent, y, text, INDEX_TEXT_SCALE, PAGE_INK);
+            }
+            y += lineHeight;
+            if (y > PAGE_HEIGHT - 18) {
+                return;
+            }
+        }
     }
 
     private static void submitTextPage(BookTextPage page, PoseStack ps, SubmitNodeCollector collector, int lightCoords) {
@@ -402,7 +452,7 @@ public final class PlacedModonomiconPages {
         int drawnW = Math.round(bgWidth * scale);
         int drawnH = Math.round(bgHeight * scale);
         int bgX = (PAGE_WIDTH - drawnW) / 2;
-        int panelTop = page.hasTitle() ? 24 : 7;
+        int panelTop = page.hasTitle() ? STATION_PANEL_TOP : STATION_PANEL_TOP_NO_TITLE;
 
         if (page.hasOvenCues()) {
             submitOvenCues(ps, collector, lightCoords, bgX, panelTop, scale);
@@ -418,9 +468,29 @@ public final class PlacedModonomiconPages {
             submitItem(slot.stack(), itemX, itemY, seed++, ps, collector, lightCoords);
         }
 
-        int textY = panelTop + drawnH + 6;
-        int textHeight = PAGE_HEIGHT - textY - 2;
-        submitSafePageTextHolder(page.getText(), textY, textHeight, ps, collector, lightCoords);
+        int textY = panelTop + stationVisibleContentBottom(page, scale, drawnH) + STATION_TEXT_GAP;
+        int textHeight = PAGE_TEXT_BOTTOM - textY;
+        submitSafePageTextHolder(page.getText(), textY, textHeight, ps, collector, lightCoords, STATION_TEXT_SCALE);
+    }
+
+    private static int stationVisibleContentBottom(StationRecipePage page, float scale, int drawnH) {
+        if (page.shouldShowBackground()) {
+            return drawnH;
+        }
+
+        int bottom = 0;
+        for (StationRecipePage.Slot slot : page.getSlots()) {
+            bottom = Math.max(bottom, Math.round((slot.y() + STATION_ITEM_SIZE) * scale));
+        }
+        if (page.hasOvenCues()) {
+            bottom = Math.max(bottom, Math.round((31 + 14) * scale));
+            bottom = Math.max(bottom, Math.round((21 + 6) * scale));
+        }
+        if (page.hasDistilleryCues()) {
+            bottom = Math.max(bottom, Math.round((45 + 5) * scale));
+            bottom = Math.max(bottom, Math.round((27 + 6) * scale));
+        }
+        return bottom == 0 ? drawnH : bottom;
     }
 
     private static void submitFallbackPage(BookPage page, BookContentEntry entry, PoseStack ps,
@@ -441,11 +511,12 @@ public final class PlacedModonomiconPages {
         if (components.isEmpty()) {
             return;
         }
-        for (String line : wrapText(components.get(0).getString(), PAGE_WIDTH, TITLE_TEXT_SCALE)) {
+        int safeWidth = PAGE_WIDTH - PAGE_TEXT_MARGIN_X * 2;
+        for (String line : wrapText(components.get(0).getString(), safeWidth, TITLE_TEXT_SCALE)) {
             if (line.isBlank()) {
                 continue;
             }
-            int x = Math.round((PAGE_WIDTH - textWidth(line, TITLE_TEXT_SCALE)) / 2.0F);
+            int x = PAGE_TEXT_MARGIN_X + Math.round((safeWidth - textWidth(line, TITLE_TEXT_SCALE)) / 2.0F);
             submitTextLine(ps, collector, x, y, line, TITLE_TEXT_SCALE, PAGE_INK);
             return;
         }
@@ -453,34 +524,57 @@ public final class PlacedModonomiconPages {
 
     private static void submitCentered(Component text, int y, int width, PoseStack ps,
                                        SubmitNodeCollector collector, int lightCoords, int color) {
-        for (String line : wrapText(text.getString(), width, BODY_TEXT_SCALE)) {
-            int x = Math.round((width - textWidth(line, BODY_TEXT_SCALE)) / 2.0F);
-            submitTextLine(ps, collector, x, y, line, BODY_TEXT_SCALE, color);
+        submitCentered(text, y, width, BODY_TEXT_SCALE, ps, collector, lightCoords, color);
+    }
+
+    private static void submitCentered(Component text, int y, int width, float scale, PoseStack ps,
+                                       SubmitNodeCollector collector, int lightCoords, int color) {
+        int safeWidth = Math.max(1, width - PAGE_TEXT_MARGIN_X * 2);
+        for (String line : wrapText(text.getString(), safeWidth, scale)) {
+            int x = PAGE_TEXT_MARGIN_X + Math.round((safeWidth - textWidth(line, scale)) / 2.0F);
+            submitTextLine(ps, collector, x, y, line, scale, color);
             return;
         }
     }
 
     private static void submitTextHolder(BookTextHolder holder, int x, int y, int width, int height,
                                          PoseStack ps, SubmitNodeCollector collector, int lightCoords) {
+        submitTextHolder(holder, x, y, width, height, ps, collector, lightCoords, BODY_TEXT_SCALE);
+    }
+
+    private static void submitTextHolder(BookTextHolder holder, int x, int y, int width, int height,
+                                         PoseStack ps, SubmitNodeCollector collector, int lightCoords,
+                                         float textScale) {
         if (holder.isEmpty()) {
             return;
         }
 
+        int safeX = Math.max(PAGE_TEXT_MARGIN_X, x);
+        int safeRight = PAGE_WIDTH - PAGE_TEXT_MARGIN_X;
+        width = Math.min(width - (safeX - x), safeRight - safeX);
+        x = safeX;
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
         int lineY = y;
-        int maxY = y + height;
-        int lineHeight = lineHeight(BODY_TEXT_SCALE);
+        int maxY = Math.min(y + height, PAGE_TEXT_BOTTOM);
+        int lineHeight = lineHeight(textScale);
+        if (lineY + lineHeight > maxY) {
+            return;
+        }
 
         if (holder instanceof RenderedBookTextHolder rendered) {
             Font font = Minecraft.getInstance().font;
-            int firstLineWrapWidth = Math.max(1, Mth.floor(width / BODY_TEXT_SCALE));
-            int followingLineWrapWidth = Math.max(1, Mth.floor((width - 10) / BODY_TEXT_SCALE));
+            int firstLineWrapWidth = Math.max(1, Mth.floor(width / textScale));
+            int followingLineWrapWidth = Math.max(1, Mth.floor((width - 10) / textScale));
             for (MutableComponent component : rendered.getRenderedText()) {
                 for (FormattedCharSequence line : MarkdownComponentRenderUtils.wrapComponents(
                         component, firstLineWrapWidth, followingLineWrapWidth, font)) {
                     if (lineY + lineHeight > maxY) {
                         return;
                     }
-                    submitTextLine(ps, collector, x, lineY, line, BODY_TEXT_SCALE, PAGE_INK);
+                    submitTextLine(ps, collector, x, lineY, line, textScale, PAGE_INK);
                     lineY += lineHeight;
                 }
             }
@@ -490,21 +584,21 @@ public final class PlacedModonomiconPages {
         if (holder.hasComponent()) {
             Font font = Minecraft.getInstance().font;
             for (FormattedCharSequence line : font.split(holder.getComponent(),
-                    Math.max(1, Mth.floor(width / BODY_TEXT_SCALE)))) {
+                    Math.max(1, Mth.floor(width / textScale)))) {
                 if (lineY + lineHeight > maxY) {
                     return;
                 }
-                submitTextLine(ps, collector, x, lineY, line, BODY_TEXT_SCALE, PAGE_INK);
+                submitTextLine(ps, collector, x, lineY, line, textScale, PAGE_INK);
                 lineY += lineHeight;
             }
             return;
         }
 
-        for (String line : wrapText(holder.getString(), width, BODY_TEXT_SCALE)) {
+        for (String line : wrapText(holder.getString(), width, textScale)) {
             if (lineY + lineHeight > maxY) {
                 return;
             }
-            submitTextLine(ps, collector, x, lineY, line, BODY_TEXT_SCALE, PAGE_INK);
+            submitTextLine(ps, collector, x, lineY, line, textScale, PAGE_INK);
             lineY += lineHeight;
         }
     }
@@ -515,12 +609,19 @@ public final class PlacedModonomiconPages {
                 ps, collector, lightCoords);
     }
 
+    private static void submitSafePageTextHolder(BookTextHolder holder, int y, int height, PoseStack ps,
+                                                 SubmitNodeCollector collector, int lightCoords, float textScale) {
+        submitTextHolder(holder, PAGE_TEXT_MARGIN_X, y, PAGE_WIDTH - PAGE_TEXT_MARGIN_X * 2, height,
+                ps, collector, lightCoords, textScale);
+    }
+
     private static void submitText(Component text, int x, int y, int width, int height, PoseStack ps,
                                    SubmitNodeCollector collector, int lightCoords) {
         int lineY = y;
+        int maxY = Math.min(y + height, PAGE_TEXT_BOTTOM);
         int lineHeight = lineHeight(BODY_TEXT_SCALE);
         for (String line : wrapText(text.getString(), width, BODY_TEXT_SCALE)) {
-            if (lineY + lineHeight > y + height) {
+            if (lineY + lineHeight > maxY) {
                 return;
             }
             submitTextLine(ps, collector, x, lineY, line, BODY_TEXT_SCALE, PAGE_INK);
@@ -641,6 +742,13 @@ public final class PlacedModonomiconPages {
         return Minecraft.getInstance().font.width(cleanPlainText(text)) * scale;
     }
 
+    private static String localized(String text) {
+        if (text.indexOf('.') >= 0 && text.indexOf(' ') < 0) {
+            return Component.translatable(text).getString();
+        }
+        return text;
+    }
+
     private static void submitItem(ItemStack stack, int x, int y, int seed, PoseStack ps,
                                    SubmitNodeCollector collector, int lightCoords) {
         submitItem(stack, x, y, seed, ps, collector, lightCoords, 16.0F);
@@ -668,12 +776,118 @@ public final class PlacedModonomiconPages {
         try {
             ps.translate(x + size / 2.0F, y + size / 2.0F, PAGE_ICON_Z_PIXELS);
             ps.scale(size, -size, size);
-            itemState.submit(ps, new PageItemCollector(collector, PAGE_ICON_ORDER), PAGE_LIGHT,
-                    OverlayTexture.NO_OVERLAY, 0);
+            Matrix4f pageIconPose = new Matrix4f(ps.last().pose());
+            itemState.submit(ps, new PageItemCollector(collector, PAGE_ICON_ORDER,
+                    shouldFlattenItemDepth(mc, stack), pageIconPose), PAGE_LIGHT, OverlayTexture.NO_OVERLAY, 0);
         } finally {
             ps.popPose();
         }
         submitItemDecorations(stack, x, y, size, ps, collector);
+    }
+
+    private static boolean shouldFlattenItemDepth(Minecraft mc, ItemStack stack) {
+        if (!(stack.getItem() instanceof BlockItem)) {
+            return false;
+        }
+
+        Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return ITEM_DEPTH_FLATTEN_CACHE.computeIfAbsent(itemId,
+                id -> shouldFlattenBlockItemDepth(mc, id));
+    }
+
+    private static boolean shouldFlattenBlockItemDepth(Minecraft mc, Identifier itemId) {
+        if (itemDefinitionUsesSpriteArt(mc, itemId)) {
+            return false;
+        }
+
+        Identifier legacyItemModel = Identifier.fromNamespaceAndPath(itemId.getNamespace(), "item/" + itemId.getPath());
+        if (modelUsesSpriteArt(mc, legacyItemModel, 0)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean itemDefinitionUsesSpriteArt(Minecraft mc, Identifier itemId) {
+        Optional<JsonObject> definition = readJsonObject(mc,
+                Identifier.fromNamespaceAndPath(itemId.getNamespace(), "items/" + itemId.getPath() + ".json"));
+        if (definition.isEmpty()) {
+            return false;
+        }
+
+        JsonElement modelElement = definition.get().get("model");
+        if (!(modelElement instanceof JsonObject modelObject)) {
+            return false;
+        }
+
+        String type = jsonString(modelObject, "type");
+        if ("minecraft:special".equals(type)) {
+            return false;
+        }
+        if (!"minecraft:model".equals(type)) {
+            return false;
+        }
+
+        String model = jsonString(modelObject, "model");
+        Identifier modelId = model == null ? null : Identifier.tryParse(model);
+        return modelId != null && modelUsesSpriteArt(mc, modelId, 0);
+    }
+
+    private static boolean modelUsesSpriteArt(Minecraft mc, Identifier modelId, int depth) {
+        if (depth > 12) {
+            return false;
+        }
+
+        Optional<JsonObject> model = readJsonObject(mc,
+                Identifier.fromNamespaceAndPath(modelId.getNamespace(), "models/" + modelId.getPath() + ".json"));
+        if (model.isEmpty()) {
+            return false;
+        }
+
+        JsonObject modelObject = model.get();
+        String parent = jsonString(modelObject, "parent");
+        if (parent != null) {
+            if (isSpriteArtParent(parent)) {
+                return true;
+            }
+
+            Identifier parentId = Identifier.tryParse(parent);
+            return parentId != null && modelUsesSpriteArt(mc, parentId, depth + 1);
+        }
+
+        JsonElement textures = modelObject.get("textures");
+        return textures instanceof JsonObject textureObject
+                && textureObject.has("layer0")
+                && !modelObject.has("elements");
+    }
+
+    static boolean isSpriteArtParent(String parent) {
+        return parent.equals("minecraft:item/generated")
+                || parent.equals("minecraft:item/handheld")
+                || parent.equals("minecraft:block/cross")
+                || parent.equals("minecraft:block/tinted_cross")
+                || parent.equals("minecraft:block/crop")
+                || parent.equals("minecraft:block/stem_growth")
+                || parent.equals("minecraft:block/flowerbed_1")
+                || parent.equals("minecraft:block/flowerbed_2")
+                || parent.equals("minecraft:block/flowerbed_3")
+                || parent.equals("minecraft:block/flowerbed_4");
+    }
+
+    private static Optional<JsonObject> readJsonObject(Minecraft mc, Identifier resourceId) {
+        return mc.getResourceManager().getResource(resourceId).flatMap(resource -> {
+            try (Reader reader = resource.openAsReader()) {
+                JsonElement root = JsonParser.parseReader(reader);
+                return root instanceof JsonObject object ? Optional.of(object) : Optional.empty();
+            } catch (Exception ignored) {
+                return Optional.empty();
+            }
+        });
+    }
+
+    private static @Nullable String jsonString(JsonObject object, String key) {
+        JsonElement element = object.get(key);
+        return element != null && element.isJsonPrimitive() ? element.getAsString() : null;
     }
 
     private static void submitItemDecorations(ItemStack stack, int x, int y, float size, PoseStack ps,
@@ -687,6 +901,18 @@ public final class PlacedModonomiconPages {
         int textY = Math.round(y + size - 7.0F);
         submitTextLine(ps, collector, textX + 1, textY + 1, count, ITEM_COUNT_TEXT_SCALE, 0xFF1F160F);
         submitTextLine(ps, collector, textX, textY, count, ITEM_COUNT_TEXT_SCALE, 0xFFFFFFFF);
+    }
+
+    static void flattenItemDepthForPage(Matrix4f matrix) {
+        flattenItemDepthForPage(matrix, null);
+    }
+
+    static void flattenItemDepthForPage(Matrix4f matrix, @Nullable Matrix4f pageIconPose) {
+        Matrix4f planePose = pageIconPose == null ? new Matrix4f() : new Matrix4f(pageIconPose);
+        Matrix4f localPose = new Matrix4f(planePose).invert().mul(matrix);
+        matrix.set(planePose)
+                .scale(1.0F, 1.0F, FLAT_ITEM_DEPTH_SCALE)
+                .mul(localPose);
     }
 
     private static ItemStack firstStack(Either<ItemStack, Ingredient> item) {
@@ -774,6 +1000,15 @@ public final class PlacedModonomiconPages {
         }
     }
 
+    private static void submitIndexButton(PageSide side, PoseStack ps, SubmitNodeCollector collector, int lightCoords) {
+        int x = side == PageSide.LEFT ? PAGE_WIDTH - 15 : 5;
+        int y = PAGE_HEIGHT - 17;
+        submitRect(ps, collector, lightCoords, x, y, x + 10, y + 9, 0x1153341A);
+        submitRect(ps, collector, lightCoords, x + 2, y + 2, x + 8, y + 3, PAGE_INK_SOFT);
+        submitRect(ps, collector, lightCoords, x + 2, y + 4, x + 8, y + 5, PAGE_INK_SOFT);
+        submitRect(ps, collector, lightCoords, x + 2, y + 6, x + 8, y + 7, PAGE_INK_SOFT);
+    }
+
     private static void submitPageNumber(PageSide side, int pageNumber, int pageCount, PoseStack ps,
                                          SubmitNodeCollector collector, int lightCoords) {
         String label = pageNumber + "/" + pageCount;
@@ -796,13 +1031,20 @@ public final class PlacedModonomiconPages {
 
     private static void submitGuiSprite(PoseStack ps, SubmitNodeCollector collector, int lightCoords, Identifier spriteId,
                                         int x, int y, int width, int height) {
-        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager()
-                .getAtlasOrThrow(AtlasIds.GUI)
-                .getSprite(spriteId);
+        AbstractTexture atlasTexture = Minecraft.getInstance().getTextureManager().getTexture(GUI_ATLAS);
+        if (!(atlasTexture instanceof TextureAtlas atlas)) {
+            return;
+        }
+        TextureAtlasSprite sprite = atlas.getSprite(spriteId);
+        submitTextureSprite(ps, collector, PAGE_ICON_ORDER, lightCoords, sprite, x, y, width, height);
+    }
+
+    private static void submitTextureSprite(PoseStack ps, SubmitNodeCollector collector, int order, int lightCoords,
+                                            TextureAtlasSprite sprite, int x, int y, int width, int height) {
         ps.pushPose();
         ps.translate(0.0F, 0.0F, PAGE_ICON_Z_PIXELS);
-        collector.order(PAGE_ICON_ORDER).submitCustomGeometry(ps, RenderTypes.text(sprite.atlasLocation()),
-                (pose, vertexConsumer) -> submitSpriteQuad(pose, vertexConsumer, PAGE_LIGHT,
+        collector.order(order).submitCustomGeometry(ps, RenderTypes.text(sprite.atlasLocation()),
+                (pose, vertexConsumer) -> submitSpriteQuad(pose, vertexConsumer, lightCoords,
                         x, y, x + width, y + height, sprite, 0xFFFFFFFF));
         ps.popPose();
     }
@@ -853,10 +1095,23 @@ public final class PlacedModonomiconPages {
     private static final class PageItemCollector implements SubmitNodeCollector {
         private final SubmitNodeCollector target;
         private final int baseOrder;
+        private final boolean flattenItems;
+        private final @Nullable Matrix4f pageIconPose;
 
         private PageItemCollector(SubmitNodeCollector target, int baseOrder) {
+            this(target, baseOrder, false);
+        }
+
+        private PageItemCollector(SubmitNodeCollector target, int baseOrder, boolean flattenItems) {
+            this(target, baseOrder, flattenItems, null);
+        }
+
+        private PageItemCollector(SubmitNodeCollector target, int baseOrder, boolean flattenItems,
+                                  @Nullable Matrix4f pageIconPose) {
             this.target = target;
             this.baseOrder = baseOrder;
+            this.flattenItems = flattenItems;
+            this.pageIconPose = pageIconPose == null ? null : new Matrix4f(pageIconPose);
         }
 
         private OrderedSubmitNodeCollector ordered() {
@@ -901,11 +1156,12 @@ public final class PlacedModonomiconPages {
 
         @Override
         public <S> void submitModel(Model<? super S> model, S state, PoseStack poseStack, RenderType renderType,
-                                    int lightCoords, int overlayCoords, int color,
-                                    @Nullable TextureAtlasSprite texture, int outlineColor,
-                                    ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
-            this.ordered().submitModel(model, state, poseStack, renderType, lightCoords, overlayCoords, color,
-                    texture, outlineColor, crumblingOverlay);
+                                     int lightCoords, int overlayCoords, int color,
+                                     @Nullable TextureAtlasSprite texture, int outlineColor,
+                                     ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitModel(model, state, poseStack, renderType, lightCoords, overlayCoords,
+                            color, texture, outlineColor, crumblingOverlay));
         }
 
         @Override
@@ -914,45 +1170,67 @@ public final class PlacedModonomiconPages {
                                     boolean skipChildren, int color,
                                     ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay,
                                     int outlineColor) {
-            this.ordered().submitModelPart(part, poseStack, renderType, lightCoords, overlayCoords, texture,
-                    skipDraw, skipChildren, color, crumblingOverlay, outlineColor);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitModelPart(part, poseStack, renderType, lightCoords, overlayCoords,
+                            texture, skipDraw, skipChildren, color, crumblingOverlay, outlineColor));
         }
 
         @Override
         public void submitBlock(PoseStack poseStack, BlockState state, int lightCoords, int overlayCoords,
                                 int outlineColor) {
-            this.ordered().submitBlock(poseStack, state, lightCoords, overlayCoords, outlineColor);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitBlock(poseStack, state, lightCoords, overlayCoords, outlineColor));
         }
 
         @Override
         public void submitMovingBlock(PoseStack poseStack, MovingBlockRenderState state) {
-            this.ordered().submitMovingBlock(poseStack, state);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitMovingBlock(poseStack, state));
         }
 
         @Override
         public void submitBlockModel(PoseStack poseStack, RenderType renderType, BlockStateModel model, float red,
                                      float green, float blue, int lightCoords, int overlayCoords, int outlineColor) {
-            this.ordered().submitBlockModel(poseStack, renderType, model, red, green, blue, lightCoords,
-                    overlayCoords, outlineColor);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitBlockModel(poseStack, renderType, model, red, green, blue, lightCoords,
+                            overlayCoords, outlineColor));
         }
 
         @Override
         public void submitItem(PoseStack poseStack, ItemDisplayContext displayContext, int lightCoords,
                                int overlayCoords, int outlineColor, int[] tintLayers, List<BakedQuad> quads,
                                RenderType renderType, ItemStackRenderState.FoilType foilType) {
-            this.ordered().submitItem(poseStack, displayContext, lightCoords, overlayCoords, outlineColor,
-                    tintLayers, quads, renderType, foilType);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitItem(poseStack, displayContext, lightCoords, overlayCoords,
+                            outlineColor, tintLayers, quads, renderType, foilType));
         }
 
         @Override
         public void submitCustomGeometry(PoseStack poseStack, RenderType renderType,
                                          SubmitNodeCollector.CustomGeometryRenderer renderer) {
-            this.ordered().submitCustomGeometry(poseStack, renderType, renderer);
+            this.submitWithItemDepthFlattened(poseStack,
+                    () -> this.ordered().submitCustomGeometry(poseStack, renderType, renderer));
         }
 
         @Override
         public void submitParticleGroup(SubmitNodeCollector.ParticleGroupRenderer renderer) {
             this.ordered().submitParticleGroup(renderer);
+        }
+
+        private void submitWithItemDepthFlattened(PoseStack poseStack, Runnable submitter) {
+            if (!this.flattenItems) {
+                submitter.run();
+                return;
+            }
+
+            poseStack.pushPose();
+            try {
+                // Keep the GUI isometric projection, then squeeze only its protrusion from the page.
+                flattenItemDepthForPage(poseStack.last().pose(), this.pageIconPose);
+                submitter.run();
+            } finally {
+                poseStack.popPose();
+            }
         }
     }
 

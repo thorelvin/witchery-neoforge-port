@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The crystal ball does not tell you what you want to hear. It tells you what it perceives — oblique, contextual, and occasionally alarming.[#]()",
+      "text": "[#](53341a)The crystal ball does not tell you what you want to hear. It tells you what it perceives — oblique, contextual, and occasionally alarming. Right-click it empty-handed near an altar holding at least 500 power for a reading.[#]()",
       "title": "The Crystal Ball",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Right-click it empty-handed near an altar holding at least 500 power for a reading.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

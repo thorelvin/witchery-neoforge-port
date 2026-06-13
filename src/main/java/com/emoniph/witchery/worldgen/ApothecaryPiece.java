@@ -6,7 +6,6 @@ import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -21,9 +20,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
@@ -198,27 +194,8 @@ public class ApothecaryPiece extends StructurePiece {
     }
 
     private void placeApothecarySignSafely(WorldGenLevel level, BoundingBox box) {
-        try {
-            placeApothecarySign(level, box);
-            debugLog("Apothecary sign phase finished at {} for generation box {}.", boundingBox, box);
-        } catch (Throwable e) {
-            WitcheryMod.LOGGER.error("[VillageBuildings] Failed to place apothecary sign at {}; continuing without it.",
-                    getWorldPos(1, 3, -1), e);
-        }
-    }
-
-    private void placeApothecarySign(WorldGenLevel level, BoundingBox box) {
         BlockPos signWorld = getWorldPos(1, 3, -1);
-        if (!box.isInside(signWorld)) return;
-
-        BlockState signState = Blocks.OAK_WALL_SIGN.defaultBlockState()
-                .setValue(WallSignBlock.FACING, Direction.SOUTH);
-        level.setBlock(signWorld, signState, 3);
-        if (level.getBlockEntity(signWorld) instanceof SignBlockEntity sign) {
-            if (sign.getLevel() == null) sign.setLevel(level.getLevel());
-            SignText text = new SignText().setMessage(1, Component.literal("~ Apothecary ~"));
-            sign.setText(text, true);
-        }
+        debugLog("Apothecary sign phase skipped at {} for generation box {}.", signWorld, box);
     }
 
     private static void debugLog(String message, Object... args) {

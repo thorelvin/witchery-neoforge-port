@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)If the power of this craft has a lifeblood, the altar is the heart that circulates it.[#]()",
+      "text": "[#](53341a)If the power of this craft has a lifeblood, the altar is the heart that circulates it. It draws energy from natural and decorative objects within a generous radius and holds it ready for the kettle, the rites, and whatever else you demand of it.[#]()",
       "title": "The Altar",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)It draws energy from natural and decorative objects within a generous radius and holds it ready for the kettle, the rites, and whatever else you demand of it.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Different blocks contribute different amounts. Rowan wood, candelabras, Redstone Soup-filled chalices, placed pentagrams and athames all feed it.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Keep it furnished — a sparse altar is a weak altar.[#]()",
+      "text": "[#](53341a)Different blocks contribute different amounts. Rowan wood, candelabras, Redstone Soup-filled chalices, placed pentagrams and athames all feed it. Keep it furnished — a sparse altar is a weak altar.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

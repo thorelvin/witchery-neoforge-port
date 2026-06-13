@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Fire is one of the oldest working tools in the craft, and the brazier is how you direct it.[#]()",
+      "text": "[#](53341a)Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. Load up to three ingredients by right-clicking, ignite it, then step back and let it burn.[#]()",
       "title": "The Brazier",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Load up to three ingredients by right-clicking, ignite it, then step back and let it burn.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Most brazier workings draw power from a nearby altar, and the effect releases when the burning is complete.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Patience is required — and occasionally a safe distance.[#]()",
+      "text": "[#](53341a)Most brazier workings draw power from a nearby altar, and the effect releases when the burning is complete. Patience is required — and occasionally a safe distance.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -71,7 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)**Conjure Spectres** — Wormwood, Bat Wool, and Graveyard Dust. Something emerges.[#]()",
+      "text": "[#](53341a)**Conjure Spectres** — Wormwood, Bat Wool, and Graveyard Dust. Something emerges. **Anguish of the Dead** — Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward. **Deathly Veil** — Fermented Eye, Ender Pearl, and Diamond.[#]()",
       "title": "Named Workings",
       "use_markdown_in_title": false
     },
@@ -82,40 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Anguish of the Dead** — Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Deathly Veil** — Fermented Eye, Ender Pearl, and Diamond. Light passes through.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Fortification of the Corpse** — Tear of the Goddess, Diamond, and Golden Apple. Resistance for those nearby.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Graveyard Mist** — Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
+      "text": "[#](53341a)Light passes through. **Fortification of the Corpse** — Tear of the Goddess, Diamond, and Golden Apple. Resistance for those nearby. **Graveyard Mist** — Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.events;
 
+import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.CoffinBlock;
 import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
@@ -75,6 +76,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -112,6 +114,7 @@ public class WitcheryPlayerEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             giveFirstJoinPrimer(player);
+            syncKnownRecipeGuideAdvancements(player);
             syncToClient(player);
         }
     }
@@ -284,6 +287,9 @@ public class WitcheryPlayerEvents {
 
         if (player.tickCount % 40 == 0) {
             tickStoryBookCollection(player);
+        }
+        if (player.tickCount % 200 == 0) {
+            syncKnownRecipeGuideAdvancements(player);
         }
 
         WitcheryPlayerData dataEveryTick = WitcheryAttachments.get(player);
@@ -558,6 +564,65 @@ public class WitcheryPlayerEvents {
 
     /** Distinct story books a player must collect to unlock the Spectral Coven. */
     private static final int STORY_UNLOCK_THRESHOLD = 5;
+
+    private static final List<GuideRecipeGate> GUIDE_RECIPE_GATES = List.of(
+            guideRecipeGate("book_oven", "guide/primer", "has_book"),
+            guideRecipeGate("book_herbology", "guide/oven", "has_book"),
+            guideRecipeGate("book_infusions", "guide/herbology", "has_book"),
+            guideRecipeGate("book_distilling", "guide/infusions", "has_book"),
+            guideRecipeGate("book_circle_magic", "guide/distilling", "has_book"),
+            guideRecipeGate("book_burning", "guide/circle_magic", "has_book"),
+            guideRecipeGate("book_wands", "guide/burning", "has_book"),
+            guideRecipeGate("book_poppets", "guide/wands", "has_book"),
+            guideRecipeGate("book_spirit_world", "guide/poppets", "has_book"),
+            guideRecipeGate("book_creatures", "guide/spirit_world", "has_book"),
+            guideRecipeGate("book_transformations", "guide/creatures", "has_book"),
+            guideRecipeGate("book_transformations", "guide/transformations", "has_book"),
+            guideRecipeGate("book_herbology", "guide/obtained/exhale_of_horned_one", "obtained"),
+            guideRecipeGate("book_infusions", "guide/obtained/mutandis", "obtained"),
+            guideRecipeGate("book_distilling", "guide/obtained/redstone_soup", "obtained"),
+            guideRecipeGate("book_circle_magic", "guide/obtained/diamond_vapour", "obtained"),
+            guideRecipeGate("book_burning", "guide/obtained/chalk", "obtained"),
+            guideRecipeGate("book_wands", "guide/obtained/fetish_scarecrow", "obtained"),
+            guideRecipeGate("book_poppets", "guide/obtained/mystic_branch", "obtained"),
+            guideRecipeGate("book_spirit_world", "guide/obtained/poppet", "obtained"),
+            guideRecipeGate("book_creatures", "guide/obtained/brew_of_flowing_spirit", "obtained")
+    );
+
+    private static GuideRecipeGate guideRecipeGate(String recipePath, String advancementPath, String criterion) {
+        return new GuideRecipeGate(ResourceKey.create(Registries.RECIPE, id(recipePath)), id(advancementPath), criterion);
+    }
+
+    /**
+     * Old worlds can have the vanilla recipe-book unlock without the newer hidden guide advancement
+     * that Modonomicon checks. Mirror known subject-book recipes back into those guide advancements so
+     * the Primer never hides pages the player has already earned.
+     */
+    private static void syncKnownRecipeGuideAdvancements(ServerPlayer player) {
+        var server = player.level().getServer();
+        if (server == null) {
+            return;
+        }
+
+        var advancements = server.getAdvancements();
+        var recipeBook = player.getRecipeBook();
+        for (GuideRecipeGate gate : GUIDE_RECIPE_GATES) {
+            if (!recipeBook.contains(gate.recipeId())) {
+                continue;
+            }
+            var holder = advancements.get(gate.advancementId());
+            if (holder != null) {
+                player.getAdvancements().award(holder, gate.criterion());
+            }
+        }
+    }
+
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(WitcheryMod.MODID, path);
+    }
+
+    private record GuideRecipeGate(ResourceKey<Recipe<?>> recipeId, Identifier advancementId, String criterion) {
+    }
 
     /**
      * Scans the player's inventory for in-world story books (vanilla written books tagged with a hidden

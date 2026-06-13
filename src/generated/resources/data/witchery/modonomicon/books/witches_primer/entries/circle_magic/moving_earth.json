@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Not one neat pillar but a greater sundering — a large working that parts the land and sends the broken line wandering outward.[#]()",
+      "text": "[#](53341a)Not one neat pillar but a greater sundering — a large working that parts the land and sends the broken line wandering outward. Where Broken Earth is a trench, this is a sustained rift.[#]()",
       "title": "Rite of Moving Earth",
       "use_markdown_in_title": false
     },
@@ -26,42 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Where Broken Earth is a trench, this is a sustained rift.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Worked from a large circle with **Dirt**, **Gravel**, or **Sand**.[#]()",
+      "text": "[#](53341a)Worked from a large circle with **Dirt**, **Gravel**, or **Sand**. It becomes a staged rite that walks a tearing path away over time, and nearby Coven Witches widen it.[#]()\n\n[#](53341a)Use it to divide a field, break pursuit, or command the earth aside.[#]()",
       "title": "The Working",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)It becomes a staged rite that walks a tearing path away over time, and nearby Coven Witches widen it.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Use it to divide a field, break pursuit, or command the earth aside.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     }
   ],

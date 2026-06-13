@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Sleep is not passive, and the spirit world is not a waiting room.[#]()",
+      "text": "[#](53341a)Sleep is not passive, and the spirit world is not a waiting room. A Dream Catcher placed near the sleeping body shapes what happens when consciousness crosses the boundary and returns.[#]()\n\n[#](53341a)Different weavings give different effects on waking.[#]()",
       "title": "Dream Weavers",
       "use_markdown_in_title": false
     },
@@ -27,18 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A Dream Catcher placed near the sleeping body shapes what happens when consciousness crosses the boundary and returns.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Different weavings give different effects on waking. Only one catcher near you takes effect — choose deliberately.[#]()",
+      "text": "[#](53341a)Only one catcher near you takes effect — choose deliberately.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

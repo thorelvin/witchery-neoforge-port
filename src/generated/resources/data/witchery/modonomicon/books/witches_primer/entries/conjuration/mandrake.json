@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Mandrake is never a polite harvest. A mature root sometimes comes quietly, and sometimes wakes as a shrieking creature instead — especially at night.[#]()",
+      "text": "[#](53341a)Mandrake is never a polite harvest. A mature root sometimes comes quietly, and sometimes wakes as a shrieking creature instead — especially at night.[#]()\n\n[#](53341a)When the crop awakens, the living root keeps nearby players sickened until it is killed.[#]()",
       "title": "Mandrake",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)When the crop awakens, the living root keeps nearby players sickened until it is killed.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

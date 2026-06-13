@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A poppet in a pocket is useful. A poppet on a shelf that activates itself when needed is more useful still.[#]()",
+      "text": "[#](53341a)A poppet in a pocket is useful. A poppet on a shelf that activates itself when needed is more useful still.[#]()\n\n[#](53341a)The Poppet Shelf holds up to nine.[#]()",
       "title": "The Poppet Shelf",
       "use_markdown_in_title": false
     },
@@ -27,18 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The Poppet Shelf holds up to nine. When you take damage or are killed, it scans nearby shelves for poppets bound to you and triggers the right protection.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)You need not be watching — that is the point.[#]()",
+      "text": "[#](53341a)When you take damage or are killed, it scans nearby shelves for poppets bound to you and triggers the right protection. You need not be watching — that is the point.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

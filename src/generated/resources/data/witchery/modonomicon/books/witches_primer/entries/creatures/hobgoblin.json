@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron.[#]()",
+      "text": "[#](53341a)Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron. They live in woodland huts and trade in koboldite, a metal found only through their commerce.[#]()",
       "title": "Hobgoblins",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)They live in woodland huts and trade in koboldite, a metal found only through their commerce.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

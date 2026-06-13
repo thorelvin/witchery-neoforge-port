@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)There are those who choose this path and those who have it chosen for them.[#]()",
+      "text": "[#](53341a)There are those who choose this path and those who have it chosen for them. Either way, the nature of vampirism is not subtle: you are sustained by blood, strengthened by it, and diminished without it.[#]()",
       "title": "Vampirism",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Either way, the nature of vampirism is not subtle: you are sustained by blood, strengthened by it, and diminished without it.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -49,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Speed, strength, and reach all scale with your blood level. Night vision is always yours, and your bite takes blood from the living.[#]()",
+      "text": "[#](53341a)Speed, strength, and reach all scale with your blood level. Night vision is always yours, and your bite takes blood from the living. You resist most damage, and you can sleep through daylight in a coffin — its own kind of grace.[#]()",
       "title": "What the Blood Gives",
       "use_markdown_in_title": false
     },
@@ -59,19 +48,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)You resist most damage, and you can sleep through daylight in a coffin — its own kind of grace.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Sunlight burns; direct daylight is a constant danger. Silver wounds heal slowly and hurt more. Witch Hunters treat you as a professional priority.[#]()",
+      "text": "[#](53341a)Sunlight burns; direct daylight is a constant danger. Silver wounds heal slowly and hurt more. Witch Hunters treat you as a professional priority. Blood drains constantly — feed regularly. And there is no going back, not easily.[#]()",
       "title": "What the Blood Costs",
       "use_markdown_in_title": false
     },
@@ -81,31 +59,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Blood drains constantly — feed regularly. And there is no going back, not easily.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Woven Cruor is the base cloth.[#]()",
+      "text": "[#](53341a)Woven Cruor is the base cloth. At level 4+, spend 125 Blood Power with a **Bone Needle** on placed White Wool to make Blood-stained Wool, then smelt it to Woven Cruor and tailor the light set.[#]()",
       "title": "Vampire Clothing",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)At level 4+, spend 125 Blood Power with a **Bone Needle** on placed White Wool to make Blood-stained Wool, then smelt it to Woven Cruor and tailor the light set.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

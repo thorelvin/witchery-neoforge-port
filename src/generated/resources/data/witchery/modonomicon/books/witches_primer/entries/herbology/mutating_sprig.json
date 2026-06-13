@@ -29,7 +29,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Surround an **Ent Twig** with **Mutandis Extremis** at a table.[#]()",
+      "text": "[#](53341a)Surround an **Ent Twig** with **Mutandis Extremis** at a table. Or use the cauldron: heat a filled Witch's Cauldron near an altar, drop in an **Ent Twig** and a **Nether Wart**, then use Mutandis Extremis on it.[#]()",
       "title": "Making the Sprig",
       "use_markdown_in_title": false
     },
@@ -39,31 +39,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Or use the cauldron: heat a filled Witch's Cauldron near an altar, drop in an **Ent Twig** and a **Nether Wart**, then use Mutandis Extremis on it.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)On simple blocks the sprig flips **Grass Block** and **Mycelium** either way, and turns underwater **Dirt** to **Clay** and back.[#]()",
+      "text": "[#](53341a)On simple blocks the sprig flips **Grass Block** and **Mycelium** either way, and turns underwater **Dirt** to **Clay** and back.[#]()\n\n[#](53341a)An empty **Chest** over water with Short Grass on four sides becomes four **Grasspers**.[#]()",
       "title": "Block & Built Mutations",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)An empty **Chest** over water with Short Grass on four sides becomes four **Grasspers**.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -84,7 +62,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A **Cobweb** over water, with four planted Alder Saplings and a trapped Zombie, becomes four **Critter Snares** — the bridge into bat, slime, and magma snare chains.[#]()",
+      "text": "[#](53341a)A **Cobweb** over water, with four planted Alder Saplings and a trapped Zombie, becomes four **Critter Snares** — the bridge into bat, slime, and magma snare chains. Four bat snares packed with Slime Balls make a **Concentrated Bat Ball**.[#]()",
       "title": "Creature Snares",
       "use_markdown_in_title": false
     },
@@ -94,31 +72,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Four bat snares packed with Slime Balls make a **Concentrated Bat Ball**.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)The diagonal Grasspers mostly hold Mutandis Extremis and a Charged Attuned Stone. Bat snares around a lured Wolf become **Owls**.[#]()",
+      "text": "[#](53341a)The diagonal Grasspers mostly hold Mutandis Extremis and a Charged Attuned Stone. Bat snares around a lured Wolf become **Owls**. Slime snares around an Ocelot become **Toads**. Cocoa-ringed webs with a Wolf and Owl leave a wild **Flying Monkey**.[#]()",
       "title": "Living Mutations",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Slime snares around an Ocelot become **Toads**. Cocoa-ringed webs with a Wolf and Owl leave a wild **Flying Monkey**.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -139,7 +95,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A **Cactus** on sand, ringed with water and Spanish Moss and fed Bone Meal/Blaze Powder Grasspers, becomes **Wild Bramble**.[#]()",
+      "text": "[#](53341a)A **Cactus** on sand, ringed with water and Spanish Moss and fed Bone Meal/Blaze Powder Grasspers, becomes **Wild Bramble**. The same with **Sugar Cane** and Ender Pearls makes **Void Bramble**.[#]()",
       "title": "Brambles & Wormwood",
       "use_markdown_in_title": false
     },
@@ -150,7 +106,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The same with **Sugar Cane** and Ender Pearls makes **Void Bramble**. Ripe **Wheat** ringed with Wispy Cotton leaves a young **Wormwood**.[#]()",
+      "text": "[#](53341a)Ripe **Wheat** ringed with Wispy Cotton leaves a young **Wormwood**.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

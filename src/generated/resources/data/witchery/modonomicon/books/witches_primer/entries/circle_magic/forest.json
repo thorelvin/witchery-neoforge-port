@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A medium working for raising a grove where none stood. Drop the sapling for the woodland you want at the center, then prepare the rite.[#]()",
+      "text": "[#](53341a)A medium working for raising a grove where none stood. Drop the sapling for the woodland you want at the center, then prepare the rite. Oak, spruce, birch, jungle, rowan, alder, and hawthorn each answer to their own sapling.[#]()",
       "title": "Rite of the Forest",
       "use_markdown_in_title": false
     },
@@ -26,31 +26,9 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Oak, spruce, birch, jungle, rowan, alder, and hawthorn each answer to their own sapling.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer a **Wicker Bundle**, a **Brew of Sprouting**, and an **Ent Twig** around the circle, with at least **4000 altar power**.[#]()",
+      "text": "[#](53341a)Offer a **Wicker Bundle**, a **Brew of Sprouting**, and an **Ent Twig** around the circle, with at least **4000 altar power**. A bound waystone in range can raise the grove there instead.[#]()",
       "title": "The Working",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)A bound waystone in range can raise the grove there instead.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

@@ -102,7 +102,7 @@ public class PlacedModonomiconBookModel extends Model.Simple {
         this.visualRightPages.yRot = spread;
         this.visualLeftPages.yRot = -spread;
         this.flipPage1.yRot = spread - spread * 2.0F * rightPageFlipAmount;
-        this.flipPage2.yRot = spread - spread * 2.0F * leftPageFlipAmount;
+        this.flipPage2.yRot = -spread + spread * 2.0F * leftPageFlipAmount;
         float hingeOffset = Mth.sin(spread);
         this.visualRightPages.x = hingeOffset;
         this.visualLeftPages.x = hingeOffset;

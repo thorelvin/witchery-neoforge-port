@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The sister-working to Sanctity. Where Sanctity presses creatures away, Imprisonment draws them back and pens them within the circle.[#]()",
+      "text": "[#](53341a)The sister-working to Sanctity. Where Sanctity presses creatures away, Imprisonment draws them back and pens them within the circle. A snare, not a killing-circle.[#]()",
       "title": "Rite of Imprisonment",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)A snare, not a killing-circle.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -64,7 +53,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer a **Slime Ball** with **Redstone** on a small circle, with **500 altar power**. For the safer inverse, study Sanctity.[#]()",
+      "text": "[#](53341a)Offer a **Slime Ball** with **Redstone** on a small circle, with **500 altar power**. For the safer inverse, study Sanctity.[#]()\n\n[#](53341a)Useful for holding sacrificial beasts or summoned nuisances in one patch while you prepare the next working.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -75,7 +64,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Useful for holding sacrificial beasts or summoned nuisances in one patch while you prepare the next working. Control before destruction.[#]()",
+      "text": "[#](53341a)Control before destruction.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A small-circle storm working for calling lightning where you choose.[#]()",
+      "text": "[#](53341a)A small-circle storm working for calling lightning where you choose. The inner branch gathers the storm in the circle, the outer lashes the ground around it, and the portable branch can be cast far from home without altar power.[#]()",
       "title": "Rite of Sky's Wrath",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The inner branch gathers the storm in the circle, the outer lashes the ground around it, and the portable branch can be cast far from home without altar power.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -49,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A **Wooden Sword** and **Wood Ash** call the inner storm (1000 power). A **Stone Sword** and **Wood Ash** call the outer storm (2000 power).[#]()",
+      "text": "[#](53341a)A **Wooden Sword** and **Wood Ash** call the inner storm (1000 power). A **Stone Sword** and **Wood Ash** call the outer storm (2000 power). An **Iron Sword**, **Wood Ash**, and a **Charged Attuned Stone** restore the portable branch.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -60,18 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)An **Iron Sword**, **Wood Ash**, and a **Charged Attuned Stone** restore the portable branch. Any worn blade serves — its edge is spent, not its temper.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)A bound waystone in range moves the storm to its location — safer than standing under your own lightning.[#]()",
+      "text": "[#](53341a)Any worn blade serves — its edge is spent, not its temper.[#]()\n\n[#](53341a)A bound waystone in range moves the storm to its location — safer than standing under your own lightning.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

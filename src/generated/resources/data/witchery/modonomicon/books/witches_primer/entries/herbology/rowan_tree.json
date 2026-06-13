@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The rowan is unremarkable to look at — a slender tree with silver bark, prone to growing in unlikely places.[#]()",
+      "text": "[#](53341a)The rowan is unremarkable to look at — a slender tree with silver bark, prone to growing in unlikely places. But it carries a sympathy with the unseen world that the other trees do not, and that makes it indispensable.[#]()",
       "title": "The Rowan Tree",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)But it carries a sympathy with the unseen world that the other trees do not, and that makes it indispensable.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Grow one from a sapling mutated with Mutandis, or find one in the wild.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Its logs feed your altar; its planks build your tools; its berries have their own quiet uses.[#]()",
+      "text": "[#](53341a)Grow one from a sapling mutated with Mutandis, or find one in the wild. Its logs feed your altar; its planks build your tools; its berries have their own quiet uses.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

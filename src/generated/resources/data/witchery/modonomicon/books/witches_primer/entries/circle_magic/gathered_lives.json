@@ -20,7 +20,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)You found them, then — five of the old village tales, copied out in trembling hands and left to yellow in chest and cellar. I felt you reading.[#]()",
+      "text": "[#](53341a)You found them, then — five of the old village tales, copied out in trembling hands and left to yellow in chest and cellar. I felt you reading. A tale is a kind of taglock, pupil: a knot tied around a life, holding it fast against forgetting.[#]()",
       "title": "The Gathered Lives",
       "use_markdown_in_title": false
     },
@@ -31,7 +31,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A tale is a kind of taglock, pupil: a knot tied around a life, holding it fast against forgetting.[#]()",
+      "text": "[#](53341a)Most witches work a coven of the living. Three sisters at a circle, five, seven — voices stacked until the working is loud enough to be heard. But a witch alone, far from any sister, learns a quieter trick. She does not gather the living.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -42,18 +42,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Most witches work a coven of the living. Three sisters at a circle, five, seven — voices stacked until the working is loud enough to be heard.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)But a witch alone, far from any sister, learns a quieter trick. She does not gather the living. She gathers the remembered.[#]()",
+      "text": "[#](53341a)She gathers the remembered.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -75,7 +64,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The others were under the rowans by then — Mistress Vale, who taught bells to listen; Selene of the cracked mirror; old Mother Hem, who tied malice[#]()",
+      "text": "[#](53341a)The others were under the rowans by then — Mistress Vale, who taught bells to listen; Selene of the cracked mirror; old Mother Hem, who tied malice backward; the broom-witch Nettie; and the midwife Annis, whose shard grew warm before a child ever[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -86,7 +75,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)backward; the broom-witch Nettie; and the midwife Annis, whose shard grew warm before a child ever turned.[#]()",
+      "text": "[#](53341a)turned.[#]()\n\n[#](53341a)I had no coven. I had their stories. So I read them aloud over the circle, one after another, until the air went the second kind of silent — not empty, but listening. And then they came. Not the women. The shape the women left in the world.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -97,29 +86,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)I had no coven. I had their stories.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)So I read them aloud over the circle, one after another, until the air went the second kind of silent — not empty, but listening. And then they came.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Not the women. The shape the women left in the world. Pale, footless, drifting a hand's breadth above the chalk.[#]()",
+      "text": "[#](53341a)Pale, footless, drifting a hand's breadth above the chalk.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -141,7 +108,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)What rises is the coven-shape itself — the weight of five lives well-remembered, lent to your working as if the sisters stood beside you again.[#]()",
+      "text": "[#](53341a)What rises is the coven-shape itself — the weight of five lives well-remembered, lent to your working as if the sisters stood beside you again. They do not speak. They do not walk.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -152,7 +119,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)They do not speak. They do not walk. They turn slowly to face the altar and wait, and while they wait, the circle counts them as kin.[#]()",
+      "text": "[#](53341a)They turn slowly to face the altar and wait, and while they wait, the circle counts them as kin.[#]()\n\n[#](53341a)That is the whole of the gift: a witch alone may now cast what only a coven could.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -163,29 +130,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)That is the whole of the gift: a witch alone may now cast what only a coven could.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Call a familiar's beast, summon what needs more than one voice — the spectral sisters make up the number. They fade by themselves before long.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Tales tire of being told, and so do the told.[#]()",
+      "text": "[#](53341a)Call a familiar's beast, summon what needs more than one voice — the spectral sisters make up the number. They fade by themselves before long. Tales tire of being told, and so do the told.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -228,7 +173,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Draw a **medium Otherwhere circle** and lay an altar near with **2000 power** to spend.[#]()",
+      "text": "[#](53341a)Draw a **medium Otherwhere circle** and lay an altar near with **2000 power** to spend. Offer a **Mellifluous Hunger** — the token that calls them — together with a **Mandrake Root** and a sprig of **Wormwood**.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -239,29 +184,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Offer a **Mellifluous Hunger** — the token that calls them — together with a **Mandrake Root** and a sprig of **Wormwood**.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The hunger draws the shapes; the root and the wormwood give them somewhere to stand.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Five spectral witches rise and drift about the circle. They count toward any coven a later rite demands, so cast your coven-working while they linger.[#]()",
+      "text": "[#](53341a)The hunger draws the shapes; the root and the wormwood give them somewhere to stand.[#]()\n\n[#](53341a)Five spectral witches rise and drift about the circle. They count toward any coven a later rite demands, so cast your coven-working while they linger.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

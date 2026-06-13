@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Greater strength brings stone-breaking power and a second appeal to Lilith.[#]()",
+      "text": "[#](53341a)Greater strength brings stone-breaking power and a second appeal to Lilith.[#]()\n\n[#](53341a)A red flower and another filled goblet open the path to higher mastery.[#]()\n\n[#](53341a)Flight follows; distance and village walls matter less than before.[#]()",
       "title": "Mastery Over Blood",
       "use_markdown_in_title": false
     },
@@ -27,51 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A red flower and another filled goblet open the path to higher mastery.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Flight follows; distance and village walls matter less than before.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Transfixed victims can be guided into cages for careful feeding.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Power over blood becomes power over making new vampires.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The final note describes a coffin, a goblet, and an unwilling rebirth.[#]()",
+      "text": "[#](53341a)Transfixed victims can be guided into cages for careful feeding.[#]()\n\n[#](53341a)Power over blood becomes power over making new vampires.[#]()\n\n[#](53341a)The final note describes a coffin, a goblet, and an unwilling rebirth.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

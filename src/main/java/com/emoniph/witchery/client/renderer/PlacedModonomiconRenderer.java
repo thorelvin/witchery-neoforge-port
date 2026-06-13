@@ -5,6 +5,7 @@ import com.emoniph.witchery.client.PlacedModonomiconPages;
 import com.emoniph.witchery.client.model.PlacedModonomiconBookModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -29,6 +30,7 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
     private static final float CLOSED_CENTER_Z_SHIFT = 0.125F;
     private static final float MODEL_BASIS_Z_ROTATION = 90.0F;
     private static final float MODEL_BASIS_X_ROTATION = 90.0F;
+    private static final int MIN_BOOK_BLOCK_LIGHT = 5;
 
     private final PlacedModonomiconBookModel model;
 
@@ -40,6 +42,8 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
         public float pageOneRotation;
         public float pageTwoRotation;
         public int openPagesIndex;
+        public int turnPage;
+        public int openingPageTurnsRemaining;
         public ItemStack bookStack = ItemStack.EMPTY;
     }
 
@@ -66,6 +70,8 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
         state.pageOneRotation = Mth.lerp(partialTick, be.prevPageOneRotation, be.pageOneRotation);
         state.pageTwoRotation = Mth.lerp(partialTick, be.prevPageTwoRotation, be.pageTwoRotation);
         state.openPagesIndex = be.getOpenPagesIndex();
+        state.turnPage = be.turnPage;
+        state.openingPageTurnsRemaining = be.openingPageTurnsRemaining;
     }
 
     @Override
@@ -78,8 +84,8 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
         float floppedAmount = Mth.clamp(state.degreesFlopped / 90.0F, 0.0F, 1.0F);
         float pageFlip = Mth.clamp(state.pageOneRotation / 180.0F, 0.0F, 1.0F);
         float backPageFlip = Mth.clamp(state.pageTwoRotation / 180.0F, 0.0F, 1.0F);
-        boolean turningNextPage = state.pageOneRotation > 0.0F && state.pageOneRotation < 180.0F;
-        boolean turningPreviousPage = state.pageTwoRotation > 0.0F && state.pageTwoRotation < 180.0F;
+        boolean turningNextPage = state.turnPage == 1 || (state.pageOneRotation > 0.0F && state.pageOneRotation < 180.0F);
+        boolean turningPreviousPage = state.turnPage == 2 || (state.pageTwoRotation > 0.0F && state.pageTwoRotation < 180.0F);
         boolean turningPage = turningNextPage || turningPreviousPage;
         float openShift = openAmount * (state.degreesOpened / 5.0F - 12.0F) / 32.0F;
         float openLift = Math.max(openAmount, 1.0F - floppedAmount) * OPEN_BOOK_LIFT_Y;
@@ -109,12 +115,23 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
         model.resetPose();
         model.setFlipPagesVisible(turningNextPage, turningPreviousPage);
         model.setupAnim(0.0F, pageFlip, backPageFlip, openAmount);
+        int bookLight = hasReadingGlow(openAmount, floppedAmount)
+                ? withMinimumBlockLight(state.lightCoords, MIN_BOOK_BLOCK_LIGHT)
+                : state.lightCoords;
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(BOOK_TEXTURE),
-                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        if (openAmount > 0.92F && !turningPage) {
-            PlacedModonomiconPages.submit(state.bookStack, state.openPagesIndex, ps, collector, state.lightCoords, openAmount);
+                bookLight, OverlayTexture.NO_OVERLAY, null);
+        if (openAmount > 0.92F && state.openingPageTurnsRemaining <= 0 && !turningPage) {
+            PlacedModonomiconPages.submit(state.bookStack, state.openPagesIndex, ps, collector, bookLight, openAmount);
         }
         ps.popPose();
+    }
+
+    private static int withMinimumBlockLight(int packedLight, int minimumBlockLight) {
+        return LightTexture.pack(Math.max(minimumBlockLight, LightTexture.block(packedLight)), LightTexture.sky(packedLight));
+    }
+
+    private static boolean hasReadingGlow(float openAmount, float floppedAmount) {
+        return openAmount > 0.02F || floppedAmount < 0.98F;
     }
 
     private static float lerpAngle(float previous, float current, float partialTick) {

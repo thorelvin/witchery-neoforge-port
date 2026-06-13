@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting.[#]()",
+      "text": "[#](53341a)A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting.[#]()\n\n[#](53341a)Right-click to add reagents one by one, then light a fire beneath it.[#]()",
       "title": "The Kettle",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Right-click to add reagents one by one, then light a fire beneath it.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)It draws power from the nearest altar to complete the working, and the ingredients decide what emerges.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Keep records of what you try — the craft does not always announce itself.[#]()",
+      "text": "[#](53341a)It draws power from the nearest altar to complete the working, and the ingredients decide what emerges. Keep records of what you try — the craft does not always announce itself.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

@@ -27,18 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)To make a fetish, place the host object in a medium circle with an Attuned Stone, a Necromantic Stone, and a Boline, then sacrifice the required spirits near the circle.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The rite binds them to the vessel.[#]()",
+      "text": "[#](53341a)To make a fetish, place the host object in a medium circle with an Attuned Stone, a Necromantic Stone, and a Boline, then sacrifice the required spirits near the circle. The rite binds them to the vessel.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -49,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)**Voodoo Protection** makes carried protection poppets more effective nearby. **Sentinel** sends spectres against uninvited guests.[#]()",
+      "text": "[#](53341a)**Voodoo Protection** makes carried protection poppets more effective nearby. **Sentinel** sends spectres against uninvited guests. **Shrieking** emits a redstone pulse and a banshee's cry.[#]()",
       "title": "What a Fetish Does",
       "use_markdown_in_title": false
     },
@@ -60,18 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Shrieking** emits a redstone pulse and a banshee's cry. **Disorientation** leaves armed or armored trespassers with unreliable senses.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Ghost Walking** spares those walking the spirit world nearby from being hurried back.[#]()",
+      "text": "[#](53341a)**Disorientation** leaves armed or armored trespassers with unreliable senses. **Ghost Walking** spares those walking the spirit world nearby from being hurried back.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

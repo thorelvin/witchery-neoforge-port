@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Mutandis is the old hedge-breaking powder, scattered over living growth to force a plant into some stranger relation — one of the first ways a witch steps[#]()",
+      "text": "[#](53341a)Mutandis is the old hedge-breaking powder, scattered over living growth to force a plant into some stranger relation — one of the first ways a witch steps outside ordinary farming.[#]()",
       "title": "Mutandis",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)outside ordinary farming.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -60,19 +49,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The original path also works: heat and fill the **Witch's Cauldron**, drop in a **Mandrake Root** and an **Egg**, then right-click with **Exhale of the[#]()",
+      "text": "[#](53341a)The original path also works: heat and fill the **Witch's Cauldron**, drop in a **Mandrake Root** and an **Egg**, then right-click with **Exhale of the Horned One** for six portions.[#]()",
       "title": "Cauldron Path",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Horned One** for six portions.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -93,7 +71,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Use Mutandis on natural plants or saplings.[#]()",
+      "text": "[#](53341a)Use Mutandis on natural plants or saplings. It can roll Witchery plants and saplings, **Alder** and **Hawthorn Saplings**, vanilla saplings, flowers, fern, grass, dead bush, and the small bush.[#]()\n\n[#](53341a)In the Spirit World it can also reveal Nether Wart.[#]()",
       "title": "Hedge Mutations",
       "use_markdown_in_title": false
     },
@@ -104,18 +82,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)It can roll Witchery plants and saplings, **Alder** and **Hawthorn Saplings**, vanilla saplings, flowers, fern, grass, dead bush, and the small bush.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)In the Spirit World it can also reveal Nether Wart. It is a mutating powder, not a fertilizer — expect transformation, not growth.[#]()",
+      "text": "[#](53341a)It is a mutating powder, not a fertilizer — expect transformation, not growth.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -137,7 +104,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Extremis pushes the art further: it mutates crops as well as wild growth, flips grass and dirt, and turns sand under water or ice into clay.[#]()",
+      "text": "[#](53341a)Extremis pushes the art further: it mutates crops as well as wild growth, flips grass and dirt, and turns sand under water or ice into clay.[#]()\n\n[#](53341a)It is also the bridge into heavier progressions like Treefyd Seeds.[#]()",
       "title": "Extremis",
       "use_markdown_in_title": false
     },
@@ -148,7 +115,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)It is also the bridge into heavier progressions like Treefyd Seeds. Treat it as the serious version of hedgecraft.[#]()",
+      "text": "[#](53341a)Treat it as the serious version of hedgecraft.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

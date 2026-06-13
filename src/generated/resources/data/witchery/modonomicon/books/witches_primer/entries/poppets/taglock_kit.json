@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A taglock is a thread of sympathy connecting a practitioner to their subject.[#]()",
+      "text": "[#](53341a)A taglock is a thread of sympathy connecting a practitioner to their subject. Without one, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target.[#]()",
       "title": "Taglock Kit",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Without one, poppets are merely decorative, curses fall without direction, and certain rites cannot find their target.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Right-click a living creature directly, or steal a player's sample by crouching up behind them.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Blood Roses, Leech Chests, and a freshly slept-in bed can hold the same sample for later theft — guard your own sleep accordingly.[#]()",
+      "text": "[#](53341a)Right-click a living creature directly, or steal a player's sample by crouching up behind them. Blood Roses, Leech Chests, and a freshly slept-in bed can hold the same sample for later theft — guard your own sleep accordingly.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The world you walk in is not the only world that exists.[#]()",
+      "text": "[#](53341a)The world you walk in is not the only world that exists. The Spirit World lies beside it, separated by a boundary that thins around places of power and at the edges of sleep.[#]()",
       "title": "The Spirit World",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The Spirit World lies beside it, separated by a boundary that thins around places of power and at the edges of sleep.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)To enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. You will leave your body behind.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)It will wait for you — try to come back before something finds it.[#]()",
+      "text": "[#](53341a)To enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. You will leave your body behind. It will wait for you — try to come back before something finds it.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

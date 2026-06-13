@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Before kettles and distilleries, every witch learns the cauldron.[#]()",
+      "text": "[#](53341a)Before kettles and distilleries, every witch learns the cauldron. Anointing Paste is what wakes an ordinary cauldron into a Witch's Cauldron — the vessel behind the cauldron paths already mentioned above.[#]()",
       "title": "The Witch's Cauldron",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Anointing Paste is what wakes an ordinary cauldron into a Witch's Cauldron — the vessel behind the cauldron paths already mentioned above.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

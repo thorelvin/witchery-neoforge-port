@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer a **Brew of Erosion** on a small circle; the crevice carves ahead of the casting point, so choose your direction first.[#]()",
+      "text": "[#](53341a)Offer a **Brew of Erosion** on a small circle; the crevice carves ahead of the casting point, so choose your direction first.[#]()\n\n[#](53341a)Use it to disrupt pursuers, split a battlefield, or make a sudden barrier.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Use it to disrupt pursuers, split a battlefield, or make a sudden barrier. Blunt magic — effective, noisy, and inclined to ruin the ground.[#]()",
+      "text": "[#](53341a)Blunt magic — effective, noisy, and inclined to ruin the ground.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

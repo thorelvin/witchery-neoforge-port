@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A desperate infernal recovery-working for calling back what was lost in death.[#]()",
+      "text": "[#](53341a)A desperate infernal recovery-working for calling back what was lost in death. It does not reverse the death — it drags your fallen belongings back before the world scatters them.[#]()",
       "title": "Rite of Prior Incarnation",
       "use_markdown_in_title": false
     },
@@ -26,19 +26,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)It does not reverse the death — it drags your fallen belongings back before the world scatters them.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Worked on a small infernal circle with a **Necromantic Stone**, **Tongue of Dog**, **Bone**, **Spectral Dust**, and a **Charged Attuned Stone**.[#]()",
+      "text": "[#](53341a)Worked on a small infernal circle with a **Necromantic Stone**, **Tongue of Dog**, **Bone**, **Spectral Dust**, and a **Charged Attuned Stone**. Cast it in the same world, within **16 blocks** of where you fell.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -49,29 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Cast it in the same world, within **16 blocks** of where you fell.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Loose drops are pulled toward you, your inventory first.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)No answer to Keep Inventory or another world — but the witch's answer to a bad death while the trail is warm.[#]()",
+      "text": "[#](53341a)Loose drops are pulled toward you, your inventory first. No answer to Keep Inventory or another world — but the witch's answer to a bad death while the trail is warm.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

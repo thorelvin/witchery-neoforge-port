@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)An infernal cooking-working that turns dropped raw food into cooked meals all at once.[#]()",
+      "text": "[#](53341a)An infernal cooking-working that turns dropped raw food into cooked meals all at once. Efficient, dramatic, and never entirely gentle — for when a camp of meat needs preparing faster than any oven.[#]()",
       "title": "Rite of Broiling",
       "use_markdown_in_title": false
     },
@@ -26,19 +26,8 @@
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": false,
-      "text": "[#](53341a)Efficient, dramatic, and never entirely gentle — for when a camp of meat needs preparing faster than any oven.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
       "show_title_separator": true,
-      "text": "[#](53341a)Started from a small infernal circle with **Sugar**.[#]()",
+      "text": "[#](53341a)Started from a small infernal circle with **Sugar**. The ordinary branch needs **Wood Ash** and **Coal** (1000 power); the hotter branch needs **Wood Ash**, **Blaze Powder**, and a **Charged Attuned Stone**.[#]()\n\n[#](53341a)It cooks every raw food in reach.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -49,18 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The ordinary branch needs **Wood Ash** and **Coal** (1000 power); the hotter branch needs **Wood Ash**, **Blaze Powder**, and a **Charged Attuned Stone**.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)It cooks every raw food in reach. The hotter branch is harsher — some offerings return as **Charcoal** instead of supper.[#]()",
+      "text": "[#](53341a)The hotter branch is harsher — some offerings return as **Charcoal** instead of supper.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

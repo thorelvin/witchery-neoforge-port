@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)An effigy shaped to resemble a person and bound to them through a taglock carries a thread of the sympathy that connects all things.[#]()",
+      "text": "[#](53341a)An effigy shaped to resemble a person and bound to them through a taglock carries a thread of the sympathy that connects all things. What happens to the effigy tends to happen to its subject — and it works in both directions.[#]()",
       "title": "Poppets",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)What happens to the effigy tends to happen to its subject — and it works in both directions.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -71,18 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Death, Earth, Water, Fire, Hunger; each covers a different category of misfortune, and Voodoo Protection counters hostile poppet workings.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Keep spares. The shelf holds nine.[#]()",
+      "text": "[#](53341a)Death, Earth, Water, Fire, Hunger; each covers a different category of misfortune, and Voodoo Protection counters hostile poppet workings.[#]()\n\n[#](53341a)Keep spares. The shelf holds nine.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

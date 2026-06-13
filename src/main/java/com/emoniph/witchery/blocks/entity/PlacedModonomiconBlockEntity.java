@@ -106,17 +106,21 @@ public class PlacedModonomiconBlockEntity extends BlockEntity {
     }
 
     public boolean turnPlacedPage(int direction) {
+        return turnPlacedPage(direction, null);
+    }
+
+    public boolean turnPlacedPage(int direction, @Nullable Player reader) {
         boolean clientSide = level != null && level.isClientSide();
         if (bookStack.isEmpty() || direction == 0 || (clientSide && turnPage != 0)) {
             return false;
         }
 
-        int pageCount = PlacedModonomiconBookResolver.getPageCount(bookStack, level);
+        int pageCount = PlacedModonomiconBookResolver.getPageCount(bookStack, level, reader);
         if (pageCount <= 0) {
             return false;
         }
 
-        int current = PlacedModonomiconBookResolver.clampOpenPagesIndex(bookStack, level, openPagesIndex);
+        int current = PlacedModonomiconBookResolver.clampOpenPagesIndex(bookStack, level, reader, openPagesIndex);
         int next = nextOpenPagesIndex(current, pageCount, direction);
         if (next == current) {
             openPagesIndex = current;
@@ -126,6 +130,34 @@ public class PlacedModonomiconBlockEntity extends BlockEntity {
         openPagesIndex = next;
         if (clientSide) {
             startPageTurn(direction > 0 ? 1 : 2);
+        } else if (level != null) {
+            turnPage = 0;
+            setChangedAndSync();
+        }
+        return true;
+    }
+
+    public boolean jumpPlacedPage(int targetOpenPagesIndex, @Nullable Player reader) {
+        boolean clientSide = level != null && level.isClientSide();
+        if (bookStack.isEmpty() || targetOpenPagesIndex < 0 || (clientSide && turnPage != 0)) {
+            return false;
+        }
+
+        int pageCount = PlacedModonomiconBookResolver.getPageCount(bookStack, level, reader);
+        if (pageCount <= 0) {
+            return false;
+        }
+
+        int current = PlacedModonomiconBookResolver.clampOpenPagesIndex(bookStack, level, reader, openPagesIndex);
+        int next = PlacedModonomiconBookResolver.clampOpenPagesIndex(bookStack, level, reader, targetOpenPagesIndex);
+        if (next == current) {
+            openPagesIndex = current;
+            return false;
+        }
+
+        openPagesIndex = next;
+        if (clientSide) {
+            startPageTurn(next > current ? 1 : 2);
         } else if (level != null) {
             turnPage = 0;
             setChangedAndSync();

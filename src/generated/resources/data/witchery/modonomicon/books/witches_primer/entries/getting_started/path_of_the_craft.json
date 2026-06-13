@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a subject's book and its pages appear here.[#]()",
+      "text": "[#](53341a)Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a subject's book and its pages appear here. Here is the whole road, so you may see where your feet are headed:[#]()",
       "title": "Path of the Craft",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Here is the whole road, so you may see where your feet are headed:[#]()",
+      "text": "[#](53341a)**Getting Started** — the altar, the boline, the first roots. **1. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders. **2. Herbology** — Mutandis, the Rowan, the Witch's Cauldron.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Getting Started** — the altar, the boline, the first roots. **1. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders. **2.[#]()",
+      "text": "[#](53341a)**3. Brews & Infusions** — the Kettle, and the four paths of infusion. **4. Distilling** — drawing essences out by heat and patience. **5. Circle Magic** — chalk, circles, and the rites of power.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -49,7 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Herbology** — Mutandis, the Rowan, the Witch's Cauldron. **3. Brews & Infusions** — the Kettle, and the four paths of infusion. **4.[#]()",
+      "text": "[#](53341a)**6. Conjuration** — the Brazier, fetishes, and the things you call. **7. Symbology** — the Mystic Branch and glyphs traced in the air. **8. Poppets** — taglocks, poppets, and binding from afar.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -60,51 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Distilling** — drawing essences out by heat and patience. **5. Circle Magic** — chalk, circles, and the rites of power. **6.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Conjuration** — the Brazier, fetishes, and the things you call. **7. Symbology** — the Mystic Branch and glyphs traced in the air. **8.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Poppets** — taglocks, poppets, and binding from afar. **9. The Spirit World** — dreams, the dead, and the far country. **10.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Creatures** — familiars and the beasts of the craft. **11. Transformations** — the deeper changes: the wolf, the night.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The order is a teacher's order, not a cage.[#]()",
+      "text": "[#](53341a)**9. The Spirit World** — dreams, the dead, and the far country. **10. Creatures** — familiars and the beasts of the craft. **11. Transformations** — the deeper changes: the wolf, the night.[#]()\n\n[#](53341a)The order is a teacher's order, not a cage.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

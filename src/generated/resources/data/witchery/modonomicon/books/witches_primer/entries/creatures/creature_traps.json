@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some creatures are better studied after they have stopped moving.[#]()",
+      "text": "[#](53341a)Some creatures are better studied after they have stopped moving. The traps are low metal plates: place one, give it a moment to arm, and keep your own feet clear.[#]()",
       "title": "Creature Traps",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The traps are low metal plates: place one, give it a moment to arm, and keep your own feet clear.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

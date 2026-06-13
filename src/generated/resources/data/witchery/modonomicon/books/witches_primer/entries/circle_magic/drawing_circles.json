@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Place each glyph around the perimeter in the chalk the rite calls for — white for most, **Otherwhere** or **Infernal** where a rite demands it — then set a[#]()",
+      "text": "[#](53341a)Place each glyph around the perimeter in the chalk the rite calls for — white for most, **Otherwhere** or **Infernal** where a rite demands it — then set a **Golden** centre in the very middle.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,18 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Golden** centre in the very middle. Drop the activating ingredient nearby and right-click that golden centre.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Whatever the ring, the centre is always gold.[#]()",
+      "text": "[#](53341a)Drop the activating ingredient nearby and right-click that golden centre. Whatever the ring, the centre is always gold.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -60,30 +49,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)**Small** (7x7, 16 glyphs) for infusions, familiar binding, and personal rites.[#]()",
+      "text": "[#](53341a)**Small** (7x7, 16 glyphs) for infusions, familiar binding, and personal rites. **Medium** (11x11, 28 glyphs) for summoning, fertility, and most buff rites. **Large** (15x15, 40 glyphs) for world-altering rites, curses, and dimensional workings.[#]()",
       "title": "Three Sizes",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Medium** (11x11, 28 glyphs) for summoning, fertility, and most buff rites.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Large** (15x15, 40 glyphs) for world-altering rites, curses, and dimensional workings.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

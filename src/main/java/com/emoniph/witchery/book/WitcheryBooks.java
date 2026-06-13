@@ -8,6 +8,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Shared constants/helpers for the native Modonomicon books (Book of Shadows family).
@@ -59,42 +60,50 @@ public final class WitcheryBooks {
 
     // Modonomicon does not auto-paginate; text longer than a page spills past the book edge.
     // Every prose page now reserves a title row (real title on the first page, a blank spacer on the
-    // rest), and the horizontal padding narrows the line, so the budget is uniform and conservative.
-    private static final int PAGE_CHARS = 155;
+    // rest), and the horizontal padding narrows the line. This budget leaves bottom breathing room
+    // while using the page instead of forcing short paragraphs onto separate leaves.
+    private static final int PAGE_CHARS = 250;
     // A single sentence is kept whole on its own page up to this length (still within a page's real
     // height); only sentences longer than this are broken at word boundaries. Keeping near-page-length
     // sentences intact avoids stranding a tiny trailing word ("it.") on the next page.
-    private static final int SENTENCE_KEEP_MAX = 175;
+    private static final int SENTENCE_KEEP_MAX = PAGE_CHARS;
+    // Keep numbered headings such as "**2. Herbology**" whole instead of splitting after "2.".
+    private static final Pattern SENTENCE_BOUNDARY = Pattern.compile("(?<=[!?])\\s+|(?<=\\.)(?<!\\d\\.)\\s+");
 
     /**
      * Splits prose into as many sepia text pages as needed to fit the page height, breaking at
      * sentence boundaries — and at word boundaries within a sentence too long for one page, so
-     * nothing ever overflows. Paragraphs ({@code \n\n}) are never merged onto one page. The first
-     * page carries the optional {@code title}. Use this for all body prose.
+     * nothing ever overflows. Paragraphs ({@code \n\n}) keep a blank line between them, but can share
+     * a page when they fit. The first page carries the optional {@code title}. Use this for all body
+     * prose.
      */
     public static List<BookPageModel<?>> prose(String title, String body) {
         List<String> pageTexts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
         for (String paragraph : body.split("\n\n", -1)) {
             String trimmed = paragraph.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            StringBuilder current = new StringBuilder();
-            for (String sentence : trimmed.split("(?<=[.!?])\\s+")) {
+            boolean firstPieceInParagraph = true;
+            for (String sentence : SENTENCE_BOUNDARY.split(trimmed)) {
                 for (String piece : splitToBudget(sentence)) {
-                    if (current.length() > 0 && current.length() + 1 + piece.length() > PAGE_CHARS) {
+                    String separator = current.length() == 0 ? "" : firstPieceInParagraph ? "\n\n" : " ";
+                    if (current.length() > 0 && current.length() + separator.length() + piece.length() > PAGE_CHARS) {
                         pageTexts.add(current.toString());
                         current.setLength(0);
+                        separator = "";
                     }
-                    if (current.length() > 0) {
-                        current.append(' ');
+                    if (!separator.isEmpty()) {
+                        current.append(separator);
                     }
                     current.append(piece);
+                    firstPieceInParagraph = false;
                 }
             }
-            if (current.length() > 0) {
-                pageTexts.add(current.toString());
-            }
+        }
+        if (current.length() > 0) {
+            pageTexts.add(current.toString());
         }
 
         List<BookPageModel<?>> pages = new ArrayList<>();
@@ -120,19 +129,50 @@ public final class WitcheryBooks {
         }
         List<String> pieces = new ArrayList<>();
         StringBuilder current = new StringBuilder();
-        for (String word : text.split(" ")) {
-            if (current.length() > 0 && current.length() + 1 + word.length() > PAGE_CHARS) {
+        for (String token : splitBudgetTokens(text)) {
+            if (current.length() > 0 && current.length() + 1 + token.length() > PAGE_CHARS) {
                 pieces.add(current.toString());
                 current.setLength(0);
             }
             if (current.length() > 0) {
                 current.append(' ');
             }
-            current.append(word);
+            current.append(token);
         }
         if (current.length() > 0) {
             pieces.add(current.toString());
         }
         return pieces;
+    }
+
+    private static List<String> splitBudgetTokens(String text) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inBold = false;
+        for (String word : text.split(" ")) {
+            if (current.length() > 0) {
+                current.append(' ');
+            }
+            current.append(word);
+            inBold ^= hasOddDelimiterCount(word, "**");
+            if (!inBold) {
+                tokens.add(current.toString());
+                current.setLength(0);
+            }
+        }
+        if (current.length() > 0) {
+            tokens.add(current.toString());
+        }
+        return tokens;
+    }
+
+    private static boolean hasOddDelimiterCount(String text, String delimiter) {
+        int count = 0;
+        int index = 0;
+        while ((index = text.indexOf(delimiter, index)) >= 0) {
+            count++;
+            index += delimiter.length();
+        }
+        return (count & 1) == 1;
     }
 }

@@ -75,6 +75,10 @@ public class WitcheryClientEvents {
         if (mc.player == null) return;
         BlockPos pos = event.getBlockPos();
         BlockState state = event.getBlockState();
+        if (state.is(WitcheryBlocks.PLACED_MODONOMICON.get())) {
+            event.setCanceled(true);
+            return;
+        }
         if (!state.is(WitcheryBlocks.BEARTRAP.get()) || !state.getValue(BeartrapBlock.CLOSED)) return;
         if (event.getLevel().getBlockEntity(pos) instanceof BeartrapBlockEntity trap
                 && trap.hasOwner()

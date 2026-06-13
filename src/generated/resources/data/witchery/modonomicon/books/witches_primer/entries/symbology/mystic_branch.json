@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The Mystic Branch is the witch's focus for stolen creature force.[#]()",
+      "text": "[#](53341a)The Mystic Branch is the witch's focus for stolen creature force. Old tales call it a wand for tracing spells in the air, but in the live port its role is simpler: it releases the creature power you have already stored within yourself.[#]()",
       "title": "Mystic Branch",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Old tales call it a wand for tracing spells in the air, but in the live port its role is simpler: it releases the creature power you have already stored within yourself.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -51,19 +40,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Hold stored creature-power charges and use the branch to spend one, releasing your bound power directly — swiftness, impossible leaps, healing,[#]()",
+      "text": "[#](53341a)Hold stored creature-power charges and use the branch to spend one, releasing your bound power directly — swiftness, impossible leaps, healing, transposition, or bat-light levitation, depending on what you carry.[#]()",
       "title": "Current Use",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)transposition, or bat-light levitation, depending on what you carry.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

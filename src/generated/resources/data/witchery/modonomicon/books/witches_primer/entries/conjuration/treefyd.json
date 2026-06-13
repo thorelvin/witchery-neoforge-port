@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred.[#]()",
+      "text": "[#](53341a)A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred. The witch prepares Treefyd Seeds, then plants them on living grass so the rooted thing may wake and walk.[#]()",
       "title": "Treefyd",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The witch prepares Treefyd Seeds, then plants them on living grass so the rooted thing may wake and walk.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -49,19 +38,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Use the seed on the top of a grass block; it rises as your own guardian. Feeding an owned Treefyd another seed splits off a fresh one.[#]()",
+      "text": "[#](53341a)Use the seed on the top of a grass block; it rises as your own guardian. Feeding an owned Treefyd another seed splits off a fresh one.[#]()\n\n[#](53341a)A **Creeper Heart** hardens it, a **Demon Heart** more so, and a **Boline** toggles whether it wanders when idle.[#]()",
       "title": "Planting the Seed",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)A **Creeper Heart** hardens it, a **Demon Heart** more so, and a **Boline** toggles whether it wanders when idle.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

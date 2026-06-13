@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Feed it a sapling and it renders the wood down into a fume, caught in a clay jar — each tree gives a different essence.[#]()",
+      "text": "[#](53341a)Feed it a sapling and it renders the wood down into a fume, caught in a clay jar — each tree gives a different essence. Start with what lies to hand: **Wood Ash** from saplings, **Exhale** from an oak, **Breath** from a birch.[#]()",
       "title": "What the Oven Makes",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Start with what lies to hand: **Wood Ash** from saplings, **Exhale** from an oak, **Breath** from a birch.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {

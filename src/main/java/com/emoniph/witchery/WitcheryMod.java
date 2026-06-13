@@ -107,6 +107,10 @@ public class WitcheryMod {
                         PlacedModonomiconPageTurnPayload.STREAM_CODEC,
                         PlacedModonomiconPageTurnPayload::handleOnServer)
                 .playToServer(
+                        com.emoniph.witchery.network.PlacedModonomiconPageJumpPayload.TYPE,
+                        com.emoniph.witchery.network.PlacedModonomiconPageJumpPayload.STREAM_CODEC,
+                        com.emoniph.witchery.network.PlacedModonomiconPageJumpPayload::handleOnServer)
+                .playToServer(
                         com.emoniph.witchery.network.SpellPreparedPayload.TYPE,
                         com.emoniph.witchery.network.SpellPreparedPayload.STREAM_CODEC,
                         com.emoniph.witchery.network.SpellPreparedPayload::handleOnServer);

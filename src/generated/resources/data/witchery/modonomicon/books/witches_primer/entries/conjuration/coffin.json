@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A vampire does not sleep in a bed. The sun makes ordinary beds inadvisable, and there is a certain indignity to them regardless.[#]()",
+      "text": "[#](53341a)A vampire does not sleep in a bed. The sun makes ordinary beds inadvisable, and there is a certain indignity to them regardless. The coffin is better: sealed against daylight, and appropriate to the condition.[#]()",
       "title": "The Coffin",
       "use_markdown_in_title": false
     },
@@ -27,29 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The coffin is better: sealed against daylight, and appropriate to the condition.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Shift-right-click to open the lid, and right-click to enter and sleep.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Any player may use it, but for vampires it resolves the problem of daylight with characteristic directness.[#]()",
+      "text": "[#](53341a)Shift-right-click to open the lid, and right-click to enter and sleep. Any player may use it, but for vampires it resolves the problem of daylight with characteristic directness.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

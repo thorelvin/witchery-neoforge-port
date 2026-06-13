@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A Wicker Man is an invitation written in dry bundles and bad judgment. Rebuilt from Bloodied Wicker Bundles and burned, it calls the Horned Huntsman.[#]()",
+      "text": "[#](53341a)A Wicker Man is an invitation written in dry bundles and bad judgment. Rebuilt from Bloodied Wicker Bundles and burned, it calls the Horned Huntsman. The shape matters — a near miss is only a bonfire.[#]()",
       "title": "The Wicker Man",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The shape matters — a near miss is only a bonfire.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -71,18 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Leave the surrounding cells empty — stray bloodied wicker spoils the match.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Then use flint and steel on any bundle to summon the Horned Huntsman at its base.[#]()",
+      "text": "[#](53341a)Leave the surrounding cells empty — stray bloodied wicker spoils the match. Then use flint and steel on any bundle to summon the Horned Huntsman at its base.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

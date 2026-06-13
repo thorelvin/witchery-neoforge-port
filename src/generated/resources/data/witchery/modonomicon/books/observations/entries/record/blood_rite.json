@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The first pages warn that the author studied an immortal predator and wrote for those who would survive the lesson.[#]()",
+      "text": "[#](53341a)The first pages warn that the author studied an immortal predator and wrote for those who would survive the lesson.[#]()\n\n[#](53341a)A chicken, a skull, a boline, and a glass goblet begin the old blood rite.[#]()",
       "title": "A Scholar's Warning",
       "use_markdown_in_title": false
     },
@@ -27,40 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)A chicken, a skull, a boline, and a glass goblet begin the old blood rite.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)A night rite calls string, red dust, torches, and a skull beneath open stars.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Blood poured over the skull draws Lilith's attention and sends the seeker toward the Nether.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Strength is proven to her in battle; the filled goblet begins the curse.[#]()",
+      "text": "[#](53341a)A night rite calls string, red dust, torches, and a skull beneath open stars.[#]()\n\n[#](53341a)Blood poured over the skull draws Lilith's attention and sends the seeker toward the Nether.[#]()\n\n[#](53341a)Strength is proven to her in battle; the filled goblet begins the curse.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

@@ -27,18 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Less a summoning than a lure: it coaxes creatures to answer a call they do not understand, and they arrive a few at a time over long minutes, not all at once.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Be patient, and have beasts within range to call.[#]()",
+      "text": "[#](53341a)Less a summoning than a lure: it coaxes creatures to answer a call they do not understand, and they arrive a few at a time over long minutes, not all at once. Be patient, and have beasts within range to call.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -49,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer barn and field bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, carrot, and seeds, plus **6000 altar power**.[#]()",
+      "text": "[#](53341a)Offer barn and field bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, carrot, and seeds, plus **6000 altar power**. It favors pigs, chickens, cows, sheep, mooshrooms, wolves, and ocelots.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -60,29 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)It favors pigs, chickens, cows, sheep, mooshrooms, wolves, and ocelots.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**It demands a coven of three.** Three witches or more must keep the circle, or the call goes unanswered and the rite collapses — this is no solitary working.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Do not cast it near a village ranch unless you can explain yourself.[#]()",
+      "text": "[#](53341a)**It demands a coven of three.** Three witches or more must keep the circle, or the call goes unanswered and the rite collapses — this is no solitary working. Do not cast it near a village ranch unless you can explain yourself.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

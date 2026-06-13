@@ -1,7 +1,6 @@
 package com.emoniph.witchery.network;
 
 import com.emoniph.witchery.WitcheryMod;
-import com.emoniph.witchery.blocks.PlacedModonomiconBlock;
 import com.emoniph.witchery.blocks.entity.PlacedModonomiconBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
@@ -51,11 +50,7 @@ public record PlacedModonomiconPageTurnPayload(BlockPos pos, int direction) impl
                 || !(level.getBlockEntity(payload.pos()) instanceof PlacedModonomiconBlockEntity be)) {
             return;
         }
-        if (PlacedModonomiconBlock.pageControlDirection(state, payload.pos(), player) != direction) {
-            return;
-        }
-
-        if (be.turnPlacedPage(direction)) {
+        if (be.turnPlacedPage(direction, player)) {
             level.playSound(null, payload.pos(), SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS,
                     0.8F, level.random.nextFloat() * 0.25F + 0.85F);
         }

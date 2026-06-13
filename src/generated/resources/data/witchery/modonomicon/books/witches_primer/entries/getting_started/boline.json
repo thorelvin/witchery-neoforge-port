@@ -16,19 +16,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The Boline is the witch's field knife.[#]()",
+      "text": "[#](53341a)The Boline is the witch's field knife. It behaves much like shears, but it also harvests cobweb intact and safely gathers Blood Poppies and other delicate ingredients that rough hands would ruin.[#]()",
       "title": "The Boline",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)It behaves much like shears, but it also harvests cobweb intact and safely gathers Blood Poppies and other delicate ingredients that rough hands would ruin.[#]()",
-      "title": " ",
       "use_markdown_in_title": false
     },
     {
