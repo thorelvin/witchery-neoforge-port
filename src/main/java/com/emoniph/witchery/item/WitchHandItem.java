@@ -104,7 +104,7 @@ public class WitchHandItem extends Item {
         int elapsed = getUseDuration(stack, entity) - timeCharged;
         boolean success = switch (data.getInfusionType()) {
             case LIGHT -> releaseLight(player, data, elapsed);
-            case OVERWORLD -> releaseOverworld(player, data);
+            case OVERWORLD -> releaseOverworld(player, data, elapsed);
             case OTHERWHERE -> releaseOtherwhere(stack, player, data, elapsed);
             case INFERNAL -> releaseInfernal(player, data);
             default -> false;
@@ -237,7 +237,7 @@ public class WitchHandItem extends Item {
     }
 
     /** Source InfusionOverworld block-top release: raise a pillar of earth, lifting whatever stands on it. */
-    private static boolean releaseOverworld(ServerPlayer player, WitcheryPlayerData data) {
+    private static boolean releaseOverworld(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
         ServerLevel level = (ServerLevel) player.level();
 
         // Source onPlayerStoppedUsing ENTITY branch: disarm a struck metal-wielding mob.
@@ -248,7 +248,7 @@ public class WitchHandItem extends Item {
 
         HitResult hit = player.pick(4.0D, 1.0F, false);
         if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS) {
-            return false;
+            return overworldShockwave(player, data, elapsed);
         }
         BlockPos pos = blockHit.getBlockPos();
 
@@ -297,7 +297,22 @@ public class WitchHandItem extends Item {
             feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
             return true;
         }
-        return false;
+        return overworldShockwave(player, data, elapsed);
+    }
+
+    /** Source InfusionOverworld fallback: a long open-ground release sends out a damaging shockwave. */
+    private static boolean overworldShockwave(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        if (player.isShiftKeyDown() || elapsed < 40) {
+            return false;
+        }
+        int seconds = elapsed / 20;
+        if (!spendInfusionEnergy(player, data, 6 * seconds)) {
+            fail(player);
+            return false;
+        }
+        com.emoniph.witchery.events.EarthShockwaveEvents.start((ServerLevel) player.level(), player, 2 * seconds);
+        feedback(player, ParticleTypes.EXPLOSION, SoundEvents.IRON_GOLEM_ATTACK);
+        return true;
     }
 
     private static boolean overworldDisarm(ServerPlayer player, WitcheryPlayerData data, Mob mob) {
