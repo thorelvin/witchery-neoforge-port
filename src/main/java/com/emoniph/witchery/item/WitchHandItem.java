@@ -96,6 +96,7 @@ public class WitchHandItem extends Item {
         int elapsed = getUseDuration(stack, entity) - timeCharged;
         boolean success = switch (data.getInfusionType()) {
             case LIGHT -> releaseLight(player, data, elapsed);
+            case OVERWORLD -> releaseOverworld(player, data);
             case OTHERWHERE -> releaseOtherwhere(stack, player, data, elapsed);
             case INFERNAL -> releaseInfernal(player, data);
             default -> false;
@@ -198,6 +199,50 @@ public class WitchHandItem extends Item {
             return recall(stack, player, data);
         }
         return teleportToLook(player, data, Math.min(120.0D, 40.0D + 20.0D * Math.max(0, elapsed / 20)));
+    }
+
+    /** Source InfusionOverworld block-top release: raise a pillar of earth, lifting whatever stands on it. */
+    private static boolean releaseOverworld(ServerPlayer player, WitcheryPlayerData data) {
+        HitResult hit = player.pick(4.0D, 1.0F, false);
+        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS
+                || blockHit.getDirection() != Direction.UP) {
+            return false;
+        }
+        ServerLevel level = (ServerLevel) player.level();
+        BlockPos top = blockHit.getBlockPos();
+        if (level.getBlockState(top.below(10)).isAir()) {
+            fail(player); // needs solid ground to push up from
+            return true;
+        }
+        if (!spendInfusionEnergy(player, data, 2)) {
+            fail(player);
+            return true;
+        }
+        raiseColumn(level, top, 6, 3);
+        feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
+        return true;
+    }
+
+    private static void raiseColumn(ServerLevel level, BlockPos top, int depth, int rise) {
+        for (int h = 0; h < depth; h++) {
+            BlockPos from = top.below(h);
+            BlockState moving = level.getBlockState(from);
+            if (moving.isAir() || moving.getDestroySpeed(level, from) < 0.0F || moving.hasBlockEntity()) {
+                continue;
+            }
+            BlockPos to = from.above(rise);
+            BlockState dest = level.getBlockState(to);
+            if (!dest.isAir() && !dest.canBeReplaced()) {
+                continue;
+            }
+            level.removeBlock(from, false);
+            level.setBlock(to, moving, 3);
+            AABB column = new AABB(from).expandTowards(0.0D, 1.0D, 0.0D);
+            for (LivingEntity rider : level.getEntitiesOfClass(LivingEntity.class, column)) {
+                rider.fallDistance = 0.0F;
+                rider.teleportTo(rider.getX(), rider.getY() + rise, rider.getZ());
+            }
+        }
     }
 
     private static boolean releaseInfernal(ServerPlayer player, WitcheryPlayerData data) {
