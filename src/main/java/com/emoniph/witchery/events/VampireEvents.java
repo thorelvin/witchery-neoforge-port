@@ -404,7 +404,7 @@ public class VampireEvents {
             levelUp(player, data);
         } else {
             level.playSound(null, pos, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
-            player.displayClientMessage(Component.translatable("witchery.vampire.quest.progress",
+            player.displayClientMessage(Component.translatable("witchery.vampire.quest.village_progress",
                     data.getVisitedVillageCount(), QUEST_VILLAGES_REQUIRED), true);
         }
     }

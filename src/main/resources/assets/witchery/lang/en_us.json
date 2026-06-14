@@ -701,6 +701,7 @@
   "witchery.vampire.bite.dry": "%s has no blood left to take.",
   "witchery.vampire.level_up": "Your thirst grows stronger. Vampire level %s.",
   "witchery.vampire.quest.progress": "Villager blood quest: %s/%s bites at the right moment.",
+  "witchery.vampire.quest.village_progress": "Village pilgrimage: %s/%s distinct villages walked.",
   "witchery.werewolf.transformed": "The full moon calls. You feel the beast take hold!",
   "witchery.werewolf.restored": "The moon releases its grip. Your human shape returns.",
   "witchery.werewolf.wolfsbane": "The wolfsbane burns. The beast retreats.",
