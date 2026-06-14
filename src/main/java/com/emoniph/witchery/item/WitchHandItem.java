@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.blocks.BarrierBlock;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import com.emoniph.witchery.data.InfusionType;
@@ -134,7 +135,9 @@ public class WitchHandItem extends Item {
         return switch (data.getInfusionType()) {
             case LIGHT -> lightTarget(player, data, target);
             case OVERWORLD -> overworldPush(player, data, target);
-            case OTHERWHERE -> otherwhereHike(player, data, target);
+            case OTHERWHERE -> player.isShiftKeyDown()
+                    ? otherwhereRecallDrag(stack, player, data, target)
+                    : otherwhereHike(player, data, target);
             case INFERNAL -> infernalCommandOrEnslave(player, data, target);
             default -> false;
         };
@@ -318,19 +321,25 @@ public class WitchHandItem extends Item {
     }
 
     private static boolean otherwhereHike(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
-        if (!spendInfusionEnergy(player, data, 2)) {
+        if (isEnderInhibited(player) || !spendInfusionEnergy(player, data, 2)) {
             fail(player);
             return true;
         }
-        double lift = clearLiftDistance(target, 8);
-        if (lift <= 0.0D) {
+        double selfLift = clearLiftDistance(player, 8);
+        if (selfLift <= 0.0D) {
             fail(player);
             return true;
         }
         player.fallDistance = 0.0F;
-        target.fallDistance = 0.0F;
-        player.teleportTo(player.getX(), player.getY() + Math.min(clearLiftDistance(player, 8), lift), player.getZ());
-        target.teleportTo(target.getX(), target.getY() + lift, target.getZ());
+        player.teleportTo(player.getX(), player.getY() + selfLift, player.getZ());
+        // The target only rides along if it is not warded against the far country.
+        if (!isEnderInhibited(target)) {
+            double lift = clearLiftDistance(target, 8);
+            if (lift > 0.0D) {
+                target.fallDistance = 0.0F;
+                target.teleportTo(target.getX(), target.getY() + lift, target.getZ());
+            }
+        }
         feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
         return true;
     }
@@ -394,7 +403,7 @@ public class WitchHandItem extends Item {
 
     private static boolean recall(ItemStack stack, ServerPlayer player, WitcheryPlayerData data) {
         CompoundTag tag = getTag(stack);
-        if (!hasRecall(tag) || !spendInfusionEnergy(player, data, 2)) {
+        if (!hasRecall(tag) || isEnderInhibited(player) || !spendInfusionEnergy(player, data, 2)) {
             fail(player);
             return false;
         }
@@ -417,8 +426,47 @@ public class WitchHandItem extends Item {
         }
     }
 
+    /** Source onLeftClickEntity (sneaking): drag self and the grasped creature to the stored recall point. */
+    private static boolean otherwhereRecallDrag(ItemStack stack, ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        CompoundTag tag = getTag(stack);
+        if (!hasRecall(tag) || isEnderInhibited(player)) {
+            fail(player);
+            return true;
+        }
+        ServerLevel dest = resolveRecallLevel(player, tag);
+        if (dest == null || !spendInfusionEnergy(player, data, 4)) {
+            fail(player);
+            return true;
+        }
+        double x = tag.getIntOr(RECALL_X, 0) + 0.5D;
+        double y = tag.getIntOr(RECALL_Y, 0);
+        double z = tag.getIntOr(RECALL_Z, 0) + 0.5D;
+        player.fallDistance = 0.0F;
+        player.teleportTo(dest, x, y, z, Set.of(), player.getYRot(), player.getXRot(), false);
+        if (!isEnderInhibited(target)) {
+            target.fallDistance = 0.0F;
+            target.teleportTo(dest, x, y, z, Set.of(), target.getYRot(), target.getXRot(), false);
+        }
+        feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
+        return true;
+    }
+
+    private static ServerLevel resolveRecallLevel(ServerPlayer player, CompoundTag tag) {
+        try {
+            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION,
+                    Identifier.parse(tag.getStringOr(RECALL_DIM, "")));
+            return ((ServerLevel) player.level()).getServer().getLevel(dimension);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private static boolean isEnderInhibited(LivingEntity entity) {
+        return entity.hasEffect(WitcheryMobEffects.ENDER_INHIBITION);
+    }
+
     private static boolean teleportToLook(ServerPlayer player, WitcheryPlayerData data, double range) {
-        if (!spendInfusionEnergy(player, data, 1)) {
+        if (isEnderInhibited(player) || !spendInfusionEnergy(player, data, 1)) {
             fail(player);
             return false;
         }
