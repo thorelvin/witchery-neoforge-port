@@ -387,6 +387,8 @@ public class WitcheryPlayerEvents {
 
         var killed = event.getEntity();
         GlassGobletItem.tryFillChickenBloodFromRitual(level, player, killed);
+        // A Witch-Hand creature sacrifice already granted the power; don't also grant it via altar-kill.
+        if (killed.getPersistentData().getBooleanOr(com.emoniph.witchery.util.Enslaved.SACRIFICED_TAG, false)) return;
         CreaturePowerType power = creaturePowerFor(killed);
 
         if (power == null) return;

@@ -35,6 +35,12 @@ public final class Enslaved {
     public static final String SOURCE_ENSLAVER_TAG = "WITCEnslaverName";
     /** Port-only tag holding the enslaver's UUID, so a name change does not orphan the thrall. */
     public static final String PORT_ENSLAVER_UUID_TAG = "witchery_enslaver_uuid";
+    /**
+     * Marks a mob killed by a Witch-Hand creature-power sacrifice. The sacrifice already grants the
+     * power, so the port's altar-kill acquisition (WitcheryPlayerEvents.onMobDeath) must skip it to
+     * avoid double-granting charges and draining altar power.
+     */
+    public static final String SACRIFICED_TAG = "witchery_sacrificed";
 
     private Enslaved() {}
 

@@ -586,6 +586,8 @@ public class WitchHandItem extends Item {
         feedback(player, ParticleTypes.SOUL, SoundEvents.SOUL_ESCAPE.value());
         level.sendParticles(ParticleTypes.SOUL, mob.getX(), mob.getY(0.6), mob.getZ(),
                 24, 0.3, 0.5, 0.3, 0.02);
+        // Mark it so the altar-kill acquisition does not also fire for this lethal blow.
+        mob.getPersistentData().putBoolean(Enslaved.SACRIFICED_TAG, true);
         mob.hurtServer(level, level.damageSources().playerAttack(player), mob.getHealth() + 1.0F);
         player.displayClientMessage(Component.translatable("witchery.creature_power.absorbed",
                 power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
