@@ -80,6 +80,12 @@ public class WitcheryEntities {
                             .sized(0.01F, 0.01F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "scrying_eye"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.EarthRockEntity>> EARTH_ROCK =
+            ENTITY_TYPES.register("earth_rock", () ->
+                    EntityType.Builder.<com.emoniph.witchery.entity.EarthRockEntity>of(com.emoniph.witchery.entity.EarthRockEntity::new, MobCategory.MISC)
+                            .sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(10)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "earth_rock"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CrazyCatLadyEntity>> CRAZY_CAT_LADY =
             ENTITY_TYPES.register("crazy_cat_lady", () ->
                     EntityType.Builder.of(CrazyCatLadyEntity::new, MobCategory.MONSTER)

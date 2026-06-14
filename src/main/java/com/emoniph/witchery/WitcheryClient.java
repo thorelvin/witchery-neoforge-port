@@ -331,6 +331,8 @@ public class WitcheryClient {
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.THROWN_BREW.get(),
                 net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.EARTH_ROCK.get(),
+                net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SUN_GRENADE.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPELL_EFFECT.get(),

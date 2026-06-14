@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.BarrierBlock;
 import com.emoniph.witchery.data.CreaturePowerType;
+import com.emoniph.witchery.entity.EarthRockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.util.EarthItems;
@@ -264,8 +265,26 @@ public class WitchHandItem extends Item {
             return true;
         }
 
+        Direction face = blockHit.getDirection();
+
+        // Aim at the side of a loose earthen block with open air in front: hurl it as a rock.
+        if (face != Direction.UP && face != Direction.DOWN
+                && EarthItems.isThrowableRock(level.getBlockState(pos))
+                && level.getBlockState(pos.relative(face)).isAir()) {
+            if (!spendInfusionEnergy(player, data, 3)) {
+                fail(player);
+                return true;
+            }
+            Vec3 centre = Vec3.atCenterOf(pos);
+            level.removeBlock(pos, false);
+            level.addFreshEntity(EarthRockEntity.hurl(level, player, centre.x, centre.y, centre.z, player.getLookAngle()));
+            level.sendParticles(ParticleTypes.EXPLOSION, centre.x, centre.y, centre.z, 1, 0.0, 0.0, 0.0, 0.0);
+            feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
+            return true;
+        }
+
         // Aim at a block top: raise an earth pillar.
-        if (blockHit.getDirection() == Direction.UP) {
+        if (face == Direction.UP) {
             if (level.getBlockState(pos.below(10)).isAir()) {
                 fail(player); // needs solid ground to push up from
                 return true;
