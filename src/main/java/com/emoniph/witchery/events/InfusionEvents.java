@@ -3,6 +3,8 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -12,10 +14,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Passive "infusion identity" effects and ambient FX for an infused player.
@@ -49,6 +55,59 @@ public class InfusionEvents {
         if (player.tickCount % AURA_INTERVAL == 0) {
             spawnAura(player, type);
         }
+    }
+
+    /**
+     * Overworld fall-cushion (source {@code InfusionOverworld.onFalling}): a hard landing on natural
+     * ground spends infusion energy to negate the fall — softly, kicking the sod loose, or, while
+     * sneaking, as a ground-slam explosion.
+     */
+    @SubscribeEvent
+    public static void onLivingFall(LivingFallEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || event.getDistance() <= 3.0f) {
+            return;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getInfusionType() != InfusionType.OVERWORLD) {
+            return;
+        }
+        ServerLevel level = (ServerLevel) player.level();
+        BlockPos ground = player.blockPosition().below();
+        if (!isOverworldFallGround(level.getBlockState(ground))) {
+            return;
+        }
+        boolean slam = player.isShiftKeyDown();
+        if (!spendEnergy(player, data, slam ? 10 : 5)) {
+            return;
+        }
+        event.setDistance(0.0f);
+        if (slam) {
+            level.explode(player, player.getX(), ground.getY() + 0.5, player.getZ(), 3.0F,
+                    Level.ExplosionInteraction.MOB);
+        } else {
+            level.destroyBlock(ground, true);
+            level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), ground.getY() + 1.0, player.getZ(),
+                    16, 0.5, 0.1, 0.5, 0.0);
+        }
+    }
+
+    private static boolean isOverworldFallGround(BlockState state) {
+        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.PODZOL)
+                || state.is(Blocks.GRAVEL) || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND)
+                || state.is(Blocks.SNOW) || state.is(Blocks.DIRT);
+    }
+
+    private static boolean spendEnergy(ServerPlayer player, WitcheryPlayerData data, int amount) {
+        if (player.isCreative()) {
+            return true;
+        }
+        int current = data.getInfusionEnergy();
+        if (current < amount) {
+            return false;
+        }
+        data.setInfusionEnergy(current - amount, data.getInfusionMaxEnergy());
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        return true;
     }
 
     /**
