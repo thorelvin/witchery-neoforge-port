@@ -6166,7 +6166,9 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.cure.none"), false);
             return false;
         }
-        if (target.get().distanceToSqr(Vec3.atCenterOf(center)) > 64.0 * 64.0) {
+        // Must be in this dimension and within range; resolveOfferedTaglockTarget finds the player
+        // server-wide, so without the dimension guard a matching x/z in another dimension would pass.
+        if (target.get().level() != sl || target.get().distanceToSqr(Vec3.atCenterOf(center)) > 64.0 * 64.0) {
             sp.displayClientMessage(Component.translatable("witchery.rite.wolfcurse.toofar"), false);
             return false;
         }
