@@ -307,6 +307,26 @@ final class RitualOfferings {
                 brewOfLove.get()));
     }
 
+    static Optional<CureVampirismOfferings> findCureVampirismOfferings(Level level, BlockPos center) {
+        Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
+        Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));
+        Optional<ItemEntity> silverSword = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.SILVER_SWORD.get()));
+        Optional<ItemEntity> garlic = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.GARLIC.get()));
+        Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
+        Optional<ItemEntity> brewOfLove = findNearbyOffering(level, center, WitcheryItems::isBrewOfLove);
+        if (taglockKit.isEmpty() || breathOfTheGoddess.isEmpty() || silverSword.isEmpty()
+                || garlic.isEmpty() || diamond.isEmpty() || brewOfLove.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new CureVampirismOfferings(
+                taglockKit.get(),
+                breathOfTheGoddess.get(),
+                silverSword.get(),
+                garlic.get(),
+                diamond.get(),
+                brewOfLove.get()));
+    }
+
     static Optional<CureMisfortuneOfferings> findCureMisfortuneOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> breathOfTheGoddess = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()));

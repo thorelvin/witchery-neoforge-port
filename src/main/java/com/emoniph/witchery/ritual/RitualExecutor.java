@@ -389,6 +389,12 @@ public class RitualExecutor {
                             || findCureSinkingOfferings(level, center).isPresent()
                             || findCureOverheatingOfferings(level, center).isPresent()
                             || findCureWakingNightmareOfferings(level, center).isPresent()),
+            // Filled player taglock on a Medium Ritual ring with the cure offerings -> Rite to remove
+            // vampirism (source RiteRemoveVampirism). Coven of 6 + a cat curse-mastery familiar gated in-rite.
+            RitualDefinition.of("remove_vampirism", RitualCircleDetector.CircleSize.MEDIUM,
+                    item -> TaglockKitItem.isTaglockKit(item) && TaglockKitItem.isFilled(item), VARIANT_RITUAL,
+                    (player, level, center, trigger) -> riteOfRemoveVampirism(player, level, center))
+                    .requiringOffering((level, center) -> findCureVampirismOfferings(level, center).isPresent()),
             // Bone Meal: Portable Fertility (with offerings) else plain Fertility.
             RitualDefinition.of("portable_fertility", RitualCircleDetector.CircleSize.SMALL,
                     item -> item.is(Items.BONE_MEAL), VARIANT_RITUAL,
@@ -6130,6 +6136,65 @@ public class RitualExecutor {
 
     private static boolean hasCurseProtection(ServerPlayer player) {
         return SilverEvents.hasHunterCurseProtection(player);
+    }
+
+    /**
+     * Rite of Remove Vampirism (source {@code RiteRemoveVampirism}): a coven of 6, led by a witch with
+     * an active cat curse-mastery familiar, channels through a filled player Taglock Kit to strip the
+     * bound player's vampirism. Source odds: a 3-in-4 cure, else the rite fizzles (no harm). 10000 power.
+     */
+    private static boolean riteOfRemoveVampirism(Player caster, Level level, BlockPos center) {
+        if (!(caster instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
+
+        Optional<CureVampirismOfferings> offerings = findCureVampirismOfferings(level, center);
+        if (offerings.isEmpty()) return false;
+
+        if (!hasActiveCurseMasteryFamiliar(sp)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.wolfcurse.requirescat"), false);
+            return false;
+        }
+        if (!requireCoven(caster, level, center, 6)) {
+            return false;
+        }
+
+        Optional<ServerPlayer> target = resolveOfferedTaglockTarget(caster, offerings.get().taglockKit(),
+                "witchery.ritual.cure.no_taglock", "witchery.ritual.cure.offline");
+        if (target.isEmpty()) return false;
+        WitcheryPlayerData data = WitcheryAttachments.get(target.get());
+        if (!data.isVampire()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.cure.none"), false);
+            return false;
+        }
+        if (target.get().distanceToSqr(Vec3.atCenterOf(center)) > 64.0 * 64.0) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.wolfcurse.toofar"), false);
+            return false;
+        }
+
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 10000, "witchery.ritual.cure.no_power")
+                .offer(offerings.get().taglockKit())
+                .offer(offerings.get().breathOfTheGoddess())
+                .offer(offerings.get().silverSword())
+                .offer(offerings.get().garlic())
+                .offer(offerings.get().diamond())
+                .offer(offerings.get().brewOfLove());
+        if (!transaction.commit(caster)) {
+            return false;
+        }
+
+        // Source: a 3-in-4 cure, else the rite simply fizzles (the "cursed" branch is cosmetic here).
+        if (sl.random.nextInt(4) != 0) {
+            data.setVampireLevel(0);
+            data.clearVisitedVillages();
+            PacketDistributor.sendToPlayer(target.get(), SyncPlayerDataPayload.from(target.get(), data));
+            target.get().displayClientMessage(Component.translatable("witchery.ritual.remove_vampirism.cured"), false);
+            success(caster, level, center, "witchery.ritual.remove_vampirism.success",
+                    SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.8f, 3, 48);
+        } else {
+            success(caster, level, center, "witchery.ritual.remove_vampirism.fizzle",
+                    SoundEvents.ENDER_DRAGON_GROWL, 0.6f, 3, 48);
+        }
+        return true;
     }
 
     private static boolean riteOfBreathOfTheGoddessCure(Player caster, Level level, BlockPos center) {

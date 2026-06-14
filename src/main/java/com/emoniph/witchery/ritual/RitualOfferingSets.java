@@ -84,6 +84,9 @@ record CureMisfortuneOfferings(ItemEntity taglockKit, ItemEntity breathOfTheGodd
 record CureCreatureOfferings(ItemEntity taglockKit, ItemEntity breathOfTheGoddess, ItemEntity spiderEye,
                              ItemEntity gunpowder, ItemEntity brewOfLove) {}
 
+record CureVampirismOfferings(ItemEntity taglockKit, ItemEntity breathOfTheGoddess, ItemEntity silverSword,
+                              ItemEntity garlic, ItemEntity diamond, ItemEntity brewOfLove) {}
+
 record CorruptPoppetOfferings(ItemEntity exhaleOfHornedOne, ItemEntity blazePowder,
                               ItemEntity spectralDust) {}
 

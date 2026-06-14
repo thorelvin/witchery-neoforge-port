@@ -207,9 +207,10 @@ class RitualDefinitionTest {
     @Test
     void definitionNamesAreUniqueAndRosterIsLocked() {
         List<String> names = RitualExecutor.allRitualDefinitionNames();
-        assertEquals(74, names.size(), "ritual definition roster size");
+        assertEquals(75, names.size(), "ritual definition roster size");
         assertTrue(names.contains("bind_waystone_portable"));
         assertTrue(names.contains("bind_waystone_copy_portable"));
+        assertTrue(names.contains("remove_vampirism"));
         assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
     }
 }

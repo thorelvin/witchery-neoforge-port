@@ -10,8 +10,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.util.VampireCage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -78,6 +81,12 @@ public class VampireEvents {
     // Sunlight blood power drain per 40-tick interval at level ≥ 5
     private static final int SUNLIGHT_BP_DRAIN_HIGH  = 60;
 
+    // Level 7→8: 3 distinct villages must be visited.
+    private static final int QUEST_VILLAGES_REQUIRED = 3;
+    // Coarse cell size (1<<6 = 64 blocks) used to treat one village as a single visit, matching the
+    // ~64-block reach of the village POI test. The visited set is persisted in the player's vampire state.
+    private static final int VILLAGE_CELL_SHIFT      = 6;
+
     // ── Tick ─────────────────────────────────────────────────────────────────
 
     @SubscribeEvent
@@ -136,20 +145,25 @@ public class VampireEvents {
     // ── Blood power tick ─────────────────────────────────────────────────────
 
     private static void tickBloodPower(ServerPlayer player, WitcheryPlayerData data) {
-        // Sunlight blood power drain
+        // Sunlight blood power drain — the "Resist Sun" mechanic (source GenericEvents onPlayerTick).
         if (isInSunlight(player) && !player.isCreative()) {
+            // A starved vampire caught in daylight past the ~20s grace period dies outright.
+            if (data.getBloodPower() == 0 && player.tickCount > 400) {
+                player.hurt(player.damageSources().onFire(), Float.MAX_VALUE);
+            }
             if (data.getVampireLevel() >= 5) {
+                // Resist Sun: blood power buys survival in daylight, bleeding off 60/interval with a
+                // matching debuff load (source Weakness IV + Slowness I + Mining Fatigue I) instead of
+                // instantly losing all power like a fledgling.
                 data.spendBloodPower(SUNLIGHT_BP_DRAIN_HIGH);
-                player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 3, true, false));
-                player.addEffect(new MobEffectInstance(MobEffects.HUNGER,   200, 0, true, false));
+                player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,        200, 3, true, false));
+                player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,        200, 0, true, false));
+                player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE,  200, 0, true, false));
             } else {
                 data.setBloodPower(0);
             }
             if (data.getBloodPower() == 0) {
-                player.igniteForSeconds(2.0f);
-                if (player.tickCount > 400 && !player.isCreative()) {
-                    player.hurt(player.damageSources().inFire(), 4.0f);
-                }
+                player.igniteForSeconds(5.0f);
             }
         }
 
@@ -192,8 +206,10 @@ public class VampireEvents {
             return;
         }
 
-        // Level 7→8: visit 3 distinct villages — tracked in bite/quest; just sync
-        // (EntityVillageGuard and proper village detection not yet ported)
+        // Level 7→8: visit 3 distinct villages (source GenericEvents village-chunk quest).
+        if (data.getVampireLevel() == 7 && data.canIncreaseVampireLevel()) {
+            checkVillageVisitQuest(player, data);
+        }
 
         if (spent) {
             PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
@@ -202,8 +218,14 @@ public class VampireEvents {
 
     // ── Sunburn ───────────────────────────────────────────────────────────────
 
+    /** Resist Sun: a level-5+ vampire with blood power to burn endures daylight (with heavy debuffs). */
+    static boolean resistsSun(WitcheryPlayerData data) {
+        return data.getVampireLevel() >= 5 && data.getBloodPower() > 0;
+    }
+
     private static void checkSunburn(ServerPlayer player, WitcheryPlayerData data) {
         if (!isInSunlight(player)) return;
+        if (resistsSun(data)) return; // the Resist Sun ability spares the flat sunburn tick
         if (!player.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) return; // helmet blocks sunburn
 
         // Fire protection from full vampire clothing sets
@@ -273,7 +295,12 @@ public class VampireEvents {
             checkVillagerBloodQuest(vampire, data, remaining);
         }
 
-        // Level 8→9 quest: bite caged villager 5× (cage detection deferred)
+        // Level 8→9 quest: bite a caged villager 5× while its blood sits in the 250-280 window.
+        if (target instanceof Villager caged && data.getVampireLevel() == 8
+                && isVillagerCaged(vampire.level(), caged.blockPosition())) {
+            int remaining = caged.getPersistentData().getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
+            checkVillagerBloodQuest(vampire, data, remaining);
+        }
 
         tryFillNearbyBloodCrucible(vampire);
         PacketDistributor.sendToPlayer(vampire, SyncPlayerDataPayload.from(vampire, data));
@@ -360,6 +387,38 @@ public class VampireEvents {
         } else if (remaining < QUEST_VILLAGER_RESET) {
             data.resetQuestCounter();
         }
+    }
+
+    /** Level 7→8 quest: standing in three distinct villages (persisted in the player's vampire state). */
+    private static void checkVillageVisitQuest(ServerPlayer player, WitcheryPlayerData data) {
+        if (!(player.level() instanceof ServerLevel level)) return;
+        BlockPos pos = player.blockPosition();
+        if (!level.isVillage(pos)) return;
+
+        long cell = (((long) (pos.getX() >> VILLAGE_CELL_SHIFT)) << 32)
+                ^ ((pos.getZ() >> VILLAGE_CELL_SHIFT) & 0xFFFFFFFFL);
+        if (!data.addVisitedVillage(cell)) return; // already counted this village
+
+        if (data.getVisitedVillageCount() >= QUEST_VILLAGES_REQUIRED) {
+            data.clearVisitedVillages();
+            levelUp(player, data);
+        } else {
+            level.playSound(null, pos, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
+            player.displayClientMessage(Component.translatable("witchery.vampire.quest.progress",
+                    data.getVisitedVillageCount(), QUEST_VILLAGES_REQUIRED), true);
+        }
+    }
+
+    /** Source {@code GenericEvents.villagerIsInCage}: an iron-bar holding cell around the villager. */
+    private static boolean isVillagerCaged(Level level, BlockPos pos) {
+        return VampireCage.isCagedAround(pos.getX(), pos.getY(), pos.getZ(), new VampireCage.BlockQuery() {
+            @Override public boolean isIronBars(int x, int y, int z) {
+                return level.getBlockState(new BlockPos(x, y, z)).is(Blocks.IRON_BARS);
+            }
+            @Override public boolean isSolidRoof(int x, int y, int z) {
+                return !level.getBlockState(new BlockPos(x, y, z)).canBeReplaced();
+            }
+        });
     }
 
     // ── Level-up ──────────────────────────────────────────────────────────────
