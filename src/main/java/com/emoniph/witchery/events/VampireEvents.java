@@ -483,6 +483,9 @@ public class VampireEvents {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static boolean isInSunlight(ServerPlayer player) {
+        // Source CreatureUtil.isInSunlight gates on the dimension actually having a sun (func_76569_d);
+        // skyless dimensions like the Nether/End have no sunlight even where the heightmap is open.
+        if (!player.level().dimensionType().hasSkyLight()) return false;
         if (player.level().getDayTime() % 24000 >= 12000) return false;
         BlockPos head = player.blockPosition().above();
         if (!player.level().canSeeSky(head)) return false;
