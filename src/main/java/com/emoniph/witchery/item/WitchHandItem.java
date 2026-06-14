@@ -1,6 +1,10 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.BarrierBlock;
 import com.emoniph.witchery.data.CreaturePowerType;
+import com.emoniph.witchery.init.WitcheryBlocks;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -90,6 +94,7 @@ public class WitchHandItem extends Item {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         int elapsed = getUseDuration(stack, entity) - timeCharged;
         boolean success = switch (data.getInfusionType()) {
+            case LIGHT -> releaseLight(player, data, elapsed);
             case OTHERWHERE -> releaseOtherwhere(stack, player, data, elapsed);
             case INFERNAL -> releaseInfernal(player, data);
             default -> false;
@@ -207,19 +212,96 @@ public class WitchHandItem extends Item {
         return true;
     }
 
+    // ── Light: barrier powers (source InfusionLight) ───────────────────────────
+    private static final int BARRIER_TICKS = 200; // source BlockBarrier 200-tick life
+
+    /** Source onLeftClickEntity: hoist the target up and cage it in light-barrier. */
     private static boolean lightTarget(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
+        ServerLevel level = (ServerLevel) player.level();
+        BlockPos dest = target.blockPosition().above(4);
+        if (!hasAirColumn(level, dest, 3)) {
+            fail(player);
+            return true;
+        }
+        if (!spendInfusionEnergy(player, data, 5)) {
+            fail(player);
+            return true;
+        }
+        target.fallDistance = 0.0F;
+        target.teleportTo(dest.getX() + 0.5D, dest.getY(), dest.getZ() + 0.5D);
+        buildBarrierCage(level, dest, 3);
+        lightFeedback(level, dest);
+        return true;
+    }
+
+    /** Source onPlayerStoppedUsing (sneaking, short channel): raise a barrier shield on the aimed surface. */
+    private static boolean releaseLight(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        if (!player.isShiftKeyDown() || elapsed >= 20) {
+            return false; // the long channel is the light-bend (sustainLight); only a quick sneak-release shields
+        }
+        HitResult hit = player.pick(16.0D, 1.0F, false);
+        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS
+                || blockHit.getDirection() != Direction.UP) {
+            return false;
+        }
         if (!spendInfusionEnergy(player, data, 3)) {
             fail(player);
             return true;
         }
-        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.GLOWING, 200, 0));
-        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.SLOWNESS, 100, 3));
-        ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD,
-                target.getX(), target.getY() + 1.0D, target.getZ(),
-                18, 0.5D, 0.8D, 0.5D, 0.02D);
+        ServerLevel level = (ServerLevel) player.level();
+        BlockPos base = blockHit.getBlockPos().above();
+        buildBarrierShield(level, base, player);
+        lightFeedback(level, base);
         return true;
+    }
+
+    private static void placeBarrier(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir() || state.canBeReplaced() || state.is(WitcheryBlocks.BARRIER.get())) {
+            BarrierBlock.setBarrier(level, pos, BARRIER_TICKS, true);
+        }
+    }
+
+    private static boolean hasAirColumn(ServerLevel level, BlockPos base, int height) {
+        for (int i = 0; i < height; i++) {
+            if (!level.getBlockState(base.above(i)).isAir()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** A 1×1 cell, {@code height} tall, walled on all sides with a floor and roof — the target inside. */
+    private static void buildBarrierCage(ServerLevel level, BlockPos center, int height) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                placeBarrier(level, center.offset(dx, -1, dz));
+                placeBarrier(level, center.offset(dx, height, dz));
+                if (dx == 0 && dz == 0) {
+                    continue; // leave the centre column open for the caged creature
+                }
+                for (int y = 0; y < height; y++) {
+                    placeBarrier(level, center.offset(dx, y, dz));
+                }
+            }
+        }
+    }
+
+    /** A 3-wide, 3-tall barrier wall across the player's facing. */
+    private static void buildBarrierShield(ServerLevel level, BlockPos base, ServerPlayer player) {
+        Direction across = player.getDirection().getClockWise();
+        for (int w = -1; w <= 1; w++) {
+            BlockPos column = base.relative(across, w);
+            for (int y = 0; y < 3; y++) {
+                placeBarrier(level, column.above(y));
+            }
+        }
+    }
+
+    private static void lightFeedback(ServerLevel level, BlockPos pos) {
+        level.playSound(null, pos, SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.7F, 1.3F);
+        level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                24, 0.6D, 0.8D, 0.6D, 0.02D);
     }
 
     private static boolean overworldPush(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
