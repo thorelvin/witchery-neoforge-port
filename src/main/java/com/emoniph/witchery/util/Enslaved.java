@@ -1,8 +1,17 @@
 package com.emoniph.witchery.util;
 
+import com.emoniph.witchery.entity.BabaYagaEntity;
+import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.EntEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.GoblinGulgEntity;
+import com.emoniph.witchery.entity.GoblinMogEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
+import com.emoniph.witchery.entity.ReflectionEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.golem.AbstractGolem;
@@ -77,7 +86,7 @@ public final class Enslaved {
 
     /**
      * Mirrors source {@code canCreatureBeEnslaved}: any {@link Mob} that is not a boss, golem, witch,
-     * or one of the mod's own infernal natives (demon, imp, ent).
+     * or one of the mod's own infernal natives (demon, imp, ent). Witchery bosses are excluded too.
      */
     public static boolean canBeEnslaved(LivingEntity entity) {
         if (!(entity instanceof Mob)) {
@@ -89,6 +98,20 @@ public final class Enslaved {
                 && !(entity instanceof Witch)
                 && !(entity instanceof DemonEntity)
                 && !(entity instanceof FlameImpEntity)
-                && !(entity instanceof EntEntity);
+                && !(entity instanceof EntEntity)
+                && !isWitcheryBoss(entity);
+    }
+
+    /** Witchery's own bosses — source {@code IBossDisplayData} implementers, which cannot be enslaved. */
+    private static boolean isWitcheryBoss(LivingEntity entity) {
+        return entity instanceof BabaYagaEntity
+                || entity instanceof DeathEntity
+                || entity instanceof GoblinGulgEntity
+                || entity instanceof GoblinMogEntity
+                || entity instanceof HornedHuntsmanEntity
+                || entity instanceof LeonardEntity
+                || entity instanceof LilithEntity
+                || entity instanceof LordOfTormentEntity
+                || entity instanceof ReflectionEntity;
     }
 }
