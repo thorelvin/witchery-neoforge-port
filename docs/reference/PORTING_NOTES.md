@@ -9,6 +9,20 @@ Current target:
 
 ---
 
+## 2026-06-14 Custom brew guide references must be generated from the live registry
+
+- The Primer `Brew Reagents` entry is generated from `Brews.ingredientReferences()`, which exposes the
+  ordered `LinkedHashMap` brew registry as display metadata: item, ingredient kind, capacity/power,
+  modifier ceilings, capacity increments, effect ids, action name keys, and explicit-stir status.
+- Keep future book/help/JEI integrations on that API instead of copying a static ingredient table. The
+  custom brew roster changes often, and a duplicate guide table will drift from the actual cauldron logic.
+- Use `witchery:item_reference` pages when the guide needs an item-icon list. The page serializes real item
+  ids, renders hoverable item stacks in the normal Primer, and has a placed-book renderer branch so the same
+  generated page data remains readable on the block book.
+- Some old source ids are not good display names (`mindrakebulb`, `attuned_stone_charged`,
+  `tear_of_goddess`, etc.), so the Primer provider keeps a tiny item-name override list for historical
+  id oddities and falls back to registry-id title casing for the rest.
+
 ## 2026-06-14 Dog Tongue ritualized brews must be state-safe on failure
 
 - The live-cauldron `Tongue of Dog` release is a ritual trigger, not a normal stir. Failed releases must

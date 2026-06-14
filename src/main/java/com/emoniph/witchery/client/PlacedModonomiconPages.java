@@ -2,6 +2,7 @@ package com.emoniph.witchery.client;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.book.PlacedModonomiconBookResolver;
+import com.emoniph.witchery.book.page.ItemReferencePage;
 import com.emoniph.witchery.book.page.StationRecipePage;
 import com.klikli_dev.modonomicon.book.BookTextHolder;
 import com.klikli_dev.modonomicon.book.RenderedBookTextHolder;
@@ -101,6 +102,7 @@ public final class PlacedModonomiconPages {
     private static final float BODY_TEXT_SCALE = 0.56F;
     private static final float STATION_TEXT_SCALE = 0.52F;
     private static final float INDEX_TEXT_SCALE = STATION_TEXT_SCALE;
+    private static final float ITEM_REFERENCE_TEXT_SCALE = 0.44F;
     private static final float TITLE_TEXT_SCALE = 0.72F;
     private static final float FOOTER_TEXT_SCALE = 0.48F;
     private static final float ITEM_COUNT_TEXT_SCALE = 0.48F;
@@ -113,6 +115,8 @@ public final class PlacedModonomiconPages {
     private static final int STATION_PANEL_TOP_NO_TITLE = 7;
     private static final int STATION_TEXT_GAP = 3;
     private static final int STATION_ITEM_SIZE = 16;
+    private static final int ITEM_REFERENCE_ROW_HEIGHT = 18;
+    private static final int ITEM_REFERENCE_ICON_SIZE = 13;
     private static final float LEFT_PAGE_CONTENT_INSET_PIXELS = 6.0F;
     private static final float PAGE_TOP_X = 0.26F / 16.0F;
     private static final float PAGE_TOP_Y = -3.72F / 16.0F;
@@ -208,6 +212,8 @@ public final class PlacedModonomiconPages {
                 submitCraftingRecipePage(recipePage, ps, collector, lightCoords);
             } else if (page instanceof StationRecipePage stationPage) {
                 submitStationRecipePage(stationPage, ps, collector, lightCoords);
+            } else if (page instanceof ItemReferencePage itemReferencePage) {
+                submitItemReferencePage(itemReferencePage, ps, collector, lightCoords);
             } else if (page != null && placedPage.entry() != null) {
                 submitFallbackPage(page, placedPage.entry(), ps, collector, lightCoords);
             }
@@ -491,6 +497,32 @@ public final class PlacedModonomiconPages {
             bottom = Math.max(bottom, Math.round((27 + 6) * scale));
         }
         return bottom == 0 ? drawnH : bottom;
+    }
+
+    private static void submitItemReferencePage(ItemReferencePage page, PoseStack ps,
+                                                SubmitNodeCollector collector, int lightCoords) {
+        if (page.hasTitle()) {
+            submitTitle(page.getTitle(), page.getBook().getDefaultTitleColor(), ps, collector, lightCoords);
+        }
+
+        int y = page.hasTitle() ? 18 : 2;
+        if (!page.getText().isEmpty()) {
+            submitSafePageTextHolder(page.getText(), y, 24, ps, collector, lightCoords, STATION_TEXT_SCALE);
+            y += 28;
+        }
+
+        int seed = page.getParentEntry().getId().hashCode();
+        for (ItemReferencePage.Row row : page.getRows()) {
+            if (y + ITEM_REFERENCE_ROW_HEIGHT > PAGE_TEXT_BOTTOM) {
+                return;
+            }
+            submitItem(row.stack(), 4, y + 2, seed++, ps, collector, lightCoords, ITEM_REFERENCE_ICON_SIZE);
+            submitTextHolder(row.text(), 22, y, PAGE_WIDTH - 25, ITEM_REFERENCE_ROW_HEIGHT - 1,
+                    ps, collector, lightCoords, ITEM_REFERENCE_TEXT_SCALE);
+            submitRect(ps, collector, lightCoords, 22, y + ITEM_REFERENCE_ROW_HEIGHT - 1,
+                    PAGE_WIDTH - 3, y + ITEM_REFERENCE_ROW_HEIGHT, 0x3353341A);
+            y += ITEM_REFERENCE_ROW_HEIGHT;
+        }
     }
 
     private static void submitFallbackPage(BookPage page, BookContentEntry entry, PoseStack ps,

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.book;
 
+import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.klikli_dev.modonomicon.api.datagen.BookSubProvider;
 import com.klikli_dev.modonomicon.api.datagen.book.BookCategoryModel;
@@ -10,13 +11,16 @@ import com.klikli_dev.modonomicon.api.datagen.book.condition.BookAdvancementCond
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookTextPageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookCraftingRecipePageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookEntityPageModel;
+import com.emoniph.witchery.book.page.ItemReferencePageModel;
 import com.emoniph.witchery.book.page.StationRecipePageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookPageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookSpotlightPageModel;
 import com.klikli_dev.modonomicon.book.BookDisplayMode;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
@@ -49,6 +53,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     private static final Identifier BG_DISTILLERY = id("textures/gui/book/bg_distillery.png");
     private static final Identifier BG_CAULDRON = id("textures/gui/book/bg_cauldron.png");
     private static final Identifier BG_RITUAL = id("textures/gui/book/ritual_circle_magic.png");
+    private static final int REFERENCE_FIRST_PAGE_ROWS = 4;
+    private static final int REFERENCE_CONTINUATION_ROWS = 6;
 
     private record RecipeSlot(ItemLike item, int count, int x, int y) {}
     private record RecipeStack(ItemLike item, int count) {}
@@ -81,6 +87,206 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 .withItem(item)
                 .withTitle(Component.literal(title))
                 .withText(WitcheryBooks.ink(caption));
+    }
+
+    private static List<BookPageModel<?>> customBrewReference() {
+        List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("Brew Reagents",
+                "A custom brew remembers each ingredient in the order it enters the Witch's Cauldron. "
+                        + "Drop ordinary brew ingredients into heated water; ingredients marked **sneak-stir** "
+                        + "must be added by sneaking and right-clicking the cauldron, so they do not feed a "
+                        + "different cauldron recipe."
+                        + "\n\nThe notes below are drawn from the live brew registry. **Level** is the capacity "
+                        + "an effect consumes. **Power** is altar power charged when the brew is bottled, "
+                        + "bucketed, or released by ritual."));
+
+        referenceSection(pages, "Capacity",
+                "Capacity ingredients widen the brew before an effect or action can fit.",
+                Brews.Ingredient.Kind.CAPACITY);
+        referenceSection(pages, "Power & Duration",
+                "These shape the next effect or action, then reset after that working is recorded.",
+                Brews.Ingredient.Kind.STRENGTH, Brews.Ingredient.Kind.DURATION,
+                Brews.Ingredient.Kind.INVERT, Brews.Ingredient.Kind.DISABLE_STRENGTH_CEILING,
+                Brews.Ingredient.Kind.NO_PARTICLES, Brews.Ingredient.Kind.DRINK_SPEED,
+                Brews.Ingredient.Kind.COLOR);
+        referenceSection(pages, "Reach & Targets",
+                "These alter where the brew may act, how wide it reaches, or how long moving gas/liquid persists.",
+                Brews.Ingredient.Kind.EXTENT, Brews.Ingredient.Kind.LIFETIME,
+                Brews.Ingredient.Kind.DISABLE_BLOCK_TARGET, Brews.Ingredient.Kind.DISABLE_ENTITY_TARGET);
+        referenceSection(pages, "Dispersal",
+                "Dispersal ingredients choose how the finished brew leaves its bottle or cauldron.",
+                Brews.Ingredient.Kind.SPLASH, Brews.Ingredient.Kind.GAS, Brews.Ingredient.Kind.LIQUID,
+                Brews.Ingredient.Kind.TRIGGER, Brews.Ingredient.Kind.RITUAL);
+        referenceSection(pages, "Potion Reagents",
+                "These ingredients become the brew's potion effect when enough capacity is available.",
+                Brews.Ingredient.Kind.EFFECT);
+        referenceSection(pages, "Action Reagents",
+                "These ingredients perform an old craft action instead of applying a normal potion effect.",
+                Brews.Ingredient.Kind.ACTION);
+        return pages;
+    }
+
+    private static void referenceSection(List<BookPageModel<?>> pages, String title, String intro,
+                                         Brews.Ingredient.Kind... kinds) {
+        List<Brews.IngredientReference> refs = new ArrayList<>();
+        for (Brews.IngredientReference ref : Brews.ingredientReferences()) {
+            if (matchesKind(ref, kinds)) {
+                refs.add(ref);
+            }
+        }
+        if (refs.isEmpty()) {
+            return;
+        }
+
+        int index = 0;
+        boolean firstPage = true;
+        while (index < refs.size()) {
+            int rowsThisPage = firstPage ? REFERENCE_FIRST_PAGE_ROWS : REFERENCE_CONTINUATION_ROWS;
+            ItemReferencePageModel page = ItemReferencePageModel.create()
+                    .withTitle(Component.literal(firstPage ? title : title + " (cont.)"));
+            if (firstPage) {
+                page.withText(WitcheryBooks.ink(intro));
+            }
+
+            int end = Math.min(refs.size(), index + rowsThisPage);
+            for (; index < end; index++) {
+                Brews.IngredientReference ref = refs.get(index);
+                page.withRow(ref.item(), WitcheryBooks.ink(referenceLine(ref)));
+            }
+            pages.add(page);
+            firstPage = false;
+        }
+    }
+
+    private static boolean matchesKind(Brews.IngredientReference ref, Brews.Ingredient.Kind... kinds) {
+        for (Brews.Ingredient.Kind kind : kinds) {
+            if (ref.kind() == kind) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String referenceLine(Brews.IngredientReference ref) {
+        String role = switch (ref.kind()) {
+            case EFFECT -> effectRole(ref);
+            case ACTION -> actionRole(ref);
+            case CAPACITY -> "capacity +" + ref.capacityIncrement() + " up to " + ref.capacityCeiling();
+            case STRENGTH -> "strength tier " + ref.modifierCeiling();
+            case DURATION -> "duration tier " + ref.modifierCeiling();
+            case INVERT -> "inverts the next effect";
+            case SPLASH -> ref.item() == WitcheryItems.ARTICHOKE.get()
+                    ? "source instant/splash dispersal" : "splash dispersal";
+            case GAS -> "moving gas dispersal";
+            case LIQUID -> "moving liquid dispersal";
+            case TRIGGER -> "triggered curse dispersal";
+            case RITUAL -> "ritual cauldron release trigger";
+            case COLOR -> "sets bottle colour";
+            case DRINK_SPEED -> ref.drinkSpeedModifier() < 0
+                    ? "faster drinking" : "slower drinking";
+            case EXTENT -> "impact extent tier " + ref.modifierCeiling();
+            case LIFETIME -> "gas/liquid lifetime tier " + ref.modifierCeiling();
+            case NO_PARTICLES -> "hides potion particles";
+            case DISABLE_BLOCK_TARGET -> "skips block targets";
+            case DISABLE_ENTITY_TARGET -> "skips entity targets";
+            case DISABLE_STRENGTH_CEILING -> "removes the strength ceiling";
+        };
+        return "**" + itemName(ref.item()) + "** - " + role + referenceMeta(ref) + ".";
+    }
+
+    private static String referenceMeta(Brews.IngredientReference ref) {
+        List<String> parts = new ArrayList<>();
+        if (ref.capacityRequired() > 0) {
+            parts.add("level " + ref.capacityRequired());
+        }
+        if (ref.powerCost() > 0) {
+            parts.add(ref.powerCost() + " power");
+        }
+        if (ref.explicitStirOnly()) {
+            parts.add("sneak-stir");
+        }
+        return parts.isEmpty() ? "" : " (" + String.join(", ", parts) + ")";
+    }
+
+    private static String effectRole(Brews.IngredientReference ref) {
+        String effect = nameFromId(ref.effectId());
+        if (ref.invertedEffectId() != null) {
+            effect += " / inverted: " + nameFromId(ref.invertedEffectId());
+        }
+        return effect;
+    }
+
+    private static String actionRole(Brews.IngredientReference ref) {
+        String action = actionName(ref.actionNameKey());
+        if (ref.invertedActionNameKey() != null) {
+            action += " / inverted: " + actionName(ref.invertedActionNameKey());
+        }
+        return action;
+    }
+
+    private static String itemName(Item item) {
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
+        if (id == null) {
+            return "Unknown";
+        }
+        return switch (id.toString()) {
+            case "witchery:attuned_stone_charged" -> "Charged Attuned Stone";
+            case "witchery:breath_of_goddess" -> "Breath of the Goddess";
+            case "witchery:exhale_of_horned_one" -> "Exhale of the Horned One";
+            case "witchery:mindrakebulb" -> "Mindrake Bulb";
+            case "witchery:tear_of_goddess" -> "Tear of the Goddess";
+            case "minecraft:dragon_breath" -> "Dragon's Breath";
+            default -> titleCase(id.getPath());
+        };
+    }
+
+    private static String nameFromId(Identifier id) {
+        return id == null ? "Unknown" : titleCase(id.getPath());
+    }
+
+    private static String actionName(String key) {
+        if (key == null) {
+            return "Unknown";
+        }
+        return switch (key) {
+            case "witchery.brew.extinguish" -> "Extinguish";
+            case "witchery.brew.dissipate" -> "Dissipate";
+            case "witchery.brew.flowers" -> "Grow Flowers";
+            case "witchery.brew.fertilization" -> "Fertilization";
+            case "witchery.brew.animal_attraction" -> "Animal Attraction";
+            case "witchery.brew.animal_repulsion" -> "Animal Repulsion";
+            case "witchery.brew.removebuffs" -> "Cure Buffs";
+            case "witchery.brew.removedebuffs" -> "Cure Debuffs";
+            case "witchery.brew.harmundead" -> "Undeadbane";
+            case "witchery.brew.harminsects" -> "Insectbane";
+            case "witchery.brew.weakenvampires" -> "Weaken Vampires";
+            case "witchery.brew.harmdemons" -> "Demonbane";
+            case "witchery.brew.harmwerewolves" -> "Harm Werewolves";
+            case "witchery.brew.stealbuffs" -> "Steal Buffs";
+            case "witchery.brew.durationboost" -> "Potion Longevity";
+            case "witchery.brew.airhike" -> "Air Hike";
+            case "witchery.brew.frogtongue" -> "Frog's Tongue";
+            default -> titleCase(key.substring(key.lastIndexOf('.') + 1));
+        };
+    }
+
+    private static String titleCase(String path) {
+        String[] words = path.replace('-', '_').split("_");
+        StringBuilder out = new StringBuilder();
+        for (String word : words) {
+            if (word.isBlank()) {
+                continue;
+            }
+            if (out.length() > 0) {
+                out.append(' ');
+            }
+            String lower = word.toLowerCase(java.util.Locale.ROOT);
+            if (out.length() > 0 && (lower.equals("of") || lower.equals("and") || lower.equals("the"))) {
+                out.append(lower);
+            } else {
+                out.append(Character.toUpperCase(lower.charAt(0))).append(lower.substring(1));
+            }
+        }
+        return out.toString();
     }
 
     // ── Station-recipe pages (live item overlays) ──────────────────────────────────────────────────
@@ -575,10 +781,13 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "The Infernal infusion: Redstone Soup with a Strong Harming potion, a Voodoo Poppet, a Demon "
                         + "Heart, Refined Evil, and a Blaze Rod."));
 
+        List<BookPageModel<?>> brewReference = customBrewReference();
+
         cat.withEntries(
                 entry(cat, "brews_infusions/kettle", "The Kettle", WitcheryItems.KETTLE.get(), 0, kettle),
                 entry(cat, "brews_infusions/infusion_sources", "Infusion Sources", WitcheryItems.GHOST_OF_THE_LIGHT.get(), 1, infusion),
-                gatedByItem("guide/obtained/redstone_soup", whatsNext(cat, "brews_infusions", 2, "book_distilling", "Witchcraft: Distilling", WitcheryItems.BOOK_DISTILLING.get(), "Distilling",
+                entry(cat, "brews_infusions/brew_reagents", "Brew Reagents", WitcheryItems.BREW_BOTTLE.get(), 2, brewReference),
+                gatedByItem("guide/obtained/redstone_soup", whatsNext(cat, "brews_infusions", 3, "book_distilling", "Witchcraft: Distilling", WitcheryItems.BOOK_DISTILLING.get(), "Distilling",
                         "The bottom reagent, **Breath of the Goddess**, is baked from a Birch Sapling in the Witches' Oven.")));
         return cat;
     }

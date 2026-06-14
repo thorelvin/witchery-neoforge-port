@@ -262,10 +262,16 @@ public class WitcheryClient {
     }
 
     public static void registerBookPageRenderers(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
-        event.enqueueWork(() -> com.klikli_dev.modonomicon.client.render.page.PageRendererRegistry.registerPageRenderer(
-                com.emoniph.witchery.book.page.StationRecipePage.TYPE,
-                page -> new com.emoniph.witchery.client.StationRecipePageRenderer(
-                        (com.emoniph.witchery.book.page.StationRecipePage) page)));
+        event.enqueueWork(() -> {
+            com.klikli_dev.modonomicon.client.render.page.PageRendererRegistry.registerPageRenderer(
+                    com.emoniph.witchery.book.page.StationRecipePage.TYPE,
+                    page -> new com.emoniph.witchery.client.StationRecipePageRenderer(
+                            (com.emoniph.witchery.book.page.StationRecipePage) page));
+            com.klikli_dev.modonomicon.client.render.page.PageRendererRegistry.registerPageRenderer(
+                    com.emoniph.witchery.book.page.ItemReferencePage.TYPE,
+                    page -> new com.emoniph.witchery.client.ItemReferencePageRenderer(
+                            (com.emoniph.witchery.book.page.ItemReferencePage) page));
+        });
     }
 
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

@@ -36,11 +36,14 @@ class PlacedModonomiconGeneratedBookTest {
     private static final int CRAFTING_RENDERED_ITEM_SIZE = 14;
     private static final int CRAFTING_RENDERED_ITEM_OFFSET = 2;
     private static final int CRAFTING_RESULT_X = 89;
+    private static final int PLACED_PAGE_TEXT_BOTTOM = PLACED_PAGE_HEIGHT - 22;
+    private static final int ITEM_REFERENCE_ROW_HEIGHT = 18;
     private static final Set<String> PLACED_PAGE_TYPES = Set.of(
             "modonomicon:crafting_recipe",
             "modonomicon:entity",
             "modonomicon:spotlight",
             "modonomicon:text",
+            "witchery:item_reference",
             "witchery:station_recipe");
     private static final List<GuideTarget> PLACEABLE_GUIDE_TARGETS = List.of(
             new GuideTarget("witches_primer", "herbology", "herbology/rowan_tree"),
@@ -217,6 +220,26 @@ class PlacedModonomiconGeneratedBookTest {
         }
     }
 
+    @Test
+    void generatedItemReferencePagesFitPlacedBookPage() throws IOException {
+        try (Stream<Path> entries = entryFiles()) {
+            for (Path entry : entries.toList()) {
+                JsonArray pages = readJson(entry).getAsJsonArray("pages");
+                if (pages == null) {
+                    continue;
+                }
+                for (int pageIndex = 0; pageIndex < pages.size(); pageIndex++) {
+                    JsonObject page = pages.get(pageIndex).getAsJsonObject();
+                    if (!"witchery:item_reference".equals(page.get("type").getAsString())) {
+                        continue;
+                    }
+
+                    assertItemReferencePageFits(entry, pageIndex, page);
+                }
+            }
+        }
+    }
+
     private static Set<String> entryPaths() throws IOException {
         Set<String> paths = new HashSet<>();
         Path entriesRoot = primerRoot().resolve("entries");
@@ -347,6 +370,28 @@ class PlacedModonomiconGeneratedBookTest {
                 () -> craftingPageMessage(entry, pageIndex) + " result item y outside page");
     }
 
+    private static void assertItemReferencePageFits(Path entry, int pageIndex, JsonObject page) {
+        JsonArray rows = page.getAsJsonArray("rows");
+        assertTrue(rows != null && !rows.isEmpty(),
+                () -> itemReferencePageMessage(entry, pageIndex) + " has no icon rows");
+
+        int y = hasNonEmptyTitle(page) ? 18 : 2;
+        if (hasNonEmptyString(page, "text")) {
+            y += 28;
+        }
+        int bottom = y + rows.size() * ITEM_REFERENCE_ROW_HEIGHT;
+        assertTrue(bottom <= PLACED_PAGE_TEXT_BOTTOM,
+                () -> itemReferencePageMessage(entry, pageIndex) + " rows exceed placed page: " + bottom);
+
+        for (var rowElement : rows) {
+            JsonObject row = rowElement.getAsJsonObject();
+            assertTrue(hasNonEmptyString(row, "item"),
+                    () -> itemReferencePageMessage(entry, pageIndex) + " row has no item icon");
+            assertTrue(hasNonEmptyString(row, "text"),
+                    () -> itemReferencePageMessage(entry, pageIndex) + " row has no text");
+        }
+    }
+
     private static boolean hasNonEmptyTitle(JsonObject page) {
         return hasNonEmptyString(page, "title");
     }
@@ -360,6 +405,10 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     private static String craftingPageMessage(Path entry, int pageIndex) {
+        return entry + " page " + pageIndex;
+    }
+
+    private static String itemReferencePageMessage(Path entry, int pageIndex) {
         return entry + " page " + pageIndex;
     }
 

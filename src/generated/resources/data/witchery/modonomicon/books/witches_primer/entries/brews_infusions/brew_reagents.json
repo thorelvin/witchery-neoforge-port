@@ -1,0 +1,662 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brews_infusions",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_bottle"
+  },
+  "name": "Brew Reagents",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A custom brew remembers each ingredient in the order it enters the Witch's Cauldron.[#]()",
+      "title": "Brew Reagents",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Drop ordinary brew ingredients into heated water; ingredients marked **sneak-stir** must be added by sneaking and right-clicking the cauldron, so they do not feed a different cauldron recipe.[#]()\n\n[#](53341a)The notes below are drawn from the live brew registry.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Level** is the capacity an effect consumes. **Power** is altar power charged when the brew is bottled, bucketed, or released by ritual.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:mandrake_root",
+          "text": "[#](53341a)**Mandrake Root** - capacity +1 up to 1 (sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:nether_wart",
+          "text": "[#](53341a)**Nether Wart** - capacity +2 up to 2 (50 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:tear_of_goddess",
+          "text": "[#](53341a)**Tear of the Goddess** - capacity +2 up to 4 (100 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:diamond_vapour",
+          "text": "[#](53341a)**Diamond Vapour** - capacity +2 up to 6 (150 power).[#]()"
+        }
+      ],
+      "text": "[#](53341a)Capacity ingredients widen the brew before an effect or action can fit.[#]()",
+      "title": "Capacity"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:diamond",
+          "text": "[#](53341a)**Diamond** - capacity +2 up to 8 (150 power).[#]()"
+        },
+        {
+          "item": "minecraft:nether_star",
+          "text": "[#](53341a)**Nether Star** - capacity +4 up to 10 (150 power).[#]()"
+        },
+        {
+          "item": "witchery:pentacle",
+          "text": "[#](53341a)**Pentacle** - capacity +6 up to 16 (1000 power).[#]()"
+        },
+        {
+          "item": "witchery:koboldite_pentacle",
+          "text": "[#](53341a)**Koboldite Pentacle** - capacity +6 up to 16 (1000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Capacity (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:white_wool",
+          "text": "[#](53341a)**White Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:orange_wool",
+          "text": "[#](53341a)**Orange Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:magenta_wool",
+          "text": "[#](53341a)**Magenta Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:light_blue_wool",
+          "text": "[#](53341a)**Light Blue Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "[#](53341a)These shape the next effect or action, then reset after that working is recorded.[#]()",
+      "title": "Power & Duration"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:yellow_wool",
+          "text": "[#](53341a)**Yellow Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:lime_wool",
+          "text": "[#](53341a)**Lime Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:pink_wool",
+          "text": "[#](53341a)**Pink Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:gray_wool",
+          "text": "[#](53341a)**Gray Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:light_gray_wool",
+          "text": "[#](53341a)**Light Gray Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:cyan_wool",
+          "text": "[#](53341a)**Cyan Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:purple_wool",
+          "text": "[#](53341a)**Purple Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:blue_wool",
+          "text": "[#](53341a)**Blue Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:brown_wool",
+          "text": "[#](53341a)**Brown Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:green_wool",
+          "text": "[#](53341a)**Green Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:red_wool",
+          "text": "[#](53341a)**Red Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:black_wool",
+          "text": "[#](53341a)**Black Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:glowstone_dust",
+          "text": "[#](53341a)**Glowstone Dust** - strength tier 1 (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:blaze_rod",
+          "text": "[#](53341a)**Blaze Rod** - strength tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "witchery:attuned_stone_charged",
+          "text": "[#](53341a)**Charged Attuned Stone** - strength tier 3 (150 power).[#]()"
+        },
+        {
+          "item": "minecraft:redstone",
+          "text": "[#](53341a)**Redstone** - duration tier 1 (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:obsidian",
+          "text": "[#](53341a)**Obsidian** - duration tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "witchery:mindrakebulb",
+          "text": "[#](53341a)**Mindrake Bulb** - duration tier 3 (150 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:fermented_spider_eye",
+          "text": "[#](53341a)**Fermented Spider Eye** - inverts the next effect (25 power).[#]()"
+        },
+        {
+          "item": "witchery:rowan_berries",
+          "text": "[#](53341a)**Rowan Berries** - faster drinking (50 power).[#]()"
+        },
+        {
+          "item": "witchery:exhale_of_horned_one",
+          "text": "[#](53341a)**Exhale of the Horned One** - faster drinking (sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:spanish_moss",
+          "text": "[#](53341a)**Spanish Moss** - faster drinking (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:gold_nugget",
+          "text": "[#](53341a)**Gold Nugget** - hides potion particles (50 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:tropical_fish",
+          "text": "[#](53341a)**Tropical Fish** - removes the strength ceiling (200 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:wood_ash",
+          "text": "[#](53341a)**Wood Ash** - impact extent tier 1 (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:cocoa_beans",
+          "text": "[#](53341a)**Cocoa Beans** - impact extent tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "witchery:wispy_cotton",
+          "text": "[#](53341a)**Wispy Cotton** - impact extent tier 3 (150 power).[#]()"
+        },
+        {
+          "item": "witchery:belladonna",
+          "text": "[#](53341a)**Belladonna** - gas/liquid lifetime tier 1 (50 power).[#]()"
+        }
+      ],
+      "text": "[#](53341a)These alter where the brew may act, how wide it reaches, or how long moving gas/liquid persists.[#]()",
+      "title": "Reach & Targets"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:lapis_lazuli",
+          "text": "[#](53341a)**Lapis Lazuli** - gas/liquid lifetime tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "minecraft:hay_block",
+          "text": "[#](53341a)**Hay Block** - gas/liquid lifetime tier 3 (150 power).[#]()"
+        },
+        {
+          "item": "minecraft:nether_brick",
+          "text": "[#](53341a)**Nether Brick** - skips block targets (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:brick",
+          "text": "[#](53341a)**Brick** - skips entity targets (50 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Reach & Targets (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:gunpowder",
+          "text": "[#](53341a)**Gunpowder** - splash dispersal.[#]()"
+        },
+        {
+          "item": "witchery:artichoke",
+          "text": "[#](53341a)**Artichoke** - source instant/splash dispersal.[#]()"
+        },
+        {
+          "item": "witchery:bat_wool",
+          "text": "[#](53341a)**Bat Wool** - moving gas dispersal.[#]()"
+        },
+        {
+          "item": "minecraft:dragon_breath",
+          "text": "[#](53341a)**Dragon's Breath** - moving gas dispersal.[#]()"
+        }
+      ],
+      "text": "[#](53341a)Dispersal ingredients choose how the finished brew leaves its bottle or cauldron.[#]()",
+      "title": "Dispersal"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:wormwood",
+          "text": "[#](53341a)**Wormwood** - moving liquid dispersal.[#]()"
+        },
+        {
+          "item": "minecraft:zombie_head",
+          "text": "[#](53341a)**Zombie Head** - triggered curse dispersal.[#]()"
+        },
+        {
+          "item": "witchery:tongue_of_dog",
+          "text": "[#](53341a)**Tongue of Dog** - ritual cauldron release trigger (250 power, sneak-stir).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Dispersal (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:spider_eye",
+          "text": "[#](53341a)**Spider Eye** - Poison (level 2).[#]()"
+        },
+        {
+          "item": "minecraft:magma_cream",
+          "text": "[#](53341a)**Magma Cream** - Fire Resistance (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:sugar",
+          "text": "[#](53341a)**Sugar** - Speed / inverted: Slowness (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:ghast_tear",
+          "text": "[#](53341a)**Ghast Tear** - Regeneration / inverted: Poison (level 2, 200 power).[#]()"
+        }
+      ],
+      "text": "[#](53341a)These ingredients become the brew's potion effect when enough capacity is available.[#]()",
+      "title": "Potion Reagents"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:leather",
+          "text": "[#](53341a)**Leather** - Jump Boost (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:sugar_cane",
+          "text": "[#](53341a)**Sugar Cane** - Floating (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "minecraft:pufferfish",
+          "text": "[#](53341a)**Pufferfish** - Water Breathing (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:golden_carrot",
+          "text": "[#](53341a)**Golden Carrot** - Night Vision / inverted: Invisibility (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:glistering_melon_slice",
+          "text": "[#](53341a)**Glistering Melon Slice** - Instant Health / inverted: Instant Damage (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:wither_skeleton_skull",
+          "text": "[#](53341a)**Wither Skeleton Skull** - Wither (level 4, 200 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:golden_apple",
+          "text": "[#](53341a)**Golden Apple** - Absorption (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:enchanted_golden_apple",
+          "text": "[#](53341a)**Enchanted Golden Apple** - Health Boost (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:ink_sac",
+          "text": "[#](53341a)**Ink Sac** - Blindness (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "witchery:infernal_blood",
+          "text": "[#](53341a)**Infernal Blood** - Grotesque (level 2, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:ender_dew",
+          "text": "[#](53341a)**Ender Dew** - Ender Inhibition (level 1, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:wheat",
+          "text": "[#](53341a)**Wheat** - Moonshine (level 1).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:wolfsbane_flower",
+          "text": "[#](53341a)**Wolfsbane Flower** - Wolfsbane (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:snowball",
+          "text": "[#](53341a)**Snowball** - Snow Trail (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:cod",
+          "text": "[#](53341a)**Cod** - Swimming (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:clay_ball",
+          "text": "[#](53341a)**Clay Ball** - Fortune (level 6, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:salmon",
+          "text": "[#](53341a)**Salmon** - Sun Allergy (level 6, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:rotten_flesh",
+          "text": "[#](53341a)**Rotten Flesh** - Diseased (level 4, 2000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:demon_heart",
+          "text": "[#](53341a)**Demon Heart** - Paralysed (level 4, 750 power).[#]()"
+        },
+        {
+          "item": "witchery:icy_needle",
+          "text": "[#](53341a)**Icy Needle** - Chilled (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:blaze_powder",
+          "text": "[#](53341a)**Blaze Powder** - Strength / inverted: Weakness (level 2, 200 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:feather",
+          "text": "[#](53341a)**Feather** - Feather Fall (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "witchery:bramble",
+          "text": "[#](53341a)**Bramble** - Repell Attacker (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "minecraft:iron_ore",
+          "text": "[#](53341a)**Iron Ore** - Gas Mask (level 2, 100 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:red_mushroom",
+          "text": "[#](53341a)**Red Mushroom** - Poison Weapons (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:cobweb",
+          "text": "[#](53341a)**Cobweb** - Reflect Projectiles / inverted: Attract Projectiles (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "witchery:foul_fume",
+          "text": "[#](53341a)**Foul Fume** - Stout Belly (level 4, 1000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:coal",
+          "text": "[#](53341a)**Coal** - Extinguish (level 1, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:stone",
+          "text": "[#](53341a)**Stone** - Dissipate (level 1, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:dandelion",
+          "text": "[#](53341a)**Dandelion** - Grow Flowers (level 1, 200 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:bone_meal",
+          "text": "[#](53341a)**Bone Meal** - Fertilization (level 1, 250 power, sneak-stir).[#]()"
+        }
+      ],
+      "text": "[#](53341a)These ingredients perform an old craft action instead of applying a normal potion effect.[#]()",
+      "title": "Action Reagents"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:golden_heart",
+          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:reek_of_misfortune",
+          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:purified_milk",
+          "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:pumpkin",
+          "text": "[#](53341a)**Pumpkin** - Undeadbane (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:blue_orchid",
+          "text": "[#](53341a)**Blue Orchid** - Insectbane (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:garlic",
+          "text": "[#](53341a)**Garlic** - Weaken Vampires (level 4, 500 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Action Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:ice",
+          "text": "[#](53341a)**Ice** - Demonbane (level 5, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:silver_deposits",
+          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:skeleton_skull",
+          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
+        },
+        {
+          "item": "witchery:creeper_heart",
+          "text": "[#](53341a)**Creeper Heart** - Potion Longevity (level 6, 5000 power).[#]()"
+        },
+        {
+          "item": "witchery:breath_of_goddess",
+          "text": "[#](53341a)**Breath of the Goddess** - Air Hike (level 2, 750 power).[#]()"
+        },
+        {
+          "item": "minecraft:slime_ball",
+          "text": "[#](53341a)**Slime Ball** - Frog's Tongue (level 2, 150 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Action Reagents (cont.)"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

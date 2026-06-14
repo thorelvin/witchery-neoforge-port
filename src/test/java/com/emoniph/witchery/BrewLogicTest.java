@@ -102,6 +102,31 @@ class BrewLogicTest {
     }
 
     @Test
+    void customBrewIngredientReferenceTracksLiveRegistry() {
+        Brews.bootstrap();
+        List<Brews.IngredientReference> refs = Brews.ingredientReferences();
+
+        assertTrue(refs.stream().anyMatch(ref -> ref.item() == Items.SPIDER_EYE
+                        && ref.kind() == Brews.Ingredient.Kind.EFFECT
+                        && ref.capacityRequired() == 2
+                        && ref.effectId() != null
+                        && ref.effectId().getPath().equals("poison")),
+                "Spider Eye should appear as a level-two poison reagent");
+        assertTrue(refs.stream().anyMatch(ref -> ref.item() == WitcheryItems.BAT_WOOL.get()
+                        && ref.kind() == Brews.Ingredient.Kind.GAS),
+                "Bat Wool should appear as the gas dispersal reagent");
+        assertTrue(refs.stream().anyMatch(ref -> ref.item() == Items.GOLD_NUGGET
+                        && ref.kind() == Brews.Ingredient.Kind.NO_PARTICLES
+                        && ref.explicitStirOnly()),
+                "Gold Nugget should appear as the explicit no-particles stir reagent");
+        assertTrue(refs.stream().anyMatch(ref -> ref.item() == WitcheryItems.TONGUE_OF_DOG.get()
+                        && ref.kind() == Brews.Ingredient.Kind.RITUAL
+                        && ref.powerCost() == Brews.SOURCE_RITUAL_TRIGGER_POWER_COST
+                        && ref.explicitStirOnly()),
+                "Tongue of Dog should appear as the ritual trigger with its source power cost");
+    }
+
+    @Test
     void dogTongueRitualReleaseValidatesFailurePathsBeforeStateChanges() {
         Brews.bootstrap();
 

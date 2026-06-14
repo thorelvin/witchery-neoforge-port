@@ -290,6 +290,13 @@ public final class Brews {
         BLOCKED
     }
 
+    public record IngredientReference(Item item, Ingredient.Kind kind, int capacityRequired, int powerCost,
+                                      int modifierCeiling, int capacityIncrement, int capacityCeiling,
+                                      int drinkSpeedModifier, Identifier effectId, Identifier invertedEffectId,
+                                      String actionNameKey, String invertedActionNameKey,
+                                      boolean explicitStirOnly) {
+    }
+
     private Brews() {
     }
 
@@ -503,6 +510,22 @@ public final class Brews {
     public static Ingredient get(Item item) {
         bootstrap();
         return REGISTRY.get(item);
+    }
+
+    public static List<IngredientReference> ingredientReferences() {
+        bootstrap();
+        return REGISTRY.entrySet().stream()
+                .map(entry -> {
+                    Item item = entry.getKey();
+                    Ingredient ing = entry.getValue();
+                    Identifier effectId = ing.effect() == null ? null : BuiltInRegistries.MOB_EFFECT.getKey(ing.effect().value());
+                    Identifier invertedEffectId = ing.inverted() == null ? null : BuiltInRegistries.MOB_EFFECT.getKey(ing.inverted().value());
+                    return new IngredientReference(item, ing.kind(), ing.capacityRequired(), ing.powerCost(),
+                            ing.modifierCeiling(), ing.capacityIncrement(), ing.capacityCeiling(),
+                            ing.drinkSpeedModifier(), effectId, invertedEffectId, ing.nameKey(),
+                            ing.invertedNameKey(), EXPLICIT_STIR_ONLY.contains(item));
+                })
+                .toList();
     }
 
     private static List<Ingredient> resolve(List<Item> items) {
