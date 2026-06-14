@@ -6,6 +6,7 @@ import com.emoniph.witchery.entity.EarthRockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.util.EarthItems;
+import com.emoniph.witchery.util.Enslaved;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Items;
@@ -61,7 +62,6 @@ public class WitchHandItem extends Item {
     private static final String RECALL_Y = "WITCRecallY";
     private static final String RECALL_Z = "WITCRecallZ";
     private static final String RECALL_DIM = "WITCRecallDim";
-    private static final String ENSLAVED_OWNER = "WITCHERY_INFUSION_ENSLAVED_OWNER";
 
     public WitchHandItem(Properties properties) {
         super(properties.stacksTo(1).rarity(Rarity.UNCOMMON));
@@ -523,12 +523,14 @@ public class WitchHandItem extends Item {
 
     private static boolean infernalCommandOrEnslave(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
         if (player.isShiftKeyDown()) {
-            if (!(target instanceof Mob mob) || !spendInfusionEnergy(player, data, 5)) {
+            if (!(target instanceof Mob mob) || !Enslaved.canBeEnslaved(mob)) {
                 fail(player);
                 return true;
             }
-            mob.getPersistentData().putString(ENSLAVED_OWNER, player.getUUID().toString());
-            mob.setTarget(null);
+            if (!spendInfusionEnergy(player, data, 5) || !Enslaved.enslave(mob, player)) {
+                fail(player);
+                return true;
+            }
             mob.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     net.minecraft.world.effect.MobEffects.GLOWING, 200, 0));
             feedback(player, ParticleTypes.WITCH, SoundEvents.ZOMBIE_INFECT);
@@ -541,7 +543,7 @@ public class WitchHandItem extends Item {
         }
         int count = 0;
         AABB area = player.getBoundingBox().inflate(50.0D, 15.0D, 50.0D);
-        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> isEnslavedBy(mob, player))) {
+        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> Enslaved.isEnslavedBy(mob, player))) {
             mob.setTarget(target);
             count++;
         }
@@ -695,10 +697,6 @@ public class WitchHandItem extends Item {
             }
         }
         return 0.0D;
-    }
-
-    private static boolean isEnslavedBy(Mob mob, ServerPlayer player) {
-        return mob.getPersistentData().getStringOr(ENSLAVED_OWNER, "").equals(player.getUUID().toString());
     }
 
     private static CompoundTag getTag(ItemStack stack) {
