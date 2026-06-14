@@ -6184,7 +6184,10 @@ public class RitualExecutor {
 
         // Source: a 3-in-4 cure, else the rite simply fizzles (the "cursed" branch is cosmetic here).
         if (sl.random.nextInt(4) != 0) {
-            data.setVampireLevel(0);
+            // setVampire(false) is the full reset (flag + level + blood power + quest counter); a bare
+            // setVampireLevel(0) would leave the vampire flag set, so isVampire() would still be true.
+            data.setVampire(false);
+            data.clearVampireUltimate();
             data.clearVisitedVillages();
             PacketDistributor.sendToPlayer(target.get(), SyncPlayerDataPayload.from(target.get(), data));
             target.get().displayClientMessage(Component.translatable("witchery.ritual.remove_vampirism.cured"), false);
