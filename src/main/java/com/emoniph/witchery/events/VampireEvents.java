@@ -484,7 +484,12 @@ public class VampireEvents {
 
     private static boolean isInSunlight(ServerPlayer player) {
         if (player.level().getDayTime() % 24000 >= 12000) return false;
-        if (!player.level().canSeeSky(player.blockPosition().above())) return false;
+        BlockPos head = player.blockPosition().above();
+        if (!player.level().canSeeSky(head)) return false;
+        // Source CreatureUtil.isInSunlight spares vampires during rain in precipitating biomes;
+        // isRainingAt is the vanilla equivalent (true only under open sky in a RAIN-precip biome, so
+        // snowy biomes still burn, matching source's `isRaining() && biome.canRain()`).
+        if (player.level().isRainingAt(head)) return false;
         return !player.isUnderWater() && !player.isInWater();
     }
 
