@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.blocks.BarrierBlock;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.entity.EarthRockEntity;
+import com.emoniph.witchery.events.WitcheryPlayerEvents;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.util.EarthItems;
@@ -527,6 +528,11 @@ public class WitchHandItem extends Item {
                 fail(player);
                 return true;
             }
+            // Source InfusionInfernal.onLeftClickEntity: sneak on a mob already enslaved by you
+            // sacrifices it for its creature power; otherwise it binds the mob.
+            if (Enslaved.isEnslavedBy(mob, player)) {
+                return sacrificeCreature(player, data, mob);
+            }
             if (!spendInfusionEnergy(player, data, 5) || !Enslaved.enslave(mob, player)) {
                 fail(player);
                 return true;
@@ -552,6 +558,37 @@ public class WitchHandItem extends Item {
         } else {
             fail(player);
         }
+        return true;
+    }
+
+    /**
+     * Source {@code InfusionInfernal.trySacrificeCreature}: slay one of your own thralls to take on
+     * (or recharge) its creature power. Shares the port's altar-kill charge tables
+     * ({@link WitcheryPlayerEvents}) so both acquisition paths grant identical charges.
+     * <p>Divergence: the enslave that precedes this already cost 5 energy, so the sacrifice itself is
+     * free (source consumes 1 charge, which is impossible to pay before you own any power).
+     */
+    private static boolean sacrificeCreature(ServerPlayer player, WitcheryPlayerData data, Mob mob) {
+        CreaturePowerType power = WitcheryPlayerEvents.creaturePowerFor(mob);
+        if (power == null) {
+            fail(player);
+            return true;
+        }
+        int charges = WitcheryPlayerEvents.creaturePowerChargesFor(mob, power);
+        if (power.name().equals(data.getCreaturePowerType())) {
+            data.addCreaturePowerCharges(charges);
+        } else {
+            data.setCreaturePower(power.name(), charges);
+        }
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+
+        ServerLevel level = (ServerLevel) player.level();
+        feedback(player, ParticleTypes.SOUL, SoundEvents.SOUL_ESCAPE.value());
+        level.sendParticles(ParticleTypes.SOUL, mob.getX(), mob.getY(0.6), mob.getZ(),
+                24, 0.3, 0.5, 0.3, 0.02);
+        mob.hurtServer(level, level.damageSources().playerAttack(player), mob.getHealth() + 1.0F);
+        player.displayClientMessage(Component.translatable("witchery.creature_power.absorbed",
+                power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
         return true;
     }
 

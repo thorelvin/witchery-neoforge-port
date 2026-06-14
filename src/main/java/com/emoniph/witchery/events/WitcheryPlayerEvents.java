@@ -414,7 +414,7 @@ public class WitcheryPlayerEvents {
                 power.displayName(), data.getCreaturePowerCharges()).withStyle(ChatFormatting.DARK_PURPLE), false);
     }
 
-    private static CreaturePowerType creaturePowerFor(LivingEntity killed) {
+    public static CreaturePowerType creaturePowerFor(LivingEntity killed) {
         if (killed instanceof CaveSpider || killed instanceof Spider) return CreaturePowerType.SPIDER;
         if (killed instanceof Creeper) return CreaturePowerType.CREEPER;
         if (killed instanceof Bat || killed instanceof OwlFamiliarEntity) return CreaturePowerType.BAT;
@@ -446,7 +446,7 @@ public class WitcheryPlayerEvents {
         return null;
     }
 
-    private static int creaturePowerChargesFor(LivingEntity killed, CreaturePowerType power) {
+    public static int creaturePowerChargesFor(LivingEntity killed, CreaturePowerType power) {
         if (power == CreaturePowerType.HEAL) {
             return killed instanceof Villager || killed instanceof MushroomCow ? 2 : 1;
         }

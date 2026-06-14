@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -113,7 +114,12 @@ public class InfusionEvents {
         }
     }
 
-    /** Source creature-power onDamage (Infernal/beast infusion): the Pigman power wards off fire. */
+    /**
+     * Source creature-power {@code onDamage} reactions (Infernal/beast infusion). Each held power
+     * spends infusion energy (or, for Creeper, gains charges) to ward off a thematic damage type:
+     * Pigman/Blaze/Ghast extinguish fire, Skeleton/Squid breathe water under a drowning blow, and a
+     * Creeper soaks up a lightning strike to recharge instead of being hurt.
+     */
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
@@ -124,13 +130,57 @@ public class InfusionEvents {
             return;
         }
         CreaturePowerType power = CreaturePowerType.fromString(data.getCreaturePowerType());
-        if (power == CreaturePowerType.PIGMAN && event.getSource().is(DamageTypeTags.IS_FIRE)
-                && spendEnergy(player, data, 3)) {
-            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1200, 0, true, false));
+        if (power == null) {
+            return;
+        }
+        switch (power) {
+            // Source PigMan keeps fire-res for 1200t and reapplies even if already held; Blaze/Ghast
+            // are the shorter 200t variant that no-ops while fire-res is already active.
+            case PIGMAN -> wardFire(player, data, event, 1200, false);
+            case BLAZE, GHAST -> wardFire(player, data, event, 200, true);
+            case SKELETON -> wardDrown(player, data, event, 5, 0, 600, 30);
+            case SQUID -> wardDrown(player, data, event, 1, 1, 1200, 300);
+            case CREEPER -> absorbLightning(player, data, event);
+            default -> { }
+        }
+    }
+
+    private static void wardFire(ServerPlayer player, WitcheryPlayerData data, LivingIncomingDamageEvent event,
+                                 int duration, boolean skipIfActive) {
+        if (!event.getSource().is(DamageTypeTags.IS_FIRE)) {
+            return;
+        }
+        if (skipIfActive && player.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+            return;
+        }
+        if (spendEnergy(player, data, 3)) {
+            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, duration, 0, true, false));
             ((ServerLevel) player.level()).playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH,
                     SoundSource.PLAYERS, 0.6F, 1.0F);
             event.setCanceled(true);
         }
+    }
+
+    private static void wardDrown(ServerPlayer player, WitcheryPlayerData data, LivingIncomingDamageEvent event,
+                                  int cost, int amplifier, int duration, int airSupply) {
+        if (event.getSource().is(DamageTypes.DROWN) && spendEnergy(player, data, cost)) {
+            player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, duration, amplifier, true, false));
+            player.setAirSupply(airSupply);
+            ((ServerLevel) player.level()).playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH,
+                    SoundSource.PLAYERS, 0.6F, 1.0F);
+            event.setCanceled(true);
+        }
+    }
+
+    private static void absorbLightning(ServerPlayer player, WitcheryPlayerData data, LivingIncomingDamageEvent event) {
+        if (!event.getSource().is(DamageTypeTags.IS_LIGHTNING)) {
+            return;
+        }
+        data.addCreaturePowerCharges(25);
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        ((ServerLevel) player.level()).sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                player.getX(), player.getY(1.0), player.getZ(), 24, 0.4, 0.6, 0.4, 0.1);
+        event.setCanceled(true);
     }
 
     private static boolean isOverworldFallGround(BlockState state) {
