@@ -1,10 +1,12 @@
 package com.emoniph.witchery.events;
 
+import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -68,9 +71,14 @@ public class InfusionEvents {
             return;
         }
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        if (data.getInfusionType() != InfusionType.OVERWORLD) {
-            return;
+        switch (data.getInfusionType()) {
+            case OVERWORLD -> overworldFallCushion(player, data, event);
+            case INFERNAL -> creaturePowerFall(player, data, event);
+            default -> { }
         }
+    }
+
+    private static void overworldFallCushion(ServerPlayer player, WitcheryPlayerData data, LivingFallEvent event) {
         ServerLevel level = (ServerLevel) player.level();
         BlockPos ground = player.blockPosition().below();
         if (!isOverworldFallGround(level.getBlockState(ground))) {
@@ -88,6 +96,40 @@ public class InfusionEvents {
             level.destroyBlock(ground, true);
             level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), ground.getY() + 1.0, player.getZ(),
                     16, 0.5, 0.1, 0.5, 0.0);
+        }
+    }
+
+    /** Source creature-power onFalling (Infernal/beast infusion): Bat cushions, Jump negates a fall. */
+    private static void creaturePowerFall(ServerPlayer player, WitcheryPlayerData data, LivingFallEvent event) {
+        CreaturePowerType power = CreaturePowerType.fromString(data.getCreaturePowerType());
+        if (power == CreaturePowerType.BAT) {
+            if (event.getDistance() > 5.0f) {
+                event.setDistance(5.0f);
+            }
+        } else if (power == CreaturePowerType.JUMP) {
+            event.setDistance(0.0f);
+            ((ServerLevel) player.level()).playSound(null, player.blockPosition(), SoundEvents.SLIME_SQUISH,
+                    SoundSource.PLAYERS, 0.6F, 1.0F);
+        }
+    }
+
+    /** Source creature-power onDamage (Infernal/beast infusion): the Pigman power wards off fire. */
+    @SubscribeEvent
+    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getInfusionType() != InfusionType.INFERNAL) {
+            return;
+        }
+        CreaturePowerType power = CreaturePowerType.fromString(data.getCreaturePowerType());
+        if (power == CreaturePowerType.PIGMAN && event.getSource().is(DamageTypeTags.IS_FIRE)
+                && spendEnergy(player, data, 3)) {
+            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1200, 0, true, false));
+            ((ServerLevel) player.level()).playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH,
+                    SoundSource.PLAYERS, 0.6F, 1.0F);
+            event.setCanceled(true);
         }
     }
 
