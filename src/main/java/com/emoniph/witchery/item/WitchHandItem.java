@@ -4,6 +4,13 @@ import com.emoniph.witchery.blocks.BarrierBlock;
 import com.emoniph.witchery.data.CreaturePowerType;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.util.EarthItems;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import com.emoniph.witchery.data.InfusionType;
@@ -160,20 +167,47 @@ public class WitchHandItem extends Item {
                 8, 0.5D, 0.6D, 0.5D, 0.01D);
     }
 
+    /** Source InfusionOverworld channel (sneak): magnetise nearby metal items and smelt ores around. */
     private static void sustainOverworld(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
-        if (!player.isShiftKeyDown() || elapsed < 40 || elapsed % 10 != 0 || !spendInfusionEnergy(player, data, 1)) {
+        if (!player.isShiftKeyDown() || elapsed < 40 || elapsed % 4 != 0 || !spendInfusionEnergy(player, data, 1)) {
             return;
         }
+        ServerLevel level = (ServerLevel) player.level();
 
-        Vec3 pullTo = player.position().add(0.0D, 1.0D, 0.0D);
-        AABB area = player.getBoundingBox().inflate(6.0D);
-        for (ItemEntity item : player.level().getEntitiesOfClass(ItemEntity.class, area)) {
+        // Magnetise loose metal items toward the witch.
+        Vec3 pullTo = player.position().add(0.0D, player.getEyeHeight() * 0.5D, 0.0D);
+        for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(6.0D))) {
+            if (!EarthItems.isMetal(item.getItem())) {
+                continue;
+            }
             Vec3 delta = pullTo.subtract(item.position());
-            if (delta.lengthSqr() > 0.01D) {
-                item.setDeltaMovement(item.getDeltaMovement().add(delta.normalize().scale(0.25D)));
+            if (delta.lengthSqr() > 0.04D) {
+                item.setDeltaMovement(delta.normalize().scale(0.4D));
             }
         }
-        player.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
+
+        // Smelt ores in a 13x7x13 box, spending 2 energy each until the pool runs dry.
+        int energy = player.isCreative() ? Integer.MAX_VALUE : data.getInfusionEnergy();
+        boolean smelted = false;
+        BlockPos centre = player.blockPosition();
+        for (BlockPos scan : BlockPos.betweenClosed(centre.offset(-6, -3, -6), centre.offset(6, 3, 6))) {
+            if (energy < 2) {
+                break;
+            }
+            Item ingot = EarthItems.oreToIngot(level.getBlockState(scan));
+            if (ingot != null) {
+                BlockPos pos = scan.immutable();
+                level.setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
+                Block.popResource(level, pos, new ItemStack(ingot));
+                energy -= 2;
+                smelted = true;
+            }
+        }
+        if (smelted && !player.isCreative()) {
+            data.setInfusionEnergy(energy, data.getInfusionMaxEnergy());
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        }
+        level.playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
                 SoundSource.PLAYERS, 0.25F, 1.5F);
     }
 
@@ -203,24 +237,74 @@ public class WitchHandItem extends Item {
 
     /** Source InfusionOverworld block-top release: raise a pillar of earth, lifting whatever stands on it. */
     private static boolean releaseOverworld(ServerPlayer player, WitcheryPlayerData data) {
+        ServerLevel level = (ServerLevel) player.level();
+
+        // Source onPlayerStoppedUsing ENTITY branch: disarm a struck metal-wielding mob.
+        EntityHitResult entityHit = pickEntity(player, 4.0D);
+        if (entityHit != null && entityHit.getEntity() instanceof Mob mob && !player.isShiftKeyDown()) {
+            return overworldDisarm(player, data, mob);
+        }
+
         HitResult hit = player.pick(4.0D, 1.0F, false);
-        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS
-                || blockHit.getDirection() != Direction.UP) {
+        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS) {
             return false;
         }
-        ServerLevel level = (ServerLevel) player.level();
-        BlockPos top = blockHit.getBlockPos();
-        if (level.getBlockState(top.below(10)).isAir()) {
-            fail(player); // needs solid ground to push up from
+        BlockPos pos = blockHit.getBlockPos();
+
+        // Sneak on an ore: smelt it to stone and drop two ingots.
+        if (player.isShiftKeyDown()) {
+            Item ingot = EarthItems.oreToIngot(level.getBlockState(pos));
+            if (ingot == null || !spendInfusionEnergy(player, data, 2)) {
+                fail(player);
+                return true;
+            }
+            level.setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
+            Block.popResource(level, pos, new ItemStack(ingot, 2));
+            feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_REPAIR);
             return true;
+        }
+
+        // Aim at a block top: raise an earth pillar.
+        if (blockHit.getDirection() == Direction.UP) {
+            if (level.getBlockState(pos.below(10)).isAir()) {
+                fail(player); // needs solid ground to push up from
+                return true;
+            }
+            if (!spendInfusionEnergy(player, data, 2)) {
+                fail(player);
+                return true;
+            }
+            raiseColumn(level, pos, 6, 3);
+            feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean overworldDisarm(ServerPlayer player, WitcheryPlayerData data, Mob mob) {
+        ItemStack held = mob.getMainHandItem();
+        if (!EarthItems.isMetal(held)) {
+            return false;
         }
         if (!spendInfusionEnergy(player, data, 2)) {
             fail(player);
             return true;
         }
-        raiseColumn(level, top, 6, 3);
-        feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
+        ServerLevel level = (ServerLevel) player.level();
+        mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        ItemEntity drop = new ItemEntity(level, mob.getX(), mob.getY() + 0.5D, mob.getZ(), held);
+        drop.setDeltaMovement(player.getLookAngle().scale(-0.2D));
+        level.addFreshEntity(drop);
+        feedback(player, ParticleTypes.CRIT, SoundEvents.ITEM_PICKUP);
         return true;
+    }
+
+    private static EntityHitResult pickEntity(ServerPlayer player, double range) {
+        Vec3 eye = player.getEyePosition();
+        Vec3 reach = player.getViewVector(1.0F).scale(range);
+        return ProjectileUtil.getEntityHitResult(player, eye, eye.add(reach),
+                player.getBoundingBox().expandTowards(reach).inflate(1.0D),
+                e -> e instanceof LivingEntity && e != player && e.isPickable(), range * range);
     }
 
     private static void raiseColumn(ServerLevel level, BlockPos top, int depth, int rise) {
@@ -352,17 +436,31 @@ public class WitchHandItem extends Item {
                 24, 0.6D, 0.8D, 0.6D, 0.02D);
     }
 
+    /** Source InfusionOverworld onLeftClickEntity: fling a metal-bearing target by the iron on them. */
     private static boolean overworldPush(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
-        int cost = player.isShiftKeyDown() ? 4 : 2;
-        if (!spendInfusionEnergy(player, data, cost)) {
+        if (!wearsOrHoldsMetal(target)) {
             fail(player);
             return true;
         }
-        Vec3 look = player.getLookAngle().normalize().scale(player.isShiftKeyDown() ? 2.4D : 1.5D);
-        target.push(look.x, player.isShiftKeyDown() ? 0.9D : 0.3D, look.z);
+        boolean high = player.isShiftKeyDown();
+        if (!spendInfusionEnergy(player, data, high ? 4 : 2)) {
+            fail(player);
+            return true;
+        }
+        Vec3 look = player.getLookAngle();
+        double horizontal = 0.8D * 3.0D;
+        target.push(look.x * horizontal, high ? 1.5D : 0.3D, look.z * horizontal);
         target.hurtMarked = true;
         feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
         return true;
+    }
+
+    private static boolean wearsOrHoldsMetal(LivingEntity entity) {
+        return EarthItems.isMetal(entity.getMainHandItem())
+                || EarthItems.isMetal(entity.getItemBySlot(EquipmentSlot.HEAD))
+                || EarthItems.isMetal(entity.getItemBySlot(EquipmentSlot.CHEST))
+                || EarthItems.isMetal(entity.getItemBySlot(EquipmentSlot.LEGS))
+                || EarthItems.isMetal(entity.getItemBySlot(EquipmentSlot.FEET));
     }
 
     private static boolean otherwhereHike(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
