@@ -157,12 +157,18 @@ public class WerewolfEvents {
     }
 
     private static void applyWolfForm(ServerPlayer player, WitcheryPlayerData data) {
-        player.addEffect(new MobEffectInstance(MobEffects.SPEED, EFFECT_DURATION, 2, true, true));  // Speed III
-        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,   EFFECT_DURATION, 1, true, true));  // Strength II
-        player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,           EFFECT_DURATION, 1, true, true));  // Jump Boost II
-        player.addEffect(new MobEffectInstance(MobEffects.HUNGER,         EFFECT_DURATION, 1, true, true));  // Hunger II
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,   EFFECT_DURATION, 0, true, false)); // Night Vision
-
+        // Level-scaled wolf-form buffs. Simplified port of source Shapeshift.getStatBoost (the exact
+        // per-level/per-form StatBoost attribute arrays land in Phase 3 with form selection); here the
+        // amplifiers ramp with the werewolf level instead of being flat.
+        int wolfLevel = Math.max(1, data.getWerewolfLevel());
+        int speedAmp = Math.min(3, 1 + (wolfLevel - 1) / 3);  // Speed II → IV
+        int strengthAmp = Math.min(2, (wolfLevel - 1) / 3);   // Strength I → III
+        int jumpAmp = Math.min(2, (wolfLevel - 1) / 4);       // Jump Boost I → III
+        player.addEffect(new MobEffectInstance(MobEffects.SPEED,        EFFECT_DURATION, speedAmp, true, true));
+        player.addEffect(new MobEffectInstance(MobEffects.STRENGTH,     EFFECT_DURATION, strengthAmp, true, true));
+        player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,   EFFECT_DURATION, jumpAmp, true, true));
+        player.addEffect(new MobEffectInstance(MobEffects.HUNGER,       EFFECT_DURATION, 1, true, true));
+        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false));
     }
 
     /** Phase 0 = full moon in vanilla's 8-phase moon cycle. */

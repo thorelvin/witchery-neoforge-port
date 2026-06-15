@@ -77,7 +77,7 @@ public class DebugInspectorItem extends Item {
                     + "  vampire=" + d.isVampire() + "  blood=" + d.getBloodLevel() + "/500\n"
                     + "  werewolf=" + d.isWerewolf()
                     + "  transform=" + String.format("%.2f", d.getTransformationLevel())
-                    + "  wolfmastery=" + d.getWolfMastery() + "/3\n"
+                    + "  wolflevel=" + d.getWerewolfLevel() + "/10 (" + d.getWolfForm() + ")\n"
                     + "  soaring=" + tickStr(d.getSoaringTicks())
                     + "  depths=" + tickStr(d.getDepthsTicks())
                     + "  grotesque=" + tickStr(d.getGrotesqueTicks()) + "\n"

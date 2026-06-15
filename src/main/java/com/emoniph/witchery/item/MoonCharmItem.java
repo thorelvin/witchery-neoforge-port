@@ -58,7 +58,7 @@ public class MoonCharmItem extends Item {
         }
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        int masteryLevel = Math.max(1, data.getWolfMastery() + 1);
+        int masteryLevel = Math.max(1, data.getWerewolfLevel());
         int triggerRemaining = Math.max((masteryLevel - 1) * 4, 1);
         if (remainingUseDuration != triggerRemaining) {
             return;

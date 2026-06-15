@@ -203,7 +203,7 @@ public class WitcheryCommands {
                                         StringArgumentType.getString(ctx, "type")))))
 
                 .then(Commands.literal("wolfmastery")
-                        .then(Commands.argument("level", IntegerArgumentType.integer(0, 3))
+                        .then(Commands.argument("level", IntegerArgumentType.integer(0, 10))
                                 .executes(ctx -> setWolfMastery(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "level")))))
 
@@ -666,9 +666,9 @@ public class WitcheryCommands {
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         WitcheryPlayerData d = WitcheryAttachments.get(p);
-        d.setWolfMastery(level);
+        d.setWerewolfLevel(level);
         sync(p, d);
-        src.sendSuccess(() -> Component.literal("Wolf mastery set to " + level + "/3."), false);
+        src.sendSuccess(() -> Component.literal("Werewolf level set to " + level + "/10."), false);
         return 1;
     }
 
@@ -799,7 +799,9 @@ public class WitcheryCommands {
         String vampire  = "  vampire=" + d.isVampire() + "  blood=" + d.getBloodLevel() + "/500";
         String werewolf = "  werewolf=" + d.isWerewolf()
                 + "  transform=" + String.format("%.2f", d.getTransformationLevel())
-                + "  wolfmastery=" + d.getWolfMastery() + "/3"
+                + "  wolflevel=" + d.getWerewolfLevel() + "/10"
+                + "  wolfform=" + d.getWolfForm()
+                + "  wolfquest=" + d.getWolfQuestState() + ":" + d.getWolfQuestCounter()
                 + "  howlCooldown=" + tickStr(d.getHowlCooldown());
 
         // ── brew buffs ───────────────────────────────────────────────────

@@ -103,6 +103,63 @@ public class WitcheryPlayerData {
         ).apply(i, VampireState::new));
     }
 
+    /** Active werewolf transform shape (source {@code TransformCreature} WOLF/WOLFMAN subset). */
+    public enum WolfForm {
+        NONE, WOLF, WOLFMAN;
+        public static WolfForm fromOrdinal(int i) {
+            WolfForm[] vals = values();
+            return i >= 0 && i < vals.length ? vals[i] : NONE;
+        }
+    }
+
+    /** Wolf-Altar quest step state (source {@code ExtendedPlayer.QuestState}). */
+    public enum WolfQuestState {
+        NOT_STARTED, STARTED, COMPLETE;
+        public static WolfQuestState fromOrdinal(int i) {
+            WolfQuestState[] vals = values();
+            return i >= 0 && i < vals.length ? vals[i] : NOT_STARTED;
+        }
+    }
+
+    /**
+     * Nested lycanthropy progression state — mirrors {@link VampireState} and keeps the main CODEC under
+     * the 16-field DFU limit (it replaces the former flat {@code wolf_mastery} 0-3 slot). Holds the source
+     * {@code werewolfLevel} (0-10), the active {@link WolfForm}, the Wolf-Altar quest step + counter, the
+     * persisted distinct-chunk set for the level 6→7 howl quest, and the howl/bone-find timers.
+     */
+    public static class WerewolfState {
+        public int level = 0;
+        public int form = 0;            // WolfForm ordinal
+        public int questState = 0;      // WolfQuestState ordinal
+        public int questCounter = 0;
+        public final java.util.List<Long> howledChunks = new java.util.ArrayList<>();
+        public long lastHowl = Long.MIN_VALUE;
+        public long lastBoneFind = Long.MIN_VALUE;
+
+        public WerewolfState() {}
+
+        private WerewolfState(int level, int form, int questState, int questCounter,
+                              java.util.List<Long> howledChunks, long lastHowl, long lastBoneFind) {
+            this.level = Math.clamp(level, 0, 10);
+            this.form = Math.clamp(form, 0, 2);
+            this.questState = Math.clamp(questState, 0, 2);
+            this.questCounter = Math.max(0, questCounter);
+            this.howledChunks.addAll(howledChunks);
+            this.lastHowl = lastHowl;
+            this.lastBoneFind = lastBoneFind;
+        }
+
+        public static final Codec<WerewolfState> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.INT.optionalFieldOf("level", 0).forGetter(s -> s.level),
+            Codec.INT.optionalFieldOf("form", 0).forGetter(s -> s.form),
+            Codec.INT.optionalFieldOf("quest_state", 0).forGetter(s -> s.questState),
+            Codec.INT.optionalFieldOf("quest_counter", 0).forGetter(s -> s.questCounter),
+            Codec.LONG.listOf().optionalFieldOf("howled_chunks", java.util.List.of()).forGetter(s -> s.howledChunks),
+            Codec.LONG.optionalFieldOf("last_howl", Long.MIN_VALUE).forGetter(s -> s.lastHowl),
+            Codec.LONG.optionalFieldOf("last_bone_find", Long.MIN_VALUE).forGetter(s -> s.lastBoneFind)
+        ).apply(i, WerewolfState::new));
+    }
+
     /** Nested record for Spirit World state — keeps the main CODEC under the 16-field DFU limit. */
     public static class SpiritWorldState {
         public boolean isDream = false;
@@ -178,7 +235,7 @@ public class WitcheryPlayerData {
     private SpiritWorldState sw = new SpiritWorldState();
     private String creaturePowerType = "";
     private int creaturePowerCharges = 0;
-    private int wolfMastery = 0;
+    private WerewolfState wws = new WerewolfState();
     private int howlCooldown = 0;
     private int soaringTicks = 0;
     private int depthsTicks = 0;
@@ -202,7 +259,7 @@ public class WitcheryPlayerData {
                                long returnPos, String returnDimension,
                                boolean inSpiritWorld, SpiritWorldState sw,
                                String creaturePowerType, int creaturePowerCharges,
-                               int wolfMastery) {
+                               WerewolfState wws) {
         this.vs = vs != null ? vs : new VampireState();
         this.werewolf = werewolf;
         this.bloodLevel = bloodLevel;
@@ -218,7 +275,7 @@ public class WitcheryPlayerData {
         this.sw = sw != null ? sw.copy() : new SpiritWorldState();
         this.creaturePowerType = creaturePowerType;
         this.creaturePowerCharges = creaturePowerCharges;
-        this.wolfMastery = wolfMastery;
+        this.wws = wws != null ? wws : new WerewolfState();
     }
 
     private static WitcheryPlayerData fromCodec(VampireState vs, boolean werewolf, int bloodLevel,
@@ -228,10 +285,10 @@ public class WitcheryPlayerData {
                                                 long returnPos, String returnDimension,
                                                 boolean inSpiritWorld, SpiritWorldState sw,
                                                 String creaturePowerType, int creaturePowerCharges,
-                                                int wolfMastery) {
+                                                WerewolfState wws) {
         return new WitcheryPlayerData(vs, werewolf, bloodLevel, transformationLevel,
                 familiar, infusionType, infusionChargeState, lastDeathPos, lastDeathDimension, returnPos, returnDimension,
-                inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wolfMastery);
+                inSpiritWorld, sw, creaturePowerType, creaturePowerCharges, wws);
     }
 
     public static final com.mojang.serialization.MapCodec<WitcheryPlayerData> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -250,7 +307,7 @@ public class WitcheryPlayerData {
         SpiritWorldState.CODEC.optionalFieldOf("spirit_world", new SpiritWorldState()).forGetter(d -> d.sw),
         Codec.STRING.optionalFieldOf("creature_power_type", "").forGetter(d -> d.creaturePowerType),
         Codec.INT.optionalFieldOf("creature_power_charges", 0).forGetter(d -> d.creaturePowerCharges),
-        Codec.INT.optionalFieldOf("wolf_mastery", 0).forGetter(d -> d.wolfMastery)
+        WerewolfState.CODEC.optionalFieldOf("werewolf_state", new WerewolfState()).forGetter(d -> d.wws)
     ).apply(i, WitcheryPlayerData::fromCodec));
 
     public boolean isVampire() { return vs.vampire; }
@@ -303,7 +360,7 @@ public class WitcheryPlayerData {
     // Source ExtendedPlayer.getMaxBloodPower: an established werewolf-hybrid (wolf mastery >= 2, the
     // port's analog of source werewolfLevel >= 2) only gets half the per-level blood-power scaling.
     public int getMaxBloodPower() {
-        int scaling = wolfMastery >= 2 ? (int) Math.floor(vs.level * 0.5) : vs.level;
+        int scaling = wws.level >= 2 ? (int) Math.floor(vs.level * 0.5) : vs.level;
         return 500 + scaling * 250;
     }
     public int getVampireLevelCap() { return vs.levelCap; }
@@ -329,7 +386,11 @@ public class WitcheryPlayerData {
     }
     public int getVisitedVillageCount() { return vs.visitedVillages.size(); }
     public void clearVisitedVillages() { vs.visitedVillages.clear(); }
-    public void setWerewolf(boolean w) { this.werewolf = w; }
+    public void setWerewolf(boolean w) {
+        this.werewolf = w;
+        if (w && wws.level == 0) wws.level = 1;       // source: infection sets werewolfLevel = 1
+        if (!w) { wws.level = 0; wws.form = 0; resetWolfQuest(); wws.howledChunks.clear(); }
+    }
     public void setBloodLevel(int b) { this.bloodLevel = Math.clamp(b, 0, 500); }
     public void addBlood(int amount) { setBloodLevel(bloodLevel + amount); }
     public void setTransformationLevel(float t) { this.transformationLevel = Math.clamp(t, 0f, 1f); }
@@ -443,8 +504,38 @@ public class WitcheryPlayerData {
     public int getPreparedSpellLevel() { return preparedSpellLevel; }
     public void setPreparedSpell(int id, int level) { this.preparedSpellId = id; this.preparedSpellLevel = level; }
     public void clearPreparedSpell() { this.preparedSpellId = -1; this.preparedSpellLevel = 1; }
-    public int getWolfMastery() { return wolfMastery; }
-    public void setWolfMastery(int v) { wolfMastery = Math.clamp(v, 0, 3); }
+    // ── Werewolf progression (source werewolfLevel / form / Wolf-Altar quest) ───
+    public int getWerewolfLevel() { return wws.level; }
+    public void setWerewolfLevel(int level) {
+        int clamped = Math.clamp(level, 0, 10);
+        if (clamped != wws.level) {
+            wws.level = clamped;
+            wws.questState = 0;
+            wws.questCounter = 0;
+            wws.howledChunks.clear();
+        }
+        this.werewolf = wws.level > 0;
+        if (wws.level == 0) wws.form = 0;
+    }
+    public void increaseWerewolfLevel() { if (wws.level < 10) setWerewolfLevel(wws.level + 1); }
+    public WolfForm getWolfForm() { return WolfForm.fromOrdinal(wws.form); }
+    public void setWolfForm(WolfForm form) { wws.form = form == null ? 0 : form.ordinal(); }
+    public WolfQuestState getWolfQuestState() { return WolfQuestState.fromOrdinal(wws.questState); }
+    public void setWolfQuestState(WolfQuestState s) { wws.questState = s == null ? 0 : s.ordinal(); }
+    public int getWolfQuestCounter() { return wws.questCounter; }
+    public void incrementWolfQuestCounter() { wws.questCounter++; }
+    public void resetWolfQuest() { wws.questState = 0; wws.questCounter = 0; }
+    /** Record a distinct howl chunk (level 6→7 quest); true if newly added. */
+    public boolean addHowledChunk(long chunk) {
+        if (wws.howledChunks.contains(chunk)) return false;
+        wws.howledChunks.add(chunk);
+        return true;
+    }
+    public int getHowledChunkCount() { return wws.howledChunks.size(); }
+    public long getLastHowl() { return wws.lastHowl; }
+    public void setLastHowl(long t) { wws.lastHowl = t; }
+    public long getLastBoneFind() { return wws.lastBoneFind; }
+    public void setLastBoneFind(long t) { wws.lastBoneFind = t; }
     public int getSoaringTicks() { return soaringTicks; }
     public boolean hasSoaringBuff() { return soaringTicks > 0; }
     public void setSoaringTicks(int v) { soaringTicks = Math.max(0, v); }
@@ -486,7 +577,8 @@ public class WitcheryPlayerData {
         this.sw = other.sw.copy();
         this.creaturePowerType = other.creaturePowerType;
         this.creaturePowerCharges = other.creaturePowerCharges;
-        this.wolfMastery = other.wolfMastery;
+        this.wws = new WerewolfState(other.wws.level, other.wws.form, other.wws.questState,
+                other.wws.questCounter, other.wws.howledChunks, other.wws.lastHowl, other.wws.lastBoneFind);
         this.soaringTicks = other.soaringTicks;
         this.depthsTicks = other.depthsTicks;
         this.grotesqueTicks = other.grotesqueTicks;
