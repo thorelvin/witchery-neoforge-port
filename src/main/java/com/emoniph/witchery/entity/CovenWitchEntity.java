@@ -98,6 +98,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     private int questRemaining;
     private int questKind; // QuestKind ordinal
     private boolean rosterReconciled; // transient — heal legacy recruited witches into CovenData once
+    /** Game time until which a dismiss is "armed": a second sneak-use within this window confirms it. Transient. */
+    private long dismissArmedUntil;
+    private static final long DISMISS_CONFIRM_TICKS = 100L; // 5s window to confirm casting a witch out
 
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
@@ -267,9 +270,18 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
 
         switch (recruitOutcome(isRecruitedBy(player), isRecruited(), full, hasFamiliar, offeredToYou)) {
             case DISMISS -> {
-                com.emoniph.witchery.world.CovenData.get(serverLevel).remove(player.getUUID(), getUUID());
-                setCovenOwner(null);
-                covenSay(player, witchName, "witchery.witch.say.leftcoven");
+                long now = serverLevel.getGameTime();
+                if (dismissArmedUntil >= now) {
+                    // Confirmed by a second sneak-use within the window — cast her out.
+                    dismissArmedUntil = 0L;
+                    com.emoniph.witchery.world.CovenData.get(serverLevel).remove(player.getUUID(), getUUID());
+                    setCovenOwner(null);
+                    covenSay(player, witchName, "witchery.witch.say.leftcoven");
+                } else {
+                    // First sneak-use — arm the dismiss and ask for confirmation (a guard rail).
+                    dismissArmedUntil = now + DISMISS_CONFIRM_TICKS;
+                    covenSay(player, witchName, "witchery.witch.say.confirmleave");
+                }
             }
             case SERVES_ANOTHER -> covenSay(player, witchName, "witchery.witch.say.servesanother");
             case FULL -> {
