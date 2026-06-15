@@ -120,7 +120,8 @@ public final class Brews {
         public enum BrewAction {
             EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
-            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL
+            HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
+            FELL_TREE, LILIFY, BLIGHT
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -344,6 +345,18 @@ public final class Brews {
         registerExplicit(Items.BONE_MEAL, Ingredient.action(Ingredient.BrewAction.FERTILIZE,
                 1, 250, 0xEDE8D0,
                 "witchery.brew.fertilization", null));
+        // Nature block-shaping actions (source brewing/action/effect/*). Felling/Lilify use the source
+        // ingredients (String / Lily Pad); Blight uses Dead Bush as a modern stand-in for the source's
+        // ambiguous item id.
+        register(Items.STRING, Ingredient.action(Ingredient.BrewAction.FELL_TREE,
+                1, 0, 0x5B3A1E,
+                "witchery.brew.felling", null));
+        register(Items.LILY_PAD, Ingredient.action(Ingredient.BrewAction.LILIFY,
+                1, 200, 0x3C7A2E,
+                "witchery.brew.lilify", null));
+        register(Items.DEAD_BUSH, Ingredient.action(Ingredient.BrewAction.BLIGHT,
+                4, 2000, 0x4A3B22,
+                "witchery.brew.blight", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -1187,6 +1200,12 @@ public final class Brews {
                 growFlowers(level, blockImpact, blockRadius, action.strength(), source);
             } else if (action.action() == Ingredient.BrewAction.FERTILIZE) {
                 fertilizeBlocks(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.FELL_TREE) {
+                fellTrees(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.LILIFY) {
+                lilify(level, blockImpact, side, source);
+            } else if (action.action() == Ingredient.BrewAction.BLIGHT) {
+                blight(level, blockImpact, blockRadius, action.strength(), source);
             }
         }
     }
@@ -1574,6 +1593,112 @@ public final class Brews {
 
     public static int sourceBlockHitRadius(int strength) {
         return 2 + 2 * strength;
+    }
+
+    // ── Nature block-shaping actions (source brewing/action/effect/*) ───────────
+
+    /** Source {@code BrewActionFelling}: a log that can be felled (drops + clears in radius). */
+    public static boolean isFellableLog(BlockState state) {
+        return state.is(net.minecraft.tags.BlockTags.LOGS);
+    }
+
+    /** Fell logs in a sphere about the impact (source BrewActionFelling — String, fortune = strength). */
+    private static void fellTrees(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int r = Math.max(radius, 1);
+        int rSq = r * r;
+        for (int dy = -r; dy <= r; dy++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (dx * dx + dy * dy + dz * dz > rSq) {
+                        continue;
+                    }
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (isFellableLog(level.getBlockState(pos)) && sourceMayModify(level, pos, source)) {
+                        level.destroyBlock(pos, true); // drop the log
+                    }
+                }
+            }
+        }
+    }
+
+    /** Source {@code BrewActionLilify}: rise to the water surface off the hit face and cap it with a lily. */
+    private static void lilify(ServerLevel level, BlockPos blockImpact, Direction side, Entity source) {
+        BlockPos.MutableBlockPos pos = blockImpact.relative(side).mutable();
+        while (pos.getY() < level.getMaxY()
+                && !(level.getBlockState(pos).liquid() && level.getBlockState(pos.above()).isAir())) {
+            pos.move(Direction.UP);
+        }
+        BlockState here = level.getBlockState(pos);
+        BlockPos lilyPos = pos.above();
+        if (here.liquid() && level.getBlockState(lilyPos).isAir() && sourceMayModify(level, lilyPos, source)) {
+            level.setBlock(lilyPos, Blocks.LILY_PAD.defaultBlockState(), 3);
+        }
+    }
+
+    /** How a column reacts to a Blight brew (source {@code BrewActionBlight}). */
+    public enum BlightOutcome { NONE, KILL_PLANT, WITHER_TO_DEAD_BUSH, FARMLAND_TO_SAND, BLIGHT_GROUND }
+
+    /** Classify a block for the Blight brew (pure, testable). */
+    public static BlightOutcome blightOutcome(BlockState state) {
+        if (state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN) || state.is(Blocks.TALL_GRASS)
+                || state.is(Blocks.LARGE_FERN) || state.is(Blocks.VINE)) {
+            return BlightOutcome.KILL_PLANT;
+        }
+        if (state.is(net.minecraft.tags.BlockTags.SMALL_FLOWERS)
+                || state.is(Blocks.SUNFLOWER) || state.is(Blocks.LILAC) || state.is(Blocks.PEONY) || state.is(Blocks.ROSE_BUSH)
+                || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES) || state.is(Blocks.WHEAT)
+                || state.is(Blocks.BEETROOTS) || state.is(Blocks.PUMPKIN) || state.is(Blocks.MELON)
+                || state.is(Blocks.PUMPKIN_STEM) || state.is(Blocks.MELON_STEM) || state.is(Blocks.SUGAR_CANE)
+                || state.is(Blocks.CACTUS) || state.is(Blocks.LILY_PAD) || state.is(Blocks.NETHER_WART)) {
+            return BlightOutcome.WITHER_TO_DEAD_BUSH;
+        }
+        if (state.is(Blocks.FARMLAND)) {
+            return BlightOutcome.FARMLAND_TO_SAND;
+        }
+        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.PODZOL)) {
+            return BlightOutcome.BLIGHT_GROUND;
+        }
+        return BlightOutcome.NONE;
+    }
+
+    /** Blight the plant life in a filled circle: kill growth, sour farmland to sand, grass to dirt. */
+    private static void blight(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int effectiveRadius = sourceBlockCircleRadius(radius, strength);
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effectiveRadius)) {
+            for (int dy = 1; dy >= -1; dy--) {
+                BlockPos pos = column.above(dy);
+                if (!sourceMayModify(level, pos, source)) {
+                    continue;
+                }
+                BlightOutcome outcome = blightOutcome(level.getBlockState(pos));
+                if (outcome == BlightOutcome.NONE) {
+                    continue;
+                }
+                switch (outcome) {
+                    case KILL_PLANT -> {
+                        level.removeBlock(pos, false);
+                        blightGround(level, pos.below(), source);
+                    }
+                    case WITHER_TO_DEAD_BUSH -> {
+                        level.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
+                        blightGround(level, pos.below(), source);
+                    }
+                    case FARMLAND_TO_SAND -> level.setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
+                    case BLIGHT_GROUND -> blightGround(level, pos, source);
+                    default -> { }
+                }
+                break;
+            }
+        }
+    }
+
+    /** Source {@code blightGround}: living earth withers to plain dirt. */
+    private static void blightGround(ServerLevel level, BlockPos pos, Entity source) {
+        BlockState state = level.getBlockState(pos);
+        if ((state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.PODZOL))
+                && sourceMayModify(level, pos, source)) {
+            level.setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
+        }
     }
 
     public static boolean sourceExtinguishApplies(ServerLevel level, int strength) {
