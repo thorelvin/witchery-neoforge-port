@@ -167,6 +167,8 @@ public class WerewolfEvents {
         }
 
         boolean counted = switch (wolfLevel) {
+            // Source: only a pounce kill counts — the killing blow must land while airborne
+            // (!player.onGround()), in beast form, on a hostile mob. The altar text spells this out.
             case 5 -> WerewolfShiftUtil.inWolfShape(data) && victim instanceof Enemy && !player.onGround();
             case 8 -> WerewolfShiftUtil.inWolfmanForm(data) && victim instanceof ZombifiedPiglin;
             case 9 -> WerewolfShiftUtil.inWolfShape(data) && (victim instanceof Villager || victim instanceof Player);
