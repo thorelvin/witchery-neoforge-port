@@ -45,11 +45,29 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
     /** Source {@code WITCCoven}: a player's coven holds at most 6 recruited witches. */
     public static final int MAX_COVEN = 6;
     private static final String TAG_COVEN_OWNER = "WITCCovenOwner";
+    private static final String TAG_QUEST_FOR = "WITCQuestFor";
+    private static final String TAG_QUEST_ITEM = "WITCQuestItem";
+    private static final String TAG_QUEST_LEFT = "WITCQuestLeft";
     private static final EntityDataAccessor<Integer> SKIN =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
+    /** Fetch-quest roster a witch may set before joining a coven (source FetchQuest entries). */
+    private record FetchQuest(net.minecraft.world.item.Item item, int count) {}
+
+    private static final java.util.function.Supplier<FetchQuest[]> QUESTS = () -> new FetchQuest[]{
+            new FetchQuest(WitcheryItems.DEMON_HEART.get(), 1),
+            new FetchQuest(net.minecraft.world.item.Items.BONE, 30),
+            new FetchQuest(WitcheryItems.MANDRAKE_ROOT.get(), 16),
+            new FetchQuest(WitcheryItems.GRAVEYARD_DUST.get(), 8),
+            new FetchQuest(WitcheryItems.QUARTZ_SPHERE.get(), 1)
+    };
+
     @Nullable
     private java.util.UUID covenOwner;
+    private String questFor = "";
+    @Nullable
+    private net.minecraft.world.item.Item questItem;
+    private int questRemaining;
 
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
@@ -180,15 +198,30 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
         return InteractionResult.CONSUME;
     }
 
-    /** The outcome of a sneak-interact recruit attempt. */
-    public enum CovenRecruitOutcome { DISMISS, SERVES_ANOTHER, FULL, RECRUIT }
+    /** The outcome of a sneak-interact on a free witch (before the fetch quest runs). */
+    public enum CovenRecruitOutcome { DISMISS, SERVES_ANOTHER, FULL, NO_FAMILIAR, OFFER_QUEST, RUN_QUEST }
 
-    /** Pure recruit-decision logic (testable). */
-    public static CovenRecruitOutcome recruitOutcome(boolean ownedByPlayer, boolean owned, boolean covenFull) {
+    /** Pure gate decision for a sneak-interact (testable). */
+    public static CovenRecruitOutcome recruitOutcome(boolean ownedByPlayer, boolean owned, boolean covenFull,
+                                                     boolean hasFamiliar, boolean questOfferedToPlayer) {
         if (ownedByPlayer) return CovenRecruitOutcome.DISMISS;
         if (owned) return CovenRecruitOutcome.SERVES_ANOTHER;
         if (covenFull) return CovenRecruitOutcome.FULL;
-        return CovenRecruitOutcome.RECRUIT;
+        if (!hasFamiliar) return CovenRecruitOutcome.NO_FAMILIAR;       // source: only a witch with a familiar may recruit
+        return questOfferedToPlayer ? CovenRecruitOutcome.RUN_QUEST : CovenRecruitOutcome.OFFER_QUEST;
+    }
+
+    /** Step of an in-progress fetch quest when the player sneak-interacts (testable). */
+    public enum QuestStep { NOT_FINISHED, PROGRESS, COMPLETE }
+
+    public static QuestStep questStep(boolean holdingQuestItem, int remainingBefore) {
+        if (!holdingQuestItem) return QuestStep.NOT_FINISHED;
+        return remainingBefore <= 1 ? QuestStep.COMPLETE : QuestStep.PROGRESS;
+    }
+
+    @Nullable
+    public net.minecraft.world.item.Item questItem() {
+        return questItem;
     }
 
     private InteractionResult handleCovenInteraction(Player player) {
@@ -197,14 +230,49 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
         }
         String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
         boolean full = covenSize(serverLevel, player.getUUID()) >= MAX_COVEN;
-        switch (recruitOutcome(isRecruitedBy(player), isRecruited(), full)) {
+        boolean hasFamiliar = !com.emoniph.witchery.init.WitcheryAttachments.get(player).getFamiliarType().isBlank();
+        boolean offeredToYou = questItem != null && questFor.equals(player.getUUID().toString());
+
+        switch (recruitOutcome(isRecruitedBy(player), isRecruited(), full, hasFamiliar, offeredToYou)) {
             case DISMISS -> {
                 setCovenOwner(null);
                 covenSay(player, witchName, "witchery.witch.say.leftcoven");
             }
             case SERVES_ANOTHER -> covenSay(player, witchName, "witchery.witch.say.servesanother");
-            case FULL -> covenSay(player, witchName, "witchery.witch.say.covenfull");
-            case RECRUIT -> {
+            case FULL -> {
+                clearQuest();
+                covenSay(player, witchName, "witchery.witch.say.covenfull");
+            }
+            case NO_FAMILIAR -> covenSay(player, witchName, "witchery.witch.say.notinterested");
+            case OFFER_QUEST -> offerQuest(player, witchName);
+            case RUN_QUEST -> runQuest(serverLevel, player, witchName);
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    private void offerQuest(Player player, String witchName) {
+        FetchQuest quest = QUESTS.get()[random.nextInt(QUESTS.get().length)];
+        questFor = player.getUUID().toString();
+        questItem = quest.item();
+        questRemaining = quest.count();
+        player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
+                Component.translatable("witchery.witch.say.questoffer",
+                        questRemaining, questItem.getDefaultInstance().getHoverName())), false);
+    }
+
+    private void runQuest(ServerLevel serverLevel, Player player, String witchName) {
+        boolean holding = player.getMainHandItem().is(questItem);
+        switch (questStep(holding, questRemaining)) {
+            case NOT_FINISHED -> covenSay(player, witchName, "witchery.witch.say.questnotfinished");
+            case PROGRESS -> {
+                player.getMainHandItem().shrink(1);
+                questRemaining--;
+                player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
+                        Component.translatable("witchery.witch.say.questitemsremaining", questRemaining)), false);
+            }
+            case COMPLETE -> {
+                player.getMainHandItem().shrink(1);
+                clearQuest();
                 setCovenOwner(player.getUUID());
                 covenSay(player, witchName, "witchery.witch.say.joinedcoven");
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH,
@@ -213,7 +281,12 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
                         net.minecraft.sounds.SoundSource.NEUTRAL, 1.0f, 1.2f);
             }
         }
-        return InteractionResult.CONSUME;
+    }
+
+    private void clearQuest() {
+        questFor = "";
+        questItem = null;
+        questRemaining = 0;
     }
 
     private void covenSay(Player player, String witchName, String key) {
@@ -258,6 +331,12 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
         if (covenOwner != null) {
             tag.putString(TAG_COVEN_OWNER, covenOwner.toString());
         }
+        if (questItem != null && !questFor.isEmpty()) {
+            tag.putString(TAG_QUEST_FOR, questFor);
+            tag.putString(TAG_QUEST_ITEM,
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(questItem).toString());
+            tag.putInt(TAG_QUEST_LEFT, questRemaining);
+        }
     }
 
     @Override
@@ -272,6 +351,12 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
                 covenOwner = null;
             }
         }
+        questFor = tag.getStringOr(TAG_QUEST_FOR, "");
+        questRemaining = tag.getIntOr(TAG_QUEST_LEFT, 0);
+        String questItemId = tag.getStringOr(TAG_QUEST_ITEM, "");
+        questItem = questItemId.isEmpty() ? null
+                : net.minecraft.core.registries.BuiltInRegistries.ITEM
+                        .getOptional(net.minecraft.resources.Identifier.parse(questItemId)).orElse(null);
     }
 
     @Override
