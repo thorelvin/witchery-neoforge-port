@@ -351,7 +351,13 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         if (monster == null) {
             return;
         }
-        monster.snapTo(getX(), getY(), getZ(), getYRot(), getXRot());
+        // Materialise the pet a couple of blocks away from the witch (toward the player) so it does not
+        // spawn embedded in her, then aim it at the player; CovenQuestEvents stops it ever turning on her.
+        net.minecraft.world.phys.Vec3 away = new net.minecraft.world.phys.Vec3(
+                player.getX() - getX(), 0.0, player.getZ() - getZ());
+        away = away.lengthSqr() < 1.0E-4 ? new net.minecraft.world.phys.Vec3(2.0, 0.0, 0.0)
+                : away.normalize().scale(2.5);
+        monster.snapTo(getX() + away.x, getY(), getZ() + away.z, getYRot(), getXRot());
         var hp = monster.getAttribute(Attributes.MAX_HEALTH);
         if (hp != null) {
             hp.setBaseValue(100.0);
