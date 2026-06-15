@@ -63,8 +63,6 @@ public class EgassyEntity extends AbstractVillager {
 
     public EgassyEntity(EntityType<? extends EgassyEntity> type, Level level) {
         super(type, level);
-        this.setCustomName(Component.literal("Egassy"));
-        this.setCustomNameVisible(true);
         this.setPersistenceRequired();
     }
 
@@ -111,7 +109,8 @@ public class EgassyEntity extends AbstractVillager {
     private void shout(String key, int cooldownTicks) {
         if (shoutCooldown > 0 || !(level() instanceof ServerLevel sl)) return;
         shoutCooldown = cooldownTicks;
-        Component msg = Component.translatable(key).withStyle(ChatFormatting.YELLOW);
+        // Speak in green to nearby players via the action bar, the same way Village Guards shout.
+        Component msg = Component.translatable(key).withStyle(ChatFormatting.GREEN);
         AABB area = getBoundingBox().inflate(12, 6, 12);
         sl.getEntitiesOfClass(ServerPlayer.class, area)
                 .forEach(p -> p.displayClientMessage(msg, true));
