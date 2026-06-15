@@ -128,6 +128,8 @@ Windows launcher:
 
 If setup fails with `compiler is null` or `jdk.compiler module` missing, Windows is launching Gradle with a JRE. Install a Java 21 JDK, not a JRE and not JDK 25/26, then set `JAVA_HOME` to the JDK folder, for example `C:\Program Files\Eclipse Adoptium\jdk-21...`.
 
+If setup fails with `Missing Gradle wrapper jar: gradle\wrapper\gradle-wrapper.jar`, the repository copy is incomplete or security software removed the wrapper jar. Re-download or `git clone` the full repository and make sure `gradle/wrapper/gradle-wrapper.jar` exists before running the launcher.
+
 ## Debug / QA Helpers
 
 The mod includes a growing `/witchery` debug command suite (permission level 2). Useful current helpers include:

@@ -30,7 +30,13 @@ if not exist "gradlew.bat" (
 if not exist "gradle\wrapper\gradle-wrapper.jar" (
     set "EXIT_CODE=1"
     >> "%LAUNCHER_LOG%" echo ERROR: Missing Gradle wrapper jar: gradle\wrapper\gradle-wrapper.jar
+    >> "%LAUNCHER_LOG%" echo This file is tracked in the repository. If it is missing, the download/extract is incomplete or antivirus removed the jar.
     echo ERROR: Missing Gradle wrapper jar: gradle\wrapper\gradle-wrapper.jar
+    echo.
+    echo This means the repo copy is incomplete, or antivirus/security software removed the jar.
+    echo Fix: re-download or git clone the full repository, then make sure this file exists:
+    echo   gradle\wrapper\gradle-wrapper.jar
+    echo.
     goto fail
 )
 >> "%LAUNCHER_LOG%" echo OK: Gradle wrapper jar found at gradle\wrapper\gradle-wrapper.jar
