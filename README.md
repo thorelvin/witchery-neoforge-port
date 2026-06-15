@@ -92,7 +92,7 @@ Consult these before choosing what to work on next — they hold the project's t
 
 Requirements:
 
-- Java `21`
+- Java `21` JDK, not a JRE. Use JDK 21 specifically; do not use JDK 25 or 26 for this repo.
 - Minecraft `1.21.11`
 - NeoForge `21.11.42`
 
@@ -125,6 +125,8 @@ Windows launcher:
 ```
 
 `RUN_MINECRAFT.bat --diagnose` checks the local Java/Gradle/client setup without launching Minecraft and writes support details to `run/logs/launcher-latest.log`. If the client crashes after startup, also check `run/logs/latest.log`, `run/logs/debug.log`, and `run/crash-reports`.
+
+If setup fails with `compiler is null` or `jdk.compiler module` missing, Windows is launching Gradle with a JRE. Install a Java 21 JDK, not a JRE and not JDK 25/26, then set `JAVA_HOME` to the JDK folder, for example `C:\Program Files\Eclipse Adoptium\jdk-21...`.
 
 ## Debug / QA Helpers
 

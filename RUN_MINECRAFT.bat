@@ -69,6 +69,16 @@ if defined JAVA_HOME (
     )
     >> "%LAUNCHER_LOG%" echo Java executable: %JAVA_HOME%\bin\java.exe
     "%JAVA_HOME%\bin\java.exe" -version >> "%LAUNCHER_LOG%" 2>&1
+    "%JAVA_HOME%\bin\java.exe" --list-modules | findstr /B /C:"jdk.compiler@" >NUL 2>&1
+    if errorlevel 1 (
+        set "EXIT_CODE=1"
+        >> "%LAUNCHER_LOG%" echo ERROR: JAVA_HOME points to a Java runtime without the jdk.compiler module.
+        echo ERROR: Java 21 JDK is required, but JAVA_HOME does not provide the Java compiler.
+        echo Install JDK 21, not a JRE and not JDK 25/26, then set JAVA_HOME to the JDK folder.
+        echo Example: C:\Program Files\Eclipse Adoptium\jdk-21...
+        goto fail
+    )
+    >> "%LAUNCHER_LOG%" echo OK: jdk.compiler module found.
 ) else (
     where java >NUL 2>&1
     if errorlevel 1 (
@@ -80,6 +90,16 @@ if defined JAVA_HOME (
     >> "%LAUNCHER_LOG%" echo Java executable from PATH:
     where java >> "%LAUNCHER_LOG%" 2>&1
     java -version >> "%LAUNCHER_LOG%" 2>&1
+    java --list-modules | findstr /B /C:"jdk.compiler@" >NUL 2>&1
+    if errorlevel 1 (
+        set "EXIT_CODE=1"
+        >> "%LAUNCHER_LOG%" echo ERROR: Java on PATH does not provide the jdk.compiler module.
+        echo ERROR: Java 21 JDK is required, but the first java.exe on PATH is a JRE.
+        echo Install JDK 21, not a JRE and not JDK 25/26, then set JAVA_HOME to the JDK folder.
+        echo Example: C:\Program Files\Eclipse Adoptium\jdk-21...
+        goto fail
+    )
+    >> "%LAUNCHER_LOG%" echo OK: jdk.compiler module found.
 )
 
 set "RAM_GB="
