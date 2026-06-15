@@ -24,6 +24,7 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.world.phys.AABB;
 
@@ -251,27 +252,11 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++)
                 if (grid[x][z] == OUTSIDE) grid[x][z] = EMPTY;
 
-        // 5b. Orthogonalise diagonal WALL adjacencies — SINGLE pass only.
-        //     With the coarse hull, diagonal WALL pairs are rare and isolated (they occur
-        //     only where two coarse blocks touch at a corner), so one pass connects them
-        //     with a 90° L by converting the INTERIOR-side shared corner to WALL. A single
-        //     pass cannot thicken straight runs (the previous multi-pass version grew
-        //     diagonal staircases into wide terraced bands).
-        {
-            byte[][] snap = copyGrid(grid, w, d);
-            for (int x = 1; x < w - 1; x++) {
-                for (int z = 1; z < d - 1; z++) {
-                    if (snap[x][z] != WALL) continue;
-                    for (int dx : new int[]{-1, 1}) {
-                        for (int dz : new int[]{-1, 1}) {
-                            if (snap[x + dx][z + dz] != WALL) continue; // diagonal WALL pair
-                            if (snap[x + dx][z] == INTERIOR) grid[x + dx][z] = WALL;
-                            else if (snap[x][z + dz] == INTERIOR) grid[x][z + dz] = WALL;
-                        }
-                    }
-                }
-            }
-        }
+        // 5b. Square diagonal WALL adjacencies. Perimeter detection naturally leaves the
+        //     two wall runs around a 90-degree turn touching only diagonally. Fill the
+        //     EMPTY shared square, not the INTERIOR shared square, so outside corners and
+        //     inside notches read as square L-corners instead of clipped chamfers.
+        squareWallCornerGaps(grid, w, d);
 
         // 6. Remove small disconnected wall loops — keep only the largest connected ring.
         //    Gap-fill sometimes creates separate interior zones that each get their own wall;
@@ -431,6 +416,30 @@ public final class VillageWallGenerator {
             for (int z = 0; z < d; z++)
                 if ((grid[x][z] == WALL || grid[x][z] == GATE) && !keep.contains(pack(x, z)))
                     grid[x][z] = INTERIOR;
+    }
+
+    static void squareWallCornerGaps(byte[][] grid, int w, int d) {
+        byte[][] snap = copyGrid(grid, w, d);
+        for (int x = 1; x < w - 1; x++) {
+            for (int z = 1; z < d - 1; z++) {
+                if (snap[x][z] != WALL) continue;
+                for (int dx : new int[]{-1, 1}) {
+                    for (int dz : new int[]{-1, 1}) {
+                        if (snap[x + dx][z + dz] != WALL) continue;
+
+                        int ax = x + dx;
+                        int az = z;
+                        int bx = x;
+                        int bz = z + dz;
+                        if (snap[ax][az] == EMPTY && snap[bx][bz] == INTERIOR) {
+                            grid[ax][az] = WALL;
+                        } else if (snap[bx][bz] == EMPTY && snap[ax][az] == INTERIOR) {
+                            grid[bx][bz] = WALL;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static long pack(int x, int z) { return (long)x << 20 | z; }
@@ -819,6 +828,8 @@ public final class VillageWallGenerator {
         if (westOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.WEST, EMPTY))
             placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
 
+        placeOuterCornerRamparts(level, wx, top, wz, brick, stair, grid, heights, gx, gz, sy, w, d);
+
         return guardPos;
     }
 
@@ -843,6 +854,23 @@ public final class VillageWallGenerator {
         int dz = outward.getStepZ();
         setBlock(level, wx + dx, top - 1, wz + dz, brick);
         setBlock(level, wx + dx, top, wz + dz, stairFor(stair, outward));
+    }
+
+    private static void placeOuterCornerRamparts(ServerLevel level, int wx, int top, int wz,
+                                                  BlockState brick, BlockState stair,
+                                                  byte[][] grid, short[][] heights,
+                                                  int gx, int gz, int sy, int w, int d) {
+        for (int dx : new int[]{-1, 1}) {
+            for (int dz : new int[]{-1, 1}) {
+                if (!isGridCell(grid, gx + dx, gz, w, d, EMPTY)) continue;
+                if (!isGridCell(grid, gx, gz + dz, w, d, EMPTY)) continue;
+                if (!isRampartCompatibleNeighbor(grid, heights, gx - dx, gz, sy, w, d)) continue;
+                if (!isRampartCompatibleNeighbor(grid, heights, gx, gz - dz, sy, w, d)) continue;
+
+                setBlock(level, wx + dx, top - 1, wz + dz, brick);
+                setBlock(level, wx + dx, top, wz + dz, cornerStairFor(stair, dx, dz));
+            }
+        }
     }
 
     private static boolean isGridCell(byte[][] grid, int x, int z, int w, int d, byte value) {
@@ -930,7 +958,18 @@ public final class VillageWallGenerator {
 
     private static BlockState stairFor(BlockState base, Direction facing) {
         return base.setValue(StairBlock.FACING, facing)
-                .setValue(StairBlock.HALF, Half.BOTTOM);
+                .setValue(StairBlock.HALF, Half.BOTTOM)
+                .setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+    }
+
+    static BlockState cornerStairFor(BlockState base, int dx, int dz) {
+        Direction facing = dx < 0 ? Direction.WEST : Direction.EAST;
+        StairsShape shape = dx < 0
+                ? (dz < 0 ? StairsShape.OUTER_LEFT : StairsShape.OUTER_RIGHT)
+                : (dz < 0 ? StairsShape.OUTER_RIGHT : StairsShape.OUTER_LEFT);
+        return base.setValue(StairBlock.FACING, facing)
+                .setValue(StairBlock.HALF, Half.BOTTOM)
+                .setValue(StairBlock.SHAPE, shape);
     }
 
     private static boolean hasLivingEntityInColumn(ServerLevel level, int x, int minY, int z, int maxY) {
