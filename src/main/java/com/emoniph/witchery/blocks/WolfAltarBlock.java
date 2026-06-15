@@ -4,9 +4,12 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfQuestState;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.blocks.entity.WolfAltarBlockEntity;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -18,12 +21,20 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wolf Altar — the werewolf progression questline (source {@code BlockStatueWerewolf}). Right-clicking
@@ -32,7 +43,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * of the Hunt quest) and the re-craft of spare Moon Charms are handled here; the counter-driven levels
  * 5→9 read the quest counter that gameplay events feed (Phase 2).
  */
-public class WolfAltarBlock extends Block {
+public class WolfAltarBlock extends BaseEntityBlock {
+
+    public static final MapCodec<WolfAltarBlock> CODEC = simpleCodec(WolfAltarBlock::new);
+    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final int GOLD_REQUIRED = 3;
     private static final int MUTTON_REQUIRED = 30;
@@ -40,7 +56,31 @@ public class WolfAltarBlock extends Block {
     /** Per-level quest-counter targets for the counter-driven levels 5→9 (kill/howl/tame/pigmen/person). */
     private static final int[] COUNTER_TARGET = {0, 0, 0, 0, 0, 10, 16, 6, 30, 1, 0};
 
-    public WolfAltarBlock(BlockBehaviour.Properties props) { super(props); }
+    public WolfAltarBlock(BlockBehaviour.Properties props) {
+        super(props);
+        registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new WolfAltarBlockEntity(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE; // the statue is drawn by WolfAltarRenderer
+    }
 
     @Override
     public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
