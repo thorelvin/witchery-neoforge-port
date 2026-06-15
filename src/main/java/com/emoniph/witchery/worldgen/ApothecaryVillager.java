@@ -57,8 +57,12 @@ public final class ApothecaryVillager {
                 .withLevel(1));
         villager.setVillagerXp(PROFESSION_LOCK_XP);
         if (jobSite != null) {
+            // Only RECORD the job site here. configure() runs during structure generation, and binding
+            // the POI (PoiManager.exists/take) mid-gen force-loads the POI section for this position,
+            // which waits on the very chunk being generated -> deadlock (the long-standing apothecary
+            // worldgen freeze). The remembered job site is bound later on the first live tick / join,
+            // when the chunk is loaded, via refreshIfApothecary -> ensureJobSite.
             rememberJobSite(villager, jobSite);
-            ensureJobSite(villager, level.getLevel(), jobSite);
         }
         replaceOffers(villager, 1);
     }
