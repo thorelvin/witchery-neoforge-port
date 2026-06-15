@@ -168,6 +168,43 @@ public class WitcheryMobDropEvents {
                 || entity instanceof ReflectionEntity;
     }
 
+    /**
+     * Coven fight-quest pet death drop (source FightPetQuest/FightZombiePetQuest WITCExtraDrops): a Spider or
+     * Zombie stamped with a witch's UUID drops her tagged remains — a Spider Eye / Rotten Flesh carrying the
+     * same UUID — which is the only item that satisfies that witch's fight quest.
+     */
+    @SubscribeEvent
+    public static void onQuestPetDrops(LivingDropsEvent event) {
+        LivingEntity dead = event.getEntity();
+        if (dead.level().isClientSide()) {
+            return;
+        }
+        String witchUuid = dead.getPersistentData().getStringOr(CovenWitchEntity.TAG_QUEST_WITCH_UUID, "");
+        if (witchUuid.isEmpty()) {
+            return;
+        }
+        Item remains = dead instanceof net.minecraft.world.entity.monster.spider.Spider
+                ? net.minecraft.world.item.Items.SPIDER_EYE
+                : dead instanceof net.minecraft.world.entity.monster.zombie.Zombie
+                        ? net.minecraft.world.item.Items.ROTTEN_FLESH
+                        : null;
+        if (remains == null) {
+            return;
+        }
+        String nameKey = remains == net.minecraft.world.item.Items.SPIDER_EYE
+                ? "witchery.witch.peteye" : "witchery.witch.petflesh";
+        ItemStack stack = new ItemStack(remains);
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putString(CovenWitchEntity.TAG_QUEST_WITCH_UUID, witchUuid);
+        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tag));
+        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,
+                net.minecraft.network.chat.Component.translatable(nameKey,
+                        dead.hasCustomName() ? dead.getCustomName().getString() : "Witch"));
+        var pos = dead.blockPosition();
+        event.getDrops().add(new ItemEntity(dead.level(), pos.getX(), pos.getY(), pos.getZ(), stack));
+    }
+
     private static boolean hasDrop(LivingDropsEvent event, Item item) {
         for (ItemEntity drop : event.getDrops()) {
             if (drop.getItem().is(item)) {

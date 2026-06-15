@@ -55,24 +55,40 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
 
     private static final String TAG_SKIN = "Skin";
     /** Source {@code WITCCoven}: a player's coven holds at most 6 recruited witches. */
-    public static final int MAX_COVEN = 6;
+    public static final int MAX_COVEN = com.emoniph.witchery.world.CovenData.MAX_COVEN;
     private static final String TAG_COVEN_OWNER = "WITCCovenOwner";
     private static final String TAG_QUEST_FOR = "WITCQuestFor";
     private static final String TAG_QUEST_ITEM = "WITCQuestItem";
     private static final String TAG_QUEST_LEFT = "WITCQuestLeft";
+    private static final String TAG_QUEST_KIND = "WITCQuestKind";
+    /** Persistent-data tag the witch stamps onto a fight-quest monster (and its drop) — source {@code WITCQuestOwnerID}. */
+    public static final String TAG_QUEST_WITCH_UUID = "WITCQuestWitchUUID";
     private static final EntityDataAccessor<Integer> SKIN =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
-    /** Fetch-quest roster a witch may set before joining a coven (source FetchQuest entries). */
-    private record FetchQuest(net.minecraft.world.item.Item item, int count) {}
+    /** Source {@code Quest} subtypes: fetch an item, or slay a conjured pet and return its tagged remains. */
+    public enum QuestKind {
+        FETCH, FIGHT_SPIDER, FIGHT_ZOMBIE;
+        public static QuestKind fromOrdinal(int i) {
+            QuestKind[] vals = values();
+            return i >= 0 && i < vals.length ? vals[i] : FETCH;
+        }
+    }
 
-    private static final java.util.function.Supplier<FetchQuest[]> QUESTS = () -> new FetchQuest[]{
-            new FetchQuest(WitcheryItems.DEMON_HEART.get(), 1),
-            new FetchQuest(net.minecraft.world.item.Items.BONE, 30),
-            new FetchQuest(WitcheryItems.MANDRAKE_ROOT.get(), 16),
-            new FetchQuest(WitcheryItems.GRAVEYARD_DUST.get(), 8),
-            new FetchQuest(WitcheryItems.QUARTZ_SPHERE.get(), 1)
-    };
+    /** A quest a witch may set before joining a coven. For FIGHT_* the item is the tagged drop to return. */
+    private record CovenQuest(QuestKind kind, net.minecraft.world.item.Item item, int count, @Nullable String descKey) {}
+
+    /** Built at runtime (not a static field) so the deferred {@code WitcheryItems} holders are populated. */
+    private static java.util.List<CovenQuest> quests() {
+        return java.util.List.of(
+                new CovenQuest(QuestKind.FIGHT_SPIDER, Items.SPIDER_EYE, 1, "witchery.witch.quest.fightspider"),
+                new CovenQuest(QuestKind.FIGHT_ZOMBIE, Items.ROTTEN_FLESH, 1, "witchery.witch.quest.fightzombie"),
+                new CovenQuest(QuestKind.FETCH, WitcheryItems.DEMON_HEART.get(), 1, null),
+                new CovenQuest(QuestKind.FETCH, Items.BONE, 30, null),
+                new CovenQuest(QuestKind.FETCH, WitcheryItems.MANDRAKE_ROOT.get(), 16, null),
+                new CovenQuest(QuestKind.FETCH, WitcheryItems.GRAVEYARD_DUST.get(), 8, null),
+                new CovenQuest(QuestKind.FETCH, WitcheryItems.QUARTZ_SPHERE.get(), 1, null));
+    }
 
     @Nullable
     private java.util.UUID covenOwner;
@@ -80,6 +96,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     @Nullable
     private net.minecraft.world.item.Item questItem;
     private int questRemaining;
+    private int questKind; // QuestKind ordinal
+    private boolean rosterReconciled; // transient — heal legacy recruited witches into CovenData once
 
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
@@ -103,11 +121,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         setPersistenceRequired(); // a recruited (or once-recruited) witch never despawns
     }
 
-    /** Number of loaded witches in {@code level} already recruited by {@code owner} (the coven cap basis). */
+    /** Size of {@code owner}'s persisted coven roster (the cap basis — source counted the player {@code WITCCoven} list). */
     public static int covenSize(ServerLevel level, java.util.UUID owner) {
-        return level.getEntities(
-                net.minecraft.world.level.entity.EntityTypeTest.forClass(CovenWitchEntity.class),
-                w -> owner.equals(w.getCovenOwner())).size();
+        return com.emoniph.witchery.world.CovenData.get(level).size(owner);
     }
 
     @Override
@@ -245,12 +261,13 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             return InteractionResult.CONSUME;
         }
         String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
-        boolean full = covenSize(serverLevel, player.getUUID()) >= MAX_COVEN;
+        boolean full = com.emoniph.witchery.world.CovenData.get(serverLevel).isFull(player.getUUID());
         boolean hasFamiliar = !com.emoniph.witchery.init.WitcheryAttachments.get(player).getFamiliarType().isBlank();
         boolean offeredToYou = questItem != null && questFor.equals(player.getUUID().toString());
 
         switch (recruitOutcome(isRecruitedBy(player), isRecruited(), full, hasFamiliar, offeredToYou)) {
             case DISMISS -> {
+                com.emoniph.witchery.world.CovenData.get(serverLevel).remove(player.getUUID(), getUUID());
                 setCovenOwner(null);
                 covenSay(player, witchName, "witchery.witch.say.leftcoven");
             }
@@ -260,24 +277,32 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
                 covenSay(player, witchName, "witchery.witch.say.covenfull");
             }
             case NO_FAMILIAR -> covenSay(player, witchName, "witchery.witch.say.notinterested");
-            case OFFER_QUEST -> offerQuest(player, witchName);
+            case OFFER_QUEST -> offerQuest(serverLevel, player, witchName);
             case RUN_QUEST -> runQuest(serverLevel, player, witchName);
         }
         return InteractionResult.CONSUME;
     }
 
-    private void offerQuest(Player player, String witchName) {
-        FetchQuest quest = QUESTS.get()[random.nextInt(QUESTS.get().length)];
+    private void offerQuest(ServerLevel serverLevel, Player player, String witchName) {
+        java.util.List<CovenQuest> roster = quests();
+        CovenQuest quest = roster.get(random.nextInt(roster.size()));
         questFor = player.getUUID().toString();
         questItem = quest.item();
         questRemaining = quest.count();
-        player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
-                Component.translatable("witchery.witch.say.questoffer",
-                        questRemaining, questItem.getDefaultInstance().getHoverName())), false);
+        questKind = quest.kind().ordinal();
+        if (quest.kind() == QuestKind.FETCH) {
+            player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
+                    Component.translatable("witchery.witch.say.questoffer",
+                            questRemaining, questItem.getDefaultInstance().getHoverName())), false);
+        } else {
+            spawnFightQuestMonster(serverLevel, player, quest.kind(), witchName);
+            player.displayClientMessage(Component.literal("§9<" + witchName + "> §r")
+                    .append(Component.translatable(quest.descKey())), false);
+        }
     }
 
     private void runQuest(ServerLevel serverLevel, Player player, String witchName) {
-        boolean holding = player.getMainHandItem().is(questItem);
+        boolean holding = holdingQuestItem(player);
         switch (questStep(holding, questRemaining)) {
             case NOT_FINISHED -> covenSay(player, witchName, "witchery.witch.say.questnotfinished");
             case PROGRESS -> {
@@ -289,6 +314,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             case COMPLETE -> {
                 player.getMainHandItem().shrink(1);
                 clearQuest();
+                com.emoniph.witchery.world.CovenData.get(serverLevel).add(player.getUUID(), getUUID());
                 setCovenOwner(player.getUUID());
                 covenSay(player, witchName, "witchery.witch.say.joinedcoven");
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH,
@@ -299,10 +325,55 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         }
     }
 
+    /**
+     * Is the player holding the quest deliverable? Fetch quests take any matching item; fight quests take
+     * only the slain pet's remains, recognised by the witch-UUID stamp the kill drop carries (source
+     * {@code isQuestItemForEntity} — the plain item never satisfies a fight quest).
+     */
+    private boolean holdingQuestItem(Player player) {
+        ItemStack held = player.getMainHandItem();
+        if (questItem == null || !held.is(questItem)) {
+            return false;
+        }
+        if (QuestKind.fromOrdinal(questKind) == QuestKind.FETCH) {
+            return true;
+        }
+        net.minecraft.world.item.component.CustomData data = held.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        return data != null
+                && data.copyTag().getStringOr(TAG_QUEST_WITCH_UUID, "").equals(getStringUUID());
+    }
+
+    /** Conjures the buffed pet (source FightPetQuest/FightZombiePetQuest): 100 HP, targets the player, UUID-stamped. */
+    private void spawnFightQuestMonster(ServerLevel serverLevel, Player player, QuestKind kind, String witchName) {
+        net.minecraft.world.entity.Mob monster = kind == QuestKind.FIGHT_SPIDER
+                ? net.minecraft.world.entity.EntityType.SPIDER.create(serverLevel, net.minecraft.world.entity.EntitySpawnReason.EVENT)
+                : net.minecraft.world.entity.EntityType.ZOMBIE.create(serverLevel, net.minecraft.world.entity.EntitySpawnReason.EVENT);
+        if (monster == null) {
+            return;
+        }
+        monster.snapTo(getX(), getY(), getZ(), getYRot(), getXRot());
+        var hp = monster.getAttribute(Attributes.MAX_HEALTH);
+        if (hp != null) {
+            hp.setBaseValue(100.0);
+            monster.setHealth(100.0f);
+        }
+        var atk = monster.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (atk != null) {
+            atk.setBaseValue(5.0);
+        }
+        monster.setCustomName(Component.translatable("witchery.witch.pet", witchName));
+        monster.getPersistentData().putString(TAG_QUEST_WITCH_UUID, getStringUUID());
+        monster.setTarget(player);
+        serverLevel.addFreshEntity(monster);
+        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH,
+                monster.getX(), monster.getY() + 1.0, monster.getZ(), 24, 0.4, 0.6, 0.4, 0.1);
+    }
+
     private void clearQuest() {
         questFor = "";
         questItem = null;
         questRemaining = 0;
+        questKind = 0;
     }
 
     private void covenSay(Player player, String witchName, String key) {
@@ -461,6 +532,28 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        // Heal a recruited witch into the persisted roster once (e.g. one recruited before the roster existed).
+        if (!rosterReconciled && covenOwner != null && level() instanceof ServerLevel sl) {
+            rosterReconciled = true;
+            com.emoniph.witchery.world.CovenData data = com.emoniph.witchery.world.CovenData.get(sl);
+            if (!data.contains(covenOwner, getUUID())) {
+                data.add(covenOwner, getUUID());
+            }
+        }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        // Source EntityCovenWitch removes the dead witch from her owner's WITCCoven list.
+        if (!level().isClientSide() && covenOwner != null && level() instanceof ServerLevel sl) {
+            com.emoniph.witchery.world.CovenData.get(sl).remove(covenOwner, getUUID());
+        }
+        super.die(source);
+    }
+
+    @Override
     public boolean showProgressBar() {
         return false;
     }
@@ -502,6 +595,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             tag.putString(TAG_QUEST_ITEM,
                     net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(questItem).toString());
             tag.putInt(TAG_QUEST_LEFT, questRemaining);
+            tag.putInt(TAG_QUEST_KIND, questKind);
         }
     }
 
@@ -519,6 +613,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         }
         questFor = tag.getStringOr(TAG_QUEST_FOR, "");
         questRemaining = tag.getIntOr(TAG_QUEST_LEFT, 0);
+        questKind = tag.getIntOr(TAG_QUEST_KIND, 0);
         String questItemId = tag.getStringOr(TAG_QUEST_ITEM, "");
         questItem = questItemId.isEmpty() ? null
                 : net.minecraft.core.registries.BuiltInRegistries.ITEM
