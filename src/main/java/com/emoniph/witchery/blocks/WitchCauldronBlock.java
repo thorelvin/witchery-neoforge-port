@@ -472,20 +472,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 return;
             }
         }
-        Item resultItem = switch (contents.bottledDispersal()) {
-            // A triggered brew is thrown like a splash; its delayed-curse behaviour comes from the contents.
-            case SPLASH, TRIGGERED -> WitcheryItems.SPLASH_BREW_BOTTLE.get();
-            case GAS -> WitcheryItems.LINGERING_BREW_BOTTLE.get();
-            case LIQUID -> WitcheryItems.LIQUID_BREW_BOTTLE.get();
-            default -> WitcheryItems.BREW_BOTTLE.get();
-        };
-        ItemStack result = new ItemStack(resultItem);
-        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), contents);
-        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_POWER.get(), contents.power());
-        // Carry the contents colour for the data-driven model tint (custom_model_data source).
-        result.set(DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(
-                List.of(), List.of(), List.of(), List.of(contents.color())));
-
+        ItemStack result = com.emoniph.witchery.item.BrewContainers.bottle(contents);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
@@ -520,12 +507,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 return;
             }
         }
-        ItemStack result = new ItemStack(WitcheryItems.BREW_BUCKET.get());
-        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), contents);
-        result.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_POWER.get(), contents.power());
-        result.set(DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(
-                List.of(), List.of(), List.of(), List.of(contents.color())));
-
+        ItemStack result = com.emoniph.witchery.item.BrewContainers.bucket(contents);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
