@@ -77,6 +77,33 @@ class CovenRecruitTest {
     }
 
     @Test
+    void rosterSurvivesCodecRoundTrip() {
+        // The persisted roster is the whole point of CovenData (it must survive logout/relog), so lock
+        // that the codec encodes a populated roster and reads it back intact.
+        CovenData data = new CovenData();
+        UUID a = UUID.randomUUID();
+        UUID b = UUID.randomUUID();
+        UUID wa1 = UUID.randomUUID();
+        UUID wa2 = UUID.randomUUID();
+        UUID wb1 = UUID.randomUUID();
+        data.add(a, wa1);
+        data.add(a, wa2);
+        data.add(b, wb1);
+
+        var encoded = CovenData.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, data)
+                .getOrThrow(s -> new AssertionError("encode failed: " + s));
+        CovenData restored = CovenData.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, encoded)
+                .getOrThrow(s -> new AssertionError("decode failed: " + s));
+
+        assertEquals(2, restored.size(a));
+        assertEquals(1, restored.size(b));
+        assertTrue(restored.contains(a, wa1));
+        assertTrue(restored.contains(a, wa2));
+        assertTrue(restored.contains(b, wb1));
+        assertFalse(restored.contains(a, wb1));
+    }
+
+    @Test
     void questKindFromOrdinalIsStable() {
         assertEquals(QuestKind.FETCH, QuestKind.fromOrdinal(0));
         assertEquals(QuestKind.FIGHT_SPIDER, QuestKind.fromOrdinal(1));
