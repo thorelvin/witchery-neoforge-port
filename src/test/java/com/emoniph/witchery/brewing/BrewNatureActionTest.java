@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,10 +40,18 @@ class BrewNatureActionTest {
     }
 
     @Test
+    void raiseLandHeightScalesWithStrengthAndRitual() {
+        assertEquals(3, Brews.raiseLandHeight(0, false));
+        assertEquals(6, Brews.raiseLandHeight(1, false));
+        assertEquals(4, Brews.raiseLandHeight(1, true));  // ritualised lifts less
+    }
+
+    @Test
     void natureIngredientsAreRegistered() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.STRING));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.LILY_PAD));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.DEAD_BUSH));
+        assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.QUARTZ));
     }
 }

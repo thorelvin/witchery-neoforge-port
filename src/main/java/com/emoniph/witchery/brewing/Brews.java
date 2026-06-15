@@ -121,7 +121,7 @@ public final class Brews {
             EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
-            FELL_TREE, LILIFY, BLIGHT
+            FELL_TREE, LILIFY, BLIGHT, RAISE_LAND
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -357,6 +357,9 @@ public final class Brews {
         register(Items.DEAD_BUSH, Ingredient.action(Ingredient.BrewAction.BLIGHT,
                 4, 2000, 0x4A3B22,
                 "witchery.brew.blight", null));
+        register(Items.QUARTZ, Ingredient.action(Ingredient.BrewAction.RAISE_LAND,
+                4, 2000, 0x8C8378,
+                "witchery.brew.raiseland", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -1206,6 +1209,8 @@ public final class Brews {
                 lilify(level, blockImpact, side, source);
             } else if (action.action() == Ingredient.BrewAction.BLIGHT) {
                 blight(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.RAISE_LAND) {
+                raiseLand(level, blockImpact, action.strength(), source);
             }
         }
     }
@@ -1689,6 +1694,41 @@ public final class Brews {
                 }
                 break;
             }
+        }
+    }
+
+    /** Source {@code BrewActionRaiseLand}: pillar height = (strength+1) * (ritualised ? 2 : 3). */
+    public static int raiseLandHeight(int strength, boolean ritualised) {
+        return (strength + 1) * (ritualised ? 2 : 3);
+    }
+
+    /** Raise the terrain column at the impact into a pillar, lifting any entities on top (source BrewActionRaiseLand). */
+    private static void raiseLand(ServerLevel level, BlockPos blockImpact, int strength, Entity source) {
+        BlockPos.MutableBlockPos top = blockImpact.mutable();
+        while (top.getY() < level.getMaxY() && !level.getBlockState(top.above()).isAir()) {
+            top.move(Direction.UP);
+        }
+        if (!sourceMayModify(level, top, source)) {
+            return;
+        }
+        int height = raiseLandHeight(strength, false);
+        for (int i = 0; i < height; i++) {
+            BlockPos from = top.below(i);
+            if (from.getY() <= level.getMinY()) {
+                break;
+            }
+            BlockState moved = level.getBlockState(from);
+            if (moved.isAir()) {
+                continue;
+            }
+            level.removeBlock(from, false);
+            level.setBlock(from.above(height), moved, 3);
+        }
+        // Lift anyone standing on the raised column.
+        AABB columnTop = new AABB(top.getX(), top.getY(), top.getZ(),
+                top.getX() + 1, top.getY() + 2, top.getZ() + 1);
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, columnTop)) {
+            entity.teleportTo(top.getX() + 0.5, top.getY() + height + 1, top.getZ() + 0.5);
         }
     }
 
