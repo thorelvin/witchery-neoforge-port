@@ -64,8 +64,21 @@ public class MoonCharmItem extends Item {
             return;
         }
 
-        if (!data.isWerewolf() || WerewolfShiftUtil.hasWolfsbane(player)) {
+        if (!data.isWerewolf() || WerewolfShiftUtil.hasWolfsbane(player)
+                || !WerewolfShiftUtil.canControlTransform(data)) {
             fail(player);
+        } else if (player.isShiftKeyDown() && WerewolfShiftUtil.isTransformed(data)) {
+            // Sneak while transformed: switch between the wolf and wolfman shapes (level 5+).
+            if (!WerewolfShiftUtil.isWolfmanAllowed(data)) {
+                fail(player);
+                player.displayClientMessage(Component.translatable("item.witchery.moon_charm.no_wolfman")
+                        .withStyle(ChatFormatting.GRAY), true);
+            } else {
+                var form = WerewolfShiftUtil.cycleForm(player, data);
+                player.displayClientMessage(Component.translatable(
+                        "item.witchery.moon_charm.form." + form.name().toLowerCase(java.util.Locale.ROOT))
+                        .withStyle(ChatFormatting.GOLD), true);
+            }
         } else {
             boolean transformed = !WerewolfShiftUtil.isTransformed(data);
             WerewolfShiftUtil.setTransformed(player, data, transformed, transformed

@@ -9,6 +9,7 @@ import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -159,11 +160,10 @@ public class WerewolfEvents {
             return;
         }
 
-        if (!WerewolfShiftUtil.isTransformed(data)) return;
         boolean counted = switch (wolfLevel) {
-            case 5 -> victim instanceof Enemy && !player.onGround();      // airborne hostile kill
-            case 8 -> victim instanceof ZombifiedPiglin;
-            case 9 -> victim instanceof Villager || victim instanceof Player;
+            case 5 -> WerewolfShiftUtil.inWolfShape(data) && victim instanceof Enemy && !player.onGround();
+            case 8 -> WerewolfShiftUtil.inWolfmanForm(data) && victim instanceof ZombifiedPiglin;
+            case 9 -> WerewolfShiftUtil.inWolfShape(data) && (victim instanceof Villager || victim instanceof Player);
             default -> false;
         };
         if (counted) {
@@ -183,7 +183,7 @@ public class WerewolfEvents {
         if (!(event.getTarget() instanceof Wolf wolf)) return;
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (data.getWerewolfLevel() != 7 || data.getWolfQuestState() != WolfQuestState.STARTED) return;
-        if (!WerewolfShiftUtil.isTransformed(data)) return;
+        if (!WerewolfShiftUtil.inWolfForm(data)) return; // source: WOLF (four-legged) shape only
         if (wolf.isTame() || wolf.isBaby()) return;
         if (!(player.level() instanceof ServerLevel level)) return;
 
@@ -194,6 +194,40 @@ public class WerewolfEvents {
             sync(player, data);
             player.displayClientMessage(Component.translatable("witchery.werewolf.level8progress",
                     6, Math.max(0, 6 - data.getWolfQuestCounter())), true);
+        }
+    }
+
+    /**
+     * Level-10 infectious bite (source {@code Shapeshift.processWolfInfection}): a level-10 werewolf in
+     * wolf shape that bites a target down below a quarter health has a 1-in-4 chance to spread the curse —
+     * villagers become Were-Villagers, players become werewolves. Vampires and existing werewolves are
+     * immune (no hybrids). Mirrors {@link #onInfectiousWolfmanDamage} (the NPC-wolfman version).
+     */
+    @SubscribeEvent
+    public static void onWerewolfPlayerBite(LivingDamageEvent.Pre event) {
+        if (event.getNewDamage() <= 0.0F) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer attacker)) return;
+        WitcheryPlayerData atkData = WitcheryAttachments.get(attacker);
+        if (atkData.getWerewolfLevel() < 10 || !WerewolfShiftUtil.inWolfShape(atkData)) return;
+
+        LivingEntity victim = event.getEntity();
+        float healthAfter = victim.getHealth() - event.getNewDamage();
+        if (healthAfter <= 0.0F || healthAfter >= victim.getMaxHealth() * 0.25F) return;
+        if (!(victim.level() instanceof ServerLevel level)) return;
+        if (level.random.nextInt(4) != 0) return;
+
+        if (victim instanceof Villager villager) {
+            if (spawnWereVillager(level, villager)) {
+                event.setNewDamage(0.0F);
+                villager.discard();
+            }
+        } else if (victim instanceof ServerPlayer victimPlayer) {
+            WitcheryPlayerData vicData = WitcheryAttachments.get(victimPlayer);
+            if (vicData.isWerewolf() || vicData.isVampire()) return; // already cursed / no hybrids
+            vicData.setWerewolf(true);
+            sync(victimPlayer, vicData);
+            victimPlayer.displayClientMessage(Component.translatable("witchery.werewolf.infection")
+                    .withStyle(ChatFormatting.DARK_PURPLE), false);
         }
     }
 

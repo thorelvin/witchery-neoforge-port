@@ -75,6 +75,7 @@ public class HowlPayload implements CustomPacketPayload {
         // Level 6→7 quest: howling in distinct chunks at night counts toward the climb.
         if (data.getWerewolfLevel() == 6
                 && data.getWolfQuestState() == WitcheryPlayerData.WolfQuestState.STARTED
+                && WerewolfShiftUtil.inWolfForm(data)
                 && (level.getDayTime() % 24000L) >= 13000L) {  // night (source: !isDaytime)
             long chunk = new ChunkPos(player.blockPosition()).toLong();
             if (data.addHowledChunk(chunk)) {
