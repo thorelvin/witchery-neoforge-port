@@ -2,6 +2,8 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.data.WitcheryPlayerData.WolfQuestState;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -16,13 +18,19 @@ import com.emoniph.witchery.entity.WereVillagerEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -125,6 +133,84 @@ public class WerewolfEvents {
             event.setCanceled(true);
             villager.discard();
         }
+    }
+
+    /**
+     * Wolf-Altar quest counters fed by combat (source GenericEvents): L4 Horned Huntsman defeat, L5
+     * airborne hostile kill, L8 wolfman pigman kill, L9 wolf villager/player kill. Each only counts while
+     * the matching quest is STARTED. <b>Phase 2 simplification:</b> the wolf-vs-wolfman form requirement
+     * is reduced to "transformed" until form selection lands in Phase 3.
+     */
+    @SubscribeEvent
+    public static void onWerewolfQuestKill(LivingDeathEvent event) {
+        if (event.isCanceled()) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (!data.isWerewolf() || data.getWolfQuestState() != WolfQuestState.STARTED) return;
+
+        int wolfLevel = data.getWerewolfLevel();
+        LivingEntity victim = event.getEntity();
+
+        // L4→5: defeating the Horned Huntsman completes the Horn quest (no transform requirement).
+        if (wolfLevel == 4 && victim instanceof HornedHuntsmanEntity) {
+            data.setWolfQuestState(WolfQuestState.COMPLETE);
+            sync(player, data);
+            player.displayClientMessage(Component.translatable("witchery.werewolf.level5complete"), true);
+            return;
+        }
+
+        if (!WerewolfShiftUtil.isTransformed(data)) return;
+        boolean counted = switch (wolfLevel) {
+            case 5 -> victim instanceof Enemy && !player.onGround();      // airborne hostile kill
+            case 8 -> victim instanceof ZombifiedPiglin;
+            case 9 -> victim instanceof Villager || victim instanceof Player;
+            default -> false;
+        };
+        if (counted) {
+            data.incrementWolfQuestCounter();
+            sync(player, data);
+            player.displayClientMessage(Component.translatable(
+                    "witchery.werewolf.level" + (wolfLevel + 1) + "progress",
+                    questTarget(wolfLevel), Math.max(0, questTarget(wolfLevel) - data.getWolfQuestCounter())), true);
+        }
+    }
+
+    /** L7→8: taming wild adult wolves in wolf form (source GenericEvents wolf-interact, 1-in-3). */
+    @SubscribeEvent
+    public static void onTameQuestWolf(PlayerInteractEvent.EntityInteract event) {
+        if (event.getHand() != InteractionHand.MAIN_HAND) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(event.getTarget() instanceof Wolf wolf)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getWerewolfLevel() != 7 || data.getWolfQuestState() != WolfQuestState.STARTED) return;
+        if (!WerewolfShiftUtil.isTransformed(data)) return;
+        if (wolf.isTame() || wolf.isBaby()) return;
+        if (!(player.level() instanceof ServerLevel level)) return;
+
+        event.setCanceled(true);
+        if (level.random.nextInt(3) == 0) {
+            wolf.tame(player);
+            data.incrementWolfQuestCounter();
+            sync(player, data);
+            player.displayClientMessage(Component.translatable("witchery.werewolf.level8progress",
+                    6, Math.max(0, 6 - data.getWolfQuestCounter())), true);
+        }
+    }
+
+    /** Per-level quest-counter targets for the combat-driven levels (matches WolfAltarBlock). */
+    static int questTarget(int wolfLevel) {
+        return switch (wolfLevel) {
+            case 5 -> 10;
+            case 6 -> 16;
+            case 7 -> 6;
+            case 8 -> 30;
+            case 9 -> 1;
+            default -> 0;
+        };
+    }
+
+    private static void sync(ServerPlayer player, WitcheryPlayerData data) {
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
     }
 
     private static boolean isSilverHeld(ItemStack stack) {

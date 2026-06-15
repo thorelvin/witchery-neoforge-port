@@ -7,9 +7,12 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -67,6 +70,21 @@ public class HowlPayload implements CustomPacketPayload {
                 wolf.tame(player);
                 level.addFreshEntity(wolf);
             }
+        }
+
+        // Level 6→7 quest: howling in distinct chunks at night counts toward the climb.
+        if (data.getWerewolfLevel() == 6
+                && data.getWolfQuestState() == WitcheryPlayerData.WolfQuestState.STARTED
+                && (level.getDayTime() % 24000L) >= 13000L) {  // night (source: !isDaytime)
+            long chunk = new ChunkPos(player.blockPosition()).toLong();
+            if (data.addHowledChunk(chunk)) {
+                data.incrementWolfQuestCounter();
+                player.displayClientMessage(Component.translatable("witchery.werewolf.level7progress",
+                        16, Math.max(0, 16 - data.getWolfQuestCounter())), true);
+            } else {
+                player.displayClientMessage(Component.translatable("witchery.werewolf.chunkvisited"), true);
+            }
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         }
 
         data.setHowlCooldown(WitcheryConfig.WEREWOLF_HOWL_COOLDOWN_SECONDS.get() * 20);
