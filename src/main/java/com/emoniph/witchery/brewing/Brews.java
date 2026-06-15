@@ -44,7 +44,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
@@ -66,6 +69,7 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -121,7 +125,8 @@ public final class Brews {
             EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
-            FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT
+            FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT,
+            TRANSPOSE, RAISE_DEAD, SPREAD_DEBUFFS
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -366,6 +371,18 @@ public final class Brews {
         register(Items.WHEAT_SEEDS, Ingredient.action(Ingredient.BrewAction.PLANT,
                 1, 0, 0x6EA53C,
                 "witchery.brew.planting", null));
+        // Source brewing/action/effect: Transpose (Ender Pearl, random teleport on contact), Raising
+        // (Bone, raises enslaved undead at the impact), Spread Debuffs (Creeper Head, casts the target's
+        // curable debuffs onto nearby creatures).
+        register(Items.ENDER_PEARL, Ingredient.action(Ingredient.BrewAction.TRANSPOSE,
+                4, 1000, 0x2E1A47,
+                "witchery.brew.transpose", null));
+        register(Items.BONE, Ingredient.action(Ingredient.BrewAction.RAISE_DEAD,
+                4, 2000, 0xE5E1D2,
+                "witchery.brew.raising", null));
+        register(Items.CREEPER_HEAD, Ingredient.action(Ingredient.BrewAction.SPREAD_DEBUFFS,
+                8, 2000, 0x4E9331,
+                "witchery.brew.spreaddebuffs", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -1172,6 +1189,10 @@ public final class Brews {
             applyAirHike(target, action.strength());
         } else if (action.action() == Ingredient.BrewAction.PULL) {
             applyPull(target, action.strength(), source, impactPos);
+        } else if (action.action() == Ingredient.BrewAction.TRANSPOSE) {
+            transposeEntity(level, target, action.strength());
+        } else if (action.action() == Ingredient.BrewAction.SPREAD_DEBUFFS) {
+            spreadDebuffs(level, target, action.strength(), powerFactor, source);
         }
     }
 
@@ -1222,6 +1243,8 @@ public final class Brews {
                         8 + 2 * action.strength());
             } else if (action.action() == Ingredient.BrewAction.PLANT) {
                 plantSeeds(level, blockImpact, blockRadius, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.RAISE_DEAD) {
+                raiseDead(level, blockImpact, action.strength(), source);
             }
         }
     }
@@ -1741,6 +1764,151 @@ public final class Brews {
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, columnTop)) {
             entity.teleportTo(top.getX() + 0.5, top.getY() + height + 1, top.getZ() + 0.5);
         }
+    }
+
+    /**
+     * Source {@code BrewActionTranspose} splash/contact path ({@code doApplyToEntity}): unless the target is
+     * under Ender Inhibition, teleport it to a safe surface spot up to {@code 10*(strength+1)} blocks away.
+     */
+    private static void transposeEntity(ServerLevel level, LivingEntity target, int strength) {
+        if (target.hasEffect(WitcheryMobEffects.ENDER_INHIBITION)) {
+            return;
+        }
+        int range = 10 * (strength + 1);
+        BlockPos origin = target.blockPosition();
+        for (int attempt = 0; attempt < 3; attempt++) {
+            int x = origin.getX() + level.random.nextInt(range * 2 + 1) - range;
+            int z = origin.getZ() + level.random.nextInt(range * 2 + 1) - range;
+            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            BlockPos dest = new BlockPos(x, y, z);
+            if (y > level.getMinY() + 1 && y < level.getMaxY() - 3
+                    && level.getBlockState(dest.below()).blocksMotion()
+                    && level.getBlockState(dest).isAir()
+                    && level.getBlockState(dest.above()).isAir()) {
+                target.teleportTo(x + 0.5, y, z + 0.5);
+                level.playSound(null, dest, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1.0f, 1.0f);
+                level.sendParticles(ParticleTypes.PORTAL, x + 0.5, y + 1.0, z + 0.5, 24, 0.4, 0.6, 0.4, 0.2);
+                return;
+            }
+        }
+    }
+
+    public static double sourceSpreadDebuffsRadius(int strength) {
+        return (double) (strength + 1) * 4.0;
+    }
+
+    public static int sourceSpreadDebuffsMaxBuffs(int strength, double powerFactor) {
+        return Mth.ceil(((double) strength + 1.0) * powerFactor);
+    }
+
+    public static boolean shouldSpreadDebuff(MobEffectInstance effect, int strength) {
+        return shouldSpreadDebuff(effect.getEffect(), effect.getAmplifier(), isCurableByModernApi(effect), strength);
+    }
+
+    public static boolean shouldSpreadDebuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
+        return effect.value().getCategory() == MobEffectCategory.HARMFUL
+                && curable
+                && amplifier <= Math.max(strength - 1, 1);
+    }
+
+    /**
+     * Source {@code spreaddebuffs} brew ({@code BrewActionEffect} on Creeper Head): copies the target's
+     * curable debuffs (amplifier ≤ max(strength-1,1)) onto nearby creatures, then strips them off the target.
+     */
+    private static void spreadDebuffs(ServerLevel level, LivingEntity target, int strength, double powerFactor,
+                                      Entity source) {
+        int maxBuffs = sourceSpreadDebuffsMaxBuffs(strength, powerFactor);
+        if (maxBuffs <= 0) {
+            return;
+        }
+        double radius = sourceSpreadDebuffsRadius(strength);
+        double radiusSq = radius * radius;
+        AABB bounds = target.getBoundingBox().inflate(radius, radius, radius);
+        List<LivingEntity> others = new ArrayList<>();
+        for (LivingEntity other : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (other != target && other.distanceToSqr(target) < radiusSq) {
+                others.add(other);
+            }
+        }
+        if (others.isEmpty()) {
+            return;
+        }
+        List<Holder<MobEffect>> toRemove = new ArrayList<>();
+        for (MobEffectInstance effect : target.getActiveEffects()) {
+            if (shouldSpreadDebuff(effect, strength)) {
+                toRemove.add(effect.getEffect());
+                for (LivingEntity other : others) {
+                    other.addEffect(new MobEffectInstance(effect), source);
+                }
+                if (--maxBuffs <= 0) {
+                    break;
+                }
+            }
+        }
+        for (Holder<MobEffect> effect : toRemove) {
+            target.removeEffect(effect);
+        }
+    }
+
+    /** Persistent-data tag marking a summoned mob whose loot is suppressed (source {@code EntityUtil.setNoDrops}). */
+    public static final String SUMMONED_NO_DROPS_TAG = "witchery_no_drops";
+
+    /** Source {@code BrewActionRaising.raiseDead} extra-spawn count (pure RNG threshold, testable). */
+    public static int sourceRaiseDeadExtraCount(int strength, double r1, double r2, double r3) {
+        int extra = 0;
+        if (strength >= 1 && r1 < strength * 0.5) extra++;
+        if (strength >= 2 && r2 < strength * 0.25) extra++;
+        if (strength >= 3 && r3 < strength * 0.25) extra++;
+        return extra;
+    }
+
+    /**
+     * Source {@code BrewActionRaising} (Bone): raises an undead thrall at the impact plus up to three more on
+     * nearby ground, all enslaved to the caster, persistent, and loot-suppressed.
+     */
+    private static void raiseDead(ServerLevel level, BlockPos blockImpact, int strength, Entity source) {
+        raiseUndead(level, blockImpact, source);
+        int extra = sourceRaiseDeadExtraCount(strength,
+                level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble());
+        for (int i = 0; i < extra; i++) {
+            int x = blockImpact.getX() - 3 + level.random.nextInt(6) + 1;
+            int z = blockImpact.getZ() - 3 + level.random.nextInt(6) + 1;
+            for (int dy = blockImpact.getY() + 6; dy >= blockImpact.getY() - 6; dy--) {
+                BlockPos ground = new BlockPos(x, dy, z);
+                if (level.getBlockState(ground.below()).blocksMotion() && level.getBlockState(ground).isAir()) {
+                    raiseUndead(level, ground, source);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void raiseUndead(ServerLevel level, BlockPos pos, Entity source) {
+        Mob undead = createUndead(level);
+        if (undead == null) {
+            return;
+        }
+        undead.snapTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, level.random.nextFloat() * 360f, 0f);
+        undead.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
+        undead.setPersistenceRequired();
+        undead.getPersistentData().putBoolean(SUMMONED_NO_DROPS_TAG, true);
+        if (source instanceof Player raiser) {
+            com.emoniph.witchery.util.Enslaved.enslave(undead, raiser);
+        }
+        level.addFreshEntity(undead);
+        level.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                12, 0.3, 0.5, 0.3, 0.02);
+    }
+
+    private static Mob createUndead(ServerLevel level) {
+        double v = level.random.nextDouble();
+        if (v < 0.6) {
+            return EntityType.ZOMBIE.create(level, EntitySpawnReason.MOB_SUMMONED);
+        }
+        if (v < 0.97) {
+            return EntityType.SKELETON.create(level, EntitySpawnReason.MOB_SUMMONED);
+        }
+        return EntityType.ZOMBIFIED_PIGLIN.create(level, EntitySpawnReason.MOB_SUMMONED);
     }
 
     /** Crop block a dropped seed plants into (pure, testable). Null = not a plantable seed. */

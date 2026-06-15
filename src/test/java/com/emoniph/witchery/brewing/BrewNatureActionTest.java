@@ -65,4 +65,47 @@ class BrewNatureActionTest {
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.WHEAT_SEEDS));
         assertTrue(Brews.isIngredient(com.emoniph.witchery.init.WitcheryItems.ENT_TWIG.get()));
     }
+
+    @Test
+    void deferredActionIngredientsAreRegistered() {
+        Brews.bootstrap();
+        assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.ENDER_PEARL));   // Transpose
+        assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.BONE));          // Raising
+        assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.CREEPER_HEAD));  // Spread Debuffs
+    }
+
+    @Test
+    void spreadDebuffsMathMatchesSource() {
+        // radius = (strength + 1) * 4
+        assertEquals(4.0, Brews.sourceSpreadDebuffsRadius(0));
+        assertEquals(20.0, Brews.sourceSpreadDebuffsRadius(4));
+        // maxBuffs = ceil((strength + 1) * powerFactor)
+        assertEquals(1, Brews.sourceSpreadDebuffsMaxBuffs(0, 1.0));
+        assertEquals(5, Brews.sourceSpreadDebuffsMaxBuffs(4, 1.0));
+        assertEquals(8, Brews.sourceSpreadDebuffsMaxBuffs(4, 1.5));
+    }
+
+    @Test
+    void spreadDebuffEligibilityMatchesSource() {
+        // HARMFUL + curable + amplifier <= max(strength-1, 1)
+        var slowness = net.minecraft.world.effect.MobEffects.SLOWNESS;
+        assertTrue(Brews.shouldSpreadDebuff(slowness, 1, true, 1));   // amp 1 <= max(0,1)=1
+        assertTrue(Brews.shouldSpreadDebuff(slowness, 2, true, 4));   // amp 2 <= max(3,1)=3
+        org.junit.jupiter.api.Assertions.assertFalse(Brews.shouldSpreadDebuff(slowness, 4, true, 4)); // amp 4 > 3
+        org.junit.jupiter.api.Assertions.assertFalse(Brews.shouldSpreadDebuff(slowness, 0, false, 4)); // not curable
+        // beneficial effects never spread
+        org.junit.jupiter.api.Assertions.assertFalse(
+                Brews.shouldSpreadDebuff(net.minecraft.world.effect.MobEffects.SPEED, 0, true, 4));
+    }
+
+    @Test
+    void raiseDeadExtraCountMatchesSource() {
+        // strength 0 → never any extra
+        assertEquals(0, Brews.sourceRaiseDeadExtraCount(0, 0.0, 0.0, 0.0));
+        // strength 1: only the first roll matters, threshold 0.5
+        assertEquals(1, Brews.sourceRaiseDeadExtraCount(1, 0.4, 0.9, 0.9));
+        assertEquals(0, Brews.sourceRaiseDeadExtraCount(1, 0.6, 0.0, 0.0));
+        // strength 4: all three roll, thresholds 2.0 / 1.0 / 1.0 (all rolls < 1.0 pass)
+        assertEquals(3, Brews.sourceRaiseDeadExtraCount(4, 0.99, 0.99, 0.99));
+    }
 }
