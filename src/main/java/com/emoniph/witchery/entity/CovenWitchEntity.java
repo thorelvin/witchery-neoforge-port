@@ -179,7 +179,14 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.4));
+        // A free witch flees when hurt (she is a neutral merchant), but a sworn coven witch stands and
+        // fights — otherwise PanicGoal (high priority) would override her combat goals when struck.
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.4) {
+            @Override
+            public boolean canUse() {
+                return !isRecruited() && super.canUse();
+            }
+        });
         // A recruited witch fights for her coven leader — throw splash potions at the leader's foes.
         this.goalSelector.addGoal(2, new CovenAttackGoal());
         this.goalSelector.addGoal(3, new OpenDoorGoal(this, true));
