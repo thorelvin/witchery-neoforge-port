@@ -83,6 +83,7 @@ public final class VillageWallGenerator {
     private static final int TREE_CLEAR_WALL_TOUCH_RADIUS = 1;
     private static final int TREE_CLEAR_PATH_TOUCH_RADIUS = 1;
     private static final int TREE_CLEAR_TREE_RADIUS = 7;
+    private static final int WALL_ENTITY_RELOCATION_RADIUS = 12;
     // Morphological dilation applied to the village footprint before perimeter detection.
     // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
     // the wall traces a smoother, more regularised contour (see reference: contour
@@ -757,7 +758,8 @@ public final class VillageWallGenerator {
                                                      int floorTo, byte[][] grid, short[][] heights,
                                                      int gx, int gz, int w, int d) {
         int top = sy + WALL_HEIGHT;
-        if (hasLivingEntityInColumn(level, wx, Math.min(sy, floorTo), wz, top + 1))
+        if (!moveLivingEntitiesOutOfWallColumn(level, wx, Math.min(sy, floorTo), wz, top + 1,
+                grid, gx, gz, w, d))
             return WallColumnResult.SKIPPED;
 
         // Base: 2 courses of stone brick (stone if submerged)
@@ -963,18 +965,86 @@ public final class VillageWallGenerator {
     }
 
     static BlockState cornerStairFor(BlockState base, int dx, int dz) {
-        Direction facing = dx < 0 ? Direction.WEST : Direction.EAST;
-        StairsShape shape = dx < 0
-                ? (dz < 0 ? StairsShape.OUTER_LEFT : StairsShape.OUTER_RIGHT)
-                : (dz < 0 ? StairsShape.OUTER_RIGHT : StairsShape.OUTER_LEFT);
+        // Match vanilla outer-stair shaping: face the diagonal cap toward the
+        // adjacent north/south rampart stair, then choose left/right from that
+        // neighbor's facing.
+        Direction facing = dx < 0 ? Direction.EAST : Direction.WEST;
+        Direction neighborFacing = dz < 0 ? Direction.NORTH : Direction.SOUTH;
+        StairsShape shape = neighborFacing == facing.getCounterClockWise()
+                ? StairsShape.OUTER_LEFT
+                : StairsShape.OUTER_RIGHT;
         return base.setValue(StairBlock.FACING, facing)
                 .setValue(StairBlock.HALF, Half.BOTTOM)
                 .setValue(StairBlock.SHAPE, shape);
     }
 
-    private static boolean hasLivingEntityInColumn(ServerLevel level, int x, int minY, int z, int maxY) {
+    private static boolean moveLivingEntitiesOutOfWallColumn(ServerLevel level, int x, int minY, int z, int maxY,
+                                                              byte[][] grid, int gx, int gz, int w, int d) {
         AABB box = new AABB(x, minY, z, x + 1.0, maxY + 1.0, z + 1.0);
-        return !level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
+        List<LivingEntity> blockers = level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive);
+        if (blockers.isEmpty()) return true;
+
+        for (LivingEntity blocker : blockers) {
+            BlockPos safe = findWallBlockerRelocation(level, x, z, grid, gx, gz, w, d, blocker);
+            if (safe == null) {
+                WitcheryMod.LOGGER.info("[VillageWalls] Could not safely move {} out of wall column {},{}; skipping column.",
+                        blocker.getType(), x, z);
+                return false;
+            }
+            blocker.teleportTo(safe.getX() + 0.5D, safe.getY(), safe.getZ() + 0.5D);
+            WitcheryMod.LOGGER.info("[VillageWalls] Moved {} from wall column {},{} to {},{},{} before placing wall.",
+                    blocker.getType(), x, z,
+                    safe.getX(), safe.getY(), safe.getZ());
+        }
+
+        return level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
+    }
+
+    private static BlockPos findWallBlockerRelocation(ServerLevel level, int wx, int wz,
+                                                       byte[][] grid, int gx, int gz, int w, int d,
+                                                       LivingEntity entity) {
+        for (int radius = 1; radius <= WALL_ENTITY_RELOCATION_RADIUS; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+                    int candidateGX = gx + dx;
+                    int candidateGZ = gz + dz;
+                    if (!insideGrid(candidateGX, candidateGZ, w, d)) continue;
+                    byte cell = grid[candidateGX][candidateGZ];
+                    if (cell == WALL || cell == GATE) continue;
+
+                    int candidateX = wx + dx;
+                    int candidateZ = wz + dz;
+                    BlockPos candidate = safeRelocationPos(level, candidateX, candidateZ, entity);
+                    if (candidate != null) return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos safeRelocationPos(ServerLevel level, int x, int z, LivingEntity entity) {
+        if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return null;
+        int y = groundHeight(level, x, z);
+        BlockPos stand = new BlockPos(x, y, z);
+        if (!level.getBlockState(stand.below()).isSolid()) return null;
+        if (!isRelocationSpace(level, stand) || !isRelocationSpace(level, stand.above())) return null;
+
+        double halfWidth = Math.max(0.3D, entity.getBbWidth() * 0.5D);
+        double height = Math.max(1.0D, entity.getBbHeight());
+        double cx = x + 0.5D;
+        double cz = z + 0.5D;
+        AABB targetBox = new AABB(cx - halfWidth, y, cz - halfWidth,
+                cx + halfWidth, y + height, cz + halfWidth);
+        if (!level.getEntitiesOfClass(LivingEntity.class, targetBox,
+                other -> other.isAlive() && other != entity).isEmpty())
+            return null;
+        return level.noCollision(entity, targetBox) ? stand : null;
+    }
+
+    private static boolean isRelocationSpace(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return !state.liquid() && (state.isAir() || state.canBeReplaced());
     }
 
     /**

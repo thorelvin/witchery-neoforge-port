@@ -108,6 +108,19 @@ final class RitualTransaction {
     }
 
     /**
+     * Validate, stage all sacrifices, then run {@code effect} only after the sacrifice queue has fully
+     * drained. Use for rites whose visible result should start after every offered item has popped.
+     */
+    boolean commitDeferred(Player player, Runnable effect) {
+        if (!hasSufficientPower()) {
+            return reportNoPower(player);
+        }
+        consumeAll();
+        SacrificeConsumer.runWhenDrained(level, effect);
+        return true;
+    }
+
+    /**
      * Rollback-safe commit: validate -> applyEffect -> consume only on success. If {@code effect}
      * returns false (or the altar cannot pay), NOTHING is consumed, so a post-validation effect
      * failure can no longer silently eat altar power or sacrifices. This is the target pattern

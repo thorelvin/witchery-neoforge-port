@@ -133,8 +133,10 @@ per-dimension stager **`SacrificeConsumer`** those all route through: `stage(Rit
 each item to pop at `max(queue) + 20` ticks (sequential, one per second); `tick(level)` (wired into
 `RitualEvents.onLevelTick` beside `tickActiveRituals`) pops the due ones — `ParticleTypes.EXPLOSION` +
 `SoundEvents.ITEM_PICKUP` (modern `random.pop`) then the real decrement
-(`RitualExecutor.removeOfferedItemNow` / grassper shrink). The effect still applies immediately (the port's
-rites are atomic functions, not source's step machine) — only the *removal* is staggered.
+(`RitualExecutor.removeOfferedItemNow` / grassper shrink). Follow-up (2026-06-16): the stager now also
+supports drained-queue callbacks, and the main transaction/output/summon rites use that path so their
+visible effect waits until the final sacrifice pop instead of firing while items are still present.
+Active ritual ticks and success feedback also wait while staged sacrifices are pending.
 
 Two guards keep the still-present items from being reused: while pending, each item is non-pickable
 (`setPickUpDelay` covering its pop) and its entity id is in a pending set that **both** offering finders

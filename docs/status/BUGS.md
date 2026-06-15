@@ -2,6 +2,16 @@
 
 Last reconciled: 2026-06-13. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-06-16 (rite sacrifice timing + Crystal Ball item GUI QA):**
+- ~~Rite effects/success cues could fire while their sacrifices were still disappearing one-by-one~~ - staged sacrifice consumption now supports drained-queue callbacks. Active ritual ticking pauses while sacrifices are pending, success feedback waits for the queue to drain, and the high-visibility instant/output/summon transaction rites now use `commitDeferred` so their result starts after the final pop. Manual QA should still sweep hand-rolled, non-transaction rite branches, but the main visible output and summon paths are covered.
+- ~~Crystal Ball item GUI icon was too small~~ - `models/item/crystal_ball.json` now overrides the block-parent GUI transform with a larger 1.6 scale and upward translation.
+
+**Closed 2026-06-16 (village wall placement QA):**
+- ~~Living entities standing in a planned village-wall column caused that column to skip~~ - the wall generator now relocates blockers to a nearby safe non-wall/non-gate cell before placing the column. The relocation requires solid ground, clear non-liquid feet/head space, no living-entity overlap, and a collision-free target box. If no safe target exists nearby, the single column still skips instead of burying the entity.
+
+**Closed 2026-06-16 (village wall outer-corner rampart QA):**
+- ~~Outer village-wall corner stair caps did not map cleanly to their neighboring rampart stairs~~ - the first diagonal-cap pass used an outward east/west-facing quadrant table. Fixed: `VillageWallGenerator.cornerStairFor` now faces the diagonal cap inward toward the adjacent straight north/south rampart lip and derives `OUTER_LEFT`/`OUTER_RIGHT` from that neighbor's facing, matching vanilla stair auto-shape logic. Covered by `VillageWallGeneratorTest`.
+
 **Open — custom brew gas duration QA (2026-06-12, in-game; verified good: Chilled freezes water, Grow Flowers blooms around the pool):**
 1. **Lingering Gas brew effect duration feels too short in-game.** The poison gas cloud worked but the applied effect wore off faster than expected. Check the gas path effect-duration scaling: `Brews.applyFluidContact` uses `SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE = 0.5` (halves duration on contact) and contact only fires every ~10 ticks (`entityInside` `nextInt(10)==4`); combined with the base effect duration that may read as too brief. Verify against source gas-contact duration and consider whether the gas cloud lifetime (`gasCloudDurationTicks`) vs per-contact reapplication is delivering the intended total. Tuning, not necessarily a hard bug.
 

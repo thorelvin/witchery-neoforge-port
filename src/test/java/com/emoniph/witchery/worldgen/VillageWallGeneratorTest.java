@@ -45,10 +45,10 @@ class VillageWallGeneratorTest {
     void cornerRampartStairsUseOuterCornerShapes() {
         BlockState base = Blocks.STONE_BRICK_STAIRS.defaultBlockState();
 
-        assertCorner(base, -1, -1, Direction.WEST, StairsShape.OUTER_LEFT);
-        assertCorner(base, -1, 1, Direction.WEST, StairsShape.OUTER_RIGHT);
-        assertCorner(base, 1, -1, Direction.EAST, StairsShape.OUTER_RIGHT);
-        assertCorner(base, 1, 1, Direction.EAST, StairsShape.OUTER_LEFT);
+        assertCorner(base, -1, -1, Direction.EAST, StairsShape.OUTER_LEFT);
+        assertCorner(base, -1, 1, Direction.EAST, StairsShape.OUTER_RIGHT);
+        assertCorner(base, 1, -1, Direction.WEST, StairsShape.OUTER_RIGHT);
+        assertCorner(base, 1, 1, Direction.WEST, StairsShape.OUTER_LEFT);
     }
 
     private static byte[][] emptyGrid(int w, int d) {

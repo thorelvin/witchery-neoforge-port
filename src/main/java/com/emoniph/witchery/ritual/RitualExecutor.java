@@ -114,6 +114,7 @@ public class RitualExecutor {
     private static final int BLIGHT_RITE_POWER = 3000;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
+    private static final ThreadLocal<Boolean> EXECUTING_RITUAL_ACTIVATION = ThreadLocal.withInitial(() -> false);
 
     public enum ActivationResult {
         NO_MATCH(false, false),
@@ -186,6 +187,7 @@ public class RitualExecutor {
     public static ActivationResult execute(Player player, Level level, BlockPos floorCenter,
                                            List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
         PENDING_RITUAL_INGREDIENT.set(ingredient.isEmpty() ? ItemStack.EMPTY : ingredient.copyWithCount(1));
+        EXECUTING_RITUAL_ACTIVATION.set(true);
         try {
             if (isRitualAreaNulled(level, floorCenter)) {
                 level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -221,6 +223,7 @@ public class RitualExecutor {
             return ActivationResult.NO_MATCH;
         } finally {
             PENDING_RITUAL_INGREDIENT.remove();
+            EXECUTING_RITUAL_ACTIVATION.remove();
         }
     }
 
@@ -744,16 +747,17 @@ public class RitualExecutor {
             return false;
         }
 
-        WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        data.setInfusionType(type);
-        data.setInfusionEnergy(200, 200);
-        com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(sp, type);
-
         String msgKey = infusionSuccessKey(type);
+        SacrificeConsumer.runWhenDrained(sl, () -> {
+            WitcheryPlayerData data = WitcheryAttachments.get(sp);
+            data.setInfusionType(type);
+            data.setInfusionEnergy(200, 200);
+            com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(sp, type);
 
-        PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
-        success(player, level, center, msgKey, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
-        WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
+            PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
+            success(player, level, center, msgKey, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
+            WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
+        });
         return true;
     }
 
@@ -811,11 +815,8 @@ public class RitualExecutor {
                 .offer(offerings.get().whiffOfMagic())
                 .offer(offerings.get().diamond())
                 .offer(offerings.get().demonicBlood());
-        // Rollback-safe: bind the familiars as the committed effect; if none could actually be
-        // bound, the transaction consumes nothing. Previously this consumed 8000 altar power and
-        // five sacrifices BEFORE binding, then returned false on a finalize failure — losing them.
-        boolean[] boundAny = {false};
-        if (!transaction.commit(player, () -> {
+        if (!transaction.commitDeferred(player, () -> {
+            boolean boundAny = false;
             for (FamiliarBindTarget bindTarget : bindTargets) {
                 TamableAnimal familiar = bindFamiliarToPlayer(bindTarget.player(), sl, bindTarget.candidate());
                 if (familiar == null) {
@@ -825,19 +826,18 @@ public class RitualExecutor {
                 sl.sendParticles(ParticleTypes.HEART,
                         familiar.getX(), familiar.getY() + 0.8, familiar.getZ(),
                         6, 0.25, 0.25, 0.25, 0.02);
-                boundAny[0] = true;
+                boundAny = true;
             }
-            if (!boundAny[0]) {
-                WitcheryMod.LOGGER.warn("Rite of Bind Familiar at {} found candidates but bound none; nothing consumed.", center);
+            if (!boundAny) {
+                WitcheryMod.LOGGER.warn("Rite of Bind Familiar at {} found candidates but bound none after sacrifices popped.", center);
+                return;
             }
-            return boundAny[0];
+            success(player, level, center, "witchery.ritual.bind_familiar.success",
+                    SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
+            WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
         })) {
             return false;
         }
-
-        success(player, level, center, "witchery.ritual.bind_familiar.success",
-                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 1, 30);
-        WitcheryMod.LOGGER.info("Bound familiar(s) near {}", center);
         return true;
     }
 
@@ -876,22 +876,20 @@ public class RitualExecutor {
                 .offer(offerings.get().whiffOfMagic())
                 .offer(offerings.get().tearOfTheGoddess())
                 .offer(offerings.get().mutandisExtremis());
-        if (!transaction.commit(player, () -> {
+        if (!transaction.commitDeferred(player, () -> {
             Creaking bound = CreakingFamiliarHelper.bind(sp, sl, boundCandidate);
             if (bound == null) {
-                return false;
+                return;
             }
             sl.sendParticles(ParticleTypes.SCULK_SOUL,
                     bound.getX(), bound.getY() + 1.0, bound.getZ(),
                     12, 0.35, 0.35, 0.35, 0.02);
-            return true;
+            success(player, level, center, "witchery.ritual.bind_creaking_familiar.success",
+                    SoundEvents.CREAKING_AMBIENT, 0.8f, 1, 36);
+            WitcheryMod.LOGGER.info("Bound Creaking familiar for {} near {}", sp.getName().getString(), center);
         })) {
             return false;
         }
-
-        success(player, level, center, "witchery.ritual.bind_creaking_familiar.success",
-                SoundEvents.CREAKING_AMBIENT, 0.8f, 1, 36);
-        WitcheryMod.LOGGER.info("Bound Creaking familiar for {} near {}", sp.getName().getString(), center);
         return true;
     }
 
@@ -931,21 +929,21 @@ public class RitualExecutor {
                 .offer(offerings.get().egg())
                 .offer(offerings.get().goldIngot())
                 .offer(offerings.get().arthana());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            familiar.snapTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5, player.getYRot(), 0.0F);
+            familiar.setOrderedToSit(false);
+            familiar.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            sl.addFreshEntity(familiar);
+
+            bindFamiliarToPlayer(sp, sl, familiar);
+
+            success(player, level, center, "witchery.ritual.summon_familiar.success",
+                    SoundEvents.PIG_AMBIENT, 1.0f, 2, 24);
+            WitcheryMod.LOGGER.info("Rite of Summon Familiar cast by {}", player.getName().getString());
+        })) {
             return false;
         }
-
-        familiar.snapTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5, player.getYRot(), 0.0F);
-        familiar.setOrderedToSit(false);
-        familiar.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(familiar);
-
-        bindFamiliarToPlayer(sp, sl, familiar);
-
-        success(player, level, center, "witchery.ritual.summon_familiar.success",
-                SoundEvents.PIG_AMBIENT, 1.0f, 2, 24);
-        WitcheryMod.LOGGER.info("Rite of Summon Familiar cast by {}", player.getName().getString());
         return true;
     }
 
@@ -1199,22 +1197,22 @@ public class RitualExecutor {
                 .offer(offerings.get().redstone())
                 .offer(offerings.get().woodAsh())
                 .offer(offerings.get().quicklime());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+
+            success(player, level, center, "witchery.ritual.charge_stone.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Charged Attuned Stone created at {} for {}", center, player.getName().getString());
+        })) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             return false;
         }
-
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-
-        success(player, level, center, "witchery.ritual.charge_stone.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Charged Attuned Stone created at {} for {}", center, player.getName().getString());
         return true;
     }
 
@@ -2088,6 +2086,9 @@ public class RitualExecutor {
     public static void tickActiveRituals(ServerLevel level) {
         List<ActiveRitual> rituals = activeRituals(level);
         if (rituals.isEmpty()) {
+            return;
+        }
+        if (SacrificeConsumer.hasPending(level)) {
             return;
         }
 
@@ -3464,6 +3465,18 @@ public class RitualExecutor {
     private static void success(Player player, Level level, BlockPos center,
                                 String messageKey, net.minecraft.sounds.SoundEvent sound,
                                 float pitch, int particleRadius, int particleCount) {
+        if (level instanceof ServerLevel sl
+                && (SacrificeConsumer.hasPending(sl) || Boolean.TRUE.equals(EXECUTING_RITUAL_ACTIVATION.get()))) {
+            SacrificeConsumer.runWhenDrained(sl, () ->
+                    playSuccess(player, level, center, messageKey, sound, pitch, particleRadius, particleCount));
+            return;
+        }
+        playSuccess(player, level, center, messageKey, sound, pitch, particleRadius, particleCount);
+    }
+
+    private static void playSuccess(Player player, Level level, BlockPos center,
+                                    String messageKey, net.minecraft.sounds.SoundEvent sound,
+                                    float pitch, int particleRadius, int particleCount) {
         level.playSound(null, center, sound, SoundSource.BLOCKS, 1f, pitch);
         if (messageKey != null) {
             player.displayClientMessage(Component.translatable(messageKey), false);
@@ -3605,18 +3618,18 @@ public class RitualExecutor {
                 .offer(offerings.get().woodAsh())
                 .offer(offerings.get().gunpowder())
                 .offer(offerings.get().spectralDust());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack output = new ItemStack(WitcheryItems.NECRO_STONE.get());
+            ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+            drop.setDeltaMovement(0.0, 0.15, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.necro_stone.success",
+                    SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
+            WitcheryMod.LOGGER.info("Rite of Necromancy created a Necromantic Stone at {}", center);
+        })) {
             return false;
         }
-
-        ItemStack output = new ItemStack(WitcheryItems.NECRO_STONE.get());
-        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
-        drop.setDeltaMovement(0.0, 0.15, 0.0);
-        sl.addFreshEntity(drop);
-
-        success(player, level, center, "witchery.ritual.necro_stone.success",
-                SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
-        WitcheryMod.LOGGER.info("Rite of Necromancy created a Necromantic Stone at {}", center);
         return true;
     }
 
@@ -3639,19 +3652,19 @@ public class RitualExecutor {
                 .offer(offerings.get().condensedFear())
                 .offer(offerings.get().spectralDust())
                 .offer(offerings.get().boline());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
+            SpectralStoneItem.clearBinding(output);
+            ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+            drop.setDeltaMovement(0.0, 0.15, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.spectral_stone.success",
+                    SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
+            WitcheryMod.LOGGER.info("Rite of Necromancy created a Spectral Stone at {}", center);
+        })) {
             return false;
         }
-
-        ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
-        SpectralStoneItem.clearBinding(output);
-        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
-        drop.setDeltaMovement(0.0, 0.15, 0.0);
-        sl.addFreshEntity(drop);
-
-        success(player, level, center, "witchery.ritual.spectral_stone.success",
-                SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9f, 3, 48);
-        WitcheryMod.LOGGER.info("Rite of Necromancy created a Spectral Stone at {}", center);
         return true;
     }
 
@@ -3730,19 +3743,19 @@ public class RitualExecutor {
                 "witchery.ritual.infusion_tree.no_power")
                 .offer(offerings.get().entTwig())
                 .offer(offerings.get().mysticUnguent());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack output = new ItemStack(WitcheryItems.MYSTIC_BRANCH.get());
+            ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+            drop.setDeltaMovement(0.0, 0.25, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.infusion_tree.success",
+                    SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+            WitcheryMod.LOGGER.info("Rite of Infusion created a Mystic Branch at {}", center);
+        })) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             return false;
         }
-
-        ItemStack output = new ItemStack(WitcheryItems.MYSTIC_BRANCH.get());
-        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
-        drop.setDeltaMovement(0.0, 0.25, 0.0);
-        sl.addFreshEntity(drop);
-
-        success(player, level, center, "witchery.ritual.infusion_tree.success",
-                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
-        WitcheryMod.LOGGER.info("Rite of Infusion created a Mystic Branch at {}", center);
         return true;
     }
 
@@ -3763,19 +3776,19 @@ public class RitualExecutor {
                 .offer(offerings.get().quartzSphere())
                 .offer(offerings.get().goldIngot())
                 .offer(offerings.get().happenstanceOil());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack output = new ItemStack(WitcheryItems.CRYSTAL_BALL.get());
+            ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+            drop.setDeltaMovement(0.0, 0.25, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.infusion_future.success",
+                    SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+            WitcheryMod.LOGGER.info("Rite of Infusion created a Crystal Ball at {}", center);
+        })) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             return false;
         }
-
-        ItemStack output = new ItemStack(WitcheryItems.CRYSTAL_BALL.get());
-        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
-        drop.setDeltaMovement(0.0, 0.25, 0.0);
-        sl.addFreshEntity(drop);
-
-        success(player, level, center, "witchery.ritual.infusion_future.success",
-                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
-        WitcheryMod.LOGGER.info("Rite of Infusion created a Crystal Ball at {}", center);
         return true;
     }
 
@@ -3796,19 +3809,19 @@ public class RitualExecutor {
                 .offer(offerings.get().quartzSphere())
                 .offer(offerings.get().mossyCobblestone())
                 .offer(offerings.get().happenstanceOil());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack output = new ItemStack(WitcheryItems.SEER_STONE.get());
+            ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
+            drop.setDeltaMovement(0.0, 0.25, 0.0);
+            sl.addFreshEntity(drop);
+
+            success(player, level, center, "witchery.ritual.infusion_seer.success",
+                    SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
+            WitcheryMod.LOGGER.info("Rite of Infusion created a Seer Stone at {}", center);
+        })) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             return false;
         }
-
-        ItemStack output = new ItemStack(WitcheryItems.SEER_STONE.get());
-        ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
-        drop.setDeltaMovement(0.0, 0.25, 0.0);
-        sl.addFreshEntity(drop);
-
-        success(player, level, center, "witchery.ritual.infusion_seer.success",
-                SoundEvents.BEACON_POWER_SELECT, 1.0f, 3, 40);
-        WitcheryMod.LOGGER.info("Rite of Infusion created a Seer Stone at {}", center);
         return true;
     }
 
@@ -5097,18 +5110,18 @@ public class RitualExecutor {
                 .offer(offerings.get().magmaCream())
                 .offer(offerings.get().arthana())
                 .offer(offerings.get().fermentedSpiderEye());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            witch.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+            witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            sl.addFreshEntity(witch);
+
+            success(player, level, center, "witchery.ritual.summon_witch.success",
+                    SoundEvents.WITCH_CELEBRATE, 0.8f, 3, 48);
+            WitcheryMod.LOGGER.info("Rite of Summon Witch cast by {}", player.getName().getString());
+        })) {
             return false;
         }
-
-        witch.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(witch);
-
-        success(player, level, center, "witchery.ritual.summon_witch.success",
-                SoundEvents.WITCH_CELEBRATE, 0.8f, 3, 48);
-        WitcheryMod.LOGGER.info("Rite of Summon Witch cast by {}", player.getName().getString());
         return true;
     }
 
@@ -5138,18 +5151,18 @@ public class RitualExecutor {
                 .offer(offerings.get().infernalBlood())
                 .offer(offerings.get().enderPearl())
                 .offer(offerings.get().attunedStone());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            imp.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+            imp.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            sl.addFreshEntity(imp);
+
+            success(player, level, center, "witchery.ritual.summon_imp.success",
+                    SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
+            WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
+        })) {
             return false;
         }
-
-        imp.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        imp.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(imp);
-
-        success(player, level, center, "witchery.ritual.summon_imp.success",
-                SoundEvents.BLAZE_AMBIENT, 0.7f, 3, 48);
-        WitcheryMod.LOGGER.info("Rite of Summon Imp cast by {}", player.getName().getString());
         return true;
     }
 
@@ -5255,21 +5268,21 @@ public class RitualExecutor {
             transaction.offer(offerings.get().diamondVapour())
                     .offer(offerings.get().enderPearl());
         }
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            wither.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+            wither.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            sl.addFreshEntity(wither);
+
+            if (!useExpensive) {
+                offerings.get().villager().discard();
+            }
+            success(player, level, center, "witchery.ritual.summon_wither.success",
+                    SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
+            WitcheryMod.LOGGER.info("Rite of Summon Wither cast by {}", player.getName().getString());
+        })) {
             return false;
         }
-
-        wither.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        wither.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(wither);
-
-        if (!useExpensive) {
-            offerings.get().villager().discard();
-        }
-        success(player, level, center, "witchery.ritual.summon_wither.success",
-                SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
-        WitcheryMod.LOGGER.info("Rite of Summon Wither cast by {}", player.getName().getString());
         return true;
     }
 
@@ -5307,21 +5320,21 @@ public class RitualExecutor {
                     .offer(offerings.get().blazePowder())
                     .offer(offerings.get().enderPearl());
         }
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+            demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
+                    net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
+            sl.addFreshEntity(demon);
+
+            if (!useExpensive) {
+                offerings.get().villager().discard();
+            }
+            success(player, level, center, "witchery.ritual.summon_demon.success",
+                    SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);
+            WitcheryMod.LOGGER.info("Rite of Summon Demon cast by {}", player.getName().getString());
+        })) {
             return false;
         }
-
-        demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
-        demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
-                net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
-        sl.addFreshEntity(demon);
-
-        if (!useExpensive) {
-            offerings.get().villager().discard();
-        }
-        success(player, level, center, "witchery.ritual.summon_demon.success",
-                SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);
-        WitcheryMod.LOGGER.info("Rite of Summon Demon cast by {}", player.getName().getString());
         return true;
     }
 
@@ -5580,22 +5593,22 @@ public class RitualExecutor {
                 "witchery.ritual.bind_waystone.no_power")
                 .offer(enderDew.get())
                 .offer(glowstone.get());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
+            WaystoneItem.bindTo(boundWaystone, center, level.dimension());
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    boundWaystone);
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+            success(player, level, center, "witchery.ritual.bind_waystone.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Waystone summoned and bound to ritual center {} for {}", center, player.getName().getString());
+        })) {
             return false;
         }
-
-        ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
-        WaystoneItem.bindTo(boundWaystone, center, level.dimension());
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                boundWaystone);
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-        success(player, level, center, "witchery.ritual.bind_waystone.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Waystone summoned and bound to ritual center {} for {}", center, player.getName().getString());
         return true;
     }
 
@@ -5613,23 +5626,23 @@ public class RitualExecutor {
                 .offer(support.enderDew())
                 .offer(support.woodAsh())
                 .offer(support.chargedStone());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
+            WaystoneItem.bindTo(boundWaystone, center, level.dimension());
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    boundWaystone);
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+            success(player, level, center, "witchery.ritual.bind_waystone.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Portable waystone binding summoned a bound waystone at {} for {}",
+                    center, player.getName().getString());
+        })) {
             return false;
         }
-
-        ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
-        WaystoneItem.bindTo(boundWaystone, center, level.dimension());
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                boundWaystone);
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-        success(player, level, center, "witchery.ritual.bind_waystone.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Portable waystone binding summoned a bound waystone at {} for {}",
-                center, player.getName().getString());
         return true;
     }
 
@@ -5655,23 +5668,23 @@ public class RitualExecutor {
                 .offer(support.snowball())
                 .offer(support.icyNeedle())
                 .offer(support.chargedStone());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack bloodedWaystone = new ItemStack(WitcheryItems.BLOODED_WAYSTONE.get());
+            WaystoneItem.bindToEntity(bloodedWaystone, target.get());
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    bloodedWaystone);
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+            success(player, level, center, "witchery.ritual.bind_blooded_waystone.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Blooded waystone summoned at {} and bound to {} for {}",
+                    center, target.get().getName().getString(), player.getName().getString());
+        })) {
             return false;
         }
-
-        ItemStack bloodedWaystone = new ItemStack(WitcheryItems.BLOODED_WAYSTONE.get());
-        WaystoneItem.bindToEntity(bloodedWaystone, target.get());
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                bloodedWaystone);
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-        success(player, level, center, "witchery.ritual.bind_blooded_waystone.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Blooded waystone summoned at {} and bound to {} for {}",
-                center, target.get().getName().getString(), player.getName().getString());
         return true;
     }
 
@@ -5703,23 +5716,23 @@ public class RitualExecutor {
                 .offer(unboundWaystone.get())
                 .offer(enderDew.get())
                 .offer(diamond.get());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
+                    .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    copiedWaystones);
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+
+            success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
+        })) {
             return false;
         }
-
-        ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
-                .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                copiedWaystones);
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-
-        success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
         return true;
     }
 
@@ -5743,23 +5756,23 @@ public class RitualExecutor {
                 .offer(support.enderDew())
                 .offer(support.quicklime())
                 .offer(support.chargedStone());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
+                    .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
+            ItemEntity entity = new ItemEntity(level,
+                    center.getX() + 0.5,
+                    center.getY() + 1.5,
+                    center.getZ() + 0.5,
+                    copiedWaystones);
+            entity.setDeltaMovement(0.0, 0.3, 0.0);
+            level.addFreshEntity(entity);
+
+            success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
+                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
+            WitcheryMod.LOGGER.info("Portable copied bound waystone at {} for {}", center, sp.getName().getString());
+        })) {
             return false;
         }
-
-        ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
-                .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
-        ItemEntity entity = new ItemEntity(level,
-                center.getX() + 0.5,
-                center.getY() + 1.5,
-                center.getZ() + 0.5,
-                copiedWaystones);
-        entity.setDeltaMovement(0.0, 0.3, 0.0);
-        level.addFreshEntity(entity);
-
-        success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
-                SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-        WitcheryMod.LOGGER.info("Portable copied bound waystone at {} for {}", center, sp.getName().getString());
         return true;
     }
 
@@ -5977,18 +5990,22 @@ public class RitualExecutor {
                 .offer(offerings.get().enderDew())
                 .offer(offerings.get().ironAxe());
         BlockPos destination = center.above();
-        if (!transaction.commit(player, () -> teleportEntityTo(targetEntity, sl,
-                destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5))) {
+        if (!transaction.commitDeferred(player, () -> {
+            if (!teleportEntityTo(targetEntity, sl,
+                    destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5)) {
+                WitcheryMod.LOGGER.warn("Rite of Transposition Entity at {} lost its target after sacrifices popped.", center);
+                return;
+            }
+            if (targetEntity instanceof ServerPlayer targetPlayer) {
+                targetPlayer.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
+            }
+            success(player, level, center, "witchery.ritual.transposition_entity.success",
+                    SoundEvents.ENDERMAN_TELEPORT, 0.8f, 2, 48);
+            WitcheryMod.LOGGER.info("Rite of Transposition Entity moved {} to {}",
+                    targetEntity.getName().getString(), destination);
+        })) {
             return false;
         }
-
-        if (targetEntity instanceof ServerPlayer targetPlayer) {
-            targetPlayer.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.pulled"), false);
-        }
-        success(player, level, center, "witchery.ritual.transposition_entity.success",
-                SoundEvents.ENDERMAN_TELEPORT, 0.8f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Transposition Entity moved {} to {}",
-                targetEntity.getName().getString(), destination);
         return true;
     }
 

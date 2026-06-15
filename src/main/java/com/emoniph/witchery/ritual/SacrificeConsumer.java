@@ -1,5 +1,6 @@
 package com.emoniph.witchery.ritual;
 
+import com.emoniph.witchery.WitcheryMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
@@ -43,6 +44,7 @@ final class SacrificeConsumer {
 
     private static final Map<ResourceKey<Level>, List<Pending>> QUEUES = new HashMap<>();
     private static final Map<ResourceKey<Level>, Set<Integer>> PENDING_IDS = new HashMap<>();
+    private static final Map<ResourceKey<Level>, List<Runnable>> DRAIN_CALLBACKS = new HashMap<>();
 
     /** Schedule one offering to pop after the current queue drains (sequential, one per 20 ticks). */
     static void stage(RitualOffering offering) {
@@ -78,14 +80,33 @@ final class SacrificeConsumer {
         return ids != null && ids.contains(item.getId());
     }
 
+    /** Whether this dimension still has staged sacrifices waiting to disappear. */
+    static boolean hasPending(ServerLevel level) {
+        List<Pending> queue = QUEUES.get(level.dimension());
+        return queue != null && !queue.isEmpty();
+    }
+
+    /**
+     * Run after all staged sacrifices in this dimension have popped. The callback is always deferred
+     * until a later tick, so activation code can enqueue the trigger item after the rite helper returns.
+     */
+    static void runWhenDrained(ServerLevel level, Runnable callback) {
+        if (callback == null) {
+            return;
+        }
+        DRAIN_CALLBACKS.computeIfAbsent(level.dimension(), k -> new ArrayList<>()).add(callback);
+    }
+
     /** Process any sacrifices due this tick. Call once per server-level tick. */
     static void tick(ServerLevel level) {
-        List<Pending> queue = QUEUES.get(level.dimension());
+        ResourceKey<Level> key = level.dimension();
+        List<Pending> queue = QUEUES.get(key);
         if (queue == null || queue.isEmpty()) {
+            runDrainCallbacksIfReady(level, key);
             return;
         }
         long now = level.getGameTime();
-        Set<Integer> ids = PENDING_IDS.get(level.dimension());
+        Set<Integer> ids = PENDING_IDS.get(key);
         Iterator<Pending> iterator = queue.iterator();
         while (iterator.hasNext()) {
             Pending pending = iterator.next();
@@ -96,20 +117,39 @@ final class SacrificeConsumer {
             iterator.remove();
         }
         if (queue.isEmpty()) {
-            QUEUES.remove(level.dimension());
-            PENDING_IDS.remove(level.dimension());
+            QUEUES.remove(key);
+            PENDING_IDS.remove(key);
+            runDrainCallbacksIfReady(level, key);
         }
     }
 
     /** Consume everything still pending immediately (server stop) so no offering is silently spared. */
     static void flush(ServerLevel level) {
-        List<Pending> queue = QUEUES.remove(level.dimension());
-        Set<Integer> ids = PENDING_IDS.remove(level.dimension());
-        if (queue == null) {
+        ResourceKey<Level> key = level.dimension();
+        List<Pending> queue = QUEUES.remove(key);
+        Set<Integer> ids = PENDING_IDS.remove(key);
+        if (queue != null) {
+            for (Pending pending : queue) {
+                pop(level, pending.offering(), ids);
+            }
+        }
+        runDrainCallbacksIfReady(level, key);
+    }
+
+    private static void runDrainCallbacksIfReady(ServerLevel level, ResourceKey<Level> key) {
+        if (hasPending(level)) {
             return;
         }
-        for (Pending pending : queue) {
-            pop(level, pending.offering(), ids);
+        List<Runnable> callbacks = DRAIN_CALLBACKS.remove(key);
+        if (callbacks == null || callbacks.isEmpty()) {
+            return;
+        }
+        for (Runnable callback : callbacks) {
+            try {
+                callback.run();
+            } catch (RuntimeException e) {
+                WitcheryMod.LOGGER.error("Delayed ritual effect failed after sacrifices drained in {}", key, e);
+            }
         }
     }
 
