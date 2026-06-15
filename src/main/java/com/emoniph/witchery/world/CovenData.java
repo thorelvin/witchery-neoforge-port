@@ -93,4 +93,11 @@ public class CovenData extends SavedData {
             setDirty();
         }
     }
+
+    /** Empties an owner's whole roster (QA / reset). */
+    public void clear(UUID owner) {
+        if (covens.remove(owner) != null) {
+            setDirty();
+        }
+    }
 }

@@ -129,6 +129,7 @@ The mod includes a growing `/witchery` debug command suite (permission level 2).
 - `/witchery spawn wickerman` — places a summon-valid bloodied Wicker Man structure for Horned Huntsman testing.
 - `/witchery ritual hitchcock [count]` — releases a raven flock without consuming a brew.
 - `/witchery rite list` and `/witchery rite <name>` — list the data-driven rite definitions and force-fire one at the player (bypassing the dispatch gating; held item used as the trigger) to smoke-test the dispatch table. The rite's own internal power/offering checks still apply, so run it near a powered altar.
+- `/witchery coven recruit`, `/witchery coven fill [count]`, and `/witchery coven clear` — swear Coven Witches to your coven (skipping the familiar gate and recruit quest), or empty the roster, for living-coven QA.
 - `/witchery coven unlock` and `/witchery coven summon` — unlock the Rite of the Gathered Lives knowledge, or raise the spectral coven directly, for coven-rite QA.
 - `/witchery learn` and `/witchery infuse` — teach Mystic Branch glyphs and set a player infusion for symbol-spell QA.
 - `/witchery guide unlock [all|<book>]` and `/witchery guide reset` — unlock or re-lock Witches' Primer chapters for guidebook QA.

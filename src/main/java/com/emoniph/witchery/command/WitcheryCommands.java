@@ -112,6 +112,10 @@ import java.util.List;
  * /witchery setup rite              - place a QA pad with ritual circle rings
  * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man)
  *                                   or a Witchery village building such as apothecary
+ * /witchery coven recruit           — swear one Coven Witch to you (skips familiar+quest); spawns one if none nearby
+ * /witchery coven fill [count]      — swear witches up to the cap (or [count]); QA timesaver
+ * /witchery coven clear             — empty your coven roster and free loaded witches sworn to you
+ * /witchery coven unlock|summon     — Spectral Coven (Rite of the Gathered Lives) debug
  */
 @EventBusSubscriber
 public class WitcheryCommands {
@@ -361,7 +365,18 @@ public class WitcheryCommands {
                         .then(Commands.literal("unlock")
                                 .executes(ctx -> unlockGatheredLives(ctx.getSource())))
                         .then(Commands.literal("summon")
-                                .executes(ctx -> summonSpectralCoven(ctx.getSource()))))
+                                .executes(ctx -> summonSpectralCoven(ctx.getSource())))
+                        // ── living-coven QA timesavers (skip the familiar + quest loop) ──
+                        .then(Commands.literal("recruit")
+                                .executes(ctx -> covenRecruit(ctx.getSource(), 1)))
+                        .then(Commands.literal("fill")
+                                .executes(ctx -> covenRecruit(ctx.getSource(),
+                                        com.emoniph.witchery.world.CovenData.MAX_COVEN))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 6))
+                                        .executes(ctx -> covenRecruit(ctx.getSource(),
+                                                IntegerArgumentType.getInteger(ctx, "count")))))
+                        .then(Commands.literal("clear")
+                                .executes(ctx -> covenClear(ctx.getSource()))))
                 // ── Cursed blocks (triggered dispersal QA timesaver) ──────────
                 .then(Commands.literal("curse")
                         .executes(ctx -> giveTriggeredBrews(ctx.getSource())))
@@ -540,6 +555,63 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal("[Coven] Summoned " + total
                 + " spectral witches around " + p.getName().getString() + "."), false);
         return total;
+    }
+
+    /**
+     * QA timesaver: swear up to {@code count} Coven Witches to the caller's coven (up to the cap),
+     * spawning fresh ones as needed — skips the familiar gate and the recruit quest entirely.
+     */
+    private static int covenRecruit(CommandSourceStack src, int count)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        ServerLevel level = (ServerLevel) p.level();
+        com.emoniph.witchery.world.CovenData data = com.emoniph.witchery.world.CovenData.get(level);
+        int sworn = 0;
+        for (int i = 0; i < count && !data.isFull(p.getUUID()); i++) {
+            // Reuse a free loaded witch if one is nearby; otherwise spawn one.
+            com.emoniph.witchery.entity.CovenWitchEntity witch = level
+                    .getEntitiesOfClass(com.emoniph.witchery.entity.CovenWitchEntity.class,
+                            p.getBoundingBox().inflate(12.0), w -> !w.isRecruited())
+                    .stream().findFirst().orElse(null);
+            if (witch == null) {
+                witch = WitcheryEntities.COVEN_WITCH.get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+                if (witch == null) break;
+                witch.snapTo(p.getX() + (level.random.nextDouble() - 0.5) * 3.0, p.getY(),
+                        p.getZ() + (level.random.nextDouble() - 0.5) * 3.0, p.getYRot(), 0f);
+                witch.finalizeSpawn(level, level.getCurrentDifficultyAt(witch.blockPosition()),
+                        net.minecraft.world.entity.EntitySpawnReason.COMMAND, null);
+                level.addFreshEntity(witch);
+            }
+            if (data.add(p.getUUID(), witch.getUUID())) {
+                witch.setCovenOwner(p.getUUID());
+                sworn++;
+            }
+        }
+        int finalSworn = sworn;
+        src.sendSuccess(() -> Component.literal("[Coven] Swore " + finalSworn + " witch(es) to "
+                + p.getName().getString() + " (now " + data.size(p.getUUID()) + "/"
+                + com.emoniph.witchery.world.CovenData.MAX_COVEN + ")."), false);
+        return sworn;
+    }
+
+    /** QA timesaver: empty the caller's coven roster and free any loaded witches sworn to them. */
+    private static int covenClear(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        ServerLevel level = (ServerLevel) p.level();
+        int before = com.emoniph.witchery.world.CovenData.get(level).size(p.getUUID());
+        // Clear covenOwner on every loaded sworn witch, or the tick-reconcile would re-add them to the
+        // roster (unloaded witches can't be reached, but the roster clear stops them counting toward the cap).
+        for (com.emoniph.witchery.entity.CovenWitchEntity witch : level.getEntities(
+                net.minecraft.world.level.entity.EntityTypeTest.forClass(
+                        com.emoniph.witchery.entity.CovenWitchEntity.class),
+                w -> w.isRecruitedBy(p))) {
+            witch.setCovenOwner(null);
+        }
+        com.emoniph.witchery.world.CovenData.get(level).clear(p.getUUID());
+        src.sendSuccess(() -> Component.literal("[Coven] Cleared " + before + " witch(es) from "
+                + p.getName().getString() + "'s coven."), false);
+        return before;
     }
 
     /** QA timesaver: hand the player triggered-dispersal splash brews to curse vanilla blocks with. */
