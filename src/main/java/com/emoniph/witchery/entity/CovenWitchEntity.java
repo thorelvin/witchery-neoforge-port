@@ -522,12 +522,20 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             }
             getLookControl().setLookAt(target, 30, 30);
             double dist = distanceTo(target);
-            if (dist > 8.0) {
-                getNavigation().moveTo(target, 0.7);
+            // Always keep ranged distance: close in if too far, but back away (kite) if a foe gets close,
+            // holding a ~6-10 block throwing band rather than wading into melee.
+            if (dist < 6.0) {
+                getNavigation().moveTo(
+                        getX() - (target.getX() - getX()),
+                        getY(),
+                        getZ() - (target.getZ() - getZ()),
+                        1.1);
+            } else if (dist > 10.0) {
+                getNavigation().moveTo(target, 0.8);
             } else {
                 getNavigation().stop();
             }
-            if (--cooldown <= 0 && hasLineOfSight(target) && dist < 12.0) {
+            if (--cooldown <= 0 && hasLineOfSight(target) && dist < 14.0) {
                 cooldown = 60;
                 performRangedAttack(target, 1.0F);
             }
