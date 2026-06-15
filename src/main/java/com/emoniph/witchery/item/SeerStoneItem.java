@@ -141,7 +141,9 @@ public class SeerStoneItem extends Item {
                     false);
         }
 
-        int covenSize = countNearbyCovenWitches(target);
+        int covenSize = target.level() instanceof ServerLevel targetLevel
+                ? CovenWitchEntity.covenSize(targetLevel, target.getUUID())
+                : countNearbyCovenWitches(target);
         if (covenSize > 0) {
             reader.displayClientMessage(
                     Component.translatable("item.witchery.seer_stone.covensize", covenSize)

@@ -42,11 +42,42 @@ import javax.annotation.Nullable;
 public class CovenWitchEntity extends AbstractVillager implements CovenMember {
 
     private static final String TAG_SKIN = "Skin";
+    /** Source {@code WITCCoven}: a player's coven holds at most 6 recruited witches. */
+    public static final int MAX_COVEN = 6;
+    private static final String TAG_COVEN_OWNER = "WITCCovenOwner";
     private static final EntityDataAccessor<Integer> SKIN =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
+    @Nullable
+    private java.util.UUID covenOwner;
+
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
+    }
+
+    @Nullable
+    public java.util.UUID getCovenOwner() {
+        return covenOwner;
+    }
+
+    public boolean isRecruited() {
+        return covenOwner != null;
+    }
+
+    public boolean isRecruitedBy(Player player) {
+        return covenOwner != null && covenOwner.equals(player.getUUID());
+    }
+
+    public void setCovenOwner(@Nullable java.util.UUID owner) {
+        this.covenOwner = owner;
+        setPersistenceRequired(); // a recruited (or once-recruited) witch never despawns
+    }
+
+    /** Number of loaded witches in {@code level} already recruited by {@code owner} (the coven cap basis). */
+    public static int covenSize(ServerLevel level, java.util.UUID owner) {
+        return level.getEntities(
+                net.minecraft.world.level.entity.EntityTypeTest.forClass(CovenWitchEntity.class),
+                w -> owner.equals(w.getCovenOwner())).size();
     }
 
     @Override
@@ -128,7 +159,11 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
             return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
         if (player.isSecondaryUseActive()) {
-            return InteractionResult.PASS;
+            // Sneak-interact recruits the witch into your coven (or dismisses her if already yours).
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            return handleCovenInteraction(player);
         }
         if (level().isClientSide()) {
             return InteractionResult.SUCCESS;
@@ -143,6 +178,47 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
         openTradingScreen(player, getDisplayName(), 1);
         player.awardStat(Stats.TALKED_TO_VILLAGER);
         return InteractionResult.CONSUME;
+    }
+
+    /** The outcome of a sneak-interact recruit attempt. */
+    public enum CovenRecruitOutcome { DISMISS, SERVES_ANOTHER, FULL, RECRUIT }
+
+    /** Pure recruit-decision logic (testable). */
+    public static CovenRecruitOutcome recruitOutcome(boolean ownedByPlayer, boolean owned, boolean covenFull) {
+        if (ownedByPlayer) return CovenRecruitOutcome.DISMISS;
+        if (owned) return CovenRecruitOutcome.SERVES_ANOTHER;
+        if (covenFull) return CovenRecruitOutcome.FULL;
+        return CovenRecruitOutcome.RECRUIT;
+    }
+
+    private InteractionResult handleCovenInteraction(Player player) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return InteractionResult.CONSUME;
+        }
+        String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
+        boolean full = covenSize(serverLevel, player.getUUID()) >= MAX_COVEN;
+        switch (recruitOutcome(isRecruitedBy(player), isRecruited(), full)) {
+            case DISMISS -> {
+                setCovenOwner(null);
+                covenSay(player, witchName, "witchery.witch.say.leftcoven");
+            }
+            case SERVES_ANOTHER -> covenSay(player, witchName, "witchery.witch.say.servesanother");
+            case FULL -> covenSay(player, witchName, "witchery.witch.say.covenfull");
+            case RECRUIT -> {
+                setCovenOwner(player.getUUID());
+                covenSay(player, witchName, "witchery.witch.say.joinedcoven");
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH,
+                        getX(), getY() + getBbHeight() * 0.75, getZ(), 16, 0.4, 0.5, 0.4, 0.0);
+                level().playSound(null, blockPosition(), SoundEvents.VILLAGER_YES,
+                        net.minecraft.sounds.SoundSource.NEUTRAL, 1.0f, 1.2f);
+            }
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    private void covenSay(Player player, String witchName, String key) {
+        player.displayClientMessage(
+                Component.literal("§9<" + witchName + "> §r").append(Component.translatable(key)), false);
     }
 
     @Override
@@ -179,12 +255,23 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(TAG_SKIN, getSkin());
+        if (covenOwner != null) {
+            tag.putString(TAG_COVEN_OWNER, covenOwner.toString());
+        }
     }
 
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         setSkin(tag.getIntOr(TAG_SKIN, 0));
+        String owner = tag.getStringOr(TAG_COVEN_OWNER, "");
+        if (!owner.isEmpty()) {
+            try {
+                covenOwner = java.util.UUID.fromString(owner);
+            } catch (IllegalArgumentException ignored) {
+                covenOwner = null;
+            }
+        }
     }
 
     @Override
