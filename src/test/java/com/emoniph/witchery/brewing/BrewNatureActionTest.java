@@ -47,11 +47,22 @@ class BrewNatureActionTest {
     }
 
     @Test
+    void plantingMapsSeedsToCrops() {
+        assertSame(Blocks.WHEAT, Brews.cropForSeed(net.minecraft.world.item.Items.WHEAT_SEEDS));
+        assertSame(Blocks.CARROTS, Brews.cropForSeed(net.minecraft.world.item.Items.CARROT));
+        assertSame(Blocks.POTATOES, Brews.cropForSeed(net.minecraft.world.item.Items.POTATO));
+        assertSame(Blocks.NETHER_WART, Brews.cropForSeed(net.minecraft.world.item.Items.NETHER_WART));
+        org.junit.jupiter.api.Assertions.assertNull(Brews.cropForSeed(net.minecraft.world.item.Items.DIAMOND));
+    }
+
+    @Test
     void natureIngredientsAreRegistered() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.STRING));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.LILY_PAD));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.DEAD_BUSH));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.QUARTZ));
+        assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.WHEAT_SEEDS));
+        assertTrue(Brews.isIngredient(com.emoniph.witchery.init.WitcheryItems.ENT_TWIG.get()));
     }
 }

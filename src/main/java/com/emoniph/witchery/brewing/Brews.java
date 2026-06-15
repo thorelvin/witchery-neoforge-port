@@ -121,7 +121,7 @@ public final class Brews {
             EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
-            FELL_TREE, LILIFY, BLIGHT, RAISE_LAND
+            FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -360,6 +360,12 @@ public final class Brews {
         register(Items.QUARTZ, Ingredient.action(Ingredient.BrewAction.RAISE_LAND,
                 4, 2000, 0x8C8378,
                 "witchery.brew.raiseland", null));
+        register(WitcheryItems.ENT_TWIG.get(), Ingredient.action(Ingredient.BrewAction.SPROUT,
+                2, 350, 0x4F7A33,
+                "witchery.brew.sprouting", null));
+        register(Items.WHEAT_SEEDS, Ingredient.action(Ingredient.BrewAction.PLANT,
+                1, 0, 0x6EA53C,
+                "witchery.brew.planting", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -1211,6 +1217,11 @@ public final class Brews {
                 blight(level, blockImpact, blockRadius, action.strength(), source);
             } else if (action.action() == Ingredient.BrewAction.RAISE_LAND) {
                 raiseLand(level, blockImpact, action.strength(), source);
+            } else if (action.action() == Ingredient.BrewAction.SPROUT) {
+                com.emoniph.witchery.item.BrewOfSproutingItem.growBranch(level, blockImpact, side,
+                        8 + 2 * action.strength());
+            } else if (action.action() == Ingredient.BrewAction.PLANT) {
+                plantSeeds(level, blockImpact, blockRadius, action.strength(), source);
             }
         }
     }
@@ -1730,6 +1741,58 @@ public final class Brews {
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, columnTop)) {
             entity.teleportTo(top.getX() + 0.5, top.getY() + height + 1, top.getZ() + 0.5);
         }
+    }
+
+    /** Crop block a dropped seed plants into (pure, testable). Null = not a plantable seed. */
+    public static net.minecraft.world.level.block.Block cropForSeed(Item seed) {
+        if (seed == Items.WHEAT_SEEDS) return Blocks.WHEAT;
+        if (seed == Items.CARROT) return Blocks.CARROTS;
+        if (seed == Items.POTATO) return Blocks.POTATOES;
+        if (seed == Items.BEETROOT_SEEDS) return Blocks.BEETROOTS;
+        if (seed == Items.MELON_SEEDS) return Blocks.MELON_STEM;
+        if (seed == Items.PUMPKIN_SEEDS) return Blocks.PUMPKIN_STEM;
+        if (seed == Items.NETHER_WART) return Blocks.NETHER_WART;
+        return null;
+    }
+
+    private static boolean canPlantOn(net.minecraft.world.level.block.Block crop, BlockState ground) {
+        return crop == Blocks.NETHER_WART ? ground.is(Blocks.SOUL_SAND) : ground.is(Blocks.FARMLAND);
+    }
+
+    /** Source {@code BrewActionPlanting}: sow nearby dropped seeds across the impact circle. */
+    private static void plantSeeds(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int reach = radius + strength;
+        AABB area = new AABB(center).inflate(reach + 0.5);
+        List<ItemEntity> seeds = level.getEntitiesOfClass(ItemEntity.class, area,
+                e -> cropForSeed(e.getItem().getItem()) != null);
+        if (seeds.isEmpty()) {
+            return;
+        }
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, reach)) {
+            ItemEntity seedEntity = nextSeed(seeds);
+            if (seedEntity == null) {
+                return;
+            }
+            net.minecraft.world.level.block.Block crop = cropForSeed(seedEntity.getItem().getItem());
+            for (int dy = 2; dy >= -2; dy--) {
+                BlockPos pos = column.above(dy);
+                if (canPlantOn(crop, level.getBlockState(pos))
+                        && level.getBlockState(pos.above()).isAir()
+                        && sourceMayModify(level, pos.above(), source)) {
+                    level.setBlock(pos.above(), crop.defaultBlockState(), 3);
+                    seedEntity.getItem().shrink(1);
+                    if (seedEntity.getItem().isEmpty()) {
+                        seedEntity.discard();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private static ItemEntity nextSeed(List<ItemEntity> seeds) {
+        seeds.removeIf(e -> !e.isAlive() || e.getItem().isEmpty());
+        return seeds.isEmpty() ? null : seeds.get(seeds.size() - 1);
     }
 
     /** Source {@code blightGround}: living earth withers to plain dirt. */

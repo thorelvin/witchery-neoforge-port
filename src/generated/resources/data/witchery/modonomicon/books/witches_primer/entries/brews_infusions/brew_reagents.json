@@ -592,13 +592,40 @@
       },
       "rows": [
         {
+          "item": "minecraft:string",
+          "text": "[#](53341a)**String** - Felling (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:lily_pad",
+          "text": "[#](53341a)**Lily Pad** - Lilify (level 1, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:dead_bush",
+          "text": "[#](53341a)**Dead Bush** - Blight (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "minecraft:quartz",
+          "text": "[#](53341a)**Quartz** - Raiseland (level 4, 2000 power).[#]()"
+        },
+        {
           "item": "witchery:golden_heart",
           "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
         },
         {
           "item": "witchery:reek_of_misfortune",
           "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
-        },
+        }
+      ],
+      "text": "",
+      "title": "Action Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
         {
           "item": "witchery:purified_milk",
           "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
@@ -614,6 +641,14 @@
         {
           "item": "witchery:garlic",
           "text": "[#](53341a)**Garlic** - Weaken Vampires (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "minecraft:ice",
+          "text": "[#](53341a)**Ice** - Demonbane (level 5, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:silver_deposits",
+          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
         }
       ],
       "text": "",
@@ -626,14 +661,6 @@
         "type": "modonomicon:none"
       },
       "rows": [
-        {
-          "item": "minecraft:ice",
-          "text": "[#](53341a)**Ice** - Demonbane (level 5, 500 power).[#]()"
-        },
-        {
-          "item": "witchery:silver_deposits",
-          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
-        },
         {
           "item": "minecraft:skeleton_skull",
           "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
