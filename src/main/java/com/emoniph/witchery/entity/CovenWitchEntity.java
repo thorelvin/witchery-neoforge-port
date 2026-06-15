@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -9,37 +10,48 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtTradingPlayerGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Coven Witch: a friendly wandering merchant that sells witchery ingredients.
  * Skin is randomly assigned on spawn (0-4 -> covenwitch1-5.png).
  */
-public class CovenWitchEntity extends AbstractVillager implements CovenMember {
+public class CovenWitchEntity extends AbstractVillager implements CovenMember, RangedAttackMob {
 
     private static final String TAG_SKIN = "Skin";
     /** Source {@code WITCCoven}: a player's coven holds at most 6 recruited witches. */
@@ -122,11 +134,15 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4));
-        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(3, new LookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // A recruited witch fights for her coven leader — throw splash potions at the leader's foes.
+        this.goalSelector.addGoal(2, new CovenAttackGoal());
+        this.goalSelector.addGoal(3, new OpenDoorGoal(this, true));
+        this.goalSelector.addGoal(4, new LookAtTradingPlayerGoal(this));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        // Targeting: defend the coven leader and retaliate against attackers (never the leader herself).
+        this.targetSelector.addGoal(1, new CovenDefendTargetGoal());
     }
 
     @Override
@@ -292,6 +308,156 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember {
     private void covenSay(Player player, String witchName, String key) {
         player.displayClientMessage(
                 Component.literal("§9<" + witchName + "> §r").append(Component.translatable(key)), false);
+    }
+
+    // ── Coven combat — recruited witches defend their leader (source: EntityCovenWitch fights) ──
+
+    /** The recruited witch's coven leader, if loaded nearby. */
+    @Nullable
+    private Player covenLeader() {
+        return covenOwner == null ? null : level().getPlayerByUUID(covenOwner);
+    }
+
+    /** A target is fair game only if it is not the leader and not a fellow member of the same coven. */
+    private boolean isHostileToCoven(@Nullable LivingEntity candidate) {
+        if (candidate == null || candidate == this || !candidate.isAlive()) {
+            return false;
+        }
+        if (covenOwner != null && covenOwner.equals(candidate.getUUID())) {
+            return false; // never the leader
+        }
+        if (candidate instanceof CovenWitchEntity other && covenOwner != null
+                && covenOwner.equals(other.getCovenOwner())) {
+            return false; // never a sister witch
+        }
+        return true;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float power) {
+        if (level().isClientSide()) {
+            return;
+        }
+        // Witch-style harmful splash potion, weaker than Baba Yaga's roster (source: a coven witch is no boss).
+        List<MobEffectInstance> effects = switch (random.nextInt(6)) {
+            case 0, 1 -> List.of(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1));
+            case 2, 3 -> List.of(new MobEffectInstance(MobEffects.POISON, 100, 0));
+            case 4 -> List.of(new MobEffectInstance(MobEffects.WEAKNESS, 160, 0));
+            default -> List.of(new MobEffectInstance(MobEffects.BLINDNESS, 120, 0));
+        };
+
+        ItemStack potionStack = new ItemStack(Items.SPLASH_POTION);
+        potionStack.set(DataComponents.POTION_CONTENTS,
+                new PotionContents(Optional.empty(), Optional.empty(), effects, Optional.empty()));
+
+        ThrownSplashPotion thrown = new ThrownSplashPotion(level(), this, potionStack);
+        thrown.setPos(getX(), getEyeY(), getZ());
+
+        double dx = target.getX() + target.getDeltaMovement().x - getX();
+        double dy = target.getEyeY() - 1.1 - getY();
+        double dz = target.getZ() + target.getDeltaMovement().z - getZ();
+        float flatDist = Mth.sqrt((float) (dx * dx + dz * dz));
+        thrown.shoot(dx, dy + flatDist * 0.2, dz, 0.75F, 8.0F);
+        playSound(SoundEvents.WITCH_THROW, 1.0F, 0.8F + random.nextFloat() * 0.4F);
+        level().addFreshEntity(thrown);
+    }
+
+    /** Throws a splash potion at the leader's foes every ~60 ticks while a target is in range. */
+    private final class CovenAttackGoal extends Goal {
+        private int cooldown;
+
+        CovenAttackGoal() {
+            setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return isRecruited() && isHostileToCoven(getTarget());
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return canUse();
+        }
+
+        @Override
+        public void start() {
+            cooldown = 20;
+        }
+
+        @Override
+        public void stop() {
+            setTarget(null);
+            getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = getTarget();
+            if (target == null) {
+                return;
+            }
+            getLookControl().setLookAt(target, 30, 30);
+            double dist = distanceTo(target);
+            if (dist > 8.0) {
+                getNavigation().moveTo(target, 0.7);
+            } else {
+                getNavigation().stop();
+            }
+            if (--cooldown <= 0 && hasLineOfSight(target) && dist < 12.0) {
+                cooldown = 60;
+                performRangedAttack(target, 1.0F);
+            }
+        }
+    }
+
+    /** Picks a hostile target: the leader's last-hurt foe, or whoever struck this witch (never the leader). */
+    private final class CovenDefendTargetGoal extends TargetGoal {
+        CovenDefendTargetGoal() {
+            super(CovenWitchEntity.this, false);
+        }
+
+        @Nullable
+        private LivingEntity findTarget() {
+            if (!isRecruited()) {
+                return null;
+            }
+            // Retaliate against our own attacker first.
+            LivingEntity attacker = getLastHurtByMob();
+            if (isHostileToCoven(attacker) && distanceToSqr(attacker) <= 256.0) {
+                return attacker;
+            }
+            // Otherwise defend the leader: attack whatever the leader is fighting or has been hurt by.
+            Player leader = covenLeader();
+            if (leader != null && distanceToSqr(leader) <= 256.0) {
+                LivingEntity leaderFoe = leader.getLastHurtMob();
+                if (isHostileToCoven(leaderFoe) && distanceToSqr(leaderFoe) <= 256.0) {
+                    return leaderFoe;
+                }
+                LivingEntity leaderAttacker = leader.getLastHurtByMob();
+                if (isHostileToCoven(leaderAttacker) && distanceToSqr(leaderAttacker) <= 256.0) {
+                    return leaderAttacker;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public boolean canUse() {
+            return findTarget() != null;
+        }
+
+        @Override
+        public void start() {
+            setTarget(findTarget());
+            super.start();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity current = getTarget();
+            return isRecruited() && isHostileToCoven(current) && distanceToSqr(current) <= 400.0;
+        }
     }
 
     @Override
