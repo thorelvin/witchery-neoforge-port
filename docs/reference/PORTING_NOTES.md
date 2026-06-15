@@ -118,6 +118,14 @@ covering the source `data:32767`.) Also added the focus swords to `RitualEvents.
 small-ritual preference so the sword is picked as the trigger over the Wood Ash offering — same
 offering-vs-trigger rule as the Creaking/Blight fixes.
 
+Follow-up (2026-06-16): Storm is now the first activation path to use the declarative
+`RitualRecipe` matcher at runtime instead of depending only on the representative trigger item chosen
+by `RitualEvents`. Small Ritual-circle activation pre-scans dropped offerings near the center, sorts
+them nearest-first, assigns distinct item entities against the source Storm recipes in registration
+order, and passes the exact matched sword/Wood Ash/Charged Stone entities into the existing staged
+sacrifice path. The old representative-item route remains as fallback, but valid dropped Storm sets no
+longer fail just because Wood Ash or another support item was closer to the center than the sword.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

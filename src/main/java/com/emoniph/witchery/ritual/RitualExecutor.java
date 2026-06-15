@@ -213,6 +213,11 @@ public class RitualExecutor {
 
             for (RitualCircleDetector.DetectionResult result : presentCircles) {
                 int circleVariant = RitualCircleDetector.detectVariant(level, floorCenter, result.size());
+                ActivationResult recipeActivation = tryFullRecipeRituals(
+                        result.size(), player, level, floorCenter, circleVariant);
+                if (recipeActivation != null && recipeActivation.matched()) {
+                    return recipeActivation;
+                }
                 ActivationResult activation = tryRitualDefinitions(
                         result.size(), player, level, floorCenter, ingredient, circleVariant);
                 if (activation != null && activation.matched()) {
@@ -619,6 +624,31 @@ public class RitualExecutor {
      * result if a definition matched (success or matched-but-failed), or {@code null} if no definition
      * applies and the caller should fall through to the remaining {@code if}-chain.
      */
+    private static ActivationResult tryFullRecipeRituals(RitualCircleDetector.CircleSize size,
+            Player player, Level level, BlockPos center, int circleVariant) {
+        if (size == RitualCircleDetector.CircleSize.SMALL && circleVariant == VARIANT_RITUAL) {
+            ActivationResult storm = tryStormRecipe(player, level, center);
+            if (storm != null) {
+                return storm;
+            }
+        }
+        return null;
+    }
+
+    private static ActivationResult tryStormRecipe(Player player, Level level, BlockPos center) {
+        if (!(level instanceof ServerLevel sl)) {
+            return null;
+        }
+        int covenSize = countNearbyCovenWitches(level, center);
+        for (StormRiteVariant variant : StormRiteVariant.values()) {
+            Optional<StormOfferings> offerings = findStormOfferingsByRecipe(level, center, variant, covenSize);
+            if (offerings.isPresent()) {
+                return matchedResult(startWeatherCallStorm(player, level, sl, center, variant, offerings.get(), covenSize));
+            }
+        }
+        return null;
+    }
+
     private static ActivationResult tryRitualDefinitions(RitualCircleDetector.CircleSize size,
             Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
@@ -4153,7 +4183,12 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable(supportKey), false);
             return false;
         }
-        if (offerings.get().tooFar()) {
+        return startWeatherCallStorm(player, level, sl, center, variant, offerings.get(), covenSize);
+    }
+
+    private static boolean startWeatherCallStorm(Player player, Level level, ServerLevel sl, BlockPos center,
+                                                 StormRiteVariant variant, StormOfferings offerings, int covenSize) {
+        if (offerings.tooFar()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
@@ -4169,18 +4204,18 @@ public class RitualExecutor {
         int maxRadius = variant == StormRiteVariant.BASE ? 3 : 7;
         int targetStage = variant == StormRiteVariant.BASE ? 8 : 18;
         if (!queueActiveRitual(sl, ActiveRitualType.WEATHER_CALL_STORM, RitualCircleDetector.CircleSize.SMALL,
-                center, offerings.get().effectCenter(), minRadius, maxRadius, targetStage,
+                center, offerings.effectCenter(), minRadius, maxRadius, targetStage,
                 RITUAL_PULSE_INTERVAL, covenSize, 0.0f, 0, List.of())) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        consumeOfferedItem(offerings.get().weatherFocus());
-        consumeOfferedItem(offerings.get().woodAsh());
-        if (offerings.get().chargedStone() != null) {
-            consumeOfferedItem(offerings.get().chargedStone());
+        consumeOfferedItem(offerings.weatherFocus());
+        consumeOfferedItem(offerings.woodAsh());
+        if (offerings.chargedStone() != null) {
+            consumeOfferedItem(offerings.chargedStone());
         }
-        if (offerings.get().boundWaystone() != null) {
-            consumeOfferedItem(offerings.get().boundWaystone());
+        if (offerings.boundWaystone() != null) {
+            consumeOfferedItem(offerings.boundWaystone());
         }
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);

@@ -18,6 +18,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -32,10 +36,25 @@ final class RitualOfferings {
 
     static final double CHARGE_STONE_ITEM_RADIUS = 6.0D;
     static final int GRASSPER_OFFERING_RADIUS = 5;
+    private static final double DEFAULT_DROPPED_OFFERING_RADIUS = 1.5D;
+
+    private static final RitualRecipe STORM_BASE_RECIPE = RitualRecipe.named("storm_base")
+            .require("Wooden Sword", stack -> stack.is(Items.WOODEN_SWORD))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .build();
+    private static final RitualRecipe STORM_LARGE_RECIPE = RitualRecipe.named("storm_large")
+            .require("Stone Sword", stack -> stack.is(Items.STONE_SWORD))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .build();
+    private static final RitualRecipe STORM_PORTABLE_RECIPE = RitualRecipe.named("storm_portable")
+            .require("Iron Sword", stack -> stack.is(Items.IRON_SWORD))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
-        double radius = 1.5;
+        double radius = DEFAULT_DROPPED_OFFERING_RADIUS;
         double radiusSq = radius * radius;
         AABB bounds = new AABB(centerPoint, centerPoint).inflate(radius);
         ItemEntity closest = null;
@@ -53,6 +72,36 @@ final class RitualOfferings {
             closestDistance = distance;
         }
         return Optional.ofNullable(closest);
+    }
+
+    static Optional<List<ItemEntity>> matchDroppedOfferings(Level level, BlockPos center, RitualRecipe recipe) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radiusSq = DEFAULT_DROPPED_OFFERING_RADIUS * DEFAULT_DROPPED_OFFERING_RADIUS;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(DEFAULT_DROPPED_OFFERING_RADIUS);
+        List<ItemEntity> candidates = new ArrayList<>();
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
+            ItemStack stack = itemEntity.getItem();
+            if (stack.isEmpty() || RitualExecutor.isPendingSacrifice(level, itemEntity)) {
+                continue;
+            }
+            double distance = itemEntity.position().distanceToSqr(centerPoint);
+            if (distance >= radiusSq) {
+                continue;
+            }
+            candidates.add(itemEntity);
+        }
+        candidates.sort(Comparator
+                .comparingDouble((ItemEntity item) -> item.position().distanceToSqr(centerPoint))
+                .thenComparingInt(ItemEntity::getId));
+        int[] assignment = recipe.assign(candidates.stream().map(ItemEntity::getItem).toList());
+        if (assignment == null) {
+            return Optional.empty();
+        }
+        List<ItemEntity> matched = new ArrayList<>(assignment.length);
+        for (int candidateIndex : assignment) {
+            matched.add(candidates.get(candidateIndex));
+        }
+        return Optional.of(List.copyOf(matched));
     }
 
     static Optional<RitualOffering> findNearbyRitualOffering(Level level, BlockPos center,
@@ -1041,6 +1090,35 @@ final class RitualOfferings {
         OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null),
                 relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
+    }
+
+    static Optional<StormOfferings> findStormOfferingsByRecipe(Level level, BlockPos center,
+                                                               StormRiteVariant variant, int covenSize) {
+        Optional<List<ItemEntity>> matched = matchDroppedOfferings(level, center, stormRecipe(variant));
+        if (matched.isEmpty()) {
+            return Optional.empty();
+        }
+        List<ItemEntity> items = matched.get();
+        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
+        return Optional.of(new StormOfferings(items.get(0), items.get(1),
+                variant == StormRiteVariant.PORTABLE ? items.get(2) : null,
+                relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
+    }
+
+    static Optional<StormRiteVariant> matchStormRecipeVariant(List<ItemStack> offeredStacks) {
+        for (StormRiteVariant variant : StormRiteVariant.values()) {
+            if (stormRecipe(variant).matches(offeredStacks)) {
+                return Optional.of(variant);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static RitualRecipe stormRecipe(StormRiteVariant variant) {
+        if (variant == StormRiteVariant.BASE) {
+            return STORM_BASE_RECIPE;
+        }
+        return variant == StormRiteVariant.LARGE ? STORM_LARGE_RECIPE : STORM_PORTABLE_RECIPE;
     }
 
     static Optional<ItemEntity> findStormWeatherFocus(Level level, BlockPos center, StormRiteVariant variant) {

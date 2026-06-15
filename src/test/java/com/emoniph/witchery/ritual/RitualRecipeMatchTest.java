@@ -1,5 +1,6 @@
 package com.emoniph.witchery.ritual;
 
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
@@ -8,7 +9,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -66,6 +69,28 @@ class RitualRecipeMatchTest {
         assertFalse(twoRedstone.matches(List.of(new ItemStack(Items.REDSTONE))),
                 "one stack cannot satisfy two requirements");
         assertTrue(twoRedstone.matches(List.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.REDSTONE))));
+    }
+
+    @Test
+    void stormRecipeVariantMatchesFullOfferingsRegardlessSupportOrder() {
+        ItemStack woodAsh = new ItemStack(WitcheryItems.WOOD_ASH.get());
+        assertEquals(Optional.of(StormRiteVariant.BASE), RitualOfferings.matchStormRecipeVariant(List.of(
+                woodAsh, new ItemStack(Items.WOODEN_SWORD))));
+        assertEquals(Optional.of(StormRiteVariant.LARGE), RitualOfferings.matchStormRecipeVariant(List.of(
+                woodAsh, new ItemStack(Items.STONE_SWORD))));
+        assertEquals(Optional.of(StormRiteVariant.PORTABLE), RitualOfferings.matchStormRecipeVariant(List.of(
+                woodAsh, new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()), new ItemStack(Items.IRON_SWORD))));
+        assertEquals(Optional.empty(), RitualOfferings.matchStormRecipeVariant(List.of(
+                woodAsh, new ItemStack(Items.IRON_SWORD))), "portable Storm needs the charged stone too");
+    }
+
+    @Test
+    void stormRecipeVariantUsesSourceRegistrationOrderWhenSeveralSetsArePresent() {
+        assertEquals(Optional.of(StormRiteVariant.BASE), RitualOfferings.matchStormRecipeVariant(List.of(
+                new ItemStack(Items.IRON_SWORD),
+                new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                new ItemStack(Items.WOODEN_SWORD),
+                new ItemStack(WitcheryItems.WOOD_ASH.get()))));
     }
 
     @Test
