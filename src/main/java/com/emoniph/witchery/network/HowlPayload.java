@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -50,26 +51,30 @@ public class HowlPayload implements CustomPacketPayload {
         // Howl sound heard up to 64 blocks away
         level.playSound(null, player.blockPosition(), SoundEvents.WOLF_SHAKE, SoundSource.PLAYERS, 2f, 0.8f);
 
-        // Frighten nearby non-werewolf living entities
-        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class,
-                player.getBoundingBox().inflate(16))) {
-            if (entity == player) continue;
-            if (entity instanceof ServerPlayer sp && WitcheryAttachments.get(sp).isWerewolf()) continue;
-            if (entity instanceof Wolf) continue;
-            entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2));
-            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
-        }
-
-        // Summon 2 tamed wolves near the player
-        for (int i = 0; i < 2; i++) {
-            Wolf wolf = EntityType.WOLF.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-            if (wolf != null) {
-                double dx = (level.getRandom().nextDouble() - 0.5) * 4;
-                double dz = (level.getRandom().nextDouble() - 0.5) * 4;
-                wolf.setPos(player.getX() + dx, player.getY(), player.getZ() + dz);
-                wolf.tame(player);
-                level.addFreshEntity(wolf);
+        int wolfLevel = data.getWerewolfLevel();
+        if (WerewolfShiftUtil.inWolfmanForm(data) && wolfLevel >= 7) {
+            // Source: a wolfman's howl paralyses nearby non-were/vampire creatures.
+            int seconds = 4 + level.getRandom().nextInt(Math.max(1, wolfLevel - 6));
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(16))) {
+                if (entity == player || entity instanceof Wolf) continue;
+                if (entity instanceof ServerPlayer sp && WitcheryAttachments.get(sp).isWerewolf()) continue;
+                entity.addEffect(new MobEffectInstance(WitcheryMobEffects.PARALYSED, seconds * 20, 3));
             }
+        } else if (WerewolfShiftUtil.inWolfForm(data) && wolfLevel >= 8) {
+            // Source: a wolf's howl calls 2 + rand(level-7) tamed wolves to the pack.
+            int count = 2 + level.getRandom().nextInt(Math.max(1, wolfLevel - 7));
+            summonWolves(level, player, count);
+        } else {
+            // Port baseline for lower levels: frighten nearby creatures + call two wolves.
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(16))) {
+                if (entity == player || entity instanceof Wolf) continue;
+                if (entity instanceof ServerPlayer sp && WitcheryAttachments.get(sp).isWerewolf()) continue;
+                entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2));
+                entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+            }
+            summonWolves(level, player, 2);
         }
 
         // Level 6→7 quest: howling in distinct chunks at night counts toward the climb.
@@ -89,5 +94,18 @@ public class HowlPayload implements CustomPacketPayload {
         }
 
         data.setHowlCooldown(WitcheryConfig.WEREWOLF_HOWL_COOLDOWN_SECONDS.get() * 20);
+    }
+
+    private static void summonWolves(ServerLevel level, ServerPlayer player, int count) {
+        for (int i = 0; i < count; i++) {
+            Wolf wolf = EntityType.WOLF.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            if (wolf != null) {
+                double dx = (level.getRandom().nextDouble() - 0.5) * 4;
+                double dz = (level.getRandom().nextDouble() - 0.5) * 4;
+                wolf.setPos(player.getX() + dx, player.getY(), player.getZ() + dz);
+                wolf.tame(player);
+                level.addFreshEntity(wolf);
+            }
+        }
     }
 }

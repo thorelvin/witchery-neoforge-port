@@ -13,8 +13,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import com.emoniph.witchery.entity.WereVillagerEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
@@ -32,6 +37,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -228,6 +234,62 @@ public class WerewolfEvents {
             sync(victimPlayer, vicData);
             victimPlayer.displayClientMessage(Component.translatable("witchery.werewolf.infection")
                     .withStyle(ChatFormatting.DARK_PURPLE), false);
+        }
+    }
+
+    /** L4+ wolf-shape: feeding on a fresh non-undead kill restores hunger (source processCreatureKilled). */
+    @SubscribeEvent
+    public static void onWolfFeed(LivingDeathEvent event) {
+        if (event.isCanceled()) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getWerewolfLevel() < 4 || !WerewolfShiftUtil.inWolfShape(data)) return;
+        if (event.getEntity().getType().is(EntityTypeTags.UNDEAD)) return;
+        player.getFoodData().eat(8, 0.8F);
+    }
+
+    /** L3+ wolf form: digging dirt occasionally turns up bones (source processDigging; 60s cooldown). */
+    @SubscribeEvent
+    public static void onWolfDig(BlockDropsEvent event) {
+        if (!(event.getBreaker() instanceof ServerPlayer player)) return;
+        if (!event.getState().is(Blocks.DIRT)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getWerewolfLevel() < 3 || !WerewolfShiftUtil.inWolfForm(data)) return;
+
+        ServerLevel level = event.getLevel();
+        long now = level.getGameTime();
+        if (data.getLastBoneFind() + 1200L > now) return;   // ~60s cooldown
+        if (level.random.nextInt(20) != 0) return;
+        data.setLastBoneFind(now);
+        sync(player, data);
+        int bones = level.random.nextInt(5) == 0 ? 2 : 1;
+        event.getDrops().add(new ItemEntity(level,
+                event.getPos().getX() + 0.5, event.getPos().getY() + 0.5, event.getPos().getZ() + 0.5,
+                new ItemStack(Items.BONE, bones)));
+    }
+
+    /** L9 wolfman: a strike rends a random piece of the victim's armour (source rendArmor). */
+    @SubscribeEvent
+    public static void onWolfmanRendArmor(LivingDamageEvent.Pre event) {
+        if (event.getNewDamage() <= 0.0F) return;
+        if (!(event.getSource().getEntity() instanceof ServerPlayer attacker)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(attacker);
+        if (data.getWerewolfLevel() < 9 || !WerewolfShiftUtil.inWolfmanForm(data)) return;
+
+        LivingEntity victim = event.getEntity();
+        if (!(victim.level() instanceof ServerLevel level)) return;
+        EquipmentSlot[] slots = {EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+        EquipmentSlot slot = slots[level.random.nextInt(slots.length)];
+        ItemStack armor = victim.getItemBySlot(slot);
+        if (armor.isEmpty()) return;
+
+        if (armor.isDamageableItem()) {
+            armor.hurtAndBreak((int) Math.ceil(armor.getMaxDamage() * 0.25F), victim, slot);
+        } else {
+            // Unbreakable armour is torn off and dropped.
+            ItemStack ripped = armor.copy();
+            victim.setItemSlot(slot, ItemStack.EMPTY);
+            victim.spawnAtLocation(level, ripped);
         }
     }
 
