@@ -116,6 +116,16 @@ Useful dev runs:
 .\gradlew.bat runData
 ```
 
+Windows launcher:
+
+```powershell
+.\RUN_MINECRAFT.bat
+.\RUN_MINECRAFT.bat --diagnose
+.\RUN_MINECRAFT.bat --stacktrace
+```
+
+`RUN_MINECRAFT.bat --diagnose` checks the local Java/Gradle/client setup without launching Minecraft and writes support details to `run/logs/launcher-latest.log`. If the client crashes after startup, also check `run/logs/latest.log`, `run/logs/debug.log`, and `run/crash-reports`.
+
 ## Debug / QA Helpers
 
 The mod includes a growing `/witchery` debug command suite (permission level 2). Useful current helpers include:
