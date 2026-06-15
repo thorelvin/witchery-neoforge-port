@@ -63,18 +63,19 @@ public class SeerStoneItem extends Item {
             return InteractionResult.PASS;
         }
 
-        if (sp.isSecondaryUseActive()) {
-            readPlayer(sp, sp);
-            return InteractionResult.CONSUME;
-        }
-
+        // Looking at another player → read their state.
         ServerPlayer target = findLookedAtPlayer(sp, TARGET_RANGE);
         if (target != null) {
             readPlayer(sp, target);
             return InteractionResult.CONSUME;
         }
 
-        summonNearbyCovenMember(sp);
+        // Sneak → call a coven witch closer; a plain use reads your own state.
+        if (sp.isSecondaryUseActive()) {
+            summonNearbyCovenMember(sp);
+        } else {
+            readPlayer(sp, sp);
+        }
         return InteractionResult.CONSUME;
     }
 
@@ -153,6 +154,16 @@ public class SeerStoneItem extends Item {
             reader.displayClientMessage(
                     Component.translatable("item.witchery.seer_stone.nocoven")
                             .withStyle(ChatFormatting.GRAY),
+                    false);
+        }
+
+        var offered = com.emoniph.witchery.entity.CovenWitchEntity.findOfferedQuest(target);
+        if (offered != null) {
+            reader.displayClientMessage(
+                    Component.translatable("item.witchery.seer_stone.quest",
+                            offered.witchName(),
+                            com.emoniph.witchery.entity.CovenWitchEntity.describeQuest(offered))
+                            .withStyle(ChatFormatting.YELLOW),
                     false);
         }
 

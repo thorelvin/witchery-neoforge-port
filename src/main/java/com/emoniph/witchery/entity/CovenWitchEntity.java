@@ -129,6 +129,33 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         return com.emoniph.witchery.world.CovenData.get(level).size(owner);
     }
 
+    /** A pending coven quest a nearby witch has offered a player (for status / Seer Stone readouts). */
+    public record OfferedQuest(String witchName, QuestKind kind, net.minecraft.world.item.Item item, int remaining) {}
+
+    /** Finds the quest a loaded witch within 64 blocks has offered {@code player}, or null. */
+    @Nullable
+    public static OfferedQuest findOfferedQuest(net.minecraft.world.entity.player.Player player) {
+        net.minecraft.world.phys.AABB bounds = player.getBoundingBox().inflate(64.0, 16.0, 64.0);
+        String id = player.getUUID().toString();
+        for (CovenWitchEntity w : player.level().getEntitiesOfClass(CovenWitchEntity.class, bounds)) {
+            if (w.questItem != null && w.questFor.equals(id)) {
+                String name = w.hasCustomName() ? w.getCustomName().getString() : "Witch";
+                return new OfferedQuest(name, QuestKind.fromOrdinal(w.questKind), w.questItem, w.questRemaining);
+            }
+        }
+        return null;
+    }
+
+    /** Player-facing one-line description of an offered quest's objective. */
+    public static net.minecraft.network.chat.Component describeQuest(OfferedQuest quest) {
+        return switch (quest.kind()) {
+            case FIGHT_SPIDER -> net.minecraft.network.chat.Component.translatable("witchery.witch.quest.short.fightspider");
+            case FIGHT_ZOMBIE -> net.minecraft.network.chat.Component.translatable("witchery.witch.quest.short.fightzombie");
+            case FETCH -> net.minecraft.network.chat.Component.translatable("witchery.witch.quest.short.fetch",
+                    quest.remaining(), quest.item().getDefaultInstance().getHoverName());
+        };
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);

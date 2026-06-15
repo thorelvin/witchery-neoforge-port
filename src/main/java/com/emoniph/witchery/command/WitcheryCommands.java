@@ -826,6 +826,15 @@ public class WitcheryCommands {
                         + " nameVisible=" + d.isFamiliarNameVisible() + ")";
         String familiar = "  familiar=" + famUUID + famExtra;
 
+        // ── coven ────────────────────────────────────────────────────────
+        int covenCount = p.level() instanceof ServerLevel csl
+                ? com.emoniph.witchery.entity.CovenWitchEntity.covenSize(csl, p.getUUID()) : 0;
+        var offered = com.emoniph.witchery.entity.CovenWitchEntity.findOfferedQuest(p);
+        String coven = "  coven=" + covenCount + "/" + com.emoniph.witchery.entity.CovenWitchEntity.MAX_COVEN
+                + "  questOffered=" + (offered == null ? "none"
+                        : "[" + offered.witchName() + "] "
+                          + com.emoniph.witchery.entity.CovenWitchEntity.describeQuest(offered).getString());
+
         // ── Spirit World ─────────────────────────────────────────────────
         String sw = "  inSpiritWorld=" + d.isInSpiritWorld()
                 + (d.isInSpiritWorld() ? "  (" + (d.isSpiritWorldDream() ? "dream" : "nightmare") + ")" : "")
@@ -847,7 +856,7 @@ public class WitcheryCommands {
                 + vampire + "\n" + werewolf + "\n"
                 + brews + "\n" + misc + "\n"
                 + infusion + "\n" + creature + "\n"
-                + familiar + "\n"
+                + familiar + "\n" + coven + "\n"
                 + sw + "\n" + returnP + "\n"
                 + death + "\n" + timing;
 
