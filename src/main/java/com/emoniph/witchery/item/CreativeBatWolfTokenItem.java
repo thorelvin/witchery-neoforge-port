@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public class CreativeBatWolfTokenItem extends Item {
     private static final int USE_DURATION = 20;
     private static final int MAX_VAMPIRE_LEVEL = 10;
-    private static final int MAX_WOLF_MASTERY = 10;
+    private static final int MAX_WOLF_LEVEL = 10;
 
     public CreativeBatWolfTokenItem(Properties properties) {
         super(properties.stacksTo(1).rarity(Rarity.EPIC));
@@ -86,7 +86,7 @@ public class CreativeBatWolfTokenItem extends Item {
 
     private static void cycleWolf(ServerPlayer player, WitcheryPlayerData data) {
         int next = data.isWerewolf() ? data.getWerewolfLevel() + 1 : 1;
-        if (next > MAX_WOLF_MASTERY) {
+        if (next > MAX_WOLF_LEVEL) {
             next = 0;
         }
 

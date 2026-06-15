@@ -204,7 +204,7 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("wolfmastery")
                         .then(Commands.argument("level", IntegerArgumentType.integer(0, 10))
-                                .executes(ctx -> setWolfMastery(ctx.getSource(),
+                                .executes(ctx -> setWolfLevel(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "level")))))
 
                 .then(Commands.literal("soaring")
@@ -662,7 +662,7 @@ public class WitcheryCommands {
         return 1;
     }
 
-    private static int setWolfMastery(CommandSourceStack src, int level)
+    private static int setWolfLevel(CommandSourceStack src, int level)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         WitcheryPlayerData d = WitcheryAttachments.get(p);
