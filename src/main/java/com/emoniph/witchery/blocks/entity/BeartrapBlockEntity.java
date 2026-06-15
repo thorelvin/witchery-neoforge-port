@@ -1,11 +1,17 @@
 package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.blocks.BeartrapBlock;
+import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -136,8 +142,47 @@ public class BeartrapBlockEntity extends BlockEntity {
         return (dayTime / 24000L) % 8L == 0L && timeOfDay > 13000L && timeOfDay < 23000L;
     }
 
+    /**
+     * Source {@code TileEntityBeartrap}: a baited Wolftrap under a full moon lures a fresh Wolfman to
+     * the area (16-32 blocks away). When that exact Wolfman later steps on this trap it is made
+     * infectious (see {@link #tryCaptureWolf}), spreading the curse to the next villager it bites.
+     */
     private void trySummonBaitWerewolf(ServerLevel level, BlockPos pos) {
-        // Source summons WitcheryEntities.WEREWOLF here; keep the trigger state live until that entity is ported.
+        for (int attempt = 0; attempt < 10; attempt++) {
+            double angle = level.random.nextDouble() * Math.PI * 2.0D;
+            double dist = 16.0D + level.random.nextInt(17);
+            int x = pos.getX() + (int) Math.round(Math.cos(angle) * dist);
+            int z = pos.getZ() + (int) Math.round(Math.sin(angle) * dist);
+            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            WolfmanEntity wolf = WitcheryEntities.WOLFMAN.get().create(level, EntitySpawnReason.EVENT);
+            if (wolf == null) {
+                return;
+            }
+            wolf.snapTo(x + 0.5D, y, z + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
+            if (!level.noCollision(wolf)) {
+                wolf.discard();
+                continue;
+            }
+            wolf.setPersistenceRequired();
+            wolf.finalizeSpawn(level, level.getCurrentDifficultyAt(wolf.blockPosition()),
+                    EntitySpawnReason.EVENT, null);
+            level.addFreshEntity(wolf);
+            level.sendParticles(ParticleTypes.SMOKE, x + 0.5D, y + 0.5D, z + 0.5D,
+                    24, 0.5D, 0.5D, 0.5D, 0.02D);
+            spawnedWolfUuid = wolf.getUUID();
+            setChanged();
+            return;
+        }
+    }
+
+    /** True when {@code living} is this trap's own lured Wolfman; it is made infectious on capture. */
+    public boolean tryCaptureWolf(LivingEntity living) {
+        if (spawnedWolfUuid != null && living instanceof WolfmanEntity wolf
+                && wolf.getUUID().equals(spawnedWolfUuid)) {
+            wolf.setInfectious();
+            return true;
+        }
+        return false;
     }
 
     private void setWolftrapStartTime(long startTime) {

@@ -129,9 +129,19 @@ public class BeartrapBlock extends BaseEntityBlock {
         if (level.isClientSide()
                 || state.getValue(CLOSED)
                 || !state.getValue(ARMED)
-                || !(entity instanceof LivingEntity living)
-                || !canTrap(living)) {
+                || !(entity instanceof LivingEntity living)) {
             return;
+        }
+        if (silvered) {
+            // A silvered Wolftrap springs for a werewolf player or for its own lured Wolfman (which it
+            // makes infectious — the source curse-spread cycle).
+            boolean captured = level.getBlockEntity(pos) instanceof BeartrapBlockEntity trap
+                    && trap.tryCaptureWolf(living);
+            boolean werewolfPlayer = living instanceof Player player
+                    && WitcheryAttachments.get(player).isWerewolf();
+            if (!captured && !werewolfPlayer) {
+                return;
+            }
         }
 
         if (!isCreativePlayer(living)) {
@@ -180,11 +190,6 @@ public class BeartrapBlock extends BaseEntityBlock {
 
     private static boolean isCreativePlayer(LivingEntity living) {
         return living instanceof Player player && player.isCreative();
-    }
-
-    private boolean canTrap(LivingEntity living) {
-        return !silvered
-                || living instanceof Player player && WitcheryAttachments.get(player).isWerewolf();
     }
 
     public boolean isSilvered() {
