@@ -392,6 +392,9 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("obsidian_barrier_portable", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, PROTECTION_BARRIER_PORTABLE_RECIPE,
                     RitualExecutor::startProtectionBarrierPortableFromRecipe),
+            FullRecipeRitualDefinition.of("volcano_charged", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_INFERNAL, VOLCANO_CHARGED_RECIPE,
+                    RitualExecutor::startChargedVolcanoFromRecipe),
             FullRecipeRitualDefinition.of("storm_base", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, STORM_BASE_RECIPE,
                     (player, level, center, items) -> startWeatherCallStormFromRecipe(
@@ -448,6 +451,9 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("bind_waystone_copy_portable", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_COPY_PORTABLE_RECIPE,
                     RitualExecutor::startBindWaystoneCopyPortableFromRecipe),
+            FullRecipeRitualDefinition.of("natures_power", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, NATURES_POWER_RECIPE,
+                    RitualExecutor::startNaturesPowerFromRecipe),
             FullRecipeRitualDefinition.of("curse_creature", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_INFERNAL, CURSE_CREATURE_RECIPE,
                     RitualExecutor::startCurseCreatureFromRecipe),
@@ -484,6 +490,30 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("rain_of_toads", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_INFERNAL, RAIN_OF_TOADS_RECIPE,
                     RitualExecutor::startRainOfToadsFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_oak", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_OAK_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_spruce", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_SPRUCE_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_birch", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_BIRCH_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_jungle", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_JUNGLE_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_rowan", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_ROWAN_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_alder", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_ALDER_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("forestation_hawthorn", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, FORESTATION_HAWTHORN_RECIPE,
+                    RitualExecutor::startForestationFromRecipe),
+            FullRecipeRitualDefinition.of("volcano_powered", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_INFERNAL, VOLCANO_POWERED_RECIPE,
+                    RitualExecutor::startPoweredVolcanoFromRecipe),
             FullRecipeRitualDefinition.of("curse_waking_nightmare", RitualCircleDetector.CircleSize.LARGE,
                     VARIANT_INFERNAL, CURSE_WAKING_NIGHTMARE_RECIPE,
                     RitualExecutor::startCurseWakingNightmareFromRecipe),
@@ -1389,15 +1419,32 @@ public class RitualExecutor {
     /** Rite of the Forest — seeds and grows a grove of the offered sapling type around the circle. */
     private static boolean riteOfTheForest(Player player, Level level, BlockPos center, ItemStack triggerSapling) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!(triggerSapling.getItem() instanceof BlockItem blockItem)
-                || !(blockItem.getBlock() instanceof SaplingBlock saplingBlock)) {
-            return false;
-        }
-
         Optional<ForestationOfferings> offerings = findForestationOfferings(level, center);
         if (offerings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.forest.support"), false);
+            return false;
+        }
+        return startForestation(player, level, sl, center, triggerSapling,
+                droppedOfferings(offerings.get().wickerBundle(),
+                        offerings.get().brewOfSprouting(),
+                        offerings.get().entTwig()));
+    }
+
+    private static boolean startForestationFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (matchedItems.isEmpty()) {
+            return false;
+        }
+        return startForestation(player, level, sl, center, matchedItems.get(0).getItem(),
+                droppedOfferings(matchedItems));
+    }
+
+    private static boolean startForestation(Player player, Level level, ServerLevel sl, BlockPos center,
+                                            ItemStack saplingStack, List<RitualOffering> offerings) {
+        if (!(saplingStack.getItem() instanceof BlockItem blockItem)
+                || !(blockItem.getBlock() instanceof SaplingBlock saplingBlock)) {
             return false;
         }
 
@@ -1409,34 +1456,32 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 4000,
-                "witchery.ritual.forest.no_power")
-                .offer(offerings.get().wickerBundle())
-                .offer(offerings.get().brewOfSprouting())
-                .offer(offerings.get().entTwig())
+        BlockPos effectCenter = relocation.effectCenter();
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 4000, "witchery.ritual.forest.no_power"),
+                offerings)
                 .offer(relocation.boundWaystone());
-        if (!transaction.commit(player)) {
+        if (!transaction.commitDeferred(player, () -> {
+            int radius = 20 + covenSize * 2;
+            int attempts = 60 + covenSize * 5;
+            int grown = 0;
+            for (int i = 0; i < attempts; i++) {
+                BlockPos ground = findForestationAnchor(sl, effectCenter, radius, 8);
+                if (ground == null) {
+                    continue;
+                }
+                if (seedForestationTree(sl, ground.above(), saplingState)) {
+                    grown++;
+                }
+            }
+
+            player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
+            success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
+            WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
+                    grown, saplingStack.getHoverName().getString(), effectCenter, player.getName().getString());
+        })) {
             return false;
         }
-
-        BlockPos effectCenter = relocation.effectCenter();
-        int radius = 20 + covenSize * 2;
-        int attempts = 60 + covenSize * 5;
-        int grown = 0;
-        for (int i = 0; i < attempts; i++) {
-            BlockPos ground = findForestationAnchor(sl, effectCenter, radius, 8);
-            if (ground == null) {
-                continue;
-            }
-            if (seedForestationTree(sl, ground.above(), saplingState)) {
-                grown++;
-            }
-        }
-
-        player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
-        success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
-                grown, triggerSapling.getHoverName().getString(), effectCenter, player.getName().getString());
         return true;
     }
 
@@ -4733,8 +4778,28 @@ public class RitualExecutor {
     }
 
     /** Rite of Earth's Wrath — raises a volcano if a lava pool lies below the circle. */
+    private static boolean startChargedVolcanoFromRecipe(Player player, Level level, BlockPos center,
+                                                         List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startVolcano(player, level, sl, center, RitualCircleDetector.CircleSize.SMALL,
+                droppedOfferings(matchedItems), 0);
+    }
+
+    private static boolean startPoweredVolcanoFromRecipe(Player player, Level level, BlockPos center,
+                                                         List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startVolcano(player, level, sl, center, RitualCircleDetector.CircleSize.SMALL,
+                droppedOfferings(matchedItems), 2000);
+    }
+
     private static boolean riteOfVolcano(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
+        return startVolcano(player, level, sl, center, RitualCircleDetector.CircleSize.LARGE, List.of(), 0);
+    }
+
+    private static boolean startVolcano(Player player, Level level, ServerLevel sl, BlockPos center,
+                                        RitualCircleDetector.CircleSize circleSize,
+                                        List<RitualOffering> offerings, int altarPowerCost) {
         int covenSize = countNearbyCovenWitches(level, center);
         OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         if (relocation.tooFar()) {
@@ -4752,17 +4817,23 @@ public class RitualExecutor {
         List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
                 ? List.of(relocation.boundWaystone().getItem().copyWithCount(1))
                 : List.of();
-        if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, RitualCircleDetector.CircleSize.LARGE, center,
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, altarPowerCost, "witchery.ritual.volcano.no_power"),
+                offerings)
+                .offer(relocation.boundWaystone());
+        if (!transaction.hasSufficientPower()) {
+            return transaction.reportNoPower(player);
+        }
+        if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, circleSize, center,
                 effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0, supplementalSacrifices)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        if (relocation.boundWaystone() != null) {
-            consumeOfferedItem(relocation.boundWaystone());
-        }
+        transaction.consumeAll();
 
-        success(player, level, center, "witchery.ritual.volcano.success",
-                SoundEvents.LAVA_POP, 0.8f, 4, 40);
+        SacrificeConsumer.runWhenDrained(sl, () ->
+                success(player, level, center, "witchery.ritual.volcano.success",
+                        SoundEvents.LAVA_POP, 0.8f, 4, 40));
         return true;
     }
 
@@ -4793,6 +4864,12 @@ public class RitualExecutor {
     }
 
     /** Rite of Nature's Power — gradually spreads fertile life around the circle. */
+    private static boolean startNaturesPowerFromRecipe(Player player, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startNaturesPower(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfNaturesPower(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<NaturesPowerOfferings> offerings = findNaturesPowerOfferings(level, center);
@@ -4801,6 +4878,18 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.natures_power.support"), false);
             return false;
         }
+        return startNaturesPower(player, level, sl, center,
+                droppedOfferings(offerings.get().rowanSapling(),
+                        offerings.get().alderSapling(),
+                        offerings.get().hawthornSapling(),
+                        offerings.get().oakSapling(),
+                        offerings.get().spruceSapling(),
+                        offerings.get().birchSapling(),
+                        offerings.get().chargedStone()));
+    }
+
+    private static boolean startNaturesPower(Player player, Level level, ServerLevel sl, BlockPos center,
+                                             List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
         if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.MEDIUM,
                 center, 14, 8, 150, 20, covenSize)) {
@@ -4808,15 +4897,14 @@ public class RitualExecutor {
             return false;
         }
 
-        consumeOfferedItem(offerings.get().rowanSapling());
-        consumeOfferedItem(offerings.get().alderSapling());
-        consumeOfferedItem(offerings.get().hawthornSapling());
-        consumeOfferedItem(offerings.get().oakSapling());
-        consumeOfferedItem(offerings.get().spruceSapling());
-        consumeOfferedItem(offerings.get().birchSapling());
-        consumeOfferedItem(offerings.get().chargedStone());
-        success(player, level, center, "witchery.ritual.natures_power.success",
-                SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40);
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 0, "witchery.ritual.natures_power.no_power"),
+                offerings);
+        if (!transaction.commitDeferred(player, () ->
+                success(player, level, center, "witchery.ritual.natures_power.success",
+                        SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40))) {
+            return false;
+        }
         return true;
     }
 

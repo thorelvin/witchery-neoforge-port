@@ -73,6 +73,12 @@ final class RitualOfferings {
             .require("Obsidian", RitualOfferings::isObsidianStack)
             .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
             .build();
+    static final RitualRecipe VOLCANO_CHARGED_RECIPE = RitualRecipe.named("volcano_charged")
+            .require("Stone", stack -> stack.is(Blocks.STONE.asItem()))
+            .require("Magma Cream", stack -> stack.is(Items.MAGMA_CREAM))
+            .require("Golden Sword", stack -> stack.is(Items.GOLDEN_SWORD))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
     static final RitualRecipe STORM_BASE_RECIPE = RitualRecipe.named("storm_base")
             .require("Wooden Sword", stack -> stack.is(Items.WOODEN_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
@@ -236,6 +242,16 @@ final class RitualOfferings {
             .require("Water Bucket", stack -> stack.is(Items.WATER_BUCKET))
             .require("Belladonna", stack -> stack.is(WitcheryItems.BELLADONNA.get()))
             .build();
+    static final RitualRecipe NATURES_POWER_RECIPE = RitualRecipe.named("natures_power")
+            .require("Brew of Sprouting", WitcheryItems::isBrewOfSprouting)
+            .require("Rowan Sapling", stack -> stack.is(WitcheryItems.ROWAN_SAPLING.get()))
+            .require("Alder Sapling", stack -> stack.is(WitcheryItems.ALDER_SAPLING.get()))
+            .require("Hawthorn Sapling", stack -> stack.is(WitcheryItems.HAWTHORN_SAPLING.get()))
+            .require("Oak Sapling", stack -> stack.is(Blocks.OAK_SAPLING.asItem()))
+            .require("Spruce Sapling", stack -> stack.is(Blocks.SPRUCE_SAPLING.asItem()))
+            .require("Birch Sapling", stack -> stack.is(Blocks.BIRCH_SAPLING.asItem()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
     static final RitualRecipe BIND_WAYSTONE_PORTABLE_RECIPE = RitualRecipe.named("bind_waystone_portable")
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
@@ -280,6 +296,25 @@ final class RitualOfferings {
             .require("Emerald", stack -> stack.is(Items.EMERALD))
             .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
             .build();
+    static final RitualRecipe FORESTATION_OAK_RECIPE = forestationRecipe("forestation_oak",
+            "Oak Sapling", stack -> stack.is(Blocks.OAK_SAPLING.asItem()));
+    static final RitualRecipe FORESTATION_SPRUCE_RECIPE = forestationRecipe("forestation_spruce",
+            "Spruce Sapling", stack -> stack.is(Blocks.SPRUCE_SAPLING.asItem()));
+    static final RitualRecipe FORESTATION_BIRCH_RECIPE = forestationRecipe("forestation_birch",
+            "Birch Sapling", stack -> stack.is(Blocks.BIRCH_SAPLING.asItem()));
+    static final RitualRecipe FORESTATION_JUNGLE_RECIPE = forestationRecipe("forestation_jungle",
+            "Jungle Sapling", stack -> stack.is(Blocks.JUNGLE_SAPLING.asItem()));
+    static final RitualRecipe FORESTATION_ROWAN_RECIPE = forestationRecipe("forestation_rowan",
+            "Rowan Sapling", stack -> stack.is(WitcheryItems.ROWAN_SAPLING.get()));
+    static final RitualRecipe FORESTATION_ALDER_RECIPE = forestationRecipe("forestation_alder",
+            "Alder Sapling", stack -> stack.is(WitcheryItems.ALDER_SAPLING.get()));
+    static final RitualRecipe FORESTATION_HAWTHORN_RECIPE = forestationRecipe("forestation_hawthorn",
+            "Hawthorn Sapling", stack -> stack.is(WitcheryItems.HAWTHORN_SAPLING.get()));
+    static final RitualRecipe VOLCANO_POWERED_RECIPE = RitualRecipe.named("volcano_powered")
+            .require("Cobblestone", stack -> stack.is(Blocks.COBBLESTONE.asItem()))
+            .require("Magma Cream", stack -> stack.is(Items.MAGMA_CREAM))
+            .require("Golden Sword", stack -> stack.is(Items.GOLDEN_SWORD))
+            .build();
     static final RitualRecipe CURE_WAKING_NIGHTMARE_RECIPE = RitualRecipe.named("cure_waking_nightmare")
             .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
             .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
@@ -301,6 +336,16 @@ final class RitualOfferings {
                     .require("Icy Needle", stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()))
                     .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
                     .build();
+
+    private static RitualRecipe forestationRecipe(String name, String saplingName,
+                                                  Predicate<ItemStack> saplingMatcher) {
+        return RitualRecipe.named(name)
+                .require(saplingName, saplingMatcher)
+                .require("Wicker Bundle", stack -> stack.is(WitcheryItems.WICKER_BUNDLE.get()))
+                .require("Brew of Sprouting", WitcheryItems::isBrewOfSprouting)
+                .require("Ent Twig", stack -> stack.is(WitcheryItems.ENT_TWIG.get()))
+                .build();
+    }
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
         Vec3 centerPoint = Vec3.atCenterOf(center);

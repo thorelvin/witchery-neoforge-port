@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -482,6 +483,110 @@ class RitualRecipeMatchTest {
                         new ItemStack(Items.WATER_BUCKET),
                         new ItemStack(WitcheryItems.BELLADONNA.get())), 1),
                 "Rain of Toads is Infernal, not Ritual");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesTerrainAndNatureRoutesRegardlessSupportOrder() {
+        assertEquals("volcano_charged", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GOLDEN_SWORD),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(Items.MAGMA_CREAM),
+                        new ItemStack(Items.STONE)), 3));
+        assertEquals("volcano_powered", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GOLDEN_SWORD),
+                        boundWaystone(),
+                        new ItemStack(Items.COBBLESTONE),
+                        new ItemStack(Items.MAGMA_CREAM)), 3),
+                "source powered Earth's Wrath allows an optional Bound Waystone relocation");
+        assertEquals("natures_power", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Blocks.BIRCH_SAPLING.asItem()),
+                        new ItemStack(WitcheryItems.ROWAN_SAPLING.get()),
+                        new ItemStack(Blocks.SPRUCE_SAPLING.asItem()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.BREW_OF_SPROUTING.get()),
+                        new ItemStack(WitcheryItems.HAWTHORN_SAPLING.get()),
+                        new ItemStack(Blocks.OAK_SAPLING.asItem()),
+                        new ItemStack(WitcheryItems.ALDER_SAPLING.get())), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesAllForestationSaplingVariants() {
+        assertEquals("forestation_oak", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(Blocks.OAK_SAPLING.asItem())), 1));
+        assertEquals("forestation_spruce", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(Blocks.SPRUCE_SAPLING.asItem())), 1));
+        assertEquals("forestation_birch", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(Blocks.BIRCH_SAPLING.asItem())), 1));
+        assertEquals("forestation_jungle", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(Blocks.JUNGLE_SAPLING.asItem())), 1));
+        assertEquals("forestation_rowan", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(WitcheryItems.ROWAN_SAPLING.get())), 1));
+        assertEquals("forestation_alder", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(WitcheryItems.ALDER_SAPLING.get())), 1));
+        assertEquals("forestation_hawthorn", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                forestationOfferings(new ItemStack(WitcheryItems.HAWTHORN_SAPLING.get())), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsForestationSourceOrderWhenMultipleSaplingsArePresent() {
+        List<ItemStack> offerings = forestationOfferings(new ItemStack(WitcheryItems.ROWAN_SAPLING.get()));
+        assertEquals("forestation_oak", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Blocks.OAK_SAPLING.asItem()),
+                        offerings.get(0),
+                        offerings.get(1),
+                        offerings.get(2),
+                        offerings.get(3)), 1),
+                "source registers vanilla oak Forestation before the Witchery tree variants");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteTerrainAndNatureSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.COBBLESTONE),
+                        new ItemStack(Items.MAGMA_CREAM)), 3),
+                "Earth's Wrath needs the Golden Sword too");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GOLDEN_SWORD),
+                        new ItemStack(Items.STONE),
+                        new ItemStack(Items.MAGMA_CREAM),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "Earth's Wrath is Infernal, not Ritual");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.BREW_OF_SPROUTING.get()),
+                        new ItemStack(WitcheryItems.ROWAN_SAPLING.get()),
+                        new ItemStack(WitcheryItems.ALDER_SAPLING.get()),
+                        new ItemStack(WitcheryItems.HAWTHORN_SAPLING.get()),
+                        new ItemStack(Blocks.OAK_SAPLING.asItem()),
+                        new ItemStack(Blocks.SPRUCE_SAPLING.asItem()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "Nature's Power needs Birch too");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Blocks.OAK_SAPLING.asItem()),
+                        new ItemStack(WitcheryItems.WICKER_BUNDLE.get()),
+                        new ItemStack(WitcheryItems.BREW_OF_SPROUTING.get())), 1),
+                "Forestation needs the Ent Twig too");
+    }
+
+    private static List<ItemStack> forestationOfferings(ItemStack sapling) {
+        return List.of(sapling,
+                new ItemStack(WitcheryItems.WICKER_BUNDLE.get()),
+                new ItemStack(WitcheryItems.BREW_OF_SPROUTING.get()),
+                new ItemStack(WitcheryItems.ENT_TWIG.get()));
     }
 
     @Test

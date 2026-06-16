@@ -978,6 +978,7 @@
   "witchery.ritual.bind_spectral.support": "Spectral Dust and a Boline must be offered for binding.",
   "witchery.ritual.bind_spectral.no_power": "A nearby altar lacks the power to bind the Spectral Stone.",
   "witchery.ritual.volcano.success": "The earth groans as a volcano rises.",
+  "witchery.ritual.volcano.no_power": "A nearby altar lacks the power to raise the volcano.",
   "witchery.ritual.blindness.success": "Darkness falls upon your enemies.",
   "witchery.ritual.blindness.support": "The rite needs a Charged Attuned Stone, Redstone Soup, Reek of Misfortune, Exhale of the Horned One, Brew of Ink, a poisonous potato, a spider eye, and a diamond.",
   "witchery.ritual.blight.success": "The circle drinks deep. Somewhere nearby, a Blight Heart wakes in the soil.",
