@@ -442,12 +442,45 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("bind_waystone_copy_portable", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_COPY_PORTABLE_RECIPE,
                     RitualExecutor::startBindWaystoneCopyPortableFromRecipe),
+            FullRecipeRitualDefinition.of("curse_creature", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, CURSE_CREATURE_RECIPE,
+                    RitualExecutor::startCurseCreatureFromRecipe),
+            FullRecipeRitualDefinition.of("cure_misfortune", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_MISFORTUNE_RECIPE,
+                    RitualExecutor::startCureMisfortuneFromRecipe),
+            FullRecipeRitualDefinition.of("cure_creature", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_CREATURE_RECIPE,
+                    RitualExecutor::startCureCreatureFromRecipe),
+            FullRecipeRitualDefinition.of("curse_insanity", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, CURSE_INSANITY_RECIPE,
+                    RitualExecutor::startCurseInsanityFromRecipe),
+            FullRecipeRitualDefinition.of("cure_insanity", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_INSANITY_RECIPE,
+                    RitualExecutor::startCureInsanityFromRecipe),
             FullRecipeRitualDefinition.of("crystal_ball", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_RITUAL, CRYSTAL_BALL_RECIPE,
                     RitualExecutor::startCrystalBallFromRecipe),
+            FullRecipeRitualDefinition.of("curse_sinking", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, CURSE_SINKING_RECIPE,
+                    RitualExecutor::startCurseSinkingFromRecipe),
+            FullRecipeRitualDefinition.of("cure_sinking", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_SINKING_RECIPE,
+                    RitualExecutor::startCureSinkingFromRecipe),
             FullRecipeRitualDefinition.of("infuse_seer_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SEER_STONE_RECIPE,
                     RitualExecutor::startSeerStoneFromRecipe),
+            FullRecipeRitualDefinition.of("curse_overheating", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, CURSE_OVERHEATING_RECIPE,
+                    RitualExecutor::startCurseOverheatingFromRecipe),
+            FullRecipeRitualDefinition.of("cure_overheating", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_OVERHEATING_RECIPE,
+                    RitualExecutor::startCureOverheatingFromRecipe),
+            FullRecipeRitualDefinition.of("curse_waking_nightmare", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, CURSE_WAKING_NIGHTMARE_RECIPE,
+                    RitualExecutor::startCurseWakingNightmareFromRecipe),
+            FullRecipeRitualDefinition.of("cure_waking_nightmare", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CURE_WAKING_NIGHTMARE_RECIPE,
+                    RitualExecutor::startCureWakingNightmareFromRecipe),
             FullRecipeRitualDefinition.of("spectral_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SPECTRAL_STONE_RECIPE,
                     RitualExecutor::startSpectralStoneFromRecipe),
@@ -5197,7 +5230,7 @@ public class RitualExecutor {
                 "witchery.curse.cursed",
                 true,
                 offerings.get().exhaleOfHornedOne(),
-                offerings.get().spiderEye(),
+                offerings.get().fermentedSpiderEye(),
                 offerings.get().gunpowder(),
                 offerings.get().brewGrotesque());
         if (!applied) {
@@ -5205,6 +5238,23 @@ public class RitualExecutor {
         }
         WitcheryMod.LOGGER.info("Curse Creature afflicted the filled-taglock target");
         return true;
+    }
+
+    private static boolean startCurseCreatureFromRecipe(Player player, Level level, BlockPos center,
+                                                        List<ItemEntity> matchedItems) {
+        if (!requireThunderstorm(player, level, center)) return false;
+        int potencyBonus = cursePotencyBonus(player, level, center);
+        return performMatchedCurse(player, level, center, matchedItems,
+                2000,
+                "witchery.ritual.curse_creature.no_power",
+                target -> {
+                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200 + (potencyBonus * 60), 1 + Math.min(2, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
+                },
+                "witchery.curse.cursed",
+                "witchery.curse.cursed",
+                true);
     }
 
     /** Curse of Corrupt Poppet — destroys bound voodoo-protection poppets on the taglock target. */
@@ -6581,6 +6631,21 @@ public class RitualExecutor {
                                                int altarPowerCost, String noPowerKey, CurseAction action,
                                                String successKey, String failKey, boolean checkHunterArmorProtection,
                                                ItemEntity... offerings) {
+        List<RitualOffering> stagedOfferings = new ArrayList<>(offerings.length + 1);
+        stagedOfferings.add(RitualOffering.dropped(offeredTaglock));
+        for (ItemEntity offering : offerings) {
+            if (offering != null) {
+                stagedOfferings.add(RitualOffering.dropped(offering));
+            }
+        }
+        return performOfferedCurse(caster, level, center, offeredTaglock, altarPowerCost, noPowerKey,
+                action, successKey, failKey, checkHunterArmorProtection, List.copyOf(stagedOfferings));
+    }
+
+    private static boolean performOfferedCurse(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey, boolean checkHunterArmorProtection,
+                                               List<RitualOffering> offerings) {
         if (!(caster instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.getItem());
@@ -6603,21 +6668,31 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, altarPowerCost, noPowerKey)
-                .offer(offeredTaglock);
-        for (ItemEntity offering : offerings) {
-            transaction.offer(offering);
-        }
-        if (!transaction.commit(caster)) {
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, altarPowerCost, noPowerKey),
+                offerings);
+        if (!transaction.commitDeferred(caster, () -> {
+            action.apply(target);
+            target.displayClientMessage(Component.translatable(successKey + ".target"), false);
+            success(caster, level, center, successKey + ".caster",
+                    SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+            WitchHunterEntity.blackMagicPerformed(sp);
+        })) {
             return false;
         }
-
-        action.apply(target);
-        target.displayClientMessage(Component.translatable(successKey + ".target"), false);
-        success(caster, level, center, successKey + ".caster",
-                SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
-        WitchHunterEntity.blackMagicPerformed(sp);
         return true;
+    }
+
+    private static boolean performMatchedCurse(Player caster, Level level, BlockPos center,
+                                               List<ItemEntity> matchedItems,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey,
+                                               boolean checkHunterArmorProtection) {
+        if (matchedItems.isEmpty()) {
+            return false;
+        }
+        return performOfferedCurse(caster, level, center, matchedItems.get(0), altarPowerCost, noPowerKey,
+                action, successKey, failKey, checkHunterArmorProtection, droppedOfferings(matchedItems));
     }
 
     @FunctionalInterface
@@ -6645,6 +6720,20 @@ public class RitualExecutor {
     private static boolean performOfferedCure(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
                                               CurePrecheck precheck, CureEffect effect, String targetKey,
                                               ItemEntity... offerings) {
+        List<RitualOffering> stagedOfferings = new ArrayList<>(offerings.length + 1);
+        stagedOfferings.add(RitualOffering.dropped(offeredTaglock));
+        for (ItemEntity offering : offerings) {
+            if (offering != null) {
+                stagedOfferings.add(RitualOffering.dropped(offering));
+            }
+        }
+        return performOfferedCure(caster, level, center, offeredTaglock, precheck, effect, targetKey,
+                List.copyOf(stagedOfferings));
+    }
+
+    private static boolean performOfferedCure(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                              CurePrecheck precheck, CureEffect effect, String targetKey,
+                                              List<RitualOffering> offerings) {
         if (!(caster instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<ServerPlayer> target = resolveOfferedTaglockTarget(
@@ -6657,20 +6746,28 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.cure.no_power")
-                .offer(offeredTaglock);
-        for (ItemEntity offering : offerings) {
-            transaction.offer(offering);
-        }
-        if (!transaction.commit(caster)) {
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.cure.no_power"),
+                offerings);
+        if (!transaction.commitDeferred(caster, () -> {
+            effect.apply(target.get());
+            target.get().displayClientMessage(Component.translatable(targetKey), false);
+            success(caster, level, center, "witchery.ritual.cure.success",
+                    SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.8f, 3, 48);
+        })) {
             return false;
         }
-
-        effect.apply(target.get());
-        target.get().displayClientMessage(Component.translatable(targetKey), false);
-        success(caster, level, center, "witchery.ritual.cure.success",
-                SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.8f, 3, 48);
         return true;
+    }
+
+    private static boolean performMatchedCure(Player caster, Level level, BlockPos center,
+                                              List<ItemEntity> matchedItems,
+                                              CurePrecheck precheck, CureEffect effect, String targetKey) {
+        if (matchedItems.isEmpty()) {
+            return false;
+        }
+        return performOfferedCure(caster, level, center, matchedItems.get(0), precheck, effect, targetKey,
+                droppedOfferings(matchedItems));
     }
 
     private static boolean triggerVoodooProtection(ServerPlayer player) {
@@ -6853,6 +6950,80 @@ public class RitualExecutor {
         return false;
     }
 
+    private static boolean startCureMisfortuneFromRecipe(Player caster, Level level, BlockPos center,
+                                                         List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> target.hasEffect(MobEffects.UNLUCK),
+                target -> target.removeEffect(MobEffects.UNLUCK),
+                "curse.witchery.misfortune.goddess_removal");
+    }
+
+    private static boolean startCureCreatureFromRecipe(Player caster, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> target.hasEffect(MobEffects.WITHER)
+                        || target.hasEffect(MobEffects.SLOWNESS)
+                        || target.hasEffect(MobEffects.WEAKNESS),
+                target -> {
+                    target.removeEffect(MobEffects.WITHER);
+                    target.removeEffect(MobEffects.SLOWNESS);
+                    target.removeEffect(MobEffects.WEAKNESS);
+                },
+                "curse.witchery.cursed.goddess_removal");
+    }
+
+    private static boolean startCureWakingNightmareFromRecipe(Player caster, Level level, BlockPos center,
+                                                              List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> {
+                    WitcheryPlayerData data = WitcheryAttachments.get(target);
+                    return data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+                },
+                target -> {
+                    WitcheryPlayerData data = WitcheryAttachments.get(target);
+                    data.setSpiritWorldIsDream(true);
+                    data.setDemonicNightmare(false);
+                    PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
+                },
+                "curse.witchery.waking_nightmare.goddess_removal");
+    }
+
+    private static boolean startCureOverheatingFromRecipe(Player caster, Level level, BlockPos center,
+                                                          List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> target.hasEffect(MobEffects.WEAKNESS) || target.isOnFire(),
+                target -> {
+                    target.removeEffect(MobEffects.WEAKNESS);
+                    target.clearFire();
+                },
+                "curse.witchery.overheating.goddess_removal");
+    }
+
+    private static boolean startCureSinkingFromRecipe(Player caster, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> target.hasEffect(MobEffects.SLOWNESS)
+                        || target.hasEffect(MobEffects.MINING_FATIGUE)
+                        || target.hasEffect(MobEffects.LEVITATION),
+                target -> {
+                    target.removeEffect(MobEffects.SLOWNESS);
+                    target.removeEffect(MobEffects.MINING_FATIGUE);
+                    target.removeEffect(MobEffects.LEVITATION);
+                },
+                "curse.witchery.sinking.goddess_removal");
+    }
+
+    private static boolean startCureInsanityFromRecipe(Player caster, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        return performMatchedCure(caster, level, center, matchedItems,
+                target -> target.hasEffect(MobEffects.NAUSEA) || target.hasEffect(MobEffects.BLINDNESS),
+                target -> {
+                    target.removeEffect(MobEffects.NAUSEA);
+                    target.removeEffect(MobEffects.BLINDNESS);
+                },
+                "curse.witchery.insanity.goddess_removal");
+    }
+
     /** Curse of Overheating — sets target on fire and applies fire vulnerability. */
     private static boolean riteOfCurseOverheating(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
@@ -6878,6 +7049,22 @@ public class RitualExecutor {
                 offerings.get().demonicBlood(),
                 offerings.get().blazeRod(),
                 offerings.get().brewGrotesque());
+    }
+
+    private static boolean startCurseOverheatingFromRecipe(Player caster, Level level, BlockPos center,
+                                                           List<ItemEntity> matchedItems) {
+        if (!requireThunderstorm(caster, level, center)) return false;
+        int potencyBonus = cursePotencyBonus(caster, level, center);
+        return performMatchedCurse(caster, level, center, matchedItems,
+                2000,
+                "witchery.ritual.curse_overheating.no_power",
+                target -> {
+                    target.igniteForTicks(200 + (potencyBonus * 80));
+                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200 + (potencyBonus * 200), Math.min(2, potencyBonus)));
+                },
+                "witchery.curse.overheating",
+                "witchery.curse.overheating",
+                false);
     }
 
     /** Curse of Sinking — extreme slowness and mining fatigue. */
@@ -6908,6 +7095,23 @@ public class RitualExecutor {
                 offerings.get().brewGrotesque());
     }
 
+    private static boolean startCurseSinkingFromRecipe(Player caster, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        if (!requireThunderstorm(caster, level, center)) return false;
+        int potencyBonus = cursePotencyBonus(caster, level, center);
+        return performMatchedCurse(caster, level, center, matchedItems,
+                2000,
+                "witchery.ritual.curse_sinking.no_power",
+                target -> {
+                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 2400 + (potencyBonus * 300), 3 + Math.min(1, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2400 + (potencyBonus * 300), 2 + Math.min(1, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20 + (potencyBonus * 10), 0));
+                },
+                "witchery.curse.sinking",
+                "witchery.curse.sinking",
+                false);
+    }
+
     /** Curse of Insanity — nausea + confusion. */
     private static boolean riteOfCurseInsanity(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
@@ -6933,6 +7137,22 @@ public class RitualExecutor {
                 offerings.get().poisonousPotato(),
                 offerings.get().sugar(),
                 offerings.get().brewGrotesque());
+    }
+
+    private static boolean startCurseInsanityFromRecipe(Player caster, Level level, BlockPos center,
+                                                        List<ItemEntity> matchedItems) {
+        if (!requireThunderstorm(caster, level, center)) return false;
+        int potencyBonus = cursePotencyBonus(caster, level, center);
+        return performMatchedCurse(caster, level, center, matchedItems,
+                2000,
+                "witchery.ritual.curse_insanity.no_power",
+                target -> {
+                    target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 3600 + (potencyBonus * 400), 1 + Math.min(1, potencyBonus)));
+                    target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100 + (potencyBonus * 40), 0));
+                },
+                "witchery.curse.insanity",
+                "witchery.curse.insanity",
+                false);
     }
 
     /** Curse of Hell on Earth — summons lightning + hostile mobs around target (large circle). */
@@ -7017,6 +7237,26 @@ public class RitualExecutor {
                 offerings.get().tormentedTwine(),
                 offerings.get().emerald(),
                 offerings.get().brewGrotesque());
+    }
+
+    private static boolean startCurseWakingNightmareFromRecipe(Player caster, Level level, BlockPos center,
+                                                               List<ItemEntity> matchedItems) {
+        if (!requireThunderstorm(caster, level, center)) return false;
+        return performMatchedCurse(caster, level, center, matchedItems,
+                10000,
+                "witchery.ritual.curse_waking_nightmare.no_power",
+                target -> {
+                    WitcheryPlayerData data = WitcheryAttachments.get(target);
+                    if (data.isInSpiritWorld()) {
+                        data.setSpiritWorldIsDream(false);
+                        PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
+                    }
+                    target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
+                },
+                "witchery.curse.waking_nightmare",
+                "witchery.curse.waking_nightmare",
+                true);
     }
 
     private static void spawnRingParticles(ServerLevel level, BlockPos center, int radius, int count) {

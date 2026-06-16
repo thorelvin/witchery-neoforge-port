@@ -50,7 +50,7 @@ record BindWaystoneCopyPortableOfferings(ItemEntity blankWaystone, ItemEntity en
                                          ItemEntity quicklime, ItemEntity chargedStone) {}
 
 record CurseCreatureOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne,
-                              ItemEntity spiderEye, ItemEntity gunpowder,
+                              ItemEntity fermentedSpiderEye, ItemEntity gunpowder,
                               ItemEntity brewGrotesque) {}
 
 record CurseSinkingOfferings(ItemEntity taglockKit, ItemEntity exhaleOfHornedOne, ItemEntity inkSac,

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,6 +51,12 @@ class RitualRecipeMatchTest {
     private static ItemStack boundWaystone() {
         ItemStack stack = new ItemStack(WitcheryItems.WAYSTONE.get());
         WaystoneItem.bindTo(stack, BlockPos.ZERO, Level.OVERWORLD);
+        return stack;
+    }
+
+    private static ItemStack filledTaglock() {
+        ItemStack stack = new ItemStack(WitcheryItems.TAGLOCK_KIT.get());
+        TaglockKitItem.bind(stack, UUID.fromString("12345678-1234-1234-1234-123456789abc"), "Victim");
         return stack;
     }
 
@@ -393,6 +401,141 @@ class RitualRecipeMatchTest {
                         new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()),
                         new ItemStack(Items.ENDER_PEARL)), 3),
                 "Summon Imp needs the Attuned Stone");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesTaglockCurseRoutesRegardlessSupportOrder() {
+        assertEquals("curse_creature", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get())), 3));
+        assertEquals("curse_sinking", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Items.NETHER_WART),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.INK_SAC),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get()),
+                        filledTaglock()), 3));
+        assertEquals("curse_overheating", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()),
+                        new ItemStack(Items.BLAZE_ROD),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get())), 3));
+        assertEquals("curse_waking_nightmare", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(WitcheryItems.TORMENTED_TWINE.get()),
+                        new ItemStack(Items.EMERALD),
+                        new ItemStack(WitcheryItems.MELLIFLUOUS_HUNGER.get()),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get()),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get())), 3));
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesTaglockCureRoutesRegardlessSupportOrder() {
+        assertEquals("cure_misfortune", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BREAD),
+                        new ItemStack(WitcheryItems.BREW_OF_LOVE.get()),
+                        filledTaglock(),
+                        new ItemStack(Items.GOLD_NUGGET),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get())), 1));
+        assertEquals("cure_creature", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(Items.SPIDER_EYE),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.BREW_OF_LOVE.get())), 1));
+        assertEquals("cure_insanity", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.BREW_OF_LOVE.get()),
+                        new ItemStack(Items.SUGAR),
+                        new ItemStack(Items.POTATO),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get())), 1));
+        assertEquals("cure_sinking", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BONE_MEAL),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_DEPTHS.get()),
+                        new ItemStack(Items.NETHER_WART),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get())), 1));
+        assertEquals("cure_overheating", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BLAZE_ROD),
+                        new ItemStack(WitcheryItems.ICY_NEEDLE.get()),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_DEPTHS.get()),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()),
+                        filledTaglock()), 1));
+        assertEquals("cure_waking_nightmare", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.TORMENTED_TWINE.get()),
+                        new ItemStack(Items.GOLDEN_CARROT),
+                        new ItemStack(WitcheryItems.BREW_OF_LOVE.get()),
+                        filledTaglock(),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get())), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsTaglockCureOrderAndSourceIngredientCorrections() {
+        assertEquals("cure_misfortune", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(filledTaglock(),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()),
+                        new ItemStack(Items.GOLD_NUGGET),
+                        new ItemStack(Items.BREAD),
+                        new ItemStack(WitcheryItems.BREW_OF_LOVE.get()),
+                        new ItemStack(Items.SPIDER_EYE),
+                        new ItemStack(Items.GUNPOWDER)), 1),
+                "current Breath cure selector checks Misfortune before generic Creature cure");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(filledTaglock(),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.SPIDER_EYE),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get())), 3),
+                "source Curse Creature uses Fermented Spider Eye, not Spider Eye");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteTaglockSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get())), 3),
+                "taglock curses require a filled Taglock Kit");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.TAGLOCK_KIT.get()),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get())), 3),
+                "an empty Taglock Kit does not satisfy source filled-taglock sacrifices");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(filledTaglock(),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.BREW_OF_THE_GROTESQUE.get())), 1),
+                "curse routes are Infernal, not Ritual");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(filledTaglock(),
+                        new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()),
+                        new ItemStack(Items.SPIDER_EYE),
+                        new ItemStack(WitcheryItems.BREW_OF_LOVE.get())), 1),
+                "cure creature needs Gunpowder too");
     }
 
     @Test

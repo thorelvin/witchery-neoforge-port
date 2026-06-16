@@ -146,6 +146,69 @@ final class RitualOfferings {
             .require("Arthana", stack -> stack.is(WitcheryItems.ARTHANA.get()))
             .require("Fermented Spider Eye", stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
             .build();
+    static final RitualRecipe CURSE_CREATURE_RECIPE = RitualRecipe.named("curse_creature")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Fermented Spider Eye", stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
+            .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_MISFORTUNE_RECIPE = RitualRecipe.named("cure_misfortune")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Gold Nugget", stack -> stack.is(Items.GOLD_NUGGET))
+            .require("Bread", stack -> stack.is(Items.BREAD))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
+            .build();
+    static final RitualRecipe CURE_CREATURE_RECIPE = RitualRecipe.named("cure_creature")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Spider Eye", stack -> stack.is(Items.SPIDER_EYE))
+            .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
+            .build();
+    static final RitualRecipe CURSE_INSANITY_RECIPE = RitualRecipe.named("curse_insanity")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Poisonous Potato", stack -> stack.is(Items.POISONOUS_POTATO))
+            .require("Sugar", stack -> stack.is(Items.SUGAR))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_INSANITY_RECIPE = RitualRecipe.named("cure_insanity")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Potato", stack -> stack.is(Items.POTATO))
+            .require("Sugar", stack -> stack.is(Items.SUGAR))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
+            .build();
+    static final RitualRecipe CURSE_SINKING_RECIPE = RitualRecipe.named("curse_sinking")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Ink Sac", stack -> stack.is(Items.INK_SAC))
+            .require("Nether Wart", stack -> stack.is(Items.NETHER_WART))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_SINKING_RECIPE = RitualRecipe.named("cure_sinking")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Bone Meal", stack -> stack.is(Items.BONE_MEAL))
+            .require("Nether Wart", stack -> stack.is(Items.NETHER_WART))
+            .require("Brew of the Depths", WitcheryItems::isBrewOfTheDepths)
+            .build();
+    static final RitualRecipe CURSE_OVERHEATING_RECIPE = RitualRecipe.named("curse_overheating")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Infernal Blood", RitualOfferings::isInfernalBloodStack)
+            .require("Blaze Rod", stack -> stack.is(Items.BLAZE_ROD))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_OVERHEATING_RECIPE = RitualRecipe.named("cure_overheating")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Icy Needle", stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()))
+            .require("Blaze Rod", stack -> stack.is(Items.BLAZE_ROD))
+            .require("Brew of the Depths", WitcheryItems::isBrewOfTheDepths)
+            .build();
     static final RitualRecipe BIND_WAYSTONE_PORTABLE_RECIPE = RitualRecipe.named("bind_waystone_portable")
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
@@ -181,6 +244,21 @@ final class RitualOfferings {
             .require("Infernal Blood", RitualOfferings::isInfernalBloodStack)
             .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
             .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .build();
+    static final RitualRecipe CURSE_WAKING_NIGHTMARE_RECIPE = RitualRecipe.named("curse_waking_nightmare")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Mellifluous Hunger", stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()))
+            .require("Tormented Twine", stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()))
+            .require("Emerald", stack -> stack.is(Items.EMERALD))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_WAKING_NIGHTMARE_RECIPE = RitualRecipe.named("cure_waking_nightmare")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Golden Carrot", stack -> stack.is(Items.GOLDEN_CARROT))
+            .require("Tormented Twine", stack -> stack.is(WitcheryItems.TORMENTED_TWINE.get()))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
             .build();
     static final RitualRecipe BIND_BLOODED_WAYSTONE_RECIPE = RitualRecipe.named("bind_blooded_waystone")
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
@@ -368,8 +446,7 @@ final class RitualOfferings {
     }
 
     static Optional<ItemEntity> findNearbyFilledTaglockOffering(Level level, BlockPos center) {
-        return findNearbyOffering(level, center,
-                stack -> TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isFilled(stack));
+        return findNearbyOffering(level, center, RitualOfferings::isFilledTaglockStack);
     }
 
     static Optional<ItemEntity> findNearbyRedstoneOffering(Level level, BlockPos center) {
@@ -390,6 +467,10 @@ final class RitualOfferings {
 
     static boolean isInfernalBloodStack(ItemStack stack) {
         return stack.is(WitcheryItems.INFERNAL_BLOOD.get()) || stack.is(WitcheryItems.DEMONIC_BLOOD.get());
+    }
+
+    static boolean isFilledTaglockStack(ItemStack stack) {
+        return TaglockKitItem.isTaglockKit(stack) && TaglockKitItem.isFilled(stack);
     }
 
     static Optional<BanishDemonOfferings> findBanishDemonOfferings(Level level, BlockPos center) {
@@ -472,17 +553,17 @@ final class RitualOfferings {
     static Optional<CurseCreatureOfferings> findCurseCreatureOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        Optional<ItemEntity> spiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.SPIDER_EYE));
+        Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
         Optional<ItemEntity> gunpowder = findNearbyOffering(level, center, stack -> stack.is(Items.GUNPOWDER));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, WitcheryItems::isBrewOfTheGrotesque);
-        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || spiderEye.isEmpty()
+        if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || fermentedSpiderEye.isEmpty()
                 || gunpowder.isEmpty() || brewGrotesque.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new CurseCreatureOfferings(
                 taglockKit.get(),
                 exhaleOfHornedOne.get(),
-                spiderEye.get(),
+                fermentedSpiderEye.get(),
                 gunpowder.get(),
                 brewGrotesque.get()));
     }
@@ -564,7 +645,7 @@ final class RitualOfferings {
     static Optional<CurseOverheatingOfferings> findCurseOverheatingOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> taglockKit = findNearbyFilledTaglockOffering(level, center);
         Optional<ItemEntity> exhaleOfHornedOne = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()));
-        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, RitualOfferings::isInfernalBloodStack);
         Optional<ItemEntity> blazeRod = findNearbyOffering(level, center, stack -> stack.is(Items.BLAZE_ROD));
         Optional<ItemEntity> brewGrotesque = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.BREW_OF_THE_GROTESQUE.get()));
         if (taglockKit.isEmpty() || exhaleOfHornedOne.isEmpty() || demonicBlood.isEmpty()

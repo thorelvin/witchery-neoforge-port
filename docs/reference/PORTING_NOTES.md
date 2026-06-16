@@ -168,6 +168,17 @@ item-only recipe when no villager is present and the expensive dropped set is co
 also carry the source medium Infernal companion-ring requirement. Note the port's historical Infernal
 Blood/Demonic Blood alias is retained for Summon Imp matching.
 
+Follow-up (2026-06-16, slice 6): the core filled-taglock curse/cure routes are in the full-offering
+table. Converted Curse Creature, Curse Insanity, Curse Sinking, Curse Overheating, Curse of Waking
+Nightmare, and the Breath-of-the-Goddess cure selectors for Misfortune, Creature, Insanity, Sinking,
+Overheating, and Waking Nightmare. The full-recipe path stages the exact matched dropped Taglock Kit
+and support offerings and returns `SUCCESS_NO_CONSUME`; the representative filled-taglock fallback
+remains for existing paths. The shared curse/cure transaction helpers now use `commitDeferred`, so
+the curse/cure effect and success feedback fire after the staged sacrifices have all popped. Source
+correction captured here: Curse Creature uses Fermented Spider Eye (`Items.field_151071_bq`), while
+Cure Creature uses Spider Eye (`Items.field_151070_bp`). Curse Overheating accepts the same
+Infernal/Demonic Blood alias used elsewhere in the port.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source
