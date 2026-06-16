@@ -608,12 +608,12 @@
           "text": "[#](53341a)**Quartz** - Raiseland (level 4, 2000 power).[#]()"
         },
         {
-          "item": "witchery:golden_heart",
-          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
+          "item": "witchery:ent_twig",
+          "text": "[#](53341a)**Ent Twig** - Sprouting (level 2, 350 power).[#]()"
         },
         {
-          "item": "witchery:reek_of_misfortune",
-          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+          "item": "minecraft:wheat_seeds",
+          "text": "[#](53341a)**Wheat Seeds** - Planting (level 1).[#]()"
         }
       ],
       "text": "",
@@ -627,9 +627,40 @@
       },
       "rows": [
         {
+          "item": "minecraft:ender_pearl",
+          "text": "[#](53341a)**Ender Pearl** - Transpose (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:bone",
+          "text": "[#](53341a)**Bone** - Raising (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "minecraft:creeper_head",
+          "text": "[#](53341a)**Creeper Head** - Spreaddebuffs (level 8, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:golden_heart",
+          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:reek_of_misfortune",
+          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+        },
+        {
           "item": "witchery:purified_milk",
           "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
-        },
+        }
+      ],
+      "text": "",
+      "title": "Action Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
         {
           "item": "minecraft:pumpkin",
           "text": "[#](53341a)**Pumpkin** - Undeadbane (level 2, 200 power).[#]()"
@@ -649,6 +680,10 @@
         {
           "item": "witchery:silver_deposits",
           "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:skeleton_skull",
+          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
         }
       ],
       "text": "",
@@ -661,10 +696,6 @@
         "type": "modonomicon:none"
       },
       "rows": [
-        {
-          "item": "minecraft:skeleton_skull",
-          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
-        },
         {
           "item": "witchery:creeper_heart",
           "text": "[#](53341a)**Creeper Heart** - Potion Longevity (level 6, 5000 power).[#]()"

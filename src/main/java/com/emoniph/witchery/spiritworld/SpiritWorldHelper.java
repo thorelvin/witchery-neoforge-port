@@ -44,17 +44,23 @@ public final class SpiritWorldHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger("witchery");
 
     /**
-     * Items that always stay with the player when entering the Spirit World.
-     * They are NOT saved to the Overworld inventory — the player keeps them.
+     * Items that always stay with the player when entering the Spirit World (not stripped).
+     * Source ({@code WorldProviderDreamWorld.sendPlayerToSpiritWorld}) carries the Icy Needle
+     * and Mutandis in; the port also keeps Mutandis Extremis and — as a deliberate addition —
+     * the Witches' Primer, so the player can read the guide while dreaming.
      */
     private static boolean isAlwaysCarried(ItemStack stack) {
         return stack.is(WitcheryItems.ICY_NEEDLE.get())
                 || stack.is(WitcheryItems.MUTANDIS.get())
-                || stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get());
+                || stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get())
+                || stack.is(WitcheryItems.WITCHES_PRIMER.get());
     }
 
     /**
-     * Items accumulated in Spirit World that transfer back to the Overworld on exit.
+     * Items that transfer back to the Overworld on exit. Source
+     * ({@code WorldProviderDreamWorld.returnPlayerToOverworld}) returns Wispy Cotton, Disturbed
+     * Cotton, Mellifluous Hunger, Icy Needle, Brew of Flowing Spirit and Subdued Spirit; the port
+     * also returns the Subdued Village Spirit and the brought-in Witches' Primer.
      */
     private static boolean isTransferable(ItemStack stack) {
         Item it = stack.getItem();
@@ -64,7 +70,18 @@ public final class SpiritWorldHelper {
                 || it == WitcheryItems.MELLIFLUOUS_HUNGER.get()
                 || WitcheryItems.isBrewOfFlowingSpirit(stack)
                 || it == WitcheryItems.SUBDUED_SPIRIT.get()
-                || it == WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get();
+                || it == WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get()
+                || it == WitcheryItems.WITCHES_PRIMER.get();
+    }
+
+    /**
+     * Items that are both kept on entry and carried back on exit (Icy Needle, Witches' Primer).
+     * These must be excluded from the saved Overworld snapshot: the live copy is re-added from the
+     * transferable list on exit, so leaving it in the snapshot too would duplicate it. Excluding it
+     * means the player returns with the actual leftover count (e.g. only the unused needles).
+     */
+    private static boolean isCarriedRoundTrip(ItemStack stack) {
+        return isAlwaysCarried(stack) && isTransferable(stack);
     }
 
     private SpiritWorldHelper() {}
@@ -292,7 +309,9 @@ public final class SpiritWorldHelper {
         net.minecraft.nbt.ListTag invList = new net.minecraft.nbt.ListTag();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (!stack.isEmpty()) {
+            // Round-trip items (Icy Needle, Primer) are re-added from the transferable list on exit,
+            // so they must not also be restored from this snapshot or they would be duplicated.
+            if (!stack.isEmpty() && !isCarriedRoundTrip(stack)) {
                 net.minecraft.nbt.CompoundTag itemTag = new net.minecraft.nbt.CompoundTag();
                 itemTag.putByte("Slot", (byte) i);
                 net.minecraft.nbt.Tag saved2 = ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, stack).result().orElse(null);

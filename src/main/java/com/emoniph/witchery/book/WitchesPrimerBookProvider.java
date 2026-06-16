@@ -1342,8 +1342,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "You will leave your body behind. It will wait for you — try to come back before "
                         + "something finds it."));
         spirit.add(spotlight(WitcheryItems.BREW_OF_SLEEPING.get(), "Brew of Sleeping",
-                "Carries you across, leaving your inventory behind. Only the Icy Needle and a few other "
-                        + "items transfer with you."));
+                "Carries you across, leaving your inventory behind. Only a few things cross with you — "
+                        + "your Icy Needles, your Mutandis, and this very Primer — and a little of what you "
+                        + "gather there, the cotton and the spirits, will follow you home."));
         spirit.add(spotlight(WitcheryItems.ICY_NEEDLE.get(), "Icy Needle",
                 "Brings you back at once, used up. Dying also returns you, less comfortably. In emergencies: "
                         + "**/witchery exit**."));

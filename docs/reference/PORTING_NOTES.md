@@ -9,6 +9,22 @@ Current target:
 
 ---
 
+## 2026-06-16 Spirit World inventory carry: Primer in/out + round-trip dedup
+
+- Source `WorldProviderDreamWorld.sendPlayerToSpiritWorld` carries **Icy Needle + Mutandis** into
+  the dream; `returnPlayerToOverworld` returns **Wispy Cotton, Disturbed Cotton, Mellifluous Hunger,
+  Icy Needle, Brew of Flowing Spirit, Subdued Spirit**. The port already matched all of those.
+- Port additions: the **Witches' Primer** is now kept on entry (so the guide is readable while
+  dreaming) and carried back on exit; Mutandis Extremis (entry) and Subdued Village Spirit (exit)
+  remain port-only extensions. Source has no guide-book carry — this is a deliberate divergence.
+- **Round-trip dedup gotcha:** `SpiritWorldHelper.saveAndStripInventory` serialised the *entire*
+  inventory into the Overworld snapshot, including items that are both kept-on-entry and
+  carried-on-exit (Icy Needle, now Primer). On exit those came back twice — once from the snapshot
+  restore and once re-added from the transferable list — so brought-in needles duplicated. Fixed by
+  excluding `isCarriedRoundTrip` items (kept ∧ transferable) from the snapshot, so the player returns
+  with the real leftover count ("the unused needles"). Items that are kept-on-entry but **not**
+  transferable (Mutandis/Extremis) deliberately stay in the snapshot and return via the restore.
+
 ## 2026-06-14 Custom brew guide references must be generated from the live registry
 
 - The Primer `Brew Reagents` entry is generated from `Brews.ingredientReferences()`, which exposes the
@@ -937,7 +953,7 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 ### 2026-05-16 (M25 — Spirit World entry/exit mechanics)
 
 **New files:**
-- `spiritworld/SpiritWorldHelper.java` — core entry/exit logic: saves inventory (keeps Icy Needle + Mutandis + Mutandis Extremis), 30/70 dream/nightmare roll, XZ-matched spawn in Spirit World, restores inventory on exit
+- `spiritworld/SpiritWorldHelper.java` — core entry/exit logic: saves inventory (keeps Icy Needle + Mutandis + Mutandis Extremis + Witches' Primer; see 2026-06-16 note for the round-trip dedup), 30/70 dream/nightmare roll, XZ-matched spawn in Spirit World, restores inventory on exit
 - `item/AppleOfSleepingItem.java` — food item, on eat server-side calls SpiritWorldHelper.enter()
 - `item/IcyNeedleItem.java` — right-click in Spirit World calls SpiritWorldHelper.exit()
 
