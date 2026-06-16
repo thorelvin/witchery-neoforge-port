@@ -129,13 +129,6 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         Optional<RecipeHolder<DistilleryRecipe>> recipe = getRecipe(serverLevel, be);
 
         if (recipe.isEmpty()) {
-            if (be.cookTime > 0) {
-                // [DISTILLERY-DEBUG] A cook in progress lost its recipe match.
-                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
-                        "[DISTILLERY-DEBUG] recipeLost@{} cookTime={}/{} in1={} in2={} jars={}",
-                        pos, be.cookTime, be.cookTimeTotal,
-                        be.items.get(SLOT_INPUT_1), be.items.get(SLOT_INPUT_2), be.items.get(SLOT_JARS));
-            }
             if (be.scanCooldown-- <= 0) {
                 be.scanCooldown = 40;
                 AltarBlockEntity found = be.findNearbyAltar(level);
@@ -161,8 +154,7 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         be.cookTimeTotal = recipe.get().value().getCookingTime();
         AltarBlockEntity altar = be.findNearbyAltar(level);
         be.readAltar(altar);
-        boolean recipeCanDistill = canDistill(be, recipe.get().value());
-        boolean canProgress = altar != null && recipeCanDistill;
+        boolean canProgress = altar != null && canDistill(be, recipe.get().value());
 
         int newPowerLevel = altar != null ? 1 : 0;
         if (newPowerLevel != be.powerLevel) {
@@ -171,16 +163,6 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         }
 
         if (!canProgress) {
-            // [DISTILLERY-DEBUG] Why did a cooking brew stop progressing? (only log an in-progress stop)
-            if (be.cookTime > 0) {
-                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
-                        "[DISTILLERY-DEBUG] stop@{} cookTime={}/{} altarFound={} altarPower={} altarValid={} canDistill={}",
-                        pos, be.cookTime, be.cookTimeTotal,
-                        altar != null,
-                        altar != null ? altar.getPower() : -1,
-                        altar != null && altar.hasValidStructure(),
-                        recipeCanDistill);
-            }
             if (be.cookTime != 0 || be.pendingPowerScaled != 0) {
                 be.cookTime = 0;
                 be.pendingPowerScaled = 0;
@@ -199,12 +181,6 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         int powerUnits = be.pendingPowerScaled / POWER_SCALE;
         if (powerUnits > 0) {
             if (!altar.consumePower(powerUnits)) {
-                // [DISTILLERY-DEBUG] consumePower failed despite altar being found.
-                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
-                        "[DISTILLERY-DEBUG] consumeFail@{} cookTime={}/{} altarPos={} altarPower={} altarMax={} altarValid={} powerUnits={} pending={}",
-                        pos, be.cookTime, be.cookTimeTotal,
-                        altar.getBlockPos(), altar.getPower(), altar.getMaxPower(),
-                        altar.hasValidStructure(), powerUnits, be.pendingPowerScaled);
                 be.powerLevel = 0;
                 syncLitState(level, pos, state, false);
                 if (changed) {
