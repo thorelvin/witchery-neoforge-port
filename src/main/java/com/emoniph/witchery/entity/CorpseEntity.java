@@ -54,6 +54,36 @@ public class CorpseEntity extends Mob {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        // Self-clean: once the owner is back from the Spirit World, the body must not linger. The
+        // explicit removal in SpiritWorldHelper.exit() can miss a body whose chunk had unloaded
+        // during the trip (it is not in the entity lookup, and a force-loaded chunk's entities are
+        // not queryable the same tick), so it would reappear when the player teleports home. This
+        // catches that case — and any orphaned bodies from earlier trips — whenever the body is
+        // loaded with its owner online and no longer dreaming.
+        if (!this.level().isClientSide() && (this.tickCount & 7) == 0) {
+            discardIfOwnerReturned();
+        }
+    }
+
+    private void discardIfOwnerReturned() {
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        UUID ownerUUID = getOwnerUUID().orElse(null);
+        if (ownerUUID == null) {
+            return;
+        }
+        ServerPlayer owner = level.getServer().getPlayerList().getPlayer(ownerUUID);
+        // Owner offline: keep the body until they return and we can tell whether they are still dreaming.
+        if (owner != null
+                && !com.emoniph.witchery.init.WitcheryAttachments.get(owner).isInSpiritWorld()) {
+            this.discard();
+        }
+    }
+
+    @Override
     public boolean isPushable() {
         return false;
     }

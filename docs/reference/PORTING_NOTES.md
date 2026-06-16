@@ -35,11 +35,18 @@ Current target:
   `AbstractClientPlayer.getSkin()`, offline via `SkinManager.createLookup`), falling back to the
   default skin. `GameProfile` is a record here — use `.name()`, not `getName()`.
 - Removal bug: `SpiritWorldHelper.removeCorpse` looked the corpse up by UUID across loaded levels.
-  A corpse whose chunk had unloaded (player wandered far in the dream) was not in any entity lookup,
-  so it survived and reappeared when the player teleported home. Fixed by force-loading the chunk at
-  the stored return position (== the corpse's spawn position) before the lookup, and warn-logging if
-  it still can't be found. All wake paths (Icy Needle, death in the Spirit World, body destroyed,
-  `/witchery exit`) funnel through `exit()` → `removeCorpse`, so this covers every case.
+  While the player is in the Spirit World the corpse's Overworld chunk unloads, so it is in no entity
+  lookup — and force-loading the chunk does **not** make `level.getEntity(uuid)` return it the same
+  tick (chunk-loaded entities are queued and only become queryable after the entity manager processes
+  them next tick). So the explicit removal at `exit()` time silently failed and bodies orphaned and
+  piled up across trips. `removeCorpse` still tries (force-loads the chunk) as a fast path, but the
+  reliable fix is a **self-cleaning tick on `CorpseEntity`**: every 8 server ticks a loaded corpse
+  whose owner is online and **no longer** `isInSpiritWorld()` discards itself. This fires when the
+  player teleports home (the body's chunk reloads) and also clears orphans from earlier trips.
+  Important orderings: the corpse spawns *after* `setInSpiritWorld(true)`, so it never self-cleans on
+  the entry tick; and manifestation keeps `isInSpiritWorld` true (the ghost is still "dreaming"), so a
+  manifested player's body is correctly kept. All wake paths (Icy Needle, death in the Spirit World,
+  body destroyed, `/witchery exit`) funnel through `exit()`, which clears `isInSpiritWorld`.
 
 ## 2026-06-14 Custom brew guide references must be generated from the live registry
 
