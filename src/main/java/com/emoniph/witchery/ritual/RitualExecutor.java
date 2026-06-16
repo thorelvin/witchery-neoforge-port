@@ -433,6 +433,12 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_COPY_RECIPE,
                     RitualExecutor::startBindWaystoneCopyFromRecipe),
+            FullRecipeRitualDefinition.of("blight", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, BLIGHT_RECIPE,
+                    RitualExecutor::startBlightFromRecipe),
+            FullRecipeRitualDefinition.of("blindness", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_INFERNAL, BLINDNESS_RECIPE,
+                    RitualExecutor::startBlindnessFromRecipe),
             FullRecipeRitualDefinition.of("summon_witch", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_INFERNAL, SUMMON_WITCH_RECIPE,
                     RitualExecutor::startSummonWitchFromRecipe),
@@ -475,6 +481,9 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("cure_overheating", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, CURE_OVERHEATING_RECIPE,
                     RitualExecutor::startCureOverheatingFromRecipe),
+            FullRecipeRitualDefinition.of("rain_of_toads", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_INFERNAL, RAIN_OF_TOADS_RECIPE,
+                    RitualExecutor::startRainOfToadsFromRecipe),
             FullRecipeRitualDefinition.of("curse_waking_nightmare", RitualCircleDetector.CircleSize.LARGE,
                     VARIANT_INFERNAL, CURSE_WAKING_NIGHTMARE_RECIPE,
                     RitualExecutor::startCurseWakingNightmareFromRecipe),
@@ -4432,6 +4441,25 @@ public class RitualExecutor {
             return false;
         }
         if (!(level instanceof ServerLevel sl)) return false;
+        return startBlindness(player, level, sl, center,
+                droppedOfferings(offerings.get().chargedStone(),
+                        offerings.get().redstoneSoup(),
+                        offerings.get().reekOfMisfortune(),
+                        offerings.get().exhaleOfHornedOne(),
+                        offerings.get().brewOfInk(),
+                        offerings.get().poisonousPotato(),
+                        offerings.get().spiderEye(),
+                        offerings.get().diamond()));
+    }
+
+    private static boolean startBlindnessFromRecipe(Player player, Level level, BlockPos center,
+                                                    List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBlindness(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startBlindness(Player player, Level level, ServerLevel sl, BlockPos center,
+                                         List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
         boolean enhanced = player instanceof ServerPlayer sp && hasActiveCurseMasteryFamiliar(sp);
         if (!queueActiveRitual(sl, ActiveRitualType.BLINDNESS, RitualCircleDetector.CircleSize.SMALL,
@@ -4448,16 +4476,14 @@ public class RitualExecutor {
                 }
             }
         }
-        consumeOfferedItem(offerings.get().chargedStone());
-        consumeOfferedItem(offerings.get().redstoneSoup());
-        consumeOfferedItem(offerings.get().reekOfMisfortune());
-        consumeOfferedItem(offerings.get().exhaleOfHornedOne());
-        consumeOfferedItem(offerings.get().brewOfInk());
-        consumeOfferedItem(offerings.get().poisonousPotato());
-        consumeOfferedItem(offerings.get().spiderEye());
-        consumeOfferedItem(offerings.get().diamond());
-        success(player, level, center, "witchery.ritual.blindness.success",
-                SoundEvents.BAT_AMBIENT, 0.5f, 3, 32);
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 0, "witchery.ritual.blindness.no_power"),
+                offerings);
+        if (!transaction.commitDeferred(player, () ->
+                success(player, level, center, "witchery.ritual.blindness.success",
+                        SoundEvents.BAT_AMBIENT, 0.5f, 3, 32))) {
+            return false;
+        }
         return true;
     }
 
@@ -4470,6 +4496,24 @@ public class RitualExecutor {
             return false;
         }
         if (!(level instanceof ServerLevel sl)) return false;
+        return startBlight(player, level, sl, center,
+                droppedOfferings(offerings.get().chargedStone(),
+                        offerings.get().redstoneSoup(),
+                        offerings.get().reekOfMisfortune(),
+                        offerings.get().fermentedSpiderEye(),
+                        offerings.get().poisonousPotato(),
+                        offerings.get().rottenFlesh(),
+                        offerings.get().diamond()));
+    }
+
+    private static boolean startBlightFromRecipe(Player player, Level level, BlockPos center,
+                                                 List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBlight(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startBlight(Player player, Level level, ServerLevel sl, BlockPos center,
+                                      List<RitualOffering> offerings) {
         Optional<BlockPos> heartPos = findBlightHeartPos(sl, center);
         if (heartPos.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -4480,21 +4524,18 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, BLIGHT_RITE_POWER)) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.blight.no_power"), false);
+        BlockPos blightHeartPos = heartPos.get();
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, BLIGHT_RITE_POWER, "witchery.ritual.blight.no_power"),
+                offerings);
+        if (!transaction.commitDeferred(player, () -> {
+            BlightHelper.placeHeart(sl, blightHeartPos, true);
+            level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 1.0f, 0.5f);
+            spawnBlightRiteBurst(sl, center);
+            player.displayClientMessage(Component.translatable("witchery.ritual.blight.success"), false);
+        })) {
             return false;
         }
-        consumeOfferedItem(offerings.get().chargedStone());
-        consumeOfferedItem(offerings.get().redstoneSoup());
-        consumeOfferedItem(offerings.get().reekOfMisfortune());
-        consumeOfferedItem(offerings.get().fermentedSpiderEye());
-        consumeOfferedItem(offerings.get().poisonousPotato());
-        consumeOfferedItem(offerings.get().rottenFlesh());
-        consumeOfferedItem(offerings.get().diamond());
-        BlightHelper.placeHeart(sl, heartPos.get(), true);
-        level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 1.0f, 0.5f);
-        spawnBlightRiteBurst(sl, center);
-        player.displayClientMessage(Component.translatable("witchery.ritual.blight.success"), false);
         return true;
     }
 
@@ -4508,19 +4549,37 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.rain_of_toads.support"), false);
             return false;
         }
+        return startRainOfToads(player, level, sl, center,
+                droppedOfferings(offerings.get().chargedStone(),
+                        offerings.get().redstoneSoup(),
+                        offerings.get().reekOfMisfortune(),
+                        offerings.get().toeOfFrog(),
+                        offerings.get().waterBucket(),
+                        offerings.get().belladonna()));
+    }
+
+    private static boolean startRainOfToadsFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 1)) return false;
+        return startRainOfToads(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startRainOfToads(Player player, Level level, ServerLevel sl, BlockPos center,
+                                           List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
         if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200, 30, covenSize)) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        consumeOfferedItem(offerings.get().chargedStone());
-        consumeOfferedItem(offerings.get().redstoneSoup());
-        consumeOfferedItem(offerings.get().reekOfMisfortune());
-        consumeOfferedItem(offerings.get().toeOfFrog());
-        consumeOfferedItem(offerings.get().waterBucket());
-        consumeOfferedItem(offerings.get().belladonna());
-        success(player, level, center, "witchery.ritual.rain_of_toads.success",
-                SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40);
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 0, "witchery.ritual.rain_of_toads.no_power"),
+                offerings);
+        if (!transaction.commitDeferred(player, () ->
+                success(player, level, center, "witchery.ritual.rain_of_toads.success",
+                        SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40))) {
+            return false;
+        }
         return true;
     }
 

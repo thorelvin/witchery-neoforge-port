@@ -179,6 +179,18 @@ correction captured here: Curse Creature uses Fermented Spider Eye (`Items.field
 Cure Creature uses Spider Eye (`Items.field_151070_bp`). Curse Overheating accepts the same
 Infernal/Demonic Blood alias used elsewhere in the port.
 
+Follow-up (2026-06-16, slice 7): the Redstone Soup curse/weather cluster is in the full-offering
+table. Converted Blight (`Charged Attuned Stone + Redstone Soup + Reek of Misfortune + Fermented
+Spider Eye + Poisonous Potato + Rotten Flesh + Diamond`), Blindness (`Charged Attuned Stone +
+Redstone Soup + Reek of Misfortune + Exhale of the Horned One + Brew of Ink + Poisonous Potato +
+Spider Eye + Diamond`), and Rain of Toads (`Charged Attuned Stone + Redstone Soup + Reek of
+Misfortune + Toe of Frog + Water Bucket + Belladonna`). The full-recipe path stages the exact matched
+dropped entities and returns `SUCCESS_NO_CONSUME`; representative-trigger fallbacks remain. Blight and
+Blindness are registered before Summon Witch to match source order, and Rain of Toads is registered
+before the later large curse routes. Because Blight and Rain are both medium Infernal Redstone Soup
+recipes with shared core items, source order must keep Blight before Rain when both complete sets are
+present.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

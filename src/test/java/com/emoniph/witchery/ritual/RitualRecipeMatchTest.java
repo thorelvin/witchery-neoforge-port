@@ -404,6 +404,87 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void fullRecipeDispatchMatchesRedstoneSoupRoutesRegardlessSupportOrder() {
+        assertEquals("blight", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Items.ROTTEN_FLESH),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(Items.POISONOUS_POTATO)), 3));
+        assertEquals("blindness", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.BREW_OF_INK.get()),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.SPIDER_EYE),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 3));
+        assertEquals("rain_of_toads", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.BELLADONNA.get()),
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(WitcheryItems.TOE_OF_FROG.get()),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 3));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsSourceOrderForOverlappingRedstoneSoupSets() {
+        assertEquals("blight", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(Items.ROTTEN_FLESH),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.TOE_OF_FROG.get()),
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(WitcheryItems.BELLADONNA.get())), 3),
+                "source registers Blight before Rain of Toads when both medium Infernal sets are present");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteRedstoneSoupSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(Items.ROTTEN_FLESH)), 3),
+                "Blight needs the Diamond too");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(WitcheryItems.BREW_OF_INK.get()),
+                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(Items.DIAMOND)), 3),
+                "Blindness uses Spider Eye, not Fermented Spider Eye");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(WitcheryItems.TOE_OF_FROG.get()),
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(WitcheryItems.BELLADONNA.get())), 1),
+                "Rain of Toads is Infernal, not Ritual");
+    }
+
+    @Test
     void fullRecipeDispatchMatchesTaglockCurseRoutesRegardlessSupportOrder() {
         assertEquals("curse_creature", RitualExecutor.matchingFullRecipeDefinitionName(
                 RitualCircleDetector.CircleSize.MEDIUM,
