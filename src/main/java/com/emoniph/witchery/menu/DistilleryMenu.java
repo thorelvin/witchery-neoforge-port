@@ -24,7 +24,7 @@ public class DistilleryMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public DistilleryMenu(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
-        this(windowId, playerInv, new SimpleContainer(DistilleryBlockEntity.SLOT_COUNT), new SimpleContainerData(4));
+        this(windowId, playerInv, new SimpleContainer(DistilleryBlockEntity.SLOT_COUNT), new SimpleContainerData(7));
     }
 
     public DistilleryMenu(int windowId, Inventory playerInv, Container container, ContainerData data) {
@@ -96,6 +96,26 @@ public class DistilleryMenu extends AbstractContainerMenu {
 
     public boolean hasPower() {
         return data.get(0) > 0;
+    }
+
+    /** True when a powering altar exists in range (even if it is currently drained). */
+    public boolean hasAltar() {
+        return data.get(6) > 0;
+    }
+
+    /** Altar power fill as a 0..1000 permille of its effective max (overflow-safe). */
+    public int getAltarPowerFill() {
+        return data.get(4);
+    }
+
+    /** Current altar power (clamped for sync; 0 when no altar). */
+    public int getAltarPower() {
+        return data.get(5);
+    }
+
+    /** Altar effective max power (clamped for sync; 0 when no altar). */
+    public int getAltarMaxPower() {
+        return data.get(6);
     }
 
     public int getBubbleFrameHeight() {

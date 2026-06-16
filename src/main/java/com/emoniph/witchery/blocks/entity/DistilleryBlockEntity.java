@@ -61,15 +61,34 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
     private int powerLevel = 0;
     private int pendingPowerScaled = 0;
     private int scanCooldown = 0;
+    // Live readout of the powering altar, sampled each tick for the GUI power gauge/tooltip.
+    private int altarPower = 0;
+    private int altarMaxPower = 0;
+
+    // ContainerData (DataSlots) sync as shorts, so the absolute power/max are clamped to fit;
+    // the gauge fill is sent as a 0..1000 permille that never overflows.
+    private static final int DATA_POWER_LEVEL = 0;
+    private static final int DATA_COOK_TIME = 2;
+    private static final int DATA_COOK_TOTAL = 3;
+    private static final int DATA_ALTAR_FILL = 4;
+    private static final int DATA_ALTAR_POWER = 5;
+    private static final int DATA_ALTAR_MAX = 6;
+    private static final int DATA_SLOT_COUNT = 7;
+    private static final int SHORT_CLAMP = 32000;
 
     private final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
             return switch (index) {
-                case 0 -> powerLevel;
+                case DATA_POWER_LEVEL -> powerLevel;
                 case 1 -> 1;
-                case 2 -> cookTime;
-                case 3 -> cookTimeTotal;
+                case DATA_COOK_TIME -> cookTime;
+                case DATA_COOK_TOTAL -> cookTimeTotal;
+                case DATA_ALTAR_FILL -> altarMaxPower > 0
+                        ? Math.min(1000, Math.max(0, altarPower) * 1000 / altarMaxPower)
+                        : 0;
+                case DATA_ALTAR_POWER -> Math.min(SHORT_CLAMP, Math.max(0, altarPower));
+                case DATA_ALTAR_MAX -> Math.min(SHORT_CLAMP, Math.max(0, altarMaxPower));
                 default -> 0;
             };
         }
@@ -77,9 +96,9 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         @Override
         public void set(int index, int value) {
             switch (index) {
-                case 0 -> powerLevel = value;
-                case 2 -> cookTime = value;
-                case 3 -> cookTimeTotal = value;
+                case DATA_POWER_LEVEL -> powerLevel = value;
+                case DATA_COOK_TIME -> cookTime = value;
+                case DATA_COOK_TOTAL -> cookTimeTotal = value;
                 default -> {
                 }
             }
@@ -87,9 +106,15 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
 
         @Override
         public int getCount() {
-            return 4;
+            return DATA_SLOT_COUNT;
         }
     };
+
+    /** Records the powering altar's current/effective-max power for the GUI gauge (0 when none). */
+    private void readAltar(@Nullable AltarBlockEntity altar) {
+        altarPower = altar != null ? altar.getPower() : 0;
+        altarMaxPower = altar != null ? altar.getEffectiveMaxPower() : 0;
+    }
 
     public DistilleryBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.DISTILLERY.get(), pos, state);
@@ -104,9 +129,18 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         Optional<RecipeHolder<DistilleryRecipe>> recipe = getRecipe(serverLevel, be);
 
         if (recipe.isEmpty()) {
+            if (be.cookTime > 0) {
+                // [DISTILLERY-DEBUG] A cook in progress lost its recipe match.
+                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
+                        "[DISTILLERY-DEBUG] recipeLost@{} cookTime={}/{} in1={} in2={} jars={}",
+                        pos, be.cookTime, be.cookTimeTotal,
+                        be.items.get(SLOT_INPUT_1), be.items.get(SLOT_INPUT_2), be.items.get(SLOT_JARS));
+            }
             if (be.scanCooldown-- <= 0) {
                 be.scanCooldown = 40;
-                int newPowerLevel = be.findNearbyAltar(level) != null ? 1 : 0;
+                AltarBlockEntity found = be.findNearbyAltar(level);
+                be.readAltar(found);
+                int newPowerLevel = found != null ? 1 : 0;
                 if (newPowerLevel != be.powerLevel) {
                     be.powerLevel = newPowerLevel;
                     changed = true;
@@ -126,7 +160,9 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
 
         be.cookTimeTotal = recipe.get().value().getCookingTime();
         AltarBlockEntity altar = be.findNearbyAltar(level);
-        boolean canProgress = altar != null && canDistill(be, recipe.get().value());
+        be.readAltar(altar);
+        boolean recipeCanDistill = canDistill(be, recipe.get().value());
+        boolean canProgress = altar != null && recipeCanDistill;
 
         int newPowerLevel = altar != null ? 1 : 0;
         if (newPowerLevel != be.powerLevel) {
@@ -135,6 +171,16 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         }
 
         if (!canProgress) {
+            // [DISTILLERY-DEBUG] Why did a cooking brew stop progressing? (only log an in-progress stop)
+            if (be.cookTime > 0) {
+                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
+                        "[DISTILLERY-DEBUG] stop@{} cookTime={}/{} altarFound={} altarPower={} altarValid={} canDistill={}",
+                        pos, be.cookTime, be.cookTimeTotal,
+                        altar != null,
+                        altar != null ? altar.getPower() : -1,
+                        altar != null && altar.hasValidStructure(),
+                        recipeCanDistill);
+            }
             if (be.cookTime != 0 || be.pendingPowerScaled != 0) {
                 be.cookTime = 0;
                 be.pendingPowerScaled = 0;
@@ -153,6 +199,12 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         int powerUnits = be.pendingPowerScaled / POWER_SCALE;
         if (powerUnits > 0) {
             if (!altar.consumePower(powerUnits)) {
+                // [DISTILLERY-DEBUG] consumePower failed despite altar being found.
+                com.emoniph.witchery.WitcheryMod.LOGGER.warn(
+                        "[DISTILLERY-DEBUG] consumeFail@{} cookTime={}/{} altarPos={} altarPower={} altarMax={} altarValid={} powerUnits={} pending={}",
+                        pos, be.cookTime, be.cookTimeTotal,
+                        altar.getBlockPos(), altar.getPower(), altar.getMaxPower(),
+                        altar.hasValidStructure(), powerUnits, be.pendingPowerScaled);
                 be.powerLevel = 0;
                 syncLitState(level, pos, state, false);
                 if (changed) {
