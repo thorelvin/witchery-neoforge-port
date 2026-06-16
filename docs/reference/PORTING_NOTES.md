@@ -25,6 +25,22 @@ Current target:
   with the real leftover count ("the unused needles"). Items that are kept-on-entry but **not**
   transferable (Mutandis/Extremis) deliberately stay in the snapshot and return via the restore.
 
+## 2026-06-16 Spirit World sleeping-body (CorpseEntity): owner skin + reliable removal
+
+- Source `EntityCorpse`/`RenderCorpse` render the sleeping body with the **owner's player skin**
+  (resolved from the owner username). The port had a placeholder Witch Hunter model + texture. Fixed:
+  `CorpseEntity` now syncs the owner's UUID + name (as `SynchedEntityData` strings — this mapping has
+  no UUID/Optional<UUID> data serializer) and `CorpseRenderer` renders a `HumanoidModel` (PLAYER
+  layer) with the owner's skin resolved exactly like `ReflectionRenderer` (online via
+  `AbstractClientPlayer.getSkin()`, offline via `SkinManager.createLookup`), falling back to the
+  default skin. `GameProfile` is a record here — use `.name()`, not `getName()`.
+- Removal bug: `SpiritWorldHelper.removeCorpse` looked the corpse up by UUID across loaded levels.
+  A corpse whose chunk had unloaded (player wandered far in the dream) was not in any entity lookup,
+  so it survived and reappeared when the player teleported home. Fixed by force-loading the chunk at
+  the stored return position (== the corpse's spawn position) before the lookup, and warn-logging if
+  it still can't be found. All wake paths (Icy Needle, death in the Spirit World, body destroyed,
+  `/witchery exit`) funnel through `exit()` → `removeCorpse`, so this covers every case.
+
 ## 2026-06-14 Custom brew guide references must be generated from the live registry
 
 - The Primer `Brew Reagents` entry is generated from `Brews.ingredientReferences()`, which exposes the

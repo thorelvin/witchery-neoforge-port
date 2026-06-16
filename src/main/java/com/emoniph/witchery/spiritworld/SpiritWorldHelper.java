@@ -477,16 +477,32 @@ public final class SpiritWorldHelper {
 
     private static void removeCorpse(ServerPlayer player, WitcheryPlayerData data) {
         data.getCorpseUUID().ifPresent(uuid -> {
-            // Search all loaded levels for the corpse
             var server = ((ServerLevel) player.level()).getServer();
+
+            // The corpse spawned at the player's entry position (== the return position). If that
+            // chunk has since unloaded — the player wandered far in the Spirit World — the corpse is
+            // not in any level's entity lookup, so it would survive and reappear on return. Force-load
+            // its chunk first so it is back in memory and can be discarded.
+            ServerLevel returnLevel = resolveReturnLevel(player, data.getReturnDimension());
+            BlockPos returnPos = data.getReturnPos().orElse(null);
+            if (returnLevel != null && returnPos != null) {
+                returnLevel.getChunk(returnPos.getX() >> 4, returnPos.getZ() >> 4, ChunkStatus.FULL, true);
+            }
+
+            boolean removed = false;
             for (var level : server.getAllLevels()) {
                 var entity = level.getEntity(uuid);
                 if (entity instanceof com.emoniph.witchery.entity.CorpseEntity c) {
                     c.discard();
+                    removed = true;
                     LOGGER.debug("[Witchery] Removed corpse {} for {}",
                             uuid, player.getName().getString());
                     break;
                 }
+            }
+            if (!removed) {
+                LOGGER.warn("[Witchery] Corpse {} for {} could not be found to remove",
+                        uuid, player.getName().getString());
             }
         });
         data.clearCorpseUUID();

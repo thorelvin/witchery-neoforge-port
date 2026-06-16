@@ -2,6 +2,9 @@ package com.emoniph.witchery.entity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,14 +24,28 @@ import java.util.UUID;
 /**
  * Sleeping body that persists in the Overworld while a player is in the Spirit World.
  * If the corpse is killed, the owner is forcibly expelled from the Spirit World.
+ *
+ * <p>The owner's UUID and name are synced to the client so the corpse can be rendered with the
+ * owner's own player skin (source {@code EntityCorpse} resolves the skin from the owner username).
  */
 public class CorpseEntity extends Mob {
 
-    private String ownerUUID = "";
+    private static final EntityDataAccessor<String> DATA_OWNER_NAME =
+            SynchedEntityData.defineId(CorpseEntity.class, EntityDataSerializers.STRING);
+    // UUID is synced as its string form — this mapping has no UUID/Optional<UUID> data serializer.
+    private static final EntityDataAccessor<String> DATA_OWNER_UUID =
+            SynchedEntityData.defineId(CorpseEntity.class, EntityDataSerializers.STRING);
 
     public CorpseEntity(EntityType<? extends CorpseEntity> type, Level level) {
         super(type, level);
         this.setPose(Pose.SLEEPING);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_OWNER_NAME, "");
+        builder.define(DATA_OWNER_UUID, "");
     }
 
     @Override
@@ -53,16 +70,24 @@ public class CorpseEntity extends Mob {
     }
 
     public void setOwner(ServerPlayer player) {
-        this.ownerUUID = player.getStringUUID();
+        this.entityData.set(DATA_OWNER_UUID, player.getUUID().toString());
+        this.entityData.set(DATA_OWNER_NAME, player.getGameProfile().name());
     }
 
     public Optional<UUID> getOwnerUUID() {
-        if (ownerUUID.isEmpty()) return Optional.empty();
+        String uuidStr = this.entityData.get(DATA_OWNER_UUID);
+        if (uuidStr.isEmpty()) {
+            return Optional.empty();
+        }
         try {
-            return Optional.of(UUID.fromString(ownerUUID));
+            return Optional.of(UUID.fromString(uuidStr));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    public String getOwnerName() {
+        return this.entityData.get(DATA_OWNER_NAME);
     }
 
     @Override
@@ -92,12 +117,14 @@ public class CorpseEntity extends Mob {
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
-        tag.putString("OwnerUUID", ownerUUID);
+        getOwnerUUID().ifPresent(uuid -> tag.putString("OwnerUUID", uuid.toString()));
+        tag.putString("OwnerName", getOwnerName());
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        ownerUUID = tag.getStringOr("OwnerUUID", "");
+        this.entityData.set(DATA_OWNER_UUID, tag.getStringOr("OwnerUUID", ""));
+        this.entityData.set(DATA_OWNER_NAME, tag.getStringOr("OwnerName", ""));
     }
 }
