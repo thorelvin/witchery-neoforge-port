@@ -580,9 +580,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "If the power of this craft has a lifeblood, the altar is the heart that circulates it. "
                         + "It draws energy from natural and decorative objects within a generous radius and "
                         + "holds it ready for the kettle, the rites, and whatever else you demand of it."
-                        + "\n\nDifferent blocks contribute different amounts. Rowan wood, candelabras, "
-                        + "Redstone Soup-filled chalices, placed pentagrams and athames all feed it. Keep it "
-                        + "furnished — a sparse altar is a weak altar."));
+                        + "\n\nTo wake an altar, lay **six Altar blocks** on one level in a full **2 by 3 "
+                        + "rectangle**. Turned sideways, the same shape is **3 by 2**. Every space in that "
+                        + "rectangle must be an Altar block: no gaps, no extra attached blocks, no steps up "
+                        + "or down."
+                        + "\n\nRight-click any block in the joined altar to read its power, maximum storage, "
+                        + "recharge, range, and whether the structure is valid. If it says invalid, mend the "
+                        + "shape before you dress the space. Rowan wood, candelabras, Redstone Soup-filled "
+                        + "chalices, placed pentagrams and athames all feed it. Keep it furnished — a sparse "
+                        + "altar is a weak altar."));
         altar.add(recipe("altar", "Altar",
                 "Craft the altar, then choose where it will live — it is hard to move, and what surrounds "
                         + "it matters."));
@@ -1137,21 +1143,30 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
         List<BookPageModel<?>> brazier = new ArrayList<>(WitcheryBooks.prose("The Brazier",
                 "Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. "
-                        + "Load up to three ingredients by right-clicking, ignite it, then step back and let "
-                        + "it burn."
-                        + "\n\nMost brazier workings draw power from a nearby altar, and the effect releases "
-                        + "when the burning is complete. Patience is required — and occasionally a safe "
-                        + "distance."));
+                        + "Load up to three ingredients by right-clicking; the bowl shows each offering as "
+                        + "colored contents. Ignite it with **flint and steel**, then step back."
+                        + "\n\nMost brazier workings draw power from a valid altar within sixteen blocks. If "
+                        + "the flame sputters smoke and fizz without finishing, the altar is missing, invalid, "
+                        + "or out of power. Empty-hand use on a burning brazier gathers **Wood Ash** and "
+                        + "cancels the burn; water clears it outright."));
         brazier.add(recipe("brazier", "Brazier",
                 "Iron ingots and a stick. The brazier need not be complicated; what burns inside it often "
                         + "is."));
         brazier.addAll(WitcheryBooks.prose("Named Workings",
-                "**Conjure Spectres** — Wormwood, Bat Wool, and Graveyard Dust. Something emerges. "
-                        + "**Anguish of the Dead** — Tear of the Goddess, Blaze Rod, and Golden Apple. Strength "
-                        + "radiates outward. **Deathly Veil** — Fermented Eye, Ender Pearl, and Diamond. Light "
-                        + "passes through. **Fortification of the Corpse** — Tear of the Goddess, Diamond, and "
-                        + "Golden Apple. Resistance for those nearby. **Graveyard Mist** — Nether Wart, "
-                        + "Quicklime, and Blaze Powder. You will know it by the smoke."));
+                "**Conjure Spectres** - Wormwood, Bat Wool, and Graveyard Dust. A Spectre emerges after "
+                        + "thirty seconds of altar-fed flame, with a rare Poltergeist riding the smoke. "
+                        + "**Conjure Banshees** - Wormwood, Condensed Fear, and Graveyard Dust. "
+                        + "**Conjure Poltergeist** - Wormwood, Refined Evil, and Focused Will; this one needs "
+                        + "no altar. **Anguish of the Dead** - Tear of the Goddess, Blaze Rod, and Golden "
+                        + "Apple. Strength radiates outward. **Fortification of the Corpse** - Tear of the "
+                        + "Goddess, Diamond, and Golden Apple. Resistance gathers nearby. **Deathly Veil** - "
+                        + "Fermented Eye, Ender Pearl, and Diamond. Light passes through. **Drain Growth** - "
+                        + "Condensed Fear, Wormy Apple, and Graveyard Dust. Crops regress and "
+                        + "undead knit together. **Graveyard Mist** - Nether Wart, Quicklime, and Blaze Powder. "
+                        + "You will know it by the smoke. **Quick burnings** - Infernal Animus; Exhale of "
+                        + "the Horned One; Rowan Berries; Fanciful Thread; Diamond Vapour with Fanciful "
+                        + "Thread; or Gunpowder. These release their nearby player effects after a short "
+                        + "burn."));
 
         List<BookPageModel<?>> fetishes = new ArrayList<>(WitcheryBooks.prose("Fetishes",
                 "A spirit bound to a physical object becomes something useful — the scarecrow that watches "

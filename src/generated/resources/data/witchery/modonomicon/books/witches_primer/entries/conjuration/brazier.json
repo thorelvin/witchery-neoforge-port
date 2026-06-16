@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. Load up to three ingredients by right-clicking, ignite it, then step back and let it burn.[#]()",
+      "text": "[#](53341a)Fire is one of the oldest working tools in the craft, and the brazier is how you direct it. Load up to three ingredients by right-clicking; the bowl shows each offering as colored contents. Ignite it with **flint and steel**, then step back.[#]()",
       "title": "The Brazier",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Most brazier workings draw power from a nearby altar, and the effect releases when the burning is complete. Patience is required — and occasionally a safe distance.[#]()",
+      "text": "[#](53341a)Most brazier workings draw power from a valid altar within sixteen blocks. If the flame sputters smoke and fizz without finishing, the altar is missing, invalid, or out of power.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Empty-hand use on a burning brazier gathers **Wood Ash** and cancels the burn; water clears it outright.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -49,7 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)**Conjure Spectres** — Wormwood, Bat Wool, and Graveyard Dust. Something emerges. **Anguish of the Dead** — Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward. **Deathly Veil** — Fermented Eye, Ender Pearl, and Diamond.[#]()",
+      "text": "[#](53341a)**Conjure Spectres** - Wormwood, Bat Wool, and Graveyard Dust. A Spectre emerges after thirty seconds of altar-fed flame, with a rare Poltergeist riding the smoke. **Conjure Banshees** - Wormwood, Condensed Fear, and Graveyard Dust.[#]()",
       "title": "Named Workings",
       "use_markdown_in_title": false
     },
@@ -60,7 +71,40 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Light passes through. **Fortification of the Corpse** — Tear of the Goddess, Diamond, and Golden Apple. Resistance for those nearby. **Graveyard Mist** — Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
+      "text": "[#](53341a)**Conjure Poltergeist** - Wormwood, Refined Evil, and Focused Will; this one needs no altar. **Anguish of the Dead** - Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Fortification of the Corpse** - Tear of the Goddess, Diamond, and Golden Apple. Resistance gathers nearby. **Deathly Veil** - Fermented Eye, Ender Pearl, and Diamond. Light passes through.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Drain Growth** - Condensed Fear, Wormy Apple, and Graveyard Dust. Crops regress and undead knit together. **Graveyard Mist** - Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Quick burnings** - Infernal Animus; Exhale of the Horned One; Rowan Berries; Fanciful Thread; Diamond Vapour with Fanciful Thread; or Gunpowder. These release their nearby player effects after a short burn.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

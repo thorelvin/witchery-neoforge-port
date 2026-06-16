@@ -27,7 +27,29 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Different blocks contribute different amounts. Rowan wood, candelabras, Redstone Soup-filled chalices, placed pentagrams and athames all feed it. Keep it furnished — a sparse altar is a weak altar.[#]()",
+      "text": "[#](53341a)To wake an altar, lay **six Altar blocks** on one level in a full **2 by 3 rectangle**. Turned sideways, the same shape is **3 by 2**. Every space in that rectangle must be an Altar block: no gaps, no extra attached blocks, no steps up or down.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Right-click any block in the joined altar to read its power, maximum storage, recharge, range, and whether the structure is valid. If it says invalid, mend the shape before you dress the space.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Rowan wood, candelabras, Redstone Soup-filled chalices, placed pentagrams and athames all feed it. Keep it furnished — a sparse altar is a weak altar.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

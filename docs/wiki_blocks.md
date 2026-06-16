@@ -68,9 +68,27 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires a Blood Altar to craft. Placement is similar to a regular Waystone.
 
 ## Brazier
-- **Obtain:** Crafting recipe required.
-- **Function:** Used for brewing potions and rituals.
-- **Notes:** Must be placed on a solid block surface.
+- **Obtain:** Crafting recipe using Iron Ingots, a Necromantic Stone, and Sticks.
+- **Function:** Holds up to three ingredients for brazier workings. Right-click ingredients into the bowl, then ignite with Flint and Steel. Loaded ingredients render as colored contents inside the brazier.
+- **Notes:** Lit braziers glow at light level 10 and burn living entities standing on top. Use a Water Bucket or water bottle to clear the contents and extinguish the flame. Empty-hand right-click a burning brazier to collect Wood Ash and cancel the burn; breaking a burning brazier also drops Wood Ash.
+- **Altar behavior:** Altar-powered recipes need a valid powered altar within 16 blocks. If the brazier gives weak smoke/fizz feedback while still burning, the recipe is waiting for altar power and its timer is paused.
+
+| Working | Ingredients | Altar | Result |
+| --- | --- | --- | --- |
+| Conjure Spectres | Wormwood, Bat Wool, Graveyard Dust | Yes | Summons a Spectre after 30 seconds of powered burn time; 5% bonus Poltergeist roll. |
+| Conjure Banshees | Wormwood, Condensed Fear, Graveyard Dust | Yes | Summons a Banshee after 30 seconds of powered burn time. |
+| Conjure Poltergeist | Wormwood, Refined Evil, Focused Will | No | Summons a Poltergeist after 45 seconds. |
+| Anguish of the Dead | Tear of Goddess, Blaze Rod, Golden Apple | Yes | Strength aura while burning. |
+| Fortification of the Corpse | Tear of Goddess, Diamond, Golden Apple | Yes | Resistance aura while burning. |
+| Deathly Veil | Fermented Spider Eye, Ender Pearl, Diamond | Yes | Invisibility aura while burning. |
+| Drain Growth | Condensed Fear, Wormy Apple, Graveyard Dust | No | Regresses nearby crop growth and heals nearby undead. |
+| Graveyard Mist | Nether Wart, Quicklime, Blaze Powder | Yes | Smoke cloud around the brazier. |
+| Infernal Animus | Infernal Animus | Yes | Fire Resistance and Strength for nearby players. |
+| Exhale of the Horned One | Exhale of the Horned One | Yes | Resistance for nearby players. |
+| Rowan Berries | Rowan Berries | No | Regeneration for nearby players. |
+| Fanciful Thread | Fanciful Thread | No | Luck for nearby players. |
+| Diamond Vapour + Fanciful Thread | Diamond Vapour, Fanciful Thread | Yes | Night Vision and Speed for nearby players. |
+| Gunpowder | Gunpowder | No | Short Strength II and Speed II burst for nearby players. |
 
 ## Brew Bag
 - **Obtain:** Crafting recipe required.
