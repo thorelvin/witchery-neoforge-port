@@ -410,12 +410,32 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("banish_demon", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BANISH_DEMON_RECIPE,
                     RitualExecutor::startBanishDemonFromRecipe),
+            FullRecipeRitualDefinition.of("summon_demon", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, SUMMON_DEMON_RECIPE,
+                    RitualExecutor::startSummonDemonFromRecipe),
+            FullRecipeRitualDefinition.of("summon_demon_expensive", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, SUMMON_DEMON_EXPENSIVE_RECIPE,
+                    RitualExecutor::startExpensiveSummonDemonFromRecipe),
+            FullRecipeRitualDefinition.of("summon_wither", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, SUMMON_WITHER_RECIPE,
+                    RitualExecutor::startSummonWitherFromRecipe,
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)),
+            FullRecipeRitualDefinition.of("summon_wither_expensive", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, SUMMON_WITHER_EXPENSIVE_RECIPE,
+                    RitualExecutor::startExpensiveSummonWitherFromRecipe,
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)),
             FullRecipeRitualDefinition.of("necromantic_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, NECROMANTIC_STONE_RECIPE,
                     RitualExecutor::startNecromanticStoneFromRecipe),
+            FullRecipeRitualDefinition.of("summon_familiar", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, SUMMON_FAMILIAR_RECIPE,
+                    RitualExecutor::startSummonFamiliarFromRecipe),
             FullRecipeRitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_COPY_RECIPE,
                     RitualExecutor::startBindWaystoneCopyFromRecipe),
+            FullRecipeRitualDefinition.of("summon_witch", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_INFERNAL, SUMMON_WITCH_RECIPE,
+                    RitualExecutor::startSummonWitchFromRecipe),
             FullRecipeRitualDefinition.of("bind_waystone_portable", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_PORTABLE_RECIPE,
                     RitualExecutor::startBindWaystonePortableFromRecipe),
@@ -431,6 +451,9 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("spectral_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SPECTRAL_STONE_RECIPE,
                     RitualExecutor::startSpectralStoneFromRecipe),
+            FullRecipeRitualDefinition.of("summon_imp", RitualCircleDetector.CircleSize.LARGE,
+                    VARIANT_INFERNAL, SUMMON_IMP_RECIPE,
+                    RitualExecutor::startSummonImpFromRecipe),
             FullRecipeRitualDefinition.of("bind_blooded_waystone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_BLOODED_WAYSTONE_RECIPE,
                     RitualExecutor::startBindBloodedWaystoneFromRecipe),
@@ -793,6 +816,13 @@ public class RitualExecutor {
         return List.copyOf(offerings);
     }
 
+    private static RitualTransaction offerAll(RitualTransaction transaction, List<RitualOffering> offerings) {
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
+        return transaction;
+    }
+
     private static ActivationResult tryRitualDefinitions(RitualCircleDetector.CircleSize size,
             Player player, Level level, BlockPos center, ItemStack item, int circleVariant) {
         for (RitualDefinition definition : RITUAL_DEFINITIONS) {
@@ -1088,6 +1118,19 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_familiar.support"), false);
             return false;
         }
+        return startSummonFamiliar(sp, level, sl, center,
+                droppedOfferings(offerings.get().egg(), offerings.get().goldIngot(), offerings.get().arthana()));
+    }
+
+    private static boolean startSummonFamiliarFromRecipe(Player player, Level level, BlockPos center,
+                                                         List<ItemEntity> matchedItems) {
+        if (!(player instanceof ServerPlayer sp)) return false;
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startSummonFamiliar(sp, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startSummonFamiliar(ServerPlayer player, Level level, ServerLevel sl, BlockPos center,
+                                              List<RitualOffering> offerings) {
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -1099,10 +1142,9 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_familiar.no_power")
-                .offer(offerings.get().egg())
-                .offer(offerings.get().goldIngot())
-                .offer(offerings.get().arthana());
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_familiar.no_power"),
+                offerings);
         if (!transaction.commitDeferred(player, () -> {
             familiar.snapTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5, player.getYRot(), 0.0F);
             familiar.setOrderedToSit(false);
@@ -1110,7 +1152,7 @@ public class RitualExecutor {
                     net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
             sl.addFreshEntity(familiar);
 
-            bindFamiliarToPlayer(sp, sl, familiar);
+            bindFamiliarToPlayer(player, sl, familiar);
 
             success(player, level, center, "witchery.ritual.summon_familiar.success",
                     SoundEvents.PIG_AMBIENT, 1.0f, 2, 24);
@@ -5418,6 +5460,22 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_witch.support"), false);
             return false;
         }
+        return startSummonWitch(player, level, sl, center,
+                droppedOfferings(offerings.get().diamondVapour(),
+                        offerings.get().exhaleOfHornedOne(),
+                        offerings.get().magmaCream(),
+                        offerings.get().arthana(),
+                        offerings.get().fermentedSpiderEye()));
+    }
+
+    private static boolean startSummonWitchFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startSummonWitch(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startSummonWitch(Player player, Level level, ServerLevel sl, BlockPos center,
+                                           List<RitualOffering> offerings) {
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -5429,12 +5487,9 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_witch.no_power")
-                .offer(offerings.get().diamondVapour())
-                .offer(offerings.get().exhaleOfHornedOne())
-                .offer(offerings.get().magmaCream())
-                .offer(offerings.get().arthana())
-                .offer(offerings.get().fermentedSpiderEye());
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 2000, "witchery.ritual.summon_witch.no_power"),
+                offerings);
         if (!transaction.commitDeferred(player, () -> {
             witch.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
             witch.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
@@ -5460,6 +5515,22 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_imp.support"), false);
             return false;
         }
+        return startSummonImp(player, level, sl, center,
+                droppedOfferings(offerings.get().refinedEvil(),
+                        offerings.get().infernalBlood(),
+                        offerings.get().enderPearl(),
+                        offerings.get().attunedStone()));
+    }
+
+    private static boolean startSummonImpFromRecipe(Player player, Level level, BlockPos center,
+                                                    List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireCoven(player, level, center, 1)) return false;
+        return startSummonImp(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
+    private static boolean startSummonImp(Player player, Level level, ServerLevel sl, BlockPos center,
+                                         List<RitualOffering> offerings) {
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -5471,11 +5542,9 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 5000, "witchery.ritual.summon_imp.no_power")
-                .offer(offerings.get().refinedEvil())
-                .offer(offerings.get().infernalBlood())
-                .offer(offerings.get().enderPearl())
-                .offer(offerings.get().attunedStone());
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 5000, "witchery.ritual.summon_imp.no_power"),
+                offerings);
         if (!transaction.commitDeferred(player, () -> {
             imp.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
             imp.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
@@ -5565,12 +5634,52 @@ public class RitualExecutor {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<SummonWitherOfferings> offerings = findSummonWitherOfferings(level, center);
         Optional<ExpensiveSummonWitherOfferings> expensiveOfferings = findExpensiveSummonWitherOfferings(level, center);
-        boolean useExpensive = expensiveOfferings.isPresent();
         if (offerings.isEmpty() && expensiveOfferings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.support"), false);
             return false;
         }
+        if (offerings.isPresent()) {
+            return startSummonWither(player, level, sl, center, false,
+                    droppedOfferings(offerings.get().diamondVapour(), offerings.get().enderPearl()),
+                    offerings.get().villager());
+        }
+        return startSummonWither(player, level, sl, center, true,
+                droppedOfferings(expensiveOfferings.get().diamond(),
+                        expensiveOfferings.get().enderPearl(),
+                        expensiveOfferings.get().attunedStone(),
+                        expensiveOfferings.get().chargedStone()),
+                null);
+    }
+
+    private static boolean startSummonWitherFromRecipe(Player player, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
+        if (villager.isEmpty()) {
+            Optional<List<ItemEntity>> expensiveItems = matchDroppedOfferings(level, center,
+                    SUMMON_WITHER_EXPENSIVE_RECIPE);
+            if (expensiveItems.isPresent()) {
+                return startSummonWither(player, level, sl, center, true,
+                        droppedOfferings(expensiveItems.get()), null);
+            }
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_wither.support"), false);
+            return false;
+        }
+        return startSummonWither(player, level, sl, center, false,
+                droppedOfferings(matchedItems), villager.get());
+    }
+
+    private static boolean startExpensiveSummonWitherFromRecipe(Player player, Level level, BlockPos center,
+                                                                List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startSummonWither(player, level, sl, center, true, droppedOfferings(matchedItems), null);
+    }
+
+    private static boolean startSummonWither(Player player, Level level, ServerLevel sl, BlockPos center,
+                                            boolean useExpensive, List<RitualOffering> offerings,
+                                            @Nullable Villager villager) {
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -5582,25 +5691,18 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, useExpensive ? 0 : 4000,
-                "witchery.ritual.summon_wither.no_power");
-        if (useExpensive) {
-            transaction.offer(expensiveOfferings.get().diamond())
-                    .offer(expensiveOfferings.get().enderPearl())
-                    .offer(expensiveOfferings.get().attunedStone())
-                    .offer(expensiveOfferings.get().chargedStone());
-        } else {
-            transaction.offer(offerings.get().diamondVapour())
-                    .offer(offerings.get().enderPearl());
-        }
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, useExpensive ? 0 : 4000,
+                        "witchery.ritual.summon_wither.no_power"),
+                offerings);
         if (!transaction.commitDeferred(player, () -> {
             wither.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
             wither.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                     net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
             sl.addFreshEntity(wither);
 
-            if (!useExpensive) {
-                offerings.get().villager().discard();
+            if (!useExpensive && villager != null) {
+                villager.discard();
             }
             success(player, level, center, "witchery.ritual.summon_wither.success",
                     SoundEvents.WITHER_SPAWN, 0.8f, 4, 64);
@@ -5616,12 +5718,55 @@ public class RitualExecutor {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<SummonDemonOfferings> offerings = findSummonDemonOfferings(level, center);
         Optional<ExpensiveSummonDemonOfferings> expensiveOfferings = findExpensiveSummonDemonOfferings(level, center);
-        boolean useExpensive = expensiveOfferings.isPresent();
         if (offerings.isEmpty() && expensiveOfferings.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.support"), false);
             return false;
         }
+        if (offerings.isPresent()) {
+            return startSummonDemon(player, level, sl, center, false,
+                    droppedOfferings(offerings.get().refinedEvil(),
+                            offerings.get().blazePowder(),
+                            offerings.get().enderPearl()),
+                    offerings.get().villager());
+        }
+        return startSummonDemon(player, level, sl, center, true,
+                droppedOfferings(expensiveOfferings.get().refinedEvil(),
+                        expensiveOfferings.get().blazeRod(),
+                        expensiveOfferings.get().enderPearl(),
+                        expensiveOfferings.get().attunedStone(),
+                        expensiveOfferings.get().chargedStone()),
+                null);
+    }
+
+    private static boolean startSummonDemonFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        Optional<Villager> villager = findNearbyVillagerSacrifice(level, center);
+        if (villager.isEmpty()) {
+            Optional<List<ItemEntity>> expensiveItems = matchDroppedOfferings(level, center,
+                    SUMMON_DEMON_EXPENSIVE_RECIPE);
+            if (expensiveItems.isPresent()) {
+                return startSummonDemon(player, level, sl, center, true,
+                        droppedOfferings(expensiveItems.get()), null);
+            }
+            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
+            player.displayClientMessage(Component.translatable("witchery.ritual.summon_demon.support"), false);
+            return false;
+        }
+        return startSummonDemon(player, level, sl, center, false,
+                droppedOfferings(matchedItems), villager.get());
+    }
+
+    private static boolean startExpensiveSummonDemonFromRecipe(Player player, Level level, BlockPos center,
+                                                               List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startSummonDemon(player, level, sl, center, true, droppedOfferings(matchedItems), null);
+    }
+
+    private static boolean startSummonDemon(Player player, Level level, ServerLevel sl, BlockPos center,
+                                           boolean useExpensive, List<RitualOffering> offerings,
+                                           @Nullable Villager villager) {
         if (hasSummonCircleObstruction(sl, center)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.rite.obstructedcircle"), false);
@@ -5633,26 +5778,17 @@ public class RitualExecutor {
             return false;
         }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000, "witchery.ritual.summon_demon.no_power");
-        if (useExpensive) {
-            transaction.offer(expensiveOfferings.get().refinedEvil())
-                    .offer(expensiveOfferings.get().blazeRod())
-                    .offer(expensiveOfferings.get().enderPearl())
-                    .offer(expensiveOfferings.get().attunedStone())
-                    .offer(expensiveOfferings.get().chargedStone());
-        } else {
-            transaction.offer(offerings.get().refinedEvil())
-                    .offer(offerings.get().blazePowder())
-                    .offer(offerings.get().enderPearl());
-        }
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 3000, "witchery.ritual.summon_demon.no_power"),
+                offerings);
         if (!transaction.commitDeferred(player, () -> {
             demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
             demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                     net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
             sl.addFreshEntity(demon);
 
-            if (!useExpensive) {
-                offerings.get().villager().discard();
+            if (!useExpensive && villager != null) {
+                villager.discard();
             }
             success(player, level, center, "witchery.ritual.summon_demon.success",
                     SoundEvents.BLAZE_SHOOT, 0.7f, 4, 56);

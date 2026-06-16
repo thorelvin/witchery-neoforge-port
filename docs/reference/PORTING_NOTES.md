@@ -158,6 +158,16 @@ source-registration based, even where it differs from the older fallback orderin
 bind before portable bind, powered copy before portable copy, location bind before Blooded binding
 when both complete sets are present, and powered Blooded binding before its no-power variant.
 
+Follow-up (2026-06-16, slice 5): the source summon cluster is in the full-offering table. Converted
+Summon Demon normal/expensive, Summon Wither normal/expensive, Summon Familiar, Summon Witch, and
+Summon Imp from their `WitcheryRecipes` sacrifice lists. The full-recipe path consumes the exact
+matched dropped ingredients and returns `SUCCESS_NO_CONSUME`; existing representative-trigger paths
+remain as fallback. Normal Demon/Wither include living villager sacrifices, so their item recipe is
+listed before the expensive variant for source order, but the action delegates to the expensive
+item-only recipe when no villager is present and the expensive dropped set is complete. Wither recipes
+also carry the source medium Infernal companion-ring requirement. Note the port's historical Infernal
+Blood/Demonic Blood alias is retained for Summon Imp matching.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

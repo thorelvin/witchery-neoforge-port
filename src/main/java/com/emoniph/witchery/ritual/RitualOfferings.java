@@ -95,6 +95,30 @@ final class RitualOfferings {
             .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .build();
+    static final RitualRecipe SUMMON_DEMON_RECIPE = RitualRecipe.named("summon_demon")
+            .require("Refined Evil", stack -> stack.is(WitcheryItems.REFINED_EVIL.get()))
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .build();
+    static final RitualRecipe SUMMON_DEMON_EXPENSIVE_RECIPE = RitualRecipe.named("summon_demon_expensive")
+            .require("Refined Evil", stack -> stack.is(WitcheryItems.REFINED_EVIL.get()))
+            .require("Blaze Rod", stack -> stack.is(Items.BLAZE_ROD))
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe SUMMON_WITHER_RECIPE = RitualRecipe.named("summon_wither")
+            .require("Wither Skeleton Skull", stack -> stack.is(Items.WITHER_SKELETON_SKULL))
+            .require("Diamond Vapour", stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()))
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .build();
+    static final RitualRecipe SUMMON_WITHER_EXPENSIVE_RECIPE = RitualRecipe.named("summon_wither_expensive")
+            .require("Wither Skeleton Skull", stack -> stack.is(Items.WITHER_SKELETON_SKULL))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
     static final RitualRecipe NECROMANTIC_STONE_RECIPE = RitualRecipe.named("necromantic_stone")
             .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
             .require("Bone", stack -> stack.is(Items.BONE))
@@ -103,11 +127,24 @@ final class RitualOfferings {
             .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
             .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
             .build();
+    static final RitualRecipe SUMMON_FAMILIAR_RECIPE = RitualRecipe.named("summon_familiar")
+            .require("Drop of Luck", stack -> stack.is(WitcheryItems.DROP_OF_LUCK.get()))
+            .require("Egg", stack -> stack.is(Items.EGG))
+            .require("Gold Ingot", stack -> stack.is(Items.GOLD_INGOT))
+            .require("Arthana", stack -> stack.is(WitcheryItems.ARTHANA.get()))
+            .build();
     static final RitualRecipe BIND_WAYSTONE_COPY_RECIPE = RitualRecipe.named("bind_waystone_copy")
             .require("Bound Waystone", WaystoneItem::isBoundWaystone)
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
             .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .build();
+    static final RitualRecipe SUMMON_WITCH_RECIPE = RitualRecipe.named("summon_witch")
+            .require("Diamond Vapour", stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()))
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Magma Cream", stack -> stack.is(Items.MAGMA_CREAM))
+            .require("Arthana", stack -> stack.is(WitcheryItems.ARTHANA.get()))
+            .require("Fermented Spider Eye", stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
             .build();
     static final RitualRecipe BIND_WAYSTONE_PORTABLE_RECIPE = RitualRecipe.named("bind_waystone_portable")
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
@@ -138,6 +175,12 @@ final class RitualOfferings {
             .require("Condensed Fear", stack -> stack.is(WitcheryItems.CONDENSED_FEAR.get()))
             .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
             .require("Boline", stack -> stack.is(WitcheryItems.BOLINE.get()))
+            .build();
+    static final RitualRecipe SUMMON_IMP_RECIPE = RitualRecipe.named("summon_imp")
+            .require("Refined Evil", stack -> stack.is(WitcheryItems.REFINED_EVIL.get()))
+            .require("Infernal Blood", RitualOfferings::isInfernalBloodStack)
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
             .build();
     static final RitualRecipe BIND_BLOODED_WAYSTONE_RECIPE = RitualRecipe.named("bind_blooded_waystone")
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
@@ -343,6 +386,10 @@ final class RitualOfferings {
 
     static boolean isObsidianStack(ItemStack stack) {
         return stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN);
+    }
+
+    static boolean isInfernalBloodStack(ItemStack stack) {
+        return stack.is(WitcheryItems.INFERNAL_BLOOD.get()) || stack.is(WitcheryItems.DEMONIC_BLOOD.get());
     }
 
     static Optional<BanishDemonOfferings> findBanishDemonOfferings(Level level, BlockPos center) {
@@ -887,8 +934,7 @@ final class RitualOfferings {
 
     static Optional<SummonImpOfferings> findSummonImpOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> refinedEvil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REFINED_EVIL.get()));
-        Optional<ItemEntity> infernalBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFERNAL_BLOOD.get())
-                || stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> infernalBlood = findNearbyOffering(level, center, RitualOfferings::isInfernalBloodStack);
         Optional<ItemEntity> enderPearl = findNearbyOffering(level, center, stack -> stack.is(Items.ENDER_PEARL));
         Optional<ItemEntity> attunedStone = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()));
         if (refinedEvil.isEmpty() || infernalBlood.isEmpty() || enderPearl.isEmpty() || attunedStone.isEmpty()) {

@@ -305,6 +305,97 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void fullRecipeDispatchMatchesSummonRoutesRegardlessSupportOrder() {
+        assertEquals("summon_familiar", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GOLD_INGOT),
+                        new ItemStack(WitcheryItems.ARTHANA.get()),
+                        new ItemStack(WitcheryItems.DROP_OF_LUCK.get()),
+                        new ItemStack(Items.EGG)), 1));
+        assertEquals("summon_witch", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(WitcheryItems.ARTHANA.get()),
+                        new ItemStack(Items.MAGMA_CREAM),
+                        new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get())), 3));
+        assertEquals("summon_imp", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                        new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(WitcheryItems.REFINED_EVIL.get())), 3));
+        assertEquals("summon_demon_expensive", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(Items.BLAZE_ROD),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(WitcheryItems.REFINED_EVIL.get())), 3));
+    }
+
+    @Test
+    void fullRecipeDispatchRequiresWitherCompanionRing() {
+        List<ItemStack> witherOfferings = List.of(
+                new ItemStack(Items.WITHER_SKELETON_SKULL),
+                new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                new ItemStack(Items.ENDER_PEARL));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE, witherOfferings, 3),
+                "Summon Wither needs the paired medium Infernal ring");
+        assertEquals("summon_wither", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE, witherOfferings, 3,
+                List.of(RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, 3))));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsSourceOrderForOverlappingSummonSets() {
+        assertEquals("summon_demon", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(WitcheryItems.REFINED_EVIL.get()),
+                        new ItemStack(Items.BLAZE_POWDER),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(Items.BLAZE_ROD),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 3),
+                "source registers villager Summon Demon before the expensive item-only recipe");
+        assertEquals("summon_wither", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(Items.WITHER_SKELETON_SKULL),
+                        new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 3,
+                List.of(RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, 3))),
+                "source registers villager Summon Wither before the expensive item-only recipe");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteSummonSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.EGG),
+                        new ItemStack(Items.GOLD_INGOT),
+                        new ItemStack(WitcheryItems.ARTHANA.get())), 1),
+                "Summon Familiar needs Drop of Luck too");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                        new ItemStack(WitcheryItems.EXHALE_OF_HORNED_ONE.get()),
+                        new ItemStack(Items.MAGMA_CREAM),
+                        new ItemStack(WitcheryItems.ARTHANA.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE)), 1),
+                "Summon Witch is Infernal, not Ritual");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.LARGE,
+                List.of(new ItemStack(WitcheryItems.REFINED_EVIL.get()),
+                        new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()),
+                        new ItemStack(Items.ENDER_PEARL)), 3),
+                "Summon Imp needs the Attuned Stone");
+    }
+
+    @Test
     void fullRecipeDispatchRejectsIncompleteProtectionAndBanishSets() {
         assertNull(RitualExecutor.matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize.SMALL,
                 List.of(new ItemStack(Items.REDSTONE)), 1));
