@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
@@ -244,6 +245,14 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         return count;
     }
 
+    public int getContentsColor() {
+        BrazierRecipe recipe = findRecipe(this);
+        int rgb = recipe == null ? averageLoadedIngredientColor() : averageIngredientColor(recipe.ingredients());
+        float shade = isBurning() ? 1.0F : 0.78F;
+        float alpha = isBurning() ? 0.95F : 0.85F;
+        return colorWithShade(rgb, shade, alpha);
+    }
+
     public int getCookTime()   { return cookTime; }
     public int getPowerLevel() { return powerLevel; }
 
@@ -352,6 +361,75 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
             powerLevel = value;
             setChanged();
         }
+    }
+
+    private int averageLoadedIngredientColor() {
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        int count = 0;
+        for (int i = SLOT_INGREDIENT_1; i <= SLOT_INGREDIENT_3; i++) {
+            ItemStack stack = slots.get(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            int rgb = ingredientContentsColor(stack.getItem());
+            red += (rgb >>> 16) & 0xFF;
+            green += (rgb >>> 8) & 0xFF;
+            blue += rgb & 0xFF;
+            count++;
+        }
+        if (count == 0) {
+            return 0x6A5A43;
+        }
+        return ((red / count) << 16) | ((green / count) << 8) | (blue / count);
+    }
+
+    private static int averageIngredientColor(Item[] ingredients) {
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        for (Item item : ingredients) {
+            int rgb = ingredientContentsColor(item);
+            red += (rgb >>> 16) & 0xFF;
+            green += (rgb >>> 8) & 0xFF;
+            blue += rgb & 0xFF;
+        }
+        int count = Math.max(1, ingredients.length);
+        return ((red / count) << 16) | ((green / count) << 8) | (blue / count);
+    }
+
+    private static int ingredientContentsColor(Item item) {
+        if (item == WitcheryItems.WORMWOOD.get()) return 0x5F8A49;
+        if (item == WitcheryItems.BAT_WOOL.get()) return 0x65606A;
+        if (item == WitcheryItems.GRAVEYARD_DUST.get()) return 0xA7A193;
+        if (item == WitcheryItems.CONDENSED_FEAR.get()) return 0x3B2E64;
+        if (item == WitcheryItems.REFINED_EVIL.get()) return 0x7D2731;
+        if (item == WitcheryItems.FOCUSED_WILL.get()) return 0x6B8CCB;
+        if (item == WitcheryItems.TEAR_OF_GODDESS.get()) return 0x8AC8F4;
+        if (item == WitcheryItems.WORMY_APPLE.get()) return 0x756B2E;
+        if (item == WitcheryItems.QUICKLIME.get()) return 0xDAD4B5;
+        if (item == WitcheryItems.INFERNAL_ANIMUS.get()) return 0xD6521F;
+        if (item == WitcheryItems.EXHALE_OF_HORNED_ONE.get()) return 0x936B37;
+        if (item == WitcheryItems.ROWAN_BERRIES.get()) return 0xB73545;
+        if (item == WitcheryItems.FANCIFUL_THREAD.get()) return 0xC684E8;
+        if (item == WitcheryItems.DIAMOND_VAPOUR.get()) return 0x77D8F1;
+        if (item == Items.BLAZE_ROD) return 0xD98A1F;
+        if (item == Items.BLAZE_POWDER) return 0xE8A928;
+        if (item == Items.GOLDEN_APPLE) return 0xE0BA38;
+        if (item == Items.DIAMOND) return 0x69D6E4;
+        if (item == Items.FERMENTED_SPIDER_EYE) return 0x5A314A;
+        if (item == Items.ENDER_PEARL) return 0x2C9A83;
+        if (item == Items.NETHER_WART) return 0xA42A34;
+        if (item == Items.GUNPOWDER) return 0x5F5F5F;
+        return 0x6A5A43;
+    }
+
+    private static int colorWithShade(int rgb, float shade, float alpha) {
+        float red = ((rgb >>> 16) & 0xFF) / 255.0F * shade;
+        float green = ((rgb >>> 8) & 0xFF) / 255.0F * shade;
+        float blue = (rgb & 0xFF) / 255.0F * shade;
+        return ARGB.colorFromFloat(alpha, red, green, blue);
     }
 
     private static void runBurningEffect(Level level, BlockPos pos, BrazierRecipe recipe, BrazierBlockEntity be) {

@@ -13,6 +13,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemUtils;
@@ -173,5 +175,17 @@ public class BrazierBlock extends BaseEntityBlock {
     @Override
     protected VoxelShape getCollisionShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
+    }
+
+    @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (!level.isClientSide()
+                && entity instanceof LivingEntity
+                && level.getBlockEntity(pos) instanceof BrazierBlockEntity be
+                && be.isBurning()
+                && !entity.fireImmune()) {
+            entity.hurt(level.damageSources().inFire(), 1.0F);
+        }
+        super.stepOn(level, pos, state, entity);
     }
 }

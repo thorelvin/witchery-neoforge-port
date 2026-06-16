@@ -5,6 +5,7 @@ import com.emoniph.witchery.client.model.BrazierModel;
 import com.mojang.math.Axis;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -22,6 +23,8 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
 
     public static class State extends BlockEntityRenderState {
         public int ingredientCount;
+        public int contentsColor;
+        public boolean burning;
     }
 
     public BrazierRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -36,6 +39,8 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         state.ingredientCount = be.getIngredientCount();
+        state.contentsColor = be.getContentsColor();
+        state.burning = be.isBurning();
     }
 
     @Override
@@ -46,7 +51,9 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
         ps.translate(0, -1, 0);
         if (state.ingredientCount > 0) {
             model.setAshIngredientCount(state.ingredientCount);
-            collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+            int light = state.burning ? LightTexture.FULL_BRIGHT : state.lightCoords;
+            collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityTranslucent(TEXTURE),
+                    light, OverlayTexture.NO_OVERLAY, null, state.contentsColor, null);
         }
         ps.popPose();
     }
