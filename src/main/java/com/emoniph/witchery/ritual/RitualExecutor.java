@@ -367,12 +367,18 @@ public class RitualExecutor {
     private static final List<FullRecipeRitualDefinition> FULL_RECIPE_RITUAL_DEFINITIONS = List.of(
             // Source registration order within the converted cluster. Recipes intentionally ignore
             // harmless extra offerings, so the more specific / earlier source entries must stay first.
+            FullRecipeRitualDefinition.of("bind_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_WAYSTONE_RECIPE,
+                    RitualExecutor::startBindWaystoneFromRecipe),
             FullRecipeRitualDefinition.of("charge_stone_medium", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_RITUAL, CHARGE_STONE_RECIPE, RitualExecutor::startChargeStoneFromRecipe,
                     RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
             FullRecipeRitualDefinition.of("charge_stone_small", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, CHARGE_STONE_RECIPE, RitualExecutor::startChargeStoneFromRecipe,
                     RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)),
+            FullRecipeRitualDefinition.of("transposition_to_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_OTHERWHERE, TRANSPOSITION_TO_WAYSTONE_RECIPE,
+                    RitualExecutor::startTranspositionToWaystoneFromRecipe),
             FullRecipeRitualDefinition.of("sanctity", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SANCTITY_RECIPE, RitualExecutor::startSanctityFromRecipe),
             FullRecipeRitualDefinition.of("imprisonment", RitualCircleDetector.CircleSize.SMALL,
@@ -407,6 +413,15 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("necromantic_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, NECROMANTIC_STONE_RECIPE,
                     RitualExecutor::startNecromanticStoneFromRecipe),
+            FullRecipeRitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_WAYSTONE_COPY_RECIPE,
+                    RitualExecutor::startBindWaystoneCopyFromRecipe),
+            FullRecipeRitualDefinition.of("bind_waystone_portable", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_WAYSTONE_PORTABLE_RECIPE,
+                    RitualExecutor::startBindWaystonePortableFromRecipe),
+            FullRecipeRitualDefinition.of("bind_waystone_copy_portable", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_WAYSTONE_COPY_PORTABLE_RECIPE,
+                    RitualExecutor::startBindWaystoneCopyPortableFromRecipe),
             FullRecipeRitualDefinition.of("crystal_ball", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_RITUAL, CRYSTAL_BALL_RECIPE,
                     RitualExecutor::startCrystalBallFromRecipe),
@@ -415,7 +430,13 @@ public class RitualExecutor {
                     RitualExecutor::startSeerStoneFromRecipe),
             FullRecipeRitualDefinition.of("spectral_stone", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SPECTRAL_STONE_RECIPE,
-                    RitualExecutor::startSpectralStoneFromRecipe)
+                    RitualExecutor::startSpectralStoneFromRecipe),
+            FullRecipeRitualDefinition.of("bind_blooded_waystone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_BLOODED_WAYSTONE_RECIPE,
+                    RitualExecutor::startBindBloodedWaystoneFromRecipe),
+            FullRecipeRitualDefinition.of("bind_blooded_waystone_portable", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, BIND_BLOODED_WAYSTONE_PORTABLE_RECIPE,
+                    RitualExecutor::startBindBloodedWaystonePortableFromRecipe)
     );
 
     private static final List<RitualDefinition> RITUAL_DEFINITIONS = List.of(
@@ -758,6 +779,16 @@ public class RitualExecutor {
         List<RitualOffering> offerings = new ArrayList<>(itemEntities.size());
         for (ItemEntity itemEntity : itemEntities) {
             offerings.add(RitualOffering.dropped(itemEntity));
+        }
+        return List.copyOf(offerings);
+    }
+
+    private static List<RitualOffering> droppedOfferings(ItemEntity... itemEntities) {
+        List<RitualOffering> offerings = new ArrayList<>(itemEntities.length);
+        for (ItemEntity itemEntity : itemEntities) {
+            if (itemEntity != null) {
+                offerings.add(RitualOffering.dropped(itemEntity));
+            }
         }
         return List.copyOf(offerings);
     }
@@ -5874,6 +5905,13 @@ public class RitualExecutor {
     // ── Sprint 4 — Waystone rites ─────────────────────────────────────────────
 
     /** Rite of Binding — summons a freshly bound Waystone item at the ritual center. */
+    private static boolean startBindWaystoneFromRecipe(Player player, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBindWaystone(player, level, sl, center, droppedOfferings(matchedItems), 500,
+                "witchery.ritual.bind_waystone.no_power", false);
+    }
+
     private static boolean riteOfBindWaystone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<ItemEntity> enderDew = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ENDER_DEW.get()));
@@ -5882,11 +5920,17 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone.support"), false);
             return false;
         }
+        return startBindWaystone(player, level, sl, center, droppedOfferings(enderDew.get(), glowstone.get()), 500,
+                "witchery.ritual.bind_waystone.no_power", false);
+    }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
-                "witchery.ritual.bind_waystone.no_power")
-                .offer(enderDew.get())
-                .offer(glowstone.get());
+    private static boolean startBindWaystone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                             List<RitualOffering> offerings, int powerCost,
+                                             @Nullable String noPowerKey, boolean portable) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, powerCost, noPowerKey);
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
             WaystoneItem.bindTo(boundWaystone, center, level.dimension());
@@ -5899,7 +5943,13 @@ public class RitualExecutor {
             level.addFreshEntity(entity);
             success(player, level, center, "witchery.ritual.bind_waystone.success",
                     SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-            WitcheryMod.LOGGER.info("Waystone summoned and bound to ritual center {} for {}", center, player.getName().getString());
+            if (portable) {
+                WitcheryMod.LOGGER.info("Portable waystone binding summoned a bound waystone at {} for {}",
+                        center, player.getName().getString());
+            } else {
+                WitcheryMod.LOGGER.info("Waystone summoned and bound to ritual center {} for {}",
+                        center, player.getName().getString());
+            }
         })) {
             return false;
         }
@@ -5907,6 +5957,12 @@ public class RitualExecutor {
     }
 
     /** Portable Rite of Binding - source no-power route using Wood Ash and a Charged Attuned Stone. */
+    private static boolean startBindWaystonePortableFromRecipe(Player player, Level level, BlockPos center,
+                                                               List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBindWaystone(player, level, sl, center, droppedOfferings(matchedItems), 0, null, true);
+    }
+
     private static boolean riteOfBindWaystonePortable(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<BindWaystonePortableOfferings> offerings = findBindWaystonePortableOfferings(level, center);
@@ -5916,31 +5972,23 @@ public class RitualExecutor {
         }
 
         BindWaystonePortableOfferings support = offerings.get();
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
-                .offer(support.enderDew())
-                .offer(support.woodAsh())
-                .offer(support.chargedStone());
-        if (!transaction.commitDeferred(player, () -> {
-            ItemStack boundWaystone = new ItemStack(WitcheryItems.BOUND_WAYSTONE.get());
-            WaystoneItem.bindTo(boundWaystone, center, level.dimension());
-            ItemEntity entity = new ItemEntity(level,
-                    center.getX() + 0.5,
-                    center.getY() + 1.5,
-                    center.getZ() + 0.5,
-                    boundWaystone);
-            entity.setDeltaMovement(0.0, 0.3, 0.0);
-            level.addFreshEntity(entity);
-            success(player, level, center, "witchery.ritual.bind_waystone.success",
-                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-            WitcheryMod.LOGGER.info("Portable waystone binding summoned a bound waystone at {} for {}",
-                    center, player.getName().getString());
-        })) {
-            return false;
-        }
-        return true;
+        return startBindWaystone(player, level, sl, center,
+                droppedOfferings(support.enderDew(), support.woodAsh(), support.chargedStone()), 0, null, true);
     }
 
     /** Rite of Binding (entity) - summons a source-style blooded Waystone bound to a nearby living target. */
+    private static boolean startBindBloodedWaystoneFromRecipe(Player player, Level level, BlockPos center,
+                                                              List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBindBloodedWaystone(player, level, sl, center, droppedOfferings(matchedItems), true);
+    }
+
+    private static boolean startBindBloodedWaystonePortableFromRecipe(Player player, Level level, BlockPos center,
+                                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startBindBloodedWaystone(player, level, sl, center, droppedOfferings(matchedItems), false);
+    }
+
     private static boolean riteOfBindBloodedWaystone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<BindBloodedWaystoneOfferings> offerings = findBindBloodedWaystoneOfferings(level, center);
@@ -5948,20 +5996,26 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_blooded_waystone.support"), false);
             return false;
         }
+        BindBloodedWaystoneOfferings support = offerings.get();
+        return startBindBloodedWaystone(player, level, sl, center,
+                droppedOfferings(support.enderDew(), support.slimeBall(), support.snowball(),
+                        support.icyNeedle(), support.chargedStone()),
+                support.needsPower());
+    }
+
+    private static boolean startBindBloodedWaystone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                                    List<RitualOffering> offerings, boolean needsPower) {
         Optional<LivingEntity> target = findBloodedWaystoneTarget(level, center);
         if (target.isEmpty()) {
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_blooded_waystone.no_target"), false);
             return false;
         }
 
-        BindBloodedWaystoneOfferings support = offerings.get();
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, support.needsPower() ? 500 : 0,
-                support.needsPower() ? "witchery.ritual.bind_blooded_waystone.no_power" : null)
-                .offer(support.enderDew())
-                .offer(support.slimeBall())
-                .offer(support.snowball())
-                .offer(support.icyNeedle())
-                .offer(support.chargedStone());
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, needsPower ? 500 : 0,
+                needsPower ? "witchery.ritual.bind_blooded_waystone.no_power" : null);
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack bloodedWaystone = new ItemStack(WitcheryItems.BLOODED_WAYSTONE.get());
             WaystoneItem.bindToEntity(bloodedWaystone, target.get());
@@ -5986,6 +6040,16 @@ public class RitualExecutor {
      * Rite of Binding (copy) — restores the original small-circle bound-waystone copy route
      * and duplicates the dropped bound waystone's location onto one extra offered unbound waystone.
      */
+    private static boolean startBindWaystoneCopyFromRecipe(Player player, Level level, BlockPos center,
+                                                           List<ItemEntity> matchedItems) {
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl) || matchedItems.isEmpty()) {
+            return false;
+        }
+        ItemStack sourceWaystone = matchedItems.get(0).getItem().copyWithCount(1);
+        return startBindWaystoneCopy(sp, level, sl, center, sourceWaystone, droppedOfferings(matchedItems), 500,
+                "witchery.ritual.bind_waystone_copy.no_power", false);
+    }
+
     private static boolean riteOfBindWaystoneCopy(Player player, Level level, BlockPos center, ItemStack sourceWaystone) {
         if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (!WaystoneItem.isBound(sourceWaystone)) {
@@ -6004,13 +6068,23 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.bind_waystone_copy.support"), false);
             return false;
         }
+        return startBindWaystoneCopy(sp, level, sl, center, sourceWaystone,
+                droppedOfferings(unboundWaystone.get(), enderDew.get(), diamond.get()), 500,
+                "witchery.ritual.bind_waystone_copy.no_power", false);
+    }
 
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 500,
-                "witchery.ritual.bind_waystone_copy.no_power")
-                .offer(unboundWaystone.get())
-                .offer(enderDew.get())
-                .offer(diamond.get());
-        if (!transaction.commitDeferred(player, () -> {
+    private static boolean startBindWaystoneCopy(ServerPlayer sp, Level level, ServerLevel sl, BlockPos center,
+                                                 ItemStack sourceWaystone, List<RitualOffering> offerings,
+                                                 int powerCost, @Nullable String noPowerKey, boolean portable) {
+        if (!WaystoneItem.isBound(sourceWaystone)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition.no_waystone"), false);
+            return false;
+        }
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, powerCost, noPowerKey);
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
+        if (!transaction.commitDeferred(sp, () -> {
             ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
                     .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
             ItemEntity entity = new ItemEntity(level,
@@ -6021,9 +6095,13 @@ public class RitualExecutor {
             entity.setDeltaMovement(0.0, 0.3, 0.0);
             level.addFreshEntity(entity);
 
-            success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
+            success(sp, level, center, "witchery.ritual.bind_waystone_copy.success",
                     SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-            WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
+            if (portable) {
+                WitcheryMod.LOGGER.info("Portable copied bound waystone at {} for {}", center, sp.getName().getString());
+            } else {
+                WitcheryMod.LOGGER.info("Copied bound waystone at {} for {}", center, sp.getName().getString());
+            }
         })) {
             return false;
         }
@@ -6031,6 +6109,16 @@ public class RitualExecutor {
     }
 
     /** Portable copy route - no-power source variant using Quicklime and a Charged Attuned Stone. */
+    private static boolean startBindWaystoneCopyPortableFromRecipe(Player player, Level level, BlockPos center,
+                                                                   List<ItemEntity> matchedItems) {
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl) || matchedItems.isEmpty()) {
+            return false;
+        }
+        ItemStack sourceWaystone = matchedItems.get(0).getItem().copyWithCount(1);
+        return startBindWaystoneCopy(sp, level, sl, center, sourceWaystone, droppedOfferings(matchedItems), 0,
+                null, true);
+    }
+
     private static boolean riteOfBindWaystoneCopyPortable(Player player, Level level, BlockPos center, ItemStack sourceWaystone) {
         if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (!WaystoneItem.isBound(sourceWaystone)) {
@@ -6045,29 +6133,10 @@ public class RitualExecutor {
         }
 
         BindWaystoneCopyPortableOfferings support = offerings.get();
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0, null)
-                .offer(support.blankWaystone())
-                .offer(support.enderDew())
-                .offer(support.quicklime())
-                .offer(support.chargedStone());
-        if (!transaction.commitDeferred(player, () -> {
-            ItemStack copiedWaystones = sourceWaystone.copyWithCount(2)
-                    .transmuteCopy(WitcheryItems.BOUND_WAYSTONE.get());
-            ItemEntity entity = new ItemEntity(level,
-                    center.getX() + 0.5,
-                    center.getY() + 1.5,
-                    center.getZ() + 0.5,
-                    copiedWaystones);
-            entity.setDeltaMovement(0.0, 0.3, 0.0);
-            level.addFreshEntity(entity);
-
-            success(player, level, center, "witchery.ritual.bind_waystone_copy.success",
-                    SoundEvents.BEACON_ACTIVATE, 1f, 2, 32);
-            WitcheryMod.LOGGER.info("Portable copied bound waystone at {} for {}", center, sp.getName().getString());
-        })) {
-            return false;
-        }
-        return true;
+        return startBindWaystoneCopy(sp, level, sl, center, sourceWaystone,
+                droppedOfferings(support.blankWaystone(), support.enderDew(), support.quicklime(),
+                        support.chargedStone()),
+                0, null, true);
     }
 
     /**
@@ -6111,10 +6180,25 @@ public class RitualExecutor {
     }
 
     /** Rite of Transposition (waystone) — teleports caster to bound waystone coordinates. */
+    private static boolean startTranspositionToWaystoneFromRecipe(Player player, Level level, BlockPos center,
+                                                                  List<ItemEntity> matchedItems) {
+        if (matchedItems.isEmpty()) {
+            return false;
+        }
+        ItemEntity matchedWaystone = matchedItems.get(0);
+        ItemStack waystone = matchedWaystone.getItem().copyWithCount(1);
+        return startTranspositionToWaystone(player, level, center, waystone, RitualOffering.dropped(matchedWaystone));
+    }
+
     private static boolean riteOfTranspositionToWaystone(Player player, Level level, BlockPos center, ItemStack waystone) {
+        return startTranspositionToWaystone(player, level, center, waystone, null);
+    }
+
+    private static boolean startTranspositionToWaystone(Player player, Level level, BlockPos center,
+                                                        ItemStack waystone, @Nullable RitualOffering consumedWaystone) {
         if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
         if (WaystoneItem.isEntityBoundWaystone(waystone)) {
-            return riteOfTranspositionToBloodedWaystone(sp, level, center, waystone);
+            return riteOfTranspositionToBloodedWaystone(sp, level, center, waystone, consumedWaystone);
         }
         Optional<BlockPos> dest = WaystoneItem.getBoundPos(waystone);
         Optional<ResourceKey<Level>> dim = WaystoneItem.getBoundDim(waystone);
@@ -6144,12 +6228,21 @@ public class RitualExecutor {
 
         success(player, level, center, "witchery.ritual.transposition.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
+        if (consumedWaystone != null) {
+            consumedWaystone.consumeOne();
+        }
         WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to {}", moved, center, d);
         return true;
     }
 
     /** Blooded Waystone transposition targets the live entity stored in the waystone's taglock data. */
     private static boolean riteOfTranspositionToBloodedWaystone(ServerPlayer player, Level level, BlockPos center, ItemStack waystone) {
+        return riteOfTranspositionToBloodedWaystone(player, level, center, waystone, null);
+    }
+
+    private static boolean riteOfTranspositionToBloodedWaystone(ServerPlayer player, Level level, BlockPos center,
+                                                               ItemStack waystone,
+                                                               @Nullable RitualOffering consumedWaystone) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<LivingEntity> target = WaystoneItem.findBoundEntity(sl.getServer(), waystone);
         if (target.isEmpty() || !target.get().isAlive() || !(target.get().level() instanceof ServerLevel targetLevel)) {
@@ -6172,6 +6265,9 @@ public class RitualExecutor {
 
         success(player, level, center, "witchery.ritual.transposition.success",
                 SoundEvents.ENDERMAN_TELEPORT, 0.8f, 1, 30);
+        if (consumedWaystone != null) {
+            consumedWaystone.consumeOne();
+        }
         WitcheryMod.LOGGER.info("Rite of Transposition moved {} entity(s) from {} to blooded waystone target {}",
                 moved, center, living.getName().getString());
         return true;

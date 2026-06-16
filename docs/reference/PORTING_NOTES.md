@@ -148,6 +148,16 @@ entities as the sacrifices to stage, returns `SUCCESS_NO_CONSUME`, and leaves th
 route as fallback for branches that already supported Grasspers. Source correction captured here:
 Seer Stone's source sacrifice is Quartz Sphere + Obsidian + Happenstance Oil, not Mossy Cobblestone.
 
+Follow-up (2026-06-16, slice 4): small Waystone rites are in the full-offering table. The converted
+dropped recipes are: bind Waystone (blank Waystone + Ender Dew + Glowstone Dust), small Otherwhere
+Waystone transposition (bound/Blooded Waystone), bind Waystone copy (bound Waystone + blank Waystone
++ Ender Dew + Diamond), portable bind/copy, and the powered/no-power Blooded Waystone variants. The
+full-recipe path stages the exact matched dropped Waystone/support entities and returns
+`SUCCESS_NO_CONSUME`; the old representative-trigger branches remain as fallback. Keep the order
+source-registration based, even where it differs from the older fallback ordering: powered location
+bind before portable bind, powered copy before portable copy, location bind before Blooded binding
+when both complete sets are present, and powered Blooded binding before its no-power variant.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

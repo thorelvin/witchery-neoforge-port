@@ -1,10 +1,13 @@
 package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +45,12 @@ class RitualRecipeMatchTest {
             .require("Obsidian", s -> s.is(Items.OBSIDIAN))
             .require("Redstone", s -> s.is(Items.REDSTONE))
             .build();
+
+    private static ItemStack boundWaystone() {
+        ItemStack stack = new ItemStack(WitcheryItems.WAYSTONE.get());
+        WaystoneItem.bindTo(stack, BlockPos.ZERO, Level.OVERWORLD);
+        return stack;
+    }
 
     @Test
     void fullOfferingSetMatches() {
@@ -203,6 +212,96 @@ class RitualRecipeMatchTest {
                         new ItemStack(Items.MOSSY_COBBLESTONE),
                         new ItemStack(WitcheryItems.QUARTZ_SPHERE.get())), 1),
                 "source Seer Stone uses Obsidian, not Mossy Cobblestone");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesWaystoneRoutesRegardlessSupportOrder() {
+        assertEquals("bind_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get())), 1));
+        assertEquals("bind_waystone_copy", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        boundWaystone()), 1));
+        assertEquals("bind_waystone_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.WOOD_ASH.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get())), 1));
+        assertEquals("bind_waystone_copy_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        boundWaystone()), 1));
+        assertEquals("bind_blooded_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.SNOWBALL),
+                        new ItemStack(Items.SLIME_BALL),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get())), 1));
+        assertEquals("bind_blooded_waystone_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.ICY_NEEDLE.get()),
+                        new ItemStack(Items.SLIME_BALL),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(WitcheryItems.WAYSTONE.get())), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsSourceOrderForOverlappingWaystoneSets() {
+        assertEquals("bind_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(WitcheryItems.WOOD_ASH.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "source registers powered bind before portable bind");
+        assertEquals("bind_waystone_copy", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(boundWaystone(),
+                        new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "source registers powered copy before portable copy");
+        assertEquals("bind_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(Items.SLIME_BALL),
+                        new ItemStack(Items.SNOWBALL)), 1),
+                "source registers location bind before Blooded Waystone binding");
+        assertEquals("bind_blooded_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.WAYSTONE.get()),
+                        new ItemStack(WitcheryItems.ENDER_DEW.get()),
+                        new ItemStack(Items.SLIME_BALL),
+                        new ItemStack(Items.SNOWBALL),
+                        new ItemStack(WitcheryItems.ICY_NEEDLE.get()),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "source registers powered Blooded Waystone before its portable no-power variant");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesWaystoneTranspositionOnOtherwhereRing() {
+        assertEquals("transposition_to_waystone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.DIRT), boundWaystone()), 2));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.WAYSTONE.get())), 2),
+                "blank Waystones do not satisfy the source transposition sacrifice");
     }
 
     @Test

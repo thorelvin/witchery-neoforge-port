@@ -38,12 +38,20 @@ final class RitualOfferings {
     static final int GRASSPER_OFFERING_RADIUS = 5;
     private static final double DEFAULT_DROPPED_OFFERING_RADIUS = 1.5D;
 
+    static final RitualRecipe BIND_WAYSTONE_RECIPE = RitualRecipe.named("bind_waystone")
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST))
+            .build();
     static final RitualRecipe CHARGE_STONE_RECIPE = RitualRecipe.named("charge_stone")
             .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
             .require("Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST))
             .require("Redstone", stack -> stack.is(Items.REDSTONE))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
             .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .build();
+    static final RitualRecipe TRANSPOSITION_TO_WAYSTONE_RECIPE = RitualRecipe.named("transposition_to_waystone")
+            .require("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe SANCTITY_RECIPE = RitualRecipe.named("sanctity")
             .require("Feather", stack -> stack.is(Items.FEATHER))
@@ -95,6 +103,25 @@ final class RitualOfferings {
             .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
             .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
             .build();
+    static final RitualRecipe BIND_WAYSTONE_COPY_RECIPE = RitualRecipe.named("bind_waystone_copy")
+            .require("Bound Waystone", WaystoneItem::isBoundWaystone)
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .build();
+    static final RitualRecipe BIND_WAYSTONE_PORTABLE_RECIPE = RitualRecipe.named("bind_waystone_portable")
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe BIND_WAYSTONE_COPY_PORTABLE_RECIPE = RitualRecipe.named("bind_waystone_copy_portable")
+            .require("Bound Waystone", WaystoneItem::isBoundWaystone)
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
     static final RitualRecipe CRYSTAL_BALL_RECIPE = RitualRecipe.named("crystal_ball")
             .require("Quartz Sphere", stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()))
             .require("Gold Ingot", stack -> stack.is(Items.GOLD_INGOT))
@@ -112,6 +139,20 @@ final class RitualOfferings {
             .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
             .require("Boline", stack -> stack.is(WitcheryItems.BOLINE.get()))
             .build();
+    static final RitualRecipe BIND_BLOODED_WAYSTONE_RECIPE = RitualRecipe.named("bind_blooded_waystone")
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Slimeball", stack -> stack.is(Items.SLIME_BALL))
+            .require("Snowball", stack -> stack.is(Items.SNOWBALL))
+            .build();
+    static final RitualRecipe BIND_BLOODED_WAYSTONE_PORTABLE_RECIPE =
+            RitualRecipe.named("bind_blooded_waystone_portable")
+                    .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+                    .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+                    .require("Slimeball", stack -> stack.is(Items.SLIME_BALL))
+                    .require("Icy Needle", stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()))
+                    .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+                    .build();
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
