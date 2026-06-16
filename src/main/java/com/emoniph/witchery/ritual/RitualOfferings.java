@@ -38,18 +38,47 @@ final class RitualOfferings {
     static final int GRASSPER_OFFERING_RADIUS = 5;
     private static final double DEFAULT_DROPPED_OFFERING_RADIUS = 1.5D;
 
-    private static final RitualRecipe STORM_BASE_RECIPE = RitualRecipe.named("storm_base")
+    static final RitualRecipe SANCTITY_RECIPE = RitualRecipe.named("sanctity")
+            .require("Feather", stack -> stack.is(Items.FEATHER))
+            .require("Redstone", stack -> stack.is(Items.REDSTONE))
+            .build();
+    static final RitualRecipe IMPRISONMENT_RECIPE = RitualRecipe.named("imprisonment")
+            .require("Slimeball", stack -> stack.is(Items.SLIME_BALL))
+            .require("Redstone", stack -> stack.is(Items.REDSTONE))
+            .build();
+    static final RitualRecipe PROTECTION_BARRIER_MONSTERS_RECIPE = RitualRecipe.named("obsidian_barrier_monsters")
+            .require("Obsidian", RitualOfferings::isObsidianStack)
+            .require("Redstone", stack -> stack.is(Items.REDSTONE))
+            .build();
+    static final RitualRecipe PROTECTION_BARRIER_LARGE_RECIPE = RitualRecipe.named("protection")
+            .require("Obsidian", RitualOfferings::isObsidianStack)
+            .require("Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST))
+            .build();
+    static final RitualRecipe PROTECTION_BARRIER_PORTABLE_RECIPE = RitualRecipe.named("obsidian_barrier_portable")
+            .require("Obsidian", RitualOfferings::isObsidianStack)
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe STORM_BASE_RECIPE = RitualRecipe.named("storm_base")
             .require("Wooden Sword", stack -> stack.is(Items.WOODEN_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
             .build();
-    private static final RitualRecipe STORM_LARGE_RECIPE = RitualRecipe.named("storm_large")
+    static final RitualRecipe STORM_LARGE_RECIPE = RitualRecipe.named("storm_large")
             .require("Stone Sword", stack -> stack.is(Items.STONE_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
             .build();
-    private static final RitualRecipe STORM_PORTABLE_RECIPE = RitualRecipe.named("storm_portable")
+    static final RitualRecipe STORM_PORTABLE_RECIPE = RitualRecipe.named("storm_portable")
             .require("Iron Sword", stack -> stack.is(Items.IRON_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
             .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe BANISH_DEMON_PORTABLE_RECIPE = RitualRecipe.named("banish_demon_charged")
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe BANISH_DEMON_RECIPE = RitualRecipe.named("banish_demon")
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .build();
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
@@ -1089,19 +1118,6 @@ final class RitualOfferings {
         }
         OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
         return Optional.of(new StormOfferings(weatherFocus.get(), woodAsh.get(), chargedStone.orElse(null),
-                relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
-    }
-
-    static Optional<StormOfferings> findStormOfferingsByRecipe(Level level, BlockPos center,
-                                                               StormRiteVariant variant, int covenSize) {
-        Optional<List<ItemEntity>> matched = matchDroppedOfferings(level, center, stormRecipe(variant));
-        if (matched.isEmpty()) {
-            return Optional.empty();
-        }
-        List<ItemEntity> items = matched.get();
-        OptionalWaystoneRelocation relocation = findOptionalWaystoneRelocation(level, center, covenSize);
-        return Optional.of(new StormOfferings(items.get(0), items.get(1),
-                variant == StormRiteVariant.PORTABLE ? items.get(2) : null,
                 relocation.boundWaystone(), relocation.effectCenter(), relocation.tooFar()));
     }
 

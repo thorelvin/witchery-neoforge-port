@@ -126,6 +126,19 @@ order, and passes the exact matched sword/Wood Ash/Charged Stone entities into t
 sacrifice path. The old representative-item route remains as fallback, but valid dropped Storm sets no
 longer fail just because Wood Ash or another support item was closer to the center than the sword.
 
+Follow-up (2026-06-16, slice 2): the Storm pre-scan has been generalized into an ordered
+`FullRecipeRitualDefinition` activation table that runs before the representative trigger table. The
+converted source-registration cluster is now: Sanctity/Protection (Feather + Redstone),
+Imprisonment (Slimeball + Redstone), small monster barrier (Obsidian + Redstone), medium player
+barrier (Obsidian + Glowstone Dust), portable barrier (Obsidian + Charged Attuned Stone), the three
+Storm recipes, portable Banish (Blaze Powder + blank Waystone + Charged Attuned Stone), then
+altar-powered Banish (Blaze Powder + blank Waystone). Because `RitualRecipe` deliberately ignores
+extra harmless offerings, this table preserves source order for overlapping sets: Redstone barrier
+wins over portable barrier, portable barrier wins over Banish when both complete sets are present,
+and portable Banish wins over the powered Banish recipe. Runtime matches return
+`SUCCESS_NO_CONSUME`; the exact matched dropped items are already queued for staged sacrifice
+consumption, so the click-layer representative item must not be consumed again.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

@@ -94,6 +94,56 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void fullRecipeDispatchMatchesProtectionClusterRegardlessSupportOrder() {
+        assertEquals("sanctity", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.FEATHER)), 1));
+        assertEquals("imprisonment", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.SLIME_BALL)), 1));
+        assertEquals("obsidian_barrier_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()), new ItemStack(Items.OBSIDIAN)), 1));
+        assertEquals("protection", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Items.GLOWSTONE_DUST), new ItemStack(Items.OBSIDIAN)), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsSourceOrderForOverlappingProtectionAndBanishSets() {
+        ItemStack blankWaystone = new ItemStack(WitcheryItems.WAYSTONE.get());
+        assertEquals("obsidian_barrier_monsters", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.OBSIDIAN),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(Items.REDSTONE)), 1),
+                "source registers the redstone barrier before portable barrier");
+        assertEquals("banish_demon_charged", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BLAZE_POWDER),
+                        blankWaystone,
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "source registers portable Banish before the altar-powered Banish recipe");
+        assertEquals("obsidian_barrier_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.OBSIDIAN),
+                        new ItemStack(Items.BLAZE_POWDER),
+                        blankWaystone,
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
+                "source registers portable barrier before the Banish recipes");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteProtectionAndBanishSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.REDSTONE)), 1));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BLAZE_POWDER), new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.OBSIDIAN), new ItemStack(Items.REDSTONE)), 3));
+    }
+
+    @Test
     void assignmentIsDistinctAndComplete() {
         int[] picks = BARRIER.assign(List.of(
                 new ItemStack(Items.OBSIDIAN), new ItemStack(Items.REDSTONE)));
