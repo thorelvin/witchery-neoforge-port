@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.blocks.BrazierBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -275,6 +276,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
             cookTime = 0;
             powerStorage = 0L;
             slots.set(SLOT_BURNING_MARKER, new ItemStack(WitcheryItems.WOOD_ASH.get()));
+            syncLitState(true);
             setChanged();
         }
     }
@@ -289,6 +291,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         clearContent();
         cookTime = 0;
         powerStorage = 0L;
+        syncLitState(false);
         setChanged();
     }
 
@@ -301,6 +304,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
     // ── Server tick ───────────────────────────────────────────────────────────
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BrazierBlockEntity be) {
+        be.syncLitState(be.isBurning());
         if (!be.isBurning()) {
             if (level.getGameTime() % 40 == 0) {
                 be.setPowerLevel(findAltar(level, pos) != null ? 1 : 0);
@@ -361,6 +365,16 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         if (powerLevel != value) {
             powerLevel = value;
             setChanged();
+        }
+    }
+
+    private void syncLitState(boolean lit) {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        BlockState state = getBlockState();
+        if (state.hasProperty(BrazierBlock.LIT) && state.getValue(BrazierBlock.LIT) != lit) {
+            level.setBlock(worldPosition, state.setValue(BrazierBlock.LIT, lit), 3);
         }
     }
 

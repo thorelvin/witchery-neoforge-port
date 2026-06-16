@@ -24,12 +24,16 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -38,10 +42,19 @@ import org.jetbrains.annotations.Nullable;
 public class BrazierBlock extends BaseEntityBlock {
 
     public static final MapCodec<BrazierBlock> CODEC = simpleCodec(BrazierBlock::new);
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final VoxelShape SHAPE = box(3.2, 0.0, 3.2, 12.8, 15.2, 12.8);
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    public BrazierBlock(BlockBehaviour.Properties p) { super(p); }
+    public BrazierBlock(BlockBehaviour.Properties p) {
+        super(p);
+        registerDefaultState(stateDefinition.any().setValue(LIT, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(LIT);
+    }
 
     @Nullable @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -160,7 +173,7 @@ public class BrazierBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be && be.isBurning()) {
+        if (state.getValue(LIT) && level.getBlockEntity(pos) instanceof BrazierBlockEntity be && be.isBurning()) {
             double x = pos.getX() + 0.4D + random.nextInt(3) * 0.1D;
             double y = pos.getY() + 1.1D + random.nextInt(2) * 0.1D;
             double z = pos.getZ() + 0.4D + random.nextInt(3) * 0.1D;
