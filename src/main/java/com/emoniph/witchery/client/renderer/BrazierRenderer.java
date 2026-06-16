@@ -21,7 +21,7 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
     private final BrazierModel model;
 
     public static class State extends BlockEntityRenderState {
-        public boolean renderAsh;
+        public int ingredientCount;
     }
 
     public BrazierRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -35,7 +35,7 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
     public void extractRenderState(BrazierBlockEntity be, State state, float partialTick,
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
-        state.renderAsh = be.isBurning();
+        state.ingredientCount = be.getIngredientCount();
     }
 
     @Override
@@ -44,7 +44,8 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        if (state.renderAsh) {
+        if (state.ingredientCount > 0) {
+            model.setAshIngredientCount(state.ingredientCount);
             collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }
         ps.popPose();

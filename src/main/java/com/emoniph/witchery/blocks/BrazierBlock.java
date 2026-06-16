@@ -5,9 +5,11 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
@@ -143,6 +145,16 @@ public class BrazierBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be && be.isBurning()) {
+            double x = pos.getX() + 0.4D + random.nextInt(3) * 0.1D;
+            double y = pos.getY() + 1.1D + random.nextInt(2) * 0.1D;
+            double z = pos.getZ() + 0.4D + random.nextInt(3) * 0.1D;
+            level.addParticle(ParticleTypes.FLAME, x, y, z, 0.0D, 0.0D, 0.0D);
+        }
+    }
 
     @Override
     protected boolean hasAnalogOutputSignal(BlockState state) {

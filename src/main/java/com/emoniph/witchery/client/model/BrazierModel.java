@@ -70,4 +70,8 @@ public class BrazierModel extends Model.Simple {
     public ModelPart ashPart() {
         return ash;
     }
+
+    public void setAshIngredientCount(int ingredientCount) {
+        ash.y = 9.7f - Math.max(0, ingredientCount - 1) * 0.1f;
+    }
 }
