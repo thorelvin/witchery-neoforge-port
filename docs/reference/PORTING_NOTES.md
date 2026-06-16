@@ -139,6 +139,15 @@ and portable Banish wins over the powered Banish recipe. Runtime matches return
 `SUCCESS_NO_CONSUME`; the exact matched dropped items are already queued for staged sacrifice
 consumption, so the click-layer representative item must not be consumed again.
 
+Follow-up (2026-06-16, slice 3): `FullRecipeRitualDefinition` now also supports companion-ring
+requirements. Charge Stone can therefore use the full dropped source recipe while requiring the paired
+small/medium Ritual rings, instead of depending on the Attuned Stone representative trigger winning
+the center scan. The same table now covers dropped full-offering dispatch for Necromantic Stone,
+Spectral Stone, Crystal Ball, and Seer Stone. Each converted handler accepts the matched dropped
+entities as the sacrifices to stage, returns `SUCCESS_NO_CONSUME`, and leaves the old representative
+route as fallback for branches that already supported Grasspers. Source correction captured here:
+Seer Stone's source sacrifice is Quartz Sphere + Obsidian + Happenstance Oil, not Mossy Cobblestone.
+
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 
 QA: rite offerings all vanished at once on activation; source pops them one at a time. Source

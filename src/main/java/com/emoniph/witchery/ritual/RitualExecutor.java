@@ -322,17 +322,25 @@ public class RitualExecutor {
 
     private record FullRecipeRitualDefinition(String name, RitualCircleDetector.CircleSize size,
                                               int requiredVariant, RitualRecipe recipe,
-                                              FullRecipeAction action) {
+                                              FullRecipeAction action,
+                                              List<RitualDefinition.CompanionRing> companionRings) {
         static FullRecipeRitualDefinition of(String name, RitualCircleDetector.CircleSize size,
                                              int requiredVariant, RitualRecipe recipe,
-                                             FullRecipeAction action) {
-            return new FullRecipeRitualDefinition(name, size, requiredVariant, recipe, action);
+                                             FullRecipeAction action,
+                                             RitualDefinition.CompanionRing... companionRings) {
+            return new FullRecipeRitualDefinition(name, size, requiredVariant, recipe, action,
+                    List.of(companionRings));
         }
 
         ActivationResult tryActivate(RitualCircleDetector.CircleSize activeSize, Player player,
                                      Level level, BlockPos center, int activeVariant) {
             if (!matchesCircle(activeSize, activeVariant)) {
                 return null;
+            }
+            for (RitualDefinition.CompanionRing ring : companionRings) {
+                if (!hasCompanionRing(level, center, ring.size(), ring.variant())) {
+                    return null;
+                }
             }
             Optional<List<ItemEntity>> matchedItems = matchDroppedOfferings(level, center, recipe);
             if (matchedItems.isEmpty()) {
@@ -344,8 +352,10 @@ public class RitualExecutor {
         }
 
         boolean matchesStacks(RitualCircleDetector.CircleSize activeSize, List<ItemStack> offeredStacks,
-                              int activeVariant) {
-            return matchesCircle(activeSize, activeVariant) && recipe.matches(offeredStacks);
+                              int activeVariant, List<RitualDefinition.CompanionRing> presentCompanionRings) {
+            return matchesCircle(activeSize, activeVariant)
+                    && presentCompanionRings.containsAll(companionRings)
+                    && recipe.matches(offeredStacks);
         }
 
         private boolean matchesCircle(RitualCircleDetector.CircleSize activeSize, int activeVariant) {
@@ -357,6 +367,12 @@ public class RitualExecutor {
     private static final List<FullRecipeRitualDefinition> FULL_RECIPE_RITUAL_DEFINITIONS = List.of(
             // Source registration order within the converted cluster. Recipes intentionally ignore
             // harmless extra offerings, so the more specific / earlier source entries must stay first.
+            FullRecipeRitualDefinition.of("charge_stone_medium", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, CHARGE_STONE_RECIPE, RitualExecutor::startChargeStoneFromRecipe,
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, VARIANT_RITUAL)),
+            FullRecipeRitualDefinition.of("charge_stone_small", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, CHARGE_STONE_RECIPE, RitualExecutor::startChargeStoneFromRecipe,
+                    RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, VARIANT_RITUAL)),
             FullRecipeRitualDefinition.of("sanctity", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, SANCTITY_RECIPE, RitualExecutor::startSanctityFromRecipe),
             FullRecipeRitualDefinition.of("imprisonment", RitualCircleDetector.CircleSize.SMALL,
@@ -387,7 +403,19 @@ public class RitualExecutor {
                     RitualExecutor::startBanishDemonPortableFromRecipe),
             FullRecipeRitualDefinition.of("banish_demon", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BANISH_DEMON_RECIPE,
-                    RitualExecutor::startBanishDemonFromRecipe)
+                    RitualExecutor::startBanishDemonFromRecipe),
+            FullRecipeRitualDefinition.of("necromantic_stone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, NECROMANTIC_STONE_RECIPE,
+                    RitualExecutor::startNecromanticStoneFromRecipe),
+            FullRecipeRitualDefinition.of("crystal_ball", RitualCircleDetector.CircleSize.MEDIUM,
+                    VARIANT_RITUAL, CRYSTAL_BALL_RECIPE,
+                    RitualExecutor::startCrystalBallFromRecipe),
+            FullRecipeRitualDefinition.of("infuse_seer_stone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, SEER_STONE_RECIPE,
+                    RitualExecutor::startSeerStoneFromRecipe),
+            FullRecipeRitualDefinition.of("spectral_stone", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, SPECTRAL_STONE_RECIPE,
+                    RitualExecutor::startSpectralStoneFromRecipe)
     );
 
     private static final List<RitualDefinition> RITUAL_DEFINITIONS = List.of(
@@ -712,8 +740,14 @@ public class RitualExecutor {
 
     static String matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize size,
                                                    List<ItemStack> offeredStacks, int circleVariant) {
+        return matchingFullRecipeDefinitionName(size, offeredStacks, circleVariant, List.of());
+    }
+
+    static String matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize size,
+                                                   List<ItemStack> offeredStacks, int circleVariant,
+                                                   List<RitualDefinition.CompanionRing> companionRings) {
         for (FullRecipeRitualDefinition definition : FULL_RECIPE_RITUAL_DEFINITIONS) {
-            if (definition.matchesStacks(size, offeredStacks, circleVariant)) {
+            if (definition.matchesStacks(size, offeredStacks, circleVariant, companionRings)) {
                 return definition.name();
             }
         }
@@ -1292,6 +1326,12 @@ public class RitualExecutor {
     }
 
     /** Rite of Charge Stone — infuses an Attuned Stone into its charged variant on paired small and medium ritual circles. */
+    private static boolean startChargeStoneFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startChargeStone(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfChargeStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<ChargeStoneOfferings> offerings = findChargeStoneOfferings(level, center);
@@ -1300,12 +1340,20 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.charge_stone.support"), false);
             return false;
         }
+        return startChargeStone(player, level, sl, center, List.of(
+                offerings.get().glowstone(),
+                offerings.get().redstone(),
+                offerings.get().woodAsh(),
+                offerings.get().quicklime()));
+    }
+
+    private static boolean startChargeStone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                            List<RitualOffering> offerings) {
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
-                "witchery.ritual.charge_stone.no_power")
-                .offer(offerings.get().glowstone())
-                .offer(offerings.get().redstone())
-                .offer(offerings.get().woodAsh())
-                .offer(offerings.get().quicklime());
+                "witchery.ritual.charge_stone.no_power");
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemEntity entity = new ItemEntity(level,
                     center.getX() + 0.5,
@@ -3761,6 +3809,15 @@ public class RitualExecutor {
 
     /** Rite of Necromancy — infuses an empty Spectral Stone at night through a representative ritual-dust route. */
     /** Rite of Necromancy — infuses an Attuned Stone into a Necromantic Stone at night. */
+    private static boolean startNecromanticStoneFromRecipe(Player player, Level level, BlockPos center,
+                                                           List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        return startNecromanticStone(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfNecromanticStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireNight(player, level, center)) {
@@ -3772,15 +3829,22 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.necro_stone.support"), false);
             return false;
         }
+        return startNecromanticStone(player, level, sl, center, List.of(
+                RitualOffering.dropped(offerings.get().attunedStone()),
+                RitualOffering.dropped(offerings.get().bone()),
+                RitualOffering.dropped(offerings.get().rottenFlesh()),
+                RitualOffering.dropped(offerings.get().woodAsh()),
+                RitualOffering.dropped(offerings.get().gunpowder()),
+                RitualOffering.dropped(offerings.get().spectralDust())));
+    }
 
+    private static boolean startNecromanticStone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                                 List<RitualOffering> offerings) {
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 1000,
-                "witchery.ritual.necro_stone.no_power")
-                .offer(offerings.get().attunedStone())
-                .offer(offerings.get().bone())
-                .offer(offerings.get().rottenFlesh())
-                .offer(offerings.get().woodAsh())
-                .offer(offerings.get().gunpowder())
-                .offer(offerings.get().spectralDust());
+                "witchery.ritual.necro_stone.no_power");
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack output = new ItemStack(WitcheryItems.NECRO_STONE.get());
             ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
@@ -3797,6 +3861,15 @@ public class RitualExecutor {
     }
 
     /** Spectral Stone rite â€” condenses a Spectral Stone from an existing Necromantic Stone at night. */
+    private static boolean startSpectralStoneFromRecipe(Player player, Level level, BlockPos center,
+                                                        List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        return startSpectralStone(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfSpectralStone(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!requireNight(player, level, center)) {
@@ -3808,13 +3881,21 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.spectral_stone.support"), false);
             return false;
         }
+        return startSpectralStone(player, level, sl, center, List.of(
+                RitualOffering.dropped(offerings.get().necroStone()),
+                RitualOffering.dropped(offerings.get().congealedSpirit()),
+                RitualOffering.dropped(offerings.get().condensedFear()),
+                RitualOffering.dropped(offerings.get().spectralDust()),
+                RitualOffering.dropped(offerings.get().boline())));
+    }
+
+    private static boolean startSpectralStone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                             List<RitualOffering> offerings) {
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 6000,
-                "witchery.ritual.spectral_stone.no_power")
-                .offer(offerings.get().necroStone())
-                .offer(offerings.get().congealedSpirit())
-                .offer(offerings.get().condensedFear())
-                .offer(offerings.get().spectralDust())
-                .offer(offerings.get().boline());
+                "witchery.ritual.spectral_stone.no_power");
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack output = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
             SpectralStoneItem.clearBinding(output);
@@ -3923,6 +4004,15 @@ public class RitualExecutor {
     }
 
     /** Rite of Infusion — creates a Crystal Ball from Quartz Sphere, gold, and Happenstance Oil at night. */
+    private static boolean startCrystalBallFromRecipe(Player player, Level level, BlockPos center,
+                                                      List<ItemEntity> matchedItems) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startCrystalBall(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfInfuseCrystalBall(Player player, Level level, BlockPos center) {
         if (!requireNight(player, level, center)) {
             return false;
@@ -3934,11 +4024,19 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_future.support"), false);
             return false;
         }
+        return startCrystalBall(player, level, sl, center, List.of(
+                RitualOffering.dropped(offerings.get().quartzSphere()),
+                RitualOffering.dropped(offerings.get().goldIngot()),
+                RitualOffering.dropped(offerings.get().happenstanceOil())));
+    }
+
+    private static boolean startCrystalBall(Player player, Level level, ServerLevel sl, BlockPos center,
+                                            List<RitualOffering> offerings) {
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
-                "witchery.ritual.infusion_future.no_power")
-                .offer(offerings.get().quartzSphere())
-                .offer(offerings.get().goldIngot())
-                .offer(offerings.get().happenstanceOil());
+                "witchery.ritual.infusion_future.no_power");
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack output = new ItemStack(WitcheryItems.CRYSTAL_BALL.get());
             ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);
@@ -3955,7 +4053,16 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Rite of Infusion — creates a Seer Stone from Quartz Sphere, mossy cobblestone, and Happenstance Oil at night. */
+    /** Rite of Infusion — creates a Seer Stone from Quartz Sphere, obsidian, and Happenstance Oil at night. */
+    private static boolean startSeerStoneFromRecipe(Player player, Level level, BlockPos center,
+                                                    List<ItemEntity> matchedItems) {
+        if (!requireNight(player, level, center)) {
+            return false;
+        }
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startSeerStone(player, level, sl, center, droppedOfferings(matchedItems));
+    }
+
     private static boolean riteOfInfuseSeerStone(Player player, Level level, BlockPos center) {
         if (!requireNight(player, level, center)) {
             return false;
@@ -3967,11 +4074,19 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.infusion_seer.support"), false);
             return false;
         }
+        return startSeerStone(player, level, sl, center, List.of(
+                RitualOffering.dropped(offerings.get().quartzSphere()),
+                RitualOffering.dropped(offerings.get().obsidian()),
+                RitualOffering.dropped(offerings.get().happenstanceOil())));
+    }
+
+    private static boolean startSeerStone(Player player, Level level, ServerLevel sl, BlockPos center,
+                                          List<RitualOffering> offerings) {
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 2000,
-                "witchery.ritual.infusion_seer.no_power")
-                .offer(offerings.get().quartzSphere())
-                .offer(offerings.get().mossyCobblestone())
-                .offer(offerings.get().happenstanceOil());
+                "witchery.ritual.infusion_seer.no_power");
+        for (RitualOffering offering : offerings) {
+            transaction.offer(offering);
+        }
         if (!transaction.commitDeferred(player, () -> {
             ItemStack output = new ItemStack(WitcheryItems.SEER_STONE.get());
             ItemEntity drop = new ItemEntity(sl, center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, output);

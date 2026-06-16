@@ -134,6 +134,78 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void fullRecipeDispatchRequiresChargeStoneCompanionRing() {
+        List<ItemStack> offerings = List.of(
+                new ItemStack(WitcheryItems.QUICKLIME.get()),
+                new ItemStack(Items.REDSTONE),
+                new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                new ItemStack(WitcheryItems.WOOD_ASH.get()),
+                new ItemStack(Items.GLOWSTONE_DUST));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL, offerings, 1),
+                "Charge Stone needs the paired medium Ritual ring");
+        assertEquals("charge_stone_small", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL, offerings, 1,
+                List.of(RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, 1))));
+        assertEquals("charge_stone_medium", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM, offerings, 1,
+                List.of(RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.SMALL, 1))));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsChargeStoneBeforeNecromanticStoneWhenBothSetsArePresent() {
+        assertEquals("charge_stone_small", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE.get()),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(Items.REDSTONE),
+                        new ItemStack(WitcheryItems.WOOD_ASH.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(Items.BONE),
+                        new ItemStack(Items.ROTTEN_FLESH),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.SPECTRAL_DUST.get())),
+                1,
+                List.of(RitualDefinition.CompanionRing.of(RitualCircleDetector.CircleSize.MEDIUM, 1))),
+                "source registers Charge Stone before Necromantic Stone");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesStoneAndScryingRitesRegardlessSupportOrder() {
+        assertEquals("necromantic_stone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.SPECTRAL_DUST.get()),
+                        new ItemStack(Items.GUNPOWDER),
+                        new ItemStack(WitcheryItems.WOOD_ASH.get()),
+                        new ItemStack(Items.ROTTEN_FLESH),
+                        new ItemStack(Items.BONE),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE.get())), 1));
+        assertEquals("spectral_stone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.BOLINE.get()),
+                        new ItemStack(WitcheryItems.SPECTRAL_DUST.get()),
+                        new ItemStack(WitcheryItems.CONDENSED_FEAR.get()),
+                        new ItemStack(WitcheryItems.CONGEALED_SPIRIT.get()),
+                        new ItemStack(WitcheryItems.NECRO_STONE.get())), 1));
+        assertEquals("crystal_ball", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(WitcheryItems.HAPPENSTANCE_OIL.get()),
+                        new ItemStack(Items.GOLD_INGOT),
+                        new ItemStack(WitcheryItems.QUARTZ_SPHERE.get())), 1));
+        assertEquals("infuse_seer_stone", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.HAPPENSTANCE_OIL.get()),
+                        new ItemStack(Items.OBSIDIAN),
+                        new ItemStack(WitcheryItems.QUARTZ_SPHERE.get())), 1));
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.HAPPENSTANCE_OIL.get()),
+                        new ItemStack(Items.MOSSY_COBBLESTONE),
+                        new ItemStack(WitcheryItems.QUARTZ_SPHERE.get())), 1),
+                "source Seer Stone uses Obsidian, not Mossy Cobblestone");
+    }
+
+    @Test
     void fullRecipeDispatchRejectsIncompleteProtectionAndBanishSets() {
         assertNull(RitualExecutor.matchingFullRecipeDefinitionName(RitualCircleDetector.CircleSize.SMALL,
                 List.of(new ItemStack(Items.REDSTONE)), 1));

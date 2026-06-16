@@ -164,7 +164,7 @@ record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 
 record CrystalBallOfferings(ItemEntity quartzSphere, ItemEntity goldIngot, ItemEntity happenstanceOil) {}
 
-record SeerStoneOfferings(ItemEntity quartzSphere, ItemEntity mossyCobblestone, ItemEntity happenstanceOil) {}
+record SeerStoneOfferings(ItemEntity quartzSphere, ItemEntity obsidian, ItemEntity happenstanceOil) {}
 
 record PriorIncarnationOfferings(ItemEntity necroStone, ItemEntity dogTongue,
                                  ItemEntity bone, ItemEntity spectralDust,

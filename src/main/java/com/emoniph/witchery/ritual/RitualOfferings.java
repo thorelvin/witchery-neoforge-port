@@ -38,6 +38,13 @@ final class RitualOfferings {
     static final int GRASSPER_OFFERING_RADIUS = 5;
     private static final double DEFAULT_DROPPED_OFFERING_RADIUS = 1.5D;
 
+    static final RitualRecipe CHARGE_STONE_RECIPE = RitualRecipe.named("charge_stone")
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .require("Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST))
+            .require("Redstone", stack -> stack.is(Items.REDSTONE))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .build();
     static final RitualRecipe SANCTITY_RECIPE = RitualRecipe.named("sanctity")
             .require("Feather", stack -> stack.is(Items.FEATHER))
             .require("Redstone", stack -> stack.is(Items.REDSTONE))
@@ -79,6 +86,31 @@ final class RitualOfferings {
     static final RitualRecipe BANISH_DEMON_RECIPE = RitualRecipe.named("banish_demon")
             .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .build();
+    static final RitualRecipe NECROMANTIC_STONE_RECIPE = RitualRecipe.named("necromantic_stone")
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .require("Bone", stack -> stack.is(Items.BONE))
+            .require("Rotten Flesh", stack -> stack.is(Items.ROTTEN_FLESH))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .build();
+    static final RitualRecipe CRYSTAL_BALL_RECIPE = RitualRecipe.named("crystal_ball")
+            .require("Quartz Sphere", stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()))
+            .require("Gold Ingot", stack -> stack.is(Items.GOLD_INGOT))
+            .require("Happenstance Oil", stack -> stack.is(WitcheryItems.HAPPENSTANCE_OIL.get()))
+            .build();
+    static final RitualRecipe SEER_STONE_RECIPE = RitualRecipe.named("infuse_seer_stone")
+            .require("Quartz Sphere", stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()))
+            .require("Obsidian", stack -> stack.is(Items.OBSIDIAN))
+            .require("Happenstance Oil", stack -> stack.is(WitcheryItems.HAPPENSTANCE_OIL.get()))
+            .build();
+    static final RitualRecipe SPECTRAL_STONE_RECIPE = RitualRecipe.named("spectral_stone")
+            .require("Necromantic Stone", stack -> stack.is(WitcheryItems.NECRO_STONE.get()))
+            .require("Congealed Spirit", stack -> stack.is(WitcheryItems.CONGEALED_SPIRIT.get()))
+            .require("Condensed Fear", stack -> stack.is(WitcheryItems.CONDENSED_FEAR.get()))
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .require("Boline", stack -> stack.is(WitcheryItems.BOLINE.get()))
             .build();
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
@@ -660,12 +692,12 @@ final class RitualOfferings {
 
     static Optional<SeerStoneOfferings> findSeerStoneOfferings(Level level, BlockPos center) {
         Optional<ItemEntity> quartzSphere = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()));
-        Optional<ItemEntity> mossyCobblestone = findNearbyOffering(level, center, stack -> stack.is(Items.MOSSY_COBBLESTONE));
+        Optional<ItemEntity> obsidian = findNearbyOffering(level, center, stack -> stack.is(Items.OBSIDIAN));
         Optional<ItemEntity> happenstanceOil = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.HAPPENSTANCE_OIL.get()));
-        if (quartzSphere.isEmpty() || mossyCobblestone.isEmpty() || happenstanceOil.isEmpty()) {
+        if (quartzSphere.isEmpty() || obsidian.isEmpty() || happenstanceOil.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new SeerStoneOfferings(quartzSphere.get(), mossyCobblestone.get(), happenstanceOil.get()));
+        return Optional.of(new SeerStoneOfferings(quartzSphere.get(), obsidian.get(), happenstanceOil.get()));
     }
 
     static Optional<PriorIncarnationOfferings> findPriorIncarnationOfferings(Level level, BlockPos center) {
