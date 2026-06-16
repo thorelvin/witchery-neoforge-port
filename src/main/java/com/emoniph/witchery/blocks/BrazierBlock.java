@@ -60,7 +60,17 @@ public class BrazierBlock extends BaseEntityBlock {
     public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
                                            BlockPos pos, Player player, InteractionHand hand,
                                            BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) {
+            PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+            boolean extinguishes = stack.is(Items.WATER_BUCKET)
+                    || stack.is(Items.POTION) && potionContents != null && potionContents.is(Potions.WATER);
+            if (extinguishes
+                    && level.getBlockEntity(pos) instanceof BrazierBlockEntity be
+                    && (!be.isEmpty() || be.isBurning())) {
+                be.reset();
+            }
+            return InteractionResult.SUCCESS;
+        }
         if (!(level.getBlockEntity(pos) instanceof BrazierBlockEntity be)) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         // Water bucket → reset

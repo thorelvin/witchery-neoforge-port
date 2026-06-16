@@ -60,6 +60,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
     private static final float POWER_PER_TICK  = 1.0f;
     private static final int   SOURCE_AURA_INTERVAL = 60;
     private static final int   SOURCE_SUMMON_INTERVAL = 100;
+    private static final int   COMPLETION_EFFECT_TICKS = 20;
 
     private int cookTime   = 0;
     private int powerLevel = 0;
@@ -177,7 +178,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         // Infernal Animus → Fire Resistance + Strength 5 min (altar)
         new BrazierRecipe(
             new Item[]{ WitcheryItems.INFERNAL_ANIMUS.get() },
-            200, true,
+            COMPLETION_EFFECT_TICKS, true,
             List.of(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
                     new MobEffectInstance(MobEffects.STRENGTH,     6000, 0)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
@@ -185,28 +186,28 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         // Exhale of Horned One → Damage Resistance 3 min (altar)
         new BrazierRecipe(
             new Item[]{ WitcheryItems.EXHALE_OF_HORNED_ONE.get() },
-            300, true,
+            COMPLETION_EFFECT_TICKS, true,
             List.of(new MobEffectInstance(MobEffects.RESISTANCE, 3600, 0)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
         ),
         // Rowan Berries → Regeneration 1 min
         new BrazierRecipe(
             new Item[]{ WitcheryItems.ROWAN_BERRIES.get() },
-            160, false,
+            COMPLETION_EFFECT_TICKS, false,
             List.of(new MobEffectInstance(MobEffects.REGENERATION, 1200, 0)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
         ),
         // Fanciful Thread → Luck 2 min
         new BrazierRecipe(
             new Item[]{ WitcheryItems.FANCIFUL_THREAD.get() },
-            200, false,
+            COMPLETION_EFFECT_TICKS, false,
             List.of(new MobEffectInstance(MobEffects.LUCK, 2400, 0)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
         ),
         // Diamond Vapour + Fanciful Thread → Night Vision + Speed 2 min (altar)
         new BrazierRecipe(
             new Item[]{ WitcheryItems.DIAMOND_VAPOUR.get(), WitcheryItems.FANCIFUL_THREAD.get() },
-            400, true,
+            COMPLETION_EFFECT_TICKS, true,
             List.of(new MobEffectInstance(MobEffects.NIGHT_VISION,   2400, 0),
                     new MobEffectInstance(MobEffects.SPEED, 2400, 0)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
@@ -214,7 +215,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         // Gunpowder → Strength + Speed burst 30 sec
         new BrazierRecipe(
             new Item[]{ Items.GUNPOWDER },
-            60, false,
+            COMPLETION_EFFECT_TICKS, false,
             List.of(new MobEffectInstance(MobEffects.STRENGTH,   600, 1),
                     new MobEffectInstance(MobEffects.SPEED, 600, 1)),
             null, BrazierMode.COMPLETION_BUFF, 8, 0, true
@@ -249,7 +250,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         BrazierRecipe recipe = findRecipe(this);
         int rgb = recipe == null ? averageLoadedIngredientColor() : averageIngredientColor(recipe.ingredients());
         float shade = isBurning() ? 1.0F : 0.78F;
-        float alpha = isBurning() ? 0.95F : 0.85F;
+        float alpha = 1.0F;
         return colorWithShade(rgb, shade, alpha);
     }
 

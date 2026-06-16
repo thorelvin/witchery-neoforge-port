@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, BrazierRenderer.State> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/brazier.png");
+    private static final Identifier CONTENTS_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/white_concrete.png");
     private final BrazierModel model;
 
     public static class State extends BlockEntityRenderState {
@@ -52,7 +52,7 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
         if (state.ingredientCount > 0) {
             model.setAshIngredientCount(state.ingredientCount);
             int light = state.burning ? LightTexture.FULL_BRIGHT : state.lightCoords;
-            collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityTranslucent(TEXTURE),
+            collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityCutoutNoCull(CONTENTS_TEXTURE),
                     light, OverlayTexture.NO_OVERLAY, null, state.contentsColor, null);
         }
         ps.popPose();

@@ -45,8 +45,26 @@ class BrazierRecipeMatchTest {
                 "two ingredient use cases must not trigger when another slot is filled");
     }
 
+    @Test
+    void modernCompletionUseCasesResolveQuickly() {
+        assertEquals(20, matchingRecipe(Items.GUNPOWDER).burnTicks());
+        assertEquals(20, matchingRecipe(WitcheryItems.DIAMOND_VAPOUR.get(), WitcheryItems.FANCIFUL_THREAD.get()).burnTicks());
+    }
+
     private static boolean matches(Item... items) {
         return matchCount(items) == 1;
+    }
+
+    private static BrazierBlockEntity.BrazierRecipe matchingRecipe(Item... items) {
+        ItemStack first = stack(items, 0);
+        ItemStack second = stack(items, 1);
+        ItemStack third = stack(items, 2);
+        for (BrazierBlockEntity.BrazierRecipe recipe : BrazierBlockEntity.RECIPES) {
+            if (recipe.matches(first, second, third)) {
+                return recipe;
+            }
+        }
+        throw new AssertionError("No matching brazier recipe");
     }
 
     private static int matchCount(Item... items) {

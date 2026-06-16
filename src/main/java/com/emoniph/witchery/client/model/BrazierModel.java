@@ -52,8 +52,8 @@ public class BrazierModel extends Model.Simple {
         root.addOrReplaceChild("foot_base", CubeListBuilder.create().texOffs(6,0).addBox(-1.5f,-0.5f,-1.5f,3,1,3), PartPose.offset(0,21f,0));
 
         // Pan
-        // Modern ModelPart baking drops zero-height planes, so keep the source ash surface barely thick.
-        root.addOrReplaceChild("ash",       CubeListBuilder.create().texOffs(0,10).addBox(-2.5f,-0.01f,-2.5f,5,0.02f,5), PartPose.offset(0,9.7f,0));
+        // Modern ModelPart baking drops zero-height planes, so keep the source ash surface visibly thick.
+        root.addOrReplaceChild("ash",       CubeListBuilder.create().texOffs(0,10).addBox(-2.75f,-0.08f,-2.75f,5.5f,0.16f,5.5f), PartPose.offset(0,9.35f,0));
         root.addOrReplaceChild("pan_base",  CubeListBuilder.create().texOffs(6,5) .addBox(-3f,0,-3f,6,1,6), PartPose.offset(0,9.95f,0));
         root.addOrReplaceChild("pan_side1", CubeListBuilder.create().texOffs(5,12).addBox(-0.5f,-0.5f,-3f,1,1,6), PartPose.offset(3f,9.5f,0));
         root.addOrReplaceChild("pan_side2", CubeListBuilder.create().texOffs(4,26).addBox(-3f,-0.5f,-0.5f,6,1,1), PartPose.offset(0,9.5f,3f));
@@ -72,6 +72,6 @@ public class BrazierModel extends Model.Simple {
     }
 
     public void setAshIngredientCount(int ingredientCount) {
-        ash.y = 9.7f - Math.max(0, ingredientCount - 1) * 0.1f;
+        ash.y = 9.35f - Math.max(0, ingredientCount - 1) * 0.1f;
     }
 }
