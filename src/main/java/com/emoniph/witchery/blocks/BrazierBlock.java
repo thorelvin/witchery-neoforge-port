@@ -77,14 +77,24 @@ public class BrazierBlock extends BaseEntityBlock {
             PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
             boolean extinguishes = stack.is(Items.WATER_BUCKET)
                     || stack.is(Items.POTION) && potionContents != null && potionContents.is(Potions.WATER);
-            if (extinguishes
-                    && level.getBlockEntity(pos) instanceof BrazierBlockEntity be
-                    && (!be.isEmpty() || be.isBurning())) {
+            if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be
+                    && ((extinguishes && (!be.isEmpty() || be.isBurning()))
+                    || (stack.isEmpty() && be.isBurning()))) {
                 be.reset();
             }
             return InteractionResult.SUCCESS;
         }
         if (!(level.getBlockEntity(pos) instanceof BrazierBlockEntity be)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+
+        if (stack.isEmpty() && be.isBurning()) {
+            ItemStack ash = new ItemStack(WitcheryItems.WOOD_ASH.get());
+            be.reset();
+            if (!player.addItem(ash)) {
+                popResource(level, pos, ash);
+            }
+            level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.6f, 1.25f);
+            return InteractionResult.SUCCESS;
+        }
 
         // Water bucket → reset
         if (stack.is(Items.WATER_BUCKET)) {
@@ -100,7 +110,7 @@ public class BrazierBlock extends BaseEntityBlock {
         // Water bottle -> reset
         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
         if (stack.is(Items.POTION) && potionContents != null && potionContents.is(Potions.WATER)) {
-            if (!be.isEmpty()) {
+            if (!be.isEmpty() || be.isBurning()) {
                 be.reset();
                 if (!player.isCreative()) {
                     player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));

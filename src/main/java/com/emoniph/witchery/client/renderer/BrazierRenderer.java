@@ -23,7 +23,7 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
 
     public static class State extends BlockEntityRenderState {
         public int ingredientCount;
-        public int contentsColor;
+        public final int[] contentsColors = new int[3];
         public boolean burning;
     }
 
@@ -39,7 +39,9 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
                                    Vec3 offset, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         state.ingredientCount = be.getIngredientCount();
-        state.contentsColor = be.getContentsColor();
+        for (int i = 0; i < state.contentsColors.length; i++) {
+            state.contentsColors[i] = be.getContentsColor(i);
+        }
         state.burning = be.isBurning();
     }
 
@@ -50,10 +52,13 @@ public class BrazierRenderer implements BlockEntityRenderer<BrazierBlockEntity, 
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
         if (state.ingredientCount > 0) {
-            model.setAshIngredientCount(state.ingredientCount);
             int light = state.burning ? LightTexture.FULL_BRIGHT : state.lightCoords;
-            collector.submitModelPart(model.ashPart(), ps, RenderTypes.entityCutoutNoCull(CONTENTS_TEXTURE),
-                    light, OverlayTexture.NO_OVERLAY, null, state.contentsColor, null);
+            var contentParts = model.contentParts(state.ingredientCount);
+            for (int i = 0; i < contentParts.size(); i++) {
+                var contentPart = contentParts.get(i);
+                collector.submitModelPart(contentPart, ps, RenderTypes.entityCutoutNoCull(CONTENTS_TEXTURE),
+                        light, OverlayTexture.NO_OVERLAY, null, state.contentsColors[i], null);
+            }
         }
         ps.popPose();
     }

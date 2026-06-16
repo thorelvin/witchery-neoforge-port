@@ -70,7 +70,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
 
     // ── Recipe definition ─────────────────────────────────────────────────────
 
-    private enum BrazierMode {
+    public enum BrazierMode {
         SUMMON,
         AURA,
         WILTING,
@@ -255,6 +255,22 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         return colorWithShade(rgb, shade, alpha);
     }
 
+    public int getContentsColor(int visibleIngredientIndex) {
+        int visibleIndex = 0;
+        for (int i = SLOT_INGREDIENT_1; i <= SLOT_INGREDIENT_3; i++) {
+            ItemStack stack = slots.get(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            if (visibleIndex == visibleIngredientIndex) {
+                float shade = isBurning() ? 1.0F : 0.78F;
+                return colorWithShade(ingredientContentsColor(stack.getItem()), shade, 1.0F);
+            }
+            visibleIndex++;
+        }
+        return getContentsColor();
+    }
+
     public int getCookTime()   { return cookTime; }
     public int getPowerLevel() { return powerLevel; }
 
@@ -326,8 +342,12 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
 
         if (recipe.needsAltar()) {
             AltarBlockEntity altar = findAltar(level, pos);
-            be.setPowerLevel(altar != null ? 1 : 0);
-            if (altar == null || !altar.consumePower((int) POWER_PER_TICK)) return;
+            boolean hasPower = altar != null && altar.consumePower((int) POWER_PER_TICK);
+            be.setPowerLevel(hasPower ? 1 : 0);
+            if (!hasPower) {
+                sendWaitingForAltarPowerFx(level, pos);
+                return;
+            }
         } else {
             be.setPowerLevel(1);
         }
@@ -355,6 +375,7 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
                 center.offset(-ALTAR_RADIUS, -ALTAR_RADIUS, -ALTAR_RADIUS),
                 center.offset( ALTAR_RADIUS,  ALTAR_RADIUS,  ALTAR_RADIUS))) {
             if (level.getBlockEntity(bp) instanceof AltarBlockEntity altar
+                    && altar.hasValidStructure()
                     && altar.getPower() >= (int) POWER_PER_TICK)
                 return altar;
         }
@@ -490,6 +511,16 @@ public class BrazierBlockEntity extends BlockEntity implements WorldlyContainer 
         level.sendParticles(SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0F),
                 pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
                 16, 0.5D, 1.0D, 0.5D, 0.02D);
+    }
+
+    private static void sendWaitingForAltarPowerFx(Level level, BlockPos pos) {
+        if (!(level instanceof ServerLevel sl) || level.getGameTime() % 40L != 0L) {
+            return;
+        }
+        sl.sendParticles(ParticleTypes.SMOKE,
+                pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                5, 0.3D, 0.25D, 0.3D, 0.01D);
+        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.18F, 1.8F);
     }
 
     private static void sendGraveyardMist(ServerLevel level, BlockPos pos) {
