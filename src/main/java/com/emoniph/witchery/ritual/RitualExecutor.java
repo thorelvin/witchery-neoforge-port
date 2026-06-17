@@ -1237,6 +1237,7 @@ public class RitualExecutor {
 
     /** Rite of Total Eclipse — forces midnight on the server. */
     private static boolean riteOfTotalEclipse(Player player, Level level, BlockPos center, ItemStack trigger) {
+        if (!(level instanceof ServerLevel sl)) return false;
         if (!requireDay(player, level, center)) {
             return false;
         }
@@ -1247,31 +1248,31 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.eclipse.support"), false);
             return false;
         }
-        if (!portable) {
-            if (!(level instanceof ServerLevel sl) || !consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
-                level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-                player.displayClientMessage(Component.translatable("witchery.ritual.eclipse.no_power"), false);
-                return false;
-            }
-        }
-        if (level instanceof ServerLevel sl) {
-            consumeOfferedItem(offerings.get().quicklime());
-            if (portable && offerings.get().chargedStone() != null) {
-                ItemStack returnedStone = offerings.get().chargedStone().getItem()
+        TotalEclipseOfferings eclipseOfferings = offerings.get();
+        ItemStack returnedStone = portable && eclipseOfferings.chargedStone() != null
+                ? eclipseOfferings.chargedStone().getItem()
                         .copyWithCount(1)
-                        .transmuteCopy(WitcheryItems.ATTUNED_STONE.get());
-                consumeOfferedItem(offerings.get().chargedStone());
+                        .transmuteCopy(WitcheryItems.ATTUNED_STONE.get())
+                : ItemStack.EMPTY;
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16,
+                portable ? 0 : 3000, "witchery.ritual.eclipse.no_power")
+                .offer(eclipseOfferings.quicklime())
+                .offer(eclipseOfferings.chargedStone());
+        if (!transaction.commitDeferred(player, () -> {
+            if (!returnedStone.isEmpty()) {
                 ItemEntity entity = new ItemEntity(sl,
                         center.getX() + 0.5, center.getY() + 1.05, center.getZ() + 0.5,
-                        returnedStone);
+                        returnedStone.copy());
                 entity.setDefaultPickUpDelay();
                 sl.addFreshEntity(entity);
             }
             sl.setDayTime(18000L); // midnight
+            success(player, level, center, "witchery.ritual.eclipse.success",
+                    SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 1, 24);
+            WitcheryMod.LOGGER.info("Rite of Total Eclipse cast at {} by {}", center, player.getName().getString());
+        })) {
+            return false;
         }
-        success(player, level, center, "witchery.ritual.eclipse.success",
-                SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 1, 24);
-        WitcheryMod.LOGGER.info("Rite of Total Eclipse cast at {} by {}", center, player.getName().getString());
         return true;
     }
 
@@ -1322,46 +1323,18 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.fertility.support"), false);
             return false;
         }
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 3000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.fertility.no_power"), false);
+        FertilityOfferings fertilityOfferings = offerings.get();
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
+                "witchery.ritual.fertility.no_power")
+                .offer(fertilityOfferings.hintOfRebirth())
+                .offer(fertilityOfferings.diamondVapour())
+                .offer(fertilityOfferings.quicklime())
+                .offer(fertilityOfferings.gypsum())
+                .offer(fertilityOfferings.mutandis());
+        if (!transaction.commitDeferred(player, () ->
+                applyFertilityEffects(player, level, sl, center, "Rite of Fertility"))) {
             return false;
         }
-        int grown = 0;
-        for (BlockPos bp : BlockPos.betweenClosed(
-                center.offset(-10, -3, -10), center.offset(10, 3, 10))) {
-            BlockState s = sl.getBlockState(bp);
-            if (s.getBlock() instanceof BonemealableBlock bm
-                    && bm.isValidBonemealTarget(sl, bp, s)) {
-                if (bm.isBonemealSuccess(sl, sl.random, bp, s)) {
-                    bm.performBonemeal(sl, sl.random, bp, s);
-                    grown++;
-                }
-            }
-        }
-
-        // Cure zombie villagers: apply Weakness so they can be cured by golden apple
-        int cured = 0;
-        for (ZombieVillager zv : sl.getEntitiesOfClass(ZombieVillager.class,
-                new AABB(center).inflate(15))) {
-            zv.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 3600, 0));
-            // Spawn a golden apple near them so players can complete the cure
-            ItemEntity apple = new ItemEntity(sl,
-                    zv.getX(), zv.getY() + 0.5, zv.getZ(),
-                    new ItemStack(Items.GOLDEN_APPLE));
-            sl.addFreshEntity(apple);
-            cured++;
-        }
-
-        consumeOfferedItem(offerings.get().hintOfRebirth());
-        consumeOfferedItem(offerings.get().diamondVapour());
-        consumeOfferedItem(offerings.get().quicklime());
-        consumeOfferedItem(offerings.get().gypsum());
-        consumeOfferedItem(offerings.get().mutandis());
-
-        player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
-        success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
-        WitcheryMod.LOGGER.info("Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
         return true;
     }
 
@@ -1374,7 +1347,24 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.ritual.fertility.portable_support"), false);
             return false;
         }
+        PortableFertilityOfferings fertilityOfferings = offerings.get();
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0,
+                "witchery.ritual.fertility.no_power")
+                .offer(fertilityOfferings.hintOfRebirth())
+                .offer(fertilityOfferings.diamondVapour())
+                .offer(fertilityOfferings.quicklime())
+                .offer(fertilityOfferings.gypsum())
+                .offer(fertilityOfferings.mutandisExtremis())
+                .offer(fertilityOfferings.chargedStone());
+        if (!transaction.commitDeferred(player, () ->
+                applyFertilityEffects(player, level, sl, center, "Portable Rite of Fertility"))) {
+            return false;
+        }
+        return true;
+    }
 
+    private static void applyFertilityEffects(Player player, Level level, ServerLevel sl,
+                                             BlockPos center, String logPrefix) {
         int grown = 0;
         for (BlockPos bp : BlockPos.betweenClosed(
                 center.offset(-10, -3, -10), center.offset(10, 3, 10))) {
@@ -1399,17 +1389,9 @@ public class RitualExecutor {
             cured++;
         }
 
-        consumeOfferedItem(offerings.get().hintOfRebirth());
-        consumeOfferedItem(offerings.get().diamondVapour());
-        consumeOfferedItem(offerings.get().quicklime());
-        consumeOfferedItem(offerings.get().gypsum());
-        consumeOfferedItem(offerings.get().mutandisExtremis());
-        consumeOfferedItem(offerings.get().chargedStone());
-
         player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
         success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
-        WitcheryMod.LOGGER.info("Portable Rite of Fertility: grew {}, cured {} zombie villagers", grown, cured);
-        return true;
+        WitcheryMod.LOGGER.info("{}: grew {}, cured {} zombie villagers", logPrefix, grown, cured);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
