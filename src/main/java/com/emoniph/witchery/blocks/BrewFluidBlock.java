@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -139,10 +140,12 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     private void tickGas(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, BrewFluidBlockEntity brew) {
         int distance = state.getValue(DISTANCE);
         int expansion = brew.getExpansion();
-        if (brew.incRunTicks() > brew.getMaxRunTicks()) {
+        int runTicks = brew.incRunTicks();
+        if (runTicks > brew.getMaxRunTicks()) {
             level.removeBlock(pos, false);
             return;
         }
+        applyGasContactPulse(level, pos, brew, runTicks);
 
         if (distance >= expansion) {
             int duration = brew.getDuration();
@@ -166,6 +169,21 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
             }
         }
         level.scheduleTick(pos, this, tickRate());
+    }
+
+    private void applyGasContactPulse(ServerLevel level, BlockPos pos, BrewFluidBlockEntity brew, int runTicks) {
+        if (!shouldApplyGasContactOnRunTick(runTicks)) {
+            return;
+        }
+        AABB contactBox = new AABB(pos.getX(), pos.getY(), pos.getZ(),
+                pos.getX() + 1.0D, pos.getY() + 1.0D, pos.getZ() + 1.0D);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, contactBox, LivingEntity::isAlive)) {
+            brew.applyContactEffect(living);
+        }
+    }
+
+    static boolean shouldApplyGasContactOnRunTick(int runTicks) {
+        return runTicks > 0 && (runTicks & 1) == 1;
     }
 
     private void tickLiquid(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, BrewFluidBlockEntity brew) {
@@ -344,7 +362,8 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                              InsideBlockEffectApplier effectApplier, boolean isMoved) {
-        if (level.isClientSide()
+        if (gas
+                || level.isClientSide()
                 || !(entity instanceof LivingEntity living)
                 || !(level.getBlockEntity(pos) instanceof BrewFluidBlockEntity brew)
                 || level.random.nextInt(10) != 4) {

@@ -1,6 +1,11 @@
 # Active Bugs
 
-Last reconciled: 2026-06-13. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+Last reconciled: 2026-06-17. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+
+**Open - none currently tracked after custom brew gas duration polish (2026-06-17).**
+
+**Closed 2026-06-17 (custom brew gas duration QA):**
+- ~~Lingering Gas brew effect duration felt too short in-game~~ - `brewgas` contact no longer depends on the empty-shape `entityInside` collision callback plus a random `nextInt(10)` roll. Gas blocks now scan their own 1-block space from the scheduled 5-tick gas update and apply contact on a deterministic every-other-gas-tick pulse, preserving the old roughly 10-tick cadence while reliably refreshing entities that are standing inside the cloud. Liquid brew still uses the previous collision-contact path. The source contact scale remains `0.25` power and `0.5` duration.
 
 **Closed 2026-06-16 (rite sacrifice timing + Crystal Ball item GUI QA):**
 - ~~Rite effects/success cues could fire while their sacrifices were still disappearing one-by-one~~ - staged sacrifice consumption now supports drained-queue callbacks. Active ritual ticking pauses while sacrifices are pending, success feedback waits for the queue to drain, and the high-visibility instant/output/summon transaction rites now use `commitDeferred` so their result starts after the final pop. Manual QA should still sweep hand-rolled, non-transaction rite branches, but the main visible output and summon paths are covered.
@@ -11,9 +16,6 @@ Last reconciled: 2026-06-13. Latest village structure/wall bugs are closed; see 
 
 **Closed 2026-06-16 (village wall outer-corner rampart QA):**
 - ~~Outer village-wall corner stair caps did not map cleanly to their neighboring rampart stairs~~ - the first diagonal-cap pass used an outward east/west-facing quadrant table. Fixed: `VillageWallGenerator.cornerStairFor` now faces the diagonal cap inward toward the adjacent straight north/south rampart lip and derives `OUTER_LEFT`/`OUTER_RIGHT` from that neighbor's facing, matching vanilla stair auto-shape logic. Covered by `VillageWallGeneratorTest`.
-
-**Open — custom brew gas duration QA (2026-06-12, in-game; verified good: Chilled freezes water, Grow Flowers blooms around the pool):**
-1. **Lingering Gas brew effect duration feels too short in-game.** The poison gas cloud worked but the applied effect wore off faster than expected. Check the gas path effect-duration scaling: `Brews.applyFluidContact` uses `SOURCE_BREW_FLUID_CONTACT_DURATION_SCALE = 0.5` (halves duration on contact) and contact only fires every ~10 ticks (`entityInside` `nextInt(10)==4`); combined with the base effect duration that may read as too brief. Verify against source gas-contact duration and consider whether the gas cloud lifetime (`gasCloudDurationTicks`) vs per-contact reapplication is delivering the intended total. Tuning, not necessarily a hard bug.
 
 **Closed 2026-06-15 (village wall corner QA, in-game screenshots):**
 - ~~Village wall inner and outer corners read as clipped/chamfered instead of square, and corner rampart caps were missing or straight~~ — the diagonal wall-corner bridge filled the interior-side shared square between diagonal wall cells, which carved the corner inward and left the outside/notch side open. Fixed: `VillageWallGenerator.squareWallCornerGaps` now fills the empty outside/notch-side shared square, and the rampart pass adds diagonal corner caps with stair `SHAPE` set to the matching outer angle. Convex outer corners and concave inner notches should now have square 90-degree wall footprints and angled rampart caps. Covered by `VillageWallGeneratorTest`.

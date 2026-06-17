@@ -75,4 +75,12 @@ class BrewFluidFlowTest {
         assertTrue(BrewFluidBlock.canDisplaceForBrew(true, false, false, false, false));
         assertTrue(BrewFluidBlock.canDisplaceForBrew(false, true, false, false, false));
     }
+
+    @Test
+    void gasContactPulseIsDeterministicEveryOtherGasTick() {
+        assertFalse(BrewFluidBlock.shouldApplyGasContactOnRunTick(0));
+        assertTrue(BrewFluidBlock.shouldApplyGasContactOnRunTick(1));
+        assertFalse(BrewFluidBlock.shouldApplyGasContactOnRunTick(2));
+        assertTrue(BrewFluidBlock.shouldApplyGasContactOnRunTick(3));
+    }
 }
