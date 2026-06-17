@@ -9,6 +9,27 @@ Current target:
 
 ---
 
+## 2026-06-17 Modonomicon does not separate CommonMark paragraphs (no `visit(Paragraph)`)
+
+- Symptom: native book prose ran sentences together at paragraph breaks — "Imprisonment.Cast",
+  "recipe.The", "remains.The Distillery" — but only when two short paragraphs landed on the same page.
+- Cause (verified against the decompiled `modonomicon-1.21.11-neoforge-1.121.0` jar): the book renderer
+  parses text with **commonmark** (`BookTextRenderer` → `ComponentRenderer`/`CoreComponentNodeRenderer`).
+  `CoreComponentNodeRenderer` overrides `visit` only for `BulletList`/`OrderedList`/`ListItem`/`Link`/
+  emphasis/`Text`/soft+hard line breaks — there is **no `visit(Paragraph)`**, so paragraph blocks fall
+  through to the default visitor which just visits children. `finalizeCurrentComponent()` (which would
+  start a new line) is called only for lists. So two paragraphs separated by a blank line are appended
+  to the **same** `MutableComponent` with nothing between them — no `\n`, no space. `BookPageRenderer`
+  then draws each component's wrapped lines back-to-back, so the paragraphs run together.
+- A blank-line gap between paragraphs therefore **cannot** be rendered mid-page by this engine. Only
+  cross-page breaks survive (each page is its own component list). Soft line breaks (single `\n`) render
+  as a space (`replaceSoftLineBreaksWithSpace=true`); hard breaks (`\` at line end) render as `\n`.
+- Fix in this port: `WitcheryBooks.ink` collapses each `\n\n` to a single space. `WitcheryBooks.prose`
+  still prefers to flush each paragraph onto its own page; only same-page paragraph pairs get the space.
+  If a true mid-page blank-line gap is ever needed, it would require emitting hard line breaks inside one
+  commonmark paragraph (e.g. a line containing only `\`), which is unverifiable without in-client QA — do
+  not assume `\n\n` works.
+
 ## 2026-06-16 Spirit World inventory carry: Primer in/out + round-trip dedup
 
 - Source `WorldProviderDreamWorld.sendPlayerToSpiritWorld` carries **Icy Needle + Mutandis** into

@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Use the seed on the top of a grass block; it rises as your own guardian. Feeding an owned Treefyd another seed splits off a fresh one.[#]()\n\n[#](53341a)A **Creeper Heart** hardens it, a **Demon Heart** more so, and a **Boline** toggles whether it wanders when idle.[#]()",
+      "text": "[#](53341a)Use the seed on the top of a grass block; it rises as your own guardian. Feeding an owned Treefyd another seed splits off a fresh one.[#]() [#](53341a)A **Creeper Heart** hardens it, a **Demon Heart** more so, and a **Boline** toggles whether it wanders when idle.[#]()",
       "title": "Planting the Seed",
       "use_markdown_in_title": false
     },

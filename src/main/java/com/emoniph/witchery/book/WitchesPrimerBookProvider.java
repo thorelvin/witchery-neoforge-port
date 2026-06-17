@@ -805,9 +805,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Not everything useful comes from a kettle. Some ingredients must be rendered down first — "
                         + "reduced, transformed, made into something the craft can use."
                         + "\n\nThe Witches' Oven smolders saplings into wood ash and jarred fumes, while logs "
-                        + "cook down into charcoal. Place a clay jar to catch the rising fumes."));
+                        + "cook down into charcoal. Insert a clay jar to catch the rising fumes."));
         oven.add(recipe("witches_oven", "Witches' Oven",
-                "Iron and netherbrick, shaped with intent. The oven needs only a fire beneath and materials "
+                "Iron ingots and iron bars, shaped with intent. The oven needs only a fire beneath and materials "
                         + "worth its attention."));
 
         List<BookPageModel<?>> ovenRecipes = new ArrayList<>(WitcheryBooks.prose("What the Oven Makes",
@@ -853,9 +853,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         List<BookPageModel<?>> distillery = new ArrayList<>(WitcheryBooks.prose("The Distillery",
                 "Some essences cannot be coaxed directly from raw materials. They must be drawn out through "
                         + "heat and pressure — concentrated and refined until only the potent core remains."
-                        + "\n\nThe Distillery takes two inputs and fuel, and needs no altar. Feed it condensed "
-                        + "fear, refined evil, the leavings of dark workings, and it rewards you with something "
-                        + "more useful."));
+                        + "\n\nThe Distillery takes two inputs and fuel, and needs no altar."));
         distillery.add(recipe("distillery", "Distillery",
                 "Iron, glass, and a brewing stand. The distillery is not complicated; what you put inside it "
                         + "often is."));
@@ -989,7 +987,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         "A small-circle storm working for calling lightning where you choose. The inner "
                                 + "branch gathers the storm in the circle, the outer lashes the ground around "
                                 + "it, and the portable branch can be cast far from home without altar power. "
-                                + "A sword laid in the circle is the lightning's focus — the better the steel, "
+                                + "A sword laid in the circle is the lightning's focus — the better the blade, "
                                 + "the wider its wrath.",
                         "A **Wooden Sword** and **Wood Ash** call the inner storm (1000 power). A **Stone "
                                 + "Sword** and **Wood Ash** call the outer storm (2000 power). An **Iron "
@@ -1002,7 +1000,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "repels them, making a brief sacred space that beasts and enemies find hard "
                                 + "to cross.",
                         "Offer a **Feather** with **Redstone** on a small circle, with **500 altar power** "
-                                + "ready. For the opposite — holding creatures in — study Imprisonment.\n\nCast "
+                                + "ready. Do not confuse it with the Rite of Imprisonment, which has the "
+                                + "opposite effect.\n\nCast "
                                 + "it against panic, interruption, or crowding while you prepare a longer "
                                 + "working. Not permanent, not a wall, but enough to keep the world at a "
                                 + "distance."),

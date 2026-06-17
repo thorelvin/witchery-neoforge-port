@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Leonard is neutral until struck. Provoked, he retaliates and brands his attacker with a withering curse.[#]()\n\n[#](53341a)At half strength he calls **Lost Souls**.[#]()",
+      "text": "[#](53341a)Leonard is neutral until struck. Provoked, he retaliates and brands his attacker with a withering curse.[#]() [#](53341a)At half strength he calls **Lost Souls**.[#]()",
       "title": "Behaviour",
       "use_markdown_in_title": false
     },

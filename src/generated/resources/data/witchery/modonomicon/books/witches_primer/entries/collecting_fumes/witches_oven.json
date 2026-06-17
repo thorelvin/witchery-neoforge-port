@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The Witches' Oven smolders saplings into wood ash and jarred fumes, while logs cook down into charcoal. Place a clay jar to catch the rising fumes.[#]()",
+      "text": "[#](53341a)The Witches' Oven smolders saplings into wood ash and jarred fumes, while logs cook down into charcoal. Insert a clay jar to catch the rising fumes.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "recipe_id_1": "witchery:witches_oven",
-      "text": "[#](53341a)Iron and netherbrick, shaped with intent. The oven needs only a fire beneath and materials worth its attention.[#]()",
+      "text": "[#](53341a)Iron ingots and iron bars, shaped with intent. The oven needs only a fire beneath and materials worth its attention.[#]()",
       "title1": "Witches' Oven",
       "title2": ""
     }

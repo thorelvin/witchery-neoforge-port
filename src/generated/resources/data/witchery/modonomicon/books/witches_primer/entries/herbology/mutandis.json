@@ -71,7 +71,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Use Mutandis on natural plants or saplings. It can roll Witchery plants and saplings, **Alder** and **Hawthorn Saplings**, vanilla saplings, flowers, fern, grass, dead bush, and the small bush.[#]()\n\n[#](53341a)In the Spirit World it can also reveal Nether Wart.[#]()",
+      "text": "[#](53341a)Use Mutandis on natural plants or saplings. It can roll Witchery plants and saplings, **Alder** and **Hawthorn Saplings**, vanilla saplings, flowers, fern, grass, dead bush, and the small bush.[#]() [#](53341a)In the Spirit World it can also reveal Nether Wart.[#]()",
       "title": "Hedge Mutations",
       "use_markdown_in_title": false
     },
@@ -104,7 +104,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Extremis pushes the art further: it mutates crops as well as wild growth, flips grass and dirt, and turns sand under water or ice into clay.[#]()\n\n[#](53341a)It is also the bridge into heavier progressions like Treefyd Seeds.[#]()",
+      "text": "[#](53341a)Extremis pushes the art further: it mutates crops as well as wild growth, flips grass and dirt, and turns sand under water or ice into clay.[#]() [#](53341a)It is also the bridge into heavier progressions like Treefyd Seeds.[#]()",
       "title": "Extremis",
       "use_markdown_in_title": false
     },

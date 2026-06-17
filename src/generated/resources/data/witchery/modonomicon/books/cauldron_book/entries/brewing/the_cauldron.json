@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A heated cauldron full of water is a patient thing. It takes whatever you give it, in the order you give it, and remembers.[#]()\n\n[#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time.[#]()",
+      "text": "[#](53341a)A heated cauldron full of water is a patient thing. It takes whatever you give it, in the order you give it, and remembers.[#]() [#](53341a)Light a fire beneath it and fill the bowl. Drop your reagents in one at a time.[#]()",
       "title": "Brewing in the Cauldron",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some things you add are not the brew, but a hand laid upon it. **Glowstone** makes the next working stronger; **redstone** makes it last.[#]()\n\n[#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again.[#]()",
+      "text": "[#](53341a)Some things you add are not the brew, but a hand laid upon it. **Glowstone** makes the next working stronger; **redstone** makes it last.[#]() [#](53341a)A **fermented spider eye** turns a kindness into a cruelty, or back again.[#]()",
       "title": "A Hand Upon the Brew",
       "use_markdown_in_title": false
     },
@@ -60,7 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's tear for mending, and leather for leaping.[#]()\n\n[#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby.[#]()",
+      "text": "[#](53341a)The reagent decides the gift: a spider's eye for poison, sugar for swiftness, a ghast's tear for mending, and leather for leaping.[#]() [#](53341a)**Gunpowder** bursts the bottle where it lands, sharing its work with all nearby.[#]()",
       "title": "The Gift of the Reagent",
       "use_markdown_in_title": false
     },

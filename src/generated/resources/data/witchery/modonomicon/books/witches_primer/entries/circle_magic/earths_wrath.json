@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A large staged terrain rite through a **Lava Bucket** trigger; the ground below must hold a sizable lava pool or it fails. A nearby **Bound Waystone** can retarget the eruption.[#]()\n\n[#](53341a)The cone rises in pulses and opens its vent at the end.[#]()",
+      "text": "[#](53341a)A large staged terrain rite through a **Lava Bucket** trigger; the ground below must hold a sizable lava pool or it fails. A nearby **Bound Waystone** can retarget the eruption.[#]() [#](53341a)The cone rises in pulses and opens its vent at the end.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },

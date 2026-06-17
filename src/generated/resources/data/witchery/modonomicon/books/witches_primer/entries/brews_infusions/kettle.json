@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting.[#]()\n\n[#](53341a)Right-click to add reagents one by one, then light a fire beneath it.[#]()",
+      "text": "[#](53341a)A kettle is a simple thing: a vessel, a fire, and whatever you choose to put inside it. That last part is where things get interesting.[#]() [#](53341a)Right-click to add reagents one by one, then light a fire beneath it.[#]()",
       "title": "The Kettle",
       "use_markdown_in_title": false
     },

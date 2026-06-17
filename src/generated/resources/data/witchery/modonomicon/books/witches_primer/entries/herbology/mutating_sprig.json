@@ -40,7 +40,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)On simple blocks the sprig flips **Grass Block** and **Mycelium** either way, and turns underwater **Dirt** to **Clay** and back.[#]()\n\n[#](53341a)An empty **Chest** over water with Short Grass on four sides becomes four **Grasspers**.[#]()",
+      "text": "[#](53341a)On simple blocks the sprig flips **Grass Block** and **Mycelium** either way, and turns underwater **Dirt** to **Clay** and back.[#]() [#](53341a)An empty **Chest** over water with Short Grass on four sides becomes four **Grasspers**.[#]()",
       "title": "Block & Built Mutations",
       "use_markdown_in_title": false
     },

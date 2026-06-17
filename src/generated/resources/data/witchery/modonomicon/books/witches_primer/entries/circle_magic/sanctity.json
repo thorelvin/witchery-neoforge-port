@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Offer a **Feather** with **Redstone** on a small circle, with **500 altar power** ready. For the opposite — holding creatures in — study Imprisonment.[#]()\n\n[#](53341a)Cast it against panic, interruption, or crowding while you prepare a longer working.[#]()",
+      "text": "[#](53341a)Offer a **Feather** with **Redstone** on a small circle, with **500 altar power** ready. Do not confuse it with the Rite of Imprisonment, which has the opposite effect.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Not permanent, not a wall, but enough to keep the world at a distance.[#]()",
+      "text": "[#](53341a)Cast it against panic, interruption, or crowding while you prepare a longer working. Not permanent, not a wall, but enough to keep the world at a distance.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

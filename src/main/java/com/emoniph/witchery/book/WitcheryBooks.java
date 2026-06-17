@@ -43,17 +43,29 @@ public final class WitcheryBooks {
      * only works on string (markdown) text, not literal Components. Bold ({@code **x**}) / italic
      * ({@code *x*}) inside the span render normally.
      *
-     * <p>A Markdown link cannot span a blank line, so each paragraph (split on {@code \n\n}) is
-     * wrapped separately — otherwise the paragraph break is swallowed and the text runs together.
+     * <p>Modonomicon's {@code CoreComponentNodeRenderer} has no {@code visit(Paragraph)} handling, so
+     * CommonMark paragraphs separated by a blank line are concatenated into one component with
+     * <em>nothing</em> between them — no newline and no space (verified against the decompiled
+     * renderer). On its own that produces run-on text like "Imprisonment.Cast" when two paragraphs
+     * land on the same page. {@link #prose(String, String)} normally hides this by flushing each
+     * paragraph onto its own page, but paragraphs short enough to share a page still ran together.
+     * To make the join read correctly we collapse each {@code \n\n} into a single space here; a true
+     * blank-line gap cannot be rendered on a shared page by this engine, and a space matches how the
+     * surrounding prose already flows.
      */
     public static String ink(String text) {
-        String[] paragraphs = text.split("\n\n", -1);
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < paragraphs.length; i++) {
-            if (i > 0) {
-                sb.append("\n\n");
+        for (String paragraph : text.split("\n\n", -1)) {
+            if (paragraph.isEmpty()) {
+                continue;
             }
-            sb.append("[#](").append(INK_HEX).append(')').append(paragraphs[i]).append("[#]()");
+            if (sb.length() > 0) {
+                sb.append(' ');
+            }
+            sb.append("[#](").append(INK_HEX).append(')').append(paragraph).append("[#]()");
+        }
+        if (sb.length() == 0) {
+            sb.append("[#](").append(INK_HEX).append(')').append("[#]()");
         }
         return sb.toString();
     }
@@ -73,9 +85,10 @@ public final class WitcheryBooks {
     /**
      * Splits prose into as many sepia text pages as needed to fit the page height, breaking at
      * sentence boundaries — and at word boundaries within a sentence too long for one page, so
-     * nothing ever overflows. Paragraphs ({@code \n\n}) keep a blank line between them, but can share
-     * a page when they fit. The first page carries the optional {@code title}. Use this for all body
-     * prose.
+     * nothing ever overflows. A paragraph break ({@code \n\n}) prefers to start a new page; when two
+     * paragraphs are short enough to share a page, {@link #ink(String)} joins them with a space
+     * (this engine cannot render a blank-line gap mid-page). The first page carries the optional
+     * {@code title}. Use this for all body prose.
      */
     public static List<BookPageModel<?>> prose(String title, String body) {
         List<String> pageTexts = new ArrayList<>();
