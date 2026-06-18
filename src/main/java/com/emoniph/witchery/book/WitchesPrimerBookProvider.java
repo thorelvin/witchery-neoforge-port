@@ -1447,13 +1447,13 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "drowning."));
         familiars.add(creature("witchery:owl", "The Owl",
                 "Reads the air and warns of what approaches. At full speed on a broomstick, an owl grants a "
-                        + "significant bonus — they seem to enjoy the height.", 0.7F, 0.3F));
+                        + "significant bonus — they seem to enjoy the height.", 0.7F, 1.0F));
         familiars.add(creature("witchery:familiar_cat", "The Cat",
                 "Indifferent to most things, hostile to supernatural intrusion. Curses find less purchase "
-                        + "near a cat, and your own circle malice takes deeper root.", 1.0F, 0.3F));
+                        + "near a cat, and your own circle malice takes deeper root.", 1.0F, 0.8F));
         familiars.add(creature("witchery:toad", "The Toad",
                 "Patient, damp, and helpful to a brewer. It gathers what falls, coaxes the odd extra bottle "
-                        + "from the kettle, and strengthens brews you drink yourself.", 1.0F, 0.3F));
+                        + "from the kettle, and strengthens brews you drink yourself.", 1.0F, 0.8F));
 
         List<BookPageModel<?>> hunter = new ArrayList<>(WitcheryBooks.prose("Witch Hunters",
                 "They exist because we exist. Witch Hunters are organised, motivated, and unpleasant — they "
@@ -1463,7 +1463,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "does not erase it."));
         hunter.add(creature("witchery:witch_hunter", "Witch Hunter",
                 "Known by the hat, the coat, and the look of someone certain of their cause. They drop "
-                        + "silver bolts and the occasional armour piece.", 0.85F, 0.3F));
+                        + "silver bolts and the occasional armour piece.", 0.85F, 1.2F));
 
         List<BookPageModel<?>> hobgoblin = new ArrayList<>(WitcheryBooks.prose("Hobgoblins",
                 "Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb "
@@ -1473,7 +1473,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "it has consequences. You have been told."));
         hobgoblin.add(creature("witchery:hobgoblin", "Hobgoblin",
                 "Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work "
-                        + "upward. The koboldite at the end is genuinely useful.", 0.6F, 0.0F));
+                        + "upward. The koboldite at the end is genuinely useful.", 0.6F, 1.0F));
 
         List<BookPageModel<?>> spectral = new ArrayList<>(WitcheryBooks.prose("Spectral Familiar",
                 "The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the "

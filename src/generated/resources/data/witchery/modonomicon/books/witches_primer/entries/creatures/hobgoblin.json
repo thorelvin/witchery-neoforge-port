@@ -40,7 +40,7 @@
       "default_rotation": 180.0,
       "entity_id": "witchery:hobgoblin",
       "name": "Hobgoblin",
-      "offset": 0.0,
+      "offset": 1.0,
       "rotate": false,
       "scale": 0.6,
       "text": "[#](53341a)Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work upward. The koboldite at the end is genuinely useful.[#]()"
