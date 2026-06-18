@@ -40,7 +40,7 @@
       "default_rotation": -45.0,
       "entity_id": "witchery:witch_hunter",
       "name": "Witch Hunter",
-      "offset": 0.0,
+      "offset": 0.3,
       "rotate": true,
       "scale": 0.85,
       "text": "[#](53341a)Known by the hat, the coat, and the look of someone certain of their cause. They drop silver bolts and the occasional armour piece.[#]()"

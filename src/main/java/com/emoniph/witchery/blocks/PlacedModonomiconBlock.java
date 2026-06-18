@@ -50,6 +50,13 @@ public class PlacedModonomiconBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape INTERACTION_SHAPE = box(1.0, 0.0, 1.0, 15.0, 13.0, 15.0);
     private static final VoxelShape COLLISION_SHAPE = box(2.0, 0.0, 2.0, 14.0, 3.0, 14.0);
+    /**
+     * Uniform scale of the whole floating book. Raised from the original 0.8 by 20% (0.8 * 1.2) so the
+     * pages read more easily. Lives here (a common class) rather than the client renderer because
+     * {@link #pagePixelPose} runs server-side via {@link #getShape}; the renderer reads this same value
+     * so the drawn book and its click / page-selection geometry stay aligned.
+     */
+    public static final float BOOK_BASIS_SCALE = 0.96F;
     private static final int PAGE_INTERACTION_PIXEL_WIDTH = 124;
     private static final int PAGE_INTERACTION_PIXEL_HEIGHT = 155;
     private static final int PAGE_BUTTON_MARGIN_PIXELS = 3;
@@ -412,7 +419,7 @@ public class PlacedModonomiconBlock extends BaseEntityBlock {
                 .translate(0.0F, -0.00390625F * (1.0F - degreesOpened / 90.0F), -(degreesFlopped / 10.0F) / 32.0F)
                 .rotateZ((float) Math.toRadians(MODEL_BASIS_Z_ROTATION))
                 .rotateX((float) Math.toRadians(MODEL_BASIS_X_ROTATION))
-                .scale(0.8F);
+                .scale(BOOK_BASIS_SCALE);
 
         float spread = 1.2F * Mth.clamp(openAmount, 0.0F, 1.0F);
         pose.translate((float) Math.sin(spread) / 16.0F, 0.0F, 0.0F)

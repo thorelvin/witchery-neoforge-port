@@ -40,7 +40,7 @@
       "default_rotation": -45.0,
       "entity_id": "witchery:owl",
       "name": "The Owl",
-      "offset": 0.0,
+      "offset": 0.3,
       "rotate": true,
       "scale": 0.7,
       "text": "[#](53341a)Reads the air and warns of what approaches. At full speed on a broomstick, an owl grants a significant bonus — they seem to enjoy the height.[#]()"
@@ -54,7 +54,7 @@
       "default_rotation": -45.0,
       "entity_id": "witchery:familiar_cat",
       "name": "The Cat",
-      "offset": 0.0,
+      "offset": 0.3,
       "rotate": true,
       "scale": 1.0,
       "text": "[#](53341a)Indifferent to most things, hostile to supernatural intrusion. Curses find less purchase near a cat, and your own circle malice takes deeper root.[#]()"
@@ -68,7 +68,7 @@
       "default_rotation": -45.0,
       "entity_id": "witchery:toad",
       "name": "The Toad",
-      "offset": 0.0,
+      "offset": 0.3,
       "rotate": true,
       "scale": 1.0,
       "text": "[#](53341a)Patient, damp, and helpful to a brewer. It gathers what falls, coaxes the odd extra bottle from the kettle, and strengthens brews you drink yourself.[#]()"

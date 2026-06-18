@@ -37,8 +37,11 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.MovingBlockRenderState;
+import com.klikli_dev.modonomicon.util.EntityUtil;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -56,7 +59,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -109,6 +114,12 @@ public final class PlacedModonomiconPages {
     private static final float NATIVE_TEXT_SCALE_FACTOR = 1.0F;
     private static final float FLAT_ITEM_DEPTH_SCALE = 0.01F;
     private static final Map<Identifier, Boolean> ITEM_DEPTH_FLATTEN_CACHE = new ConcurrentHashMap<>();
+    /** Lazily-built display entities for entity ("Creatures") pages, keyed by entity id. */
+    private static final Map<String, LivingEntity> FRAMED_ENTITY_CACHE = new ConcurrentHashMap<>();
+    /** Fraction of the portrait frame the entity's largest bounding-box dimension fills (QA-tunable). */
+    private static final float ENTITY_FIT_FACTOR = 0.8F;
+    /** Y rotation applied so the framed entity faces the reader (QA-tunable; 0/180 flip front/back). */
+    private static final float ENTITY_FACING_Y_DEGREES = 0.0F;
     private static final int BODY_LINE_PADDING = 1;
     private static final int PAGE_TEXT_BOTTOM = PAGE_HEIGHT - 22;
     private static final int STATION_PANEL_TOP = 18;
@@ -132,7 +143,7 @@ public final class PlacedModonomiconPages {
     private PlacedModonomiconPages() {}
 
     public static void submit(ItemStack bookStack, int openPagesIndex, PoseStack ps, SubmitNodeCollector collector,
-                              int lightCoords, float openAmount) {
+                              int lightCoords, float openAmount, CameraRenderState camera) {
         if (bookStack.isEmpty()) {
             return;
         }
@@ -143,9 +154,9 @@ public final class PlacedModonomiconPages {
         }
 
         submitPage(spread.leftPage(), PageSide.LEFT, ps, collector, lightCoords, openAmount,
-                spread.openPagesIndex() > 0, spread.openPagesIndex() + 1, spread.pageCount());
+                spread.openPagesIndex() > 0, spread.openPagesIndex() + 1, spread.pageCount(), camera);
         submitPage(spread.rightPage(), PageSide.RIGHT, ps, collector, lightCoords, openAmount,
-                spread.openPagesIndex() + 2 < spread.pageCount(), spread.openPagesIndex() + 2, spread.pageCount());
+                spread.openPagesIndex() + 2 < spread.pageCount(), spread.openPagesIndex() + 2, spread.pageCount(), camera);
     }
 
     @Nullable
@@ -189,7 +200,7 @@ public final class PlacedModonomiconPages {
 
     private static void submitPage(@Nullable PlacedModonomiconBookResolver.PlacedPage placedPage, PageSide side, PoseStack ps,
                                    SubmitNodeCollector collector, int lightCoords, float openAmount,
-                                   boolean showNavigationArrow, int pageNumber, int pageCount) {
+                                   boolean showNavigationArrow, int pageNumber, int pageCount, CameraRenderState camera) {
         if (placedPage == null) {
             return;
         }
@@ -207,7 +218,7 @@ public final class PlacedModonomiconPages {
             } else if (page instanceof BookSpotlightPage spotlightPage) {
                 submitSpotlightPage(spotlightPage, ps, collector, lightCoords);
             } else if (page instanceof BookEntityPage entityPage) {
-                submitEntityPage(entityPage, ps, collector, lightCoords);
+                submitEntityPage(entityPage, ps, collector, lightCoords, camera);
             } else if (page instanceof BookCraftingRecipePage recipePage) {
                 submitCraftingRecipePage(recipePage, ps, collector, lightCoords);
             } else if (page instanceof StationRecipePage stationPage) {
@@ -319,7 +330,7 @@ public final class PlacedModonomiconPages {
     }
 
     private static void submitEntityPage(BookEntityPage page, PoseStack ps,
-                                         SubmitNodeCollector collector, int lightCoords) {
+                                         SubmitNodeCollector collector, int lightCoords, CameraRenderState camera) {
         if (!page.getEntityName().isEmpty()) {
             submitTitle(page.getEntityName(), page.getBook().getDefaultTitleColor(), ps, collector, lightCoords);
         }
@@ -333,12 +344,15 @@ public final class PlacedModonomiconPages {
         submitRect(ps, collector, lightCoords, frameX, frameY, frameX + 1, frameY + frameSize, PAGE_INK_SOFT);
         submitRect(ps, collector, lightCoords, frameX + 51, frameY, frameX + 52, frameY + frameSize, PAGE_INK_SOFT);
 
-        ItemStack entityIcon = spawnEggFor(page.getEntityId());
-        if (entityIcon.isEmpty()) {
-            submitCentered(Component.literal(page.getEntityId()), frameY + 16, PAGE_WIDTH, ps, collector, lightCoords, PAGE_INK);
-        } else {
-            submitItem(entityIcon, (PAGE_WIDTH - 16) / 2, frameY + 11,
-                    page.getEntityId().hashCode(), ps, collector, lightCoords, 18.0F);
+        if (!submitFramedEntity(page, frameX, frameY, frameSize, ps, collector, lightCoords, camera)) {
+            // Fallback when the entity cannot be loaded/rendered: keep the old spawn-egg icon.
+            ItemStack entityIcon = spawnEggFor(page.getEntityId());
+            if (entityIcon.isEmpty()) {
+                submitCentered(Component.literal(page.getEntityId()), frameY + 16, PAGE_WIDTH, ps, collector, lightCoords, PAGE_INK);
+            } else {
+                submitItem(entityIcon, (PAGE_WIDTH - 16) / 2, frameY + 11,
+                        page.getEntityId().hashCode(), ps, collector, lightCoords, 18.0F);
+            }
         }
 
         int x = page.getBook().getBookTextOffsetX();
@@ -346,6 +360,88 @@ public final class PlacedModonomiconPages {
         int width = PAGE_WIDTH + page.getBook().getBookTextOffsetWidth() - x;
         int height = PAGE_HEIGHT + page.getBook().getBookTextOffsetHeight() - y;
         submitTextHolder(page.getText(), x, y, width, height, ps, collector, lightCoords);
+    }
+
+    /**
+     * Renders the page's actual entity model inside the portrait frame, in place of the spawn egg.
+     *
+     * <p>The placed book is a {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer}, so
+     * the screen-space {@code GuiGraphics.submitEntityRenderState} the item-opened book uses is not
+     * available; instead we drive {@link EntityRenderer#submit} into the page's own
+     * {@link SubmitNodeCollector} (the same collector the flat block/item models already use). The
+     * entity is fit to the frame by its bounding box, flipped from page (Y-down) into model (Y-up)
+     * orientation with a proper Z rotation (a negative scale would invert face winding and cull the
+     * model), centred vertically, and turned to face the reader.
+     *
+     * <p><b>First-pass / QA-tunable:</b> the facing, fit factor, and vertical centring constants are
+     * best-effort without in-client verification — adjust {@link #ENTITY_FIT_FACTOR},
+     * {@link #ENTITY_FACING_Y_DEGREES}, and the offset handling from screenshots. The cached entity is
+     * built once per id from the client level. Returns {@code false} (→ egg fallback) on any failure.
+     */
+    private static boolean submitFramedEntity(BookEntityPage page, int frameX, int frameY, int frameSize,
+                                              PoseStack ps, SubmitNodeCollector collector, int lightCoords,
+                                              CameraRenderState camera) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) {
+            return false;
+        }
+        try {
+            LivingEntity entity = resolveFramedEntity(page.getEntityId(), mc);
+            if (entity == null) {
+                return false;
+            }
+
+            EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
+            EntityRenderer<? super LivingEntity, ?> renderer = dispatcher.getRenderer(entity);
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            EntityRenderState renderState = ((EntityRenderer) renderer).createRenderState(entity, 1.0F);
+            renderState.lightCoords = LightTexture.FULL_BRIGHT;
+            renderState.shadowPieces.clear();
+            renderState.outlineColor = 0;
+
+            float bbWidth = entity.getBbWidth();
+            float bbHeight = entity.getBbHeight();
+            float sizeUnits = Math.max(1.0F, Math.max(bbWidth, bbHeight));
+            float scalePx = (frameSize * ENTITY_FIT_FACTOR) / sizeUnits * Math.max(0.05F, page.getScale());
+            float centerX = frameX + 26.0F;
+            float centerY = frameY + frameSize / 2.0F;
+
+            ps.pushPose();
+            try {
+                ps.translate(centerX, centerY, PAGE_ICON_Z_PIXELS);
+                ps.scale(scalePx, scalePx, scalePx);
+                // Flip from page space (Y down) into model space (Y up) with a proper rotation so face
+                // winding is preserved (a negative Y scale would cull the model), then turn to the reader.
+                ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+                ps.mulPose(Axis.YP.rotationDegrees(ENTITY_FACING_Y_DEGREES));
+                // Centre the standing model (feet at y=0, head at y=bbHeight) about the frame midline.
+                // The page's `offset` is intentionally not applied here — it tunes the item-opened book's
+                // separate Modonomicon renderer, and the placed frame centres purely by bounding box.
+                ps.translate(0.0F, -bbHeight / 2.0F, 0.0F);
+                @SuppressWarnings({"unchecked", "rawtypes"})
+                EntityRenderer rawRenderer = renderer;
+                rawRenderer.submit(renderState, ps, new PageItemCollector(collector, PAGE_ICON_ORDER), camera);
+            } finally {
+                ps.popPose();
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Nullable
+    private static LivingEntity resolveFramedEntity(String entityId, Minecraft mc) {
+        LivingEntity cached = FRAMED_ENTITY_CACHE.get(entityId);
+        if (cached != null && cached.isAlive()) {
+            return cached;
+        }
+        Entity loaded = EntityUtil.getEntityLoader(entityId).apply(mc.level);
+        if (!(loaded instanceof LivingEntity living)) {
+            return null;
+        }
+        FRAMED_ENTITY_CACHE.put(entityId, living);
+        return living;
     }
 
     private static void submitCraftingRecipePage(BookCraftingRecipePage page, PoseStack ps,

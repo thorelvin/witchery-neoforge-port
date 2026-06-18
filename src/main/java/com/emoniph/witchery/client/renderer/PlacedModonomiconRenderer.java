@@ -1,5 +1,6 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.blocks.PlacedModonomiconBlock;
 import com.emoniph.witchery.blocks.entity.PlacedModonomiconBlockEntity;
 import com.emoniph.witchery.client.PlacedModonomiconPages;
 import com.emoniph.witchery.client.model.PlacedModonomiconBookModel;
@@ -110,7 +111,9 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
                 -(state.degreesFlopped / 10.0F) / 32.0F);
         ps.mulPose(Axis.ZP.rotationDegrees(MODEL_BASIS_Z_ROTATION));
         ps.mulPose(Axis.XP.rotationDegrees(MODEL_BASIS_X_ROTATION));
-        ps.scale(0.8F, 0.8F, 0.8F);
+        // Book basis scale (shared with the block's hit geometry so clicks track the drawn pages).
+        float bookScale = PlacedModonomiconBlock.BOOK_BASIS_SCALE;
+        ps.scale(bookScale, bookScale, bookScale);
 
         model.resetPose();
         model.setFlipPagesVisible(turningNextPage, turningPreviousPage);
@@ -121,7 +124,7 @@ public class PlacedModonomiconRenderer implements BlockEntityRenderer<PlacedModo
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(BOOK_TEXTURE),
                 bookLight, OverlayTexture.NO_OVERLAY, null);
         if (openAmount > 0.92F && state.openingPageTurnsRemaining <= 0 && !turningPage) {
-            PlacedModonomiconPages.submit(state.bookStack, state.openPagesIndex, ps, collector, bookLight, openAmount);
+            PlacedModonomiconPages.submit(state.bookStack, state.openPagesIndex, ps, collector, bookLight, openAmount, camera);
         }
         ps.popPose();
     }
