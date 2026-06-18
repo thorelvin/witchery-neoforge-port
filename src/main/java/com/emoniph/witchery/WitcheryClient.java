@@ -272,6 +272,13 @@ public class WitcheryClient {
                     com.emoniph.witchery.book.page.ItemReferencePage.TYPE,
                     page -> new com.emoniph.witchery.client.ItemReferencePageRenderer(
                             (com.emoniph.witchery.book.page.ItemReferencePage) page));
+            // Override Modonomicon's built-in entity page renderer: its scissor box omits the book
+            // origin, so the box sat off the frame and clipped the mob's lower body. Runs in
+            // enqueueWork (after Modonomicon's own client-setup registration) so this put() wins.
+            com.klikli_dev.modonomicon.client.render.page.PageRendererRegistry.registerPageRenderer(
+                    com.klikli_dev.modonomicon.api.ModonomiconConstants.Data.Page.ENTITY,
+                    page -> new com.emoniph.witchery.client.WitcheryEntityPageRenderer(
+                            (com.klikli_dev.modonomicon.book.page.BookEntityPage) page));
         });
     }
 
