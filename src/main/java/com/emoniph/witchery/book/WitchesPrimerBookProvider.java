@@ -477,6 +477,13 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         };
     }
 
+    /**
+     * Fixed facing for static creature portraits (degrees). Modonomicon applies this as a Y rotation
+     * with {@code rotate=false}; 180° turns the freshly-built entity (default south-facing) to look at
+     * the reader. QA-tunable: use ~135/-45 for a 3/4 isometric angle, 0 if it ends up facing away.
+     */
+    private static final float BOOK_ENTITY_FACING_DEGREES = 180.0F;
+
     private static BookEntityPageModel creature(String entityId, String name, String caption) {
         return creature(entityId, name, caption, 1.0F, 0.0F);
     }
@@ -488,6 +495,10 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
      * their hitbox (or sit off-centre) clip in the 106px frame, so {@code scale} (<1 shrinks) and
      * {@code offset} nudge them back into the frame. These are first-pass values — confirm in-client
      * and tune from screenshots.
+     *
+     * <p>All creature pages render <b>static</b> (no spin): {@code rotate=false} with a fixed
+     * {@link #BOOK_ENTITY_FACING_DEGREES}, so every living entity shows a steady flat isometric
+     * portrait facing the reader instead of Modonomicon's default slow turntable.
      */
     private static BookEntityPageModel creature(String entityId, String name, String caption,
                                                  float scale, float offset) {
@@ -496,6 +507,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 .withEntityName(Component.literal(name))
                 .withScale(scale)
                 .withOffset(offset)
+                .withRotate(false)
+                .withDefaultRotation(BOOK_ENTITY_FACING_DEGREES)
                 .withText(WitcheryBooks.ink(caption));
     }
 
