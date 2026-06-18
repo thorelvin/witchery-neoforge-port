@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -110,6 +111,13 @@ public class WitcheryEntityPageRenderer extends BookPageRenderer<BookEntityPage>
         renderState.lightCoords = LightTexture.FULL_BRIGHT;
         renderState.shadowPieces.clear();
         renderState.outlineColor = 0;
+        // Some mobs (e.g. the Hobgoblin) spawn with their head yaw turned off the body yaw, so the
+        // portrait looked away to the side. Align the head with the body and level the pitch so every
+        // creature looks straight out at the reader.
+        if (renderState instanceof LivingEntityRenderState livingState) {
+            livingState.yRot = livingState.bodyRot;
+            livingState.xRot = 0.0F;
+        }
 
         // Box aligned to the actual on-screen frame. Unlike the stock renderer this includes the book
         // origin (getBookLeft/getBookTop), so the scissor box matches the frame drawn above instead of
