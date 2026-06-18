@@ -107,10 +107,11 @@ import java.util.List;
  * /witchery reflection              — summon a Reflection linked to you as owner
  * /witchery torment                 — enter the Torment dimension
  * /witchery exit                    — return to previous dimension
+ * /witchery exit nether             — return from /witchery goto nether
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
  * /witchery setup rite              - place a QA pad with ritual circle rings
- * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man)
+ * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man / warped_coven / nether)
  *                                   or a Witchery village building such as apothecary
  * /witchery coven recruit           — swear one Coven Witch to you (skips familiar+quest); spawns one if none nearby
  * /witchery coven fill [count]      — swear witches up to the cap (or [count]); QA timesaver
@@ -249,7 +250,9 @@ public class WitcheryCommands {
                         .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.TORMENT)))
 
                 .then(Commands.literal("exit")
-                        .executes(ctx -> exitDimension(ctx.getSource())))
+                        .executes(ctx -> exitDimension(ctx.getSource()))
+                        .then(Commands.literal("nether")
+                                .executes(ctx -> exitNether(ctx.getSource()))))
 
                 // ── New debug commands ────────────────────────────────────────
 
@@ -441,6 +444,8 @@ public class WitcheryCommands {
                         .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("stone_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("straw_man")       .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "straw_man")))
+                        .then(Commands.literal("warped_coven")    .executes(ctx -> gotoStructure(ctx.getSource(), Level.NETHER, "witchery", "warped_coven")))
+                        .then(Commands.literal("nether")          .executes(ctx -> gotoNether(ctx.getSource())))
                         .then(Commands.literal("apothecary")      .executes(ctx -> gotoVillageBuilding(ctx.getSource(), "apothecary")))
                         .then(Commands.literal("village_plains")  .executes(ctx -> gotoStructure(ctx.getSource(), "minecraft", "village_plains")))
                         .then(Commands.literal("village_meadow")  .executes(ctx -> gotoMeadowVillage(ctx.getSource())))
@@ -1106,6 +1111,26 @@ public class WitcheryCommands {
         player.teleportTo(target, safePos[0], (double)(safePos[1]), safePos[2], java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
         src.sendSuccess(() -> Component.literal("Entered " + dim.identifier().getPath() + "."), false);
         return 1;
+    }
+
+    private static int exitNether(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!player.level().dimension().equals(Level.NETHER)) {
+            src.sendFailure(Component.literal("You are not in the Nether.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (data.getReturnPos().isEmpty()) {
+            src.sendFailure(Component.literal(
+                    "No Nether return point is stored. Use /witchery goto nether first.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        return exitDimension(src);
     }
 
     private static int exitDimension(CommandSourceStack src)
@@ -2481,6 +2506,18 @@ public class WitcheryCommands {
         return gotoStructure(src, "witchery", structureId);
     }
 
+    private static int gotoStructure(CommandSourceStack src, ResourceKey<Level> dimension,
+                                     String namespace, String structureId)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel targetLevel = src.getServer().getLevel(dimension);
+        if (targetLevel == null) {
+            src.sendFailure(Component.literal("The spirits cannot reach that dimension.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        return gotoStructure(src, targetLevel, namespace, structureId);
+    }
+
     // Per-player cooldown so /witchery goto can't be spammed (each teleport triggers heavy
     // village wall generation + chunk loading; rapid repeats can overload/freeze the game).
     private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
@@ -2489,6 +2526,8 @@ public class WitcheryCommands {
     private static final int GOTO_VILLAGE_SEARCH_RADIUS_RINGS = 8;
     private static final boolean GOTO_SKIP_REFERENCED_STRUCTURES = false;
     private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
+    private static final int GOTO_NETHER_SEARCH_RADIUS_BLOCKS = 128;
+    private static final int GOTO_NETHER_SEARCH_STEP_BLOCKS = 8;
 
     private static int gotoVillageBuilding(CommandSourceStack src, String building)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
@@ -2573,12 +2612,142 @@ public class WitcheryCommands {
         return 1;
     }
 
-    private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
+    private static int gotoNether(CommandSourceStack src)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
-        ServerLevel level = src.getLevel();
+        ServerLevel currentLevel = src.getLevel();
+        ServerLevel nether = src.getServer().getLevel(Level.NETHER);
+        if (nether == null) {
+            src.sendFailure(Component.literal("The spirits cannot reach the Nether.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
 
-        long now = level.getGameTime();
+        long now = currentLevel.getGameTime();
+        Long last = GOTO_COOLDOWN.get(player.getUUID());
+        if (last != null && now - last < GOTO_COOLDOWN_TICKS) {
+            long remaining = (GOTO_COOLDOWN_TICKS - (now - last) + 19) / 20;
+            src.sendFailure(Component.literal(
+                    "The leylines are still tangled from your last crossing. Rest " + remaining
+                    + "s before you walk the hidden paths again.").withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        BlockPos reference = netherReferencePos(player);
+        BlockPos landing = findSafeNetherLanding(nether, reference);
+        if (landing == null) {
+            src.sendFailure(Component.literal(
+                    "The Nether offers no safe foothold nearby. Move elsewhere and gaze again.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        data.setReturnPos(player.blockPosition(), player.level().dimension());
+        sync(player, data);
+
+        nether.getChunk(landing.getX() >> 4, landing.getZ() >> 4, ChunkStatus.FULL, true);
+        player.teleportTo(nether, landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5,
+                java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+        player.setDeltaMovement(0.0, 0.0, 0.0);
+        player.fallDistance = 0.0F;
+        GOTO_COOLDOWN.put(player.getUUID(), now);
+
+        src.sendSuccess(() -> Component.literal(
+                "The hidden paths carry you into the Nether at "
+                + landing.getX() + " " + landing.getY() + " " + landing.getZ()
+                + ". Use /witchery exit nether to return.")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    private static BlockPos netherReferencePos(ServerPlayer player) {
+        BlockPos pos = player.blockPosition();
+        if (player.level().dimension().equals(Level.OVERWORLD)) {
+            return new BlockPos(Math.floorDiv(pos.getX(), 8), 64, Math.floorDiv(pos.getZ(), 8));
+        }
+        return new BlockPos(pos.getX(), 64, pos.getZ());
+    }
+
+    private static BlockPos findSafeNetherLanding(ServerLevel level, BlockPos reference) {
+        for (int radius = 0; radius <= GOTO_NETHER_SEARCH_RADIUS_BLOCKS; radius += GOTO_NETHER_SEARCH_STEP_BLOCKS) {
+            for (int dx = -radius; dx <= radius; dx += GOTO_NETHER_SEARCH_STEP_BLOCKS) {
+                for (int dz = -radius; dz <= radius; dz += GOTO_NETHER_SEARCH_STEP_BLOCKS) {
+                    if (Math.abs(dx) != radius && Math.abs(dz) != radius) {
+                        continue;
+                    }
+                    int x = reference.getX() + dx;
+                    int z = reference.getZ() + dz;
+                    level.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
+                    BlockPos landing = scanNetherColumnForLanding(level, x, z);
+                    if (landing != null) {
+                        return landing;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos scanNetherColumnForLanding(ServerLevel level, int x, int z) {
+        int minY = Math.max(level.getMinY() + 3, 24);
+        int maxY = Math.min(level.getMaxY() - 3, 112);
+        BlockPos.MutableBlockPos feet = new BlockPos.MutableBlockPos(x, maxY, z);
+        for (int y = maxY; y >= minY; y--) {
+            feet.set(x, y, z);
+            if (isSafeNetherLanding(level, feet)) {
+                return feet.immutable();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSafeNetherLanding(ServerLevel level, BlockPos feet) {
+        BlockState floor = level.getBlockState(feet.below());
+        BlockState feetState = level.getBlockState(feet);
+        BlockState headState = level.getBlockState(feet.above());
+        return floor.getFluidState().isEmpty()
+                && floor.isFaceSturdy(level, feet.below(), Direction.UP)
+                && !floor.is(Blocks.MAGMA_BLOCK)
+                && !floor.is(Blocks.CAMPFIRE)
+                && !floor.is(Blocks.SOUL_CAMPFIRE)
+                && isOpenForLanding(feetState)
+                && isOpenForLanding(headState)
+                && !hasNearbyLava(level, feet);
+    }
+
+    private static boolean isOpenForLanding(BlockState state) {
+        return state.getFluidState().isEmpty()
+                && !state.is(Blocks.FIRE)
+                && !state.is(Blocks.SOUL_FIRE)
+                && (state.isAir() || state.canBeReplaced());
+    }
+
+    private static boolean hasNearbyLava(ServerLevel level, BlockPos feet) {
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    cursor.set(feet.getX() + dx, feet.getY() + dy, feet.getZ() + dz);
+                    if (level.getBlockState(cursor).getFluidState().is(net.minecraft.tags.FluidTags.LAVA)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        return gotoStructure(src, src.getLevel(), namespace, structureId);
+    }
+
+    private static int gotoStructure(CommandSourceStack src, ServerLevel level, String namespace, String structureId)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+
+        long now = src.getLevel().getGameTime();
         Long last = GOTO_COOLDOWN.get(player.getUUID());
         if (last != null && now - last < GOTO_COOLDOWN_TICKS) {
             long remaining = (GOTO_COOLDOWN_TICKS - (now - last) + 19) / 20; // round up to seconds
@@ -2651,13 +2820,18 @@ public class WitcheryCommands {
         WitcheryMod.LOGGER.info("[Goto] Prepared {} chunk(s) around {}:{} at {} before teleport.",
                 preloaded, namespace, structureId, found);
 
-        int surfaceY = level.getHeight(
-                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
-                found.getX(), found.getZ());
-        // Final safety net: if heightmap is still suspicious, use structure Y + 3.
-        // found.getY() is the village center Y (ground level at generation time).
-        if (surfaceY < 20) {
-            surfaceY = Math.max(found.getY() + 3, 20);
+        int surfaceY;
+        if (level.dimension().equals(Level.NETHER)) {
+            surfaceY = Math.clamp(found.getY() + 2, level.getMinY() + 2, level.getMaxY() - 2);
+        } else {
+            surfaceY = level.getHeight(
+                    net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                    found.getX(), found.getZ());
+            // Final safety net: if heightmap is still suspicious, use structure Y + 3.
+            // found.getY() is the village center Y (ground level at generation time).
+            if (surfaceY < 20) {
+                surfaceY = Math.max(found.getY() + 3, 20);
+            }
         }
 
         player.teleportTo(level, found.getX() + 0.5, surfaceY, found.getZ() + 0.5,

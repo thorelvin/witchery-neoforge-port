@@ -816,7 +816,38 @@ Structure integrations:
 
 ---
 
-## 14. Current Scope Note
+## 14. Current NBT Structure Pipeline
+
+Designer-built structures should enter the port as Minecraft structure NBT whenever the shape is authored in-game. JSON should describe placement, biome tags, structure sets, loot, tags, and small data knobs; it should not be used as a hand-written block-by-block structure format unless the structure is tiny or procedural by nature.
+
+Live first slice:
+
+| Structure | Template | Placement | Runtime additions |
+|---|---|---|---|
+| Hobgoblin Hut | `data/witchery/structure/hobgoblin_hut/hobgobhut.nbt` | Forests and swamps; dry, non-river/ocean, low-variance footprint; no vanilla terrain shelf | Clutter clear, real support columns, resident Hobgoblin; no chest |
+| Warped Coven | `data/witchery/structure/warped_coven/warpedcoven.nbt` | Warped Forest; stable Nether floor plus interior clearance; `top_layer_modification` | Interior volume clear, resident Coven Witch, infernal loot chest |
+
+Rules for future NBT imports:
+
+- Keep the designer NBT as the source of the visible structure shape.
+- Clean accidental palette entries before packaging: snow layers, test blocks, mirrors, debug markers, or dimension-specific leftovers should not ship unless the slice explicitly wants them.
+- Prefer biome tags such as `#witchery:has_hobgoblin_hut` over hard-coded biome lists inside Java, so distribution can expand by datapack.
+- Use `terrain_adaptation: none` when the structure piece already owns terrain fitting. Vanilla beard/shelf adaptation can create visible cuts around detailed Witchery builds.
+- Separate terrain suitability from structure placement. Check water, biome family, footprint variance, Nether floor stability, and interior clearance before adding the piece.
+- Clear only what the structure owns. Overworld huts should remove clutter and support their real feet; Nether huts may clear an interior volume after vegetation placement when stems/leaves would otherwise appear inside.
+- Add runtime entities and chests from the piece code when they are gameplay state, not static designer decoration.
+- Add a headless resource test for every imported template: size, forbidden palette entries, required important blocks, biome tag, structure step, and terrain adaptation.
+
+Future migration plan:
+
+1. Leave procedural structures in place until an NBT replacement has a matching placement rule and tests.
+2. Move one structure family at a time: template import, cleanup, placement constraints, runtime entities/chests, docs, then in-game QA.
+3. Keep old piece serializers registered when saved worlds may contain older procedural pieces.
+4. Use JSON/data packs for distribution and loot iteration; use Java only for rules that need world inspection or runtime behavior.
+
+---
+
+## 15. Current Scope Note
 
 Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) before using this file for implementation.
 
@@ -830,7 +861,7 @@ Current implementation order, naming resolution, and agent-facing constraints ar
 
 ---
 
-## 15. Registry Name Suggestions
+## 16. Registry Name Suggestions
 
 These are suggestions only.
 
@@ -882,7 +913,7 @@ These are suggestions only.
 
 ---
 
-## 16. Final Direction
+## 17. Final Direction
 
 The structure generation redo should make the world feel haunted by Witchery.
 

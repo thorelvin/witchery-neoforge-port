@@ -61,6 +61,7 @@ Substantial restored or in-progress systems include:
 - Many mobs and renderers restored or polished toward old Witchery visuals — ravens, spirits, nightmares, flying monkeys, imps, Ents, Mandrakes, Banshees, Poltergeists, Hellhounds, Mindrakes, spectral coven witches, and others.
 - The **Witches' Primer** as a native Modonomicon guidebook that grows as the witch does: every player is handed the Primer on first join, and crafting a topic book unlocks that chapter and reveals the next book's recipe — a guided path from Getting Started through Collecting Fumes, Herbology, Circle Magic, and the transformations. Station and rite recipes use baked source-style book art, chapters unlock in their proper order with later pages revealed as you obtain the matching station output, and a placeable Modonomicon block now opens like a Hexerei-style book with live Primer pages, entry lists, gating, page buttons, back-to-entries navigation, and Primer-matching item rendering directly on the model. The current Primer also gives concrete setup help for the altar's six-block 2x3/3x2 footprint and documents brazier operation, altar-wait feedback, Wood Ash collection, and the full brazier working roster.
 - Vanilla villages now receive Witchery village buildings and adaptive town walls: apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA. Apothecary residents now keep their cauldron jobsite anchor, custom look/name, and full levelled trade list across reload/profession churn.
+- Designer-authored NBT structures are now part of the worldgen path. The Hobgoblin Hut uses a cleaned NBT template in forests and swamps, rejects water/steep footprints, clears only local clutter, has no chest, and spawns a resident Hobgoblin. The Warped Coven is a Nether warped-forest structure with terrain/clearance checks, late vegetation cleanup, a Coven Witch resident, and a focused infernal loot chest.
 - A large exact-ID cleanup pass has promoted or removed the former legacy placeholder roster. Source and community fan-mod aliases now cover guidebooks, hunter gear, brew containers, contracts, waystones, special wearables, utility tools, mounted trophy heads, and many old food/ingredient items; deeper behavior and visual QA continue family by family.
 - Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are restored or partially restored, with current QA notes in the status docs.
 - The in-game guidebook is powered by **Modonomicon** as a required dependency. JEI integration is declared optional and can be wired in as current Minecraft/NeoForge availability allows.
@@ -74,7 +75,7 @@ Every grimoire has blank pages. Important remaining work includes:
 - Custom Brew parity is still an evolving area: the composed-brew core, finite moving liquid, brew buckets, colour sync, source-shaped thrown bottle travel, source Gas Mask gas protection, lifetime-scaled moving gas, Disease brew/block spread, Purified Milk disease cleanup, Dog Tongue ritualized cauldron release, triggered item/block curses, and many source actions exist, but exact old pulse choreography, target modifiers, backfire routes, and obscure old action routes remain open.
 - The latest parity-scan backlog is merged into [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md), with status corrections reflected in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs careful QA around room generation, reflection behavior, stale generated chunks, and player-skin/equipment behavior.
-- Village additions are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
+- Village additions and the first NBT-backed wild structures are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
 - Ritual execution is powerful but still carries old-queue/refund/edge-case parity risk.
 - Public-release cleanup remains: licensing clarity, asset audit/replacement direction, packaging, balance passes, and broad multiplayer/server QA.
 
@@ -134,6 +135,8 @@ If setup fails with `Missing Gradle wrapper jar: gradle\wrapper\gradle-wrapper.j
 ## Debug / QA Helpers
 
 The mod includes a growing `/witchery` debug command suite (permission level 2). Useful current helpers include:
+
+Structure goto targets currently include `hobgoblin_hut`, `coven_circle`, `stone_circle`, `straw_man`, and Nether-only `warped_coven`. `/witchery goto nether` searches for a safe Nether foothold and stores the player's previous position; `/witchery exit nether` returns to that stored point.
 
 - `/witchery setup stations` — builds a stocked Rowan QA hut with core machines, altar, traders, chest supplies, kettle setup, Glowglobes, and test layout.
 - `/witchery setup rite` — builds a ritual QA pad with white, golden, otherwhere, and infernal circle sets.

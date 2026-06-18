@@ -7,11 +7,14 @@ import com.emoniph.witchery.worldgen.CovenCirclePiece;
 import com.emoniph.witchery.worldgen.CovenCircleStructure;
 import com.emoniph.witchery.worldgen.HobgoblinHutPiece;
 import com.emoniph.witchery.worldgen.HobgoblinHutStructure;
+import com.emoniph.witchery.worldgen.HobgoblinHutTemplatePiece;
 import com.emoniph.witchery.worldgen.StrawManPiece;
 import com.emoniph.witchery.worldgen.StrawManStructure;
 import com.emoniph.witchery.worldgen.StrawManTemplatePiece;
 import com.emoniph.witchery.worldgen.VillageKeepPiece;
 import com.emoniph.witchery.worldgen.VillageWatchTowerPiece;
+import com.emoniph.witchery.worldgen.WarpedCovenPiece;
+import com.emoniph.witchery.worldgen.WarpedCovenStructure;
 import com.emoniph.witchery.worldgen.WitchHutPiece;
 import com.emoniph.witchery.worldgen.WitchHutStructure;
 import com.emoniph.witchery.worldgen.WitcheryVillageElement;
@@ -55,6 +58,15 @@ public class WitcheryStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> HOBGOBLIN_HUT_PIECE =
             PIECE_TYPES.register("hobgoblin_hut", () -> HobgoblinHutPiece::new);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> HOBGOBLIN_HUT_TEMPLATE_PIECE =
+            PIECE_TYPES.register("hobgoblin_hut_template", () -> HobgoblinHutTemplatePiece::new);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<WarpedCovenStructure>> WARPED_COVEN_TYPE =
+            STRUCTURE_TYPES.register("warped_coven", () -> () -> WarpedCovenStructure.CODEC);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> WARPED_COVEN_PIECE =
+            PIECE_TYPES.register("warped_coven", () -> WarpedCovenPiece::new);
 
     // ── Village pool pieces (injected via WitcheryVillageElement) ─────────────
     // Piece types remain registered so saved worlds can deserialize them.
