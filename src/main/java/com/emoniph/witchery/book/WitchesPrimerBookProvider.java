@@ -478,9 +478,24 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     }
 
     private static BookEntityPageModel creature(String entityId, String name, String caption) {
+        return creature(entityId, name, caption, 1.0F, 0.0F);
+    }
+
+    /**
+     * Entity page with explicit render tuning. Modonomicon auto-fits the entity to its bounding box
+     * ({@code renderScale = 100 / max(1, max(bbW, bbH)) * 0.75 * scale}) and centres it vertically by
+     * {@code bbHeight/2 + max(bbHeight, size)*0.5 + offset}. Witchery models whose geometry overruns
+     * their hitbox (or sit off-centre) clip in the 106px frame, so {@code scale} (<1 shrinks) and
+     * {@code offset} nudge them back into the frame. These are first-pass values — confirm in-client
+     * and tune from screenshots.
+     */
+    private static BookEntityPageModel creature(String entityId, String name, String caption,
+                                                 float scale, float offset) {
         return BookEntityPageModel.create()
                 .withEntityId(entityId)
                 .withEntityName(Component.literal(name))
+                .withScale(scale)
+                .withOffset(offset)
                 .withText(WitcheryBooks.ink(caption));
     }
 
@@ -599,25 +614,26 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         boline.add(recipe("boline", "Boline",
                 "Forge it from iron, bone, and an emerald. It fights no better than a wooden sword, but it "
                         + "endures like iron and matters far more as a tool."));
-        List<BookPageModel<?>> path = WitcheryBooks.prose("Path of the Craft",
+        List<BookPageModel<?>> path = new ArrayList<>(WitcheryBooks.prose("Path of the Craft",
                 "Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a "
-                        + "subject's book and its pages appear here. Here is the whole road, so you may see "
-                        + "where your feet are headed:"
-                        + "\n\n**Getting Started** — the altar, the boline, the first roots."
-                        + "\n**1. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders."
-                        + "\n**2. Herbology** — Mutandis, the Rowan, the Witch's Cauldron."
-                        + "\n**3. Brews & Infusions** — the Kettle, and the four paths of infusion."
-                        + "\n**4. Distilling** — drawing essences out by heat and patience."
-                        + "\n**5. Circle Magic** — chalk, circles, and the rites of power."
-                        + "\n**6. Conjuration** — the Brazier, fetishes, and the things you call."
-                        + "\n**7. Symbology** — the Mystic Branch and glyphs traced in the air."
-                        + "\n**8. Poppets** — taglocks, poppets, and binding from afar."
-                        + "\n**9. The Spirit World** — dreams, the dead, and the far country."
-                        + "\n**10. Creatures** — familiars and the beasts of the craft."
-                        + "\n**11. Transformations** — the deeper changes: the wolf, the night."
-                        + "\n\nThe order is a teacher's order, not a cage. Should a coven witch or a dusty "
-                        + "bookshop press a later chapter into your hands early, read it gladly — knowledge "
-                        + "found is knowledge still.");
+                        + "subject's book and its pages appear here. Beyond this **Getting Started** road of "
+                        + "the altar, the boline, and the first roots, the whole path runs:"));
+        path.add(WitcheryBooks.orderedListPage(null, List.of(
+                "**Collecting Fumes** — the Witches' Oven.",
+                "**Herbology** — Mutandis and the Cauldron.",
+                "**Brews & Infusions** — the Kettle.",
+                "**Distilling** — essences drawn by heat.",
+                "**Circle Magic** — chalk and rites.",
+                "**Conjuration** — the Brazier.",
+                "**Symbology** — the Mystic Branch.",
+                "**Poppets** — binding from afar.",
+                "**The Spirit World** — dreams and the dead.",
+                "**Creatures** — familiars and beasts.",
+                "**Transformations** — the wolf and the night.")));
+        path.addAll(WitcheryBooks.prose(null,
+                "The order is a teacher's order, not a cage. Should a coven witch or a dusty bookshop press "
+                        + "a later chapter into your hands early, read it gladly — knowledge found is knowledge "
+                        + "still."));
 
         cat.withEntries(
                 entry(cat, "getting_started/first_steps", "witchery.book.entry.first_steps", WitcheryItems.WITCHES_PRIMER.get(), 0, firstSteps),
@@ -1418,7 +1434,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "drowning."));
         familiars.add(creature("witchery:owl", "The Owl",
                 "Reads the air and warns of what approaches. At full speed on a broomstick, an owl grants a "
-                        + "significant bonus — they seem to enjoy the height."));
+                        + "significant bonus — they seem to enjoy the height.", 0.7F, 0.0F));
         familiars.add(creature("witchery:familiar_cat", "The Cat",
                 "Indifferent to most things, hostile to supernatural intrusion. Curses find less purchase "
                         + "near a cat, and your own circle malice takes deeper root."));
@@ -1434,7 +1450,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "does not erase it."));
         hunter.add(creature("witchery:witch_hunter", "Witch Hunter",
                 "Known by the hat, the coat, and the look of someone certain of their cause. They drop "
-                        + "silver bolts and the occasional armour piece."));
+                        + "silver bolts and the occasional armour piece.", 0.85F, 0.0F));
 
         List<BookPageModel<?>> hobgoblin = new ArrayList<>(WitcheryBooks.prose("Hobgoblins",
                 "Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb "
@@ -1444,7 +1460,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "it has consequences. You have been told."));
         hobgoblin.add(creature("witchery:hobgoblin", "Hobgoblin",
                 "Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work "
-                        + "upward. The koboldite at the end is genuinely useful."));
+                        + "upward. The koboldite at the end is genuinely useful.", 0.85F, 0.0F));
 
         List<BookPageModel<?>> spectral = new ArrayList<>(WitcheryBooks.prose("Spectral Familiar",
                 "The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the "

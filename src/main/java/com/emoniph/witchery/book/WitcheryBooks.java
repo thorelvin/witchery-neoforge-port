@@ -135,6 +135,37 @@ public final class WitcheryBooks {
         return pages;
     }
 
+    /**
+     * Builds a single sepia text page that renders {@code items} as a Modonomicon ordered list — each
+     * item on its own line with an auto-incrementing "N." counter.
+     *
+     * <p>Authored as CommonMark ordered-list markdown (the "N." marker sits at the start of each line)
+     * so Modonomicon's list handling finalizes a component per item and the page renderer draws a real
+     * line break between them. A plain prose page cannot do this: {@link #prose} splits on sentence
+     * boundaries (period + any whitespace, newlines included) and rejoins with spaces, and this engine
+     * renders neither {@code \n\n} nor a soft {@code \n} as a visible break. Each item's text is colour-
+     * wrapped individually so the list marker stays at the line start where CommonMark needs it.
+     *
+     * <p>The first page of an entry should carry the entry title; pass {@code null} here for a
+     * continuation page, which then reserves a blank spacer title row exactly like {@link #prose}.
+     */
+    public static BookPageModel<?> orderedListPage(String title, List<String> items) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < items.size(); i++) {
+            if (i > 0) {
+                sb.append('\n');
+            }
+            sb.append(i + 1).append(". ").append(ink(items.get(i)));
+        }
+        BookTextPageModel page = BookTextPageModel.create().withText(sb.toString());
+        if (title != null) {
+            page.withTitle(Component.literal(title));
+        } else {
+            page.withTitle(Component.literal(" ")).withShowTitleSeparator(false);
+        }
+        return page;
+    }
+
     /** Breaks a string too long for one page into word-boundary pieces that each fit the budget. */
     private static List<String> splitToBudget(String text) {
         if (text.length() <= SENTENCE_KEEP_MAX) {

@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a subject's book and its pages appear here. Here is the whole road, so you may see where your feet are headed:[#]()",
+      "text": "[#](53341a)Eleven chapters lie ahead of this one, pupil, and they open in their proper order — craft a subject's book and its pages appear here. Beyond this **Getting Started** road of the altar, the boline, and the first roots, the whole path runs:[#]()",
       "title": "Path of the Craft",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Getting Started** — the altar, the boline, the first roots. **1. Collecting Fumes** — the Witches' Oven and the breaths and odours it renders. **2. Herbology** — Mutandis, the Rowan, the Witch's Cauldron.[#]()",
+      "text": "1. [#](53341a)**Collecting Fumes** — the Witches' Oven.[#]()\n2. [#](53341a)**Herbology** — Mutandis and the Cauldron.[#]()\n3. [#](53341a)**Brews & Infusions** — the Kettle.[#]()\n4. [#](53341a)**Distilling** — essences drawn by heat.[#]()\n5. [#](53341a)**Circle Magic** — chalk and rites.[#]()\n6. [#](53341a)**Conjuration** — the Brazier.[#]()\n7. [#](53341a)**Symbology** — the Mystic Branch.[#]()\n8. [#](53341a)**Poppets** — binding from afar.[#]()\n9. [#](53341a)**The Spirit World** — dreams and the dead.[#]()\n10. [#](53341a)**Creatures** — familiars and beasts.[#]()\n11. [#](53341a)**Transformations** — the wolf and the night.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,40 +38,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**3. Brews & Infusions** — the Kettle, and the four paths of infusion. **4. Distilling** — drawing essences out by heat and patience. **5. Circle Magic** — chalk, circles, and the rites of power.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**6. Conjuration** — the Brazier, fetishes, and the things you call. **7. Symbology** — the Mystic Branch and glyphs traced in the air. **8. Poppets** — taglocks, poppets, and binding from afar.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**9. The Spirit World** — dreams, the dead, and the far country. **10. Creatures** — familiars and the beasts of the craft. **11. Transformations** — the deeper changes: the wolf, the night.[#]() [#](53341a)The order is a teacher's order, not a cage.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)Should a coven witch or a dusty bookshop press a later chapter into your hands early, read it gladly — knowledge found is knowledge still.[#]()",
+      "text": "[#](53341a)The order is a teacher's order, not a cage. Should a coven witch or a dusty bookshop press a later chapter into your hands early, read it gladly — knowledge found is knowledge still.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }
