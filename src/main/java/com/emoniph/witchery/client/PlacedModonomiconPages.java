@@ -409,10 +409,12 @@ public final class PlacedModonomiconPages {
             ps.pushPose();
             try {
                 ps.translate(centerX, centerY, PAGE_ICON_Z_PIXELS);
-                ps.scale(scalePx, scalePx, scalePx);
-                // Flip from page space (Y down) into model space (Y up) with a proper rotation so face
-                // winding is preserved (a negative Y scale would cull the model), then turn to the reader.
-                ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+                // Y-reflecting scale flips the model upright for the page's Y-down content space. Crucially
+                // it adds a SECOND reflection on top of the page pose's own -Y scale, so the net model->world
+                // transform has an even number of reflections — entity normals and winding stay correct. A
+                // pure-rotation flip (rotateZ 180) left an odd reflection count, inverting the normals, which
+                // made the mob render lit from below with dark faces.
+                ps.scale(scalePx, -scalePx, scalePx);
                 ps.mulPose(Axis.YP.rotationDegrees(ENTITY_FACING_Y_DEGREES));
                 // Centre the standing model (feet at y=0, head at y=bbHeight) about the frame midline.
                 // The page's `offset` is intentionally not applied here — it tunes the item-opened book's
