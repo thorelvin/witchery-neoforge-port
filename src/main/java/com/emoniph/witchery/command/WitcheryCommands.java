@@ -2528,6 +2528,9 @@ public class WitcheryCommands {
     private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
     private static final int GOTO_NETHER_SEARCH_RADIUS_BLOCKS = 128;
     private static final int GOTO_NETHER_SEARCH_STEP_BLOCKS = 8;
+    private static final int GOTO_NETHER_STRUCTURE_LANDING_RADIUS_BLOCKS = 18;
+    private static final int GOTO_NETHER_STRUCTURE_LANDING_CLEARANCE_BLOCKS = 4;
+    private static final int GOTO_NETHER_STRUCTURE_VERTICAL_SEARCH_BLOCKS = 6;
 
     private static int gotoVillageBuilding(CommandSourceStack src, String building)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
@@ -2738,6 +2741,99 @@ public class WitcheryCommands {
         return false;
     }
 
+    private static BlockPos findSafeNetherStructureLanding(ServerLevel level, BlockPos found) {
+        BlockPos nearStructureFloor = findSafeNetherStructureLandingNearY(level, found, found.getY() + 1);
+        if (nearStructureFloor != null) {
+            return nearStructureFloor;
+        }
+        return findHighestSafeNetherStructureLanding(level, found);
+    }
+
+    private static BlockPos findSafeNetherStructureLandingNearY(ServerLevel level, BlockPos found, int targetY) {
+        int minY = Math.max(level.getMinY() + 3, targetY - 2);
+        int maxY = Math.min(level.getMaxY() - GOTO_NETHER_STRUCTURE_LANDING_CLEARANCE_BLOCKS - 1,
+                targetY + GOTO_NETHER_STRUCTURE_VERTICAL_SEARCH_BLOCKS);
+        for (int radius = 0; radius <= GOTO_NETHER_STRUCTURE_LANDING_RADIUS_BLOCKS; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.abs(dx) != radius && Math.abs(dz) != radius) {
+                        continue;
+                    }
+                    int x = found.getX() + dx;
+                    int z = found.getZ() + dz;
+                    level.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
+                    for (int y = maxY; y >= minY; y--) {
+                        BlockPos feet = new BlockPos(x, y, z);
+                        if (isSafeNetherStructureLanding(level, feet)) {
+                            return feet;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos findHighestSafeNetherStructureLanding(ServerLevel level, BlockPos found) {
+        for (int radius = 0; radius <= GOTO_NETHER_STRUCTURE_LANDING_RADIUS_BLOCKS; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.abs(dx) != radius && Math.abs(dz) != radius) {
+                        continue;
+                    }
+                    int x = found.getX() + dx;
+                    int z = found.getZ() + dz;
+                    level.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
+                    BlockPos landing = scanNetherColumnForStructureLanding(level, x, z);
+                    if (landing != null) {
+                        return landing;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos scanNetherColumnForStructureLanding(ServerLevel level, int x, int z) {
+        int minY = Math.max(level.getMinY() + 3, 24);
+        int maxY = Math.min(level.getMaxY() - GOTO_NETHER_STRUCTURE_LANDING_CLEARANCE_BLOCKS - 1, 112);
+        BlockPos.MutableBlockPos feet = new BlockPos.MutableBlockPos(x, maxY, z);
+        for (int y = maxY; y >= minY; y--) {
+            feet.set(x, y, z);
+            if (isSafeNetherStructureLanding(level, feet)) {
+                return feet.immutable();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSafeNetherStructureLanding(ServerLevel level, BlockPos feet) {
+        return isSafeNetherLanding(level, feet)
+                && hasLandingClearance(level, feet, GOTO_NETHER_STRUCTURE_LANDING_CLEARANCE_BLOCKS)
+                && hasHorizontalBreathingRoom(level, feet);
+    }
+
+    private static boolean hasLandingClearance(ServerLevel level, BlockPos feet, int clearBlocks) {
+        for (int dy = 0; dy < clearBlocks; dy++) {
+            if (!isOpenForLanding(level.getBlockState(feet.above(dy)))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean hasHorizontalBreathingRoom(ServerLevel level, BlockPos feet) {
+        int openSides = 0;
+        BlockPos head = feet.above();
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (isOpenForLanding(level.getBlockState(feet.relative(direction)))
+                    && isOpenForLanding(level.getBlockState(head.relative(direction)))) {
+                openSides++;
+            }
+        }
+        return openSides >= 2;
+    }
+
     private static int gotoStructure(CommandSourceStack src, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         return gotoStructure(src, src.getLevel(), namespace, structureId);
@@ -2771,7 +2867,7 @@ public class WitcheryCommands {
             return 0;
         }
 
-        final BlockPos from = player.blockPosition();
+        final BlockPos from = gotoStructureSearchOrigin(player, level);
         if (com.emoniph.witchery.events.VillageWallEvents.isVillageId(namespace, structureId)) {
             WitcheryMod.LOGGER.info("[Goto] Queueing safe village search for {}:{} from {} (radius={}, one candidate chunk per tick).",
                     namespace, structureId, from, GOTO_VILLAGE_SEARCH_RADIUS_RINGS);
@@ -2820,9 +2916,19 @@ public class WitcheryCommands {
         WitcheryMod.LOGGER.info("[Goto] Prepared {} chunk(s) around {}:{} at {} before teleport.",
                 preloaded, namespace, structureId, found);
 
+        BlockPos destination = found;
         int surfaceY;
         if (level.dimension().equals(Level.NETHER)) {
-            surfaceY = Math.clamp(found.getY() + 2, level.getMinY() + 2, level.getMaxY() - 2);
+            BlockPos landing = findSafeNetherStructureLanding(level, found);
+            if (landing == null) {
+                src.sendFailure(Component.literal(
+                        "The scrying mists found " + fullId
+                        + ", but no safe Nether foothold opened nearby. Wander further and gaze again.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return 0;
+            }
+            destination = landing;
+            surfaceY = landing.getY();
         } else {
             surfaceY = level.getHeight(
                     net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
@@ -2834,17 +2940,28 @@ public class WitcheryCommands {
             }
         }
 
-        player.teleportTo(level, found.getX() + 0.5, surfaceY, found.getZ() + 0.5,
+        player.teleportTo(level, destination.getX() + 0.5, surfaceY, destination.getZ() + 0.5,
                 java.util.Set.of(), player.getYRot(), player.getXRot(), false);
         player.setDeltaMovement(0.0, 0.0, 0.0);
         player.fallDistance = 0.0F;
         GOTO_COOLDOWN.put(player.getUUID(), now);
 
         int dist = (int) Math.sqrt(found.distSqr(from));
+        final BlockPos finalDestination = destination;
         src.sendSuccess(() -> Component.literal(
                 "The hidden paths carry you away, across " + dist + " blocks, to "
-                + found.getX() + " ~ " + found.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
+                + finalDestination.getX() + " " + finalDestination.getY() + " "
+                + finalDestination.getZ() + ".")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
         return 1;
+    }
+
+    private static BlockPos gotoStructureSearchOrigin(ServerPlayer player, ServerLevel targetLevel) {
+        if (targetLevel.dimension().equals(Level.NETHER)
+                && !player.level().dimension().equals(Level.NETHER)) {
+            return netherReferencePos(player);
+        }
+        return player.blockPosition();
     }
 
     private static int preloadGotoDestination(ServerLevel level, BlockPos found) {
