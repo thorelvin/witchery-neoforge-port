@@ -928,12 +928,31 @@ public final class PlacedModonomiconPages {
             return false;
         }
 
+        // A `minecraft:special` item model (e.g. the Beartrap/Wolftrap entity-machine renderer) draws
+        // real 3D geometry, so it must be flattened like a block model. Its `base` icon model parents to
+        // item/generated (sprite art), which would otherwise trip the sprite-art check below and skip
+        // flattening, leaving the trap protruding from the page.
+        if (itemDefinitionUsesSpecialModel(mc, itemId)) {
+            return true;
+        }
+
         Identifier legacyItemModel = Identifier.fromNamespaceAndPath(itemId.getNamespace(), "item/" + itemId.getPath());
         if (modelUsesSpriteArt(mc, legacyItemModel, 0)) {
             return false;
         }
 
         return true;
+    }
+
+    private static boolean itemDefinitionUsesSpecialModel(Minecraft mc, Identifier itemId) {
+        Optional<JsonObject> definition = readJsonObject(mc,
+                Identifier.fromNamespaceAndPath(itemId.getNamespace(), "items/" + itemId.getPath() + ".json"));
+        if (definition.isEmpty()) {
+            return false;
+        }
+        JsonElement modelElement = definition.get().get("model");
+        return modelElement instanceof JsonObject modelObject
+                && "minecraft:special".equals(jsonString(modelObject, "type"));
     }
 
     private static boolean itemDefinitionUsesSpriteArt(Minecraft mc, Identifier itemId) {
