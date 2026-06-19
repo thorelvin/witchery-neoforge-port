@@ -415,7 +415,58 @@ public final class SpiritWorldHelper {
         BlockPos anchor = BlockPos.containing(x, y, z);
         sw.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
         clearCopiedBed(sw, anchor);
-        return new double[]{ x, y, z };
+        return new double[]{ x, safeEntryY(sw, anchor, y), z };
+    }
+
+    private static double safeEntryY(ServerLevel level, BlockPos anchor, double originalY) {
+        if (isValidEntryPos(level, anchor)) {
+            return originalY;
+        }
+
+        int minFeetY = level.getMinY() + 1;
+        int maxFeetY = level.getMaxY() - 2;
+        int maxOffset = Math.max(maxFeetY - anchor.getY(), anchor.getY() - minFeetY);
+        for (int offset = 1; offset <= maxOffset; offset++) {
+            int yUp = anchor.getY() + offset;
+            if (yUp <= maxFeetY) {
+                BlockPos up = new BlockPos(anchor.getX(), yUp, anchor.getZ());
+                if (isValidEntryPos(level, up)) {
+                    return yUp + 0.1D;
+                }
+            }
+
+            int yDown = anchor.getY() - offset;
+            if (yDown >= minFeetY) {
+                BlockPos down = new BlockPos(anchor.getX(), yDown, anchor.getZ());
+                if (isValidEntryPos(level, down)) {
+                    return yDown + 0.1D;
+                }
+            }
+        }
+
+        return Math.max(level.getSeaLevel() + 1, 65);
+    }
+
+    private static boolean isValidEntryPos(ServerLevel level, BlockPos feet) {
+        if (feet.getY() <= level.getMinY() || feet.getY() >= level.getMaxY() - 1) {
+            return false;
+        }
+        return isStandableFloor(level, feet.below())
+                && isOpenForPlayer(level, feet)
+                && isOpenForPlayer(level, feet.above());
+    }
+
+    private static boolean isStandableFloor(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return !state.isAir()
+                && state.getFluidState().isEmpty()
+                && !state.getCollisionShape(level, pos).isEmpty();
+    }
+
+    private static boolean isOpenForPlayer(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.getFluidState().isEmpty()
+                && state.getCollisionShape(level, pos).isEmpty();
     }
 
     private static void clearCopiedBed(ServerLevel level, BlockPos anchor) {

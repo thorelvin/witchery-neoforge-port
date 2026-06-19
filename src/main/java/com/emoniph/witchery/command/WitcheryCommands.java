@@ -252,7 +252,7 @@ public class WitcheryCommands {
 
                 // ── Dimensions ───────────────────────────────────────────────
                 .then(Commands.literal("dream")
-                        .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.SPIRIT_WORLD)))
+                        .executes(ctx -> enterSpiritWorldDream(ctx.getSource())))
 
                 .then(Commands.literal("mirror")
                         .executes(ctx -> enterDimension(ctx.getSource(), WitcheryDimensions.MIRROR_WORLD)))
@@ -1109,6 +1109,40 @@ public class WitcheryCommands {
         return new double[]{ 0.5, 64, 0.5 };
     }
 
+    private static int enterSpiritWorldDream(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel target = ((ServerLevel) player.level()).getServer().getLevel(WitcheryDimensions.SPIRIT_WORLD);
+        if (target == null) {
+            src.sendFailure(Component.literal("Spirit World dimension is not loaded."));
+            return 0;
+        }
+
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        if (player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            data.setInSpiritWorld(true);
+            data.setSpiritWorldIsDream(true);
+            data.setDemonicNightmare(false);
+            sync(player, data);
+            src.sendSuccess(() -> Component.literal("Spirit World mode set to a peaceful dream."), false);
+            return 1;
+        }
+
+        if (data.isInSpiritWorld() || data.isManifestedGhost()) {
+            src.sendFailure(Component.literal("You are already tied to the Spirit World; wake or return before dreaming again."));
+            return 0;
+        }
+
+        if (!player.level().dimension().equals(Level.OVERWORLD)) {
+            src.sendFailure(Component.literal("Dream entry can only start from the Overworld."));
+            return 0;
+        }
+
+        SpiritWorldHelper.enter(player, 0.0);
+        src.sendSuccess(() -> Component.literal("Entered a peaceful Spirit World dream."), false);
+        return 1;
+    }
+
     private static int enterDimension(CommandSourceStack src, ResourceKey<Level> dim)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
@@ -1166,6 +1200,13 @@ public class WitcheryCommands {
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
         WitcheryPlayerData data = WitcheryAttachments.get(player);
+
+        if (player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                && data.isInSpiritWorld()
+                && !data.getSavedInventorySnbt().isEmpty()) {
+            SpiritWorldHelper.exit(player);
+            return 1;
+        }
 
         if (data.getReturnPos().isEmpty()) {
             ServerLevel overworld = ((net.minecraft.server.level.ServerLevel) player.level()).getServer().getLevel(Level.OVERWORLD);
@@ -1450,7 +1491,7 @@ public class WitcheryCommands {
 
         if (failures.isEmpty()) {
             src.sendSuccess(() -> Component.literal(
-                    "Spirit World verification passed: fixed biome, source baseline animals, native Spirit spawns, and vegetation/cotton feature wiring are loaded."),
+                    "Spirit World verification passed: fixed biome, expanded dream wildlife, native Spirit spawns, and vegetation/cotton feature wiring are loaded."),
                     false);
             return 1;
         }
@@ -1575,11 +1616,47 @@ public class WitcheryCommands {
             verifyJsonInt(effectsJson, "foliage_color", 8371292, "Spirit World biome foliage_color", failures);
         }
 
-        verifyBiomeSpawner(biomeJson, "creature", "minecraft:sheep", failures);
-        verifyBiomeSpawner(biomeJson, "creature", "minecraft:pig", failures);
-        verifyBiomeSpawner(biomeJson, "creature", "minecraft:chicken", failures);
-        verifyBiomeSpawner(biomeJson, "creature", "minecraft:cow", failures);
+        for (String type : java.util.List.of(
+                "minecraft:armadillo",
+                "minecraft:bee",
+                "minecraft:camel",
+                "minecraft:cat",
+                "minecraft:chicken",
+                "minecraft:cow",
+                "minecraft:donkey",
+                "minecraft:fox",
+                "minecraft:frog",
+                "minecraft:goat",
+                "minecraft:horse",
+                "minecraft:llama",
+                "minecraft:mooshroom",
+                "minecraft:mule",
+                "minecraft:ocelot",
+                "minecraft:panda",
+                "minecraft:parrot",
+                "minecraft:pig",
+                "minecraft:polar_bear",
+                "minecraft:rabbit",
+                "minecraft:sheep",
+                "minecraft:skeleton_horse",
+                "minecraft:sniffer",
+                "minecraft:strider",
+                "minecraft:tadpole",
+                "minecraft:turtle",
+                "minecraft:wolf",
+                "minecraft:zombie_horse")) {
+            verifyBiomeSpawner(biomeJson, "creature", type, failures);
+        }
+        verifyBiomeSpawner(biomeJson, "ambient", "minecraft:bat", failures);
         verifyBiomeSpawner(biomeJson, "ambient", "witchery:spirit", failures);
+        verifyBiomeSpawner(biomeJson, "water_creature", "minecraft:dolphin", failures);
+        verifyBiomeSpawner(biomeJson, "water_creature", "minecraft:squid", failures);
+        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:cod", failures);
+        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:pufferfish", failures);
+        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:salmon", failures);
+        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:tropical_fish", failures);
+        verifyBiomeSpawner(biomeJson, "underground_water_creature", "minecraft:glow_squid", failures);
+        verifyBiomeSpawner(biomeJson, "axolotls", "minecraft:axolotl", failures);
 
         verifyBiomeFeature(biomeJson, "witchery:spirit_grass", failures);
         verifyBiomeFeature(biomeJson, "witchery:spirit_tall_grass", failures);

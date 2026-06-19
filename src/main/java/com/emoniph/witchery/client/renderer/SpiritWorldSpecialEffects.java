@@ -61,6 +61,17 @@ public final class SpiritWorldSpecialEffects {
                 blue * (angle * 0.91F + 0.09F));
     }
 
+    public static SpiritFog currentSpiritFog() {
+        SpiritState state = currentSpiritState();
+        if (state.demonic()) {
+            return new SpiritFog(2.0F, 36.0F);
+        }
+        if (state.nightmare()) {
+            return new SpiritFog(4.0F, 48.0F);
+        }
+        return new SpiritFog(6.0F, 72.0F);
+    }
+
     private static SpiritState currentSpiritState() {
         Player player = Minecraft.getInstance().player;
         boolean nightmare = false;
@@ -85,6 +96,8 @@ public final class SpiritWorldSpecialEffects {
     }
 
     public record SpiritColor(float red, float green, float blue) {}
+
+    public record SpiritFog(float nearPlane, float farPlane) {}
 
     private record SpiritState(boolean nightmare, boolean demonic) {
         private boolean nightmareLike() {

@@ -38,6 +38,14 @@ class NbtStructureTemplateTest {
             "data/witchery/loot_table/chests/witch_well.json";
 
     @Test
+    void packagedTemplatesStayVanillaStructureBlockReadable() throws IOException {
+        assertVanillaStructureTemplate(HOBGOBLIN_HUT_TEMPLATE);
+        assertVanillaStructureTemplate(WARPED_COVEN_TEMPLATE);
+        assertVanillaStructureTemplate(WITCH_WELL_TEMPLATE);
+        assertVanillaStructureTemplate(WITCH_WELL_CAVE_TEMPLATE);
+    }
+
+    @Test
     void hobgoblinHutTemplateIsPackagedWithoutChest() throws IOException {
         CompoundTag template = readTemplate(HOBGOBLIN_HUT_TEMPLATE);
 
@@ -185,6 +193,39 @@ class NbtStructureTemplateTest {
         assertEquals(z, intAt(size, 2));
     }
 
+    private static void assertVanillaStructureTemplate(String resourceName) throws IOException {
+        CompoundTag template = readTemplate(resourceName);
+        assertTrue(template.getInt("DataVersion").isPresent(),
+                resourceName + " must keep DataVersion for structure-block/DataFixer loading");
+        assertFalse(template.contains("pos"),
+                resourceName + " must not keep schematic/export wrapper position data");
+        assertFalse(template.contains("state"),
+                resourceName + " must not keep schematic/export wrapper state data");
+
+        ListTag size = list(template, "size");
+        ListTag palette = list(template, "palette");
+        ListTag blocks = list(template, "blocks");
+        list(template, "entities");
+
+        assertEquals(3, size.size(), resourceName + " size must be a 3-int list");
+        assertFalse(palette.isEmpty(), resourceName + " palette must not be empty");
+        assertFalse(blocks.isEmpty(), resourceName + " blocks must not be empty");
+
+        for (int i = 0; i < palette.size(); i++) {
+            assertFalse(string(compoundAt(palette, i), "Name").isBlank(),
+                    resourceName + " palette entry " + i + " must have a block Name");
+        }
+
+        for (int i = 0; i < blocks.size(); i++) {
+            CompoundTag block = compoundAt(blocks, i);
+            assertEquals(3, list(block, "pos").size(),
+                    resourceName + " block " + i + " pos must be a 3-int list");
+            int state = integer(block, "state");
+            assertTrue(state >= 0 && state < palette.size(),
+                    resourceName + " block " + i + " state index must point into palette");
+        }
+    }
+
     private static boolean paletteContainsBlock(CompoundTag template, String blockName) {
         ListTag palette = list(template, "palette");
         for (int i = 0; i < palette.size(); i++) {
@@ -239,6 +280,10 @@ class NbtStructureTemplateTest {
 
     private static CompoundTag compoundAt(ListTag tag, int index) {
         return tag.getCompound(index).orElseThrow();
+    }
+
+    private static int integer(CompoundTag tag, String key) {
+        return tag.getInt(key).orElseThrow();
     }
 
     private static int intAt(ListTag tag, int index) {

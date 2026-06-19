@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -194,6 +195,20 @@ public class WitcheryClientEvents {
         event.setRed(color.red());
         event.setGreen(color.green());
         event.setBlue(color.blue());
+    }
+
+    @SubscribeEvent
+    public static void onRenderFog(ViewportEvent.RenderFog event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || !mc.level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
+        if (event.getType() != FogType.NONE) return;
+
+        SpiritWorldSpecialEffects.SpiritFog fog = SpiritWorldSpecialEffects.currentSpiritFog();
+        float far = Math.min(event.getFarPlaneDistance(), fog.farPlane());
+        float near = Math.min(fog.nearPlane(), far * 0.75F);
+        event.setNearPlaneDistance(near);
+        event.setFarPlaneDistance(far);
+        ((net.neoforged.bus.api.ICancellableEvent) event).setCanceled(true);
     }
 
     /**

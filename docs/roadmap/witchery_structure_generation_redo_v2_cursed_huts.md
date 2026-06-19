@@ -830,13 +830,16 @@ Live first slice:
 Rules for future NBT imports:
 
 - Keep the designer NBT as the source of the visible structure shape.
+- Keep every packaged NBT in vanilla structure-template format so designers can reopen it with an in-game Structure Block later: root tags should include `DataVersion`, `size`, `palette` or `palettes`, `blocks`, and `entities`, with block entries pointing at palette indexes.
+- Do not package schematic/export wrapper data such as top-level `pos` or scalar `state` tags. If a tool exports that shape, round-trip it through Minecraft's Structure Block or convert it before committing.
+- Resource-pack templates live under `data/<namespace>/structure/...`; world-saved Structure Block files live under `<world>/generated/<namespace>/structures/...`. The generated-world path uses plural `structures`.
 - Clean accidental palette entries before packaging: snow layers, test blocks, mirrors, debug markers, or dimension-specific leftovers should not ship unless the slice explicitly wants them.
 - Prefer biome tags such as `#witchery:has_hobgoblin_hut` over hard-coded biome lists inside Java, so distribution can expand by datapack.
 - Use `terrain_adaptation: none` when the structure piece already owns terrain fitting. Vanilla beard/shelf adaptation can create visible cuts around detailed Witchery builds.
 - Separate terrain suitability from structure placement. Check water, biome family, footprint variance, Nether floor stability, and interior clearance before adding the piece.
 - Clear only what the structure owns. Overworld huts should remove clutter and support their real feet; Nether huts may clear an interior volume after vegetation placement when stems/leaves would otherwise appear inside.
 - Add runtime entities and chests from the piece code when they are gameplay state, not static designer decoration.
-- Add a headless resource test for every imported template: size, forbidden palette entries, required important blocks, biome tag, structure step, and terrain adaptation.
+- Add a headless resource test for every imported template: vanilla structure-template shape, size, forbidden palette entries, required important blocks, biome tag, structure step, and terrain adaptation.
 
 Future migration plan:
 
