@@ -89,6 +89,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         super.postProcess(level, structureManager, generator, random, box, chunkPos, pos);
 
+        if (variant.adaptsTemplateSurfaceAfterPlacement()) {
+            placeAdaptiveSurface(level, box);
+        }
         if (variant == Variant.CAVE) {
             fillCaveExteriorBackfill(level, box);
             clearCaveInteriorBackfill(level, box);
@@ -334,6 +337,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
         REGULAR("regular", "witch_well/well", 8, 6,
                 0, 14, 0, 13, 1, 4,
                 8, 0, 6),
+        SMALL("small", "witch_well/small_well", 4, 5,
+                0, 8, 1, 9, 0, 4,
+                4, 0, 5),
         CAVE("cave", "witch_well/well_cave", 14, 10,
                 7, 26, 3, 17, 12, 10,
                 22, 8, 15);
@@ -418,6 +424,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
 
         boolean surfaceColumn(int localX, int localZ) {
+            if (this == SMALL) {
+                return smallWellSurfaceMarker(localX, localZ);
+            }
             if (this != CAVE) {
                 return true;
             }
@@ -428,6 +437,14 @@ public class WitchWellPiece extends TemplateStructurePiece {
             double dx = (localX - centerX) / radiusX;
             double dz = (localZ - centerZ) / radiusZ;
             return dx * dx + dz * dz <= 1.0D;
+        }
+
+        boolean heightSampleColumn(int localX, int localZ) {
+            return this != SMALL || smallWellDirtRing(localX, localZ);
+        }
+
+        boolean adaptsTemplateSurfaceAfterPlacement() {
+            return this == SMALL;
         }
 
         boolean clearsCaveBackfillAt(int localX, int localY, int localZ) {
@@ -447,6 +464,21 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return x >= minX && x <= maxX
                     && y >= minY && y <= maxY
                     && z >= minZ && z <= maxZ;
+        }
+
+        private static boolean smallWellSurfaceMarker(int x, int z) {
+            if ((x == 3 && z == 4) || (x == 4 && z == 5) || (x == 5 && z == 6)) {
+                return false;
+            }
+            int dx = x - 4;
+            int dz = z - 5;
+            return dx * dx + dz * dz <= 18;
+        }
+
+        private static boolean smallWellDirtRing(int x, int z) {
+            return (x == 3 && (z == 5 || z == 6))
+                    || (x == 4 && (z == 4 || z == 6))
+                    || (x == 5 && (z == 4 || z == 5));
         }
 
         int surfaceFillDepth() {

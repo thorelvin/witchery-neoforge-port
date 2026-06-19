@@ -24,8 +24,11 @@ public class WitchWellStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
-        WitchWellPiece.Variant preferred = ctx.random().nextInt(10) == 0
+        int variantRoll = ctx.random().nextInt(10);
+        WitchWellPiece.Variant preferred = variantRoll == 0
                 ? WitchWellPiece.Variant.CAVE
+                : variantRoll <= 5
+                ? WitchWellPiece.Variant.SMALL
                 : WitchWellPiece.Variant.REGULAR;
 
         Optional<GenerationStub> stub = generationStubFor(ctx, preferred);
@@ -73,12 +76,18 @@ public class WitchWellStructure extends Structure {
             for (int localZ = variant.surfaceMinZ() - TERRAIN_PADDING;
                  localZ <= variant.surfaceMaxZ() + TERRAIN_PADDING;
                  localZ++) {
+                if (!variant.heightSampleColumn(localX, localZ)) {
+                    continue;
+                }
                 int y = surfaceY(ctx, x + localX, z + localZ);
                 minY = Math.min(minY, y);
                 maxY = Math.max(maxY, y);
             }
         }
 
+        if (minY == Integer.MAX_VALUE) {
+            return OptionalInt.empty();
+        }
         if (maxY - minY > MAX_FOOTPRINT_HEIGHT_VARIANCE) {
             return OptionalInt.empty();
         }

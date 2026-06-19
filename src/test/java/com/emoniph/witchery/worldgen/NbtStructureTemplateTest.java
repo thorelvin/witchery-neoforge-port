@@ -22,6 +22,8 @@ class NbtStructureTemplateTest {
             "data/witchery/structure/warped_coven/warpedcoven.nbt";
     private static final String WITCH_WELL_TEMPLATE =
             "data/witchery/structure/witch_well/well.nbt";
+    private static final String WITCH_WELL_SMALL_TEMPLATE =
+            "data/witchery/structure/witch_well/small_well.nbt";
     private static final String WITCH_WELL_CAVE_TEMPLATE =
             "data/witchery/structure/witch_well/well_cave.nbt";
     private static final String HOBGOBLIN_HUT_STRUCTURE =
@@ -42,6 +44,7 @@ class NbtStructureTemplateTest {
         assertVanillaStructureTemplate(HOBGOBLIN_HUT_TEMPLATE);
         assertVanillaStructureTemplate(WARPED_COVEN_TEMPLATE);
         assertVanillaStructureTemplate(WITCH_WELL_TEMPLATE);
+        assertVanillaStructureTemplate(WITCH_WELL_SMALL_TEMPLATE);
         assertVanillaStructureTemplate(WITCH_WELL_CAVE_TEMPLATE);
     }
 
@@ -123,6 +126,19 @@ class NbtStructureTemplateTest {
     }
 
     @Test
+    void smallWitchWellKeepsEditableSurfaceMarkersButNoDebugBlocks() throws IOException {
+        CompoundTag small = readTemplate(WITCH_WELL_SMALL_TEMPLATE);
+
+        assertSize(small, 10, 8, 10);
+        assertEquals(800, list(small, "blocks").size());
+        assertTrue(paletteContainsBlock(small, "minecraft:grass_block"));
+        assertTrue(paletteContainsBlock(small, "minecraft:dirt"));
+        assertTrue(paletteContainsBlock(small, "minecraft:cauldron"));
+        assertFalse(paletteContainsBlock(small, "minecraft:structure_block"));
+        assertFalse(paletteContainsBlockNamePart(small, "snow"));
+    }
+
+    @Test
     void witchWellGeneratesInForestAndSwampWithOwnLoot() throws IOException {
         String structure = readResourceText(WITCH_WELL_STRUCTURE);
         String biomes = readResourceText(WITCH_WELL_BIOME_TAG);
@@ -143,16 +159,29 @@ class NbtStructureTemplateTest {
     void caveWitchWellPlacesSurfaceOneBlockBelowOpeningWithoutDirtSupportOverCave() {
         WitchWellPiece.Variant cave = WitchWellPiece.Variant.CAVE;
         WitchWellPiece.Variant regular = WitchWellPiece.Variant.REGULAR;
+        WitchWellPiece.Variant small = WitchWellPiece.Variant.SMALL;
 
         assertEquals(12, cave.surfaceYOffset());
+        assertEquals(0, small.surfaceYOffset());
         assertEquals(26, cave.surfaceMaxX());
         assertEquals(10, cave.surfaceFillDepth());
         assertEquals(4, regular.surfaceFillDepth());
+        assertEquals(4, small.surfaceFillDepth());
         assertTrue(cave.surfaceColumn(14, 10));
         assertTrue(cave.surfaceColumn(25, 10));
         assertFalse(cave.surfaceColumn(7, 3));
         assertFalse(cave.surfaceColumn(26, 17));
         assertTrue(regular.surfaceColumn(0, 0));
+        assertTrue(small.surfaceColumn(0, 4));
+        assertTrue(small.surfaceColumn(4, 4));
+        assertTrue(small.surfaceColumn(5, 5));
+        assertFalse(small.surfaceColumn(4, 5));
+        assertFalse(small.surfaceColumn(9, 9));
+        assertTrue(small.heightSampleColumn(3, 5));
+        assertTrue(small.heightSampleColumn(4, 4));
+        assertTrue(small.heightSampleColumn(5, 5));
+        assertFalse(small.heightSampleColumn(0, 4));
+        assertFalse(small.heightSampleColumn(4, 5));
         assertTrue(cave.clearsCaveBackfillAt(14, 10, 10));
         assertTrue(cave.clearsCaveBackfillAt(12, 8, 8));
         assertTrue(cave.clearsCaveBackfillAt(16, 10, 12));

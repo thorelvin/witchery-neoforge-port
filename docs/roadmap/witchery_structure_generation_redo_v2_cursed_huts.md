@@ -826,6 +826,7 @@ Live first slice:
 |---|---|---|---|
 | Hobgoblin Hut | `data/witchery/structure/hobgoblin_hut/hobgobhut.nbt` | Forests and swamps; dry, non-river/ocean, low-variance footprint; no vanilla terrain shelf | Clutter clear, real support columns, resident Hobgoblin; no chest |
 | Warped Coven | `data/witchery/structure/warped_coven/warpedcoven.nbt` | Warped Forest; stable Nether floor plus interior clearance; `top_layer_modification` | Interior volume clear, resident Coven Witch, infernal loot chest |
+| Witch Wells | `data/witchery/structure/witch_well/*.nbt` | Forests and swamps; regular, small, and one-in-ten cursed cave variants; small well anchors to its dirt-ring marker | Adaptive surface skirt, cursed cave backfill/clear masks, shared well loot where a container exists |
 
 Rules for future NBT imports:
 
