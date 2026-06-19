@@ -15,6 +15,8 @@ import com.emoniph.witchery.worldgen.VillageKeepPiece;
 import com.emoniph.witchery.worldgen.VillageWatchTowerPiece;
 import com.emoniph.witchery.worldgen.WarpedCovenPiece;
 import com.emoniph.witchery.worldgen.WarpedCovenStructure;
+import com.emoniph.witchery.worldgen.WitchWellPiece;
+import com.emoniph.witchery.worldgen.WitchWellStructure;
 import com.emoniph.witchery.worldgen.WitchHutPiece;
 import com.emoniph.witchery.worldgen.WitchHutStructure;
 import com.emoniph.witchery.worldgen.WitcheryVillageElement;
@@ -67,6 +69,12 @@ public class WitcheryStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> WARPED_COVEN_PIECE =
             PIECE_TYPES.register("warped_coven", () -> WarpedCovenPiece::new);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<WitchWellStructure>> WITCH_WELL_TYPE =
+            STRUCTURE_TYPES.register("witch_well", () -> () -> WitchWellStructure.CODEC);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> WITCH_WELL_PIECE =
+            PIECE_TYPES.register("witch_well", () -> WitchWellPiece::new);
 
     // ── Village pool pieces (injected via WitcheryVillageElement) ─────────────
     // Piece types remain registered so saved worlds can deserialize them.

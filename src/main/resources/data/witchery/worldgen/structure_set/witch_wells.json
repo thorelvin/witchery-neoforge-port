@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "witchery:witch_well",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 40,
+    "separation": 12,
+    "salt": 912347651
+  }
+}

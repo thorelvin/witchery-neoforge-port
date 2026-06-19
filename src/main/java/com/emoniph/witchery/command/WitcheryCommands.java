@@ -32,6 +32,8 @@ import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import com.emoniph.witchery.ritual.RitualExecutor;
 import com.emoniph.witchery.predictions.Predictions;
+import com.emoniph.witchery.world.WitcheryStructureData;
+import com.emoniph.witchery.worldgen.WitchWellPiece;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -52,6 +54,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -66,6 +69,9 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -87,6 +93,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Debug/admin commands for Witchery. All require permission level 2.
@@ -111,7 +118,7 @@ import java.util.List;
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
  * /witchery setup rite              - place a QA pad with ritual circle rings
- * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / coven_circle / straw_man / warped_coven / nether)
+ * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / witch_well / cursed_well / coven_circle / straw_man / warped_coven / nether)
  *                                   or a Witchery village building such as apothecary
  * /witchery coven recruit           — swear one Coven Witch to you (skips familiar+quest); spawns one if none nearby
  * /witchery coven fill [count]      — swear witches up to the cap (or [count]); QA timesaver
@@ -137,6 +144,10 @@ public class WitcheryCommands {
     private static final int SETUP_RITE_FOUNDATION_DEPTH = 3;
     private static final int SETUP_RITE_CLEAR_HEIGHT = 5;
     private static final int SETUP_RITE_FLOOR_Y = -1;
+    private static final int SETUP_WELL_FORWARD_OFFSET = 18;
+    private static final int SETUP_WELL_SEARCH_RADIUS = 12;
+    private static final int SETUP_WELL_TERRAIN_PADDING = 1;
+    private static final int SETUP_WELL_MAX_HEIGHT_VARIANCE = 2;
 
     private record SetupHouseLayout(BlockPos origin, Direction depth, Direction width) {
         BlockPos pos(int x, int z) {
@@ -364,7 +375,9 @@ public class WitcheryCommands {
                         .then(Commands.literal("stations")
                                 .executes(ctx -> setupStations(ctx.getSource())))
                         .then(Commands.literal("rite")
-                                .executes(ctx -> setupRite(ctx.getSource()))))
+                                .executes(ctx -> setupRite(ctx.getSource())))
+                        .then(Commands.literal("cursed_well")
+                                .executes(ctx -> setupCursedWell(ctx.getSource()))))
                 // ── Spectral Coven (debug timesavers) ─────────────────────────
                 .then(Commands.literal("coven")
                         .then(Commands.literal("unlock")
@@ -446,6 +459,9 @@ public class WitcheryCommands {
                         .then(Commands.literal("coven_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("stone_circle")    .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "coven_circle")))
                         .then(Commands.literal("straw_man")       .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "straw_man")))
+                        .then(Commands.literal("witch_well")      .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "witch_well")))
+                        .then(Commands.literal("cursed_well")     .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "cursed_well", WitchWellPiece.Variant.CAVE)))
+                        .then(Commands.literal("witch_well_cave") .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "witch_well_cave", WitchWellPiece.Variant.CAVE)))
                         .then(Commands.literal("warped_coven")    .executes(ctx -> gotoStructure(ctx.getSource(), Level.NETHER, "witchery", "warped_coven")))
                         .then(Commands.literal("nether")          .executes(ctx -> gotoNether(ctx.getSource())))
                         .then(Commands.literal("apothecary")      .executes(ctx -> gotoVillageBuilding(ctx.getSource(), "apothecary")))
@@ -1869,6 +1885,128 @@ public class WitcheryCommands {
         return 1;
     }
 
+    private static int setupCursedWell(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) return 0;
+        if (!level.dimension().equals(Level.OVERWORLD)) {
+            src.sendFailure(Component.literal("Cursed well setup must be raised in the Overworld.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        WitchWellPiece.Variant variant = WitchWellPiece.Variant.CAVE;
+        BlockPos surface = findSetupWellSurface(level, player, variant);
+        if (surface == null) {
+            src.sendFailure(Component.literal(
+                    "No dry, even enough patch opened nearby for a cursed well. Move to flatter ground and try again.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+
+        int x = surface.getX() - variant.surfaceAnchorX();
+        int y = surface.getY() - variant.surfaceYOffset();
+        int z = surface.getZ() - variant.surfaceAnchorZ();
+        StructureTemplateManager templateManager = src.getServer().getStructureManager();
+        WitchWellPiece piece = new WitchWellPiece(templateManager, variant, x, y, z);
+        BoundingBox box = piece.getBoundingBox();
+        preloadSetupWellChunks(level, box);
+
+        RandomSource random = RandomSource.create(level.getSeed() ^ surface.asLong() ^ level.getGameTime());
+        piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(),
+                random, box, new ChunkPos(surface), surface);
+
+        BlockPos target = piece.indexedTarget();
+        WitcheryStructureData.get(level).record(level, WitcheryStructureData.WITCH_WELL,
+                variant.serializedName(), target);
+        com.emoniph.witchery.events.VillageWallEvents.queueKnownStructureGoto(
+                level, player, target, player.blockPosition(), WitcheryMod.MODID, "cursed_well");
+
+        src.sendSuccess(() -> Component.literal(
+                "A cursed well is raised nearby and written into the atlas. The hidden paths are opening.")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    private static BlockPos findSetupWellSurface(ServerLevel level, ServerPlayer player,
+                                                 WitchWellPiece.Variant variant) {
+        Direction forward = player.getDirection();
+        BlockPos center = player.blockPosition().relative(forward, SETUP_WELL_FORWARD_OFFSET);
+        BlockPos best = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (int dx = -SETUP_WELL_SEARCH_RADIUS; dx <= SETUP_WELL_SEARCH_RADIUS; dx++) {
+            for (int dz = -SETUP_WELL_SEARCH_RADIUS; dz <= SETUP_WELL_SEARCH_RADIUS; dz++) {
+                BlockPos candidate = setupWellSurfaceAt(level, variant, center.getX() + dx, center.getZ() + dz);
+                if (candidate == null) {
+                    continue;
+                }
+                double distance = candidate.distSqr(center);
+                if (distance < bestDistance) {
+                    best = candidate;
+                    bestDistance = distance;
+                }
+            }
+        }
+        return best;
+    }
+
+    private static BlockPos setupWellSurfaceAt(ServerLevel level, WitchWellPiece.Variant variant,
+                                               int anchorX, int anchorZ) {
+        int templateX = anchorX - variant.surfaceAnchorX();
+        int templateZ = anchorZ - variant.surfaceAnchorZ();
+        int minY = Integer.MAX_VALUE;
+        int maxY = Integer.MIN_VALUE;
+
+        for (int localX = variant.surfaceMinX() - SETUP_WELL_TERRAIN_PADDING;
+             localX <= variant.surfaceMaxX() + SETUP_WELL_TERRAIN_PADDING;
+             localX++) {
+            for (int localZ = variant.surfaceMinZ() - SETUP_WELL_TERRAIN_PADDING;
+                 localZ <= variant.surfaceMaxZ() + SETUP_WELL_TERRAIN_PADDING;
+                 localZ++) {
+                int x = templateX + localX;
+                int z = templateZ + localZ;
+                int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+                if (y <= level.getMinY()) {
+                    return null;
+                }
+                BlockPos ground = new BlockPos(x, y, z);
+                if (!isDrySetupWellGround(level, ground)) {
+                    return null;
+                }
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+            }
+        }
+
+        if (maxY - minY > SETUP_WELL_MAX_HEIGHT_VARIANCE) {
+            return null;
+        }
+        return new BlockPos(anchorX, maxY, anchorZ);
+    }
+
+    private static boolean isDrySetupWellGround(ServerLevel level, BlockPos ground) {
+        BlockState state = level.getBlockState(ground);
+        if (state.isAir() || !state.blocksMotion() || !state.getFluidState().isEmpty()) {
+            return false;
+        }
+        return level.getFluidState(ground.above()).isEmpty()
+                && level.getFluidState(ground.above(2)).isEmpty();
+    }
+
+    private static void preloadSetupWellChunks(ServerLevel level, BoundingBox box) {
+        int minChunkX = Math.floorDiv(box.minX(), 16);
+        int maxChunkX = Math.floorDiv(box.maxX(), 16);
+        int minChunkZ = Math.floorDiv(box.minZ(), 16);
+        int maxChunkZ = Math.floorDiv(box.maxZ(), 16);
+
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+            }
+        }
+    }
+
     private static int inspectRitualCircle(CommandSourceStack src)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
@@ -2557,6 +2695,18 @@ public class WitcheryCommands {
         return gotoStructure(src, targetLevel, namespace, structureId);
     }
 
+    private static int gotoWitchWellVariant(CommandSourceStack src, String displayStructureId,
+                                            WitchWellPiece.Variant variant)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel targetLevel = src.getServer().getLevel(Level.OVERWORLD);
+        if (targetLevel == null) {
+            src.sendFailure(Component.literal("The spirits cannot reach the Overworld.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        return gotoStructure(src, targetLevel, "witchery", "witch_well", displayStructureId, variant);
+    }
+
     // Per-player cooldown so /witchery goto can't be spammed (each teleport triggers heavy
     // village wall generation + chunk loading; rapid repeats can overload/freeze the game).
     private static final java.util.Map<java.util.UUID, Long> GOTO_COOLDOWN = new java.util.HashMap<>();
@@ -2881,6 +3031,12 @@ public class WitcheryCommands {
 
     private static int gotoStructure(CommandSourceStack src, ServerLevel level, String namespace, String structureId)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        return gotoStructure(src, level, namespace, structureId, structureId, null);
+    }
+
+    private static int gotoStructure(CommandSourceStack src, ServerLevel level, String namespace, String structureId,
+                                     String displayStructureId, WitchWellPiece.Variant targetWellVariant)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
 
         long now = src.getLevel().getGameTime();
@@ -2927,20 +3083,38 @@ public class WitcheryCommands {
         }
 
         if (level.dimension().equals(Level.OVERWORLD)) {
-            WitcheryMod.LOGGER.info("[Goto] Queueing safe structure search for {}:{} from {} (radius={}, one candidate chunk per tick).",
-                    namespace, structureId, from, GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS);
+            Optional<WitcheryStructureData.Entry> indexed = WitcheryStructureData.get(level).nearest(level,
+                    namespace + ":" + structureId,
+                    targetWellVariant != null ? targetWellVariant.serializedName() : null,
+                    from);
+            if (indexed.isPresent()) {
+                BlockPos target = indexed.get().pos();
+                com.emoniph.witchery.events.VillageWallEvents.queueKnownStructureGoto(
+                        level, player, target, from, namespace, displayStructureId);
+                GOTO_COOLDOWN.put(player.getUUID(), now);
+                src.sendSuccess(() -> Component.literal(
+                        targetWellVariant == WitchWellPiece.Variant.CAVE
+                                ? "The hidden paths remember a cursed well already written in the atlas."
+                                : "The hidden paths remember a known structure already written in the atlas.")
+                        .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+                return 1;
+            }
+
+            WitcheryMod.LOGGER.info("[Goto] Queueing loaded-only structure search for {}:{} from {} (radius={}, unloaded chunks skipped).",
+                    namespace, displayStructureId, from, GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS);
             boolean queued = com.emoniph.witchery.events.VillageWallEvents.queueStructureGotoLocate(
-                    level, player, holderOpt.get(), from, namespace, structureId,
-                    GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS);
+                    level, player, holderOpt.get(), from, namespace, displayStructureId,
+                    GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS, targetWellVariant);
             if (!queued) {
                 src.sendFailure(Component.literal(
                         "The hidden paths could not prepare a safe search for that structure.")
                         .withStyle(ChatFormatting.DARK_PURPLE));
                 return 0;
             }
-            GOTO_COOLDOWN.put(player.getUUID(), now);
             src.sendSuccess(() -> Component.literal(
-                    "The hidden paths begin a slower search, one omen at a time.")
+                    targetWellVariant == WitchWellPiece.Variant.CAVE
+                            ? "The hidden paths begin a lighter search for a cursed well, one known omen at a time."
+                            : "The hidden paths begin a lighter search, one known omen at a time.")
                     .withStyle(ChatFormatting.LIGHT_PURPLE), false);
             return 1;
         }
