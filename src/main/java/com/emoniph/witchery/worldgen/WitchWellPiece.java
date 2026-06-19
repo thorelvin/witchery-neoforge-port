@@ -432,7 +432,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         boolean clearsCaveBackfillAt(int localX, int localY, int localZ) {
             return this == CAVE
-                    && (inBox(localX, localY, localZ, 13, 3, 9, 15, 11, 11)
+                    && (inBox(localX, localY, localZ, 13, 10, 9, 15, 11, 11)
+                    || inBox(localX, localY, localZ, 12, 7, 8, 16, 10, 12)
                     || inBox(localX, localY, localZ, 13, 13, 9, 15, 18, 11)
                     || inBox(localX, localY, localZ, 17, 6, 7, 22, 11, 13)
                     || inBox(localX, localY, localZ, 20, 5, 5, 25, 11, 15)

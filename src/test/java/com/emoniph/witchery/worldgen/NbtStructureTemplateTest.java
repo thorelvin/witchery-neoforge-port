@@ -146,10 +146,13 @@ class NbtStructureTemplateTest {
         assertFalse(cave.surfaceColumn(26, 17));
         assertTrue(regular.surfaceColumn(0, 0));
         assertTrue(cave.clearsCaveBackfillAt(14, 10, 10));
+        assertTrue(cave.clearsCaveBackfillAt(12, 8, 8));
+        assertTrue(cave.clearsCaveBackfillAt(16, 10, 12));
         assertTrue(cave.clearsCaveBackfillAt(14, 13, 10));
         assertTrue(cave.clearsCaveBackfillAt(22, 10, 15));
         assertTrue(cave.clearsCaveBackfillAt(25, 10, 10));
-        assertFalse(cave.clearsCaveBackfillAt(16, 10, 10));
+        assertFalse(cave.clearsCaveBackfillAt(16, 11, 10));
+        assertFalse(cave.clearsCaveBackfillAt(11, 8, 10));
         assertFalse(cave.clearsCaveBackfillAt(14, 12, 10));
         assertFalse(cave.clearsCaveBackfillAt(7, 10, 10));
         assertFalse(cave.clearsCaveBackfillAt(14, 10, 3));
