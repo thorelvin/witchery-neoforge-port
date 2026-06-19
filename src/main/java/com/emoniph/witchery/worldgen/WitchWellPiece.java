@@ -35,6 +35,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 public class WitchWellPiece extends TemplateStructurePiece {
     private static final String VARIANT_TAG = "WitcheryWellVariant";
+    private static final int SURFACE_SAMPLE_RADIUS = 12;
     private static final ResourceKey<LootTable> LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chests/witch_well"));
 
@@ -88,6 +89,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         super.postProcess(level, structureManager, generator, random, box, chunkPos, pos);
 
+        if (variant == Variant.CAVE) {
+            clearCaveInteriorBackfill(level, box);
+        }
         placeLoot(level, box, random);
         recordStructure(level);
     }
@@ -133,6 +137,22 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
     }
 
+    private void clearCaveInteriorBackfill(WorldGenLevel level, BoundingBox box) {
+        for (int x = variant.surfaceMinX(); x <= variant.surfaceMaxX(); x++) {
+            for (int z = variant.surfaceMinZ(); z <= variant.surfaceMaxZ(); z++) {
+                for (int y = 3; y <= 18; y++) {
+                    if (!variant.clearsCaveBackfillAt(x, y, z)) {
+                        continue;
+                    }
+                    BlockPos pos = templateWorldPos(x, y, z);
+                    if (box.isInside(pos) && isCaveTerrainBackfill(level.getBlockState(pos))) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
+    }
+
     private void placeAdaptiveSurface(WorldGenLevel level, BoundingBox box) {
         int y = variant.surfaceYOffset();
         for (int localX = variant.surfaceMinX(); localX <= variant.surfaceMaxX(); localX++) {
@@ -143,9 +163,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
                 }
                 BlockState surface = adaptiveSurfaceState(level, pos);
                 level.setBlock(pos, surface, 3);
-                if (!variant.leavesCaveVoidBelowSurface(localX, localZ)) {
-                    fillColumnDownAt(level, box, pos.below(), supportState(surface), variant.surfaceFillDepth());
-                }
+                fillColumnDownAt(level, box, pos.below(), supportState(surface), variant.surfaceFillDepth());
             }
         }
     }
@@ -199,6 +217,10 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return normalized;
         }
 
+        normalized = nearbySurfaceState(level, pos, SURFACE_SAMPLE_RADIUS);
+        if (normalized != null) {
+            return normalized;
+        }
         BlockPos ground = findGroundAtOrBelow(level, pos);
         if (ground != null) {
             normalized = normalizeSurfaceState(level.getBlockState(ground));
@@ -207,6 +229,26 @@ public class WitchWellPiece extends TemplateStructurePiece {
             }
         }
         return Blocks.GRASS_BLOCK.defaultBlockState();
+    }
+
+    private static BlockState nearbySurfaceState(ServerLevelAccessor level, BlockPos center, int maxRadius) {
+        for (int radius = 1; radius <= maxRadius; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.abs(dx) != radius && Math.abs(dz) != radius) {
+                        continue;
+                    }
+                    for (int dy = 1; dy >= -1; dy--) {
+                        BlockState normalized = normalizeSurfaceState(
+                                level.getBlockState(center.offset(dx, dy, dz)));
+                        if (normalized != null) {
+                            return normalized;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static BlockState normalizeSurfaceState(BlockState state) {
@@ -227,6 +269,13 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return state;
         }
         return null;
+    }
+
+    private static boolean isCaveTerrainBackfill(BlockState state) {
+        return normalizeSurfaceState(state) != null
+                || state.is(Blocks.COARSE_DIRT)
+                || state.is(Blocks.ROOTED_DIRT)
+                || state.is(Blocks.DIRT);
     }
 
     private static BlockState supportState(BlockState surface) {
@@ -265,7 +314,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
                 0, 14, 0, 13, 1, 4,
                 8, 0, 6),
         CAVE("cave", "witch_well/well_cave", 14, 10,
-                7, 26, 3, 17, 12, 2,
+                7, 26, 3, 17, 12, 10,
                 22, 8, 15);
 
         private final String serializedName;
@@ -347,10 +396,20 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return surfaceYOffset;
         }
 
-        boolean leavesCaveVoidBelowSurface(int localX, int localZ) {
+        boolean clearsCaveBackfillAt(int localX, int localY, int localZ) {
             return this == CAVE
-                    && localX >= 8 && localX <= 26
-                    && localZ >= 4 && localZ <= 16;
+                    && (inBox(localX, localY, localZ, 13, 3, 4, 26, 11, 16)
+                    || inBox(localX, localY, localZ, 9, 13, 5, 26, 16, 15)
+                    || inBox(localX, localY, localZ, 20, 13, 4, 26, 18, 16)
+                    || inBox(localX, localY, localZ, 13, 11, 8, 17, 18, 12));
+        }
+
+        private static boolean inBox(int x, int y, int z,
+                                     int minX, int minY, int minZ,
+                                     int maxX, int maxY, int maxZ) {
+            return x >= minX && x <= maxX
+                    && y >= minY && y <= maxY
+                    && z >= minZ && z <= maxZ;
         }
 
         int surfaceFillDepth() {

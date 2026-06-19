@@ -138,12 +138,14 @@ class NbtStructureTemplateTest {
 
         assertEquals(12, cave.surfaceYOffset());
         assertEquals(26, cave.surfaceMaxX());
-        assertTrue(cave.leavesCaveVoidBelowSurface(14, 10));
-        assertTrue(cave.leavesCaveVoidBelowSurface(22, 15));
-        assertTrue(cave.leavesCaveVoidBelowSurface(25, 10));
-        assertFalse(cave.leavesCaveVoidBelowSurface(7, 10));
-        assertFalse(cave.leavesCaveVoidBelowSurface(14, 3));
-        assertFalse(regular.leavesCaveVoidBelowSurface(8, 6));
+        assertEquals(10, cave.surfaceFillDepth());
+        assertEquals(4, regular.surfaceFillDepth());
+        assertTrue(cave.clearsCaveBackfillAt(14, 10, 10));
+        assertTrue(cave.clearsCaveBackfillAt(22, 10, 15));
+        assertTrue(cave.clearsCaveBackfillAt(25, 10, 10));
+        assertFalse(cave.clearsCaveBackfillAt(7, 10, 10));
+        assertFalse(cave.clearsCaveBackfillAt(14, 10, 3));
+        assertFalse(regular.clearsCaveBackfillAt(8, 6, 6));
     }
 
     private static CompoundTag readTemplate(String resourceName) throws IOException {
