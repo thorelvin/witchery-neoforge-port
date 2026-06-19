@@ -120,19 +120,12 @@ public class WitchWellPiece extends TemplateStructurePiece {
     }
 
     private void clearCaveInterior(WorldGenLevel level, BoundingBox box) {
-        clearLocalBox(level, box, 13, 3, 8, 17, 18, 12);
-        clearLocalBox(level, box, 17, 6, 7, 22, 11, 13);
-        clearLocalBox(level, box, 20, 5, 5, 25, 11, 15);
-        clearLocalBox(level, box, 9, 13, 5, 19, 16, 15);
-        clearLocalBox(level, box, 20, 13, 4, 26, 18, 16);
-    }
-
-    private void clearLocalBox(WorldGenLevel level, BoundingBox box,
-                               int minX, int minY, int minZ,
-                               int maxX, int maxY, int maxZ) {
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
-                for (int y = minY; y <= maxY; y++) {
+        for (int x = variant.surfaceMinX(); x <= variant.surfaceMaxX(); x++) {
+            for (int z = variant.surfaceMinZ(); z <= variant.surfaceMaxZ(); z++) {
+                for (int y = 3; y <= 18; y++) {
+                    if (!variant.clearsCaveBackfillAt(x, y, z)) {
+                        continue;
+                    }
                     BlockPos pos = templateWorldPos(x, y, z);
                     if (box.isInside(pos)) {
                         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
@@ -161,9 +154,6 @@ public class WitchWellPiece extends TemplateStructurePiece {
     private void fillCaveExteriorBackfill(WorldGenLevel level, BoundingBox box) {
         for (int x = variant.surfaceMinX(); x <= variant.surfaceMaxX(); x++) {
             for (int z = variant.surfaceMinZ(); z <= variant.surfaceMaxZ(); z++) {
-                if (!variant.surfaceColumn(x, z)) {
-                    continue;
-                }
                 BlockPos surfacePos = templateWorldPos(x, variant.surfaceYOffset(), z);
                 BlockState support = supportState(adaptiveSurfaceState(level, surfacePos));
                 for (int y = variant.surfaceYOffset() - 1;
@@ -442,7 +432,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         boolean clearsCaveBackfillAt(int localX, int localY, int localZ) {
             return this == CAVE
-                    && (inBox(localX, localY, localZ, 13, 3, 8, 17, 18, 12)
+                    && (inBox(localX, localY, localZ, 13, 3, 9, 15, 11, 11)
+                    || inBox(localX, localY, localZ, 13, 13, 9, 15, 18, 11)
                     || inBox(localX, localY, localZ, 17, 6, 7, 22, 11, 13)
                     || inBox(localX, localY, localZ, 20, 5, 5, 25, 11, 15)
                     || inBox(localX, localY, localZ, 9, 13, 5, 19, 16, 15)
