@@ -1,7 +1,8 @@
 {
   "type": "neoforge:add_features",
   "biomes": [
-    "#minecraft:is_swamp",
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
     "#minecraft:is_jungle"
   ],
   "features": [

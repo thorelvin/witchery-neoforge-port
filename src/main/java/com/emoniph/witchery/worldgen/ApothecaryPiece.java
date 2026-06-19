@@ -200,7 +200,7 @@ public class ApothecaryPiece extends StructurePiece {
 
     private static void debugLog(String message, Object... args) {
         if (WitcheryConfig.DEBUG.get()) {
-            WitcheryMod.LOGGER.info("[VillageBuildings:Debug] " + message, args);
+            WitcheryMod.LOGGER.debug("[VillageBuildings:Debug] " + message, args);
         }
     }
 }

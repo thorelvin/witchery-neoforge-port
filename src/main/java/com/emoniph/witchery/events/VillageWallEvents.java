@@ -213,7 +213,7 @@ public class VillageWallEvents {
 
     private static void debugLog(String message, Object... args) {
         if (debugEnabled()) {
-            WitcheryMod.LOGGER.info("[VillageWalls:Debug] " + message, args);
+            WitcheryMod.LOGGER.debug("[VillageWalls:Debug] " + message, args);
         }
     }
 

@@ -40,8 +40,8 @@ public class WitcheryConfig {
 
     static {
         DEBUG = BUILDER
-                .comment("Enable extra Witchery diagnostic logging for QA. Default: true")
-                .define("debug", true);
+                .comment("Enable extra Witchery diagnostic logging for QA. Default: false")
+                .define("debug", false);
 
         BUILDER.push("general");
         TOWN_ZOMBIE_ATTACK_REDUCTION_MODE = BUILDER

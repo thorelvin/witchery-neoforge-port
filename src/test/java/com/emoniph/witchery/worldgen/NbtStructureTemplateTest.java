@@ -73,7 +73,8 @@ class NbtStructureTemplateTest {
     void nbtHobgoblinHutUsesSourceStyleForestAndSwampBiomes() throws IOException {
         String json = readResourceText(HOBGOBLIN_HUT_BIOME_TAG);
         assertTrue(json.contains("\"#minecraft:is_forest\""));
-        assertTrue(json.contains("\"#minecraft:is_swamp\""));
+        assertTrue(json.contains("\"minecraft:swamp\""));
+        assertTrue(json.contains("\"minecraft:mangrove_swamp\""));
     }
 
     private static CompoundTag readTemplate(String resourceName) throws IOException {
