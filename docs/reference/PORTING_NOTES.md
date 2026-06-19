@@ -9,6 +9,33 @@ Current target:
 
 ---
 
+## 2026-06-19 Shade of Leonard — combat/hex/soul parity gotchas
+
+- **`MobEffectInstance.getCures()` is not present** in this NeoForge build (21.11.42). The NeoForge
+  `EffectCure` API used elsewhere for milk-gated incurability isn't available here, and no other
+  port effect uses it. To make an effect "incurable" the way source `setIncurable()` did, the port
+  has no current hook — so incurability is left un-gated (consistent with Diseased/Paralysed). Don't
+  reach for `getCures().clear()`; it won't compile.
+- **`Entity.hasImpulse` is not accessible** from a `LivingEntity` reference. To force a server-set
+  velocity to sync to the client, set `entity.hurtMarked = true` instead.
+- **`Mob.customServerAiStep(ServerLevel)`** — signature couldn't be confirmed against any existing
+  port mob (none override it) and it has churned across 1.21.x. Safer to drive per-tick boss logic
+  from the known-good `tick()` server branch (`level() instanceof ServerLevel`) as `LilithEntity`
+  does, suppressing AI during the invulnerable phase by dropping the target + stopping navigation
+  rather than skipping a `super.customServerAiStep` call.
+- **Resizing the easy way:** source `PotionResizing` used reflection to call `setSize` per entity
+  class. Modern MC has the `minecraft:generic.scale` attribute — a single `ADD_MULTIPLIED_BASE 1.0`
+  modifier doubles an entity cleanly. Leonard's giant phase uses that; the full source player
+  shrink/grow tier table + size-based damage multiplier is a separate deferred system.
+- **Leonard is a ranged caster, not a melee mob.** Source AI is `EntityAIArrowAttack` only (no
+  attack-on-collide goal); the `func_70652_k` melee exists for contact but isn't pursued. Port it as
+  `RangedAttackGoal` + `RangedAttackMob` with **no** `MeleeAttackGoal`, reusing `SpellEffectEntity`
+  (the Mystic Branch projectile) for the spells — Ignianima/Expelliarmus/Flipendo/Impedimenta/
+  Confundus all already exist as `EffectRegistry` statics.
+- **Spawn-reason gating:** `finalizeSpawn` only runs the dramatic invulnerable spawn phase for
+  summon-like reasons (`MOB_SUMMONED`/`SPAWN_ITEM_USE`/`COMMAND`/`EVENT`). The cauldron summon uses
+  `MOB_SUMMONED` (good); `/witchery spawn leonard` uses `TRIGGERED` and intentionally skips it.
+
 ## 2026-06-17 Modonomicon does not separate CommonMark paragraphs (no `visit(Paragraph)`)
 
 - Symptom: native book prose ran sentences together at paragraph breaks — "Imprisonment.Cast",

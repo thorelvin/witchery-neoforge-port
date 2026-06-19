@@ -9,7 +9,11 @@ import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.GrotesqueMobEffect;
+import com.emoniph.witchery.effect.InsanityMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
+import com.emoniph.witchery.effect.MortalCoilMobEffect;
+import com.emoniph.witchery.effect.OverheatingMobEffect;
+import com.emoniph.witchery.effect.SinkingMobEffect;
 import com.emoniph.witchery.effect.ParalyzedMobEffect;
 import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.QueasyMobEffect;
@@ -97,6 +101,29 @@ public final class WitcheryMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> DISEASED =
             MOB_EFFECTS.register("diseased", () -> new DiseasedMobEffect(0xB9AD7D));
+
+    // ── Shade of Leonard hex kit ──────────────────────────────────────────────
+    /** Death Coil — incurable, kills the victim when it expires (cleared if the Shade dies). */
+    public static final DeferredHolder<MobEffect, MobEffect> MORTAL_COIL =
+            MOB_EFFECTS.register("mortal_coil", () -> new MortalCoilMobEffect(0x009900));
+
+    public static final DeferredHolder<MobEffect, MobEffect> SINKING =
+            MOB_EFFECTS.register("sinking", () -> new SinkingMobEffect(0x990000));
+
+    public static final DeferredHolder<MobEffect, MobEffect> INSANITY =
+            MOB_EFFECTS.register("insanity", () -> new InsanityMobEffect(0x000099));
+
+    public static final DeferredHolder<MobEffect, MobEffect> OVERHEATING =
+            MOB_EFFECTS.register("overheating", () -> new OverheatingMobEffect(0x009999));
+
+    /**
+     * Resizing — registered here as a marker so Leonard's giant phase reads as the source
+     * {@code RESIZING} effect. The full source resizing system (player shrink/grow tiers +
+     * size-based damage multiplier) is a deferred follow-up; Leonard drives his own visible
+     * scale through the {@code minecraft:generic.scale} attribute.
+     */
+    public static final DeferredHolder<MobEffect, MobEffect> RESIZING =
+            MOB_EFFECTS.register("resizing", () -> new SimpleMobEffect(MobEffectCategory.NEUTRAL, 0xC050C0));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

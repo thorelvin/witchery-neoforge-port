@@ -450,6 +450,7 @@ public class WitcheryCommands {
                         .then(Commands.literal("were_villager")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.WERE_VILLAGER.get())))
                         .then(Commands.literal("village_guard")  .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.VILLAGE_GUARD.get())))
                         .then(Commands.literal("leonard")        .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LEONARD.get())))
+                        .then(Commands.literal("leonard_weak")   .executes(ctx -> spawnLeonardWeak(ctx.getSource())))
                         .then(Commands.literal("lost_soul")      .executes(ctx -> spawnEntity(ctx.getSource(), WitcheryEntities.LOST_SOUL.get()))))
 
                 .then(Commands.literal("reflection")
@@ -1229,6 +1230,30 @@ public class WitcheryCommands {
                 net.minecraft.world.entity.EntitySpawnReason.TRIGGERED, null);
         sl.addFreshEntity(entity);
         src.sendSuccess(() -> Component.literal("Spawned " + type.getDescription().getString() + "."), false);
+        return 1;
+    }
+
+    /**
+     * QA timesaver: spawns a Shade of Leonard already at ~46% health, so the Lost Soul waves
+     * (which begin below 50%) start as soon as the player engages, and a few player-capped hits
+     * cascade through the soul shield into the giant phase (below 25%) and on to death — letting
+     * the whole low-health behaviour set be verified in seconds instead of ~50 swings.
+     */
+    private static int spawnLeonardWeak(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel sl)) return 0;
+        com.emoniph.witchery.entity.LeonardEntity leonard =
+                WitcheryEntities.LEONARD.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (leonard == null) return 0;
+        var pos = player.blockPosition().relative(player.getDirection(), 3);
+        leonard.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        leonard.finalizeSpawn(sl, new net.minecraft.world.DifficultyInstance(sl.getDifficulty(), 0L, 0L, 0.0F),
+                net.minecraft.world.entity.EntitySpawnReason.TRIGGERED, null);
+        leonard.setHealth(280.0F); // just under the 300 (50%) soul-wave threshold
+        sl.addFreshEntity(leonard);
+        src.sendSuccess(() -> Component.literal(
+                "Spawned a weakened Shade of Leonard (280/600 HP) for low-health phase QA."), false);
         return 1;
     }
 

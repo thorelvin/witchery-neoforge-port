@@ -44,6 +44,25 @@
       "witchery:entity/egassy/fart"
     ]
   },
+  "entity.leonard.say": {
+    "sounds": [
+      "witchery:entity/leonard/say1",
+      "witchery:entity/leonard/say2",
+      "witchery:entity/leonard/say3",
+      "witchery:entity/leonard/say4",
+      "witchery:entity/leonard/say5"
+    ]
+  },
+  "entity.leonard.hit": {
+    "sounds": [
+      "witchery:entity/leonard/hit"
+    ]
+  },
+  "entity.leonard.death": {
+    "sounds": [
+      "witchery:entity/leonard/death"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

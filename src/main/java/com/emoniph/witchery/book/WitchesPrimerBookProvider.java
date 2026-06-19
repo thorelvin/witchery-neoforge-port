@@ -1277,15 +1277,22 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "of infernal commerce. His Shade does not wander freely; he must be forced into the "
                         + "world through the Witch's Cauldron."));
         leonard.addAll(WitcheryBooks.prose("Summoning",
-                "Heat and fill the Witch's Cauldron, drop in **Refined Evil**, **Mandrake Root**, a **Tear "
-                        + "of the Goddess**, and **Nether Wart**, then hold a **Witches' Hat** and right-click "
-                        + "it. The altar must hold at least 10,000 power."));
+                "Heat and fill the Witch's Cauldron, drop in **Nether Wart**, a **Tear of the Goddess**, "
+                        + "**Diamond Vapour**, a **Diamond**, and a **Nether Star**, then hold a **Witches' "
+                        + "Hat** and use it on the cauldron. The altar must hold at least 10,000 power. The "
+                        + "Shade forms half-made and untouchable for a few moments before he draws his full "
+                        + "strength together."));
         leonard.addAll(WitcheryBooks.prose("Behaviour",
-                "Leonard is neutral until struck. Provoked, he retaliates and brands his attacker with a "
-                        + "withering curse."
-                        + "\n\nAt half strength he calls **Lost Souls**. Green souls take harm from anything; "
-                        + "red resist all but fire and explosions; black resist all but magic and potions. "
-                        + "While any remain, Leonard cannot be harmed."));
+                "Leonard is neutral until struck, for he reckons no mortal thing a threat. Provoked, no blow "
+                        + "but your own hand will mark him — arrows and thrown things simply glance away — and "
+                        + "even your strikes he shrugs down to almost nothing. He answers with the witch's own "
+                        + "signs flung as fire and force, and lays the **Mortal Coil** on every soul nearby: a "
+                        + "quiet curse that kills when it lifts, unless the Shade is slain first, which frees "
+                        + "everyone it touched."
+                        + "\n\nBelow half strength he calls **Lost Souls** in waves. Green souls take harm from "
+                        + "anything; red resist all but fire and explosions; black resist all but magic and "
+                        + "potions. While any remain, Leonard cannot be harmed. Wounded near to death he swells "
+                        + "to a giant, harder still to fell."));
         leonard.addAll(WitcheryBooks.prose("Reward",
                 "A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its "
                         + "precise uses await further investigation — but the standing it confers among "

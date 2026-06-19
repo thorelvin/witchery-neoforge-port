@@ -322,7 +322,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LeonardEntity>> LEONARD =
             ENTITY_TYPES.register("leonard", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.LeonardEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(16)
+                            .sized(0.6F, 1.95F).fireImmune().clientTrackingRange(16)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "leonard"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LostSoulEntity>> LOST_SOUL =

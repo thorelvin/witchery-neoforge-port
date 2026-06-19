@@ -847,12 +847,16 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        Optional<ItemEntity> refinedEvil  = findCauldronOffering(level, pos, WitcheryItems.REFINED_EVIL.get());
-        Optional<ItemEntity> mandrake     = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
-        Optional<ItemEntity> tear         = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
+        // Source recipe (1.7.10 WitcheryBrewRegistry / Resurrected summonleonard.json): the
+        // Witches' Hat triggers the ritual, brewed over Nether Wart + Tear of the Goddess +
+        // Diamond Vapour + Diamond + Nether Star.
         Optional<ItemEntity> nWart        = findCauldronOffering(level, pos, net.minecraft.world.item.Items.NETHER_WART);
+        Optional<ItemEntity> tear         = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
+        Optional<ItemEntity> diamondVapour= findCauldronOffering(level, pos, WitcheryItems.DIAMOND_VAPOUR.get());
+        Optional<ItemEntity> diamond      = findCauldronOffering(level, pos, net.minecraft.world.item.Items.DIAMOND);
+        Optional<ItemEntity> netherStar   = findCauldronOffering(level, pos, net.minecraft.world.item.Items.NETHER_STAR);
 
-        if (refinedEvil.isEmpty() || mandrake.isEmpty() || tear.isEmpty() || nWart.isEmpty()) {
+        if (nWart.isEmpty() || tear.isEmpty() || diamondVapour.isEmpty() || diamond.isEmpty() || netherStar.isEmpty()) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.support"), false);
             return InteractionResult.CONSUME;
         }
@@ -870,7 +874,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        for (ItemEntity offering : List.of(refinedEvil.get(), mandrake.get(), tear.get(), nWart.get())) {
+        for (ItemEntity offering : List.of(nWart.get(), tear.get(), diamondVapour.get(), diamond.get(), netherStar.get())) {
             ItemStack offeringStack = offering.getItem();
             offeringStack.shrink(1);
             if (offeringStack.isEmpty()) {
@@ -887,7 +891,10 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 leonard.setPos(pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5);
                 leonard.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
                 leonard.setPersistenceRequired();
+                leonard.setInvulnerableStart(); // source: spawns mid-coalesce at quarter health, invulnerable
                 serverLevel.addFreshEntity(leonard);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION,
+                        pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 4, 0.4, 0.4, 0.4, 0.0);
             }
         }
 
