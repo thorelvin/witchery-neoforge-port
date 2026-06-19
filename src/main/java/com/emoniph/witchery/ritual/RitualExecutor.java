@@ -407,6 +407,12 @@ public class RitualExecutor {
                     VARIANT_RITUAL, STORM_PORTABLE_RECIPE,
                     (player, level, center, items) -> startWeatherCallStormFromRecipe(
                             player, level, center, StormRiteVariant.PORTABLE, items)),
+            FullRecipeRitualDefinition.of("total_eclipse", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, TOTAL_ECLIPSE_RECIPE,
+                    RitualExecutor::startTotalEclipseFromRecipe),
+            FullRecipeRitualDefinition.of("total_eclipse_portable", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, TOTAL_ECLIPSE_PORTABLE_RECIPE,
+                    RitualExecutor::startPortableTotalEclipseFromRecipe),
             FullRecipeRitualDefinition.of("banish_demon_charged", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BANISH_DEMON_PORTABLE_RECIPE,
                     RitualExecutor::startBanishDemonPortableFromRecipe),
@@ -436,6 +442,12 @@ public class RitualExecutor {
             FullRecipeRitualDefinition.of("bind_waystone_copy", RitualCircleDetector.CircleSize.SMALL,
                     VARIANT_RITUAL, BIND_WAYSTONE_COPY_RECIPE,
                     RitualExecutor::startBindWaystoneCopyFromRecipe),
+            FullRecipeRitualDefinition.of("portable_fertility", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, PORTABLE_FERTILITY_RECIPE,
+                    RitualExecutor::startPortableFertilityFromRecipe),
+            FullRecipeRitualDefinition.of("fertility", RitualCircleDetector.CircleSize.SMALL,
+                    VARIANT_RITUAL, FERTILITY_RECIPE,
+                    RitualExecutor::startFertilityFromRecipe),
             FullRecipeRitualDefinition.of("blight", RitualCircleDetector.CircleSize.MEDIUM,
                     VARIANT_INFERNAL, BLIGHT_RECIPE,
                     RitualExecutor::startBlightFromRecipe),
@@ -1254,10 +1266,42 @@ public class RitualExecutor {
                         .copyWithCount(1)
                         .transmuteCopy(WitcheryItems.ATTUNED_STONE.get())
                 : ItemStack.EMPTY;
+        return startTotalEclipse(player, level, sl, center, portable,
+                droppedOfferings(eclipseOfferings.quicklime(), eclipseOfferings.chargedStone()), returnedStone);
+    }
+
+    private static boolean startTotalEclipseFromRecipe(Player player, Level level, BlockPos center,
+                                                       List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startTotalEclipse(player, level, sl, center, false, droppedOfferings(matchedItems), ItemStack.EMPTY);
+    }
+
+    private static boolean startPortableTotalEclipseFromRecipe(Player player, Level level, BlockPos center,
+                                                               List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startTotalEclipse(player, level, sl, center, true, droppedOfferings(matchedItems),
+                dischargedAttunedStone(matchedItems));
+    }
+
+    private static ItemStack dischargedAttunedStone(List<ItemEntity> matchedItems) {
+        for (ItemEntity itemEntity : matchedItems) {
+            ItemStack stack = itemEntity.getItem();
+            if (stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())) {
+                return stack.copyWithCount(1).transmuteCopy(WitcheryItems.ATTUNED_STONE.get());
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private static boolean startTotalEclipse(Player player, Level level, ServerLevel sl, BlockPos center,
+                                             boolean portable, List<RitualOffering> offerings,
+                                             ItemStack returnedStone) {
+        if (!requireDay(player, level, center)) {
+            return false;
+        }
         RitualTransaction transaction = new RitualTransaction(sl, center, 16,
-                portable ? 0 : 3000, "witchery.ritual.eclipse.no_power")
-                .offer(eclipseOfferings.quicklime())
-                .offer(eclipseOfferings.chargedStone());
+                portable ? 0 : 3000, "witchery.ritual.eclipse.no_power");
+        offerAll(transaction, offerings);
         if (!transaction.commitDeferred(player, () -> {
             if (!returnedStone.isEmpty()) {
                 ItemEntity entity = new ItemEntity(sl,
@@ -1324,18 +1368,12 @@ public class RitualExecutor {
             return false;
         }
         FertilityOfferings fertilityOfferings = offerings.get();
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
-                "witchery.ritual.fertility.no_power")
-                .offer(fertilityOfferings.hintOfRebirth())
-                .offer(fertilityOfferings.diamondVapour())
-                .offer(fertilityOfferings.quicklime())
-                .offer(fertilityOfferings.gypsum())
-                .offer(fertilityOfferings.mutandis());
-        if (!transaction.commitDeferred(player, () ->
-                applyFertilityEffects(player, level, sl, center, "Rite of Fertility"))) {
-            return false;
-        }
-        return true;
+        return startFertility(player, level, sl, center, 3000, "Rite of Fertility",
+                droppedOfferings(fertilityOfferings.hintOfRebirth(),
+                        fertilityOfferings.diamondVapour(),
+                        fertilityOfferings.quicklime(),
+                        fertilityOfferings.gypsum(),
+                        fertilityOfferings.mutandis()));
     }
 
     /** Portable Rite of Fertility — the charged-stone / Mutandis Extremis variant without altar-power drain. */
@@ -1348,16 +1386,37 @@ public class RitualExecutor {
             return false;
         }
         PortableFertilityOfferings fertilityOfferings = offerings.get();
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 0,
-                "witchery.ritual.fertility.no_power")
-                .offer(fertilityOfferings.hintOfRebirth())
-                .offer(fertilityOfferings.diamondVapour())
-                .offer(fertilityOfferings.quicklime())
-                .offer(fertilityOfferings.gypsum())
-                .offer(fertilityOfferings.mutandisExtremis())
-                .offer(fertilityOfferings.chargedStone());
+        return startFertility(player, level, sl, center, 0, "Portable Rite of Fertility",
+                droppedOfferings(fertilityOfferings.hintOfRebirth(),
+                        fertilityOfferings.diamondVapour(),
+                        fertilityOfferings.quicklime(),
+                        fertilityOfferings.gypsum(),
+                        fertilityOfferings.mutandisExtremis(),
+                        fertilityOfferings.chargedStone()));
+    }
+
+    private static boolean startFertilityFromRecipe(Player player, Level level, BlockPos center,
+                                                    List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startFertility(player, level, sl, center, 3000, "Rite of Fertility",
+                droppedOfferings(matchedItems));
+    }
+
+    private static boolean startPortableFertilityFromRecipe(Player player, Level level, BlockPos center,
+                                                            List<ItemEntity> matchedItems) {
+        if (!(level instanceof ServerLevel sl)) return false;
+        return startFertility(player, level, sl, center, 0, "Portable Rite of Fertility",
+                droppedOfferings(matchedItems));
+    }
+
+    private static boolean startFertility(Player player, Level level, ServerLevel sl, BlockPos center,
+                                          int altarPower, String logPrefix,
+                                          List<RitualOffering> offerings) {
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, altarPower,
+                "witchery.ritual.fertility.no_power");
+        offerAll(transaction, offerings);
         if (!transaction.commitDeferred(player, () ->
-                applyFertilityEffects(player, level, sl, center, "Portable Rite of Fertility"))) {
+                applyFertilityEffects(player, level, sl, center, logPrefix))) {
             return false;
         }
         return true;

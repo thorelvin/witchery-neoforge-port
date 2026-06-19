@@ -92,6 +92,15 @@ final class RitualOfferings {
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
             .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
             .build();
+    static final RitualRecipe TOTAL_ECLIPSE_RECIPE = RitualRecipe.named("total_eclipse")
+            .require("Stone Axe", stack -> stack.is(Items.STONE_AXE))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .build();
+    static final RitualRecipe TOTAL_ECLIPSE_PORTABLE_RECIPE = RitualRecipe.named("total_eclipse_portable")
+            .require("Iron Axe", stack -> stack.is(Items.IRON_AXE))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
     static final RitualRecipe BANISH_DEMON_PORTABLE_RECIPE = RitualRecipe.named("banish_demon_charged")
             .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
@@ -144,6 +153,23 @@ final class RitualOfferings {
             .require("Blank Waystone", WaystoneItem::isBlankWaystone)
             .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
             .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .build();
+    static final RitualRecipe PORTABLE_FERTILITY_RECIPE = RitualRecipe.named("portable_fertility")
+            .require("Bone Meal", stack -> stack.is(Items.BONE_MEAL))
+            .require("Hint of Rebirth", stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()))
+            .require("Diamond Vapour", stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .require("Gypsum", stack -> stack.is(WitcheryItems.GYPSUM.get()))
+            .require("Mutandis Extremis", stack -> stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe FERTILITY_RECIPE = RitualRecipe.named("fertility")
+            .require("Bone Meal", stack -> stack.is(Items.BONE_MEAL))
+            .require("Hint of Rebirth", stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()))
+            .require("Diamond Vapour", stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()))
+            .require("Quicklime", stack -> stack.is(WitcheryItems.QUICKLIME.get()))
+            .require("Gypsum", stack -> stack.is(WitcheryItems.GYPSUM.get()))
+            .require("Mutandis", stack -> stack.is(WitcheryItems.MUTANDIS.get()))
             .build();
     static final RitualRecipe BLIGHT_RECIPE = RitualRecipe.named("blight")
             .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))

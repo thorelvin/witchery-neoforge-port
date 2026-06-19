@@ -112,6 +112,37 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void fullRecipeDispatchMatchesTotalEclipseRegardlessSupportOrder() {
+        assertEquals("total_eclipse", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(Items.STONE_AXE)), 1));
+        assertEquals("total_eclipse_portable", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(Items.IRON_AXE)), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteTotalEclipseSets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.STONE_AXE)), 1),
+                "ordinary Eclipse needs Quicklime");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.IRON_AXE),
+                        new ItemStack(WitcheryItems.QUICKLIME.get())), 1),
+                "portable Eclipse needs the Charged Attuned Stone");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.STONE_AXE),
+                        new ItemStack(WitcheryItems.QUICKLIME.get())), 3),
+                "Eclipse is Ritual chalk, not Infernal");
+    }
+
+    @Test
     void fullRecipeDispatchMatchesProtectionClusterRegardlessSupportOrder() {
         assertEquals("sanctity", RitualExecutor.matchingFullRecipeDefinitionName(
                 RitualCircleDetector.CircleSize.SMALL,
@@ -300,6 +331,72 @@ class RitualRecipeMatchTest {
                         new ItemStack(WitcheryItems.ICY_NEEDLE.get()),
                         new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get())), 1),
                 "source registers powered Blooded Waystone before its portable no-power variant");
+    }
+
+    @Test
+    void fullRecipeDispatchMatchesFertilityRoutesRegardlessSupportOrder() {
+        assertEquals("fertility", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.GYPSUM.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(Items.BONE_MEAL),
+                        new ItemStack(WitcheryItems.MUTANDIS.get()),
+                        new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()),
+                        new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get())), 1));
+        assertEquals("portable_fertility", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                portableFertilityOfferings(), 1));
+    }
+
+    @Test
+    void fullRecipeDispatchKeepsPortableFertilityBeforePlainWhenBothSetsArePresent() {
+        List<ItemStack> portable = portableFertilityOfferings();
+        assertEquals("portable_fertility", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(WitcheryItems.MUTANDIS.get()),
+                        portable.get(0),
+                        portable.get(1),
+                        portable.get(2),
+                        portable.get(3),
+                        portable.get(4),
+                        portable.get(5),
+                        portable.get(6)), 1),
+                "the port's existing Bone Meal dispatcher tries the portable no-power branch first");
+    }
+
+    @Test
+    void fullRecipeDispatchRejectsIncompleteFertilitySets() {
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BONE_MEAL),
+                        new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()),
+                        new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(WitcheryItems.GYPSUM.get())), 1),
+                "plain Fertility needs Mutandis");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                List.of(new ItemStack(Items.BONE_MEAL),
+                        new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()),
+                        new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                        new ItemStack(WitcheryItems.QUICKLIME.get()),
+                        new ItemStack(WitcheryItems.GYPSUM.get()),
+                        new ItemStack(WitcheryItems.MUTANDIS_EXTREMIS.get())), 1),
+                "portable Fertility needs the Charged Attuned Stone");
+        assertNull(RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.SMALL,
+                portableFertilityOfferings(), 2),
+                "Fertility is Ritual chalk, not Otherwhere");
+    }
+
+    private static List<ItemStack> portableFertilityOfferings() {
+        return List.of(new ItemStack(Items.BONE_MEAL),
+                new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()),
+                new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()),
+                new ItemStack(WitcheryItems.QUICKLIME.get()),
+                new ItemStack(WitcheryItems.GYPSUM.get()),
+                new ItemStack(WitcheryItems.MUTANDIS_EXTREMIS.get()),
+                new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
     }
 
     @Test
