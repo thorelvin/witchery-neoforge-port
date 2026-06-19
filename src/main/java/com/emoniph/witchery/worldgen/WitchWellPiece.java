@@ -137,16 +137,15 @@ public class WitchWellPiece extends TemplateStructurePiece {
         int y = variant.surfaceYOffset();
         for (int localX = variant.surfaceMinX(); localX <= variant.surfaceMaxX(); localX++) {
             for (int localZ = variant.surfaceMinZ(); localZ <= variant.surfaceMaxZ(); localZ++) {
-                if (variant.leavesSurfaceOpen(localX, localZ)) {
-                    continue;
-                }
                 BlockPos pos = templateWorldPos(localX, y, localZ);
                 if (!box.isInside(pos)) {
                     continue;
                 }
                 BlockState surface = adaptiveSurfaceState(level, pos);
                 level.setBlock(pos, surface, 3);
-                fillColumnDownAt(level, box, pos.below(), supportState(surface), variant.surfaceFillDepth());
+                if (!variant.leavesCaveVoidBelowSurface(localX, localZ)) {
+                    fillColumnDownAt(level, box, pos.below(), supportState(surface), variant.surfaceFillDepth());
+                }
             }
         }
     }
@@ -266,7 +265,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
                 0, 14, 0, 13, 1, 4,
                 8, 0, 6),
         CAVE("cave", "witch_well/well_cave", 14, 10,
-                7, 21, 3, 17, 15, 2,
+                7, 26, 3, 17, 12, 2,
                 22, 8, 15);
 
         private final String serializedName;
@@ -348,10 +347,10 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return surfaceYOffset;
         }
 
-        boolean leavesSurfaceOpen(int localX, int localZ) {
+        boolean leavesCaveVoidBelowSurface(int localX, int localZ) {
             return this == CAVE
-                    && localX >= 9 && localX <= 21
-                    && localZ >= 5 && localZ <= 15;
+                    && localX >= 8 && localX <= 26
+                    && localZ >= 4 && localZ <= 16;
         }
 
         int surfaceFillDepth() {

@@ -132,18 +132,18 @@ class NbtStructureTemplateTest {
     }
 
     @Test
-    void caveWitchWellLeavesItsSurfaceOpeningUnplugged() {
+    void caveWitchWellPlacesSurfaceOneBlockBelowOpeningWithoutDirtSupportOverCave() {
         WitchWellPiece.Variant cave = WitchWellPiece.Variant.CAVE;
         WitchWellPiece.Variant regular = WitchWellPiece.Variant.REGULAR;
 
-        assertTrue(cave.leavesSurfaceOpen(14, 10));
-        assertTrue(cave.leavesSurfaceOpen(9, 5));
-        assertTrue(cave.leavesSurfaceOpen(21, 5));
-        assertTrue(cave.leavesSurfaceOpen(21, 15));
-        assertFalse(cave.leavesSurfaceOpen(8, 10));
-        assertFalse(cave.leavesSurfaceOpen(14, 4));
-        assertFalse(cave.leavesSurfaceOpen(22, 10));
-        assertFalse(regular.leavesSurfaceOpen(8, 6));
+        assertEquals(12, cave.surfaceYOffset());
+        assertEquals(26, cave.surfaceMaxX());
+        assertTrue(cave.leavesCaveVoidBelowSurface(14, 10));
+        assertTrue(cave.leavesCaveVoidBelowSurface(22, 15));
+        assertTrue(cave.leavesCaveVoidBelowSurface(25, 10));
+        assertFalse(cave.leavesCaveVoidBelowSurface(7, 10));
+        assertFalse(cave.leavesCaveVoidBelowSurface(14, 3));
+        assertFalse(regular.leavesCaveVoidBelowSurface(8, 6));
     }
 
     private static CompoundTag readTemplate(String resourceName) throws IOException {
