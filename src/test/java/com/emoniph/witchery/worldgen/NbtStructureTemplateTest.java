@@ -138,8 +138,11 @@ class NbtStructureTemplateTest {
 
         assertTrue(cave.leavesSurfaceOpen(14, 10));
         assertTrue(cave.leavesSurfaceOpen(9, 5));
+        assertTrue(cave.leavesSurfaceOpen(21, 5));
+        assertTrue(cave.leavesSurfaceOpen(21, 15));
         assertFalse(cave.leavesSurfaceOpen(8, 10));
         assertFalse(cave.leavesSurfaceOpen(14, 4));
+        assertFalse(cave.leavesSurfaceOpen(22, 10));
         assertFalse(regular.leavesSurfaceOpen(8, 6));
     }
 

@@ -113,7 +113,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
     private void clearCaveInterior(WorldGenLevel level, BoundingBox box) {
         clearLocalBox(level, box, 8, 3, 4, 26, 12, 16);
-        clearLocalBox(level, box, 9, 13, 5, 19, 16, 15);
+        clearLocalBox(level, box, 9, 13, 5, 26, 16, 15);
+        clearLocalBox(level, box, 20, 13, 4, 26, 18, 16);
         clearLocalBox(level, box, 13, 11, 8, 17, 18, 12);
     }
 
@@ -349,7 +350,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         boolean leavesSurfaceOpen(int localX, int localZ) {
             return this == CAVE
-                    && localX >= 9 && localX <= 19
+                    && localX >= 9 && localX <= 21
                     && localZ >= 5 && localZ <= 15;
         }
 
