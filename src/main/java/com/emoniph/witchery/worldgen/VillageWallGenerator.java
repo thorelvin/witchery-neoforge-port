@@ -98,6 +98,25 @@ public final class VillageWallGenerator {
 
     private VillageWallGenerator() {}
 
+    /** Default chance (percent) that a detected village receives walls. */
+    public static final int DEFAULT_WALL_SPAWN_PERCENT = 40;
+
+    /**
+     * Deterministic per-village decision: true if this village should receive walls.
+     * Seeded from the world seed and the village bounding-box min corner so the same
+     * village always decides the same way across reloads and regardless of chunk-load
+     * order (the same start can be evaluated many times). The coordinate multipliers are
+     * vanilla-style so symmetric/swapped {@code (minX, minZ)} pairs don't collide.
+     */
+    public static boolean shouldGenerateWalls(long worldSeed, int minX, int minZ, int spawnPercent) {
+        if (spawnPercent >= 100) return true;
+        if (spawnPercent <= 0) return false;
+        long seed = worldSeed
+                ^ ((long) minX * 341873128712L)
+                ^ ((long) minZ * 132897987541L);
+        return net.minecraft.util.RandomSource.create(seed).nextInt(100) < spawnPercent;
+    }
+
     // ── Entry point ────────────────────────────────────────────────────────────
 
     public static GenerationResult generate(ServerLevel level, StructureStart start) {

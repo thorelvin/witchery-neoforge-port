@@ -1,5 +1,6 @@
 package com.emoniph.witchery.config;
 
+import com.emoniph.witchery.worldgen.VillageWallGenerator;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
@@ -37,6 +38,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_ROWAN_TREES;
     public static final ModConfigSpec.BooleanValue ENABLE_WILD_CROPS;
     public static final ModConfigSpec.BooleanValue ENABLE_BRAMBLE_PATCHES;
+    public static final ModConfigSpec.IntValue VILLAGE_WALL_SPAWN_PERCENT;
 
     static {
         DEBUG = BUILDER
@@ -104,6 +106,9 @@ public class WitcheryConfig {
         ENABLE_BRAMBLE_PATCHES = BUILDER
                 .comment("Enable bramble patch worldgen in forests.")
                 .define("enableBramblePatches", true);
+        VILLAGE_WALL_SPAWN_PERCENT = BUILDER
+                .comment("Percent chance (0-100) that a village receives adaptive Witchery walls. Deterministic per village. 0 = never, 100 = every village. Default: 40")
+                .defineInRange("villageWallSpawnPercent", VillageWallGenerator.DEFAULT_WALL_SPAWN_PERCENT, 0, 100);
         BUILDER.pop();
 
         SPEC = BUILDER.build();

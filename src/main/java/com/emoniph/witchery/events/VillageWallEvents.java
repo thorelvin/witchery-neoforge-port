@@ -888,6 +888,17 @@ public class VillageWallEvents {
         }
 
         BoundingBox bb = start.getBoundingBox();
+        // Per-village wall spawn roll: by default only ~40% of villages get walls (config-tunable
+        // via worldgen.villageWallSpawnPercent). Deterministic per village, so this stays stable
+        // across reloads / repeated chunk-load evaluations. Not marked processed on a "no" — the
+        // deterministic seed re-derives the same answer next time, and leaving it unmarked keeps
+        // the village open to a manual /witchery walls force-build.
+        int wallSpawnPercent = WitcheryConfig.VILLAGE_WALL_SPAWN_PERCENT.get();
+        if (!VillageWallGenerator.shouldGenerateWalls(level.getSeed(), bb.minX(), bb.minZ(), wallSpawnPercent)) {
+            debugLog("Village {} did not roll walls ({}% chance); leaving it unwalled.",
+                    bb, wallSpawnPercent);
+            return false;
+        }
         if (QUEUE.stream().anyMatch(p -> p.start().getBoundingBox().equals(bb))) {
             debugLog("Skipping automatic village queue for {} because it is already pending.", bb);
             return false;
