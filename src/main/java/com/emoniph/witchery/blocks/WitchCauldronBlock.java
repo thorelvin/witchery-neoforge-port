@@ -287,7 +287,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
     }
 
     /**
-     * Shared core that stirs a {@link Brews#requiresExplicitStir} ingredient into the composing brew.
+     * Shared core that stirs a {@link Brews#canBeExplicitlyStirred} ingredient into the composing brew.
      *
      * <p>The sneak + right-click gesture cannot be handled in {@link #useItemOn} because vanilla skips a
      * block's interaction when the player sneaks with a non-empty hand
@@ -300,7 +300,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         if (state.getValue(LEVEL) <= 0
                 || !isHeated(level.getBlockState(pos.below()))
-                || !Brews.requiresExplicitStir(stack.getItem())) {
+                || !Brews.canBeExplicitlyStirred(stack.getItem())) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
@@ -834,9 +834,22 @@ public class WitchCauldronBlock extends BaseEntityBlock {
 
     private record ChalkUpgradeMatch(Item result, int powerCost, List<ItemEntity> offerings, String successKey) {}
 
+    static List<Item> leonardSummonIngredients() {
+        return List.of(
+                Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get(),
+                Items.DIAMOND,
+                Items.NETHER_STAR);
+    }
+
+    static boolean isLeonardSummonBrew(List<Item> ingredients) {
+        return ingredients.equals(leonardSummonIngredients());
+    }
+
     /**
-     * Brew of Summon Leonard — Witches' Hat (trigger) + Refined Evil + Mandrake Root +
-     * Tear of the Goddess + Nether Wart, with 10 000 altar power.
+     * Brew of Summon Leonard — Witches' Hat (trigger) over Nether Wart, Tear of the Goddess,
+     * Diamond Vapour, Diamond, and Nether Star, with 10 000 altar power.
      * Spawns the Shade of Leonard 1 block above the cauldron; consumes all ingredients.
      */
     private InteractionResult trySummonLeonard(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
@@ -847,16 +860,8 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // Source recipe (1.7.10 WitcheryBrewRegistry / Resurrected summonleonard.json): the
-        // Witches' Hat triggers the ritual, brewed over Nether Wart + Tear of the Goddess +
-        // Diamond Vapour + Diamond + Nether Star.
-        Optional<ItemEntity> nWart        = findCauldronOffering(level, pos, net.minecraft.world.item.Items.NETHER_WART);
-        Optional<ItemEntity> tear         = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
-        Optional<ItemEntity> diamondVapour= findCauldronOffering(level, pos, WitcheryItems.DIAMOND_VAPOUR.get());
-        Optional<ItemEntity> diamond      = findCauldronOffering(level, pos, net.minecraft.world.item.Items.DIAMOND);
-        Optional<ItemEntity> netherStar   = findCauldronOffering(level, pos, net.minecraft.world.item.Items.NETHER_STAR);
-
-        if (nWart.isEmpty() || tear.isEmpty() || diamondVapour.isEmpty() || diamond.isEmpty() || netherStar.isEmpty()) {
+        if (!(level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe)
+                || !isLeonardSummonBrew(brewBe.getIngredients())) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.leonard.support"), false);
             return InteractionResult.CONSUME;
         }
@@ -874,15 +879,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        for (ItemEntity offering : List.of(nWart.get(), tear.get(), diamondVapour.get(), diamond.get(), netherStar.get())) {
-            ItemStack offeringStack = offering.getItem();
-            offeringStack.shrink(1);
-            if (offeringStack.isEmpty()) {
-                offering.discard();
-            } else {
-                offering.setItem(offeringStack);
-            }
-        }
+        brewBe.removeIngredients(leonardSummonIngredients());
         lowerFillLevel(state, level, pos);
 
         if (level instanceof ServerLevel serverLevel) {

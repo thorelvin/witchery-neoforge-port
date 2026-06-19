@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Drop ordinary brew ingredients into heated water; ingredients marked **sneak-stir** must be added by sneaking and right-clicking the cauldron, so they do not feed a different cauldron recipe.[#]() [#](53341a)The notes below are drawn from the live brew registry.[#]()",
+      "text": "[#](53341a)Drop ordinary brew ingredients into heated water; ingredients marked **sneak-stir** must be added by sneaking and right-clicking the cauldron, so they do not feed a different cauldron recipe.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Level** is the capacity an effect consumes. **Power** is altar power charged when the brew is bottled, bucketed, or released by ritual.[#]()",
+      "text": "[#](53341a)Ingredients marked **drop or sneak-stir** accept either gesture.[#]() [#](53341a)The notes below are drawn from the live brew registry. **Level** is the capacity an effect consumes.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Power** is altar power charged when the brew is bottled, bucketed, or released by ritual.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -55,11 +66,11 @@
         },
         {
           "item": "minecraft:nether_wart",
-          "text": "[#](53341a)**Nether Wart** - capacity +2 up to 2 (50 power, sneak-stir).[#]()"
+          "text": "[#](53341a)**Nether Wart** - capacity +2 up to 2 (50 power, drop or sneak-stir).[#]()"
         },
         {
           "item": "witchery:tear_of_goddess",
-          "text": "[#](53341a)**Tear of the Goddess** - capacity +2 up to 4 (100 power, sneak-stir).[#]()"
+          "text": "[#](53341a)**Tear of the Goddess** - capacity +2 up to 4 (100 power, drop or sneak-stir).[#]()"
         },
         {
           "item": "witchery:diamond_vapour",

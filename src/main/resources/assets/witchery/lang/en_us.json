@@ -1220,7 +1220,7 @@
   "witchery.cauldron.pit_trap.no_power": "A nearby altar lacks the power to bind the hidden earth. 4 000 power required.",
   "witchery.cauldron.pit_dirt.success": "The cauldron knots the dirt into a false floor.",
   "witchery.cauldron.pit_grass.success": "The cauldron grows a false grassy floor.",
-  "witchery.cauldron.leonard.support": "The cauldron needs Nether Wart, a Tear of the Goddess, Diamond Vapour, a Diamond, and a Nether Star to call Leonard.",
+  "witchery.cauldron.leonard.support": "The cauldron needs Nether Wart, a Tear of the Goddess, Diamond Vapour, a Diamond, and a Nether Star, dissolved in that order, to call Leonard.",
   "witchery.cauldron.leonard.no_power": "The altar lacks the power to summon the Shade of Leonard. 10 000 power required.",
   "witchery.cauldron.leonard.success": "The Shade of Leonard is forced into the world.",
   "witchery.curse.blocked_by_poppet": "A protective poppet negated the curse.",

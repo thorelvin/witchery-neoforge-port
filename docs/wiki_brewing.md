@@ -708,7 +708,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Brew of Summon Leonard
 - **Type:** Potion
-- **Recipe:** Witch's Cauldron, Altar Power: 10000
+- **Recipe:** Witch's Cauldron, Altar Power: 10000. Dissolve Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, and Nether Star in that order, then use a Witches' Hat on the cauldron. No Gunpowder.
 - **Effect:** Forces a Shade of Leonard into the world.
 - **Notes:** Cannot be combined with other custom brew effects due to high power requirement.
 

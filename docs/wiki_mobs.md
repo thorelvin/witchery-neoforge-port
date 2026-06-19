@@ -210,19 +210,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** In Legacy versions, using a Boline on a tamed raven harvests feathers without damaging it.
 
 ## Shade of Leonard
-- **HP:** Not specified
-- **Damage:** Not specified
-- **Spawn:** Not specified
-- **Drops:** Not specified
-- **Behaviour:** Not specified
-- **Notes:** None.
-
-## Shade of Leonard
-- **HP:** 500
-- **Drops:** Leonard's Urn
-- **Spawn:** Summoned by performing a Witch's Cauldron ritual
-- **Behaviour:** Neutral unless attacked; curses the player with Mortal Coil, becomes immune to damage when surrounded by Lost Souls
-- **Notes:** Boosts range capabilities of cauldron spells but increases side effects
+- **HP:** 600
+- **Drops:** Enchanted Book, Demon Heart, Leonard's Urn
+- **Spawn:** Heat and fill a Witch's Cauldron, dissolve Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, and Nether Star in that order, then use a Witches' Hat. Requires 10000 altar power; no Gunpowder.
+- **Behaviour:** Neutral unless attacked; only player melee can harm him. Casts Mystic Branch spells, lays Mortal Coil, summons Lost Souls below half health, and becomes immune while any Lost Soul remains.
+- **Notes:** Coalesces briefly in an invulnerable phase and swells to a giant near death.
 
 ## Spectral Familiar
 - **HP:** 40

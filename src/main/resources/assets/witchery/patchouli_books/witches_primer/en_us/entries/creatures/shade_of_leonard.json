@@ -12,7 +12,7 @@
     {
       "type": "patchouli:text",
       "title": "Summoning Ritual",
-      "text": "Heat the Witch's Cauldron over fire. Fill it with water. Drop in $(item)Refined Evil$(), $(item)Mandrake Root$(), a $(item)Tear of the Goddess$(), and $(item)Nether Wart$(). Hold a $(item)Witches' Hat$() and right-click the cauldron. The nearby altar must hold at least 10 000 power.$(br2)When the conditions are met, the Shade rises above the cauldron."
+      "text": "Heat the Witch's Cauldron over fire. Fill it with water. Dissolve $(item)Nether Wart$(), a $(item)Tear of the Goddess$(), $(item)Diamond Vapour$(), a $(item)Diamond$(), and a $(item)Nether Star$(), in that order, either by dropping each into the bowl or by sneak-stirring it in by hand. Hold a $(item)Witches' Hat$() and right-click the cauldron. No Gunpowder. The nearby altar must hold at least 10 000 power.$(br2)When the conditions are met, the Shade rises above the cauldron."
     },
     {
       "type": "patchouli:text",

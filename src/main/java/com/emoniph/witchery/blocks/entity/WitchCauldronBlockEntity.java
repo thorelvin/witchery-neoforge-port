@@ -77,6 +77,17 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return true;
     }
 
+    public void removeIngredients(List<Item> items) {
+        boolean changed = false;
+        for (Item item : items) {
+            changed |= ingredients.remove(item);
+        }
+        if (changed) {
+            color = ingredients.isEmpty() ? 0 : Brews.color(ingredients);
+            sync();
+        }
+    }
+
     public int getColor() {
         return color;
     }

@@ -94,7 +94,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "A custom brew remembers each ingredient in the order it enters the Witch's Cauldron. "
                         + "Drop ordinary brew ingredients into heated water; ingredients marked **sneak-stir** "
                         + "must be added by sneaking and right-clicking the cauldron, so they do not feed a "
-                        + "different cauldron recipe."
+                        + "different cauldron recipe. Ingredients marked **drop or sneak-stir** accept either "
+                        + "gesture."
                         + "\n\nThe notes below are drawn from the live brew registry. **Level** is the capacity "
                         + "an effect consumes. **Power** is altar power charged when the brew is bottled, "
                         + "bucketed, or released by ritual."));
@@ -203,6 +204,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         }
         if (ref.explicitStirOnly()) {
             parts.add("sneak-stir");
+        } else if (ref.explicitStirAllowed()) {
+            parts.add("drop or sneak-stir");
         }
         return parts.isEmpty() ? "" : " (" + String.join(", ", parts) + ")";
     }
@@ -1277,11 +1280,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "of infernal commerce. His Shade does not wander freely; he must be forced into the "
                         + "world through the Witch's Cauldron."));
         leonard.addAll(WitcheryBooks.prose("Summoning",
-                "Heat and fill the Witch's Cauldron, drop in **Nether Wart**, a **Tear of the Goddess**, "
-                        + "**Diamond Vapour**, a **Diamond**, and a **Nether Star**, then hold a **Witches' "
-                        + "Hat** and use it on the cauldron. The altar must hold at least 10,000 power. The "
-                        + "Shade forms half-made and untouchable for a few moments before he draws his full "
-                        + "strength together."));
+                "Heat and fill the Witch's Cauldron. Dissolve **Nether Wart**, a **Tear of the Goddess**, "
+                        + "**Diamond Vapour**, a **Diamond**, and a **Nether Star** in that order — by dropping "
+                        + "each into the bowl or by sneak-stirring it in by hand. Then hold a **Witches' Hat** "
+                        + "and use it on the cauldron. No Gunpowder. The altar must hold at least 10,000 "
+                        + "power. The Shade forms half-made and untouchable for a few moments before he draws "
+                        + "his full strength together."));
         leonard.addAll(WitcheryBooks.prose("Behaviour",
                 "Leonard is neutral until struck, for he reckons no mortal thing a threat. Provoked, no blow "
                         + "but your own hand will mark him — arrows and thrown things simply glance away — and "

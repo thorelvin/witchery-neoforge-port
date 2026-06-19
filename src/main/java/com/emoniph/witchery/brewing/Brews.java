@@ -244,6 +244,7 @@ public final class Brews {
 
     private static final Map<Item, Ingredient> REGISTRY = new LinkedHashMap<>();
     private static final Set<Item> EXPLICIT_STIR_ONLY = new HashSet<>();
+    private static final Set<Item> EXPLICIT_STIR_ALLOWED = new HashSet<>();
     private static final Method TAMABLE_SET_OWNER_UUID = findTamableSetOwnerUuid();
     private static final Method MOB_EFFECT_INSTANCE_GET_CURES = findMobEffectInstanceGetCures();
     private static final int SOURCE_DEFAULT_STRENGTH_CEILING = 10;
@@ -300,7 +301,7 @@ public final class Brews {
                                       int modifierCeiling, int capacityIncrement, int capacityCeiling,
                                       int drinkSpeedModifier, Identifier effectId, Identifier invertedEffectId,
                                       String actionNameKey, String invertedActionNameKey,
-                                      boolean explicitStirOnly) {
+                                      boolean explicitStirOnly, boolean explicitStirAllowed) {
     }
 
     private Brews() {
@@ -450,12 +451,12 @@ public final class Brews {
                 2, 150, 0x8CD66A,
                 "witchery.brew.frogtongue", null));
 
-        // Source capacity modifiers. Mandrake Root, Nether Wart, and Tear of the Goddess are also
-        // hardcoded cauldron offerings in the modern port, so dropped entities keep that meaning;
-        // sneaking with the item explicitly stirs it as custom-brew capacity.
+        // Source capacity modifiers. Mandrake Root remains a hardcoded offering when dropped.
+        // Nether Wart and Tear of the Goddess may either auto-stir from drops or be stirred by hand,
+        // and Leonard's hat trigger reads the dissolved cauldron ingredient list.
         registerExplicit(WitcheryItems.MANDRAKE_ROOT.get(), Ingredient.capacity(1, 1, 0));
-        registerExplicit(Items.NETHER_WART, Ingredient.capacity(2, 2, 50));
-        registerExplicit(WitcheryItems.TEAR_OF_GODDESS.get(), Ingredient.capacity(2, 4, 100));
+        registerStirrable(Items.NETHER_WART, Ingredient.capacity(2, 2, 50));
+        registerStirrable(WitcheryItems.TEAR_OF_GODDESS.get(), Ingredient.capacity(2, 4, 100));
         register(WitcheryItems.DIAMOND_VAPOUR.get(), Ingredient.capacity(2, 6, 150));
         register(Items.DIAMOND, Ingredient.capacity(2, 8, 150));
         register(Items.NETHER_STAR, Ingredient.capacity(4, 10, 150));
@@ -524,6 +525,14 @@ public final class Brews {
         register(item, ingredient);
         if (item != null && item != Items.AIR) {
             EXPLICIT_STIR_ONLY.add(item);
+            EXPLICIT_STIR_ALLOWED.add(item);
+        }
+    }
+
+    private static void registerStirrable(Item item, Ingredient ingredient) {
+        register(item, ingredient);
+        if (item != null && item != Items.AIR) {
+            EXPLICIT_STIR_ALLOWED.add(item);
         }
     }
 
@@ -535,6 +544,11 @@ public final class Brews {
     public static boolean requiresExplicitStir(Item item) {
         bootstrap();
         return EXPLICIT_STIR_ONLY.contains(item);
+    }
+
+    public static boolean canBeExplicitlyStirred(Item item) {
+        bootstrap();
+        return EXPLICIT_STIR_ALLOWED.contains(item);
     }
 
     public static boolean isAutomaticIngredient(Item item) {
@@ -562,7 +576,8 @@ public final class Brews {
                     return new IngredientReference(item, ing.kind(), ing.capacityRequired(), ing.powerCost(),
                             ing.modifierCeiling(), ing.capacityIncrement(), ing.capacityCeiling(),
                             ing.drinkSpeedModifier(), effectId, invertedEffectId, ing.nameKey(),
-                            ing.invertedNameKey(), EXPLICIT_STIR_ONLY.contains(item));
+                            ing.invertedNameKey(), EXPLICIT_STIR_ONLY.contains(item),
+                            EXPLICIT_STIR_ALLOWED.contains(item));
                 })
                 .toList();
     }

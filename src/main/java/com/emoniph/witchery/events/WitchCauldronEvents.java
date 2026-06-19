@@ -27,7 +27,7 @@ public class WitchCauldronEvents {
      * <p>Vanilla skips a block's {@code useItemOn} when a player sneaks with a non-empty hand
      * ({@code ServerPlayerGameMode#useItemOn} — {@code flag1}), so the cauldron never saw the stir and
      * capacity ingredients like Mandrake Root could not be added. {@code RightClickBlock} fires before
-     * that gate, so we perform the stir here for {@link Brews#requiresExplicitStir} ingredients.
+     * that gate, so we perform the stir here for {@link Brews#canBeExplicitlyStirred} ingredients.
      */
     @SubscribeEvent
     public static void onSneakStirBrew(PlayerInteractEvent.RightClickBlock event) {
@@ -36,7 +36,7 @@ public class WitchCauldronEvents {
             return; // a normal right-click already reaches the cauldron's useItemOn
         }
         ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || !Brews.requiresExplicitStir(stack.getItem())) {
+        if (stack.isEmpty() || !Brews.canBeExplicitlyStirred(stack.getItem())) {
             return;
         }
         Level level = event.getLevel();

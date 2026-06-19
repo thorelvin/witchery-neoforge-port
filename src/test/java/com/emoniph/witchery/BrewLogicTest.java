@@ -1798,12 +1798,26 @@ class BrewLogicTest {
     }
 
     @Test
-    void dualPurposeCapacityIngredientsRequireExplicitStirring() {
+    void dualPurposeCapacityIngredientsUseTheirCurrentStirMode() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root is a brew capacity ingredient");
         assertTrue(Brews.requiresExplicitStir(WitcheryItems.MANDRAKE_ROOT.get()), "Mandrake Root keeps dropped-offering behavior");
+        assertTrue(Brews.canBeExplicitlyStirred(WitcheryItems.MANDRAKE_ROOT.get()),
+                "Mandrake Root can still be shift-stirred as capacity");
         assertFalse(Brews.canAddAutomatically(List.of(), WitcheryItems.MANDRAKE_ROOT.get()),
                 "dropped Mandrake Root must remain available to hardcoded cauldron offerings");
+        assertFalse(Brews.requiresExplicitStir(Items.NETHER_WART),
+                "Nether Wart may dissolve from a drop for Leonard's cauldron contents recipe");
+        assertTrue(Brews.canBeExplicitlyStirred(Items.NETHER_WART),
+                "Nether Wart may also be shift-stirred into the cauldron");
+        assertTrue(Brews.canAddAutomatically(List.of(), Items.NETHER_WART),
+                "dropped Nether Wart can dissolve into the cauldron");
+        assertFalse(Brews.requiresExplicitStir(WitcheryItems.TEAR_OF_GODDESS.get()),
+                "Tear of the Goddess may dissolve from a drop for Leonard's cauldron contents recipe");
+        assertTrue(Brews.canBeExplicitlyStirred(WitcheryItems.TEAR_OF_GODDESS.get()),
+                "Tear of the Goddess may also be shift-stirred into the cauldron");
+        assertTrue(Brews.canAddAutomatically(List.of(Items.NETHER_WART), WitcheryItems.TEAR_OF_GODDESS.get()),
+                "dropped Tear of the Goddess can dissolve after Nether Wart");
         assertTrue(Brews.canAddAutomatically(List.of(), WitcheryItems.DIAMOND_VAPOUR.get()),
                 "non-conflicting capacity ingredients still auto-stir when dropped");
         assertTrue(Brews.isIngredient(Items.BLAZE_ROD), "Blaze Rod is the source strength tier 2 modifier");
