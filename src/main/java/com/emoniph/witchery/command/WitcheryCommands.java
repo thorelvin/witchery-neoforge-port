@@ -2524,6 +2524,7 @@ public class WitcheryCommands {
     private static final long GOTO_COOLDOWN_TICKS = 600L; // 30 seconds
     private static final int GOTO_SEARCH_RADIUS_RINGS = 32;
     private static final int GOTO_VILLAGE_SEARCH_RADIUS_RINGS = 8;
+    private static final int GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS = 8;
     private static final boolean GOTO_SKIP_REFERENCED_STRUCTURES = false;
     private static final int GOTO_PRELOAD_RADIUS_CHUNKS = 0; // arrival chunk only
     private static final int GOTO_NETHER_SEARCH_RADIUS_BLOCKS = 128;
@@ -2886,9 +2887,28 @@ public class WitcheryCommands {
             return 1;
         }
 
+        if (level.dimension().equals(Level.OVERWORLD)) {
+            WitcheryMod.LOGGER.info("[Goto] Queueing safe structure search for {}:{} from {} (radius={}, one candidate chunk per tick).",
+                    namespace, structureId, from, GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS);
+            boolean queued = com.emoniph.witchery.events.VillageWallEvents.queueStructureGotoLocate(
+                    level, player, holderOpt.get(), from, namespace, structureId,
+                    GOTO_SAFE_STRUCTURE_SEARCH_RADIUS_RINGS);
+            if (!queued) {
+                src.sendFailure(Component.literal(
+                        "The hidden paths could not prepare a safe search for that structure.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return 0;
+            }
+            GOTO_COOLDOWN.put(player.getUUID(), now);
+            src.sendSuccess(() -> Component.literal(
+                    "The hidden paths begin a slower search, one omen at a time.")
+                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+            return 1;
+        }
+
         // Non-village Witchery structures still use vanilla locate semantics.
-        // Village gotos use the ticked safe-locate path above because biome-specific
-        // vanilla village locate can monopolize the server thread when chained.
+        // Overworld gotos use the ticked safe-locate path above because biome-specific
+        // vanilla locate can monopolize the server thread when the target is sparse.
         final net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.structure.Structure> holderSet =
                 net.minecraft.core.HolderSet.direct(holderOpt.get());
         int searchRadius = GOTO_SEARCH_RADIUS_RINGS;

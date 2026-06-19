@@ -118,6 +118,7 @@ public class VillageWallEvents {
         final String structureId;
         final String targetBuilding;
         final ResourceKey<Biome> targetBiome;
+        final boolean generateVillageWalls;
         final List<LocateCandidate> candidates;
         final long queuedAt;
         int cursor;
@@ -126,6 +127,7 @@ public class VillageWallEvents {
         VillageGotoLocateJob(UUID playerId, BlockPos from, float yRot, float xRot,
                              String namespace, String structureId, String targetBuilding,
                              ResourceKey<Biome> targetBiome,
+                             boolean generateVillageWalls,
                              List<LocateCandidate> candidates, long queuedAt) {
             this.playerId = playerId;
             this.from = from;
@@ -135,6 +137,7 @@ public class VillageWallEvents {
             this.structureId = structureId;
             this.targetBuilding = targetBuilding;
             this.targetBiome = targetBiome;
+            this.generateVillageWalls = generateVillageWalls;
             this.candidates = candidates;
             this.queuedAt = queuedAt;
         }
@@ -187,6 +190,7 @@ public class VillageWallEvents {
     private static final long VILLAGE_GOTO_LOCATE_LOG_INTERVAL_TICKS = 40L;
     private static final int VILLAGE_GOTO_PREP_CHUNKS_PER_TICK = 1;
     private static final int VILLAGE_GOTO_LANDING_CHUNK_RADIUS = 2;
+    private static final int STRUCTURE_GOTO_LANDING_CHUNK_RADIUS = 0;
     private static final long VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS = 40L;
     private static final long VILLAGE_GOTO_PREP_TIMEOUT_TICKS = 20L * 150L;
     private static final long VILLAGE_GOTO_WALL_RETRY_TICKS = 40L;
@@ -421,10 +425,29 @@ public class VillageWallEvents {
         UUID playerId = player.getUUID();
         GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
         GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
-                namespace, structureId, null, targetBiome, candidates, level.getGameTime()));
+                namespace, structureId, null, targetBiome, true, candidates, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued safe village locate for {}:{} from {} with {} candidate chunk(s){}.",
                 namespace, structureId, from, candidates.size(),
                 targetBiome != null ? " filtered to " + targetBiome.identifier() : "");
+        return true;
+    }
+
+    public static boolean queueStructureGotoLocate(ServerLevel level, ServerPlayer player, Holder<Structure> holder,
+                                                   BlockPos from, String namespace, String structureId,
+                                                   int searchRadius) {
+        List<LocateCandidate> candidates = villageGotoLocateCandidates(level, holder, from, searchRadius);
+        if (candidates.isEmpty()) {
+            WitcheryMod.LOGGER.info("[Goto] No safe locate candidates for {}:{} from {}.",
+                    namespace, structureId, from);
+            return false;
+        }
+
+        UUID playerId = player.getUUID();
+        GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
+        GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
+                namespace, structureId, null, null, false, candidates, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued safe structure locate for {}:{} from {} with {} candidate chunk(s).",
+                namespace, structureId, from, candidates.size());
         return true;
     }
 
@@ -449,7 +472,7 @@ public class VillageWallEvents {
         UUID playerId = player.getUUID();
         GOTO_LOCATES.removeIf(job -> job.playerId.equals(playerId));
         GOTO_LOCATES.add(new VillageGotoLocateJob(playerId, from, player.getYRot(), player.getXRot(),
-                WitcheryMod.MODID, building, building, null, candidates, level.getGameTime()));
+                WitcheryMod.MODID, building, building, null, true, candidates, level.getGameTime()));
         WitcheryMod.LOGGER.info("[Goto] Queued safe village-building locate for {} from {} with {} candidate chunk(s).",
                 building, from, candidates.size());
         return true;
@@ -518,8 +541,14 @@ public class VillageWallEvents {
                 found = new VillageGotoFound(buildingTarget, found.start());
             }
 
-            WitcheryMod.LOGGER.info("[Goto] Safe village locate found {}:{} at {} after {}/{} probe(s).",
+            WitcheryMod.LOGGER.info("[Goto] Safe {} locate found {}:{} at {} after {}/{} probe(s).",
+                    job.generateVillageWalls ? "village" : "structure",
                     job.namespace, job.structureId, found.target(), job.cursor, job.candidates.size());
+
+            if (!job.generateVillageWalls) {
+                queueStructureGotoPrep(level, job, found);
+                return true;
+            }
 
             VillageGotoResult wallResult = queueVillageGoto(level, player, found.target(), job.from,
                     job.namespace, job.structureId, found.start(), job.targetBuilding);
@@ -534,23 +563,37 @@ public class VillageWallEvents {
         }
 
         if (job.cursor >= job.candidates.size()) {
-            String message = job.targetBuilding == null
+            String message = !job.generateVillageWalls
+                    ? "The scrying mists reveal no matching structure nearby within the safe range. Wander further and gaze again."
+                    : job.targetBuilding == null
                     ? "The scrying mists reveal no matching village nearby within the safe range. Wander further and gaze again."
                     : "The scrying mists reveal no village " + job.targetBuilding
                     + " nearby within the safe range. Wander further and gaze again.";
             player.sendSystemMessage(Component.literal(message)
                     .withStyle(ChatFormatting.DARK_PURPLE));
-            WitcheryMod.LOGGER.info("[Goto] Safe village locate found no {}:{} from {} after {} probe(s).",
+            WitcheryMod.LOGGER.info("[Goto] Safe {} locate found no {}:{} from {} after {} probe(s).",
+                    job.generateVillageWalls ? "village" : "structure",
                     job.namespace, job.structureId, job.from, job.candidates.size());
             return true;
         }
 
         if (now - job.lastLogAt >= VILLAGE_GOTO_LOCATE_LOG_INTERVAL_TICKS) {
             job.lastLogAt = now;
-            WitcheryMod.LOGGER.info("[Goto] Safe village locate still probing {}:{} from {}: {}/{} candidate chunk(s).",
+            WitcheryMod.LOGGER.info("[Goto] Safe {} locate still probing {}:{} from {}: {}/{} candidate chunk(s).",
+                    job.generateVillageWalls ? "village" : "structure",
                     job.namespace, job.structureId, job.from, job.cursor, job.candidates.size());
         }
         return false;
+    }
+
+    private static void queueStructureGotoPrep(ServerLevel level, VillageGotoLocateJob job, VillageGotoFound found) {
+        PendingTeleport teleport = new PendingTeleport(job.playerId, found.target(), job.from,
+                job.yRot, job.xRot, job.namespace, job.structureId, null);
+        List<ChunkPos> chunks = structureLandingPrepChunks(found.target());
+        GOTO_PREPS.removeIf(prep -> prep.teleport.playerId().equals(job.playerId));
+        GOTO_PREPS.add(new VillageGotoPrepJob(found.start(), teleport, chunks, false, level.getGameTime()));
+        WitcheryMod.LOGGER.info("[Goto] Queued safe structure arrival prep for {}:{} at {} with {} chunk(s).",
+                job.namespace, job.structureId, found.target(), chunks.size());
     }
 
     private static boolean matchesTargetBiome(ServerLevel level, StructureStart start, BlockPos target,
@@ -646,7 +689,8 @@ public class VillageWallEvents {
                 if (job.cursor >= job.chunks.size()) {
                     job.loggedAllChunksReady = true;
                 }
-                WitcheryMod.LOGGER.info("[Goto] Preparing village arrival at {}:{} for {}: {}/{} chunk(s) ready.",
+                WitcheryMod.LOGGER.info("[Goto] Preparing {} arrival at {}:{} for {}: {}/{} chunk(s) ready.",
+                        job.generateWalls ? "village" : "structure",
                         job.teleport.namespace(), job.teleport.structureId(), job.teleport.target(),
                         Math.min(job.cursor, job.chunks.size()), job.chunks.size());
             }
@@ -664,7 +708,8 @@ public class VillageWallEvents {
             if (ready < job.chunks.size()) {
                 if (now - job.lastLogAt >= VILLAGE_GOTO_PREP_LOG_INTERVAL_TICKS) {
                     job.lastLogAt = now;
-                    WitcheryMod.LOGGER.info("[Goto] Holding village arrival chunks at {}:{} for {}: {}/{} still resident.",
+                    WitcheryMod.LOGGER.info("[Goto] Holding {} arrival chunks at {}:{} for {}: {}/{} still resident.",
+                            job.generateWalls ? "village" : "structure",
                             job.teleport.namespace(), job.teleport.structureId(), job.teleport.target(),
                             ready, job.chunks.size());
                 }
@@ -1253,13 +1298,21 @@ public class VillageWallEvents {
     }
 
     private static List<ChunkPos> landingPrepChunks(BlockPos target) {
+        return landingPrepChunks(target, VILLAGE_GOTO_LANDING_CHUNK_RADIUS);
+    }
+
+    private static List<ChunkPos> structureLandingPrepChunks(BlockPos target) {
+        return landingPrepChunks(target, STRUCTURE_GOTO_LANDING_CHUNK_RADIUS);
+    }
+
+    private static List<ChunkPos> landingPrepChunks(BlockPos target, int radius) {
         ChunkPos center = new ChunkPos(target);
         LinkedHashSet<ChunkPos> chunks = new LinkedHashSet<>();
-        for (int radius = 0; radius <= VILLAGE_GOTO_LANDING_CHUNK_RADIUS; radius++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                boolean zEdge = dz == -radius || dz == radius;
-                for (int dx = -radius; dx <= radius; dx++) {
-                    boolean xEdge = dx == -radius || dx == radius;
+        for (int ring = 0; ring <= radius; ring++) {
+            for (int dz = -ring; dz <= ring; dz++) {
+                boolean zEdge = dz == -ring || dz == ring;
+                for (int dx = -ring; dx <= ring; dx++) {
+                    boolean xEdge = dx == -ring || dx == ring;
                     if (!zEdge && !xEdge) continue;
                     chunks.add(new ChunkPos(center.x + dx, center.z + dz));
                 }
