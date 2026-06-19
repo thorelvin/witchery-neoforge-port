@@ -112,8 +112,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
     }
 
     private void clearCaveInterior(WorldGenLevel level, BoundingBox box) {
-        clearLocalBox(level, box, 12, 5, 6, 24, 12, 14);
-        clearLocalBox(level, box, 13, 11, 8, 17, 16, 12);
+        clearLocalBox(level, box, 8, 3, 4, 26, 12, 16);
+        clearLocalBox(level, box, 9, 13, 5, 19, 16, 15);
+        clearLocalBox(level, box, 13, 11, 8, 17, 18, 12);
     }
 
     private void clearLocalBox(WorldGenLevel level, BoundingBox box,
@@ -135,6 +136,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
         int y = variant.surfaceYOffset();
         for (int localX = variant.surfaceMinX(); localX <= variant.surfaceMaxX(); localX++) {
             for (int localZ = variant.surfaceMinZ(); localZ <= variant.surfaceMaxZ(); localZ++) {
+                if (variant.leavesSurfaceOpen(localX, localZ)) {
+                    continue;
+                }
                 BlockPos pos = templateWorldPos(localX, y, localZ);
                 if (!box.isInside(pos)) {
                     continue;
@@ -341,6 +345,12 @@ public class WitchWellPiece extends TemplateStructurePiece {
 
         public int surfaceYOffset() {
             return surfaceYOffset;
+        }
+
+        boolean leavesSurfaceOpen(int localX, int localZ) {
+            return this == CAVE
+                    && localX >= 9 && localX <= 19
+                    && localZ >= 5 && localZ <= 15;
         }
 
         int surfaceFillDepth() {

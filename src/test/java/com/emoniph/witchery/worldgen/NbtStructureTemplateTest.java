@@ -131,6 +131,18 @@ class NbtStructureTemplateTest {
         assertTrue(loot.contains("\"witchery:tear_of_goddess\""));
     }
 
+    @Test
+    void caveWitchWellLeavesItsSurfaceOpeningUnplugged() {
+        WitchWellPiece.Variant cave = WitchWellPiece.Variant.CAVE;
+        WitchWellPiece.Variant regular = WitchWellPiece.Variant.REGULAR;
+
+        assertTrue(cave.leavesSurfaceOpen(14, 10));
+        assertTrue(cave.leavesSurfaceOpen(9, 5));
+        assertFalse(cave.leavesSurfaceOpen(8, 10));
+        assertFalse(cave.leavesSurfaceOpen(14, 4));
+        assertFalse(regular.leavesSurfaceOpen(8, 6));
+    }
+
     private static CompoundTag readTemplate(String resourceName) throws IOException {
         InputStream input = NbtStructureTemplateTest.class.getClassLoader().getResourceAsStream(resourceName);
         if (input == null) {
