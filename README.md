@@ -132,11 +132,15 @@ If setup fails with `compiler is null` or `jdk.compiler module` missing, Windows
 
 If setup fails with `Missing Gradle wrapper jar: gradle\wrapper\gradle-wrapper.jar`, the repository copy is incomplete or security software removed the wrapper jar. Re-download or `git clone` the full repository and make sure `gradle/wrapper/gradle-wrapper.jar` exists before running the launcher.
 
+### Dev tools
+
+Dev runs (`runClient` / `RUN_MINECRAFT.bat`) bundle [WorldEdit](https://www.curseforge.com/minecraft/mc-mods/worldedit) for in-game world-building (the `//wand`, `//set`, `//copy`/`//paste` command suite). It is wired in as a dev-only `localRuntime` dependency (CurseForge build for MC `1.21.11` / NeoForge) and is **not** bundled into the published Witchery mod — it loads only in the development client/server.
+
 ## Debug / QA Helpers
 
 The mod includes a growing `/witchery` debug command suite (permission level 2). Useful current helpers include:
 
-Structure goto targets currently include `hobgoblin_hut`, `coven_circle`, `stone_circle`, `straw_man`, and Nether-only `warped_coven`. `/witchery goto nether` searches for a safe Nether foothold and stores the player's previous position; `/witchery exit nether` returns to that stored point.
+Structure goto targets currently include `hobgoblin_hut`, `coven_circle`, `stone_circle`, `straw_man`, `witch_well`, `small_well`, `cursed_well`, and Nether-only `warped_coven`. `/witchery goto nether` searches for a safe Nether foothold and stores the player's previous position; `/witchery exit nether` returns to that stored point.
 
 - `/witchery setup stations` — builds a stocked Rowan QA hut with core machines, altar, traders, chest supplies, kettle setup, Glowglobes, and test layout.
 - `/witchery setup rite` — builds a ritual QA pad with white, golden, otherwhere, and infernal circle sets.

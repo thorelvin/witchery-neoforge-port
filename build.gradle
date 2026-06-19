@@ -80,6 +80,13 @@ repositories {
         name = 'Klikli Cloudsmith'
         url = 'https://dl.cloudsmith.io/public/klikli-dev/mods/maven/'
     }
+
+    // CurseMaven — pulls CurseForge mod jars by project/file id. Used for dev-only tool mods.
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
 }
 
 dependencies {
@@ -99,6 +106,14 @@ dependencies {
     // compileOnly "mezz.jei:jei-1.21.11-common-api:..."
     // compileOnly "mezz.jei:jei-1.21.11-neoforge-api:..."
     // localRuntime "mezz.jei:jei-1.21.11-neoforge:..."
+
+    // WorldEdit — dev-only world-building tool for the designer. Dev runtime only via
+    // localRuntime (chained into runtimeClasspath at the top of this file); never shipped
+    // with Witchery. CurseForge release for MC 1.21.11 / NeoForge: 7.4.2 (project 225608,
+    // file 7855515). transitive=false: the CurseForge jar is fully bundled.
+    localRuntime("curse.maven:worldedit-225608:7855515") {
+        transitive = false
+    }
 
     testImplementation platform("org.junit:junit-bom:5.11.3")
     testImplementation "org.junit.jupiter:junit-jupiter"
