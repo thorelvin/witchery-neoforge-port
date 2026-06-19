@@ -258,6 +258,8 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("nightmare")
                         .executes(ctx -> toggleNightmare(ctx.getSource(), true))
+                        .then(Commands.literal("demonic")
+                                .executes(ctx -> forceDemonicNightmare(ctx.getSource())))
                         .then(Commands.argument("value", BoolArgumentType.bool())
                                 .executes(ctx -> toggleNightmare(ctx.getSource(),
                                         BoolArgumentType.getBool(ctx, "value")))))
@@ -914,7 +916,8 @@ public class WitcheryCommands {
 
         // ── Spirit World ─────────────────────────────────────────────────
         String sw = "  inSpiritWorld=" + d.isInSpiritWorld()
-                + (d.isInSpiritWorld() ? "  (" + (d.isSpiritWorldDream() ? "dream" : "nightmare") + ")" : "")
+                + (d.isInSpiritWorld() ? "  (" + (d.isSpiritWorldDream() ? "dream"
+                        : (d.isDemonicNightmare() ? "demonic nightmare" : "nightmare")) + ")" : "")
                 + "  manifestedGhost=" + d.isManifestedGhost()
                 + "  manifestTime=" + tickStr(d.getManifestationTime())
                 + "  corpse=" + d.getCorpseUUID().map(u -> u.toString().substring(0, 8) + "...").orElse("none");
@@ -1109,6 +1112,15 @@ public class WitcheryCommands {
 
         double[] safePos = findSafeEntry(target, dim, player.blockPosition());
         player.teleportTo(target, safePos[0], (double)(safePos[1]), safePos[2], java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
+        // This is a raw teleport (no corpse / inventory strip), but mark a normal dream so the sky/fog
+        // render as the pink dream rather than the default green nightmare (isNightmare() = !isDream).
+        // Use /witchery nightmare [false|true|demonic] to switch atmospheres once inside.
+        if (dim.equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            data.setInSpiritWorld(true);
+            data.setSpiritWorldIsDream(true);
+            data.setDemonicNightmare(false);
+            sync(player, data);
+        }
         src.sendSuccess(() -> Component.literal("Entered " + dim.identifier().getPath() + "."), false);
         return 1;
     }
@@ -1286,6 +1298,33 @@ public class WitcheryCommands {
                 int removed = removeVictimNightmares(p, spiritWorld);
                 src.sendSuccess(() -> Component.literal("Peaceful dream restored; removed " + removed + " bound Nightmare(s)."), false);
             }
+        }
+        return 1;
+    }
+
+    /** Force a demonic Spirit World nightmare (red sky), entering from the Overworld if needed. */
+    private static int forceDemonicNightmare(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        WitcheryPlayerData d = WitcheryAttachments.get(p);
+        if (!d.isInSpiritWorld()) {
+            if (!p.level().dimension().equals(Level.OVERWORLD)) {
+                src.sendFailure(Component.literal("Demonic nightmare debug entry can only start from the Overworld or while already in the Spirit World."));
+                return 0;
+            }
+            SpiritWorldHelper.enter(p, 1.0);
+        }
+
+        d.setSpiritWorldIsDream(false);
+        d.setDemonicNightmare(true);
+        sync(p, d);
+        src.sendSuccess(() -> Component.literal("Spirit World mode set to demonic nightmare (red)."), false);
+        if (p.level() instanceof ServerLevel spiritWorld
+                && spiritWorld.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+            d.setLastNightmareKillGameTime(Long.MIN_VALUE);
+            SpiritWorldHelper.tickNightmareRespawn(p, spiritWorld, d);
+            sync(p, d);
+            src.sendSuccess(() -> Component.literal("Demonic nightmare pressure forced; fireballs and demons may now appear."), false);
         }
         return 1;
     }
