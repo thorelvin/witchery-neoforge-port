@@ -26,7 +26,9 @@ public record SyncPlayerDataPayload(
         int infusionEnergy,
         int infusionMaxEnergy,
         boolean inSpiritWorld,
-        boolean manifestedGhost
+        boolean manifestedGhost,
+        boolean spiritWorldDream,
+        boolean demonicNightmare
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncPlayerDataPayload> TYPE =
@@ -51,6 +53,8 @@ public record SyncPlayerDataPayload(
                             buf.readInt(),
                             buf.readInt(),
                             buf.readBoolean(),
+                            buf.readBoolean(),
+                            buf.readBoolean(),
                             buf.readBoolean()
                     );
                 }
@@ -72,6 +76,8 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.infusionMaxEnergy());
                     buf.writeBoolean(payload.inSpiritWorld());
                     buf.writeBoolean(payload.manifestedGhost());
+                    buf.writeBoolean(payload.spiritWorldDream());
+                    buf.writeBoolean(payload.demonicNightmare());
                 }
             };
 
@@ -89,7 +95,9 @@ public record SyncPlayerDataPayload(
                 data.getInfusionEnergy(),
                 data.getInfusionMaxEnergy(),
                 data.isInSpiritWorld(),
-                data.isManifestedGhost()
+                data.isManifestedGhost(),
+                data.isSpiritWorldDream(),
+                data.isDemonicNightmare()
         );
     }
 

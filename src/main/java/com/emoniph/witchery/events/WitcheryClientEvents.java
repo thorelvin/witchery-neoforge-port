@@ -185,10 +185,10 @@ public class WitcheryClientEvents {
             event.setBlue(0.1f);
             return;
         }
+        // Gate on the dimension only, matching onExtractLevelRenderState (the sky). The earlier extra
+        // isInSpiritWorld() gate could leave the fog overworld-blue while the sky was already spirit-
+        // coloured if that flag had not synced yet.
         if (!mc.level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
-
-        WitcheryPlayerData data = WitcheryAttachments.get(mc.player);
-        if (!data.isInSpiritWorld()) return;
 
         SpiritWorldSpecialEffects.SpiritColor color = SpiritWorldSpecialEffects.currentSpiritColor();
         event.setRed(color.red());
