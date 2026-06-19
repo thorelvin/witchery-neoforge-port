@@ -90,6 +90,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
         super.postProcess(level, structureManager, generator, random, box, chunkPos, pos);
 
         if (variant == Variant.CAVE) {
+            fillCaveExteriorBackfill(level, box);
             clearCaveInteriorBackfill(level, box);
         }
         placeLoot(level, box, random);
@@ -105,6 +106,9 @@ public class WitchWellPiece extends TemplateStructurePiece {
     private void clearSurfaceClutter(WorldGenLevel level, BoundingBox box) {
         for (int localX = variant.surfaceMinX(); localX <= variant.surfaceMaxX(); localX++) {
             for (int localZ = variant.surfaceMinZ(); localZ <= variant.surfaceMaxZ(); localZ++) {
+                if (!variant.surfaceColumn(localX, localZ)) {
+                    continue;
+                }
                 for (int localY = variant.surfaceYOffset(); localY <= variant.surfaceYOffset() + 8; localY++) {
                     BlockPos pos = templateWorldPos(localX, localY, localZ);
                     if (box.isInside(pos) && isClutter(level.getBlockState(pos))) {
@@ -116,10 +120,11 @@ public class WitchWellPiece extends TemplateStructurePiece {
     }
 
     private void clearCaveInterior(WorldGenLevel level, BoundingBox box) {
-        clearLocalBox(level, box, 8, 3, 4, 26, 12, 16);
-        clearLocalBox(level, box, 9, 13, 5, 26, 16, 15);
+        clearLocalBox(level, box, 13, 3, 8, 17, 18, 12);
+        clearLocalBox(level, box, 17, 6, 7, 22, 11, 13);
+        clearLocalBox(level, box, 20, 5, 5, 25, 11, 15);
+        clearLocalBox(level, box, 9, 13, 5, 19, 16, 15);
         clearLocalBox(level, box, 20, 13, 4, 26, 18, 16);
-        clearLocalBox(level, box, 13, 11, 8, 17, 18, 12);
     }
 
     private void clearLocalBox(WorldGenLevel level, BoundingBox box,
@@ -153,10 +158,36 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
     }
 
+    private void fillCaveExteriorBackfill(WorldGenLevel level, BoundingBox box) {
+        for (int x = variant.surfaceMinX(); x <= variant.surfaceMaxX(); x++) {
+            for (int z = variant.surfaceMinZ(); z <= variant.surfaceMaxZ(); z++) {
+                if (!variant.surfaceColumn(x, z)) {
+                    continue;
+                }
+                BlockPos surfacePos = templateWorldPos(x, variant.surfaceYOffset(), z);
+                BlockState support = supportState(adaptiveSurfaceState(level, surfacePos));
+                for (int y = variant.surfaceYOffset() - 1;
+                     y >= variant.surfaceYOffset() - variant.surfaceFillDepth();
+                     y--) {
+                    if (variant.clearsCaveBackfillAt(x, y, z)) {
+                        continue;
+                    }
+                    BlockPos pos = templateWorldPos(x, y, z);
+                    if (box.isInside(pos) && isReplaceableByStructures(level.getBlockState(pos))) {
+                        level.setBlock(pos, support, 2);
+                    }
+                }
+            }
+        }
+    }
+
     private void placeAdaptiveSurface(WorldGenLevel level, BoundingBox box) {
         int y = variant.surfaceYOffset();
         for (int localX = variant.surfaceMinX(); localX <= variant.surfaceMaxX(); localX++) {
             for (int localZ = variant.surfaceMinZ(); localZ <= variant.surfaceMaxZ(); localZ++) {
+                if (!variant.surfaceColumn(localX, localZ)) {
+                    continue;
+                }
                 BlockPos pos = templateWorldPos(localX, y, localZ);
                 if (!box.isInside(pos)) {
                     continue;
@@ -396,12 +427,26 @@ public class WitchWellPiece extends TemplateStructurePiece {
             return surfaceYOffset;
         }
 
+        boolean surfaceColumn(int localX, int localZ) {
+            if (this != CAVE) {
+                return true;
+            }
+            double centerX = (surfaceMinX + surfaceMaxX) / 2.0D;
+            double centerZ = (surfaceMinZ + surfaceMaxZ) / 2.0D;
+            double radiusX = (surfaceMaxX - surfaceMinX + 1) / 2.0D;
+            double radiusZ = (surfaceMaxZ - surfaceMinZ + 1) / 2.0D;
+            double dx = (localX - centerX) / radiusX;
+            double dz = (localZ - centerZ) / radiusZ;
+            return dx * dx + dz * dz <= 1.0D;
+        }
+
         boolean clearsCaveBackfillAt(int localX, int localY, int localZ) {
             return this == CAVE
-                    && (inBox(localX, localY, localZ, 13, 3, 4, 26, 11, 16)
-                    || inBox(localX, localY, localZ, 9, 13, 5, 26, 16, 15)
-                    || inBox(localX, localY, localZ, 20, 13, 4, 26, 18, 16)
-                    || inBox(localX, localY, localZ, 13, 11, 8, 17, 18, 12));
+                    && (inBox(localX, localY, localZ, 13, 3, 8, 17, 18, 12)
+                    || inBox(localX, localY, localZ, 17, 6, 7, 22, 11, 13)
+                    || inBox(localX, localY, localZ, 20, 5, 5, 25, 11, 15)
+                    || inBox(localX, localY, localZ, 9, 13, 5, 19, 16, 15)
+                    || inBox(localX, localY, localZ, 20, 13, 4, 26, 18, 16));
         }
 
         private static boolean inBox(int x, int y, int z,

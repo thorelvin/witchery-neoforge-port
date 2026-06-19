@@ -140,6 +140,11 @@ class NbtStructureTemplateTest {
         assertEquals(26, cave.surfaceMaxX());
         assertEquals(10, cave.surfaceFillDepth());
         assertEquals(4, regular.surfaceFillDepth());
+        assertTrue(cave.surfaceColumn(14, 10));
+        assertTrue(cave.surfaceColumn(25, 10));
+        assertFalse(cave.surfaceColumn(7, 3));
+        assertFalse(cave.surfaceColumn(26, 17));
+        assertTrue(regular.surfaceColumn(0, 0));
         assertTrue(cave.clearsCaveBackfillAt(14, 10, 10));
         assertTrue(cave.clearsCaveBackfillAt(22, 10, 15));
         assertTrue(cave.clearsCaveBackfillAt(25, 10, 10));
