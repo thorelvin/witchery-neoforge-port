@@ -153,6 +153,25 @@ public class WitcheryClient {
         event.register(WitcheryMenuTypes.DISTILLERY.get(),     DistilleryScreen::new);
     }
 
+    /**
+     * Make Wispy Cotton show its disturbed art during a nightmare by wrapping its baked
+     * {@link net.minecraft.client.renderer.block.model.BlockStateModel} so it delegates to the
+     * disturbed-cotton model when {@link com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects#isNightmareLike()}.
+     */
+    public static void onModifyBakingResult(net.neoforged.neoforge.client.event.ModelEvent.ModifyBakingResult event) {
+        var models = event.getBakingResult().blockStateModels();
+        net.minecraft.world.level.block.state.BlockState wispy =
+                WitcheryBlocks.WISPY_COTTON.get().defaultBlockState();
+        net.minecraft.world.level.block.state.BlockState disturbed =
+                WitcheryBlocks.DISTURBED_COTTON.get().defaultBlockState();
+        net.minecraft.client.renderer.block.model.BlockStateModel wispyModel = models.get(wispy);
+        net.minecraft.client.renderer.block.model.BlockStateModel disturbedModel = models.get(disturbed);
+        if (wispyModel != null && disturbedModel != null) {
+            models.put(wispy, new com.emoniph.witchery.client.renderer.NightmareCottonModel(
+                    wispyModel, disturbedModel));
+        }
+    }
+
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> {
                     if (tintIndex != 0 || level == null || pos == null) {

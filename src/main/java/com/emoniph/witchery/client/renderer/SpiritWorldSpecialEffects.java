@@ -72,6 +72,15 @@ public final class SpiritWorldSpecialEffects {
         return new SpiritFog(6.0F, 72.0F);
     }
 
+    /**
+     * True when the local client is currently seeing a nightmare (ordinary or demonic). Used to swap
+     * Wispy Cotton to its disturbed appearance, matching the source rule that nightmare cotton yields
+     * Disturbed Cotton.
+     */
+    public static boolean isNightmareLike() {
+        return currentSpiritState().nightmareLike();
+    }
+
     private static SpiritState currentSpiritState() {
         Player player = Minecraft.getInstance().player;
         boolean nightmare = false;

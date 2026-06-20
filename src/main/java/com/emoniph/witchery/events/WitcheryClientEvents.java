@@ -43,11 +43,63 @@ public class WitcheryClientEvents {
 
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
 
+    private static boolean lastNightmareLike;
+
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
         com.emoniph.witchery.client.ScryingCameraState.clientTick();
         applySwimmingBoost();
+        refreshCottonOnNightmareChange();
+    }
+
+    /**
+     * Wispy Cotton swaps to its disturbed art via a dynamic baked model; that art is baked into the
+     * chunk mesh, so a nightmare beginning/ending won't show until the section rebuilds. Force a
+     * re-mesh on the transition (rare) so the change is visible immediately.
+     */
+    private static void refreshCottonOnNightmareChange() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        boolean nightmareLike = com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects.isNightmareLike();
+        if (nightmareLike != lastNightmareLike) {
+            lastNightmareLike = nightmareLike;
+            if (mc.levelRenderer != null) {
+                mc.levelRenderer.allChanged();
+            }
+        }
+    }
+
+    /**
+     * Close an open guidebook with the <strong>X</strong> key (mirrors Escape). Covers the native
+     * Modonomicon books (Witches' Primer and friends) and the vanilla read-only book screen used for
+     * the Immortal's Observations. Skipped while a text field is focused (e.g. a Modonomicon search
+     * box) so the key still types there.
+     */
+    @SubscribeEvent
+    public static void onBookScreenKeyPressed(net.neoforged.neoforge.client.event.ScreenEvent.KeyPressed.Pre event) {
+        if (event.getKeyCode() != org.lwjgl.glfw.GLFW.GLFW_KEY_X) {
+            return;
+        }
+        net.minecraft.client.gui.screens.Screen screen = event.getScreen();
+        if (!isCloseableBookScreen(screen)) {
+            return;
+        }
+        if (screen.getFocused() instanceof net.minecraft.client.gui.components.EditBox) {
+            return; // reader is typing (search box) — let the key through
+        }
+        screen.onClose();
+        event.setCanceled(true);
+    }
+
+    private static boolean isCloseableBookScreen(net.minecraft.client.gui.screens.Screen screen) {
+        if (screen instanceof net.minecraft.client.gui.screens.inventory.BookViewScreen) {
+            return true; // vanilla read-only book (Immortal's Observations)
+        }
+        // Native Modonomicon guidebook screens all live under this gui.book package.
+        return screen.getClass().getName().startsWith("com.klikli_dev.modonomicon.client.gui.book.");
     }
 
     @SubscribeEvent

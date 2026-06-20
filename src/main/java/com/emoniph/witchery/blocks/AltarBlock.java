@@ -4,10 +4,7 @@ import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -18,7 +15,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import static com.emoniph.witchery.init.WitcheryBlockEntities.ALTAR;
@@ -69,18 +65,8 @@ public class AltarBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
-    /** Right-click to inspect current power level. */
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof AltarBlockEntity altar) {
-            player.displayClientMessage(Component.literal(
-                    "Altar power: " + altar.getPower() + " / " + altar.getEffectiveMaxPower()
-                    + "  (recharge: " + altar.getEffectiveRecharge() + "/20t"
-                    + ", range: " + altar.getRange()
-                    + ", valid: " + altar.hasValidStructure() + ")"), false);
-        }
-        return InteractionResult.SUCCESS;
-    }
+    // Altar power is inspected with the Debug Inspector item, not by clicking the altar — the old
+    // empty-hand "Altar power: ..." chat readout was a debug leak and has been removed.
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {

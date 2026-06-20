@@ -147,7 +147,7 @@ public class CaneSwordItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context,
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.accept(Component.translatable("item.witchery.cane_sword.tip.toggle")

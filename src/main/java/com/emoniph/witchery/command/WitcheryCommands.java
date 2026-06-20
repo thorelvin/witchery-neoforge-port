@@ -1674,7 +1674,8 @@ public class WitcheryCommands {
         verifyBiomeFeature(biomeJson, "witchery:spirit_dead_bush", failures);
         verifyBiomeFeature(biomeJson, "witchery:spirit_tree", failures);
         verifyBiomeFeature(biomeJson, "witchery:wispy_cotton", failures);
-        verifyBiomeFeature(biomeJson, "witchery:disturbed_cotton", failures);
+        // Disturbed Cotton intentionally has no worldgen (source parity): it is only obtained by
+        // harvesting Wispy Cotton during a nightmare, and the wispy block shows its disturbed art then.
     }
 
     private static void verifyJsonInt(JsonObject json, String key, int expected, String label, java.util.List<String> failures) {
