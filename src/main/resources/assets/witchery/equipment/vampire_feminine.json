@@ -1,0 +1,10 @@
+{
+  "layers": {
+    "humanoid": [
+      { "texture": "witchery:vampire_feminine" }
+    ],
+    "humanoid_leggings": [
+      { "texture": "witchery:vampire_feminine" }
+    ]
+  }
+}

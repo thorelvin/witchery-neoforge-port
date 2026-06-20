@@ -12,15 +12,14 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 /**
- * Natural worldgen for the {@link VanishingHut}. Places a small witch's hut on flat, dry land in
- * forests and swamps. The block placement, resident, and (later) relocation are all handled by
+ * Natural worldgen for the {@link VanishingHut}. Places the NBT hut on flat, dry land in
+ * forests and swamps. The block placement, resident, and relocation are all handled by
  * {@link VanishingHutPiece} reusing the same {@code VanishingHut} build logic the QA command uses.
  */
 public class VanishingHutStructure extends Structure {
 
     public static final MapCodec<VanishingHutStructure> CODEC = simpleCodec(VanishingHutStructure::new);
 
-    private static final int FOOTPRINT = VanishingHut.HALF * 2 + 1; // 5x5
     private static final int TERRAIN_PADDING = 1;
     private static final int MAX_FOOTPRINT_HEIGHT_VARIANCE = 2;
 
@@ -36,14 +35,15 @@ public class VanishingHutStructure extends Structure {
         if (!hasDryLandFootprint(ctx, centerX, centerZ)) {
             return Optional.empty();
         }
-        OptionalInt groundY = findFootprintGroundY(ctx, centerX, centerZ);
-        if (groundY.isEmpty()) {
+        OptionalInt anchorY = findFootprintAnchorY(ctx, centerX, centerZ);
+        if (anchorY.isEmpty()) {
             return Optional.empty();
         }
 
-        // groundY is the top solid block; the buried anchor sits there and the floor one above.
+        // The template's local y=1 is its visible surface/floor layer, so the hidden anchor is one
+        // block below the natural top solid block.
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder ->
-                builder.addPiece(new VanishingHutPiece(centerX, groundY.getAsInt(), centerZ)));
+                builder.addPiece(new VanishingHutPiece(centerX, anchorY.getAsInt(), centerZ)));
     }
 
     @Override
@@ -52,8 +52,10 @@ public class VanishingHutStructure extends Structure {
     }
 
     private static boolean hasDryLandFootprint(GenerationContext ctx, int centerX, int centerZ) {
-        for (int dx = -VanishingHut.HALF - TERRAIN_PADDING; dx <= VanishingHut.HALF + TERRAIN_PADDING; dx++) {
-            for (int dz = -VanishingHut.HALF - TERRAIN_PADDING; dz <= VanishingHut.HALF + TERRAIN_PADDING; dz++) {
+        for (int dx = VanishingHut.MIN_DX - TERRAIN_PADDING;
+             dx <= VanishingHut.MAX_DX + TERRAIN_PADDING; dx++) {
+            for (int dz = VanishingHut.MIN_DZ - TERRAIN_PADDING;
+                 dz <= VanishingHut.MAX_DZ + TERRAIN_PADDING; dz++) {
                 int wx = centerX + dx;
                 int wz = centerZ + dz;
                 if (isOverWater(ctx, wx, wz) || isWaterBiome(ctx, wx, wz)) {
@@ -64,11 +66,11 @@ public class VanishingHutStructure extends Structure {
         return true;
     }
 
-    private static OptionalInt findFootprintGroundY(GenerationContext ctx, int centerX, int centerZ) {
+    private static OptionalInt findFootprintAnchorY(GenerationContext ctx, int centerX, int centerZ) {
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
-        for (int dx = -VanishingHut.HALF; dx <= VanishingHut.HALF; dx++) {
-            for (int dz = -VanishingHut.HALF; dz <= VanishingHut.HALF; dz++) {
+        for (int dx = VanishingHut.MIN_DX; dx <= VanishingHut.MAX_DX; dx++) {
+            for (int dz = VanishingHut.MIN_DZ; dz <= VanishingHut.MAX_DZ; dz++) {
                 int y = surfaceY(ctx, centerX + dx, centerZ + dz);
                 minY = Math.min(minY, y);
                 maxY = Math.max(maxY, y);
@@ -77,7 +79,7 @@ public class VanishingHutStructure extends Structure {
         if (maxY - minY > MAX_FOOTPRINT_HEIGHT_VARIANCE) {
             return OptionalInt.empty();
         }
-        return OptionalInt.of(minY);
+        return OptionalInt.of(minY - 1);
     }
 
     private static boolean isOverWater(GenerationContext ctx, int x, int z) {

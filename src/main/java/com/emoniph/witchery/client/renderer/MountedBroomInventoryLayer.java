@@ -43,7 +43,7 @@ public class MountedBroomInventoryLayer extends RenderLayer<AvatarRenderState, P
         if (!(entity instanceof Player player) || !(player.getVehicle() instanceof BroomEntity)) return;
 
         poseStack.pushPose();
-        poseStack.translate(0.0F, 0.6F, 0.0F);
+        poseStack.translate(0.0F, 0.2F, 0.0F);
         model.setupAnim(state);
         collector.submitModel(model, state, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
                 LightTexture.FULL_BRIGHT, LivingEntityRenderer.getOverlayCoords(state, 0.0F),

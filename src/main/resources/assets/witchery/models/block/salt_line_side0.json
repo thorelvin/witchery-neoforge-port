@@ -1,0 +1,6 @@
+{
+  "parent": "witchery:block/salt_line_side",
+  "textures": {
+    "line": "witchery:block/salt_line_line0"
+  }
+}

@@ -41,6 +41,7 @@ public class BroomEntity extends Mob {
     private static final double BASE_SPEED_LIMIT = 0.9;
     private static final double ENCHANTED_SPEED_BONUS = 0.15;
     private static final double SIDEWAYS_CONTROL = 0.25;
+    private static final double VERTICAL_KEY_CONTROL = 0.12;
     private static final float BREAK_DAMAGE_THRESHOLD = 40.0F;
 
     private static final EntityDataAccessor<Boolean> DATA_ENCHANTED =
@@ -57,6 +58,8 @@ public class BroomEntity extends Mob {
     private double speedMultiplier = BASE_SPEED_MULTIPLIER;
     private boolean riderHasOwlFamiliar;
     private boolean riderHasSoaringBrew;
+    private boolean riderWantsUp;
+    private boolean riderWantsDown;
 
     public BroomEntity(EntityType<? extends BroomEntity> type, Level level) {
         super(type, level);
@@ -145,6 +148,7 @@ public class BroomEntity extends Mob {
         } else {
             riderHasOwlFamiliar = false;
             riderHasSoaringBrew = false;
+            setRiderVerticalInput(false, false);
             if (isLocallyControlledBroom()) {
                 handleUnriddenMovement();
                 move(MoverType.SELF, getDeltaMovement());
@@ -154,6 +158,11 @@ public class BroomEntity extends Mob {
                 setDeltaMovement(Vec3.ZERO);
             }
         }
+    }
+
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderWantsUp = up;
+        this.riderWantsDown = down;
     }
 
     private void decayHitState() {
@@ -179,6 +188,7 @@ public class BroomEntity extends Mob {
         alignToRider(rider);
 
         Vec3 motion = getDeltaMovement();
+        boolean hasVerticalKeyInput = riderWantsUp != riderWantsDown;
         if (rider.zza > 0.0F) {
             double yawRadians = Math.toRadians(rider.getYRot());
             double sinYaw = -Math.sin(yawRadians);
@@ -191,13 +201,15 @@ public class BroomEntity extends Mob {
                     cosYaw * speedMultiplier * controlFactor
             );
 
-            double pitch = -Math.sin(Math.toRadians(rider.getXRot()));
-            if (pitch > -0.5 && pitch < 0.2) {
-                pitch = 0.0;
-            } else if (pitch < 0.0) {
-                pitch *= 0.5;
+            if (!hasVerticalKeyInput) {
+                double pitch = -Math.sin(Math.toRadians(rider.getXRot()));
+                if (pitch > -0.5 && pitch < 0.2) {
+                    pitch = 0.0;
+                } else if (pitch < 0.0) {
+                    pitch *= 0.5;
+                }
+                motion = new Vec3(motion.x, pitch * speedMultiplier * 2.0, motion.z);
             }
-            motion = new Vec3(motion.x, pitch * speedMultiplier * 2.0, motion.z);
 
             if (riderHasOwlFamiliar) {
                 motion = motion.add(
@@ -208,6 +220,14 @@ public class BroomEntity extends Mob {
             }
         } else {
             motion = new Vec3(motion.x * 0.9, motion.y * 0.9, motion.z * 0.9);
+        }
+
+        if (hasVerticalKeyInput) {
+            double verticalControl = VERTICAL_KEY_CONTROL
+                    + (riderHasSoaringBrew ? 0.04 : 0.0)
+                    + (riderHasOwlFamiliar ? 0.04 : 0.0)
+                    + (isEnchanted() ? 0.02 : 0.0);
+            motion = new Vec3(motion.x, riderWantsUp ? verticalControl : -verticalControl, motion.z);
         }
 
         motion = clampSpeed(motion);
@@ -357,7 +377,7 @@ public class BroomEntity extends Mob {
     @Override
     public void positionRider(Entity passenger, MoveFunction moveFunc) {
         if (hasPassenger(passenger)) {
-            double offsetY = getBbHeight() + 0.1;
+            double offsetY = getBbHeight() * 0.55D;
             Vec3 pos = new Vec3(getX(), getY() + offsetY, getZ());
             moveFunc.accept(passenger, pos.x, pos.y, pos.z);
             if (passenger instanceof LivingEntity rider) {

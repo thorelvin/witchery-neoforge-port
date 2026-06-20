@@ -144,7 +144,17 @@ public class WitcheryClient {
         Map.entry(VillageGuardModel.ARMOR_HEAD_LAYER,  VillageGuardModel::createArmorHeadLayer),
         Map.entry(LeonardModel.LAYER_LOCATION,    LeonardModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.LostSoulModel.LAYER_LOCATION,
-                  com.emoniph.witchery.client.model.LostSoulModel::createBodyLayer)
+                  com.emoniph.witchery.client.model.LostSoulModel::createBodyLayer),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE.layer,
+                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE, false)),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE.slimLayer,
+                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE, true)),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE.layer,
+                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE, false)),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE.slimLayer,
+                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE, true)),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC.layer,
+                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC, false))
     );
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -260,6 +270,23 @@ public class WitcheryClient {
                 return 0xFF000000 | BrewLiquidFluid.brewColor(getter, pos);
             }
         }, WitcheryFluids.BREW_LIQUID_TYPE.value());
+
+        // Vampire clothing wears a custom coat/dress/chestplate model (not the flat armor silhouette).
+        event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
+                        com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_TOP_HAT.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_DRESS_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_COAT.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_TROUSERS.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_OXFORD_BOOTS.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_SHOES.get());
+        event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
+                        com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_VEIL_HAT.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_DRESS_JACKET.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CORSET.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_SKIRTED_TROUSERS.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_SKIRT.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_HEELS.get());
+        event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
+                        com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_HELMET.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHESTPLATE.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_BOOTS.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
@@ -378,7 +405,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.EARTH_ROCK.get(),
                 net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SUN_GRENADE.get(),
-                net.minecraft.client.renderer.entity.NoopRenderer::new);
+                net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPELL_EFFECT.get(),
                 net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SCRYING_EYE.get(),

@@ -5,12 +5,14 @@ import com.emoniph.witchery.blocks.BeartrapBlock;
 import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
 import com.emoniph.witchery.client.renderer.SpiritWorldSpecialEffects;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.BroomEntity;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.EarmuffsItem;
+import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
@@ -33,7 +35,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,13 +46,47 @@ public class WitcheryClientEvents {
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
 
     private static boolean lastNightmareLike;
+    private static boolean lastBroomControlRiding;
+    private static boolean lastBroomControlUp;
+    private static boolean lastBroomControlDown;
 
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
         com.emoniph.witchery.client.ScryingCameraState.clientTick();
         applySwimmingBoost();
+        syncBroomControls();
         refreshCottonOnNightmareChange();
+    }
+
+    private static void syncBroomControls() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || !(mc.player.getVehicle() instanceof BroomEntity broom)) {
+            if (lastBroomControlRiding) {
+                sendBroomControls(false, false);
+            }
+            lastBroomControlRiding = false;
+            lastBroomControlUp = false;
+            lastBroomControlDown = false;
+            return;
+        }
+
+        boolean up = mc.options.keyJump.isDown();
+        boolean down = mc.options.keySprint.isDown();
+        broom.setRiderVerticalInput(up, down);
+        if (!lastBroomControlRiding || up != lastBroomControlUp || down != lastBroomControlDown) {
+            sendBroomControls(up, down);
+            lastBroomControlRiding = true;
+            lastBroomControlUp = up;
+            lastBroomControlDown = down;
+        }
+    }
+
+    private static void sendBroomControls(boolean up, boolean down) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.getConnection() != null) {
+            ClientPacketDistributor.sendToServer(new BroomControlPayload(up, down));
+        }
     }
 
     /**
@@ -180,6 +216,24 @@ public class WitcheryClientEvents {
         sky.shouldRenderDarkDisc = event.getCamera().position().y < 0.0D;
     }
 
+    /**
+     * Vampire clothing ships slim-arm models/textures, but vanilla armor is slim-agnostic so the armor
+     * model hook can't see the player's skin. Stash the slim flag for the duration of this player's render
+     * (cleared in Post) so {@link com.emoniph.witchery.client.VampireArmorClientExtensions} can pick the
+     * slim model + texture. Non-player wearers never fire this event and default to wide, which is correct.
+     */
+    @SubscribeEvent
+    public static void onRenderPlayerSlimPre(RenderPlayerEvent.Pre<?> event) {
+        boolean slim = event.getRenderState().skin.model()
+                == net.minecraft.world.entity.player.PlayerModelType.SLIM;
+        com.emoniph.witchery.client.VampireArmorClientExtensions.SLIM_RENDER.set(slim);
+    }
+
+    @SubscribeEvent
+    public static void onRenderPlayerSlimPost(RenderPlayerEvent.Post<?> event) {
+        com.emoniph.witchery.client.VampireArmorClientExtensions.SLIM_RENDER.set(Boolean.FALSE);
+    }
+
     @SubscribeEvent
     public static void onRenderWerewolfPlayerPre(RenderPlayerEvent.Pre<?> event) {
         AvatarRenderState state = event.getRenderState();
@@ -225,7 +279,7 @@ public class WitcheryClientEvents {
         if (!data.isWerewolf() || data.getTransformationLevel() <= 0.01F) return;
         if (!player.isShiftKeyDown()) return;
         if (player.getXRot() > -75f) return;
-        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(HowlPayload.INSTANCE);
+        ClientPacketDistributor.sendToServer(HowlPayload.INSTANCE);
     }
 
     @SubscribeEvent

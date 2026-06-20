@@ -32,8 +32,9 @@ public class VanishingHutPiece extends StructurePiece {
 
     public VanishingHutPiece(int centerX, int anchorY, int centerZ) {
         super(WitcheryStructures.VANISHING_HUT_PIECE.get(), 0, new BoundingBox(
-                centerX - VanishingHut.HALF, anchorY, centerZ - VanishingHut.HALF,
-                centerX + VanishingHut.HALF, anchorY + VanishingHut.ROOF_DY, centerZ + VanishingHut.HALF));
+                centerX + VanishingHut.MIN_DX, anchorY, centerZ + VanishingHut.MIN_DZ,
+                centerX + VanishingHut.MAX_DX, anchorY + VanishingHut.ROOF_DY,
+                centerZ + VanishingHut.MAX_DZ));
         setOrientation(Direction.NORTH);
     }
 
@@ -47,8 +48,8 @@ public class VanishingHutPiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager mgr, ChunkGenerator gen,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        int centerX = boundingBox.minX() + VanishingHut.HALF;
-        int centerZ = boundingBox.minZ() + VanishingHut.HALF;
+        int centerX = boundingBox.minX() - VanishingHut.MIN_DX;
+        int centerZ = boundingBox.minZ() - VanishingHut.MIN_DZ;
         BlockPos anchor = new BlockPos(centerX, boundingBox.minY(), centerZ);
 
         clearClutter(level, centerX, centerZ, boundingBox.minY());
@@ -67,8 +68,8 @@ public class VanishingHutPiece extends StructurePiece {
     private static void clearClutter(WorldGenLevel level, int centerX, int centerZ, int anchorY) {
         int floorY = anchorY + 1;
         int roofY = anchorY + VanishingHut.ROOF_DY;
-        for (int dx = -VanishingHut.HALF; dx <= VanishingHut.HALF; dx++) {
-            for (int dz = -VanishingHut.HALF; dz <= VanishingHut.HALF; dz++) {
+        for (int dx = VanishingHut.MIN_DX; dx <= VanishingHut.MAX_DX; dx++) {
+            for (int dz = VanishingHut.MIN_DZ; dz <= VanishingHut.MAX_DZ; dz++) {
                 for (int y = floorY; y <= roofY; y++) {
                     BlockPos cell = new BlockPos(centerX + dx, y, centerZ + dz);
                     if (isClutter(level.getBlockState(cell))) {

@@ -208,17 +208,17 @@ public final class VanishingHutEvents {
             }
             Integer floorY = validFloorY(level, x, z);
             if (floorY != null) {
-                return new BlockPos(x, floorY - 1, z);
+                return new BlockPos(x, floorY - 2, z);
             }
         }
         return null;
     }
 
-    /** The floor Y for a valid, level, dry, open 5x5 footprint centered at (x,z), or null. */
+    /** The first-air Y over a valid, level, dry, open footprint centered at (x,z), or null. */
     private static Integer validFloorY(ServerLevel level, int x, int z) {
         int baseFloor = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-        for (int dx = -VanishingHut.HALF; dx <= VanishingHut.HALF; dx++) {
-            for (int dz = -VanishingHut.HALF; dz <= VanishingHut.HALF; dz++) {
+        for (int dx = VanishingHut.MIN_DX; dx <= VanishingHut.MAX_DX; dx++) {
+            for (int dz = VanishingHut.MIN_DZ; dz <= VanishingHut.MAX_DZ; dz++) {
                 int cx = x + dx;
                 int cz = z + dz;
                 int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE, cx, cz);
@@ -231,8 +231,9 @@ public final class VanishingHutEvents {
                 if (!groundFluid.isEmpty() || !groundState.isSolidRender()) {
                     return null; // water/lava or non-solid footing
                 }
-                // Floor + the wall column must be open.
-                for (int y = surface; y <= surface + VanishingHut.WALL_HEIGHT + 1; y++) {
+                // The template's visible surface replaces the top solid block; everything above
+                // that must be open enough for the NBT volume.
+                for (int y = surface; y <= surface + VanishingHut.ROOF_DY; y++) {
                     BlockState above = level.getBlockState(new BlockPos(cx, y, cz));
                     if (!above.isAir() && !above.canBeReplaced()) {
                         return null;

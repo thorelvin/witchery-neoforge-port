@@ -31,7 +31,14 @@ import net.minecraft.world.phys.HitResult;
 import java.util.List;
 import java.util.UUID;
 
-public class SunGrenadeEntity extends ThrowableProjectile {
+public class SunGrenadeEntity extends ThrowableProjectile
+        implements net.minecraft.world.entity.projectile.ItemSupplier {
+
+    // Synced so the client (ThrownItemRenderer) can show the correct thrown item — a Sun Grenade,
+    // or the Duplication Grenade when used in duplication mode.
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> DATA_DUPLICATION =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(
+                    SunGrenadeEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
 
     private static final int MAX_RELEASE_TICKS = 200;
     private static final double ACTIVE_UNDEAD_RADIUS = 1.0;
@@ -58,13 +65,21 @@ public class SunGrenadeEntity extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
-        // no extra data needed
+        builder.define(DATA_DUPLICATION, false);
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(this.entityData.get(DATA_DUPLICATION)
+                ? WitcheryItems.DUPLICATION_GRENADE.get()
+                : WitcheryItems.SUN_GRENADE.get());
     }
 
     public void setDuplicationMode(UUID ownerUUID, String ownerName) {
         this.duplicationMode = true;
         this.duplicationOwnerUUID = ownerUUID;
         this.duplicationOwnerName = ownerName == null ? "" : ownerName;
+        this.entityData.set(DATA_DUPLICATION, true);
     }
 
     @Override
@@ -157,6 +172,7 @@ public class SunGrenadeEntity extends ThrowableProjectile {
             lightBlockPos = null;
         }
         duplicationMode = tag.getBooleanOr("DuplicationMode", false);
+        this.entityData.set(DATA_DUPLICATION, duplicationMode);
         String uuid = tag.getStringOr("DuplicationOwnerUUID", "");
         if (!uuid.isEmpty()) {
             try {

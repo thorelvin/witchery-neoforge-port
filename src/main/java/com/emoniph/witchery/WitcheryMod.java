@@ -18,6 +18,7 @@ import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.init.WitcheryRecipeSerializers;
 import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.init.WitcherySoundEvents;
+import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
@@ -114,6 +115,10 @@ public class WitcheryMod {
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,
                         HowlPayload::handleOnServer)
+                .playToServer(
+                        BroomControlPayload.TYPE,
+                        BroomControlPayload.STREAM_CODEC,
+                        BroomControlPayload::handleOnServer)
                 .playToServer(
                         PlacedModonomiconPageTurnPayload.TYPE,
                         PlacedModonomiconPageTurnPayload.STREAM_CODEC,
