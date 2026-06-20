@@ -37,4 +37,20 @@ public class WitcheryDataComponents {
                             .persistent(com.emoniph.witchery.brewing.BrewCurse.CODEC)
                             .networkSynchronized(com.emoniph.witchery.brewing.BrewCurse.STREAM_CODEC)
                             .build());
+
+    /** Player-authored warning text bound into a composed brew bottle. */
+    public static final Supplier<DataComponentType<com.emoniph.witchery.brewing.BrewWarningText>> BREW_WARNING =
+            DATA_COMPONENTS.register("brew_warning", () ->
+                    DataComponentType.<com.emoniph.witchery.brewing.BrewWarningText>builder()
+                            .persistent(com.emoniph.witchery.brewing.BrewWarningText.CODEC)
+                            .networkSynchronized(com.emoniph.witchery.brewing.BrewWarningText.STREAM_CODEC)
+                            .build());
+
+    /** A triggered warning curse stored on an item. */
+    public static final Supplier<DataComponentType<com.emoniph.witchery.brewing.BrewWarningCurse>> BREW_WARNING_CURSE =
+            DATA_COMPONENTS.register("brew_warning_curse", () ->
+                    DataComponentType.<com.emoniph.witchery.brewing.BrewWarningCurse>builder()
+                            .persistent(com.emoniph.witchery.brewing.BrewWarningCurse.CODEC)
+                            .networkSynchronized(com.emoniph.witchery.brewing.BrewWarningCurse.STREAM_CODEC)
+                            .build());
 }

@@ -118,7 +118,7 @@ public final class Brews {
         public enum Kind {
             EFFECT, ACTION, CAPACITY, STRENGTH, DURATION, INVERT, SPLASH, GAS, LIQUID, TRIGGER, COLOR, DRINK_SPEED,
             EXTENT, LIFETIME, NO_PARTICLES, DISABLE_BLOCK_TARGET, DISABLE_ENTITY_TARGET,
-            DISABLE_STRENGTH_CEILING, RITUAL
+            DISABLE_STRENGTH_CEILING, RITUAL, WARNING
         }
 
         public enum BrewAction {
@@ -510,6 +510,8 @@ public final class Brews {
         // Zombie Head = source triggered dispersal: the brew is not released on impact but stored as a
         // delayed "curse" on items it splashes, released later when the cursed item is used.
         register(Items.ZOMBIE_HEAD, Ingredient.modifier(Ingredient.Kind.TRIGGER));
+        // Writable Book = port-only warning binding: captures nearby spoken words into triggered brews.
+        register(Items.WRITABLE_BOOK, Ingredient.modifier(Ingredient.Kind.WARNING));
         // Tongue of Dog = source BrewActionRitual trigger. It stays explicit so dropped Tongue of Dog
         // still feeds kettle recipes instead of being swallowed by the auto-stir loop.
         registerExplicit(WitcheryItems.TONGUE_OF_DOG.get(), Ingredient.ritual(SOURCE_RITUAL_TRIGGER_POWER_COST));
@@ -620,7 +622,7 @@ public final class Brews {
                 case DISABLE_BLOCK_TARGET -> mods.disableBlockTarget = true;
                 case DISABLE_ENTITY_TARGET -> mods.disableEntityTarget = true;
                 case DISABLE_STRENGTH_CEILING -> mods.strengthCeilingDisabled = true;
-                case SPLASH, GAS, LIQUID, TRIGGER, COLOR, DRINK_SPEED, RITUAL -> { /* presentation/dispersal/use-time only */ }
+                case SPLASH, GAS, LIQUID, TRIGGER, COLOR, DRINK_SPEED, RITUAL, WARNING -> { /* presentation/dispersal/use-time only */ }
                 case EXTENT -> {
                     if (resolved.extent < ing.modifierCeiling()) {
                         resolved.extent++;
@@ -2501,6 +2503,9 @@ public final class Brews {
             }
         }
         if (primary == null) {
+            if (BrewWarningMessages.hasBinding(items)) {
+                return Component.translatable("item.witchery.brew_warning");
+            }
             return Component.translatable("item.witchery.brew_mundane");
         }
         String prefix = strong && lengthy ? "witchery.brew.potent" : strong ? "witchery.brew.strong" : lengthy ? "witchery.brew.lasting" : "witchery.brew.of";

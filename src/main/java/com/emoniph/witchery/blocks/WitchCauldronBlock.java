@@ -1,10 +1,13 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.brewing.BrewWarningMessages;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -473,6 +476,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             }
         }
         ItemStack result = com.emoniph.witchery.item.BrewContainers.bottle(contents);
+        bindWarningText(result, contents, be, level, pos, player);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
@@ -508,6 +512,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             }
         }
         ItemStack result = com.emoniph.witchery.item.BrewContainers.bucket(contents);
+        bindWarningText(result, contents, be, level, pos, player);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
@@ -518,6 +523,32 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6F, 0.9F);
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+    }
+
+    private static void bindWarningText(ItemStack result,
+                                        com.emoniph.witchery.brewing.BrewContents contents,
+                                        WitchCauldronBlockEntity be,
+                                        Level level,
+                                        BlockPos pos,
+                                        Player player) {
+        if (!BrewWarningMessages.hasBinding(contents.items())) {
+            return;
+        }
+        BrewWarningText warning = be.getWarningText();
+        if ((warning == null || warning.isEmpty()) && level instanceof ServerLevel serverLevel) {
+            warning = BrewWarningMessages.findNearby(serverLevel, pos, player).orElse(null);
+            be.setWarningText(warning);
+        }
+        if (warning == null || warning.isEmpty()) {
+            if (!level.isClientSide()) {
+                player.displayClientMessage(Component.translatable("witchery.cauldron.brew.warning.no_words"), true);
+            }
+            return;
+        }
+        result.set(WitcheryDataComponents.BREW_WARNING.get(), warning);
+        if (!level.isClientSide()) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.warning.bound"), true);
+        }
     }
 
     private double getContentHeight(BlockState state) {

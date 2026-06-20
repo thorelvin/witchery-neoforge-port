@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Locks the generic composed-brew container/serializer architecture: a brew is persisted only as its
@@ -47,6 +48,8 @@ class BrewContainerArchitectureTest {
         assertSame(Brews.Dispersal.GAS, Brews.bottledDispersal(List.of(Items.SPIDER_EYE, WitcheryItems.BAT_WOOL.get())));
         assertSame(Brews.Dispersal.LIQUID, Brews.bottledDispersal(List.of(Items.SPIDER_EYE, WitcheryItems.WORMWOOD.get())));
         assertSame(Brews.Dispersal.TRIGGERED, Brews.bottledDispersal(List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD)));
+        assertSame(Brews.Dispersal.TRIGGERED, Brews.bottledDispersal(List.of(Items.WRITABLE_BOOK, Items.ZOMBIE_HEAD)));
+        assertTrue(Brews.isIngredient(Items.WRITABLE_BOOK));
     }
 
     @Test
@@ -68,5 +71,14 @@ class BrewContainerArchitectureTest {
         ItemStack bucket = BrewContainers.bucket(splash);
         assertSame(WitcheryItems.BREW_BUCKET.get(), bucket.getItem());
         assertEquals(splash, bucket.get(WitcheryDataComponents.BREW_CONTENTS.get()));
+    }
+
+    @Test
+    void warningBrewUsesTriggeredSplashContainer() {
+        BrewContents warning = new BrewContents(List.of(Items.WRITABLE_BOOK, Items.ZOMBIE_HEAD));
+        ItemStack bottle = BrewContainers.bottle(warning);
+
+        assertSame(WitcheryItems.SPLASH_BREW_BOTTLE.get(), bottle.getItem());
+        assertEquals(warning, bottle.get(WitcheryDataComponents.BREW_CONTENTS.get()));
     }
 }

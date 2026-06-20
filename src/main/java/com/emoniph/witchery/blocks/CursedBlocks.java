@@ -1,8 +1,11 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.brewing.CursedBlockData;
+import com.emoniph.witchery.brewing.CursedBlockWarningData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -42,6 +45,15 @@ public final class CursedBlocks {
         return curseAt(level, hitPos.relative(hit.getDirection()), brew, id);
     }
 
+    /** Bind warning text to the block the splash hit, if it is a curseable type. */
+    public static boolean tryWarn(ServerLevel level, BlockHitResult hit, BrewWarningText warning) {
+        BlockPos hitPos = hit.getBlockPos();
+        if (warnAt(level, hitPos, warning)) {
+            return true;
+        }
+        return warnAt(level, hitPos.relative(hit.getDirection()), warning);
+    }
+
     private static boolean curseAt(ServerLevel level, BlockPos pos, BrewContents brew, @Nullable UUID thrower) {
         BlockPos target = curseTarget(level.getBlockState(pos), pos);
         if (target == null) {
@@ -50,6 +62,23 @@ public final class CursedBlocks {
         CursedBlockData.get(level).curse(target, brew, thrower);
         level.sendParticles(ParticleTypes.WITCH, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5,
                 8, 0.3, 0.3, 0.3, 0.0);
+        return true;
+    }
+
+    private static boolean warnAt(ServerLevel level, BlockPos pos, BrewWarningText warning) {
+        if (warning == null || warning.isEmpty()) {
+            return false;
+        }
+        BlockPos target = curseTarget(level.getBlockState(pos), pos);
+        if (target == null) {
+            return false;
+        }
+        CursedBlockWarningData.get(level).warn(target, warning.message(), BrewWarningText.TRIGGER_COOLDOWN_TICKS);
+        level.sendParticles(new DustParticleOptions(BrewWarningText.COLOR, 0.85F),
+                target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5,
+                10, 0.3, 0.3, 0.3, 0.0);
+        level.sendParticles(ParticleTypes.WITCH, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5,
+                6, 0.3, 0.3, 0.3, 0.0);
         return true;
     }
 

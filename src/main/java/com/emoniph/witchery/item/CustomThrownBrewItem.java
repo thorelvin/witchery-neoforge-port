@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.entity.ThrownBrewEntity;
 import com.emoniph.witchery.init.WitcheryDataComponents;
@@ -52,6 +53,10 @@ public class CustomThrownBrewItem extends Item {
         return stack.getOrDefault(WitcheryDataComponents.BREW_CONTENTS.get(), BrewContents.EMPTY);
     }
 
+    private static BrewWarningText warning(ItemStack stack) {
+        return stack.get(WitcheryDataComponents.BREW_WARNING.get());
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         BrewContents brew = contents(stack);
@@ -72,7 +77,7 @@ public class CustomThrownBrewItem extends Item {
                 SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
                 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide()) {
-            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, dispersal);
+            ThrownBrewEntity projectile = new ThrownBrewEntity(level, player, brew, dispersal, warning(stack));
             projectile.shootFromSourceThrower(player);
             level.addFreshEntity(projectile);
             if (!player.isCreative()) {
@@ -96,6 +101,11 @@ public class CustomThrownBrewItem extends Item {
         }
         tooltip.accept(Component.translatable(dispersalTooltipKey(brew))
                 .withStyle(ChatFormatting.GRAY));
+        BrewWarningText warning = warning(stack);
+        if (warning != null && !warning.isEmpty()) {
+            tooltip.accept(Component.translatable("witchery.brew.warning.tooltip", warning.message())
+                    .withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
         for (var effect : com.emoniph.witchery.brewing.Brews.buildEffects(brew.items())) {
             Component name = Component.translatable(effect.getEffect().value().getDescriptionId());
             if (effect.getAmplifier() > 0) {

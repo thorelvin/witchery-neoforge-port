@@ -57,7 +57,7 @@ Core behavior to eventually port:
 
 The custom brew system could apply effects to doors, buttons, levers, pressure plates, and items. This is a high-value later system.
 
-2026-06-20 port status: first practical triggered-dispersal parity is live. Triggered brews can curse dropped items and can store invisible saved-data curses on buttons, levers, pressure plates, wooden doors, and ladders without replacing the block, preserving modern wood/block variants. Ladders trigger on contact entry, and the cursed cave well seeds this same mechanic on its entry ladder. Remaining follow-up is broader dynamic action coverage.
+2026-06-20 port status: first practical triggered-dispersal parity is live. Triggered brews can curse dropped items and can store invisible saved-data curses on buttons, levers, pressure plates, wooden doors, and ladders without replacing the block, preserving modern wood/block variants. Ladders trigger on contact entry, and warning-only records can share the same detector for atmospheric tells. Writable Book now acts as a warning-brew binder: speak near the heated cauldron, add the book, add Zombie Head for triggered dispersal, then bottle and throw it at a supported block or loose item to store a purple actionbar warning. The cursed cave well warns on the top ladder and seeds the triggered poison curse on a lower ladder. Remaining follow-up is broader dynamic action coverage.
 
 Implementation notes:
 - Design brew effects as data-driven handlers.

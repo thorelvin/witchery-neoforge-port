@@ -3,6 +3,7 @@ package com.emoniph.witchery.worldgen;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.brewing.BrewContents;
 import com.emoniph.witchery.brewing.CursedBlockData;
+import com.emoniph.witchery.brewing.CursedBlockWarningData;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.emoniph.witchery.world.WitcheryStructureData;
 import net.minecraft.core.BlockPos;
@@ -45,6 +46,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chests/witch_well"));
     private static final BrewContents CAVE_ENTRY_CURSE = new BrewContents(
             List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
+    private static final String CAVE_ENTRY_WARNING = "You feel uneasy.";
+    private static final int CAVE_ENTRY_WARNING_COOLDOWN_TICKS = 100;
 
     private final Variant variant;
 
@@ -102,7 +105,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
         if (variant == Variant.CAVE) {
             fillCaveExteriorBackfill(level, box);
             clearCaveInteriorBackfill(level, box);
-            curseCaveEntryLadder(level, box);
+            seedCaveEntryLadders(level, box);
         }
         placeLoot(level, box, random);
         recordStructure(level);
@@ -228,19 +231,39 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
     }
 
-    private void curseCaveEntryLadder(WorldGenLevel level, BoundingBox box) {
-        BlockPos ladder = findCaveEntryLadder(level, box);
-        if (ladder == null) {
+    private void seedCaveEntryLadders(WorldGenLevel level, BoundingBox box) {
+        LadderSpan ladders = findCaveEntryLadders(level, box);
+        if (ladders == null) {
             return;
         }
         ServerLevel serverLevel = level.getLevel();
-        CursedBlockData data = CursedBlockData.get(serverLevel);
-        if (data.get(ladder) == null) {
-            data.curse(ladder, CAVE_ENTRY_CURSE, null);
+        CursedBlockWarningData warnings = CursedBlockWarningData.get(serverLevel);
+        if (warnings.get(ladders.top()) == null) {
+            warnings.warn(ladders.top(), CAVE_ENTRY_WARNING, CAVE_ENTRY_WARNING_COOLDOWN_TICKS);
+        }
+
+        BlockPos bottom = ladders.bottom();
+        if (!bottom.equals(ladders.top())) {
+            CursedBlockData curses = CursedBlockData.get(serverLevel);
+            if (curses.get(bottom) == null) {
+                curses.curse(bottom, CAVE_ENTRY_CURSE, null);
+            }
         }
     }
 
-    private BlockPos findCaveEntryLadder(WorldGenLevel level, BoundingBox box) {
+    private LadderSpan findCaveEntryLadders(WorldGenLevel level, BoundingBox box) {
+        BlockPos top = findTopCaveLadder(level, box);
+        if (top == null) {
+            return null;
+        }
+        BlockPos bottom = findLowestLadderInColumn(level, box, top.getX(), top.getZ());
+        if (bottom.equals(top)) {
+            bottom = findLowestCaveLadder(level, box);
+        }
+        return new LadderSpan(top, bottom);
+    }
+
+    private BlockPos findTopCaveLadder(WorldGenLevel level, BoundingBox box) {
         BlockPos anchor = indexedTarget();
         BlockPos best = null;
         long bestDistance = Long.MAX_VALUE;
@@ -266,6 +289,47 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
         return null;
     }
+
+    private BlockPos findLowestLadderInColumn(WorldGenLevel level, BoundingBox box, int x, int z) {
+        BlockPos best = null;
+        for (int y = box.minY(); y <= box.maxY(); y++) {
+            BlockPos candidate = new BlockPos(x, y, z);
+            if (level.getBlockState(candidate).is(Blocks.LADDER)) {
+                best = candidate.immutable();
+                break;
+            }
+        }
+        return best == null ? new BlockPos(x, box.minY(), z) : best;
+    }
+
+    private BlockPos findLowestCaveLadder(WorldGenLevel level, BoundingBox box) {
+        BlockPos anchor = indexedTarget();
+        BlockPos best = null;
+        long bestDistance = Long.MAX_VALUE;
+        for (int y = box.minY(); y <= box.maxY(); y++) {
+            for (int x = box.minX(); x <= box.maxX(); x++) {
+                for (int z = box.minZ(); z <= box.maxZ(); z++) {
+                    BlockPos candidate = new BlockPos(x, y, z);
+                    if (!level.getBlockState(candidate).is(Blocks.LADDER)) {
+                        continue;
+                    }
+                    long dx = candidate.getX() - anchor.getX();
+                    long dz = candidate.getZ() - anchor.getZ();
+                    long distance = dx * dx + dz * dz;
+                    if (best == null || distance < bestDistance) {
+                        best = candidate.immutable();
+                        bestDistance = distance;
+                    }
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return anchor;
+    }
+
+    private record LadderSpan(BlockPos top, BlockPos bottom) {}
 
     private void recordStructure(WorldGenLevel level) {
         ServerLevel serverLevel = level.getLevel();

@@ -19,7 +19,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "A single cauldron holds only so much intent — eight reagents at most before the water grows too muddled to take more.$(br2)So pour off what you have made, rinse the bowl with fresh water, and begin the next working. A careful witch keeps her bottles labelled; the brew will tell you its true name if you but read it."
+      "text": "For a spoken snare, say the warning aloud beside the heated cauldron, then add a $(l)writable book$() and a $(l)zombie head$(). Bottle it and throw it at a door, button, pressure plate, ladder, or loose item.$(br2)When the cursed thing is used, your words return in purple: quiet, sudden, and exactly as unhelpful as you intended."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "A single cauldron holds only so much intent - eight reagents at most before the water grows too muddled to take more.$(br2)So pour off what you have made, rinse the bowl with fresh water, and begin the next working. A careful witch keeps her bottles labelled; the brew will tell you its true name if you but read it."
     }
   ]
 }

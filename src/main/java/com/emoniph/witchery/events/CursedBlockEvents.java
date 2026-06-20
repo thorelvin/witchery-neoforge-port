@@ -2,10 +2,14 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.CursedBlocks;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.brewing.CursedBlockData;
+import com.emoniph.witchery.brewing.CursedBlockWarningData;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -38,8 +42,9 @@ import java.util.UUID;
  * Triggers a triggered-dispersal block curse on activation (source {@code BlockButtonBase} etc. +
  * {@code TileEntityCursedBlock.applyToEntityAndDestroy}). Buttons / levers / doors fire on the player's
  * right-click; pressure plates have no interaction event, so they are polled on the rising edge of
- * POWERED. Ladders fire when a living entity enters the ladder block. The curse data lives in
- * {@link CursedBlockData}; the block itself is never modified.
+ * POWERED. Ladders fire when a living entity enters the ladder block. Warning-only cursed blocks share
+ * the ladder contact path, but do not consume brew charges. The curse data lives in {@link CursedBlockData};
+ * the block itself is never modified.
  */
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class CursedBlockEvents {
@@ -50,6 +55,8 @@ public final class CursedBlockEvents {
     private static final Map<ResourceKey<Level>, Set<BlockPos>> POWERED_PLATES = new HashMap<>();
     /** Transient per-level record of entities already touching each cursed ladder (entry detection). */
     private static final Map<ResourceKey<Level>, Map<BlockPos, Set<UUID>>> LADDER_CONTACTS = new HashMap<>();
+    /** Transient per-level warning cooldowns, keyed by warned position and player. */
+    private static final Map<ResourceKey<Level>, Map<BlockPos, Map<UUID, Long>>> WARNING_COOLDOWNS = new HashMap<>();
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -72,6 +79,7 @@ public final class CursedBlockEvents {
         // Doors store the curse on the lower half.
         BlockPos target = state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER
                 ? pos.below() : pos;
+        applyWarning(level, target, player, warningCooldowns(level));
         applyCurse(level, target, player);
     }
 
@@ -80,27 +88,31 @@ public final class CursedBlockEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        CursedBlockData data = CursedBlockData.get(level);
-        if (data.isEmpty()) {
+        CursedBlockData curses = CursedBlockData.get(level);
+        CursedBlockWarningData warnings = CursedBlockWarningData.get(level);
+        if (curses.isEmpty() && warnings.isEmpty()) {
             POWERED_PLATES.remove(level.dimension());
             LADDER_CONTACTS.remove(level.dimension());
+            WARNING_COOLDOWNS.remove(level.dimension());
             return;
         }
         Set<BlockPos> powered = POWERED_PLATES.computeIfAbsent(level.dimension(), k -> new HashSet<>());
         Map<BlockPos, Set<UUID>> ladderContacts = LADDER_CONTACTS.computeIfAbsent(level.dimension(), k -> new HashMap<>());
+        Map<BlockPos, Map<UUID, Long>> warningCooldowns = warningCooldowns(level);
         List<BlockPos> stale = null;
-        for (BlockPos pos : data.positions()) {
+        for (BlockPos pos : watchedPositions(curses, warnings)) {
             if (!level.isLoaded(pos)) {
                 continue;
             }
             BlockState state = level.getBlockState(pos);
-            if (CursedBlocks.isPressurePlate(state)) {
+            if ((curses.get(pos) != null || warnings.get(pos) != null) && CursedBlocks.isPressurePlate(state)) {
                 ladderContacts.remove(pos);
                 boolean on = state.getValue(BlockStateProperties.POWERED);
                 boolean wasOn = powered.contains(pos);
                 if (on && !wasOn) {
                     LivingEntity stepper = findStepper(level, pos);
                     if (stepper != null) {
+                        applyWarning(level, pos, stepper, warningCooldowns);
                         applyCurse(level, pos, stepper);
                     }
                 }
@@ -111,7 +123,7 @@ public final class CursedBlockEvents {
                 }
             } else if (CursedBlocks.isLadder(state)) {
                 powered.remove(pos);
-                handleLadderContact(level, pos, ladderContacts);
+                handleLadderContact(level, pos, ladderContacts, warningCooldowns);
             } else if (!CursedBlocks.isSupportedCursedBlock(state)) {
                 // The cursed block was broken or replaced — drop the stale record.
                 if (stale == null) {
@@ -120,13 +132,29 @@ public final class CursedBlockEvents {
                 stale.add(pos);
                 powered.remove(pos);
                 ladderContacts.remove(pos);
+                warningCooldowns.remove(pos);
             } else {
                 ladderContacts.remove(pos);
+                warningCooldowns.remove(pos);
             }
         }
         if (stale != null) {
-            stale.forEach(data::remove);
+            for (BlockPos pos : stale) {
+                curses.remove(pos);
+                warnings.remove(pos);
+            }
         }
+    }
+
+    private static List<BlockPos> watchedPositions(CursedBlockData curses, CursedBlockWarningData warnings) {
+        Set<BlockPos> positions = new HashSet<>();
+        positions.addAll(curses.positions());
+        positions.addAll(warnings.positions());
+        return new ArrayList<>(positions);
+    }
+
+    private static Map<BlockPos, Map<UUID, Long>> warningCooldowns(ServerLevel level) {
+        return WARNING_COOLDOWNS.computeIfAbsent(level.dimension(), k -> new HashMap<>());
     }
 
     private static void applyCurse(ServerLevel level, BlockPos pos, LivingEntity activator) {
@@ -151,7 +179,8 @@ public final class CursedBlockEvents {
     }
 
     private static void handleLadderContact(ServerLevel level, BlockPos pos,
-                                            Map<BlockPos, Set<UUID>> ladderContacts) {
+                                            Map<BlockPos, Set<UUID>> ladderContacts,
+                                            Map<BlockPos, Map<UUID, Long>> warningCooldowns) {
         Set<UUID> current = new HashSet<>();
         LivingEntity entrant = null;
         Set<UUID> previous = ladderContacts.get(pos);
@@ -165,14 +194,39 @@ public final class CursedBlockEvents {
         }
 
         if (entrant != null) {
+            applyWarning(level, pos, entrant, warningCooldowns);
             applyCurse(level, pos, entrant);
         }
 
-        if (CursedBlockData.get(level).get(pos) == null || current.isEmpty()) {
+        if ((CursedBlockData.get(level).get(pos) == null
+                && CursedBlockWarningData.get(level).get(pos) == null) || current.isEmpty()) {
             ladderContacts.remove(pos);
         } else {
             ladderContacts.put(pos.immutable(), current);
         }
+    }
+
+    private static void applyWarning(ServerLevel level, BlockPos pos, LivingEntity activator,
+                                     Map<BlockPos, Map<UUID, Long>> warningCooldowns) {
+        CursedBlockWarningData.Warning warning = CursedBlockWarningData.get(level).get(pos);
+        if (warning == null || !(activator instanceof Player player)) {
+            return;
+        }
+        long now = level.getGameTime();
+        Map<UUID, Long> playerCooldowns = warningCooldowns.computeIfAbsent(pos.immutable(), k -> new HashMap<>());
+        Long nextAllowed = playerCooldowns.get(player.getUUID());
+        if (nextAllowed != null && nextAllowed > now) {
+            return;
+        }
+        playerCooldowns.put(player.getUUID(), now + warning.cooldownTicks());
+        player.displayClientMessage(Component.literal(warning.message()).withStyle(ChatFormatting.LIGHT_PURPLE), true);
+        level.sendParticles(new DustParticleOptions(BrewWarningText.COLOR, 0.85F),
+                player.getX(), player.getY() + player.getBbHeight() * 0.5, player.getZ(),
+                8, 0.25, 0.35, 0.25, 0.0);
+        level.sendParticles(ParticleTypes.WITCH,
+                player.getX(), player.getY() + player.getBbHeight() * 0.5, player.getZ(),
+                3, 0.2, 0.3, 0.2, 0.0);
+        level.playSound(null, pos, SoundEvents.AMBIENT_CAVE.value(), SoundSource.BLOCKS, 0.45F, 1.2F);
     }
 
     @Nullable

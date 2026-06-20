@@ -2,6 +2,8 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.brewing.BrewContents;
 import com.emoniph.witchery.brewing.BrewCurse;
+import com.emoniph.witchery.brewing.BrewWarningCurse;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryEntities;
@@ -60,6 +62,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     /** Non-empty when carrying a composed custom brew (overrides the fixed BrewType path). */
     private BrewContents composed = BrewContents.EMPTY;
     private Brews.Dispersal composedDispersal = Brews.Dispersal.SPLASH;
+    private BrewWarningText warningText;
 
     public ThrownBrewEntity(EntityType<? extends ThrownBrewEntity> type, Level level) {
         super(type, level);
@@ -80,11 +83,17 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     }
 
     public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, Brews.Dispersal dispersal) {
+        this(level, owner, contents, dispersal, null);
+    }
+
+    public ThrownBrewEntity(Level level, LivingEntity owner, BrewContents contents, Brews.Dispersal dispersal,
+                            BrewWarningText warningText) {
         super(WitcheryEntities.THROWN_BREW.get(), sourceThrowX(owner), owner.getEyeY() - 0.1D,
                 sourceThrowZ(owner), level);
         setOwner(owner);
         this.composed = contents;
         this.composedDispersal = sanitizeComposedDispersal(dispersal);
+        this.warningText = warningText == null || warningText.isEmpty() ? null : warningText;
         setBrewType(0);
         setGas(this.composedDispersal == Brews.Dispersal.GAS);
         setPower(contents.power());
@@ -162,7 +171,12 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
                 if (effective == Brews.Dispersal.TRIGGERED) {
                     curseNearbyItems(serverLevel, pos);
                     if (result instanceof BlockHitResult blockHit) {
-                        com.emoniph.witchery.blocks.CursedBlocks.tryCurse(serverLevel, blockHit, composed, getOwner());
+                        if (warningText != null) {
+                            com.emoniph.witchery.blocks.CursedBlocks.tryWarn(serverLevel, blockHit, warningText);
+                        }
+                        if (composed.hasEffect()) {
+                            com.emoniph.witchery.blocks.CursedBlocks.tryCurse(serverLevel, blockHit, composed, getOwner());
+                        }
                     }
                 } else if (effective == Brews.Dispersal.GAS || effective == Brews.Dispersal.LIQUID) {
                     Brews.placeMovingBrewFluid(serverLevel, Brews.sourceMovingBrewFluidPos(result),
@@ -194,6 +208,9 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
             tag.store("Composed", BrewContents.CODEC, composed);
             tag.putString("ComposedDispersal", composedDispersal.name());
         }
+        if (warningText != null && !warningText.isEmpty()) {
+            tag.store("BrewWarning", BrewWarningText.CODEC, warningText);
+        }
         tag.putInt("BrewType", getBrewTypeId());
         tag.putBoolean("Gas", isGas());
         tag.putInt("Power", getPower());
@@ -208,6 +225,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
         setPower(tag.getIntOr("Power", getPower()));
         setColor(tag.getIntOr("Color", getColor()));
         composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
+        warningText = tag.read("BrewWarning", BrewWarningText.CODEC).orElse(null);
         composedDispersal = readComposedDispersal(tag.getStringOr("ComposedDispersal",
                 isGas() ? Brews.Dispersal.GAS.name() : Brews.Dispersal.SPLASH.name()));
         setGas(composedDispersal == Brews.Dispersal.GAS);
@@ -217,15 +235,26 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     private void curseNearbyItems(ServerLevel level, Vec3 pos) {
         AABB area = new AABB(pos, pos).inflate(SOURCE_CURSE_RADIUS);
         boolean cursedAny = false;
+        boolean applyBrewCurse = composed.hasEffect();
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, area)) {
             ItemStack stack = itemEntity.getItem();
-            if (!itemEntity.isAlive() || stack.isEmpty()
-                    || stack.has(WitcheryDataComponents.BREW_CURSE.get())) {
+            if (!itemEntity.isAlive() || stack.isEmpty()) {
+                continue;
+            }
+            boolean needsBrewCurse = applyBrewCurse && !stack.has(WitcheryDataComponents.BREW_CURSE.get());
+            boolean needsWarningCurse = warningText != null && !stack.has(WitcheryDataComponents.BREW_WARNING_CURSE.get());
+            if (!needsBrewCurse && !needsWarningCurse) {
                 continue;
             }
             ItemStack cursed = stack.split(1); // source curses a single item split off the stack
-            cursed.set(WitcheryDataComponents.BREW_CURSE.get(),
-                    new BrewCurse(composed, SOURCE_CURSE_CHARGES, 0L));
+            if (needsBrewCurse) {
+                cursed.set(WitcheryDataComponents.BREW_CURSE.get(),
+                        new BrewCurse(composed, SOURCE_CURSE_CHARGES, 0L));
+            }
+            if (needsWarningCurse) {
+                cursed.set(WitcheryDataComponents.BREW_WARNING_CURSE.get(),
+                        new BrewWarningCurse(warningText, SOURCE_CURSE_CHARGES, 0L));
+            }
             if (stack.isEmpty()) {
                 itemEntity.setItem(cursed);
             } else {

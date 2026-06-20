@@ -116,7 +116,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         referenceSection(pages, "Dispersal",
                 "Dispersal ingredients choose how the finished brew leaves its bottle or cauldron.",
                 Brews.Ingredient.Kind.SPLASH, Brews.Ingredient.Kind.GAS, Brews.Ingredient.Kind.LIQUID,
-                Brews.Ingredient.Kind.TRIGGER, Brews.Ingredient.Kind.RITUAL);
+                Brews.Ingredient.Kind.TRIGGER, Brews.Ingredient.Kind.RITUAL, Brews.Ingredient.Kind.WARNING);
         referenceSection(pages, "Potion Reagents",
                 "These ingredients become the brew's potion effect when enough capacity is available.",
                 Brews.Ingredient.Kind.EFFECT);
@@ -180,6 +180,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
             case GAS -> "moving gas dispersal";
             case LIQUID -> "moving liquid dispersal";
             case TRIGGER -> "triggered curse dispersal";
+            case WARNING -> "binds nearby spoken warning text";
             case RITUAL -> "ritual cauldron release trigger";
             case COLOR -> "sets bottle colour";
             case DRINK_SPEED -> ref.drinkSpeedModifier() < 0

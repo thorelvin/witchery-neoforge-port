@@ -1,6 +1,8 @@
 package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.BrewWarningMessages;
+import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.blocks.WitchCauldronBlock;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
@@ -38,10 +40,13 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     private static final String KEY_BREW = "Brew";
     private static final String KEY_COLOR = "Color";
+    private static final String KEY_WARNING = "Warning";
     private static final int STIR_INTERVAL = 6;
 
     private final List<Item> ingredients = new ArrayList<>();
     private int color;
+    @Nullable
+    private BrewWarningText warningText;
 
     public WitchCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.WITCH_CAULDRON.get(), pos, state);
@@ -60,9 +65,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public void clear() {
-        if (!ingredients.isEmpty() || color != 0) {
+        if (!ingredients.isEmpty() || color != 0 || warningText != null) {
             ingredients.clear();
             color = 0;
+            warningText = null;
             sync();
         }
     }
@@ -72,15 +78,34 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             return false;
         }
         ingredients.add(item);
+        if (BrewWarningMessages.isBindingItem(item) && level instanceof ServerLevel serverLevel) {
+            warningText = BrewWarningMessages.findNearby(serverLevel, worldPosition, null).orElse(null);
+        }
         color = Brews.color(ingredients);
         sync();
         return true;
+    }
+
+    @Nullable
+    public BrewWarningText getWarningText() {
+        return warningText;
+    }
+
+    public void setWarningText(@Nullable BrewWarningText warningText) {
+        if (warningText != null && warningText.isEmpty()) {
+            warningText = null;
+        }
+        this.warningText = warningText;
+        sync();
     }
 
     public void removeIngredients(List<Item> items) {
         boolean changed = false;
         for (Item item : items) {
             changed |= ingredients.remove(item);
+            if (BrewWarningMessages.isBindingItem(item)) {
+                warningText = null;
+            }
         }
         if (changed) {
             color = ingredients.isEmpty() ? 0 : Brews.color(ingredients);
@@ -98,6 +123,9 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         if (!ingredients.isEmpty()) {
             tag.store(KEY_BREW, BrewContents.CODEC, new BrewContents(List.copyOf(ingredients)));
         }
+        if (warningText != null && !warningText.isEmpty()) {
+            tag.store(KEY_WARNING, BrewWarningText.CODEC, warningText);
+        }
         tag.putInt(KEY_COLOR, color);
     }
 
@@ -106,6 +134,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         super.loadAdditional(tag);
         ingredients.clear();
         tag.read(KEY_BREW, BrewContents.CODEC).ifPresent(contents -> ingredients.addAll(contents.items()));
+        warningText = tag.read(KEY_WARNING, BrewWarningText.CODEC).orElse(null);
         color = tag.getIntOr(KEY_COLOR, ingredients.isEmpty() ? 0 : Brews.color(ingredients));
     }
 
