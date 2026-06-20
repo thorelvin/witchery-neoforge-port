@@ -101,6 +101,10 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     /** Game time until which a dismiss is "armed": a second sneak-use within this window confirms it. Transient. */
     private long dismissArmedUntil;
     private static final long DISMISS_CONFIRM_TICKS = 100L; // 5s window to confirm casting a witch out
+    private static final String TAG_HUT_HOME = "WITCHutHome";
+    /** When set (a Vanishing Witch Hut resident), the witch is tethered to her hut and won't wander out. */
+    @Nullable
+    private net.minecraft.core.BlockPos hutHome;
 
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
@@ -122,6 +126,27 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     public void setCovenOwner(@Nullable java.util.UUID owner) {
         this.covenOwner = owner;
         setPersistenceRequired(); // a recruited (or once-recruited) witch never despawns
+    }
+
+    /** Tether this witch to a Vanishing Witch Hut so she stays inside; null clears the tether. */
+    public void setHutHome(@Nullable net.minecraft.core.BlockPos pos) {
+        this.hutHome = pos == null ? null : pos.immutable();
+        if (pos != null) {
+            setPersistenceRequired();
+        }
+    }
+
+    /** Keep a hut resident inside: pull her back whenever she drifts off the hearth (source cat-lady tether). */
+    private void moveTowardHome() {
+        if (hutHome == null) {
+            return;
+        }
+        double cx = hutHome.getX() + 0.5D;
+        double cy = hutHome.getY();
+        double cz = hutHome.getZ() + 0.5D;
+        if (distanceToSqr(cx, cy, cz) > 2.0D) {
+            getNavigation().moveTo(cx, cy, cz, 0.8D);
+        }
     }
 
     /** Size of {@code owner}'s persisted coven roster (the cap basis — source counted the player {@code WITCCoven} list). */
@@ -208,6 +233,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         addTrade(offers, Items.EMERALD, 1, WitcheryItems.SNOWBELL.get(), 2, 10, 3);
         addTrade(offers, Items.EMERALD, 2, WitcheryItems.ROWAN_BERRIES.get(), 4, 10, 4);
         addTrade(offers, Items.EMERALD, 3, WitcheryItems.WOOD_ASH.get(), 4, 12, 4);
+        addTrade(offers, Items.EMERALD, 1, WitcheryItems.WITCHES_SALT.get(), 4, 12, 3);
         addTrade(offers, Items.EMERALD, 4, WitcheryItems.TAGLOCK_KIT.get(), 1, 6, 6);
         addTrade(offers, Items.EMERALD, 5, WitcheryItems.EXHALE_OF_HORNED_ONE.get(), 1, 6, 8);
         addTrade(offers, Items.EMERALD, 5, WitcheryItems.HINT_OF_REBIRTH.get(), 1, 6, 8);
@@ -602,6 +628,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
                 data.add(covenOwner, getUUID());
             }
         }
+        if (!level().isClientSide() && hutHome != null) {
+            moveTowardHome();
+        }
     }
 
     @Override
@@ -657,6 +686,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             tag.putInt(TAG_QUEST_LEFT, questRemaining);
             tag.putInt(TAG_QUEST_KIND, questKind);
         }
+        if (hutHome != null) {
+            tag.putLong(TAG_HUT_HOME, hutHome.asLong());
+        }
     }
 
     @Override
@@ -678,6 +710,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         questItem = questItemId.isEmpty() ? null
                 : net.minecraft.core.registries.BuiltInRegistries.ITEM
                         .getOptional(net.minecraft.resources.Identifier.parse(questItemId)).orElse(null);
+        long home = tag.getLongOr(TAG_HUT_HOME, Long.MIN_VALUE);
+        hutHome = home == Long.MIN_VALUE ? null : net.minecraft.core.BlockPos.of(home);
     }
 
     @Override

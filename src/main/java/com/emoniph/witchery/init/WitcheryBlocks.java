@@ -459,6 +459,18 @@ public class WitcheryBlocks {
     public static final DeferredBlock<BeartrapBlock> WOLFTRAP = registerBlock("wolftrap",
             props -> new BeartrapBlock(props, true),
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 10.0f).noOcclusion().noCollision());
+    // Hidden, effectively unbreakable controller buried under a Vanishing Witch Hut. No block item.
+    public static final DeferredBlock<com.emoniph.witchery.blocks.VanishingHutAnchorBlock> VANISHING_HUT_ANCHOR =
+            registerBlock("vanishing_hut_anchor",
+                    com.emoniph.witchery.blocks.VanishingHutAnchorBlock::new,
+                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
+                            .strength(-1.0F, 3600000.0F).noOcclusion().noLootTable());
+    // Witches' Salt laid as a thin ground line — counterplay that holds a Vanishing Witch Hut.
+    public static final DeferredBlock<com.emoniph.witchery.blocks.SaltLineBlock> SALT_LINE =
+            registerBlock("salt_line",
+                    com.emoniph.witchery.blocks.SaltLineBlock::new,
+                    BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).sound(SoundType.SAND)
+                            .strength(0.0F).noOcclusion().noCollision().instabreak());
     public static final DeferredBlock<PlantMineBlock> PLANT_MINE = registerBlock("plant_mine",
             PlantMineBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS)

@@ -187,6 +187,9 @@ public class WitcheryClient {
                         ? (level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : GrassColor.getDefaultColor())
                         : -1,
                 WitcheryBlocks.BLIGHTED_SOIL.get());
+        // The salt line reuses the redstone-dust models; tint their (red) dust white so it reads as salt.
+        event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? 0xFFFFFF : -1,
+                WitcheryBlocks.SALT_LINE.get());
     }
 
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {

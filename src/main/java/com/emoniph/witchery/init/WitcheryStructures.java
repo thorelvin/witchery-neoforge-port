@@ -76,6 +76,12 @@ public class WitcheryStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> WITCH_WELL_PIECE =
             PIECE_TYPES.register("witch_well", () -> WitchWellPiece::new);
 
+    public static final DeferredHolder<StructureType<?>, StructureType<com.emoniph.witchery.worldgen.VanishingHutStructure>> VANISHING_HUT_TYPE =
+            STRUCTURE_TYPES.register("vanishing_hut", () -> () -> com.emoniph.witchery.worldgen.VanishingHutStructure.CODEC);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> VANISHING_HUT_PIECE =
+            PIECE_TYPES.register("vanishing_hut", () -> com.emoniph.witchery.worldgen.VanishingHutPiece::new);
+
     // ── Village pool pieces (injected via WitcheryVillageElement) ─────────────
     // Piece types remain registered so saved worlds can deserialize them.
 

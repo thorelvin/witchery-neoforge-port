@@ -109,6 +109,9 @@ public class WitcheryItems {
     public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
     public static final DeferredItem<Item>      GARLIC         = ITEMS.register("garlic",         id -> new BlockItem(WitcheryBlocks.GARLIC_CROP.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> GARLIC_GARLAND = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GARLIC_GARLAND);
+    // Witches' Salt — placed as a thin ground line to hold a Vanishing Witch Hut in place.
+    public static final DeferredItem<Item> WITCHES_SALT = ITEMS.register("witches_salt",
+            id -> new BlockItem(WitcheryBlocks.SALT_LINE.get(), itemProps(id)));
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────
     public static final DeferredItem<Item> FANCIFUL_THREAD     = ITEMS.registerSimpleItem("fanciful_thread");

@@ -377,7 +377,15 @@ public class WitcheryCommands {
                         .then(Commands.literal("rite")
                                 .executes(ctx -> setupRite(ctx.getSource())))
                         .then(Commands.literal("cursed_well")
-                                .executes(ctx -> setupCursedWell(ctx.getSource()))))
+                                .executes(ctx -> setupCursedWell(ctx.getSource())))
+                        .then(Commands.literal("vanishing_hut")
+                                .executes(ctx -> setupVanishingHut(ctx.getSource()))))
+                // ── Vanishing Witch Hut (debug timesavers) ────────────────────
+                .then(Commands.literal("hut")
+                        .then(Commands.literal("move")
+                                .executes(ctx -> hutMove(ctx.getSource())))
+                        .then(Commands.literal("watch")
+                                .executes(ctx -> hutWatch(ctx.getSource()))))
                 // ── Spectral Coven (debug timesavers) ─────────────────────────
                 .then(Commands.literal("coven")
                         .then(Commands.literal("unlock")
@@ -464,6 +472,7 @@ public class WitcheryCommands {
                         .then(Commands.literal("small_well")      .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "small_well", WitchWellPiece.Variant.SMALL)))
                         .then(Commands.literal("cursed_well")     .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "cursed_well", WitchWellPiece.Variant.CAVE)))
                         .then(Commands.literal("witch_well_cave") .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "witch_well_cave", WitchWellPiece.Variant.CAVE)))
+                        .then(Commands.literal("vanishing_hut")   .executes(ctx -> gotoVanishingHut(ctx.getSource())))
                         .then(Commands.literal("warped_coven")    .executes(ctx -> gotoStructure(ctx.getSource(), Level.NETHER, "witchery", "warped_coven")))
                         .then(Commands.literal("nether")          .executes(ctx -> gotoNether(ctx.getSource())))
                         .then(Commands.literal("apothecary")      .executes(ctx -> gotoVillageBuilding(ctx.getSource(), "apothecary")))
@@ -651,7 +660,7 @@ public class WitcheryCommands {
             p.drop(stack, false);
         }
         src.sendSuccess(() -> Component.literal("[Curse] Gave triggered splash brews (Poison + Zombie Head). "
-                + "Throw one at a vanilla button / lever / pressure plate / door to curse it; activating the "
+                + "Throw one at a vanilla button / lever / pressure plate / door / ladder to curse it; activating the "
                 + "cursed block dumps the brew on whoever triggered it, then it reverts."), false);
         return 1;
     }
@@ -2028,6 +2037,107 @@ public class WitcheryCommands {
         src.sendSuccess(() -> Component.literal(
                 "A cursed well is raised nearby and written into the atlas. The hidden paths are opening.")
                 .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    // ── Vanishing Witch Hut QA ──────────────────────────────────────────────────
+
+    private static int setupVanishingHut(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) return 0;
+
+        BlockPos near = player.blockPosition().relative(player.getDirection(), 6);
+        BlockPos anchor = com.emoniph.witchery.events.VanishingHutEvents.placeNear(level, near);
+        if (anchor == null) {
+            src.sendFailure(Component.literal(
+                    "No dry, even patch opened nearby for a witch's hut. Move to flatter ground and try again.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal(
+                "A witch's hut settles nearby. Step inside, leave, and look away — it does not like to be watched.")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    private static int gotoVanishingHut(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+        var entry = com.emoniph.witchery.world.VanishingHutData.get(level)
+                .nearest(level, player.blockPosition());
+        if (entry.isEmpty()) {
+            ServerLevel spirit = src.getServer().getLevel(
+                    com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD);
+            if (spirit != null) {
+                entry = com.emoniph.witchery.world.VanishingHutData.get(level)
+                        .nearest(spirit, player.blockPosition());
+            }
+            if (entry.isEmpty()) {
+                src.sendFailure(Component.literal(
+                        "No witch's hut is remembered. Raise one with /witchery setup vanishing_hut.")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return 0;
+            }
+        }
+
+        var found = entry.get();
+        ServerLevel destLevel = src.getServer().getLevel(net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.DIMENSION,
+                net.minecraft.resources.Identifier.parse(found.dimension())));
+        if (destLevel == null) {
+            destLevel = level;
+        }
+        BlockPos floor = found.pos().above();
+        destLevel.getChunk(floor.getX() >> 4, floor.getZ() >> 4, ChunkStatus.FULL, true);
+        player.teleportTo(destLevel, floor.getX() + 0.5, floor.getY(), floor.getZ() + 0.5,
+                java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+        src.sendSuccess(() -> Component.literal("The hidden paths lead you to the witch's hut.")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    private static com.emoniph.witchery.blocks.entity.VanishingHutAnchorBlockEntity findNearestHut(
+            ServerLevel level, BlockPos from) {
+        var entry = com.emoniph.witchery.world.VanishingHutData.get(level).nearest(level, from);
+        if (entry.isEmpty()) {
+            return null;
+        }
+        BlockPos anchor = entry.get().pos();
+        level.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
+        return level.getBlockEntity(anchor)
+                instanceof com.emoniph.witchery.blocks.entity.VanishingHutAnchorBlockEntity be ? be : null;
+    }
+
+    private static int hutMove(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+        var be = findNearestHut(level, player.blockPosition());
+        if (be == null) {
+            src.sendFailure(Component.literal("No witch's hut nearby in this world to move.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        be.forceRelocate(level);
+        src.sendSuccess(() -> Component.literal("The witch's hut stirs to move...")
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        return 1;
+    }
+
+    private static int hutWatch(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        ServerLevel level = src.getLevel();
+        var be = findNearestHut(level, player.blockPosition());
+        if (be == null) {
+            src.sendFailure(Component.literal("No witch's hut nearby in this world.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        String state = be.debugState(level);
+        src.sendSuccess(() -> Component.literal(state).withStyle(ChatFormatting.GRAY), false);
         return 1;
     }
 

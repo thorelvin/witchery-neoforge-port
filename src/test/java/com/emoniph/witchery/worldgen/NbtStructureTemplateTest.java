@@ -156,6 +156,22 @@ class NbtStructureTemplateTest {
     }
 
     @Test
+    void vanishingHutGeneratesInForestAndSwamp() throws IOException {
+        String structure = readResourceText("data/witchery/worldgen/structure/vanishing_hut.json");
+        String set = readResourceText("data/witchery/worldgen/structure_set/vanishing_huts.json");
+        String biomes = readResourceText("data/witchery/tags/worldgen/biome/has_vanishing_hut.json");
+
+        assertTrue(structure.contains("\"type\": \"witchery:vanishing_hut\""));
+        assertTrue(structure.contains("\"biomes\": \"#witchery:has_vanishing_hut\""));
+        assertTrue(structure.contains("\"terrain_adaptation\": \"none\""));
+        assertTrue(set.contains("\"witchery:vanishing_hut\""));
+        assertTrue(set.contains("\"type\": \"minecraft:random_spread\""));
+        assertTrue(biomes.contains("\"#minecraft:is_forest\""));
+        assertTrue(biomes.contains("\"minecraft:swamp\""));
+        assertTrue(biomes.contains("\"minecraft:mangrove_swamp\""));
+    }
+
+    @Test
     void caveWitchWellPlacesSurfaceOneBlockBelowOpeningWithoutDirtSupportOverCave() {
         WitchWellPiece.Variant cave = WitchWellPiece.Variant.CAVE;
         WitchWellPiece.Variant regular = WitchWellPiece.Variant.REGULAR;

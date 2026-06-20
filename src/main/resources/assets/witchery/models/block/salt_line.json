@@ -1,0 +1,20 @@
+{
+  "textures": {
+    "salt": "minecraft:block/calcite",
+    "particle": "minecraft:block/calcite"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 1, 16],
+      "faces": {
+        "up":    { "uv": [0, 0, 16, 16], "texture": "#salt" },
+        "down":  { "uv": [0, 0, 16, 16], "texture": "#salt" },
+        "north": { "uv": [0, 0, 16, 1], "texture": "#salt" },
+        "south": { "uv": [0, 0, 16, 1], "texture": "#salt" },
+        "east":  { "uv": [0, 0, 16, 1], "texture": "#salt" },
+        "west":  { "uv": [0, 0, 16, 1], "texture": "#salt" }
+      }
+    }
+  ]
+}
