@@ -1,7 +1,11 @@
 {
   "feature": "witchery:wispy_cotton",
-  "_comment": "Source WitcheryWorldGenerator.generateDreamworld places one cotton patch in ~75% of dream chunks (random.nextInt(4) != 0). Vanilla placement can't express 75% via rarity_filter (1/N only), so we place it in every eligible chunk and match the source's expected density through the patch tries instead (~0.75 * 64 source tries ~= 48). Previously a rarity_filter chance:4 made it 1-in-4 chunks, i.e. ~3x too rare.",
+  "_comment": "Source WitcheryWorldGenerator.generateDreamworld only attempts one WorldGenFlowers patch in ~75% of dream chunks, but it starts from a random Y between 0 and surface+32, so most of the 64 flower tries miss the surface. Modern heightmap placement is far more reliable, so keep this sparse instead of using 48 guaranteed surface tries.",
   "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 2
+    },
     {
       "type": "minecraft:in_square"
     },
