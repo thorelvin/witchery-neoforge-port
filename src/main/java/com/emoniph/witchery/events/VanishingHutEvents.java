@@ -38,7 +38,7 @@ public final class VanishingHutEvents {
 
     private static final int RING_MIN = 48;
     private static final int RING_MAX = 96;
-    private static final int RING_ATTEMPTS = 24;
+    private static final int RING_ATTEMPTS = 12;
     private static final int FLATNESS_TOLERANCE = 2;
 
     private VanishingHutEvents() {}
@@ -53,7 +53,7 @@ public final class VanishingHutEvents {
      * Returns the buried anchor pos, or null if no level, dry, open footprint opened up nearby.
      */
     public static BlockPos placeNear(ServerLevel level, BlockPos near) {
-        BlockPos anchor = findValidAnchor(level, near.getX(), near.getZ(), 6, 24, RING_ATTEMPTS);
+        BlockPos anchor = findValidAnchor(level, near.getX(), near.getZ(), 6, 24, RING_ATTEMPTS, true);
         if (anchor == null) {
             return null;
         }
@@ -103,11 +103,13 @@ public final class VanishingHutEvents {
 
         BlockPos destAnchor;
         if (cross) {
-            // Mirror the 1:1 coords; nudge within a small ring if the exact spot is unusable.
-            destAnchor = findValidAnchor(targetLevel, oldAnchor.getX(), oldAnchor.getZ(), 0, 16, 12);
+            // Mirror the 1:1 coords into the other dimension; that destination is intended, so allow
+            // loading the single small target area there.
+            destAnchor = findValidAnchor(targetLevel, oldAnchor.getX(), oldAnchor.getZ(), 0, 16, 12, true);
         } else {
+            // In-world hop: only consider already-loaded ground near the player (no generation spike).
             destAnchor = findValidAnchor(targetLevel, oldAnchor.getX(), oldAnchor.getZ(),
-                    RING_MIN, RING_MAX, RING_ATTEMPTS);
+                    RING_MIN, RING_MAX, RING_ATTEMPTS, false);
         }
 
         if (destAnchor == null) {
@@ -175,9 +177,15 @@ public final class VanishingHutEvents {
      * Find a buried-anchor position with a level, dry, open footprint. Searches outward in a ring
      * ({@code minRadius..maxRadius}); pass {@code minRadius==0} to anchor on the exact column first.
      * Returns the anchor pos (one below the floor surface) or null if nothing valid was found.
+     *
+     * <p>{@code mayForceLoad} controls the cost: the in-world ring relocation passes {@code false}
+     * so it only inspects chunks that are <em>already</em> loaded (no synchronous chunk generation —
+     * there is almost always loaded ground near the player who just visited; if not, the move simply
+     * waits for the next cycle). The cross-dimension and command placements pass {@code true} because
+     * the chosen destination is intended and is a single small area, not a 24-chunk scan.
      */
     private static BlockPos findValidAnchor(ServerLevel level, int centerX, int centerZ,
-                                            int minRadius, int maxRadius, int attempts) {
+                                            int minRadius, int maxRadius, int attempts, boolean mayForceLoad) {
         for (int attempt = 0; attempt < attempts; attempt++) {
             int x;
             int z;
@@ -190,7 +198,14 @@ public final class VanishingHutEvents {
                 x = centerX + (int) Math.round(Math.cos(angle) * dist);
                 z = centerZ + (int) Math.round(Math.sin(angle) * dist);
             }
-            level.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
+            int chunkX = x >> 4;
+            int chunkZ = z >> 4;
+            if (!level.hasChunk(chunkX, chunkZ)) {
+                if (!mayForceLoad) {
+                    continue; // never force-generate chunks during the ring scan
+                }
+                level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+            }
             Integer floorY = validFloorY(level, x, z);
             if (floorY != null) {
                 return new BlockPos(x, floorY - 1, z);
