@@ -84,10 +84,24 @@ public class RowanDoorBlock extends DoorBlock implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                 Player player, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.CONSUME;
+        return toggleWithKeyCheck(state, level, pos, player);
+    }
 
-        // Normalize to LOWER half for UUID lookup
+    /**
+     * Lock-checked open/close shared by an empty-hand click and the key's/keyring's {@code useOn}.
+     * If the door is bound (has a UUID) and the player holds no matching key it stays locked;
+     * otherwise it toggles. Routing the key's {@code useOn} here is what makes the key work even when
+     * the player sneak-clicks (which skips the block's own empty-hand interaction). {@code pos} may be
+     * either half — it is normalized to the lower half for the UUID lookup and the toggle.
+     */
+    public InteractionResult toggleWithKeyCheck(BlockState state, Level level, BlockPos pos, Player player) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+
         BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+        BlockState lowerState = level.getBlockState(lowerPos);
+        if (!(lowerState.getBlock() instanceof RowanDoorBlock)) {
+            return InteractionResult.PASS;
+        }
         UUID doorUUID = getDoorUUID(level, lowerPos);
 
         if (doorUUID != null && !playerHasKey(player, doorUUID)) {
@@ -95,9 +109,9 @@ public class RowanDoorBlock extends DoorBlock implements EntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // Key found (or no UUID): toggle open via parent's setOpen (handles sound + game event)
-        this.setOpen(player, level, state, pos, !this.isOpen(state));
-        return (level.isClientSide() ? net.minecraft.world.InteractionResult.SUCCESS_SERVER : net.minecraft.world.InteractionResult.SUCCESS);
+        // Key found (or door unbound): toggle open via parent's setOpen (handles sound + game event).
+        this.setOpen(player, level, lowerState, lowerPos, !this.isOpen(lowerState));
+        return InteractionResult.SUCCESS;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

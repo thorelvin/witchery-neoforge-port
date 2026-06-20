@@ -1,12 +1,18 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.RowanDoorBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +24,18 @@ public class RowanDoorKeyItem extends Item {
     private static final String TAG_DOOR_UUID_LEAST = "DoorUUIDLeast";
 
     public RowanDoorKeyItem(Properties props) { super(props); }
+
+    /** Right-click the bound Rowan Door with the key to open it (works even while sneaking). */
+    @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        Level level = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof RowanDoorBlock door && ctx.getPlayer() != null) {
+            return door.toggleWithKeyCheck(state, level, pos, ctx.getPlayer());
+        }
+        return InteractionResult.PASS;
+    }
 
     public static void bindKey(ItemStack stack, UUID uuid) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {

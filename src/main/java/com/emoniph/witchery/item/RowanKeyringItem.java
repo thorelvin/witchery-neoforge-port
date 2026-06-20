@@ -1,14 +1,20 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.RowanDoorBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +24,18 @@ import java.util.UUID;
 public class RowanKeyringItem extends Item {
 
     public RowanKeyringItem(Properties props) { super(props); }
+
+    /** Right-click a Rowan Door with the keyring to open it if the ring holds its key (works sneaking). */
+    @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        Level level = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof RowanDoorBlock door && ctx.getPlayer() != null) {
+            return door.toggleWithKeyCheck(state, level, pos, ctx.getPlayer());
+        }
+        return InteractionResult.PASS;
+    }
 
     /** Add a key's UUID to the ring. No-op if already present. */
     public static void addKey(ItemStack stack, UUID uuid) {
