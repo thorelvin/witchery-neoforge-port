@@ -9,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -20,8 +21,9 @@ import java.util.UUID;
 /**
  * Triggered-dispersal block cursing — the port of source {@code DispersalTriggered.onImpactSplashPotion},
  * but data-driven (see {@link CursedBlockData}): a triggered brew splash that lands on a button / lever /
- * pressure plate / door records a curse on that block's position. The block itself is left untouched, so
- * it keeps its exact wood type and state; activation is intercepted in {@code CursedBlockEvents}.
+ * pressure plate / door / ladder records a curse on that block's position. The block itself is left
+ * untouched, so it keeps its exact wood type and state; activation is intercepted in
+ * {@code CursedBlockEvents}.
  */
 public final class CursedBlocks {
 
@@ -55,7 +57,10 @@ public final class CursedBlocks {
      * null if the block is not curseable. */
     @Nullable
     private static BlockPos curseTarget(BlockState state, BlockPos pos) {
-        if (state.is(Blocks.LEVER) || state.is(BlockTags.BUTTONS) || state.getBlock() instanceof PressurePlateBlock) {
+        if (state.is(Blocks.LEVER)
+                || state.is(BlockTags.BUTTONS)
+                || state.getBlock() instanceof PressurePlateBlock
+                || state.getBlock() instanceof LadderBlock) {
             return pos;
         }
         if (state.is(BlockTags.WOODEN_DOORS) && state.getBlock() instanceof DoorBlock) {
@@ -73,5 +78,14 @@ public final class CursedBlocks {
     /** Pressure plates have no interaction event — they are polled on the rising edge of POWERED. */
     public static boolean isPressurePlate(BlockState state) {
         return state.getBlock() instanceof PressurePlateBlock;
+    }
+
+    /** Ladders have no activation event; cursed ladders trigger when a living entity enters the ladder. */
+    public static boolean isLadder(BlockState state) {
+        return state.getBlock() instanceof LadderBlock;
+    }
+
+    public static boolean isSupportedCursedBlock(BlockState state) {
+        return isRightClickActivated(state) || isPressurePlate(state) || isLadder(state);
     }
 }

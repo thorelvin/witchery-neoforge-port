@@ -1,6 +1,8 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.brewing.BrewContents;
+import com.emoniph.witchery.brewing.CursedBlockData;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.emoniph.witchery.world.WitcheryStructureData;
 import net.minecraft.core.BlockPos;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
@@ -33,11 +36,15 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.loot.LootTable;
 
+import java.util.List;
+
 public class WitchWellPiece extends TemplateStructurePiece {
     private static final String VARIANT_TAG = "WitcheryWellVariant";
     private static final int SURFACE_SAMPLE_RADIUS = 12;
     private static final ResourceKey<LootTable> LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chests/witch_well"));
+    private static final BrewContents CAVE_ENTRY_CURSE = new BrewContents(
+            List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
 
     private final Variant variant;
 
@@ -95,6 +102,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
         if (variant == Variant.CAVE) {
             fillCaveExteriorBackfill(level, box);
             clearCaveInteriorBackfill(level, box);
+            curseCaveEntryLadder(level, box);
         }
         placeLoot(level, box, random);
         recordStructure(level);
@@ -218,6 +226,45 @@ public class WitchWellPiece extends TemplateStructurePiece {
             dispenser.setLootTable(LOOT_TABLE, random.nextLong());
             dispenser.setChanged();
         }
+    }
+
+    private void curseCaveEntryLadder(WorldGenLevel level, BoundingBox box) {
+        BlockPos ladder = findCaveEntryLadder(level, box);
+        if (ladder == null) {
+            return;
+        }
+        ServerLevel serverLevel = level.getLevel();
+        CursedBlockData data = CursedBlockData.get(serverLevel);
+        if (data.get(ladder) == null) {
+            data.curse(ladder, CAVE_ENTRY_CURSE, null);
+        }
+    }
+
+    private BlockPos findCaveEntryLadder(WorldGenLevel level, BoundingBox box) {
+        BlockPos anchor = indexedTarget();
+        BlockPos best = null;
+        long bestDistance = Long.MAX_VALUE;
+        for (int y = box.maxY(); y >= box.minY(); y--) {
+            for (int x = box.minX(); x <= box.maxX(); x++) {
+                for (int z = box.minZ(); z <= box.maxZ(); z++) {
+                    BlockPos candidate = new BlockPos(x, y, z);
+                    if (!level.getBlockState(candidate).is(Blocks.LADDER)) {
+                        continue;
+                    }
+                    long dx = candidate.getX() - anchor.getX();
+                    long dz = candidate.getZ() - anchor.getZ();
+                    long distance = dx * dx + dz * dz;
+                    if (best == null || distance < bestDistance) {
+                        best = candidate.immutable();
+                        bestDistance = distance;
+                    }
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return null;
     }
 
     private void recordStructure(WorldGenLevel level) {
