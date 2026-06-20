@@ -41,7 +41,7 @@ public class MindrakeBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK)
-                || state.is(Blocks.DIRT) || state.is(Blocks.COARSE_DIRT);
+        // Source BlockWitchCrop (waterPlant=false): grass, dirt, or farmland.
+        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
     }
 }

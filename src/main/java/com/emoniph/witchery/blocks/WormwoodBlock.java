@@ -32,6 +32,7 @@ public class WormwoodBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.FARMLAND);
+        // Source BlockWitchCrop (waterPlant=false): grass, dirt, or farmland.
+        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
     }
 }
