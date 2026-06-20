@@ -37,7 +37,8 @@ public class GarlicCropBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Source BlockWitchCrop (waterPlant=false): grass, dirt, or farmland.
-        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
+        // Herbalism Primer: farmland only. (1.7.10 BlockWitchCrop also accepted grass/dirt, but the
+        // in-game primer — the canonical herbalism guide — calls for farmland.)
+        return state.is(Blocks.FARMLAND);
     }
 }

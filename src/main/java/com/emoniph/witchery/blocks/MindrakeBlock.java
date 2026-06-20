@@ -41,7 +41,8 @@ public class MindrakeBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Source BlockWitchCrop (waterPlant=false): grass, dirt, or farmland.
-        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
+        // Herbalism Primer: tilled earth / farmland only (matched to its Mandrake sibling; the primer
+        // table doesn't list Mindrake, but it's the same witch-crop family and player-planted from a bulb).
+        return state.is(Blocks.FARMLAND);
     }
 }

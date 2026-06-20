@@ -43,8 +43,10 @@ public class MandrakeBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Source BlockWitchCrop (waterPlant=false): grass, dirt, or farmland.
-        return state.is(Blocks.FARMLAND) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
+        // Herbalism Primer: tilled earth / farmland only. (1.7.10 BlockWitchCrop also accepted
+        // grass/dirt, but the in-game primer — the canonical herbalism guide — calls for tilled
+        // farmland, so the port follows the primer.)
+        return state.is(Blocks.FARMLAND);
     }
 
     // Mature mandrake only summon the hostile root creature under the original
