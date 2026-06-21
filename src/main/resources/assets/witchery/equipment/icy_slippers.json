@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "witchery:icy_slippers"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "witchery:icy_slippers"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "witchery:seeping_shoes"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "witchery:seeping_shoes"
+      }
+    ]
+  }
+}

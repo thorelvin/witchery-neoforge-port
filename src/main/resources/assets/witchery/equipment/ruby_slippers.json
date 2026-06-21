@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "witchery:ruby_slippers"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "witchery:ruby_slippers"
+      }
+    ]
+  }
+}

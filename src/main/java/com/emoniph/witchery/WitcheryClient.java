@@ -117,6 +117,7 @@ public class WitcheryClient {
         Map.entry(WitchesRobeArmorModel.LAYER_LOCATION, WitchesRobeArmorModel::createLayer),
         Map.entry(BabasHatArmorModel.LAYER_LOCATION,   BabasHatArmorModel::createLayer),
         Map.entry(NecromancerRobeArmorModel.LAYER_LOCATION, NecromancerRobeArmorModel::createLayer),
+        Map.entry(WitchesShoesArmorModel.LAYER_LOCATION, WitchesShoesArmorModel::createLayer),
         Map.entry(TwistingBandArmorModel.LAYER_LOCATION, TwistingBandArmorModel::createLayer),
         Map.entry(MogsQuiverArmorModel.LAYER_LOCATION, MogsQuiverArmorModel::createLayer),
         Map.entry(GulgsGirdleArmorModel.LAYER_LOCATION, GulgsGirdleArmorModel::createLayer),
@@ -323,6 +324,12 @@ public class WitcheryClient {
 
         event.registerItem(new com.emoniph.witchery.client.NecromancerRobeArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.NECROMANCER_ROBES.get());
+
+        event.registerItem(new com.emoniph.witchery.client.WitchesShoesArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.ICE_SLIPPERS.get(),
+                com.emoniph.witchery.init.WitcheryItems.ICY_SLIPPERS.get(),
+                com.emoniph.witchery.init.WitcheryItems.RUBY_SLIPPERS.get(),
+                com.emoniph.witchery.init.WitcheryItems.SEEPING_SHOES.get());
 
         event.registerItem(new com.emoniph.witchery.client.TwistingBandArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.TWISTING_BAND.get());

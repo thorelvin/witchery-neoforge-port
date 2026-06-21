@@ -1357,6 +1357,8 @@
   "item.witchery.ruby_slippers.activated": "There's no place like home...",
   "item.witchery.ruby_slippers.cooldown": "The slippers need to rest for %s more minute(s).",
   "item.witchery.seeping_shoes": "Seeping Shoes",
+  "item.witchery.seeping_shoes.tip.1": "Cave spider's bane.",
+  "item.witchery.seeping_shoes.tip.2": "Remove poison effects when standing on ground",
   "item.witchery.devils_tongue_charm": "Devil's Tongue Charm",
   "item.witchery.devils_tongue_charm.tip": "Even demons find your wit\nirresistible... most of the time.",
   "item.witchery.water_diviner": "Water Diviner",
