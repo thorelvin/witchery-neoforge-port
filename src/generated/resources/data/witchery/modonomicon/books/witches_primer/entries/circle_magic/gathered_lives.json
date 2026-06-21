@@ -138,32 +138,39 @@
       "type": "witchery:station_recipe",
       "anchor": "",
       "background": "witchery:textures/gui/book/ritual_circle_magic.png",
-      "bg_height": 155,
-      "bg_width": 318,
+      "bg_height": 120,
+      "bg_width": 116,
       "condition": {
         "type": "modonomicon:none"
       },
+      "rings": [
+        {
+          "color": "purple",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
       "slots": [
         {
           "count": 1,
           "item": "witchery:mellifluous_hunger",
-          "x": 103,
-          "y": 41
+          "x": 32,
+          "y": 78
         },
         {
           "count": 1,
           "item": "witchery:mandrake_root",
-          "x": 146,
-          "y": 41
+          "x": 50,
+          "y": 78
         },
         {
           "count": 1,
           "item": "witchery:wormwood",
-          "x": 189,
-          "y": 41
+          "x": 68,
+          "y": 78
         }
       ],
-      "text": "[#](53341a)**9x9** ring - **Otherwhere** chalk - **2000** altar power[#]()",
+      "text": "[#](53341a)**11x11** - **Otherwhere** chalk - **2000** altar power[#]()",
       "title": ""
     },
     {

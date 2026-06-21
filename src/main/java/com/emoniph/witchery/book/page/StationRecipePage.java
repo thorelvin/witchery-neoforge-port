@@ -39,6 +39,14 @@ public class StationRecipePage extends BookPage {
     /** One item placed at (x,y) pixels relative to the background's top-left. */
     public record Slot(ItemStack stack, int x, int y) {}
 
+    /**
+     * One chalk circle of a ritual's ring setup: {@code color} is the chalk family
+     * ({@code white}=ritual, {@code purple}=otherwhere, {@code red}=infernal) and {@code size} is the
+     * ring tier ({@code small}/{@code medium}/{@code large}). The renderer draws these concentrically,
+     * largest first, to depict the ring layout the rite needs.
+     */
+    public record Ring(String color, String size) {}
+
     protected BookTextHolder title;
     protected BookTextHolder text;
     protected final Identifier background;
@@ -48,10 +56,13 @@ public class StationRecipePage extends BookPage {
     protected final boolean ovenCues;
     protected final boolean distilleryCues;
     protected final List<Slot> slots;
+    protected final List<Ring> rings;
+    protected final int covenFaces;
 
     public StationRecipePage(BookTextHolder title, BookTextHolder text, Identifier background,
                              int bgWidth, int bgHeight, boolean showBackground, boolean ovenCues,
-                             boolean distilleryCues, List<Slot> slots, String anchor, BookCondition condition) {
+                             boolean distilleryCues, List<Slot> slots, List<Ring> rings, int covenFaces,
+                             String anchor, BookCondition condition) {
         super(anchor, condition);
         this.title = title;
         this.text = text;
@@ -62,6 +73,8 @@ public class StationRecipePage extends BookPage {
         this.ovenCues = ovenCues;
         this.distilleryCues = distilleryCues;
         this.slots = slots;
+        this.rings = rings;
+        this.covenFaces = covenFaces;
     }
 
     @Override
@@ -109,6 +122,16 @@ public class StationRecipePage extends BookPage {
         return slots;
     }
 
+    /** The ritual's chalk circles, largest-first; empty for non-ritual recipe pages. */
+    public List<Ring> getRings() {
+        return rings;
+    }
+
+    /** Number of coven witches the rite requires (0 = no coven); drawn as that many witch faces. */
+    public int getCovenFaces() {
+        return covenFaces;
+    }
+
     @Override
     public void prerenderMarkdown(BookTextRenderer textRenderer) {
         super.prerenderMarkdown(textRenderer);
@@ -137,12 +160,20 @@ public class StationRecipePage extends BookPage {
             int count = GsonHelper.getAsInt(s, "count", 1);
             slots.add(new Slot(new ItemStack(item, count), GsonHelper.getAsInt(s, "x"), GsonHelper.getAsInt(s, "y")));
         }
+        List<Ring> rings = new ArrayList<>();
+        if (json.has("rings")) {
+            for (var element : GsonHelper.getAsJsonArray(json, "rings")) {
+                JsonObject r = element.getAsJsonObject();
+                rings.add(new Ring(GsonHelper.getAsString(r, "color"), GsonHelper.getAsString(r, "size")));
+            }
+        }
+        int covenFaces = GsonHelper.getAsInt(json, "coven_faces", 0);
         BookCondition condition = json.has("condition")
                 ? BookCondition.fromJson(id, GsonHelper.getAsJsonObject(json, "condition"), provider)
                 : new BookNoneCondition();
         String anchor = GsonHelper.getAsString(json, "anchor", "");
         return new StationRecipePage(title, text, background, w, h, showBackground, ovenCues, distilleryCues,
-                slots, anchor, condition);
+                slots, rings, covenFaces, anchor, condition);
     }
 
     public static StationRecipePage fromNetwork(RegistryFriendlyByteBuf buffer) {
@@ -160,11 +191,17 @@ public class StationRecipePage extends BookPage {
             ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
             slots.add(new Slot(stack, buffer.readVarInt(), buffer.readVarInt()));
         }
+        int ringCount = buffer.readVarInt();
+        List<Ring> rings = new ArrayList<>();
+        for (int i = 0; i < ringCount; i++) {
+            rings.add(new Ring(buffer.readUtf(), buffer.readUtf()));
+        }
+        int covenFaces = buffer.readVarInt();
         // Base BookPage.toNetwork writes anchor then condition, last — read them in that order.
         String anchor = buffer.readUtf();
         BookCondition condition = BookCondition.fromNetwork(buffer);
         return new StationRecipePage(title, text, background, w, h, showBackground, ovenCues, distilleryCues,
-                slots, anchor, condition);
+                slots, rings, covenFaces, anchor, condition);
     }
 
     @Override
@@ -189,6 +226,12 @@ public class StationRecipePage extends BookPage {
             buffer.writeVarInt(slot.x());
             buffer.writeVarInt(slot.y());
         }
+        buffer.writeVarInt(this.rings.size());
+        for (Ring ring : this.rings) {
+            buffer.writeUtf(ring.color());
+            buffer.writeUtf(ring.size());
+        }
+        buffer.writeVarInt(this.covenFaces);
         super.toNetwork(buffer); // writes anchor + condition
     }
 }

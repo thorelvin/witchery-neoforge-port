@@ -21,6 +21,51 @@
       "use_markdown_in_title": false
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:sugar",
+          "x": 23,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 41,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 59,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 77,
+          "y": 78
+        }
+      ],
+      "text": "[#](53341a)**7x7** - **Infernal** chalk - **1000** altar power[#]()",
+      "title": ""
+    },
+    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {

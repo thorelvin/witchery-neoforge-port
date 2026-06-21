@@ -8,6 +8,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Client renderer for {@link StationRecipePage}: draws the station GUI background and renders each
  * real {@link net.minecraft.world.item.ItemStack} at its slot via
@@ -33,6 +36,22 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
     private static final int BUBBLE = 0xCC6F5438;
     private static final int BUBBLE_LIGHT = 0xAAA9875A;
     private static final Identifier FURNACE_FLAME = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
+
+    // Ritual ring diagram (canvas-relative, before scale). Rings are concentric dashed glyph circles.
+    private static final int RING_CENTER_X_OFFSET = 0; // added to bgWidth/2
+    private static final int RING_CENTER_Y = 40;
+    private static final float RING_SQUASH = 0.62F; // ellipse flatten, evokes a circle drawn on the ground
+    private static final int GOLD_CENTER = 0xFFE8C020;
+    private static final int FACE_SIZE = 14;
+    private static final int FACE_GAP = 3;
+    private static final int FACE_ROW_Y = 102;
+    private static final Identifier[] COVEN_SKINS = {
+        Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch1.png"),
+        Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch2.png"),
+        Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch3.png"),
+        Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch4.png"),
+        Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch5.png"),
+    };
 
     public StationRecipePageRenderer(StationRecipePage page) {
         super(page);
@@ -68,6 +87,12 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
         if (this.page.hasDistilleryCues()) {
             this.renderDistilleryCues(graphics, bgX, panelTop, scale);
         }
+        if (!this.page.getRings().isEmpty()) {
+            this.renderRings(graphics, bgX, panelTop, scale, bgWidth);
+        }
+        if (this.page.getCovenFaces() > 0) {
+            this.renderCovenFaces(graphics, bgX, panelTop, scale, bgWidth, this.page.getCovenFaces());
+        }
         for (StationRecipePage.Slot slot : this.page.getSlots()) {
             int itemX = bgX + Math.round(slot.x() * scale);
             int itemY = panelTop + Math.round(slot.y() * scale);
@@ -79,6 +104,85 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
         int textY = panelTop + drawnH + TEXT_GAP;
         int textHeight = BookEntryScreen.PAGE_HEIGHT - textY - 2;
         this.renderBookTextHolder(graphics, this.page.getText(), 0, textY, pageWidth, textHeight);
+    }
+
+    /**
+     * Draw the rite's chalk circles as concentric dashed glyph rings (largest first), centred in the
+     * upper canvas. Each ring is a ring of small coloured squares — count tied to the in-world glyph
+     * count (small=8, medium=16, large=28) — in the chalk colour, around a golden centre.
+     */
+    private void renderRings(GuiGraphics graphics, int bgX, int panelTop, float scale, int bgWidth) {
+        int centerX = bgX + Math.round((bgWidth / 2.0F + RING_CENTER_X_OFFSET) * scale);
+        int centerY = panelTop + Math.round(RING_CENTER_Y * scale);
+
+        // Largest first so smaller companion rings sit visibly inside.
+        List<StationRecipePage.Ring> ordered = new ArrayList<>(this.page.getRings());
+        ordered.sort((a, b) -> Integer.compare(sizeRadius(b.size()), sizeRadius(a.size())));
+
+        for (StationRecipePage.Ring ring : ordered) {
+            int radiusX = Math.max(4, Math.round(sizeRadius(ring.size()) * scale));
+            int radiusY = Math.max(2, Math.round(radiusX * RING_SQUASH));
+            int dots = sizeGlyphCount(ring.size());
+            int color = chalkColor(ring.color());
+            int dotSize = Math.max(2, Math.round(2.5F * scale));
+            for (int i = 0; i < dots; i++) {
+                double angle = 2.0 * Math.PI * i / dots;
+                int x = centerX + (int) Math.round(Math.cos(angle) * radiusX);
+                int y = centerY + (int) Math.round(Math.sin(angle) * radiusY);
+                graphics.fill(x - dotSize / 2, y - dotSize / 2, x - dotSize / 2 + dotSize, y - dotSize / 2 + dotSize, color);
+            }
+        }
+        int gold = Math.max(2, Math.round(3 * scale));
+        graphics.fill(centerX - gold / 2, centerY - gold / 2, centerX - gold / 2 + gold, centerY - gold / 2 + gold, GOLD_CENTER);
+    }
+
+    private static int sizeRadius(String size) {
+        return switch (size) {
+            case "small" -> 16;
+            case "large" -> 38;
+            default -> 26; // medium
+        };
+    }
+
+    private static int sizeGlyphCount(String size) {
+        // Source ring footprints: small 7x7 = 16 glyphs, medium 11x11 = 28, large 15x15 = 40.
+        return switch (size) {
+            case "small" -> 16;
+            case "large" -> 40;
+            default -> 28; // medium
+        };
+    }
+
+    private static int chalkColor(String color) {
+        return switch (color) {
+            case "red" -> 0xFFE03A3A;     // infernal
+            case "purple" -> 0xFFA64DFF;  // otherwhere
+            case "blue" -> 0xFF3A7AE0;
+            default -> 0xFFEDEDED;        // white / ritual
+        };
+    }
+
+    /**
+     * Draw {@code count} witch faces in a centred row — the coven required to cast. Each is the face
+     * (u8,v8) plus hat overlay (u40,v8) of a coven-witch skin, cycling skins 1-5 for variety.
+     */
+    private void renderCovenFaces(GuiGraphics graphics, int bgX, int panelTop, float scale, int bgWidth, int count) {
+        int face = Math.max(8, Math.round(FACE_SIZE * scale));
+        int gap = Math.max(1, Math.round(FACE_GAP * scale));
+        int totalW = count * face + (count - 1) * gap;
+        int startX = bgX + Math.round((bgWidth / 2.0F) * scale) - totalW / 2;
+        int y = panelTop + Math.round(FACE_ROW_Y * scale);
+        float s = face / 8.0F;
+        for (int i = 0; i < count; i++) {
+            Identifier skin = COVEN_SKINS[i % COVEN_SKINS.length];
+            int x = startX + i * (face + gap);
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(x, y);
+            graphics.pose().scale(s, s);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, skin, 0, 0, 8.0F, 8.0F, 8, 8, 64, 128);   // face
+            graphics.blit(RenderPipelines.GUI_TEXTURED, skin, 0, 0, 40.0F, 8.0F, 8, 8, 64, 128);  // hat overlay
+            graphics.pose().popMatrix();
+        }
     }
 
     private void renderOvenCues(GuiGraphics graphics, int bgX, int panelTop, float scale) {

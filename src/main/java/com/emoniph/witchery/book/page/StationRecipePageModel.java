@@ -17,6 +17,7 @@ import java.util.List;
 public class StationRecipePageModel extends BookPageModel<StationRecipePageModel> {
 
     private record SlotModel(Identifier item, int count, int x, int y) {}
+    private record RingModel(String color, String size) {}
 
     private BookTextHolderModel title = new BookTextHolderModel("");
     private BookTextHolderModel text = new BookTextHolderModel("");
@@ -27,6 +28,8 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
     private boolean ovenCues = false;
     private boolean distilleryCues = false;
     private final List<SlotModel> slots = new ArrayList<>();
+    private final List<RingModel> rings = new ArrayList<>();
+    private int covenFaces = 0;
 
     protected StationRecipePageModel() {
         super(StationRecipePage.TYPE);
@@ -73,6 +76,18 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
         return this;
     }
 
+    /** Add one chalk circle to the ring diagram. {@code color}: white/purple/red; {@code size}: small/medium/large. */
+    public StationRecipePageModel withRing(String color, String size) {
+        this.rings.add(new RingModel(color, size));
+        return this;
+    }
+
+    /** Number of coven witches the rite requires; rendered as that many witch faces (0 = none). */
+    public StationRecipePageModel withCovenFaces(int count) {
+        this.covenFaces = count;
+        return this;
+    }
+
     @Override
     public JsonObject toJson(Identifier bookId, HolderLookup.Provider provider) {
         JsonObject json = super.toJson(bookId, provider); // type, anchor, condition
@@ -100,6 +115,19 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
             slotArray.add(s);
         }
         json.add("slots", slotArray);
+        if (!this.rings.isEmpty()) {
+            JsonArray ringArray = new JsonArray();
+            for (RingModel ring : this.rings) {
+                JsonObject r = new JsonObject();
+                r.addProperty("color", ring.color());
+                r.addProperty("size", ring.size());
+                ringArray.add(r);
+            }
+            json.add("rings", ringArray);
+        }
+        if (this.covenFaces > 0) {
+            json.addProperty("coven_faces", this.covenFaces);
+        }
         return json;
     }
 }

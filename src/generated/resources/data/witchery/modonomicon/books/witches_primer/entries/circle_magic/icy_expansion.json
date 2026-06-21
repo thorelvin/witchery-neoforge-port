@@ -21,6 +21,34 @@
       "use_markdown_in_title": false
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 2,
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:frozen_heart",
+          "x": 50,
+          "y": 78
+        }
+      ],
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - no altar power[#]()",
+      "title": ""
+    },
+    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {

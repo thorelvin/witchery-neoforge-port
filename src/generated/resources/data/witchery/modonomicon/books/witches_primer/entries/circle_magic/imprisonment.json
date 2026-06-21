@@ -24,26 +24,33 @@
       "type": "witchery:station_recipe",
       "anchor": "",
       "background": "witchery:textures/gui/book/ritual_circle_magic.png",
-      "bg_height": 155,
-      "bg_width": 318,
+      "bg_height": 120,
+      "bg_width": 116,
       "condition": {
         "type": "modonomicon:none"
       },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
       "slots": [
         {
           "count": 1,
           "item": "minecraft:slime_ball",
-          "x": 103,
-          "y": 41
+          "x": 41,
+          "y": 78
         },
         {
           "count": 1,
           "item": "minecraft:redstone",
-          "x": 146,
-          "y": 41
+          "x": 59,
+          "y": 78
         }
       ],
-      "text": "[#](53341a)**7x7** ring - **Ritual** chalk - **500 (+16/s)** altar power[#]()",
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - **500 (+16/s)** altar power[#]()",
       "title": ""
     },
     {

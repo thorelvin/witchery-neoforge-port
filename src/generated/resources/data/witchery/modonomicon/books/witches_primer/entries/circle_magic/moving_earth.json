@@ -21,6 +21,45 @@
       "use_markdown_in_title": false
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "large"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:dirt",
+          "x": 32,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gravel",
+          "x": 50,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "minecraft:sand",
+          "x": 68,
+          "y": 78
+        }
+      ],
+      "text": "[#](53341a)**15x15** - **Ritual** chalk - no altar power[#]()",
+      "title": ""
+    },
+    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {

@@ -21,6 +21,57 @@
       "use_markdown_in_title": false
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:sprouting_brew",
+          "x": 14,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "witchery:rowan_sapling",
+          "x": 32,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "witchery:alder_sapling",
+          "x": 50,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "witchery:hawthorn_sapling",
+          "x": 68,
+          "y": 78
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 86,
+          "y": 78
+        }
+      ],
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - no altar power[#]()",
+      "title": ""
+    },
+    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {
