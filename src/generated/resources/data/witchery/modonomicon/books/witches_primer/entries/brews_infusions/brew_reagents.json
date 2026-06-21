@@ -371,6 +371,10 @@
           "text": "[#](53341a)**Zombie Head** - triggered curse dispersal.[#]()"
         },
         {
+          "item": "minecraft:writable_book",
+          "text": "[#](53341a)**Writable Book** - binds nearby spoken warning text.[#]()"
+        },
+        {
           "item": "witchery:tongue_of_dog",
           "text": "[#](53341a)**Tongue of Dog** - ritual cauldron release trigger (250 power, sneak-stir).[#]()"
         }
