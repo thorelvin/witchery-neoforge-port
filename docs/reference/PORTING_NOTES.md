@@ -1,5 +1,9 @@
 # Porting Notes — Chronological API Gotchas
 
+> Historical/reference note (2026-06-21): this file is intentionally
+> chronological and large. Search it when needed, but put new short handoff notes
+> in `docs/status/CURRENT.md` and docs routing in `docs/DOCS_INDEX.md`.
+
 This is intentionally chronological. Do not load the whole file unless needed; search it for the API/entity/system you are working on.
 
 Current target:
@@ -442,7 +446,7 @@ Architecture / gotchas:
   effect at the player, bypassing dispatch gating (held item = trigger); the rite's own internal
   power/offering checks still apply, so run near a powered altar.
 
-Full slice-by-slice log is in `docs/status/NEXT_FIXES_PLAN.md` (architecture item #1).
+Full slice-by-slice log is archived in `docs/archive/status/NEXT_FIXES_PLAN.md` (architecture item #1).
 
 ## 2026-06-05 Guidebook progression — book-aligned unlock chain
 

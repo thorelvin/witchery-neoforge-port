@@ -1,5 +1,9 @@
 # Current Scope Handoff - Witchery Port
 
+> Docs cleanup note (2026-06-21): this file remains the additive-scope roadmap
+> handoff. For the day-to-day current project state, use
+> `docs/status/CURRENT.md`; for docs routing, use `docs/DOCS_INDEX.md`.
+
 **Target:** Minecraft 1.21.11 / NeoForge 21.11
 **Purpose:** This file is the clean implementation handoff. Read this first, then use the supporting roadmap files in the order and scope described below.
 

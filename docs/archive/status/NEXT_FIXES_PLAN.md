@@ -1,8 +1,12 @@
 # Next Fixes Plan
 
+> Superseded for new planning (2026-06-21): keep this file as historical
+> mechanical-parity planning detail. Put current handoff in
+> `docs/status/CURRENT.md` and new slice candidates in `docs/status/NEXT_TASKS.md`.
+
 This plan is ordered by mechanical parity value, not by how visible a bug is in screenshots.
 The goal is to make the NeoForge port behave like 1.7.10 Witchery first, then keep the codebase cleaner than the original where modern structure helps.
-Use `docs/status/QA_PARITY_PLAN.md` alongside this file for the subsystem QA checklist covering mechanics, sound, and graphics parity.
+For new verification work, use `docs/status/QA_QUEUE.md`; older subsystem QA detail remains below and in `QA_PARITY_PLAN.md`.
 
 Current reconciliation (2026-06-14): placed Modonomicon live pages/navigation, triggered cursed-block dispersal, Waystone/Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle parity, Apothecary jobsite/trade repair, Purified Milk disease cleanup, full Disease brew/block spread, and Dog Tongue ritualized cauldron brew release have moved from active implementation into QA/polish. Keep the next brew pass pointed at wider dynamic brew actions, exact ritual pulse/backfire/target-modifier parity, old spell-projectile routes, and broader Spirit World/familiar work.
 
@@ -174,4 +178,4 @@ Use this as the current unattended run order for the next autonomous/daytime pas
    Focus first on ritual fail/sustain/complete cues, then machine active/burning/idle feedback, then Spirit World and special-block interactions. Use original Witchery 1.7.10 as the final judge for cadence and intent, and use modern NeoForge examples only for sound registration/playback patterns.
 5. Close each autonomous batch with verification and docs, not just code.
    Best implementation path:
-   After every real patch, run `./gradlew.bat compileJava processResources`, update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, `QA_PARITY_PLAN.md`, and/or this plan when repo truth changes, then commit. If a task turns out bigger than expected, document the exact remaining gap before moving on instead of leaving hidden drift.
+   Historical workflow note: after every real patch, run `./gradlew.bat compileJava processResources`, then follow `docs/DOCS_INDEX.md` for the current docs update route. If a task turns out bigger than expected, document the exact remaining gap before moving on instead of leaving hidden drift.

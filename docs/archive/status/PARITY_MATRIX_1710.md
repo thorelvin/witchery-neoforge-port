@@ -1,5 +1,9 @@
 # Witchery 1.7.10-0.24.1 Parity Matrix
 
+> Frozen baseline note (2026-06-21): use this as a source-parity snapshot.
+> Put live feature status in `docs/status/FEATURE_MATRIX.md` and active QA in
+> `docs/status/QA_QUEUE.md`.
+
 **Built:** 2026-05-28
 **Baseline source:** `C:\claude\witchery\decompiled\witchery-1.7.10-0.24.1`
 **Port:** NeoForge 1.21.1

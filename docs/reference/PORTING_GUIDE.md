@@ -1,6 +1,8 @@
 # Porting Guide — Witchery 1.7.10 → NeoForge 1.21.11
 
-This is the fast implementation manual. For exact API gotchas, search `docs/reference/PORTING_NOTES.md` and `docs/reference/API_MAP.md`.
+This is the fast implementation manual. For docs routing, start with
+`docs/DOCS_INDEX.md`. For exact API gotchas, search
+`docs/reference/PORTING_NOTES.md` and `docs/reference/API_MAP.md`.
 
 ## Goal
 
@@ -15,11 +17,11 @@ Build a working, feature-faithful Witchery fan port on modern NeoForge 1.21.11.
 
 1. One subsystem at a time.
 2. Read current source before adding new code.
-3. Use `FEATURE_MATRIX.md` for current status; old roadmap snapshots may be stale.
-4. Use `BUGS.md` for the active sprint.
+3. Use `docs/status/CURRENT.md` for the current handoff; old roadmap snapshots may be stale.
+4. Use `BUGS.md` for active bugs and `QA_QUEUE.md` for active in-game verification.
 5. After each coding milestone, run `./gradlew compileJava` when practical.
-6. Add API lessons to `PORTING_NOTES.md`.
-7. Update `FEATURE_MATRIX.md` when status changes.
+6. Add durable API lessons to `PORTING_NOTES.md`; put short session notes in `CURRENT.md`.
+7. Update `FEATURE_MATRIX.md` only when feature-level status changes.
 8. Do not delete assets/data/lang/textures unless explicitly told.
 9. If unsure about a NeoForge API, inspect local Gradle/decompiled NeoForge source; do not guess.
 
@@ -87,11 +89,12 @@ For every feature:
 4. What is produced?
 5. What state is saved?
 6. Does it work on a dedicated server?
-7. What docs/status file must be updated?
+7. Which route in `docs/DOCS_INDEX.md` should be updated?
 
 ## Current major incomplete areas
 
-See `FEATURE_MATRIX.md` for details. High-value missing/partial areas:
+See `docs/status/CURRENT.md`, `docs/status/NEXT_TASKS.md`, and
+`docs/status/FEATURE_MATRIX.md` for details. High-value missing/partial areas:
 - active render/spawn bug fixes
 - Mutandis mutation behavior
 - brazier recipes
@@ -115,7 +118,9 @@ See `FEATURE_MATRIX.md` for details. High-value missing/partial areas:
 ## Status update rule
 
 When a task finishes:
+- Check `docs/DOCS_INDEX.md` and update only the docs that truly changed.
 - Move bugs from **Open** to **Fixed / Verify** in `BUGS.md`.
-- Change feature rows in `FEATURE_MATRIX.md`.
-- Add API discoveries to `PORTING_NOTES.md`.
+- Add active in-game retests to `QA_QUEUE.md`.
+- Change feature rows in `FEATURE_MATRIX.md` only when the feature state changed.
+- Add durable API discoveries to `PORTING_NOTES.md`; keep ordinary handoff notes in `CURRENT.md`.
 - Add next small tasks to `NEXT_TASKS.md` if obvious.

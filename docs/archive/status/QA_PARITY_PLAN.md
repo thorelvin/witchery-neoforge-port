@@ -1,10 +1,13 @@
 # QA Parity Plan
 
+> Superseded for new work (2026-06-21): keep this file as historical parity
+> detail. Add new active in-game verification items to `docs/status/QA_QUEUE.md`.
+
 Last updated: 2026-06-19
 
 This checklist is the quality gate for the NeoForge port. The goal is not just "feature present", but "behaves, sounds, and looks like original Witchery unless a modern runtime constraint forces a deliberate deviation."
 
-`docs/status/NEXT_FIXES_PLAN.md` stays the ordered implementation roadmap. This file is the parity and verification harness used while working through that roadmap.
+For new planning and verification work, use `docs/status/CURRENT.md`, `docs/status/NEXT_TASKS.md`, and `docs/status/QA_QUEUE.md`. This file keeps older parity detail searchable.
 
 Current phase note: the obvious missing-core-rite sweep is nearly exhausted, and the highest-value QA work now shifts toward dispatcher accuracy, refund/upkeep fidelity, Spirit World feel verification, machine/storage GUI cleanup, and then the sound/UI/block-render audits that are easier to trust once rite coverage is no longer the main gap. Use Witchery Resurrected layouts/assets when they preserve the original result more faithfully on NeoForge, but keep original 1.7.10 mechanics and feel as the final judge.
 
@@ -134,10 +137,10 @@ Wolfman/Were Villager lifecycle QA note (2026-06-02): old `EntityVillagerWere` c
 
 Hobgoblin damage QA note (2026-06-02): old `EntityGoblin` cancels out-of-world damage, and the port now applies that source hook to `HobgoblinEntity` only. Use a controlled `minecraft:out_of_world` damage source or void setup on a Hobgoblin and confirm it survives unchanged, then hit it with ordinary player, mob, fall, and fire damage to confirm only the old out-of-world branch is cancelled. Do not expect Gulg or Mog to share this immunity; the old boss classes do not extend `EntityGoblin`.
 
-Circle magic QA note (2026-06-01, updated 2026-06-06): the current ritual playtest findings are tracked in `docs/status/RITUAL_QA_PROGRESS.md`. Confirmed in game: golden center glyph activation, source-scale small/medium/large detection, Charging with dropped items and Grassper-held offerings, Sanctity repelling a Banshee, small Protection blocking arrows/projectiles while letting players pass, portable Protection creating the larger player-blocking short-lived barrier, active ritual inspector output, upgraded altar range lookup, and the approved green protection ring pulse. Source-backed fixes from the pass also corrected portable Protection back onto the small ring, made medium Charging/Protection stop claiming incomplete larger setups, restored Banish Demon support sacrifices, restored the source translucent barrier render path, source-shaped the Protection barrier geometry after medium player-blocking QA exposed a pass-through gap, restored old `BlockBarrier` source resistance `1000.0F` plus light opacity 0, restored the source creative-sneak pass-through exception for player-blocking barrier blocks, and restored the source `owner` key so the caster can pass through owner-marked player-blocking barriers without sneaking while other players remain blocked. Retest portable/player-blocking Protection with the caster and a second player if possible, including a save/reload while the active rite persists. Remaining risk is the representative-item dispatcher: source `SacrificeItem` matched unordered dropped/Grassper sacrifices, while this port still has many per-rite `ItemEntity` offering records that need a deliberate transaction refactor before universal Grassper parity is safe.
+Circle magic QA note (2026-06-01, updated 2026-06-06): the current ritual playtest findings are tracked in `RITUAL_QA_PROGRESS.md`. Confirmed in game: golden center activation, source-scale small/medium/large detection, Charging with dropped items and Grassper-held offerings, Sanctity repelling a Banshee, small Protection blocking arrows/projectiles while letting players pass, portable Protection creating the larger player-blocking short-lived barrier, active ritual inspector output, upgraded altar range lookup, and the approved green protection ring pulse. Source-backed fixes from the pass also corrected portable Protection back onto the small ring, made medium Charging/Protection stop claiming incomplete larger setups, restored Banish Demon support sacrifices, restored the source translucent barrier render path, source-shaped the Protection barrier geometry after medium player-blocking QA exposed a pass-through gap, restored old `BlockBarrier` source resistance `1000.0F` plus light opacity 0, restored the source creative-sneak pass-through exception for player-blocking barrier blocks, and restored the source `owner` key so the caster can pass through owner-marked player-blocking barriers without sneaking while other players remain blocked. Retest portable/player-blocking Protection with the caster and a second player if possible, including a save/reload while the active rite persists. Remaining risk is the representative-item dispatcher: source `SacrificeItem` matched unordered dropped/Grassper sacrifices, while this port still has many per-rite `ItemEntity` offering records that need a deliberate transaction refactor before universal Grassper parity is safe.
 
 Current unattended execution note:
-- Use the current 5-point unattended run order in `docs/status/NEXT_FIXES_PLAN.md`.
+- Use the current 5-point unattended run order in `NEXT_FIXES_PLAN.md`.
 - Finish one focused subsystem at a time.
 - When a visual issue can be solved by correcting a bad item/model/texture chain, do that before introducing a new custom renderer.
 - When a subsystem needs a custom renderer, prefer matching original orientation, brightness, transparency, and inventory pose before adding extra effects.
@@ -433,7 +436,7 @@ Every implementation batch should follow this loop:
 5. Implement the smallest behavior-preserving fix that moves parity forward.
    If a small refactor makes that fix safer or clearer, do it in the same patch and keep the behavioral goal explicit.
 6. Run `./gradlew.bat compileJava processResources`.
-7. Update `BUGS.md`, `FEATURE_MATRIX.md`, `ITEM_REVIEW.md`, and/or `NEXT_FIXES_PLAN.md` when the repo truth has changed.
+7. Update only the docs routed by `docs/DOCS_INDEX.md` when repo truth has changed.
 8. Keep unresolved visual-only or feel-only issues documented instead of hand-waving them away.
 
 ## Regression checklist

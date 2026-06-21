@@ -1,5 +1,8 @@
 # Process Suggestions (agent-logged, awaiting owner decision)
 
+> Historical/process note (2026-06-21): docs-routing decisions now live in
+> `docs/DOCS_INDEX.md`. Keep this file for unresolved process suggestions only.
+
 These are workflow/quality suggestions surfaced during autonomous port work. They are
 **logged, not acted on** unless the project owner approves. Keep this list short; remove
 items once decided.

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  * One declaratively-dispatched rite: the trigger item and ring requirements that select it, paired
  * with the effect to run. {@code RitualExecutor} consults a table of these ("find the matching
  * definition, run it") instead of an ordered {@code if}/{@code else if} chain — the first step toward
- * the data-driven ritual registry described in {@code docs/status/NEXT_FIXES_PLAN.md} (architecture #1).
+ * the data-driven ritual registry described in {@code docs/archive/status/NEXT_FIXES_PLAN.md} (architecture #1).
  *
  * <p>This first cut covers the simple rites whose dispatch condition is just <em>trigger item
  * (+ optional ring variant)</em>; their offerings and altar power are still validated inside the

@@ -1,5 +1,8 @@
 # Story Book Loot
 
+> Historical note (2026-06-21): keep this file as the original story-book loot
+> summary. Add new story-book verification to `docs/status/QA_QUEUE.md`.
+
 Current truth as of 2026-06-05:
 
 - The twelve Witchery life stories from `C:\claude\witchery\stories` are available as vanilla `minecraft:written_book` loot entries.

@@ -211,7 +211,7 @@ Files:
 - `src/test/java/com/emoniph/witchery/ritual/RitualRecipeMatchTest.java`
 - `src/main/java/com/emoniph/witchery/events/RitualEvents.java`
 
-See `docs/status/NEXT_FIXES_PLAN.md` for the ordered parity roadmap.
+See `docs/archive/status/NEXT_FIXES_PLAN.md` for the archived ordered parity roadmap.
 
 ### 3. Hellhound → Wolf cure does not fire (in-game QA 2026-06-03) — FIXED 2026-06-03
 

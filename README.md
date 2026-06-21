@@ -37,7 +37,7 @@ High-level estimate:
 
 - Mechanical porting: roughly `95-96%`
 - Release-ready parity/polish: roughly `82-86%`
-- Best source of truth: [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md)
+- Best source of truth: [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md)
 
 The long tail is mostly old Witchery edge cases, in-game QA, final visuals, custom-brew action gaps, exact ritual pulse/backfire/target-modifier parity, transformation polish, and polish on promoted exact IDs. The live legacy placeholder roster is empty; the remaining work is making those promoted systems feel finished. The cauldron is lit; the brew is still thickening.
 
@@ -74,7 +74,7 @@ Every grimoire has blank pages. Important remaining work includes:
 - Some systems marked "Done" in status docs are implementation slices rather than full old-Witchery parity, especially transformations, machines, custom brews, Torment/Mirror World fresh-dimension checks, and armor/equipment feel.
 - The legacy placeholder map is empty, but promotion is not the same as finished parity. Several exact IDs, aliases, wearables, blocks, and brew paths still need source-feel polish, in-game QA, or deeper behavior.
 - Custom Brew parity is still an evolving area: the composed-brew core, finite moving liquid, brew buckets, colour sync, source-shaped thrown bottle travel, source Gas Mask gas protection, lifetime-scaled moving gas, Disease brew/block spread, Purified Milk disease cleanup, Dog Tongue ritualized cauldron release, triggered item/block curses, and many source actions exist, but exact old pulse choreography, target modifiers, backfire routes, and obscure old action routes remain open.
-- The latest parity-scan backlog is merged into [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md), with status corrections reflected in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
+- The latest active handoff lives in [docs/status/CURRENT.md](docs/status/CURRENT.md), with slice candidates in [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and feature state in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs careful QA around room generation, reflection behavior, stale generated chunks, and player-skin/equipment behavior.
 - Village additions and the first NBT-backed wild structures are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
 - Ritual execution is powerful but still carries old-queue/refund/edge-case parity risk.
@@ -82,14 +82,16 @@ Every grimoire has blank pages. Important remaining work includes:
 
 ## Status Docs
 
-Consult these before choosing what to work on next — they hold the project's true memory:
+Consult [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) before choosing what to work on next. It explains which docs are active, frozen, or reference-only.
 
-- [Book_of_Shadows.html](Book_of_Shadows.html) — broad player-facing guide, kept in step with the in-game Primer for current altar and brazier behavior.
+- [docs/status/CURRENT.md](docs/status/CURRENT.md) — compact living handoff.
+- [docs/status/QA_QUEUE.md](docs/status/QA_QUEUE.md) — active in-game QA queue.
+- [Book_of_Shadows.html](Book_of_Shadows.html) — broad player-facing guide, kept in step with the in-game Primer for current behavior.
 - [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md) — feature-level parity matrix.
-- [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) — current plan, quick verify items, and next-session priorities.
+- [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) — backlog and slice candidates.
 - [docs/status/BUGS.md](docs/status/BUGS.md) — active/fixed bug board and parity notes.
 - [docs/status/ITEM_REVIEW.md](docs/status/ITEM_REVIEW.md) — item roster, exact-ID promotions, and follow-up decisions.
-- [docs/reference/PORTING_NOTES.md](docs/reference/PORTING_NOTES.md) — chronological implementation notes and reference findings.
+- [docs/reference/PORTING_NOTES.md](docs/reference/PORTING_NOTES.md) — historical implementation notes and reference findings.
 
 ## Build
 
@@ -170,11 +172,11 @@ For Mirror World specifically, stale generated chunks can make new room logic ap
 
 Recommended loop — measure twice, cast once:
 
-1. Check [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
+1. Check [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md).
 2. Compare the port against original/decompiled behavior before choosing a bounded task.
 3. Implement one coherent parity slice or bug fix.
 4. Run `.\gradlew.bat compileJava processResources`.
-5. Update status docs to match repository truth.
+5. Update only the docs routed by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md).
 6. Commit meaningful progress with a clear message.
 
 Keep unrelated local art experiments, temp folders, or generated scratch files out of parity commits unless the task explicitly includes them.

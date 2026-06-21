@@ -1,5 +1,8 @@
 # Ritual QA Progress
 
+> Superseded for new ritual QA (2026-06-21): keep this file as historical ritual
+> test detail. Add active retests to `docs/status/QA_QUEUE.md`.
+
 Last updated: 2026-06-17
 
 ## Source Rules
