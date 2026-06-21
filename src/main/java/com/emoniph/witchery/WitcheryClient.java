@@ -115,6 +115,9 @@ public class WitcheryClient {
         Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
         Map.entry(DeathArmorModel.LAYER_LOCATION,      DeathArmorModel::createLayer),
         Map.entry(WitchesRobeArmorModel.LAYER_LOCATION, WitchesRobeArmorModel::createLayer),
+        Map.entry(TwistingBandArmorModel.LAYER_LOCATION, TwistingBandArmorModel::createLayer),
+        Map.entry(MogsQuiverArmorModel.LAYER_LOCATION, MogsQuiverArmorModel::createLayer),
+        Map.entry(GulgsGirdleArmorModel.LAYER_LOCATION, GulgsGirdleArmorModel::createLayer),
         Map.entry(HobgoblinModel.LAYER_LOCATION,       HobgoblinModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_BANSHEE,            GhostModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_SPECTRE,            GhostModel::createBodyLayer),
@@ -312,6 +315,16 @@ public class WitcheryClient {
         event.registerItem(new com.emoniph.witchery.client.WitchesRobeArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBE.get(),
                 com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBES.get());
+
+        event.registerItem(new com.emoniph.witchery.client.TwistingBandArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.TWISTING_BAND.get());
+
+        event.registerItem(new com.emoniph.witchery.client.MogsQuiverArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.MOGS_QUIVER.get());
+
+        event.registerItem(new com.emoniph.witchery.client.GulgsGirdleArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get(),
+                com.emoniph.witchery.init.WitcheryItems.GULGS_GRUDLE.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {

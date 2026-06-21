@@ -1,0 +1,10 @@
+{
+  "layers": {
+    "humanoid": [
+      { "texture": "witchery:mogs_quiver" }
+    ],
+    "humanoid_leggings": [
+      { "texture": "witchery:mogs_quiver" }
+    ]
+  }
+}

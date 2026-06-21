@@ -1,0 +1,10 @@
+{
+  "layers": {
+    "humanoid": [
+      { "texture": "witchery:gulgs_girdle" }
+    ],
+    "humanoid_leggings": [
+      { "texture": "witchery:gulgs_girdle" }
+    ]
+  }
+}

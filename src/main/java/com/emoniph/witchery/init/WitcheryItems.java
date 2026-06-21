@@ -80,6 +80,12 @@ public class WitcheryItems {
             deathsMaterial("deaths_clothes");
     public static final net.minecraft.world.item.equipment.ArmorMaterial WITCHES_ROBES_MATERIAL =
             witchesRobesMaterial("witches_robes");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial TWISTING_BAND_MATERIAL =
+            twistingBandMaterial("twisting_band");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial MOGS_QUIVER_MATERIAL =
+            goblinClothesMaterial("mogs_quiver");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial GULGS_GIRDLE_MATERIAL =
+            goblinClothesMaterial("gulgs_girdle");
 
     private static net.minecraft.world.item.equipment.ArmorMaterial vampireMaterial(
             net.minecraft.world.item.equipment.ArmorMaterial base, String assetPath) {
@@ -106,6 +112,22 @@ public class WitcheryItems {
     }
 
     private static net.minecraft.world.item.equipment.ArmorMaterial witchesRobesMaterial(String assetPath) {
+        net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.LEATHER;
+        return new net.minecraft.world.item.equipment.ArmorMaterial(
+                base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
+                base.toughness(), base.knockbackResistance(), base.repairIngredient(),
+                witcheryEquipmentAsset(assetPath));
+    }
+
+    private static net.minecraft.world.item.equipment.ArmorMaterial twistingBandMaterial(String assetPath) {
+        net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.IRON;
+        return new net.minecraft.world.item.equipment.ArmorMaterial(
+                base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
+                base.toughness(), base.knockbackResistance(), base.repairIngredient(),
+                witcheryEquipmentAsset(assetPath));
+    }
+
+    private static net.minecraft.world.item.equipment.ArmorMaterial goblinClothesMaterial(String assetPath) {
         net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.LEATHER;
         return new net.minecraft.world.item.equipment.ArmorMaterial(
                 base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
@@ -801,28 +823,25 @@ public class WitcheryItems {
             id -> new LeonardsUrnItem(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> GULGS_GIRDLE       = ITEMS.register("gulgs_girdle",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
-                            net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
+                    .humanoidArmor(GULGS_GIRDLE_MATERIAL, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
                     .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> GULGS_GRUDLE       = ITEMS.register("gulgs_grudle",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
-                            net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
+                    .humanoidArmor(GULGS_GIRDLE_MATERIAL, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
                     .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.register("mogs_quiver",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.MOGS_QUIVER, itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
-                            net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)
+                    .humanoidArmor(MOGS_QUIVER_MATERIAL, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)
                     .durability(net.minecraft.world.item.equipment.ArmorType.CHESTPLATE.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> TWISTING_BAND      = ITEMS.register("twisting_band",
             id -> new TwistingBandItem(itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, net.minecraft.world.item.equipment.ArmorType.HELMET)
+                    .humanoidArmor(TWISTING_BAND_MATERIAL, net.minecraft.world.item.equipment.ArmorType.HELMET)
                     .durability(net.minecraft.world.item.equipment.ArmorType.HELMET.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND.durability()))
                     .rarity(net.minecraft.world.item.Rarity.RARE)));
