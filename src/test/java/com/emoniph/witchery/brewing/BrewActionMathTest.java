@@ -1,6 +1,8 @@
 package com.emoniph.witchery.brewing;
 
 import com.emoniph.witchery.blocks.DiseaseBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
@@ -163,10 +165,25 @@ class BrewActionMathTest {
     @Test
     void ritualizedBrewDeliveryUsesSourceTriggerRadiusChargesAndRange() {
         assertEquals(250, Brews.SOURCE_RITUAL_TRIGGER_POWER_COST);
+        assertEquals(100, Brews.SOURCE_SET_LOCATION_POWER_COST);
         assertEquals(3, Brews.sourceRitualInstantRadius(0));
         assertEquals(6, Brews.sourceRitualInstantRadius(3));
         assertEquals(1, Brews.sourceTriggeredRitualItemCharges(false));
         assertEquals(2, Brews.sourceTriggeredRitualItemCharges(true));
+
+        BlockPos center = BlockPos.ZERO;
+        assertTrue(Brews.sourceRitualTargetAllowed(center, Level.OVERWORLD,
+                        center.offset(32, 0, 0), Level.OVERWORLD, 0, false),
+                "location-bound brews inherit the old 32-block reach at coven size 0");
+        assertFalse(Brews.sourceRitualTargetAllowed(center, Level.OVERWORLD,
+                        center.offset(33, 0, 0), Level.OVERWORLD, 0, false),
+                "same-dimension Waystone target just outside source range fails");
+        assertFalse(Brews.sourceRitualTargetAllowed(center, Level.OVERWORLD,
+                        center, Level.NETHER, 6, false),
+                "cross-dimension Waystone target needs Leonard even with a full coven");
+        assertTrue(Brews.sourceRitualTargetAllowed(center, Level.OVERWORLD,
+                        center, Level.NETHER, 6, true),
+                "Leonard plus a full coven unlocks cross-dimension delivery");
 
         assertTrue(Brews.sourceRitualDistanceAllowed(32.0 * 32.0, true, 0, false),
                 "coven size 0 allows the source 32-block same-dimension reach");

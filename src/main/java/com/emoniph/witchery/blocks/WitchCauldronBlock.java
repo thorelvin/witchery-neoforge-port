@@ -358,7 +358,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
 
-        int powerCost = Brews.ritualPowerCost(contents.items());
+        int powerCost = Brews.ritualPowerCost(serverLevel, pos, contents.items());
         AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
         if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost || !altar.consumePower(powerCost)) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.no_power", powerCost), false);
@@ -393,6 +393,8 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             case NEEDS_SPLASH_DISPERSAL -> "witchery.cauldron.brew.ritual.needs_splash";
             case NO_TRIGGER_ITEM -> "witchery.cauldron.brew.ritual.no_item";
             case BLOCKED -> "witchery.cauldron.brew.ritual.blocked";
+            case INVALID_TARGET -> "witchery.cauldron.brew.ritual.invalid_target";
+            case TARGET_TOO_FAR -> "witchery.cauldron.brew.ritual.target_too_far";
             case SUCCESS -> "witchery.cauldron.brew.ritual.success";
         };
     }
