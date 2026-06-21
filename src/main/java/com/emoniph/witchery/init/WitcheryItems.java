@@ -80,6 +80,10 @@ public class WitcheryItems {
             deathsMaterial("deaths_clothes");
     public static final net.minecraft.world.item.equipment.ArmorMaterial WITCHES_ROBES_MATERIAL =
             witchesRobesMaterial("witches_robes");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial BABAS_HAT_MATERIAL =
+            witchesRobesMaterial("babas_hat");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial NECROMANCER_ROBES_MATERIAL =
+            witchesRobesMaterial("necromancer_robes");
     public static final net.minecraft.world.item.equipment.ArmorMaterial TWISTING_BAND_MATERIAL =
             twistingBandMaterial("twisting_band");
     public static final net.minecraft.world.item.equipment.ArmorMaterial MOGS_QUIVER_MATERIAL =
@@ -881,10 +885,12 @@ public class WitcheryItems {
     // Witches outfit / special armors — wearable
     public static final DeferredItem<Item> BABAS_HAT        = ITEMS.register("babas_hat",
             id -> new BabasHatItem(itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
-                            net.minecraft.world.item.equipment.ArmorType.HELMET)
+                    .humanoidArmor(BABAS_HAT_MATERIAL, net.minecraft.world.item.equipment.ArmorType.HELMET)
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
-    public static final DeferredItem<Item> NECROMANCER_ROBES = ITEMS.register("necromancer_robes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
+    public static final DeferredItem<Item> NECROMANCER_ROBES = ITEMS.register("necromancer_robes",
+            id -> new NecromancerRobesItem(itemProps(id)
+                    .humanoidArmor(NECROMANCER_ROBES_MATERIAL,
+                            net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> ICE_SLIPPERS     = ITEMS.register("ice_slippers",
             id -> new IcySlippersItem(itemProps(id)
                     .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
