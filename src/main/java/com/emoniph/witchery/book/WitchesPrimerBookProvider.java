@@ -256,6 +256,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
             case "witchery.brew.dissipate" -> "Dissipate";
             case "witchery.brew.flowers" -> "Grow Flowers";
             case "witchery.brew.fertilization" -> "Fertilization";
+            case "witchery.brew.felling" -> "Felling";
+            case "witchery.brew.lilify" -> "Lilify";
+            case "witchery.brew.blight" -> "Blight";
+            case "witchery.brew.raiseland" -> "Raise Land";
+            case "witchery.brew.sprouting" -> "Sprouting";
+            case "witchery.brew.planting" -> "Planting";
+            case "witchery.brew.transpose" -> "Transposition";
+            case "witchery.brew.raising" -> "Raising";
+            case "witchery.brew.spreaddebuffs" -> "Spread Affliction";
             case "witchery.brew.animal_attraction" -> "Animal Attraction";
             case "witchery.brew.animal_repulsion" -> "Animal Repulsion";
             case "witchery.brew.removebuffs" -> "Cure Buffs";

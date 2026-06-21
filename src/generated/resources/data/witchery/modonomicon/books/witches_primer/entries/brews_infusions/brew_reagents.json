@@ -620,7 +620,7 @@
         },
         {
           "item": "minecraft:quartz",
-          "text": "[#](53341a)**Quartz** - Raiseland (level 4, 2000 power).[#]()"
+          "text": "[#](53341a)**Quartz** - Raise Land (level 4, 2000 power).[#]()"
         },
         {
           "item": "witchery:ent_twig",
@@ -643,7 +643,7 @@
       "rows": [
         {
           "item": "minecraft:ender_pearl",
-          "text": "[#](53341a)**Ender Pearl** - Transpose (level 4, 1000 power).[#]()"
+          "text": "[#](53341a)**Ender Pearl** - Transposition (level 4, 1000 power).[#]()"
         },
         {
           "item": "minecraft:bone",
@@ -651,7 +651,7 @@
         },
         {
           "item": "minecraft:creeper_head",
-          "text": "[#](53341a)**Creeper Head** - Spreaddebuffs (level 8, 2000 power).[#]()"
+          "text": "[#](53341a)**Creeper Head** - Spread Affliction (level 8, 2000 power).[#]()"
         },
         {
           "item": "witchery:golden_heart",

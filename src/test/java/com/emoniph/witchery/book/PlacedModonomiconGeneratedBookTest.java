@@ -244,6 +244,25 @@ class PlacedModonomiconGeneratedBookTest {
         }
     }
 
+    @Test
+    void generatedBrewReagentActionsUseReadableSourceNames() throws IOException {
+        String brewReagents = Files.readString(primerRoot()
+                .resolve("entries")
+                .resolve("brews_infusions")
+                .resolve("brew_reagents.json"));
+
+        assertTrue(brewReagents.contains("**Quartz** - Raise Land"),
+                "Raise Land should not fall back to raw key text");
+        assertTrue(brewReagents.contains("**Ender Pearl** - Transposition"),
+                "Transpose action should use its in-game source name");
+        assertTrue(brewReagents.contains("**Creeper Head** - Spread Affliction"),
+                "Spread Affliction should not fall back to raw key text");
+        assertFalse(brewReagents.contains("Raiseland"),
+                "generated brew reagent page should not contain raw action key text");
+        assertFalse(brewReagents.contains("Spreaddebuffs"),
+                "generated brew reagent page should not contain raw action key text");
+    }
+
     private static Set<String> entryPaths() throws IOException {
         Set<String> paths = new HashSet<>();
         Path entriesRoot = primerRoot().resolve("entries");
