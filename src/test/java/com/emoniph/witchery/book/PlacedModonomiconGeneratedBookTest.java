@@ -27,8 +27,12 @@ class PlacedModonomiconGeneratedBookTest {
     private static final int PLACED_PAGE_HEIGHT = 155;
     private static final int STATION_PANEL_TOP = 24;
     private static final int STATION_PANEL_TOP_NO_TITLE = 7;
-    private static final int STATION_TEXT_GAP = 6;
+    private static final int STATION_TEXT_GAP = 3;
     private static final int ITEM_SIZE = 16;
+    private static final int RITUAL_RING_CENTER_Y = 34;
+    private static final float RITUAL_RING_SQUASH = 0.62F;
+    private static final int RITUAL_FACE_SIZE = 12;
+    private static final int RITUAL_FACE_ROW_Y = 106;
     private static final int CRAFTING_SECOND_RECIPE_Y = 78;
     private static final int CRAFTING_TEXT_Y = 104;
     private static final int CRAFTING_GRID_X = 9;
@@ -312,7 +316,7 @@ class PlacedModonomiconGeneratedBookTest {
         int drawnH = Math.round(bgHeight * scale);
         int bgX = Math.round((PLACED_PAGE_WIDTH - drawnW) / 2.0F);
         int panelTop = hasNonEmptyTitle(page) ? STATION_PANEL_TOP : STATION_PANEL_TOP_NO_TITLE;
-        int textY = panelTop + drawnH + STATION_TEXT_GAP;
+        int textY = panelTop + stationVisibleContentBottom(page, scale, drawnH) + STATION_TEXT_GAP;
 
         assertTrue(textY < PLACED_PAGE_HEIGHT,
                 () -> stationPageMessage(entry, pageIndex) + " leaves no caption room");
@@ -328,6 +332,83 @@ class PlacedModonomiconGeneratedBookTest {
             assertTrue(itemY >= 0 && itemY + ITEM_SIZE <= PLACED_PAGE_HEIGHT,
                     () -> stationPageMessage(entry, pageIndex) + " item y outside placed page: " + itemY);
         }
+
+        assertRitualDecorationsFit(entry, pageIndex, page, bgX, panelTop, scale, bgWidth);
+    }
+
+    private static int stationVisibleContentBottom(JsonObject page, float scale, int drawnH) {
+        if (pageShouldShowBackground(page)) {
+            return drawnH;
+        }
+
+        int bottom = 0;
+        JsonArray slots = page.getAsJsonArray("slots");
+        for (var slotElement : slots) {
+            JsonObject slot = slotElement.getAsJsonObject();
+            bottom = Math.max(bottom, Math.round((slot.get("y").getAsInt() + ITEM_SIZE) * scale));
+        }
+        if (page.has("rings")) {
+            bottom = Math.max(bottom, Math.round((RITUAL_RING_CENTER_Y
+                    + ritualRingRadius(largestRingSize(page)) * RITUAL_RING_SQUASH + 2) * scale));
+        }
+        if (page.has("coven_faces")) {
+            bottom = Math.max(bottom, Math.round((RITUAL_FACE_ROW_Y + RITUAL_FACE_SIZE) * scale));
+        }
+        return bottom == 0 ? drawnH : bottom;
+    }
+
+    private static void assertRitualDecorationsFit(Path entry, int pageIndex, JsonObject page,
+                                                   int bgX, int panelTop, float scale, int bgWidth) {
+        if (page.has("rings")) {
+            int centerX = bgX + Math.round((bgWidth / 2.0F) * scale);
+            int centerY = panelTop + Math.round(RITUAL_RING_CENTER_Y * scale);
+            for (var ringElement : page.getAsJsonArray("rings")) {
+                JsonObject ring = ringElement.getAsJsonObject();
+                int radiusX = Math.max(4, Math.round(ritualRingRadius(ring.get("size").getAsString()) * scale));
+                int radiusY = Math.max(2, Math.round(radiusX * RITUAL_RING_SQUASH));
+                assertTrue(centerX - radiusX >= 0 && centerX + radiusX <= PLACED_PAGE_WIDTH,
+                        () -> stationPageMessage(entry, pageIndex) + " ritual ring x outside placed page");
+                assertTrue(centerY - radiusY >= 0 && centerY + radiusY <= PLACED_PAGE_HEIGHT,
+                        () -> stationPageMessage(entry, pageIndex) + " ritual ring y outside placed page");
+            }
+        }
+        if (page.has("coven_faces")) {
+            int count = page.get("coven_faces").getAsInt();
+            int face = Math.max(8, Math.round(RITUAL_FACE_SIZE * scale));
+            int totalW = count * face + Math.max(0, count - 1) * Math.max(1, Math.round(2 * scale));
+            int startX = bgX + Math.round((bgWidth / 2.0F) * scale) - totalW / 2;
+            int y = panelTop + Math.round(RITUAL_FACE_ROW_Y * scale);
+            assertTrue(startX >= 0 && startX + totalW <= PLACED_PAGE_WIDTH,
+                    () -> stationPageMessage(entry, pageIndex) + " coven faces x outside placed page");
+            assertTrue(y >= 0 && y + face <= PLACED_PAGE_HEIGHT,
+                    () -> stationPageMessage(entry, pageIndex) + " coven faces y outside placed page");
+        }
+    }
+
+    private static boolean pageShouldShowBackground(JsonObject page) {
+        return !page.has("show_background") || page.get("show_background").getAsBoolean();
+    }
+
+    private static String largestRingSize(JsonObject page) {
+        String largest = "small";
+        if (!page.has("rings")) {
+            return largest;
+        }
+        for (var ringElement : page.getAsJsonArray("rings")) {
+            String size = ringElement.getAsJsonObject().get("size").getAsString();
+            if (ritualRingRadius(size) > ritualRingRadius(largest)) {
+                largest = size;
+            }
+        }
+        return largest;
+    }
+
+    private static int ritualRingRadius(String size) {
+        return switch (size) {
+            case "small" -> 15;
+            case "large" -> 35;
+            default -> 25;
+        };
     }
 
     private static void assertCraftingRecipeFits(Path entry, int pageIndex, JsonObject page) {

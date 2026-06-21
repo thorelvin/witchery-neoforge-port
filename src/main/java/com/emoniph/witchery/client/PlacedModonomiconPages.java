@@ -126,6 +126,12 @@ public final class PlacedModonomiconPages {
     private static final int STATION_PANEL_TOP_NO_TITLE = 7;
     private static final int STATION_TEXT_GAP = 3;
     private static final int STATION_ITEM_SIZE = 16;
+    private static final int RITUAL_RING_CENTER_Y = 34;
+    private static final float RITUAL_RING_SQUASH = 0.62F;
+    private static final int RITUAL_GOLD_CENTER = 0xFFE8C020;
+    private static final int RITUAL_FACE_SIZE = 12;
+    private static final int RITUAL_FACE_GAP = 2;
+    private static final int RITUAL_FACE_ROW_Y = 106;
     private static final int ITEM_REFERENCE_ROW_HEIGHT = 18;
     private static final int ITEM_REFERENCE_ICON_SIZE = 13;
     private static final float LEFT_PAGE_CONTENT_INSET_PIXELS = 6.0F;
@@ -135,6 +141,13 @@ public final class PlacedModonomiconPages {
             Identifier.withDefaultNamespace("textures/atlas/gui.png");
     private static final Identifier FURNACE_FLAME =
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
+    private static final Identifier[] COVEN_SKINS = {
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch1.png"),
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch2.png"),
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch3.png"),
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch4.png"),
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch5.png"),
+    };
     // The page cubes are one pixel thick. The readable paper faces are the inner faces near z=0.
     // The left page is rotated into mirrored page-space so native text and custom geometry face out.
     private static final float LEFT_PAGE_SURFACE_Z = -0.025F / 16.0F;
@@ -564,6 +577,12 @@ public final class PlacedModonomiconPages {
         if (page.hasDistilleryCues()) {
             submitDistilleryCues(ps, collector, lightCoords, bgX, panelTop, scale);
         }
+        if (!page.getRings().isEmpty()) {
+            submitRitualRings(page, ps, collector, lightCoords, bgX, panelTop, scale, bgWidth);
+        }
+        if (page.getCovenFaces() > 0) {
+            submitCovenFaces(ps, collector, lightCoords, bgX, panelTop, scale, bgWidth, page.getCovenFaces());
+        }
 
         int seed = page.getParentEntry().getId().hashCode();
         for (StationRecipePage.Slot slot : page.getSlots()) {
@@ -586,6 +605,13 @@ public final class PlacedModonomiconPages {
         for (StationRecipePage.Slot slot : page.getSlots()) {
             bottom = Math.max(bottom, Math.round((slot.y() + STATION_ITEM_SIZE) * scale));
         }
+        if (!page.getRings().isEmpty()) {
+            bottom = Math.max(bottom, Math.round((RITUAL_RING_CENTER_Y
+                    + ritualRingRadius(largestRingSize(page)) * RITUAL_RING_SQUASH + 2) * scale));
+        }
+        if (page.getCovenFaces() > 0) {
+            bottom = Math.max(bottom, Math.round((RITUAL_FACE_ROW_Y + RITUAL_FACE_SIZE) * scale));
+        }
         if (page.hasOvenCues()) {
             bottom = Math.max(bottom, Math.round((31 + 14) * scale));
             bottom = Math.max(bottom, Math.round((21 + 6) * scale));
@@ -595,6 +621,88 @@ public final class PlacedModonomiconPages {
             bottom = Math.max(bottom, Math.round((27 + 6) * scale));
         }
         return bottom == 0 ? drawnH : bottom;
+    }
+
+    private static String largestRingSize(StationRecipePage page) {
+        String largest = "small";
+        for (StationRecipePage.Ring ring : page.getRings()) {
+            if (ritualRingRadius(ring.size()) > ritualRingRadius(largest)) {
+                largest = ring.size();
+            }
+        }
+        return largest;
+    }
+
+    private static void submitRitualRings(StationRecipePage page, PoseStack ps,
+                                          SubmitNodeCollector collector, int lightCoords,
+                                          int bgX, int panelTop, float scale, int bgWidth) {
+        int centerX = bgX + Math.round((bgWidth / 2.0F) * scale);
+        int centerY = panelTop + Math.round(RITUAL_RING_CENTER_Y * scale);
+        List<StationRecipePage.Ring> ordered = new ArrayList<>(page.getRings());
+        ordered.sort((a, b) -> Integer.compare(ritualRingRadius(b.size()), ritualRingRadius(a.size())));
+
+        for (StationRecipePage.Ring ring : ordered) {
+            int radiusX = Math.max(4, Math.round(ritualRingRadius(ring.size()) * scale));
+            int radiusY = Math.max(2, Math.round(radiusX * RITUAL_RING_SQUASH));
+            int dots = ritualGlyphCount(ring.size());
+            int color = ritualChalkColor(ring.color());
+            int dotSize = Math.max(2, Math.round(2.5F * scale));
+            for (int i = 0; i < dots; i++) {
+                double angle = 2.0 * Math.PI * i / dots;
+                int x = centerX + (int) Math.round(Math.cos(angle) * radiusX);
+                int y = centerY + (int) Math.round(Math.sin(angle) * radiusY);
+                submitRect(ps, collector, lightCoords,
+                        x - dotSize / 2.0F, y - dotSize / 2.0F,
+                        x - dotSize / 2.0F + dotSize, y - dotSize / 2.0F + dotSize, color);
+            }
+        }
+
+        int gold = Math.max(2, Math.round(3 * scale));
+        submitRect(ps, collector, lightCoords,
+                centerX - gold / 2.0F, centerY - gold / 2.0F,
+                centerX - gold / 2.0F + gold, centerY - gold / 2.0F + gold, RITUAL_GOLD_CENTER);
+    }
+
+    private static void submitCovenFaces(PoseStack ps, SubmitNodeCollector collector, int lightCoords,
+                                         int bgX, int panelTop, float scale, int bgWidth, int count) {
+        int face = Math.max(8, Math.round(RITUAL_FACE_SIZE * scale));
+        int gap = Math.max(1, Math.round(RITUAL_FACE_GAP * scale));
+        int totalW = count * face + (count - 1) * gap;
+        int startX = bgX + Math.round((bgWidth / 2.0F) * scale) - totalW / 2;
+        int y = panelTop + Math.round(RITUAL_FACE_ROW_Y * scale);
+        for (int i = 0; i < count; i++) {
+            Identifier skin = COVEN_SKINS[i % COVEN_SKINS.length];
+            int x = startX + i * (face + gap);
+            submitTextureRegion(ps, collector, lightCoords, skin, x, y, face, face,
+                    8.0F / 64.0F, 8.0F / 128.0F, 16.0F / 64.0F, 16.0F / 128.0F);
+            submitTextureRegion(ps, collector, lightCoords, skin, x, y, face, face,
+                    40.0F / 64.0F, 8.0F / 128.0F, 48.0F / 64.0F, 16.0F / 128.0F);
+        }
+    }
+
+    private static int ritualRingRadius(String size) {
+        return switch (size) {
+            case "small" -> 15;
+            case "large" -> 35;
+            default -> 25;
+        };
+    }
+
+    private static int ritualGlyphCount(String size) {
+        return switch (size) {
+            case "small" -> 16;
+            case "large" -> 40;
+            default -> 28;
+        };
+    }
+
+    private static int ritualChalkColor(String color) {
+        return switch (color) {
+            case "red" -> 0xFFE03A3A;
+            case "purple" -> 0xFFA64DFF;
+            case "blue" -> 0xFF3A7AE0;
+            default -> 0xFFEDEDED;
+        };
     }
 
     private static void submitItemReferencePage(ItemReferencePage page, PoseStack ps,
@@ -1198,6 +1306,17 @@ public final class PlacedModonomiconPages {
         ps.popPose();
     }
 
+    private static void submitTextureRegion(PoseStack ps, SubmitNodeCollector collector, int lightCoords,
+                                            Identifier texture, int x, int y, int width, int height,
+                                            float u0, float v0, float u1, float v1) {
+        ps.pushPose();
+        ps.translate(0.0F, 0.0F, PAGE_ICON_Z_PIXELS);
+        collector.order(PAGE_ICON_ORDER).submitCustomGeometry(ps, RenderTypes.text(texture),
+                (pose, vertexConsumer) -> submitTexturedQuad(pose, vertexConsumer, lightCoords,
+                        x, y, x + width, y + height, u0, v0, u1, v1, 0xFFFFFFFF));
+        ps.popPose();
+    }
+
     private static void submitRect(PoseStack ps, SubmitNodeCollector collector, int lightCoords,
                                    float x0, float y0, float x1, float y1, int color) {
         if (x1 <= x0 || y1 <= y0) {
@@ -1231,6 +1350,19 @@ public final class PlacedModonomiconPages {
         float u1 = sprite.getU1();
         float v0 = sprite.getV0();
         float v1 = sprite.getV1();
+        vertexConsumer.addVertex(pose, x0, y0, 1.0F).setColor(color).setUv(u0, v0).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x0, y1, 1.0F).setColor(color).setUv(u0, v1).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x1, y1, 1.0F).setColor(color).setUv(u1, v1).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x1, y0, 1.0F).setColor(color).setUv(u1, v0).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x0, y0, 1.0F).setColor(color).setUv(u0, v0).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x1, y0, 1.0F).setColor(color).setUv(u1, v0).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x1, y1, 1.0F).setColor(color).setUv(u1, v1).setLight(lightCoords);
+        vertexConsumer.addVertex(pose, x0, y1, 1.0F).setColor(color).setUv(u0, v1).setLight(lightCoords);
+    }
+
+    private static void submitTexturedQuad(PoseStack.Pose pose, VertexConsumer vertexConsumer, int lightCoords,
+                                           float x0, float y0, float x1, float y1,
+                                           float u0, float v0, float u1, float v1, int color) {
         vertexConsumer.addVertex(pose, x0, y0, 1.0F).setColor(color).setUv(u0, v0).setLight(lightCoords);
         vertexConsumer.addVertex(pose, x0, y1, 1.0F).setColor(color).setUv(u0, v1).setLight(lightCoords);
         vertexConsumer.addVertex(pose, x1, y1, 1.0F).setColor(color).setUv(u1, v1).setLight(lightCoords);

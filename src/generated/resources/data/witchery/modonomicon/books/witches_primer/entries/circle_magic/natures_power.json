@@ -40,32 +40,50 @@
         {
           "count": 1,
           "item": "witchery:sprouting_brew",
-          "x": 14,
-          "y": 78
+          "x": 23,
+          "y": 68
         },
         {
           "count": 1,
           "item": "witchery:rowan_sapling",
-          "x": 32,
-          "y": 78
+          "x": 41,
+          "y": 68
         },
         {
           "count": 1,
           "item": "witchery:alder_sapling",
-          "x": 50,
-          "y": 78
+          "x": 59,
+          "y": 68
         },
         {
           "count": 1,
           "item": "witchery:hawthorn_sapling",
-          "x": 68,
-          "y": 78
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:oak_sapling",
+          "x": 23,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:spruce_sapling",
+          "x": 41,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:birch_sapling",
+          "x": 59,
+          "y": 87
         },
         {
           "count": 1,
           "item": "witchery:attuned_stone_charged",
-          "x": 86,
-          "y": 78
+          "x": 77,
+          "y": 87
         }
       ],
       "text": "[#](53341a)**11x11** - **Ritual** chalk - no altar power[#]()",

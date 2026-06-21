@@ -450,7 +450,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     // offerings as live item slots with tooltips, a power/size caption, and one witch face per coven member.
     private static final int RITUAL_CANVAS_W = 116;
     private static final int RITUAL_CANVAS_H = 120;
-    private static final int RITUAL_OFFERING_Y = 78;
+    private static final int RITUAL_OFFERING_SINGLE_Y = 76;
+    private static final int RITUAL_OFFERING_TOP_Y = 68;
+    private static final int RITUAL_OFFERING_BOTTOM_Y = 87;
 
     /** One chalk circle of a ring setup. {@code color}: white(ritual)/purple(otherwhere)/red(infernal); size small/medium/large. */
     private record Ring(String color, String size) {}
@@ -481,7 +483,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         }
         boolean noPower = power == null || power.isBlank() || power.equalsIgnoreCase("none");
         String caption = "**" + String.join(" + ", sizes) + "** - **" + String.join(" / ", chalks) + "** chalk"
-                + (noPower ? " - no altar power" : " - **" + power + "** altar power");
+                + (noPower ? " - no altar power" : " - **" + power + "** altar power")
+                + (coven > 0 ? " - **Coven: " + coven + "**" : "");
 
         StationRecipePageModel page = StationRecipePageModel.create()
                 .withBackground(BG_RITUAL, RITUAL_CANVAS_W, RITUAL_CANVAS_H)
@@ -490,16 +493,27 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         for (Ring r : rings) {
             page.withRing(r.color(), r.size());
         }
-        int n = Math.min(offerings.length, 5);
-        int pitch = 18;
-        int startX = RITUAL_CANVAS_W / 2 - (n * pitch) / 2 + (pitch - 16) / 2;
-        for (int i = 0; i < n; i++) {
-            page.withSlot(offerings[i], 1, startX + i * pitch, RITUAL_OFFERING_Y);
+        int n = Math.min(offerings.length, 10);
+        if (n <= 5) {
+            addRitualOfferingRow(page, offerings, 0, n, RITUAL_OFFERING_SINGLE_Y);
+        } else {
+            int firstRow = Math.min(5, (n + 1) / 2);
+            addRitualOfferingRow(page, offerings, 0, firstRow, RITUAL_OFFERING_TOP_Y);
+            addRitualOfferingRow(page, offerings, firstRow, n - firstRow, RITUAL_OFFERING_BOTTOM_Y);
         }
         if (coven > 0) {
             page.withCovenFaces(coven);
         }
         return page;
+    }
+
+    private static void addRitualOfferingRow(StationRecipePageModel page, ItemLike[] offerings,
+                                             int offset, int count, int y) {
+        int pitch = 18;
+        int startX = RITUAL_CANVAS_W / 2 - (count * pitch) / 2 + (pitch - 16) / 2;
+        for (int i = 0; i < count; i++) {
+            page.withSlot(offerings[offset + i], 1, startX + i * pitch, y);
+        }
     }
 
     /**
@@ -1025,7 +1039,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "solid for a while.",
                         ritualCard("5000", 0, List.of(ringOtherwhere("small")),
                                 WitcheryItems.MELLIFLUOUS_HUNGER.get(), WitcheryItems.SPECTRAL_DUST.get(),
-                                WitcheryItems.NECRO_STONE.get(), WitcheryItems.ARTHANA.get(), Items.GUNPOWDER),
+                                WitcheryItems.NECRO_STONE.get(), Items.GOLDEN_PICKAXE,
+                                WitcheryItems.ARTHANA.get(), Items.GUNPOWDER),
                         "It asks for **Spectral Dust**, **Mellifluous Hunger**, a **Necromantic Stone**, a "
                                 + "**Golden Pickaxe**, an **Arthana**, and **Gunpowder**, plus **5000 altar "
                                 + "power**. The stone and Arthana return.\n\nThen pass through a **Spirit "
@@ -1038,7 +1053,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "arrive a few at a time over long minutes, not all at once. Be patient, and "
                                 + "have beasts within range to call.",
                         ritualCard("6000", 3, List.of(ringOtherwhere("large")),
-                                Items.MILK_BUCKET, Items.HAY_BLOCK, Items.APPLE, Items.BEEF, Items.CARROT),
+                                Items.MILK_BUCKET, Items.HAY_BLOCK, Items.APPLE, Items.BEEF, Items.COD,
+                                Items.RED_MUSHROOM, Items.CARROT, Items.WHEAT_SEEDS),
                         "Offer barn and field bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, "
                                 + "carrot, and seeds, plus **6000 altar power**. It favors pigs, chickens, "
                                 + "cows, sheep, mooshrooms, wolves, and ocelots.\n\n**It demands a coven of "
@@ -1084,7 +1100,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "once. Efficient, dramatic, and never entirely gentle — for when a camp of "
                                 + "meat needs preparing faster than any oven.",
                         ritualCard("1000", 0, List.of(ringInfernal("small")),
-                                Items.SUGAR, WitcheryItems.WOOD_ASH.get(), Items.COAL, Items.BLAZE_POWDER),
+                                Items.SUGAR, WitcheryItems.WOOD_ASH.get(), Items.COAL, Items.BLAZE_POWDER,
+                                WitcheryItems.ATTUNED_STONE_CHARGED.get()),
                         "Started from a small infernal circle with **Sugar**. The ordinary branch needs "
                                 + "**Wood Ash** and **Coal** (1000 power); the hotter branch needs **Wood "
                                 + "Ash**, **Blaze Powder**, and a **Charged Attuned Stone**.\n\nIt cooks every "
@@ -1125,6 +1142,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         ritualCard("none", 0, List.of(ringWhite("medium")),
                                 WitcheryItems.SPROUTING_BREW.get(), WitcheryItems.ROWAN_SAPLING.get(),
                                 WitcheryItems.ALDER_SAPLING.get(), WitcheryItems.HAWTHORN_SAPLING.get(),
+                                Items.OAK_SAPLING, Items.SPRUCE_SAPLING, Items.BIRCH_SAPLING,
                                 WitcheryItems.ATTUNED_STONE_CHARGED.get()),
                         "Worked from a medium circle with **Brew of Sprouting** and a mixed grove offering — "
                                 + "**Rowan**, **Alder**, **Hawthorn**, **Oak**, **Spruce**, and **Birch "

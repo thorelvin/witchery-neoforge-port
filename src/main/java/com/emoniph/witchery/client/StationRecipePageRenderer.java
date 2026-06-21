@@ -39,12 +39,12 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
 
     // Ritual ring diagram (canvas-relative, before scale). Rings are concentric dashed glyph circles.
     private static final int RING_CENTER_X_OFFSET = 0; // added to bgWidth/2
-    private static final int RING_CENTER_Y = 40;
+    private static final int RING_CENTER_Y = 34;
     private static final float RING_SQUASH = 0.62F; // ellipse flatten, evokes a circle drawn on the ground
     private static final int GOLD_CENTER = 0xFFE8C020;
-    private static final int FACE_SIZE = 14;
-    private static final int FACE_GAP = 3;
-    private static final int FACE_ROW_Y = 102;
+    private static final int FACE_SIZE = 12;
+    private static final int FACE_GAP = 2;
+    private static final int FACE_ROW_Y = 106;
     private static final Identifier[] COVEN_SKINS = {
         Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch1.png"),
         Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch2.png"),
@@ -99,11 +99,40 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
             this.parentScreen.renderItemStack(graphics, itemX, itemY, mouseX, mouseY, slot.stack());
         }
 
-        // Auto-fit the caption into the space left below the panel: the height-bounded overload shrinks
+        // Auto-fit the caption into the space left below the visible panel content: the height-bounded overload shrinks
         // the text just enough to fit (down a size or two on long captions), so nothing overflows the page.
-        int textY = panelTop + drawnH + TEXT_GAP;
+        int textY = panelTop + visibleContentBottom(scale, drawnH) + TEXT_GAP;
         int textHeight = BookEntryScreen.PAGE_HEIGHT - textY - 2;
         this.renderBookTextHolder(graphics, this.page.getText(), 0, textY, pageWidth, textHeight);
+    }
+
+    private int visibleContentBottom(float scale, int drawnH) {
+        if (this.page.shouldShowBackground()) {
+            return drawnH;
+        }
+
+        int bottom = 0;
+        for (StationRecipePage.Slot slot : this.page.getSlots()) {
+            bottom = Math.max(bottom, Math.round((slot.y() + 16) * scale));
+        }
+        if (!this.page.getRings().isEmpty()) {
+            bottom = Math.max(bottom, Math.round((RING_CENTER_Y
+                    + sizeRadius(largestRingSize()) * RING_SQUASH + 2) * scale));
+        }
+        if (this.page.getCovenFaces() > 0) {
+            bottom = Math.max(bottom, Math.round((FACE_ROW_Y + FACE_SIZE) * scale));
+        }
+        return bottom == 0 ? drawnH : bottom;
+    }
+
+    private String largestRingSize() {
+        String largest = "small";
+        for (StationRecipePage.Ring ring : this.page.getRings()) {
+            if (sizeRadius(ring.size()) > sizeRadius(largest)) {
+                largest = ring.size();
+            }
+        }
+        return largest;
     }
 
     /**
@@ -138,9 +167,9 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
 
     private static int sizeRadius(String size) {
         return switch (size) {
-            case "small" -> 16;
-            case "large" -> 38;
-            default -> 26; // medium
+            case "small" -> 15;
+            case "large" -> 35;
+            default -> 25; // medium
         };
     }
 

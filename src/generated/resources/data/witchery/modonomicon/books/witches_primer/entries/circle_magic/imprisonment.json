@@ -41,13 +41,13 @@
           "count": 1,
           "item": "minecraft:slime_ball",
           "x": 41,
-          "y": 78
+          "y": 76
         },
         {
           "count": 1,
           "item": "minecraft:redstone",
           "x": 59,
-          "y": 78
+          "y": 76
         }
       ],
       "text": "[#](53341a)**7x7** - **Ritual** chalk - **500 (+16/s)** altar power[#]()",

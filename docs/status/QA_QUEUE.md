@@ -99,6 +99,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 - Confirm the Primer's chapter unlock path still teaches stations in a workable
   order.
+- Open Circle Magic rite recipe cards in the held Primer and placed Primer.
+  Confirm ring diagrams, two-row offering layouts, coven faces, and captions fit
+  for Beastial Call, Manifestation, Nature's Power, and a small two-item rite
+  such as Sanctity.
 - Confirm altar setup instructions are concrete and readable in the in-game
   book.
 - Confirm `Book_of_Shadows.html` and README match player-facing recipes,

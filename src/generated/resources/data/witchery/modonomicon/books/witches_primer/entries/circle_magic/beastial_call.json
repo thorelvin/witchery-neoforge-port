@@ -52,35 +52,53 @@
         {
           "count": 1,
           "item": "minecraft:milk_bucket",
-          "x": 14,
-          "y": 78
+          "x": 23,
+          "y": 68
         },
         {
           "count": 1,
           "item": "minecraft:hay_block",
-          "x": 32,
-          "y": 78
+          "x": 41,
+          "y": 68
         },
         {
           "count": 1,
           "item": "minecraft:apple",
-          "x": 50,
-          "y": 78
+          "x": 59,
+          "y": 68
         },
         {
           "count": 1,
           "item": "minecraft:beef",
-          "x": 68,
-          "y": 78
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:cod",
+          "x": 23,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:red_mushroom",
+          "x": 41,
+          "y": 87
         },
         {
           "count": 1,
           "item": "minecraft:carrot",
-          "x": 86,
-          "y": 78
+          "x": 59,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:wheat_seeds",
+          "x": 77,
+          "y": 87
         }
       ],
-      "text": "[#](53341a)**15x15** - **Otherwhere** chalk - **6000** altar power[#]()",
+      "text": "[#](53341a)**15x15** - **Otherwhere** chalk - **6000** altar power - **Coven: 3**[#]()",
       "title": ""
     },
     {
