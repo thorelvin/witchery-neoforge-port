@@ -1,0 +1,10 @@
+{
+  "layers": {
+    "humanoid": [
+      { "texture": "witchery:hunter_dawn" }
+    ],
+    "humanoid_leggings": [
+      { "texture": "witchery:hunter_dawn" }
+    ]
+  }
+}

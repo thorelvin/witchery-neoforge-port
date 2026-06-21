@@ -471,7 +471,6 @@ public class WitcheryCommands {
                         .then(Commands.literal("witch_well")      .executes(ctx -> gotoStructure(ctx.getSource(), "witchery", "witch_well")))
                         .then(Commands.literal("small_well")      .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "small_well", WitchWellPiece.Variant.SMALL)))
                         .then(Commands.literal("cursed_well")     .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "cursed_well", WitchWellPiece.Variant.CAVE)))
-                        .then(Commands.literal("witch_well_cave") .executes(ctx -> gotoWitchWellVariant(ctx.getSource(), "witch_well_cave", WitchWellPiece.Variant.CAVE)))
                         .then(Commands.literal("vanishing_hut")   .executes(ctx -> gotoVanishingHut(ctx.getSource())))
                         .then(Commands.literal("warped_coven")    .executes(ctx -> gotoStructure(ctx.getSource(), Level.NETHER, "witchery", "warped_coven")))
                         .then(Commands.literal("nether")          .executes(ctx -> gotoNether(ctx.getSource())))

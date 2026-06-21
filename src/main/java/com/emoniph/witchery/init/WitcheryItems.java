@@ -64,16 +64,56 @@ public class WitcheryItems {
             vampireMaterial(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, "vampire_feminine");
     public static final net.minecraft.world.item.equipment.ArmorMaterial VAMPIRE_METALLIC_MATERIAL =
             vampireMaterial(net.minecraft.world.item.equipment.ArmorMaterials.IRON, "vampire_metallic");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_PLAIN_MATERIAL =
+            hunterMaterial("hunter_plain");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_PLAIN_BOOTS_MATERIAL =
+            hunterMaterial("hunter_plain_boots");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_SILVERED_MATERIAL =
+            hunterMaterial("hunter_silvered");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_SILVERED_BOOTS_MATERIAL =
+            hunterMaterial("hunter_silvered_boots");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_DAWN_MATERIAL =
+            hunterMaterial("hunter_dawn");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial HUNTER_DAWN_BOOTS_MATERIAL =
+            hunterMaterial("hunter_dawn_boots");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial DEATHS_CLOTHING_MATERIAL =
+            deathsMaterial("deaths_clothes");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial WITCHES_ROBES_MATERIAL =
+            witchesRobesMaterial("witches_robes");
 
     private static net.minecraft.world.item.equipment.ArmorMaterial vampireMaterial(
             net.minecraft.world.item.equipment.ArmorMaterial base, String assetPath) {
         return new net.minecraft.world.item.equipment.ArmorMaterial(
                 base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
                 base.toughness(), base.knockbackResistance(), base.repairIngredient(),
-                vampireEquipmentAsset(assetPath));
+                witcheryEquipmentAsset(assetPath));
     }
 
-    private static net.minecraft.resources.ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> vampireEquipmentAsset(String path) {
+    private static net.minecraft.world.item.equipment.ArmorMaterial hunterMaterial(String assetPath) {
+        net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.LEATHER;
+        return new net.minecraft.world.item.equipment.ArmorMaterial(
+                base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
+                base.toughness(), base.knockbackResistance(), base.repairIngredient(),
+                witcheryEquipmentAsset(assetPath));
+    }
+
+    private static net.minecraft.world.item.equipment.ArmorMaterial deathsMaterial(String assetPath) {
+        net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.IRON;
+        return new net.minecraft.world.item.equipment.ArmorMaterial(
+                base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
+                base.toughness(), base.knockbackResistance(), base.repairIngredient(),
+                witcheryEquipmentAsset(assetPath));
+    }
+
+    private static net.minecraft.world.item.equipment.ArmorMaterial witchesRobesMaterial(String assetPath) {
+        net.minecraft.world.item.equipment.ArmorMaterial base = net.minecraft.world.item.equipment.ArmorMaterials.LEATHER;
+        return new net.minecraft.world.item.equipment.ArmorMaterial(
+                base.durability(), base.defense(), base.enchantmentValue(), base.equipSound(),
+                base.toughness(), base.knockbackResistance(), base.repairIngredient(),
+                witcheryEquipmentAsset(assetPath));
+    }
+
+    private static net.minecraft.resources.ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> witcheryEquipmentAsset(String path) {
         return net.minecraft.resources.ResourceKey.create(
                 net.minecraft.world.item.equipment.EquipmentAssets.ROOT_ID,
                 net.minecraft.resources.Identifier.fromNamespaceAndPath(WitcheryMod.MODID, path));
@@ -84,7 +124,7 @@ public class WitcheryItems {
                                     DeathsClothingItem.Piece piece) {
         int diamondDurability = armorType.getDurability(net.minecraft.world.item.equipment.ArmorMaterials.DIAMOND.durability());
         return new DeathsClothingItem(piece, itemProps(id)
-                .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.IRON, armorType)
+                .humanoidArmor(DEATHS_CLOTHING_MATERIAL, armorType)
                 .durability(diamondDurability)
                 .rarity(net.minecraft.world.item.Rarity.EPIC));
     }
@@ -94,9 +134,19 @@ public class WitcheryItems {
                                     HunterClothingItem.Variant variant) {
         int ironDurability = armorType.getDurability(net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability());
         return new HunterClothingItem(variant, itemProps(id)
-                .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, armorType)
+                .humanoidArmor(hunterMaterialFor(variant, armorType), armorType)
                 .durability(ironDurability)
                 .rarity(net.minecraft.world.item.Rarity.UNCOMMON));
+    }
+
+    private static net.minecraft.world.item.equipment.ArmorMaterial hunterMaterialFor(
+            HunterClothingItem.Variant variant, net.minecraft.world.item.equipment.ArmorType armorType) {
+        boolean boots = armorType == net.minecraft.world.item.equipment.ArmorType.BOOTS;
+        return switch (variant) {
+            case PLAIN -> boots ? HUNTER_PLAIN_BOOTS_MATERIAL : HUNTER_PLAIN_MATERIAL;
+            case SILVERED -> boots ? HUNTER_SILVERED_BOOTS_MATERIAL : HUNTER_SILVERED_MATERIAL;
+            case DAWN -> boots ? HUNTER_DAWN_BOOTS_MATERIAL : HUNTER_DAWN_MATERIAL;
+        };
     }
 
     private static Item earmuffs(net.minecraft.resources.Identifier id) {
@@ -441,11 +491,11 @@ public class WitcheryItems {
     public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> WITCHES_ROBE  = ITEMS.register("witches_robe",
             id -> new WitchesRobeItem(itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    .humanoidArmor(WITCHES_ROBES_MATERIAL,
                             net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> WITCHES_ROBES = ITEMS.register("witches_robes",
             id -> new WitchesRobeItem(itemProps(id)
-                    .humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+                    .humanoidArmor(WITCHES_ROBES_MATERIAL,
                             net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.register("witches_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", WitcheryItems::earmuffs);
@@ -610,10 +660,14 @@ public class WitcheryItems {
     public static final DeferredItem<Item> INFUSED_GRAVE_BREW     = ITEMS.register("infused_grave_brew", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
 
     // ── Infusion brew bases (M19) ─────────────────────────────────────────────
-    public static final DeferredItem<Item> GHOST_OF_THE_LIGHT   = ITEMS.registerSimpleItem("ghost_of_the_light");
-    public static final DeferredItem<Item> SOUL_OF_THE_WORLD    = ITEMS.registerSimpleItem("soul_of_the_world");
-    public static final DeferredItem<Item> SPIRIT_OF_OTHERWHERE = ITEMS.registerSimpleItem("spirit_of_otherwhere");
-    public static final DeferredItem<Item> INFERNAL_ANIMUS      = ITEMS.registerSimpleItem("infernal_animus");
+    public static final DeferredItem<Item> GHOST_OF_THE_LIGHT   = ITEMS.register("ghost_of_the_light",
+            id -> new InfusionSourceItem(itemProps(id), "witchery.infusion.light.name"));
+    public static final DeferredItem<Item> SOUL_OF_THE_WORLD    = ITEMS.register("soul_of_the_world",
+            id -> new InfusionSourceItem(itemProps(id), "witchery.infusion.overworld.name"));
+    public static final DeferredItem<Item> SPIRIT_OF_OTHERWHERE = ITEMS.register("spirit_of_otherwhere",
+            id -> new InfusionSourceItem(itemProps(id), "witchery.infusion.otherwhere.name"));
+    public static final DeferredItem<Item> INFERNAL_ANIMUS      = ITEMS.register("infernal_animus",
+            id -> new InfusionSourceItem(itemProps(id), "witchery.infusion.infernal.name"));
     public static final DeferredItem<Item> MYSTIC_UNGUENT       = ITEMS.registerSimpleItem("mystic_unguent");
     public static final DeferredItem<Item> FLYING_OINTMENT      = ITEMS.registerSimpleItem("flying_ointment");
     public static final DeferredItem<Item> HAPPENSTANCE_OIL     = ITEMS.registerSimpleItem("happenstance_oil");

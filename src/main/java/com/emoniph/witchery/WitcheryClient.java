@@ -112,6 +112,9 @@ public class WitcheryClient {
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
         Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
+        Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
+        Map.entry(DeathArmorModel.LAYER_LOCATION,      DeathArmorModel::createLayer),
+        Map.entry(WitchesRobeArmorModel.LAYER_LOCATION, WitchesRobeArmorModel::createLayer),
         Map.entry(HobgoblinModel.LAYER_LOCATION,       HobgoblinModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_BANSHEE,            GhostModel::createBodyLayer),
         Map.entry(GhostModel.LAYER_SPECTRE,            GhostModel::createBodyLayer),
@@ -287,6 +290,28 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_HELMET.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT.get(),
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHESTPLATE.get(),
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_BOOTS.get());
+
+        event.registerItem(new com.emoniph.witchery.client.HunterArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_HELMET.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_CHESTPLATE.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_BOOTS.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_HELMET_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_BOOTS_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
+                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_HAT.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_COAT.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_LEGGINGS.get(),
+                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_BOOTS.get());
+
+        event.registerItem(new com.emoniph.witchery.client.DeathArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.DEATHS_HOOD.get(),
+                com.emoniph.witchery.init.WitcheryItems.DEATHS_ROBE.get(),
+                com.emoniph.witchery.init.WitcheryItems.DEATHS_SHOES.get());
+
+        event.registerItem(new com.emoniph.witchery.client.WitchesRobeArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBE.get(),
+                com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBES.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {

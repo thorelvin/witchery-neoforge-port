@@ -5,6 +5,7 @@ import com.emoniph.witchery.blocks.entity.VanishingHutAnchorBlockEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.world.VanishingHutData;
+import com.emoniph.witchery.worldgen.NbtStructurePlacement;
 import com.emoniph.witchery.worldgen.VanishingHut;
 import com.emoniph.witchery.worldgen.VanishingHutHelper;
 import net.minecraft.core.BlockPos;
@@ -13,8 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.material.FluidState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -39,6 +38,8 @@ public final class VanishingHutEvents {
     private static final int RING_MIN = 48;
     private static final int RING_MAX = 96;
     private static final int RING_ATTEMPTS = 12;
+    private static final int SETUP_SEARCH_RADIUS = 24;
+    private static final int SETUP_RANDOM_ATTEMPTS = 24;
     private static final int FLATNESS_TOLERANCE = 2;
 
     private VanishingHutEvents() {}
@@ -53,11 +54,14 @@ public final class VanishingHutEvents {
      * Returns the buried anchor pos, or null if no level, dry, open footprint opened up nearby.
      */
     public static BlockPos placeNear(ServerLevel level, BlockPos near) {
-        BlockPos anchor = findValidAnchor(level, near.getX(), near.getZ(), 6, 24, RING_ATTEMPTS, true);
+        RejectionStats stats = new RejectionStats();
+        BlockPos anchor = findSetupAnchor(level, near.getX(), near.getZ(), stats);
         if (anchor == null) {
+            stats.logSetupFailure(level, near);
             return null;
         }
         UUID hutId = UUID.randomUUID();
+        clearClutter(level, anchor);
         VanishingHut.build(level, anchor, hutId);
         CovenWitchEntity witch = VanishingHut.spawnResident(level, anchor);
         if (level.getBlockEntity(anchor) instanceof VanishingHutAnchorBlockEntity be) {
@@ -118,6 +122,7 @@ public final class VanishingHutEvents {
             return;
         }
 
+        clearClutter(targetLevel, destAnchor);
         VanishingHut.build(targetLevel, destAnchor, hutId);
 
         // Carry the same witch to the new hut; only spawn a fresh one if she's truly gone.
@@ -186,6 +191,62 @@ public final class VanishingHutEvents {
      */
     private static BlockPos findValidAnchor(ServerLevel level, int centerX, int centerZ,
                                             int minRadius, int maxRadius, int attempts, boolean mayForceLoad) {
+        return findValidAnchor(level, centerX, centerZ, minRadius, maxRadius, attempts, mayForceLoad, null);
+    }
+
+    private static BlockPos findSetupAnchor(ServerLevel level, int centerX, int centerZ,
+                                            RejectionStats stats) {
+        BlockPos anchor = findDeterministicAnchor(level, centerX, centerZ,
+                SETUP_SEARCH_RADIUS, true, stats);
+        if (anchor != null) {
+            return anchor;
+        }
+        return findValidAnchor(level, centerX, centerZ, 0, SETUP_SEARCH_RADIUS,
+                SETUP_RANDOM_ATTEMPTS, true, stats);
+    }
+
+    private static BlockPos findDeterministicAnchor(ServerLevel level, int centerX, int centerZ,
+                                                    int maxRadius, boolean mayForceLoad,
+                                                    RejectionStats stats) {
+        for (int radius = 0; radius <= maxRadius; radius++) {
+            if (radius == 0) {
+                BlockPos anchor = tryAnchorCandidate(level, centerX, centerZ, mayForceLoad, stats);
+                if (anchor != null) {
+                    return anchor;
+                }
+                continue;
+            }
+            for (int dx = -radius; dx <= radius; dx++) {
+                BlockPos north = tryAnchorCandidate(level, centerX + dx, centerZ - radius,
+                        mayForceLoad, stats);
+                if (north != null) {
+                    return north;
+                }
+                BlockPos south = tryAnchorCandidate(level, centerX + dx, centerZ + radius,
+                        mayForceLoad, stats);
+                if (south != null) {
+                    return south;
+                }
+            }
+            for (int dz = -radius + 1; dz <= radius - 1; dz++) {
+                BlockPos west = tryAnchorCandidate(level, centerX - radius, centerZ + dz,
+                        mayForceLoad, stats);
+                if (west != null) {
+                    return west;
+                }
+                BlockPos east = tryAnchorCandidate(level, centerX + radius, centerZ + dz,
+                        mayForceLoad, stats);
+                if (east != null) {
+                    return east;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos findValidAnchor(ServerLevel level, int centerX, int centerZ,
+                                            int minRadius, int maxRadius, int attempts,
+                                            boolean mayForceLoad, RejectionStats stats) {
         for (int attempt = 0; attempt < attempts; attempt++) {
             int x;
             int z;
@@ -198,49 +259,97 @@ public final class VanishingHutEvents {
                 x = centerX + (int) Math.round(Math.cos(angle) * dist);
                 z = centerZ + (int) Math.round(Math.sin(angle) * dist);
             }
-            int chunkX = x >> 4;
-            int chunkZ = z >> 4;
-            if (!level.hasChunk(chunkX, chunkZ)) {
-                if (!mayForceLoad) {
-                    continue; // never force-generate chunks during the ring scan
-                }
-                level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
-            }
-            Integer floorY = validFloorY(level, x, z);
-            if (floorY != null) {
-                return new BlockPos(x, floorY - 2, z);
+            BlockPos anchor = tryAnchorCandidate(level, x, z, mayForceLoad, stats);
+            if (anchor != null) {
+                return anchor;
             }
         }
         return null;
     }
 
+    private static BlockPos tryAnchorCandidate(ServerLevel level, int x, int z,
+                                               boolean mayForceLoad, RejectionStats stats) {
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        if (!level.hasChunk(chunkX, chunkZ)) {
+            if (!mayForceLoad) {
+                if (stats != null) stats.unloadedChunk++;
+                return null; // never force-generate chunks during the ring scan
+            }
+            level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+        }
+        Integer floorY = validFloorY(level, x, z, stats);
+        return floorY == null ? null : new BlockPos(x, floorY - 2, z);
+    }
+
     /** The first-air Y over a valid, level, dry, open footprint centered at (x,z), or null. */
-    private static Integer validFloorY(ServerLevel level, int x, int z) {
-        int baseFloor = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+    private static Integer validFloorY(ServerLevel level, int x, int z, RejectionStats stats) {
+        Integer baseFloor = trueGroundSurfaceY(level, x, z, stats);
+        if (baseFloor == null) {
+            return null;
+        }
         for (int dx = VanishingHut.MIN_DX; dx <= VanishingHut.MAX_DX; dx++) {
             for (int dz = VanishingHut.MIN_DZ; dz <= VanishingHut.MAX_DZ; dz++) {
                 int cx = x + dx;
                 int cz = z + dz;
-                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE, cx, cz);
-                if (Math.abs(surface - baseFloor) > FLATNESS_TOLERANCE) {
-                    return null; // too uneven
+                Integer surfaceResult = trueGroundSurfaceY(level, cx, cz, stats);
+                if (surfaceResult == null) {
+                    return null;
                 }
-                BlockPos ground = new BlockPos(cx, surface - 1, cz);
-                BlockState groundState = level.getBlockState(ground);
-                FluidState groundFluid = groundState.getFluidState();
-                if (!groundFluid.isEmpty() || !groundState.isSolidRender()) {
-                    return null; // water/lava or non-solid footing
+                int surface = surfaceResult;
+                if (Math.abs(surface - baseFloor) > FLATNESS_TOLERANCE) {
+                    if (stats != null) stats.uneven++;
+                    return null; // too uneven
                 }
                 // The template's visible surface replaces the top solid block; everything above
                 // that must be open enough for the NBT volume.
                 for (int y = surface; y <= surface + VanishingHut.ROOF_DY; y++) {
                     BlockState above = level.getBlockState(new BlockPos(cx, y, cz));
-                    if (!above.isAir() && !above.canBeReplaced()) {
+                    if (!above.isAir() && !NbtStructurePlacement.isClearableClutter(above)) {
+                        if (stats != null) stats.blockedVolume++;
                         return null;
                     }
                 }
             }
         }
         return baseFloor;
+    }
+
+    private static Integer trueGroundSurfaceY(ServerLevel level, int x, int z, RejectionStats stats) {
+        NbtStructurePlacement.GroundResult result = NbtStructurePlacement.trueGroundSurfaceY(level, x, z);
+        if (result.surfaceY().isPresent()) {
+            return result.surfaceY().getAsInt();
+        }
+        if (stats != null) {
+            if (result.failure() == NbtStructurePlacement.GroundFailure.FLUID) {
+                stats.fluid++;
+            } else {
+                stats.nonSolidGround++;
+            }
+        }
+        return null;
+    }
+
+    private static void clearClutter(ServerLevel level, BlockPos anchor) {
+        int floorY = anchor.getY() + 1;
+        int roofY = anchor.getY() + VanishingHut.ROOF_DY;
+        NbtStructurePlacement.clearClutterBox(level,
+                anchor.getX() + VanishingHut.MIN_DX, floorY, anchor.getZ() + VanishingHut.MIN_DZ,
+                anchor.getX() + VanishingHut.MAX_DX, roofY, anchor.getZ() + VanishingHut.MAX_DZ);
+    }
+
+    private static final class RejectionStats {
+        private int unloadedChunk;
+        private int uneven;
+        private int fluid;
+        private int nonSolidGround;
+        private int blockedVolume;
+
+        private void logSetupFailure(ServerLevel level, BlockPos near) {
+            WitcheryMod.LOGGER.info(
+                    "[VanishingHut] Setup failed near {} in {}: unloaded={}, uneven={}, fluid={}, nonSolidGround={}, blocked={}.",
+                    near, level.dimension().identifier(), unloadedChunk, uneven, fluid,
+                    nonSolidGround, blockedVolume);
+        }
     }
 }

@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -82,16 +81,7 @@ public class HobgoblinHutTemplatePiece extends TemplateStructurePiece {
     }
 
     private void clearClutter(WorldGenLevel level, BoundingBox box) {
-        for (int x = 0; x < WIDTH; x++) {
-            for (int z = 0; z < DEPTH; z++) {
-                for (int y = 0; y < HEIGHT; y++) {
-                    BlockPos blockPos = templateWorldPos(x, y, z);
-                    if (box.isInside(blockPos) && isClutter(level.getBlockState(blockPos))) {
-                        level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-                    }
-                }
-            }
-        }
+        NbtStructurePlacement.clearLocalClutter(level, box, WIDTH, HEIGHT, DEPTH, this::templateWorldPos);
     }
 
     private void fillSupportColumns(WorldGenLevel level, BoundingBox box) {
@@ -99,14 +89,6 @@ public class HobgoblinHutTemplatePiece extends TemplateStructurePiece {
             fillColumnDownAt(level, box, templateWorldPos(column[0], -1, column[1]),
                     Blocks.DIRT.defaultBlockState());
         }
-    }
-
-    private static boolean isClutter(BlockState state) {
-        return state.canBeReplaced()
-                || state.is(BlockTags.LEAVES)
-                || state.is(BlockTags.LOGS)
-                || state.is(BlockTags.FLOWERS)
-                || state.is(BlockTags.SAPLINGS);
     }
 
     private void fillColumnDownAt(WorldGenLevel level, BoundingBox box, BlockPos pos, BlockState state) {

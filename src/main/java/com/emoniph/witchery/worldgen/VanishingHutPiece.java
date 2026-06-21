@@ -8,13 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
@@ -68,23 +65,8 @@ public class VanishingHutPiece extends StructurePiece {
     private static void clearClutter(WorldGenLevel level, int centerX, int centerZ, int anchorY) {
         int floorY = anchorY + 1;
         int roofY = anchorY + VanishingHut.ROOF_DY;
-        for (int dx = VanishingHut.MIN_DX; dx <= VanishingHut.MAX_DX; dx++) {
-            for (int dz = VanishingHut.MIN_DZ; dz <= VanishingHut.MAX_DZ; dz++) {
-                for (int y = floorY; y <= roofY; y++) {
-                    BlockPos cell = new BlockPos(centerX + dx, y, centerZ + dz);
-                    if (isClutter(level.getBlockState(cell))) {
-                        level.setBlock(cell, Blocks.AIR.defaultBlockState(), 3);
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isClutter(BlockState state) {
-        return state.canBeReplaced()
-                || state.is(BlockTags.LEAVES)
-                || state.is(BlockTags.LOGS)
-                || state.is(BlockTags.FLOWERS)
-                || state.is(BlockTags.SAPLINGS);
+        NbtStructurePlacement.clearClutterBox(level,
+                centerX + VanishingHut.MIN_DX, floorY, centerZ + VanishingHut.MIN_DZ,
+                centerX + VanishingHut.MAX_DX, roofY, centerZ + VanishingHut.MAX_DZ);
     }
 }
