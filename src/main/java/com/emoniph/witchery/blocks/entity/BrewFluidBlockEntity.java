@@ -31,6 +31,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
     private static final String KEY_RUN_TICKS = "RunTicks";
     private static final String KEY_MAX_RUN_TICKS = "MaxRunTicks";
     private static final String KEY_PERSISTENT_SOURCE = "PersistentSource";
+    private static final String KEY_RITUALISED = "Ritualised";
+    private static final String KEY_RITUAL_COVEN_SIZE = "RitualCovenSize";
     private static final String KEY_THROWER = "Thrower";
     private static final String KEY_THROWER_UUID = "ThrowerUUID";
 
@@ -42,6 +44,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
     private int runTicks;
     private int maxRunTicks = Brews.sourceBrewGasMaxRunTicks(0);
     private boolean persistentSource;
+    private boolean ritualised;
+    private int ritualCovenSize;
     private String throwerName = "";
     private UUID throwerUuid;
 
@@ -54,6 +58,11 @@ public class BrewFluidBlockEntity extends BlockEntity {
     }
 
     public void initialise(List<net.minecraft.world.item.Item> items, Entity source, boolean persistentSource) {
+        initialise(items, source, persistentSource, false, 0);
+    }
+
+    public void initialise(List<net.minecraft.world.item.Item> items, Entity source, boolean persistentSource,
+                           boolean ritualised, int ritualCovenSize) {
         this.contents = new BrewContents(List.copyOf(items));
         this.color = Brews.color(items);
         int lifetime = Brews.impactLifetime(items);
@@ -63,6 +72,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
         this.updateCount = 0;
         this.runTicks = 0;
         this.persistentSource = persistentSource;
+        this.ritualised = ritualised;
+        this.ritualCovenSize = ritualised ? Math.max(0, ritualCovenSize) : 0;
         if (source != null) {
             this.throwerName = source.getName().getString();
             this.throwerUuid = source.getUUID();
@@ -82,6 +93,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
         this.throwerName = source.throwerName;
         this.throwerUuid = source.throwerUuid;
         this.persistentSource = source.persistentSource;
+        this.ritualised = source.ritualised;
+        this.ritualCovenSize = source.ritualCovenSize;
         this.updateCount = 0;
         this.runTicks = 0;
         sync();
@@ -143,7 +156,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
         if (contents.isEmpty()) {
             return;
         }
-        Brews.tickAdjacentBlockPulse(serverLevel, worldPosition, contents.items(), findThrower(serverLevel));
+        Brews.tickAdjacentBlockPulse(serverLevel, worldPosition, contents.items(), findThrower(serverLevel),
+                ritualised, ritualCovenSize);
     }
 
     @Nullable
@@ -181,6 +195,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
         tag.putInt(KEY_RUN_TICKS, runTicks);
         tag.putInt(KEY_MAX_RUN_TICKS, maxRunTicks);
         tag.putBoolean(KEY_PERSISTENT_SOURCE, persistentSource);
+        tag.putBoolean(KEY_RITUALISED, ritualised);
+        tag.putInt(KEY_RITUAL_COVEN_SIZE, ritualCovenSize);
         if (!throwerName.isEmpty()) {
             tag.putString(KEY_THROWER, throwerName);
         }
@@ -200,6 +216,8 @@ public class BrewFluidBlockEntity extends BlockEntity {
         runTicks = tag.getIntOr(KEY_RUN_TICKS, 0);
         maxRunTicks = Math.max(1, tag.getIntOr(KEY_MAX_RUN_TICKS, Brews.sourceBrewGasMaxRunTicks(0)));
         persistentSource = tag.getBooleanOr(KEY_PERSISTENT_SOURCE, false);
+        ritualised = tag.getBooleanOr(KEY_RITUALISED, false);
+        ritualCovenSize = Math.max(0, tag.getIntOr(KEY_RITUAL_COVEN_SIZE, 0));
         throwerName = tag.getStringOr(KEY_THROWER, "");
         String uuid = tag.getStringOr(KEY_THROWER_UUID, "");
         try {

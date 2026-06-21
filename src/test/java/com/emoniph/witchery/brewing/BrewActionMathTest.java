@@ -180,6 +180,62 @@ class BrewActionMathTest {
     }
 
     @Test
+    void ritualizedBrewStrengthCapsUseSourceCovenTable() {
+        assertEquals(1, Brews.sourceRitualCovenMaxStrength(0));
+        assertEquals(1, Brews.sourceRitualCovenMaxStrength(1));
+        assertEquals(2, Brews.sourceRitualCovenMaxStrength(2));
+        assertEquals(3, Brews.sourceRitualCovenMaxStrength(4));
+        assertEquals(4, Brews.sourceRitualCovenMaxStrength(6));
+        assertEquals(4, Brews.sourceRitualCovenMaxStrength(99));
+
+        assertEquals(0, Brews.sourceRitualEffectiveStrength(-1, 6));
+        assertEquals(1, Brews.sourceRitualEffectiveStrength(3, 0));
+        assertEquals(2, Brews.sourceRitualEffectiveStrength(5, 2));
+        assertEquals(4, Brews.sourceRitualEffectiveStrength(9, 6));
+    }
+
+    @Test
+    void ritualizedRaiseLandAndRaiseDeadUseSourceMath() {
+        assertEquals(3, Brews.raiseLandHeight(0, false));
+        assertEquals(2, Brews.raiseLandHeight(0, true));
+        assertEquals(9, Brews.raiseLandHeight(2, false));
+        assertEquals(6, Brews.raiseLandHeight(2, true));
+
+        assertEquals(2, Brews.raiseLandRitualRadius(0));
+        assertEquals(6, Brews.raiseLandRitualRadius(2));
+
+        assertEquals(200, Brews.sourceRaiseDeadRitualLifetimeTicks(0));
+        assertEquals(600, Brews.sourceRaiseDeadRitualLifetimeTicks(2));
+    }
+
+    @Test
+    void ritualMisfortuneUsesSourceRiskAndBackfireThresholds() {
+        assertEquals(0, Brews.sourceRitualMisfortuneRisk(true, false, false, false));
+        assertEquals(0, Brews.sourceRitualMisfortuneRisk(false, true, false, false));
+        assertEquals(1, Brews.sourceRitualMisfortuneRisk(false, false, false, false));
+        assertEquals(2, Brews.sourceRitualMisfortuneRisk(false, false, true, false));
+        assertEquals(3, Brews.sourceRitualMisfortuneRisk(false, false, true, true));
+
+        assertEquals(Brews.RitualMisfortuneOutcome.NONE,
+                Brews.sourceRitualMisfortuneOutcome(0, 250, 0.99));
+        assertEquals(Brews.RitualMisfortuneOutcome.NONE,
+                Brews.sourceRitualMisfortuneOutcome(1, 0, 0.99));
+        assertEquals(Brews.RitualMisfortuneOutcome.NONE,
+                Brews.sourceRitualMisfortuneOutcome(1, 250, 0.49));
+        assertEquals(Brews.RitualMisfortuneOutcome.SLOWNESS,
+                Brews.sourceRitualMisfortuneOutcome(1, 250, 0.50));
+        assertEquals(Brews.RitualMisfortuneOutcome.PARALYSIS,
+                Brews.sourceRitualMisfortuneOutcome(1, 250, 0.75));
+        assertEquals(Brews.RitualMisfortuneOutcome.INSANITY,
+                Brews.sourceRitualMisfortuneOutcome(1, 250, 0.90));
+        assertEquals(Brews.RitualMisfortuneOutcome.LIGHTNING,
+                Brews.sourceRitualMisfortuneOutcome(1, 250, 0.98));
+        assertEquals(Brews.RitualMisfortuneOutcome.PARALYSIS,
+                Brews.sourceRitualMisfortuneOutcome(2, 250, 0.70),
+                "risk scales the source roll by 1.2, so 0.70 crosses the paralysis threshold");
+    }
+
+    @Test
     void diseaseBlockUsesSourceDecayAndContactOdds() {
         assertTrue(DiseaseBlock.shouldSourceRemove(0));
         assertFalse(DiseaseBlock.shouldSourceRemove(1));

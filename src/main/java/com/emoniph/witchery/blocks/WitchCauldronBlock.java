@@ -376,6 +376,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         setFillLevel(state, level, pos, 0);
         brewBe.clear();
+        Brews.applyRitualMisfortune(serverLevel, pos, powerCost);
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.7F);
         level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS,
                 0.5F, 0.9F + level.random.nextFloat() * 0.2F);

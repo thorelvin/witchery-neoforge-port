@@ -24,6 +24,7 @@ import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
+import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -55,10 +56,12 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -264,6 +267,12 @@ public final class Brews {
     private static final int SOURCE_BREW_FLUID_BASE_DECAY_DENOMINATOR = 5;
     private static final double SOURCE_ADJACENT_BLOCK_PULSE_CHANCE = 0.01;
     private static final double SOURCE_ADJACENT_BLOCK_PULSE_RADIUS = 1.0;
+    private static final int[] SOURCE_RITUAL_COVEN_MAX_STRENGTH = {1, 1, 2, 2, 3, 3, 4};
+    private static final int SOURCE_RITUAL_BACKFIRE_RADIUS = 16;
+    private static final int SOURCE_RITUAL_BACKFIRE_SLOWNESS_TICKS = 60 * 20;
+    private static final int SOURCE_RITUAL_BACKFIRE_PARALYSIS_TICKS = 20 * 20;
+    private static final int SOURCE_RITUAL_BACKFIRE_INSANITY_TICKS = 3 * 60 * 20;
+    private static final int SOURCE_RITUAL_BACKFIRE_LIGHTNING_PARALYSIS_TICKS = 10 * 20;
     public static final int SOURCE_RITUAL_TRIGGER_POWER_COST = 250;
     public static final int SOURCE_TRIGGERED_RITUAL_ITEM_CHARGES = 1;
     public static final int SOURCE_TRIGGERED_RITUAL_CAT_ITEM_CHARGES = 2;
@@ -295,6 +304,14 @@ public final class Brews {
         NEEDS_SPLASH_DISPERSAL,
         NO_TRIGGER_ITEM,
         BLOCKED
+    }
+
+    public enum RitualMisfortuneOutcome {
+        NONE,
+        SLOWNESS,
+        PARALYSIS,
+        INSANITY,
+        LIGHTNING
     }
 
     public record IngredientReference(Item item, Ingredient.Kind kind, int capacityRequired, int powerCost,
@@ -744,6 +761,12 @@ public final class Brews {
 
     public static boolean placeMovingBrewFluid(ServerLevel level, BlockPos pos, List<Item> items,
                                                Dispersal dispersal, Entity source, boolean persistentLiquidSource) {
+        return placeMovingBrewFluid(level, pos, items, dispersal, source, persistentLiquidSource, false, 0);
+    }
+
+    public static boolean placeMovingBrewFluid(ServerLevel level, BlockPos pos, List<Item> items,
+                                               Dispersal dispersal, Entity source, boolean persistentLiquidSource,
+                                               boolean ritualised, int covenSize) {
         if ((dispersal != Dispersal.GAS && dispersal != Dispersal.LIQUID) || !hasEffect(items)) {
             return false;
         }
@@ -764,7 +787,8 @@ public final class Brews {
             level.removeBlock(pos, false);
             return false;
         }
-        fluid.initialise(items, source, persistentLiquidSource && dispersal == Dispersal.LIQUID);
+        fluid.initialise(items, source, persistentLiquidSource && dispersal == Dispersal.LIQUID,
+                ritualised, covenSize);
         if (dispersal == Dispersal.GAS) {
             level.scheduleTick(pos, state.getBlock(), com.emoniph.witchery.blocks.BrewFluidBlock.SOURCE_GAS_TICK_RATE);
         } else {
@@ -895,17 +919,19 @@ public final class Brews {
             return validation;
         }
         Dispersal delivery = dispersal(items);
+        int covenSize = sourceRitualCovenSize(level, center);
         if (delivery == Dispersal.TRIGGERED) {
             return curseTriggeredRitualItem(level, center, items)
                     ? RitualDeliveryResult.SUCCESS
                     : RitualDeliveryResult.NO_TRIGGER_ITEM;
         }
         if (delivery == Dispersal.GAS || delivery == Dispersal.LIQUID) {
-            return placeMovingBrewFluid(level, center.above(), items, delivery, source, delivery == Dispersal.LIQUID)
+            return placeMovingBrewFluid(level, center.above(), items, delivery, source, delivery == Dispersal.LIQUID,
+                    true, covenSize)
                     ? RitualDeliveryResult.SUCCESS
                     : RitualDeliveryResult.BLOCKED;
         }
-        applyRitualBlockInstant(level, center, items, resolved, source);
+        applyRitualBlockInstant(level, center, items, resolved, source, covenSize);
         return RitualDeliveryResult.SUCCESS;
     }
 
@@ -920,14 +946,15 @@ public final class Brews {
     }
 
     private static void applyRitualBlockInstant(ServerLevel level, BlockPos center, List<Item> items,
-                                                Resolution resolved, Entity source) {
+                                                Resolution resolved, Entity source, int covenSize) {
         double radius = sourceRitualInstantRadius(resolved.extent);
         Vec3 impactPos = Vec3.atCenterOf(center);
         if (!resolved.effects.isEmpty()) {
-            applyBlockImpactEffects(level, center, resolved.effects, source);
+            applyBlockImpactEffects(level, center, resolved.effects, source, true, covenSize);
         }
         if (!resolved.actions.isEmpty()) {
-            applyBlockImpactActions(level, impactPos, center, Direction.UP, resolved.actions, source, radius);
+            applyBlockImpactActions(level, impactPos, center, Direction.UP, resolved.actions, source, radius,
+                    true, covenSize);
         }
         int brewColor = color(items);
         level.sendParticles(new DustParticleOptions(brewColor, 1.0F),
@@ -953,6 +980,145 @@ public final class Brews {
         int rangeScale = (1 + covenSize) * 4;
         int allowedRange = 2 * rangeScale * rangeScale;
         return distanceSqr <= (double) allowedRange * (double) allowedRange;
+    }
+
+    public static int sourceRitualCovenMaxStrength(int covenSize) {
+        int index = Math.clamp(covenSize, 0, SOURCE_RITUAL_COVEN_MAX_STRENGTH.length - 1);
+        return SOURCE_RITUAL_COVEN_MAX_STRENGTH[index];
+    }
+
+    public static int sourceRitualEffectiveStrength(int strength, int covenSize) {
+        return Math.min(Math.max(0, strength), sourceRitualCovenMaxStrength(covenSize));
+    }
+
+    public static int sourceRitualMisfortuneRisk(boolean smallRitual, boolean mediumRitual,
+                                                 boolean smallInfernal, boolean mediumInfernal) {
+        int risk = 0;
+        if (!smallRitual && !mediumRitual) {
+            risk++;
+        }
+        if (smallInfernal) {
+            risk++;
+        }
+        if (mediumInfernal) {
+            risk++;
+        }
+        return risk;
+    }
+
+    public static RitualMisfortuneOutcome sourceRitualMisfortuneOutcome(int risk, int power, double random) {
+        if (risk <= 0 || power <= 0) {
+            return RitualMisfortuneOutcome.NONE;
+        }
+        double roll = random * (1.0D + (double) (risk - 1) * 0.2D);
+        if (roll < 0.5D) {
+            return RitualMisfortuneOutcome.NONE;
+        }
+        if (roll < 0.75D) {
+            return RitualMisfortuneOutcome.SLOWNESS;
+        }
+        if (roll < 0.9D) {
+            return RitualMisfortuneOutcome.PARALYSIS;
+        }
+        if (roll < 0.98D) {
+            return RitualMisfortuneOutcome.INSANITY;
+        }
+        return RitualMisfortuneOutcome.LIGHTNING;
+    }
+
+    public static void applyRitualMisfortune(ServerLevel level, BlockPos center, int power) {
+        int risk = sourceRitualMisfortuneRisk(level, center);
+        RitualMisfortuneOutcome outcome = sourceRitualMisfortuneOutcome(risk, power, level.random.nextDouble());
+        if (outcome == RitualMisfortuneOutcome.NONE) {
+            return;
+        }
+        switch (outcome) {
+            case SLOWNESS -> applyRitualBackfireEffect(level, center,
+                    new MobEffectInstance(MobEffects.SLOWNESS, SOURCE_RITUAL_BACKFIRE_SLOWNESS_TICKS, 1));
+            case PARALYSIS -> applyRitualBackfireEffect(level, center,
+                    new MobEffectInstance(WitcheryMobEffects.PARALYSED, SOURCE_RITUAL_BACKFIRE_PARALYSIS_TICKS, 2));
+            case INSANITY -> applyRitualBackfireEffect(level, center,
+                    new MobEffectInstance(WitcheryMobEffects.INSANITY, SOURCE_RITUAL_BACKFIRE_INSANITY_TICKS, 2));
+            case LIGHTNING -> {
+                applyRitualBackfireEffect(level, center,
+                        new MobEffectInstance(WitcheryMobEffects.PARALYSED,
+                                SOURCE_RITUAL_BACKFIRE_LIGHTNING_PARALYSIS_TICKS, 2));
+                int bolts = level.random.nextInt(3) + 2;
+                for (int i = 0; i < bolts; i++) {
+                    spawnRitualBackfireBolt(level, center, 1, 4);
+                }
+            }
+            default -> { }
+        }
+        level.playSound(null, center, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.35F, 1.6F);
+        level.sendParticles(ParticleTypes.WITCH,
+                center.getX() + 0.5D, center.getY() + 0.8D, center.getZ() + 0.5D,
+                20, 0.6D, 0.5D, 0.6D, 0.05D);
+    }
+
+    private static int sourceRitualMisfortuneRisk(ServerLevel level, BlockPos center) {
+        int small = detectCauldronRingVariant(level, center, RitualCircleDetector.CircleSize.SMALL);
+        int medium = detectCauldronRingVariant(level, center, RitualCircleDetector.CircleSize.MEDIUM);
+        return sourceRitualMisfortuneRisk(small == 1, medium == 1, small == 3, medium == 3);
+    }
+
+    private static int detectCauldronRingVariant(ServerLevel level, BlockPos center,
+                                                 RitualCircleDetector.CircleSize size) {
+        int atCenter = RitualCircleDetector.detectVariant(level, center, size);
+        if (atCenter != 0) {
+            return atCenter;
+        }
+        return RitualCircleDetector.detectVariant(level, center.below(), size);
+    }
+
+    private static int sourceRitualCovenSize(ServerLevel level, BlockPos center) {
+        return level.getEntitiesOfClass(Entity.class, new AABB(center).inflate(16.0D),
+                entity -> entity instanceof com.emoniph.witchery.entity.CovenMember).size();
+    }
+
+    private static void applyRitualBackfireEffect(ServerLevel level, BlockPos center, MobEffectInstance effect) {
+        double radiusSq = SOURCE_RITUAL_BACKFIRE_RADIUS * SOURCE_RITUAL_BACKFIRE_RADIUS;
+        AABB bounds = new AABB(center).inflate(SOURCE_RITUAL_BACKFIRE_RADIUS, 2.0D, SOURCE_RITUAL_BACKFIRE_RADIUS);
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
+            if (entity.distanceToSqr(center.getX() + 0.5D, entity.getY(), center.getZ() + 0.5D) >= radiusSq
+                    || entity instanceof Enemy
+                    || entity instanceof EnderDragon
+                    || entity instanceof WitherBoss) {
+                continue;
+            }
+            removeBeneficialEffects(entity);
+            entity.addEffect(new MobEffectInstance(effect));
+        }
+    }
+
+    private static void removeBeneficialEffects(LivingEntity entity) {
+        List<Holder<MobEffect>> effectsToRemove = new ArrayList<>();
+        for (MobEffectInstance effect : entity.getActiveEffects()) {
+            if (effect.getEffect().value().getCategory() == MobEffectCategory.BENEFICIAL) {
+                effectsToRemove.add(effect.getEffect());
+            }
+        }
+        for (Holder<MobEffect> effect : effectsToRemove) {
+            entity.removeEffect(effect);
+        }
+    }
+
+    private static void spawnRitualBackfireBolt(ServerLevel level, BlockPos center, int min, int max) {
+        int activeRadius = max - min;
+        int ax = level.random.nextInt(activeRadius * 2 + 1);
+        if (ax > activeRadius) {
+            ax += min * 2;
+        }
+        int az = level.random.nextInt(activeRadius * 2 + 1);
+        if (az > activeRadius) {
+            az += min * 2;
+        }
+        BlockPos pos = center.offset(-max + ax, 0, -max + az);
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+        if (bolt != null) {
+            bolt.setPos(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
+            level.addFreshEntity(bolt);
+        }
     }
 
     private static boolean hasTriggeredRitualItemTarget(ServerLevel level, BlockPos center) {
@@ -1215,16 +1381,24 @@ public final class Brews {
 
     private static void applyBlockImpactEffects(ServerLevel level, BlockPos impactPos, List<EffectApplication> effects,
                                                 Entity source) {
+        applyBlockImpactEffects(level, impactPos, effects, source, false, 0);
+    }
+
+    private static void applyBlockImpactEffects(ServerLevel level, BlockPos impactPos, List<EffectApplication> effects,
+                                                Entity source, boolean ritualised, int covenSize) {
         for (EffectApplication application : effects) {
             if (application.disableBlockTarget()) {
                 continue;
             }
             MobEffectInstance effect = application.effect();
             MobEffect mobEffect = effect.getEffect().value();
+            int strength = ritualised
+                    ? sourceRitualEffectiveStrength(effect.getAmplifier(), covenSize)
+                    : effect.getAmplifier();
             if (mobEffect == WitcheryMobEffects.SNOW_TRAIL.value()) {
-                applySnowTrailBlockHit(level, impactPos, effect.getAmplifier(), source);
+                applySnowTrailBlockHit(level, impactPos, strength, source);
             } else if (mobEffect == WitcheryMobEffects.CHILLED.value()) {
-                applyChilledBlockHit(level, impactPos, effect.getAmplifier(), source);
+                applyChilledBlockHit(level, impactPos, strength, source);
             }
         }
     }
@@ -1232,36 +1406,47 @@ public final class Brews {
     private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, BlockPos blockImpact,
                                                 Direction side, List<ActionApplication> actions, Entity source,
                                                 double instantRadius) {
+        applyBlockImpactActions(level, impactPos, blockImpact, side, actions, source, instantRadius, false, 0);
+    }
+
+    private static void applyBlockImpactActions(ServerLevel level, Vec3 impactPos, BlockPos blockImpact,
+                                                Direction side, List<ActionApplication> actions, Entity source,
+                                                double instantRadius, boolean ritualised, int covenSize) {
         int blockRadius = Mth.ceil(instantRadius);
         for (ActionApplication action : actions) {
             if (action.disableBlockTarget()) {
                 continue;
             }
+            int strength = ritualised ? sourceRitualEffectiveStrength(action.strength(), covenSize) : action.strength();
             if (action.action() == Ingredient.BrewAction.PULL) {
-                applyPullToNonLivingEntities(level, impactPos, action.strength(), source, instantRadius);
+                applyPullToNonLivingEntities(level, impactPos, strength, source, instantRadius);
             } else if (action.action() == Ingredient.BrewAction.EXTINGUISH) {
-                extinguishFires(level, blockImpact, blockRadius, action.strength(), source);
+                extinguishFires(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.DISSIPATE) {
-                dissipateGasClouds(level, blockImpact, blockRadius, action.strength());
+                dissipateGasClouds(level, blockImpact, blockRadius, strength);
             } else if (action.action() == Ingredient.BrewAction.GROW_FLOWERS) {
-                growFlowers(level, blockImpact, blockRadius, action.strength(), source);
+                growFlowers(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.FERTILIZE) {
-                fertilizeBlocks(level, blockImpact, blockRadius, action.strength(), source);
+                fertilizeBlocks(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.FELL_TREE) {
-                fellTrees(level, blockImpact, blockRadius, action.strength(), source);
+                fellTrees(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.LILIFY) {
                 lilify(level, blockImpact, side, source);
             } else if (action.action() == Ingredient.BrewAction.BLIGHT) {
-                blight(level, blockImpact, blockRadius, action.strength(), source);
+                blight(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.RAISE_LAND) {
-                raiseLand(level, blockImpact, action.strength(), source);
+                if (ritualised) {
+                    raiseLandRitual(level, blockImpact, strength, source);
+                } else {
+                    raiseLand(level, blockImpact, strength, source, false);
+                }
             } else if (action.action() == Ingredient.BrewAction.SPROUT) {
                 com.emoniph.witchery.item.BrewOfSproutingItem.growBranch(level, blockImpact, side,
-                        8 + 2 * action.strength());
+                        8 + 2 * strength);
             } else if (action.action() == Ingredient.BrewAction.PLANT) {
-                plantSeeds(level, blockImpact, blockRadius, action.strength(), source);
+                plantSeeds(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.RAISE_DEAD) {
-                raiseDead(level, blockImpact, action.strength(), source);
+                raiseDead(level, blockImpact, strength, source, ritualised);
             }
         }
     }
@@ -1274,6 +1459,11 @@ public final class Brews {
      * fires / lays snow / freezes water around itself. Most brews carry no block action, so this no-ops.
      */
     public static void tickAdjacentBlockPulse(ServerLevel level, BlockPos fluidPos, List<Item> items, Entity source) {
+        tickAdjacentBlockPulse(level, fluidPos, items, source, false, 0);
+    }
+
+    public static void tickAdjacentBlockPulse(ServerLevel level, BlockPos fluidPos, List<Item> items, Entity source,
+                                              boolean ritualised, int covenSize) {
         Resolution resolved = resolveBrew(items);
         if (resolved.actions.isEmpty() && resolved.effects.isEmpty()) {
             return;
@@ -1290,10 +1480,10 @@ public final class Brews {
             BlockPos target = fluidPos.relative(direction);
             if (!weakActions.isEmpty()) {
                 applyBlockImpactActions(level, Vec3.atCenterOf(target), target, direction.getOpposite(), weakActions, source,
-                        SOURCE_ADJACENT_BLOCK_PULSE_RADIUS);
+                        SOURCE_ADJACENT_BLOCK_PULSE_RADIUS, ritualised, covenSize);
             }
             if (!weakEffects.isEmpty()) {
-                applyBlockImpactEffects(level, target, weakEffects, source);
+                applyBlockImpactEffects(level, target, weakEffects, source, ritualised, covenSize);
             }
         }
     }
@@ -1753,8 +1943,26 @@ public final class Brews {
         return (strength + 1) * (ritualised ? 2 : 3);
     }
 
+    /** Source ritual {@code BrewActionRaiseLand}: filled circle radius = {@code (strength+1)*2}. */
+    public static int raiseLandRitualRadius(int strength) {
+        return (strength + 1) * 2;
+    }
+
+    private static void raiseLandRitual(ServerLevel level, BlockPos blockImpact, int strength, Entity source) {
+        int radius = raiseLandRitualRadius(strength);
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz < radiusSq) {
+                    raiseLand(level, blockImpact.offset(dx, 0, dz), strength, source, true);
+                }
+            }
+        }
+    }
+
     /** Raise the terrain column at the impact into a pillar, lifting any entities on top (source BrewActionRaiseLand). */
-    private static void raiseLand(ServerLevel level, BlockPos blockImpact, int strength, Entity source) {
+    private static void raiseLand(ServerLevel level, BlockPos blockImpact, int strength, Entity source,
+                                  boolean ritualised) {
         BlockPos.MutableBlockPos top = blockImpact.mutable();
         while (top.getY() < level.getMaxY() && !level.getBlockState(top.above()).isAir()) {
             top.move(Direction.UP);
@@ -1762,7 +1970,7 @@ public final class Brews {
         if (!sourceMayModify(level, top, source)) {
             return;
         }
-        int height = raiseLandHeight(strength, false);
+        int height = raiseLandHeight(strength, ritualised);
         for (int i = 0; i < height; i++) {
             BlockPos from = top.below(i);
             if (from.getY() <= level.getMinY()) {
@@ -1879,12 +2087,22 @@ public final class Brews {
         return extra;
     }
 
+    /** Source ritual {@code BrewActionRaising}: raised undead are temporary, {@code 10s * (strength+1)}. */
+    public static int sourceRaiseDeadRitualLifetimeTicks(int strength) {
+        return 10 * 20 * (strength + 1);
+    }
+
     /**
      * Source {@code BrewActionRaising} (Bone): raises an undead thrall at the impact plus up to three more on
      * nearby ground, all enslaved to the caster, persistent, and loot-suppressed.
      */
-    private static void raiseDead(ServerLevel level, BlockPos blockImpact, int strength, Entity source) {
-        raiseUndead(level, blockImpact, source);
+    private static void raiseDead(ServerLevel level, BlockPos blockImpact, int strength, Entity source,
+                                  boolean ritualised) {
+        if (ritualised) {
+            raiseUndead(level, blockImpact, source, sourceRaiseDeadRitualLifetimeTicks(strength));
+            return;
+        }
+        raiseUndead(level, blockImpact, source, 0);
         int extra = sourceRaiseDeadExtraCount(strength,
                 level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble());
         for (int i = 0; i < extra; i++) {
@@ -1893,14 +2111,14 @@ public final class Brews {
             for (int dy = blockImpact.getY() + 6; dy >= blockImpact.getY() - 6; dy--) {
                 BlockPos ground = new BlockPos(x, dy, z);
                 if (level.getBlockState(ground.below()).blocksMotion() && level.getBlockState(ground).isAir()) {
-                    raiseUndead(level, ground, source);
+                    raiseUndead(level, ground, source, 0);
                     break;
                 }
             }
         }
     }
 
-    private static void raiseUndead(ServerLevel level, BlockPos pos, Entity source) {
+    private static void raiseUndead(ServerLevel level, BlockPos pos, Entity source, int lifetimeTicks) {
         Mob undead = createUndead(level);
         if (undead == null) {
             return;
@@ -1909,6 +2127,9 @@ public final class Brews {
         undead.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
         undead.setPersistenceRequired();
         undead.getPersistentData().putBoolean(SUMMONED_NO_DROPS_TAG, true);
+        if (lifetimeTicks > 0) {
+            undead.addEffect(new MobEffectInstance(WitcheryMobEffects.MORTAL_COIL, lifetimeTicks, 0), source);
+        }
         if (source instanceof Player raiser) {
             com.emoniph.witchery.util.Enslaved.enslave(undead, raiser);
         }
