@@ -2,18 +2,22 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.DemonicContractItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -175,7 +179,18 @@ public class FlameImpEntity extends Monster {
         ItemStack stack = player.getItemInHand(hand);
 
         // ── Taming with Demonic Contract ──
-        if (!isOwned() && WitcheryItems.isDemonicContract(stack)) {
+        if (!isOwned() && DemonicContractItem.isOwnershipContract(stack)) {
+            Optional<UUID> contractOwner = DemonicContractItem.getBoundUUID(stack);
+            if (contractOwner.isEmpty()) {
+                player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.unsigned", getDisplayName())
+                        .withStyle(s -> s.withColor(0xAA0000)), false);
+                return InteractionResult.CONSUME;
+            }
+            if (!contractOwner.get().equals(player.getUUID())) {
+                player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.notowners", getDisplayName())
+                        .withStyle(s -> s.withColor(0xAA0000)), false);
+                return InteractionResult.CONSUME;
+            }
             if (player.experienceLevel < 25 && !player.isCreative()) {
                 player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.noxp", getDisplayName())
                         .withStyle(s -> s.withColor(0xAA0000)), false);
@@ -193,6 +208,10 @@ public class FlameImpEntity extends Monster {
         if (!isOwned()) return super.mobInteract(player, hand);
 
         // ── Tamed interactions ──
+
+        if (DemonicContractItem.isSpellContract(stack) && player instanceof ServerPlayer serverPlayer) {
+            return castSpellContract(serverPlayer, stack);
+        }
 
         // Demon Heart → power up
         if (stack.is(Items.HEART_OF_THE_SEA) || stack.is(WitcheryItems.DEMON_HEART.get())) {
@@ -242,6 +261,57 @@ public class FlameImpEntity extends Monster {
         }
 
         return super.mobInteract(player, hand);
+    }
+
+    private InteractionResult castSpellContract(ServerPlayer player, ItemStack stack) {
+        playSound(SoundEvents.BLAZE_AMBIENT, 0.5F, getVoicePitch());
+        if (!DemonicContractItem.isBound(stack)) {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.unsigned", getDisplayName())
+                    .withStyle(s -> s.withColor(0xAA0000)), false);
+            return InteractionResult.CONSUME;
+        }
+        if (isPowered()) {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.toomuchpower", getDisplayName())
+                    .withStyle(s -> s.withColor(0xAA0000)), false);
+            return InteractionResult.CONSUME;
+        }
+        if (affection < MAX_AFFECTION) {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.notliked", getDisplayName())
+                    .withStyle(s -> s.withColor(0xAA0000)), false);
+            return InteractionResult.CONSUME;
+        }
+
+        long now = level().getGameTime();
+        if (now <= lastGiftTime + GIFT_DELAY_TICKS && !player.isCreative()) {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.toooften", getDisplayName())
+                    .withStyle(s -> s.withColor(0xAA0000)), false);
+            return InteractionResult.CONSUME;
+        }
+
+        Optional<LivingEntity> target = DemonicContractItem.findBoundTarget(((ServerLevel) player.level()).getServer(), stack);
+        if (target.isEmpty()) {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.cannotfind",
+                    getDisplayName(), DemonicContractItem.getBoundName(stack)).withStyle(s -> s.withColor(0xAA0000)), false);
+            return InteractionResult.CONSUME;
+        }
+
+        LivingEntity targetEntity = target.get();
+        if (DemonicContractItem.activate(stack, targetEntity)) {
+            lastGiftTime = now;
+            if (!player.isCreative()) {
+                stack.shrink(1);
+            }
+            if (level() instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.FLAME, getX(), getY() + 0.7D, getZ(),
+                        12, 0.35D, 0.35D, 0.35D, 0.03D);
+            }
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.feelthefire",
+                    getDisplayName(), targetEntity.getDisplayName()).withStyle(s -> s.withColor(0xAA0000)), false);
+        } else {
+            player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.spell.failed",
+                    getDisplayName(), targetEntity.getDisplayName()).withStyle(s -> s.withColor(0xAA0000)), false);
+        }
+        return InteractionResult.SUCCESS;
     }
 
     private void giveGift(Player player, long now) {
