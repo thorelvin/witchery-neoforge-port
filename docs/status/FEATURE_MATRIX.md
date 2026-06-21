@@ -2,6 +2,8 @@
 
 Legend: Done / Partial / Not started / Deferred
 
+Current local delta (2026-06-21): **Flame Imp contracts complete.** Ownership contracts now sign with the player's blood before taming, spell contracts bind to a target or self, and a pleased unpowered Flame Imp spends them for the five source abilities: Living Flame, Fiery Tolerance, Evaporation, Fiery Touch, and Melting Touch. Player-facing README, Book of Shadows, mob docs, QA notes, parity matrix, and item review describe the signing flow and refusal cases.
+
 Latest status checkpoint: 2026-06-18 (NBT-backed Hobgoblin Hut replacement, Warped Coven Nether structure, safe Nether goto/return helpers, current Primer creature-page polish, Custom Brew Ingredient Reference in the native Primer, Dog Tongue ritualized custom-brew cauldron release, placed Modonomicon live-page polish/navigation, vanilla-shaped brew liquid flow, Gas Mask/lifetime gas-brew parity, Disease brew/block spread parity, Purified Milk disease cleanup, triggered cursed-block dispersal, source-style Waystone/Taglock Crystal Ball scrying, Apothecary jobsite/trade repair, Ender Dew creative access, and docs reconciliation).
 
 Last progress reconciliation: 2026-06-13 (today's Codex/Claude commits are rolled into the current local deltas below; the long historical roster reconciliation is kept for older audit context). Recent commit audit checked `git log --since 2026-06-08` through `bbc25752` and confirmed the June 10-13 slices are reflected in the status docs.

@@ -68,19 +68,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Occasionally has a Bone Meal effect on the ground; can be spawned by breaking Alder, Hawthorn, or Rowan wood
 
 ## Flame Imp
-- **HP:** 50 (x 25)
-- **Damage:** 4
-- **Spawn:** Anywhere with the Rite of Summoning
-- **Behaviour:** Hostile, attacks whoever they see. Can be bound with a contract to cast fire-themed imp magic.
-- **Notes:** Requires a Demonic Contract signed in blood and 25 experience levels to bind. Feeding a Demon Heart gives temporary larger size and twice as much damage but disables imp magic for thirty minutes or until pricked with Icy Needles. Imp Magic includes Fiery Touch, Melting Touch, Living Flame, Evaporation, Fiery Tolerance, and Torment.
-
-## Flame Imp
-- **HP:** 50 (× 25)
+- **HP:** 50
 - **Damage:** 4 (Normal), 8 (with Demon Heart)
-- **Drops:** Not specified in text
-- **Spawn:** Summoned using the Rite of Summoning
-- **Behaviour:** Aggressive, can be tamed with a Demonic Contract. Tamed Flame Imps protect their master from hostile entities and can perform Imp Magic. They can give gifts to their master after building up affection.
-- **Notes:** Can grow stronger for 30 minutes when given a Demon Heart, becoming immune to Imp Magic during this time.
+- **Spawn:** Anywhere with the Rite of Summoning
+- **Drops:** Torment Scroll chance if it has not shared its secret
+- **Behaviour:** Hostile while wild. A Demonic Contract or `contract_ownership` must be signed by using it in hand, then used on the imp with 25 experience levels to tame it. Tamed imps can be impressed with shiny gifts and can spend signed spell contracts for Imp Magic.
+- **Notes:** Spell contracts are signed on a target, or on yourself by using the contract while crouched. A pleased, unpowered Flame Imp can cast Living Flame, Fiery Tolerance, Evaporation, Fiery Touch, and Melting Touch. Demon Heart power doubles its bite for 30 minutes but stops Imp Magic until the time passes or Icy Needles calm it.
 
 ## Flying Monkey
 - **HP:** 5
