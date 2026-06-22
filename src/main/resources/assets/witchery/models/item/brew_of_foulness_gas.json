@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "witchery:item/ingredient.brew_grotesque",
-    "layer1": "minecraft:item/lingering_potion"
+    "layer1": "witchery:item/brew_splash"
   }
 }

@@ -168,12 +168,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FETISH_TRENT_EFFIGY.get(),
                 WitcheryItems.FETISH_WITCHS_LADDER.get(),
                 WitcheryItems.STATUE_GODDESS.get(),
-                WitcheryItems.STATUE_HOBGOBLIN_PATRON.get(),
                 WitcheryItems.WICKER_BUNDLE.get(),
                 WitcheryItems.BLOODIED_WICKER_BUNDLE.get(),
-                WitcheryItems.BLOODED_WOOL.get(),
-                WitcheryItems.PIT_DIRT.get(),
-                WitcheryItems.PIT_GRASS.get());
+                WitcheryItems.BLOODED_WOOL.get());
         for (DyeColor color : DyeColor.values()) {
             output.accept(ShadedGlassBlock.stackForColor(color));
         }
@@ -205,7 +202,6 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ENCHANTED_BROOM.get(),
                 WitcheryItems.ARTHANA.get(),
                 WitcheryItems.PENTACLE.get(),
-                WitcheryItems.KOBOLDITE_PENTACLE.get(),
                 WitcheryItems.BOLINE.get(),
                 WitcheryItems.KOBOLDITE_PICKAXE.get(),
                 WitcheryItems.CHALK.get(),
@@ -403,7 +399,6 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.WITCHES_ROBES.get(),
                 WitcheryItems.BABAS_HAT.get(),
                 WitcheryItems.NECROMANCER_ROBES.get(),
-                WitcheryItems.WITCHES_SHOES.get(),
                 WitcheryItems.ICY_SLIPPERS.get(),
                 WitcheryItems.SEEPING_SHOES.get(),
                 WitcheryItems.RUBY_SLIPPERS.get(),

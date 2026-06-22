@@ -490,9 +490,16 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            poseStack.pushPose();
+            if (displayContext == ItemDisplayContext.GUI) {
+                poseStack.translate(0.5, 0.5, 0.5);
+                poseStack.scale(0.82F, 0.82F, 0.82F);
+                poseStack.translate(-0.5, -0.6, -0.5);
+            }
             startBlockEntityPose(poseStack);
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
+            poseStack.popPose();
         }
 
         @Override
@@ -772,9 +779,16 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            poseStack.pushPose();
+            if (displayContext == ItemDisplayContext.GUI) {
+                poseStack.translate(0.5, 0.5, 0.5);
+                poseStack.scale(0.62F, 0.62F, 0.62F);
+                poseStack.translate(-0.5, -0.55, -0.5);
+            }
             startBlockEntityPose(poseStack);
             collector.submitModelPart(model.root(), poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null);
             finishPose(poseStack);
+            poseStack.popPose();
         }
 
         @Override

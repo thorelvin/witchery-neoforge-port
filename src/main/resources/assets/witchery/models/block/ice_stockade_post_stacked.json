@@ -1,0 +1,8 @@
+{
+  "render_type": "minecraft:translucent",
+  "parent": "witchery:block/stockade_post_stacked",
+  "textures": {
+    "texture": "minecraft:block/ice",
+    "particle": "minecraft:block/ice"
+  }
+}

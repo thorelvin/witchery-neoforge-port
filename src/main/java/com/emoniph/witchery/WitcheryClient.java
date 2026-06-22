@@ -73,10 +73,6 @@ import java.util.function.Supplier;
 // Client-only network handlers live here to keep Minecraft.getInstance() out of shared code.
 // Game bus events in WitcheryClientEvents.
 public class WitcheryClient {
-    private static final int ROWAN_LEAF_COLOR = 0x48B518;
-    private static final int ALDER_LEAF_COLOR = 0x399933;
-    private static final int HAWTHORN_LEAF_COLOR = 0x66AA66;
-
     public static final List<Map.Entry<ModelLayerLocation, Supplier<LayerDefinition>>> LAYER_DEFS = List.of(
         Map.entry(WitchesOvenModel.LAYER_LOCATION,    WitchesOvenModel::createBodyLayer),
         Map.entry(DistilleryModel.LAYER_LOCATION,      DistilleryModel::createBodyLayer),
@@ -115,6 +111,7 @@ public class WitcheryClient {
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
         Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
         Map.entry(DeathArmorModel.LAYER_LOCATION,      DeathArmorModel::createLayer),
+        Map.entry(WitchesHatArmorModel.LAYER_LOCATION, WitchesHatArmorModel::createLayer),
         Map.entry(WitchesRobeArmorModel.LAYER_LOCATION, WitchesRobeArmorModel::createLayer),
         Map.entry(BabasHatArmorModel.LAYER_LOCATION,   BabasHatArmorModel::createLayer),
         Map.entry(NecromancerRobeArmorModel.LAYER_LOCATION, NecromancerRobeArmorModel::createLayer),
@@ -230,15 +227,6 @@ public class WitcheryClient {
                         ? (level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : GrassColor.getDefaultColor())
                         : -1,
                 WitcheryBlocks.BLIGHTED_SOIL.get());
-        event.register((state, level, pos, tintIndex) ->
-                        tintIndex == 0
-                                ? (level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : ROWAN_LEAF_COLOR)
-                                : -1,
-                WitcheryBlocks.ROWAN_LEAVES.get());
-        event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? ALDER_LEAF_COLOR : -1,
-                WitcheryBlocks.ALDER_LEAVES.get());
-        event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? HAWTHORN_LEAF_COLOR : -1,
-                WitcheryBlocks.HAWTHORN_LEAVES.get());
         // The salt line reuses the redstone-dust models; tint their (red) dust white so it reads as salt.
         event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? 0xFFFFFF : -1,
                 WitcheryBlocks.SALT_LINE.get());
@@ -315,6 +303,9 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.DEATHS_HOOD.get(),
                 com.emoniph.witchery.init.WitcheryItems.DEATHS_ROBE.get(),
                 com.emoniph.witchery.init.WitcheryItems.DEATHS_SHOES.get());
+
+        event.registerItem(new com.emoniph.witchery.client.WitchesHatArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.WITCHES_HAT.get());
 
         event.registerItem(new com.emoniph.witchery.client.WitchesRobeArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBES.get());

@@ -1,48 +1,10 @@
 {
   "multipart": [
-    {
-      "apply": {
-        "model": "witchery:block/ice_stockade_post"
-      }
-    },
-    {
-      "when": {
-        "north": "true"
-      },
-      "apply": {
-        "model": "witchery:block/ice_stockade_side",
-        "uvlock": true
-      }
-    },
-    {
-      "when": {
-        "east": "true"
-      },
-      "apply": {
-        "model": "witchery:block/ice_stockade_side",
-        "uvlock": true,
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "south": "true"
-      },
-      "apply": {
-        "model": "witchery:block/ice_stockade_side",
-        "uvlock": true,
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "west": "true"
-      },
-      "apply": {
-        "model": "witchery:block/ice_stockade_side",
-        "uvlock": true,
-        "y": 270
-      }
-    }
+    { "when": { "north": "false", "east": "false", "south": "false", "west": "false", "up": "false" }, "apply": { "model": "witchery:block/ice_stockade_post" } },
+    { "when": { "north": "false", "east": "false", "south": "false", "west": "false", "up": "true" }, "apply": { "model": "witchery:block/ice_stockade_post_stacked" } },
+    { "when": { "AND": [ { "up": "false" }, { "OR": [ { "north": "true" }, { "south": "true" } ] } ] }, "apply": { "model": "witchery:block/ice_stockade_side", "uvlock": true } },
+    { "when": { "AND": [ { "up": "true" }, { "OR": [ { "north": "true" }, { "south": "true" } ] } ] }, "apply": { "model": "witchery:block/ice_stockade_side_stacked", "uvlock": true } },
+    { "when": { "AND": [ { "up": "false" }, { "OR": [ { "east": "true" }, { "west": "true" } ] } ] }, "apply": { "model": "witchery:block/ice_stockade_side", "uvlock": true, "y": 90 } },
+    { "when": { "AND": [ { "up": "true" }, { "OR": [ { "east": "true" }, { "west": "true" } ] } ] }, "apply": { "model": "witchery:block/ice_stockade_side_stacked", "uvlock": true, "y": 90 } }
   ]
 }

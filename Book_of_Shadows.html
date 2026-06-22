@@ -2364,7 +2364,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>The set also includes Snow Stairs, Snow Slab, and Snow Pressure Plate, plus the Perpetual Ice stair/slab variants, all craftable from their snow/ice base blocks.</p>
 
 <h4 id="stockade">The Stockade</h4>
-<p>A palisade for those who would rather a wall did some of the fighting. It stands no taller than a fence but it bites — press against it and it draws blood — and it links arms with its own kind and with Iron Bars to ring a garden or a grave. Bind nine of them from a frame of logs about an Exhale of the Horned One. And should winter find your stockade, a cold brew will turn the timber to the harder, glassy Ice Stockade described above.</p>
+<p>A palisade for those who would rather a wall did some of the fighting. It stands no taller than a fence but it bites — press against it and it draws blood from players and creatures alike — and it links arms with its own kind and with Iron Bars to ring a garden or a grave. Stack one above another and the lower post settles into a straighter fence-body while the upper keeps the point. Bind nine of them from a frame of logs about an Exhale of the Horned One. And should winter find your stockade, a cold brew will turn the timber to the harder, glassy Ice Stockade described above.</p>
 
 <!-- CH 32 -->
 <h2 class="chapter" id="ch32">Chapter 32: Rules Worth Knowing<span class="stage stage-end">Endgame</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
@@ -2598,7 +2598,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td><code>rowan_door_key</code></td><td>Rowan Door Key</td></tr>
   <tr><td><code>rowan_keyring</code></td><td>Rowan Keyring</td></tr>
   <tr><td><code>koboldite_pickaxe</code></td><td>Koboldite Pickaxe</td></tr>
-  <tr><td><code>koboldite_pentacle</code></td><td>Koboldite Pentacle</td></tr>
+  <tr><td><code>pentacle</code></td><td>Koboldite Pentacle / Pentacle</td></tr>
   <tr><td><code>icy_needle</code></td><td>Icy Needle</td></tr>
   <tr><td><code>apple_of_sleeping</code></td><td>Apple of Sleeping</td></tr>
   <tr><td><code>mandrake_root</code></td><td>Mandrake Root</td></tr>
@@ -2640,14 +2640,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><th>ID(s)</th><th>Item</th></tr>
   <tr><td><code>witches_hat</code></td><td>Witch's Hat</td></tr>
   <tr><td><code>witches_robes</code> · <code>witches_robe</code></td><td>Witches' Robes</td></tr>
-  <tr><td><code>witches_shoes</code></td><td>Witch's Shoes</td></tr>
   <tr><td><code>necromancer_robes</code></td><td>Necromancer Robes</td></tr>
   <tr><td><code>hunter_hat</code>, <code>hunter_coat</code>, <code>hunter_leggings</code>, <code>hunter_boots</code></td><td>Hunter outfit (base)</td></tr>
   <tr><td><code>silvered_hunter_hat/coat/leggings/boots</code></td><td>Silvered Hunter outfit</td></tr>
   <tr><td><code>dawn_hunter_hat/coat/leggings/boots</code> · <code>witch_hunter_dawn_*</code></td><td>Dawn Hunter (silvered + garlicked)</td></tr>
   <tr><td><code>vampire_top_hat</code>, <code>vampire_dress_coat</code>, <code>vampire_dress_jacket</code>, <code>vampire_trousers</code>, <code>vampire_skirted_trousers</code>, <code>vampire_oxford_boots</code>, <code>vampire_helmet</code>, <code>vampire_chain_coat</code>, <code>vampire_chain_coat_ladies</code></td><td>Vampire clothing (primary)</td></tr>
   <tr><td><code>vampire_veil_hat</code>, <code>vampire_coat</code>, <code>vampire_corset</code>, <code>vampire_chestplate</code>, <code>vampire_skirt</code>, <code>vampire_leggings</code>, <code>vampire_shoes</code>, <code>vampire_heels</code>, <code>vampire_boots</code></td><td>Vampire clothing (alias set)</td></tr>
-  <tr><td><code>deaths_hood</code>, <code>deaths_robe</code>, <code>deaths_shoes</code>, <code>deaths_hand</code></td><td>Death armor set + Hand of Death</td></tr>
+  <tr><td><code>deaths_hood</code>, <code>deaths_robe</code>, <code>deaths_shoes</code>, <code>deaths_hand</code></td><td>Death armor set + Hand of Death; full set lets the hand deploy and retract its scythe on right-click</td></tr>
   <tr><td><code>ruby_slippers</code></td><td>Ruby Slippers</td></tr>
   <tr><td><code>icy_slippers</code> · <code>ice_slippers</code></td><td>Icy Slippers</td></tr>
   <tr><td><code>seeping_shoes</code></td><td>Seeping Shoes</td></tr>
@@ -2670,7 +2669,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td><code>staff_of_duplication</code></td><td>Staff of Duplication</td></tr>
   <tr><td><code>duplication_grenade</code>, <code>sun_grenade</code></td><td>Duplication Grenade, Sun Grenade</td></tr>
   <tr><td><code>brew_bag</code></td><td>Brew Bag</td></tr>
-  <tr><td><code>pentacle</code> · <code>koboldite_pentacle</code></td><td>Pentacle (altar recharge ×2)</td></tr>
+  <tr><td><code>pentacle</code></td><td>Pentacle (altar recharge ×2)</td></tr>
   <tr><td><code>hand_bow</code> · <code>crossbow_pistol</code></td><td>Hand Bow / Crossbow Pistol</td></tr>
   <tr><td><code>huntsmans_spear</code> · <code>huntsman_spear</code></td><td>Spear of the Huntsman</td></tr>
   <tr><td><code>horn_of_the_hunt</code> · <code>hunts_horn</code></td><td>Horn of the Hunt</td></tr>
@@ -2760,7 +2759,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td><code>stockade</code>, <code>ice_stockade</code></td><td>Wooden / Ice Stockade</td></tr>
   <tr><td><code>ice_door</code>, <code>ice_fence</code>, <code>ice_gate</code>, <code>ice_stairs</code>, <code>ice_slab</code>, <code>ice_pressure_plate</code>, <code>perpetual_ice</code></td><td>Ice World family</td></tr>
   <tr><td><code>snow_stairs</code>, <code>snow_slab</code>, <code>snow_pressure_plate</code></td><td>Snow family</td></tr>
-  <tr><td><code>pit_dirt</code>, <code>pit_grass</code></td><td>Pit trap camouflage (no collision)</td></tr>
+  <tr><td><code>pit_dirt</code>, <code>pit_grass</code></td><td>Pit trap camouflage (no collision; crafted from the cauldron route, hidden from normal creative browsing)</td></tr>
   <tr><td><code>beartrap</code>, <code>wolftrap</code></td><td>Traps</td></tr>
 </table>
 

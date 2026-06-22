@@ -1,7 +1,8 @@
 {
   "render_type": "minecraft:translucent",
-  "parent": "minecraft:block/fence_post",
+  "parent": "witchery:block/stockade_post",
   "textures": {
-    "texture": "minecraft:block/ice"
+    "texture": "minecraft:block/ice",
+    "particle": "minecraft:block/ice"
   }
 }

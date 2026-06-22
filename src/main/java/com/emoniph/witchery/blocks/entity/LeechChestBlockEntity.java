@@ -46,7 +46,8 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private static final UUID UNKNOWN_PLAYER_UUID = new UUID(0L, 0L);
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-    private final List<StoredPlayer> recentPlayers = new ArrayList<>();
+    private final List<UUID> recentPlayerUuids = new ArrayList<>();
+    private final List<String> recentPlayerNames = new ArrayList<>();
     private String customName = "";
     private int openCount = 0;
     private int openTimer = 0;
@@ -109,58 +110,61 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         if (level == null || level.isClientSide() || player == null) {
             return;
         }
-        StoredPlayer stored = new StoredPlayer(player.getUUID(), player.getName().getString());
-        if (hasStoredPlayer(stored.uuid(), stored.name())) {
+        UUID uuid = player.getUUID();
+        String name = player.getName().getString();
+        if (hasStoredPlayer(uuid, name)) {
             return;
         }
 
-        recentPlayers.add(stored);
-        while (recentPlayers.size() > MAX_RECENT_PLAYERS) {
-            recentPlayers.remove(0);
-        }
+        addStoredPlayer(uuid, name);
         sync();
     }
 
-    public DrainResult drainStoredPlayerExcept(Player usingPlayer) {
+    public LeechChestDrainResult drainStoredPlayerExcept(Player usingPlayer) {
         if (level == null || level.isClientSide() || usingPlayer == null) {
-            return DrainResult.none();
+            return LeechChestDrainResult.none();
         }
 
         List<String> missingPlayers = new ArrayList<>();
         UUID usingUuid = usingPlayer.getUUID();
         String usingName = usingPlayer.getName().getString();
+        int storedCount = storedPlayerCount();
 
-        for (int i = recentPlayers.size() - 1; i >= 0; i--) {
-            StoredPlayer stored = recentPlayers.get(i);
-            if (stored.uuid().equals(usingUuid) || stored.name().equalsIgnoreCase(usingName)) {
-                if (recentPlayers.size() == 1) {
-                    return DrainResult.onlyOwn();
+        for (int i = storedCount - 1; i >= 0; i--) {
+            UUID storedUuid = recentPlayerUuids.get(i);
+            String storedName = recentPlayerNames.get(i);
+            if (storedUuid.equals(usingUuid) || storedName.equalsIgnoreCase(usingName)) {
+                if (storedCount == 1) {
+                    return LeechChestDrainResult.onlyOwn();
                 }
                 continue;
             }
 
-            ServerPlayer onlinePlayer = findOnlinePlayer(stored);
+            ServerPlayer onlinePlayer = findOnlinePlayer(storedUuid, storedName);
             if (onlinePlayer != null && onlinePlayer.isAlive()) {
-                recentPlayers.remove(i);
+                removeStoredPlayer(i);
                 sync();
-                return DrainResult.success(new StoredPlayer(onlinePlayer.getUUID(), onlinePlayer.getName().getString()));
+                return LeechChestDrainResult.success(onlinePlayer.getUUID(), onlinePlayer.getName().getString());
             }
 
-            missingPlayers.add(stored.name());
+            missingPlayers.add(storedName);
         }
 
         if (!missingPlayers.isEmpty()) {
-            return DrainResult.missingPlayers(missingPlayers);
+            return LeechChestDrainResult.missingPlayers(missingPlayers);
         }
-        return DrainResult.none();
+        return LeechChestDrainResult.none();
     }
 
     private boolean hasStoredPlayer(UUID uuid, String name) {
-        for (StoredPlayer stored : recentPlayers) {
-            if (!UNKNOWN_PLAYER_UUID.equals(stored.uuid()) && stored.uuid().equals(uuid)) {
+        int storedCount = storedPlayerCount();
+        for (int i = 0; i < storedCount; i++) {
+            UUID storedUuid = recentPlayerUuids.get(i);
+            String storedName = recentPlayerNames.get(i);
+            if (!UNKNOWN_PLAYER_UUID.equals(storedUuid) && storedUuid.equals(uuid)) {
                 return true;
             }
-            if (stored.name().equalsIgnoreCase(name)) {
+            if (storedName.equalsIgnoreCase(name)) {
                 return true;
             }
         }
@@ -168,14 +172,14 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     }
 
     @Nullable
-    private ServerPlayer findOnlinePlayer(StoredPlayer stored) {
+    private ServerPlayer findOnlinePlayer(UUID storedUuid, String storedName) {
         if (level == null || level.getServer() == null) {
             return null;
         }
-        ServerPlayer player = UNKNOWN_PLAYER_UUID.equals(stored.uuid())
+        ServerPlayer player = UNKNOWN_PLAYER_UUID.equals(storedUuid)
                 ? null
-                : level.getServer().getPlayerList().getPlayer(stored.uuid());
-        return player != null ? player : level.getServer().getPlayerList().getPlayerByName(stored.name());
+                : level.getServer().getPlayerList().getPlayer(storedUuid);
+        return player != null ? player : level.getServer().getPlayerList().getPlayerByName(storedName);
     }
 
     public CompoundTag createDropData() {
@@ -338,16 +342,16 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     }
 
     private void saveStoredPlayers(net.minecraft.world.level.storage.ValueOutput tag) {
-        tag.putInt(KEY_STORED_PLAYER_COUNT, recentPlayers.size());
-        for (int i = 0; i < recentPlayers.size(); i++) {
-            StoredPlayer stored = recentPlayers.get(i);
-            tag.putString(KEY_STORED_PLAYER_UUID + i, stored.uuid().toString());
-            tag.putString(KEY_STORED_PLAYER_NAME + i, stored.name());
+        int storedCount = storedPlayerCount();
+        tag.putInt(KEY_STORED_PLAYER_COUNT, storedCount);
+        for (int i = 0; i < storedCount; i++) {
+            tag.putString(KEY_STORED_PLAYER_UUID + i, recentPlayerUuids.get(i).toString());
+            tag.putString(KEY_STORED_PLAYER_NAME + i, recentPlayerNames.get(i));
         }
     }
 
     private void loadStoredPlayers(net.minecraft.world.level.storage.ValueInput tag) {
-        recentPlayers.clear();
+        clearStoredPlayers();
 
         int storedCount = tag.getIntOr(KEY_STORED_PLAYER_COUNT, 0);
         for (int i = 0; i < storedCount; i++) {
@@ -358,7 +362,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             }
 
             try {
-                recentPlayers.add(new StoredPlayer(UUID.fromString(uuidString), name));
+                addStoredPlayer(UUID.fromString(uuidString), name);
             } catch (IllegalArgumentException ignored) {
                 // Skip malformed historical data rather than bricking the chest.
             }
@@ -366,17 +370,17 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     }
 
     private void saveStoredPlayersToTag(CompoundTag tag) {
-        tag.putInt(KEY_STORED_PLAYER_COUNT, recentPlayers.size());
-        for (int i = 0; i < recentPlayers.size(); i++) {
-            StoredPlayer stored = recentPlayers.get(i);
-            tag.putString(KEY_STORED_PLAYER_UUID + i, stored.uuid().toString());
-            tag.putString(KEY_STORED_PLAYER_NAME + i, stored.name());
+        int storedCount = storedPlayerCount();
+        tag.putInt(KEY_STORED_PLAYER_COUNT, storedCount);
+        for (int i = 0; i < storedCount; i++) {
+            tag.putString(KEY_STORED_PLAYER_UUID + i, recentPlayerUuids.get(i).toString());
+            tag.putString(KEY_STORED_PLAYER_NAME + i, recentPlayerNames.get(i));
         }
         saveSourcePlayersToTag(tag);
     }
 
     private void loadStoredPlayersFromTag(CompoundTag tag) {
-        recentPlayers.clear();
+        clearStoredPlayers();
 
         int storedCount = tag.getIntOr(KEY_STORED_PLAYER_COUNT, 0);
         for (int i = 0; i < storedCount; i++) {
@@ -387,28 +391,30 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             }
 
             try {
-                recentPlayers.add(new StoredPlayer(UUID.fromString(uuidString), name));
+                addStoredPlayer(UUID.fromString(uuidString), name);
             } catch (IllegalArgumentException ignored) {
                 // Skip malformed historical data rather than bricking the chest.
             }
         }
 
-        if (recentPlayers.isEmpty()) {
+        if (storedPlayerCount() == 0) {
             loadSourcePlayersFromTag(tag);
         }
     }
 
     private void saveSourcePlayersToTag(CompoundTag tag) {
-        if (recentPlayers.isEmpty()) {
+        int storedCount = storedPlayerCount();
+        if (storedCount == 0) {
             return;
         }
         ListTag players = new ListTag();
-        for (StoredPlayer stored : recentPlayers) {
-            if (stored.name().isBlank()) {
+        for (int i = 0; i < storedCount; i++) {
+            String storedName = recentPlayerNames.get(i);
+            if (storedName.isBlank()) {
                 continue;
             }
             CompoundTag player = new CompoundTag();
-            player.putString(SOURCE_PLAYER_KEY, stored.name());
+            player.putString(SOURCE_PLAYER_KEY, storedName);
             players.add(player);
         }
         if (!players.isEmpty()) {
@@ -422,31 +428,47 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             CompoundTag player = players.getCompoundOrEmpty(i);
             String name = player.getStringOr(SOURCE_PLAYER_KEY, "");
             if (!name.isBlank() && !hasStoredPlayer(UNKNOWN_PLAYER_UUID, name)) {
-                recentPlayers.add(new StoredPlayer(UNKNOWN_PLAYER_UUID, name));
+                addStoredPlayer(UNKNOWN_PLAYER_UUID, name);
             }
-        }
-        while (recentPlayers.size() > MAX_RECENT_PLAYERS) {
-            recentPlayers.remove(0);
         }
     }
 
-    public record StoredPlayer(UUID uuid, String name) {}
-
-    public record DrainResult(@Nullable StoredPlayer player, List<String> missingPlayers, boolean onlyOwnTaglock) {
-        public static DrainResult success(StoredPlayer player) {
-            return new DrainResult(player, List.of(), false);
+    private int storedPlayerCount() {
+        int storedCount = Math.min(recentPlayerUuids.size(), recentPlayerNames.size());
+        while (recentPlayerUuids.size() > storedCount) {
+            recentPlayerUuids.remove(recentPlayerUuids.size() - 1);
         }
-
-        public static DrainResult missingPlayers(List<String> missingPlayers) {
-            return new DrainResult(null, List.copyOf(missingPlayers), false);
+        while (recentPlayerNames.size() > storedCount) {
+            recentPlayerNames.remove(recentPlayerNames.size() - 1);
         }
+        return storedCount;
+    }
 
-        public static DrainResult onlyOwn() {
-            return new DrainResult(null, List.of(), true);
+    private void addStoredPlayer(UUID uuid, String name) {
+        if (name == null || name.isBlank()) {
+            return;
         }
+        recentPlayerUuids.add(uuid == null ? UNKNOWN_PLAYER_UUID : uuid);
+        recentPlayerNames.add(name);
+        trimStoredPlayers();
+    }
 
-        public static DrainResult none() {
-            return new DrainResult(null, List.of(), false);
+    private void removeStoredPlayer(int index) {
+        if (index < 0 || index >= storedPlayerCount()) {
+            return;
+        }
+        recentPlayerUuids.remove(index);
+        recentPlayerNames.remove(index);
+    }
+
+    private void clearStoredPlayers() {
+        recentPlayerUuids.clear();
+        recentPlayerNames.clear();
+    }
+
+    private void trimStoredPlayers() {
+        while (storedPlayerCount() > MAX_RECENT_PLAYERS) {
+            removeStoredPlayer(0);
         }
     }
 }

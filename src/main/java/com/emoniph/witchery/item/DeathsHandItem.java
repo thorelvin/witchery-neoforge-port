@@ -53,10 +53,8 @@ public class DeathsHandItem extends Item {
         }
 
         boolean deployed = !isDeployed(stack);
-        ItemStack transformed = stack.transmuteCopy(
-                deployed ? WitcheryItems.DEPLOYED_DEATHS_HAND.get() : WitcheryItems.DEATHS_HAND.get(),
-                stack.getCount());
-        setDeployed(transformed, false);
+        ItemStack transformed = stack.transmuteCopy(WitcheryItems.DEATHS_HAND.get(), stack.getCount());
+        setDeployed(transformed, deployed);
 
         if (deployed) {
             level.playSound(null, player.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 1.0F, 2.0F);

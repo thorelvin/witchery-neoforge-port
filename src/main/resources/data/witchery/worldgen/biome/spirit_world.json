@@ -181,12 +181,6 @@
         "weight": 5,
         "minCount": 1,
         "maxCount": 4
-      },
-      {
-        "type": "minecraft:zombie_horse",
-        "weight": 1,
-        "minCount": 1,
-        "maxCount": 1
       }
     ],
     "ambient": [

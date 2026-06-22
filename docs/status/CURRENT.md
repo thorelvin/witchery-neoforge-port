@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-06-21
+Last curated: 2026-06-22
 
 This is the compact living handoff for the Witchery NeoForge port. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -34,6 +34,9 @@ enough to read before starting work. Long historical deltas belong in
   and custom brew/ritual edge cases.
 - Source-feel polish on exact-ID items and wearables that are registered but
   still need model, texture, transform, or gameplay verification.
+- Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal
+  blocks until their player-facing route is useful, keep item renders legible,
+  and prefer source-shaped models/textures over improvised geometry.
 - Structure/worldgen tuning for NBT-backed huts, wells, villages, and Nether
   placements.
 - Spirit World atmosphere and dream/nightmare behavior QA.
@@ -54,6 +57,11 @@ enough to read before starting work. Long historical deltas belong in
   animal spawning.
 - Triggered cursed-block mechanics now support warning messages and cursed
   well ladder behavior.
+- Recent QA polish cleaned up the Witchery creative tab, restored single-texture
+  Rowan/Alder/Hawthorn leaf art with visible berry/flower colors, added vertical
+  stockade stack presentation while preserving contact damage, moved Death's
+  Hand back to a source-style same-item scythe toggle, and nudged the Goddess
+  statue / Crystal Ball GUI transforms.
 
 ## Docs Cleanup Note
 

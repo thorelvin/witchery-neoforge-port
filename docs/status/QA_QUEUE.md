@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-06-21
+Last curated: 2026-06-22
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -85,6 +85,25 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   shapes.
 - Retest gas/liquid brews for tint persistence, lifetime, source/flow behavior,
   and Gas Mask protection.
+
+### Visuals And Creative Tab
+
+- Open the Witchery creative tab and confirm internal utility entries stay
+  hidden: Pit Dirt, Pit Grass, duplicate Koboldite Pentacle, Witches' Shoes, and
+  the unfinished Hobgoblin Patron statue should not appear as normal player
+  picks.
+- Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
+  items should read as green foliage from one combined texture, with Rowan
+  berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of
+  grey/brown or layered tint artifacts.
+- Check Goddess Statue and Crystal Ball GUI items: the statue should fit inside
+  the slot, and the Crystal Ball should sit one pixel lower than the prior pass.
+- Stack normal and ice stockades two high. The lower stockade should switch to
+  the stacked/fence-like body, the top should remain pointy, and both should
+  damage players and mobs on contact.
+- Wear the full Death set, use Hand of Death to deploy/retract the scythe, and
+  confirm the held model protrudes from the arm, the scythe faces forward, and
+  right-click toggles without losing the base item.
 
 ### Villages And Walls
 

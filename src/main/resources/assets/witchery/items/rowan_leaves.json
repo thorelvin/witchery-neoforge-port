@@ -1,12 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:block/rowan_leaves",
-    "tints": [
-      {
-        "type": "minecraft:constant",
-        "value": -12012264
-      }
-    ]
+    "model": "witchery:block/rowan_leaves"
   }
 }

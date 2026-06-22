@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.entity.BloodRoseBlockEntity;
 import com.emoniph.witchery.blocks.entity.LeechChestBlockEntity;
+import com.emoniph.witchery.blocks.entity.LeechChestDrainResult;
 import com.emoniph.witchery.data.BedTaglockSavedData;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.FlyingMonkeyEntity;
@@ -250,11 +251,11 @@ public class TaglockKitItem extends Item {
             return InteractionResult.PASS;
         }
 
-        LeechChestBlockEntity.DrainResult drainResult = be.drainStoredPlayerExcept(user);
-        if (drainResult.player() != null) {
-            bindSinglePlayerTaglock(user, ctx.getHand(), stack, drainResult.player().uuid(), drainResult.player().name());
+        LeechChestDrainResult drainResult = be.drainStoredPlayerExcept(user);
+        if (drainResult.hasPlayer()) {
+            bindSinglePlayerTaglock(user, ctx.getHand(), stack, drainResult.playerUuid(), drainResult.playerName());
             user.displayClientMessage(Component.translatable("witchery.taglock_kit.collected_leech_chest",
-                    drainResult.player().name()).withStyle(ChatFormatting.GREEN), false);
+                    drainResult.playerName()).withStyle(ChatFormatting.GREEN), false);
             return InteractionResult.CONSUME;
         }
 

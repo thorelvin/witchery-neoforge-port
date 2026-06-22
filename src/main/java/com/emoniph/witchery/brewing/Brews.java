@@ -507,7 +507,6 @@ public final class Brews {
         register(Items.DIAMOND, Ingredient.capacity(2, 8, 150));
         register(Items.NETHER_STAR, Ingredient.capacity(4, 10, 150));
         register(WitcheryItems.PENTACLE.get(), Ingredient.capacity(6, 16, 1000));
-        register(WitcheryItems.KOBOLDITE_PENTACLE.get(), Ingredient.capacity(6, 16, 1000));
 
         // Source wool colour modifiers (old Dye.rgb table, registered against wool metadata).
         register(Items.WHITE_WOOL, Ingredient.color(16777215));

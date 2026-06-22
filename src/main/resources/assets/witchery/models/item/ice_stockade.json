@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/fence_inventory",
-  "textures": {
-    "texture": "minecraft:block/ice"
-  }
+  "parent": "witchery:block/ice_stockade_post"
 }

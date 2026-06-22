@@ -3,6 +3,9 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.blocks.entity.MirrorBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -29,6 +32,10 @@ import java.util.UUID;
  * Drops equipment copies on death.
  */
 public class ReflectionEntity extends Monster {
+    private static final EntityDataAccessor<String> DATA_OWNER_UUID =
+            SynchedEntityData.defineId(ReflectionEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DATA_OWNER_NAME =
+            SynchedEntityData.defineId(ReflectionEntity.class, EntityDataSerializers.STRING);
 
     private UUID ownerUUID = null;
     private String ownerName = "";
@@ -52,6 +59,13 @@ public class ReflectionEntity extends Monster {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_OWNER_UUID, "");
+        builder.define(DATA_OWNER_NAME, "");
+    }
+
+    @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
@@ -63,14 +77,15 @@ public class ReflectionEntity extends Monster {
     }
 
     public void setOwner(ServerPlayer player) {
-        this.ownerUUID = player.getUUID();
-        this.ownerName = player.getName().getString();
+        setOwnerIdentity(player.getUUID(), player.getName().getString());
         snapshotEquipment(player);
     }
 
     public void setOwnerIdentity(UUID ownerUUID, String ownerName) {
         this.ownerUUID = ownerUUID;
         this.ownerName = ownerName == null ? "" : ownerName;
+        entityData.set(DATA_OWNER_UUID, ownerUUID == null ? "" : ownerUUID.toString());
+        entityData.set(DATA_OWNER_NAME, this.ownerName);
     }
 
     public void setTemporaryDecoy(int ticks) {
@@ -86,8 +101,21 @@ public class ReflectionEntity extends Monster {
         equipmentSnapshot[5] = player.getItemBySlot(EquipmentSlot.OFFHAND).copy();
     }
 
-    public UUID getOwnerUUID() { return ownerUUID; }
-    public String getOwnerName() { return ownerName; }
+    public UUID getOwnerUUID() {
+        String syncedUuid = entityData.get(DATA_OWNER_UUID);
+        if (!syncedUuid.isEmpty()) {
+            try {
+                return UUID.fromString(syncedUuid);
+            } catch (IllegalArgumentException ignored) {
+                return ownerUUID;
+            }
+        }
+        return ownerUUID;
+    }
+    public String getOwnerName() {
+        String syncedName = entityData.get(DATA_OWNER_NAME);
+        return syncedName.isEmpty() ? ownerName : syncedName;
+    }
     public ItemStack[] getEquipmentSnapshot() { return equipmentSnapshot; }
 
     @Override
@@ -174,6 +202,8 @@ public class ReflectionEntity extends Monster {
             try {
                 ownerUUID = UUID.fromString(uuidStr);
                 ownerName = tag.getStringOr("OwnerName", "");
+                entityData.set(DATA_OWNER_UUID, ownerUUID.toString());
+                entityData.set(DATA_OWNER_NAME, ownerName);
             } catch (IllegalArgumentException ignored) {}
         }
         temporaryTicks = tag.getIntOr("TemporaryTicks", 0);

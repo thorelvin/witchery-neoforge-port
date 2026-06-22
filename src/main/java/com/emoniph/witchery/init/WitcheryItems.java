@@ -422,7 +422,6 @@ public class WitcheryItems {
     // Pure items
     public static final DeferredItem<Item> ARTHANA = ITEMS.register("arthana", id -> new com.emoniph.witchery.item.ArthanaItem(itemProps(id).durability(250)));
     public static final DeferredItem<Item> PENTACLE = ITEMS.register("pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
-    public static final DeferredItem<Item> KOBOLDITE_PENTACLE = ITEMS.register("koboldite_pentacle", id -> new com.emoniph.witchery.item.PentacleItem(itemProps(id)));
     public static final DeferredItem<BlockItem> STATUE_HOBGOBLIN_PATRON = ITEMS.register("statue_hobgoblin_patron",
             id -> new StatueHobgoblinPatronItem(WitcheryBlocks.STATUE_HOBGOBLIN_PATRON.get(), itemProps(id)));
     public static final DeferredItem<Item> WAYSTONE = ITEMS.register("waystone", id -> new com.emoniph.witchery.item.WaystoneItem(itemProps(id).stacksTo(16)));
@@ -500,12 +499,13 @@ public class WitcheryItems {
             id -> new HornOfTheHuntItem(itemProps(id)));
 
     // Armour
-    public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",   id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.HELMET)));
+    public static final DeferredItem<Item> WITCHES_HAT   = ITEMS.register("witches_hat",
+            id -> new Item(itemProps(id).humanoidArmor(WITCHES_ROBES_MATERIAL,
+                    net.minecraft.world.item.equipment.ArmorType.HELMET)));
     public static final DeferredItem<Item> WITCHES_ROBES = ITEMS.register("witches_robes",
             id -> new WitchesRobeItem(itemProps(id)
                     .humanoidArmor(WITCHES_ROBES_MATERIAL,
                             net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
-    public static final DeferredItem<Item> WITCHES_SHOES = ITEMS.register("witches_shoes", id -> new Item(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER, net.minecraft.world.item.equipment.ArmorType.BOOTS)));
     public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", WitcheryItems::earmuffs);
     public static final DeferredItem<Item> BITING_BELT = ITEMS.register("biting_belt", id ->
             new BitingBeltItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,

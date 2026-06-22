@@ -49,7 +49,7 @@ public class FlameImpEntity extends Monster {
 
     private static final int  MAX_AFFECTION   = 20;
     private static final int  GIFT_DELAY_TICKS = 20 * 60 * 3; // 3 min
-    private static final long POWER_DURATION   = 20L * 60 * 30; // 30 min in ticks
+    private static final long POWER_DURATION   = 20L * 60 * 60; // 60 min in ticks, matching source
 
     // Shinies: item → affection points
     private static final Map<Item, Integer> SHINIES;
@@ -222,7 +222,6 @@ public class FlameImpEntity extends Monster {
             }
             if (!player.isCreative()) stack.shrink(1);
             setPowered(true);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(2.0 / 20.0);
             playSound(SoundEvents.FIRECHARGE_USE, 1.0f, 0.8f);
             player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.gift.power",
                     getDisplayName()).withStyle(s -> s.withColor(0xAA0000)), false);
@@ -234,7 +233,6 @@ public class FlameImpEntity extends Monster {
             if (!isPowered()) return InteractionResult.CONSUME;
             if (!player.isCreative()) stack.shrink(1);
             setPowered(false);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
             playSound(SoundEvents.PLAYER_HURT_FREEZE, 1.0f, 1.5f);
             player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.gift.powerloss",
                     getDisplayName()).withStyle(s -> s.withColor(0xAA0000)), false);
@@ -326,18 +324,23 @@ public class FlameImpEntity extends Monster {
 
     private ItemStack buildGift() {
         return switch (secretsShared++) {
-            case 0  -> new ItemStack(WitcheryItems.TORMENT_SCROLL.get());
+            case 0  -> new ItemStack(WitcheryItems.HUNGER_DEMON_SOUL.get());
+            case 1  -> new ItemStack(WitcheryItems.FEAR_DEMON_SOUL.get());
+            case 2  -> new ItemStack(WitcheryItems.ANGUISH_DEMON_SOUL.get());
+            case 3  -> new ItemStack(WitcheryItems.TORMENT_SCROLL.get());
             default -> randomExtraDrop();
         };
     }
 
     private ItemStack randomExtraDrop() {
-        return switch (random.nextInt(5)) {
+        return switch (random.nextInt(7)) {
             case 0 -> new ItemStack(WitcheryItems.BAT_WOOL.get(), 5);
-            case 1 -> new ItemStack(WitcheryItems.WOOD_ASH.get(), 3);
-            case 2 -> new ItemStack(Items.BONE, 4);
-            case 3 -> new ItemStack(Items.BLAZE_POWDER, 2);
-            default -> new ItemStack(Items.GUNPOWDER, 3);
+            case 1 -> new ItemStack(WitcheryItems.TONGUE_OF_DOG.get(), 5);
+            case 2 -> new ItemStack(WitcheryItems.TOE_OF_FROG.get(), 2);
+            case 3 -> new ItemStack(WitcheryItems.OWLETS_WING.get(), 2);
+            case 4 -> new ItemStack(WitcheryItems.ENT_TWIG.get());
+            case 5 -> new ItemStack(WitcheryItems.INFERNAL_BLOOD.get(), 2);
+            default -> new ItemStack(WitcheryItems.CREEPER_HEART.get(), 2);
         };
     }
 
@@ -388,7 +391,6 @@ public class FlameImpEntity extends Monster {
         home = new BlockPos(tag.getIntOr("HomeX", 0), tag.getIntOr("HomeY", 0), tag.getIntOr("HomeZ", 0));
         if (powerUpExpiry > 0 && level().getGameTime() < powerUpExpiry) {
             entityData.set(DATA_POWERED, true);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(2.0 / 20.0);
         }
     }
 

@@ -314,6 +314,7 @@ public class BrewOfIceItem extends BrewItem {
                 .setValue(StockadeBlock.EAST, from.getValue(StockadeBlock.EAST))
                 .setValue(StockadeBlock.SOUTH, from.getValue(StockadeBlock.SOUTH))
                 .setValue(StockadeBlock.WEST, from.getValue(StockadeBlock.WEST))
+                .setValue(StockadeBlock.UP, from.getValue(StockadeBlock.UP))
                 .setValue(StockadeBlock.WATERLOGGED, from.getValue(StockadeBlock.WATERLOGGED));
     }
 

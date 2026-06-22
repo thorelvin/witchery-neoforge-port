@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.util.RandomSource;
@@ -29,6 +31,7 @@ import net.minecraft.util.RandomSource;
  */
 public class StockadeBlock extends CrossCollisionBlock {
     public static final MapCodec<StockadeBlock> CODEC = simpleCodec(StockadeBlock::new);
+    public static final BooleanProperty UP = BlockStateProperties.UP;
 
     public StockadeBlock(BlockBehaviour.Properties properties) {
         super(3.2F, 3.2F, 14.4F, 14.4F, 14.4F, properties);
@@ -37,6 +40,7 @@ public class StockadeBlock extends CrossCollisionBlock {
                 .setValue(EAST, false)
                 .setValue(SOUTH, false)
                 .setValue(WEST, false)
+                .setValue(UP, false)
                 .setValue(WATERLOGGED, false));
     }
 
@@ -55,6 +59,7 @@ public class StockadeBlock extends CrossCollisionBlock {
                 .setValue(EAST, connectsTo(level.getBlockState(pos.east()), Direction.WEST))
                 .setValue(SOUTH, connectsTo(level.getBlockState(pos.south()), Direction.NORTH))
                 .setValue(WEST, connectsTo(level.getBlockState(pos.west()), Direction.EAST))
+                .setValue(UP, connectsVertically(level.getBlockState(pos.above())))
                 .setValue(WATERLOGGED, fluid.getType() == Fluids.WATER);
     }
 
@@ -64,6 +69,9 @@ public class StockadeBlock extends CrossCollisionBlock {
                                      BlockState facingState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
             scheduledTickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+        if (facing == Direction.UP) {
+            return state.setValue(UP, connectsVertically(facingState));
         }
         return facing.getAxis().isHorizontal()
                 ? state.setValue(PROPERTY_BY_DIRECTION.get(facing), connectsTo(facingState, facing.getOpposite()))
@@ -77,6 +85,10 @@ public class StockadeBlock extends CrossCollisionBlock {
         }
         return block == WitcheryBlocks.ICE_GATE.get()
                 && FenceGateBlock.connectsToDirection(state, direction);
+    }
+
+    private boolean connectsVertically(BlockState state) {
+        return state.getBlock() == this;
     }
 
     @Override
@@ -104,6 +116,6 @@ public class StockadeBlock extends CrossCollisionBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, SOUTH, WEST, WATERLOGGED);
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, WATERLOGGED);
     }
 }

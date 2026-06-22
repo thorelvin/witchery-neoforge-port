@@ -1,7 +1,7 @@
-﻿{
+{
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "witchery:item/ingredient.brew_hollow_tears",
-    "layer1": "minecraft:item/potion"
+    "layer1": "witchery:item/brew_drinkable"
   }
 }

@@ -1,10 +1,16 @@
 {
   "layers": {
     "humanoid": [
-      { "texture": "witchery:witches_robes" }
+      {
+        "texture": "witchery:witches_robes",
+        "dyeable": { "color_when_undyed": 2628115 }
+      }
     ],
     "humanoid_leggings": [
-      { "texture": "witchery:witches_robes" }
+      {
+        "texture": "witchery:witches_robes",
+        "dyeable": { "color_when_undyed": 2628115 }
+      }
     ]
   }
 }
