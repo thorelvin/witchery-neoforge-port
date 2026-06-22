@@ -6,6 +6,7 @@ import com.emoniph.witchery.client.model.BeartrapModel;
 import com.emoniph.witchery.client.model.CandelabraModel;
 import com.emoniph.witchery.client.model.ChaliceModel;
 import com.emoniph.witchery.client.model.CoffinModel;
+import com.emoniph.witchery.client.model.DeathHandModel;
 import com.emoniph.witchery.client.model.DistilleryModel;
 import com.emoniph.witchery.client.model.DreamCatcherModel;
 import com.emoniph.witchery.client.model.FumeFunnelModel;
@@ -49,6 +50,8 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("brazier"), BrazierUnbaked.MAP_CODEC);
         event.register(id("beartrap"), BeartrapUnbaked.MAP_CODEC);
         event.register(id("wolftrap"), WolftrapUnbaked.MAP_CODEC);
+        event.register(id("deaths_hand"), DeathHandUnbaked.MAP_CODEC);
+        event.register(id("deaths_hand_deployed"), DeployedDeathHandUnbaked.MAP_CODEC);
         event.register(id("candelabra"), CandelabraUnbaked.MAP_CODEC);
         event.register(id("chalice"), ChaliceUnbaked.MAP_CODEC);
         event.register(id("leech_chest"), LeechChestUnbaked.MAP_CODEC);
@@ -401,6 +404,82 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<WolftrapUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record DeathHandSpecialRenderer(DeathHandModel model, boolean deployed) implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/deathshand.png");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            boolean firstPerson = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                    || displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+            model.setup(firstPerson, deployed);
+
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.XP.rotationDegrees(100.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-51.0F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-81.0F));
+            poseStack.translate(0.125F, 0.12F, -0.85F);
+            if (deployed) {
+                if (firstPerson) {
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+                } else {
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+                    poseStack.translate(0.19F, -0.12F, 0.01F);
+                }
+            }
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+
+            for (ModelPart part : model.handParts(firstPerson)) {
+                collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
+                        lightCoords, OverlayTexture.NO_OVERLAY, null);
+            }
+            if (deployed) {
+                poseStack.pushPose();
+                poseStack.scale(1.2F, 1.2F, 1.2F);
+                collector.submitModelPart(model.scythe(), poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
+                        lightCoords, OverlayTexture.NO_OVERLAY, null);
+                poseStack.popPose();
+            }
+            poseStack.popPose();
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            consumer.accept(new Vector3f(-1.5F, -2.5F, -1.5F));
+            consumer.accept(new Vector3f(1.5F, 2.5F, 1.5F));
+        }
+    }
+
+    public record DeathHandUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<DeathHandUnbaked> MAP_CODEC = MapCodec.unit(new DeathHandUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new DeathHandSpecialRenderer(
+                    new DeathHandModel(context.entityModelSet().bakeLayer(DeathHandModel.LAYER_LOCATION)), false);
+        }
+
+        @Override
+        public MapCodec<DeathHandUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record DeployedDeathHandUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<DeployedDeathHandUnbaked> MAP_CODEC = MapCodec.unit(new DeployedDeathHandUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new DeathHandSpecialRenderer(
+                    new DeathHandModel(context.entityModelSet().bakeLayer(DeathHandModel.LAYER_LOCATION)), true);
+        }
+
+        @Override
+        public MapCodec<DeployedDeathHandUnbaked> type() {
             return MAP_CODEC;
         }
     }

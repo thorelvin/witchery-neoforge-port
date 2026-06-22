@@ -4,6 +4,7 @@ import com.emoniph.witchery.client.model.DeathArmorModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,19 +12,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class DeathArmorClientExtensions implements IClientItemExtensions {
-    private DeathArmorModel model;
+import java.util.EnumMap;
 
-    private DeathArmorModel model() {
-        if (model == null) {
-            model = new DeathArmorModel(Minecraft.getInstance().getEntityModels().bakeLayer(DeathArmorModel.LAYER_LOCATION));
-        }
-        return model;
+public class DeathArmorClientExtensions implements IClientItemExtensions {
+    private final EnumMap<EquipmentSlot, DeathArmorModel> models = new EnumMap<>(EquipmentSlot.class);
+
+    private DeathArmorModel model(EquipmentSlot slot) {
+        return models.computeIfAbsent(slot, ignored ->
+                new DeathArmorModel(Minecraft.getInstance().getEntityModels().bakeLayer(DeathArmorModel.LAYER_LOCATION)));
     }
 
     @Override
     public Model getGenericArmorModel(ItemStack stack, EquipmentClientInfo.LayerType layerType, Model original) {
-        DeathArmorModel deathModel = model();
+        EquipmentSlot slot = equipmentSlot(stack);
+        DeathArmorModel deathModel = model(slot);
         if (original instanceof HumanoidModel<?> originalHumanoid) {
             copyPose(originalHumanoid.head, deathModel.head);
             copyPose(originalHumanoid.hat, deathModel.hat);
@@ -33,7 +35,7 @@ public class DeathArmorClientExtensions implements IClientItemExtensions {
             copyPose(originalHumanoid.rightLeg, deathModel.rightLeg);
             copyPose(originalHumanoid.leftLeg, deathModel.leftLeg);
         }
-        applySlotVisibility(deathModel, equipmentSlot(stack));
+        applySlotVisibility(deathModel, slot);
         return deathModel;
     }
 
@@ -54,6 +56,7 @@ public class DeathArmorClientExtensions implements IClientItemExtensions {
                 model.rightArm.visible = true;
                 model.leftArm.visible = true;
             }
+            // Source Death clothes have no leggings item; Death's Footwear owns both leg wraps.
             case LEGS, FEET -> {
                 model.rightLeg.visible = true;
                 model.leftLeg.visible = true;
@@ -63,8 +66,7 @@ public class DeathArmorClientExtensions implements IClientItemExtensions {
         }
     }
 
-    private static void copyPose(net.minecraft.client.model.geom.ModelPart from,
-                                 net.minecraft.client.model.geom.ModelPart to) {
+    private static void copyPose(ModelPart from, ModelPart to) {
         to.x = from.x;
         to.y = from.y;
         to.z = from.z;

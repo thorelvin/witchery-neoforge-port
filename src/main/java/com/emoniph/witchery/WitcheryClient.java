@@ -110,6 +110,7 @@ public class WitcheryClient {
         Map.entry(FlyingMonkeyModel.LAYER_LOCATION,    FlyingMonkeyModel::createBodyLayer),
         Map.entry(CatFamiliarModel.LAYER_LOCATION,     CatFamiliarModel::createBodyLayer),
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
+        Map.entry(DeathHandModel.LAYER_LOCATION,       DeathHandModel::createLayer),
         Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
         Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
