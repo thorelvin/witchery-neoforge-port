@@ -156,6 +156,9 @@ public class BeartrapBlock extends BaseEntityBlock {
                     20, 0.25D, 0.5D, 0.25D, 0.0D);
         }
         level.setBlock(pos, state.setValue(CLOSED, true).setValue(ARMED, false), 3);
+        if (level.getBlockEntity(pos) instanceof BeartrapBlockEntity trap) {
+            trap.setSourceClosed(true);
+        }
     }
 
     @Override
@@ -165,6 +168,9 @@ public class BeartrapBlock extends BaseEntityBlock {
             boolean closing = !state.getValue(CLOSED);
             BlockState updated = state.setValue(CLOSED, closing).setValue(ARMED, false);
             level.setBlock(pos, updated, 3);
+            if (level.getBlockEntity(pos) instanceof BeartrapBlockEntity trap) {
+                trap.setSourceClosed(closing);
+            }
             level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_CLICK.get(),
                     SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
             if (!closing) {

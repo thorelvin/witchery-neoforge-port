@@ -414,9 +414,11 @@ public final class WitcherySpecialItemRenderers {
         @Override
         public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
                            int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
-            boolean firstPerson = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+            boolean firstPersonView = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
                     || displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-            model.setup(firstPerson, deployed);
+            boolean rightHand = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                    || displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+            model.setup(rightHand, deployed);
 
             poseStack.pushPose();
             poseStack.mulPose(Axis.XP.rotationDegrees(100.0F));
@@ -424,16 +426,14 @@ public final class WitcherySpecialItemRenderers {
             poseStack.mulPose(Axis.ZP.rotationDegrees(-81.0F));
             poseStack.translate(0.125F, 0.12F, -0.85F);
             if (deployed) {
-                if (firstPerson) {
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
-                } else {
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                    poseStack.translate(0.19F, -0.12F, 0.01F);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(rightHand ? -90.0F : 90.0F));
+                if (!firstPersonView) {
+                    poseStack.translate(rightHand ? -0.19F : 0.19F, -0.12F, 0.01F);
                 }
             }
             poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 
-            for (ModelPart part : model.handParts(firstPerson)) {
+            for (ModelPart part : model.handParts(rightHand)) {
                 collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
                         lightCoords, OverlayTexture.NO_OVERLAY, null);
             }

@@ -93,6 +93,13 @@ public class BeartrapBlockEntity extends BlockEntity {
         return ownerName;
     }
 
+    public void setSourceClosed(boolean closed) {
+        if (sourceClosed != closed) {
+            sourceClosed = closed;
+            setChanged();
+        }
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, BeartrapBlockEntity trap) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !(state.getBlock() instanceof BeartrapBlock beartrapBlock)

@@ -14,6 +14,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- 2026-06-23: Custom brew moving-fluid contact, Dog Tongue gas/liquid placement fallback, brazier dousing, Spirit World fog density, Death Hand held-side rendering, trap state sync, and cursed warning cooldowns were tightened.
 - 2026-06-21: Visual ritual recipe pages in the Primer gained ring diagrams and coven-face indicators; in-game visual tuning remains.
 - 2026-06-20: Vampire armor visuals, Sun Grenade projectile rendering, Rowan Key use, crop soil rules, Spirit World cotton, Vanishing Hut generation, Witches' Salt, and village wall spawn tuning landed.
 - 2026-06-19 to 2026-06-13: Leonard, NBT structures, custom brew reference/delivery, placed Primer/scrying/apothecary, Disease brew, and Purified Milk polish landed.
@@ -25,7 +26,7 @@ Parity baseline is now `1.7.10-0.24.1`. All new work checks decompiled original 
 
 Five implementation lanes — work one bounded slice at a time per lane:
 
-1. **Custom Brew / Witch's Cauldron** — first priority after parity matrix is built. Source: `WitcheryBrewRegistry.java`, `BlockCauldron.java`, `TileEntityCauldron.java`, `BrewAction*`, `DispersalInstant/Liquid/Gas/Triggered`, 44 potion effect classes. The practical composed action roster, generic containers/buckets, triggered dispersal, and moving gas/liquid basics are live. Open: exact ritualized pulse/backfire/target-modifier wiring, old spell-projectile routing, non-Diseased incurable cure parity, Grotesque overlay polish, and deeper edge behavior.
+1. **Custom Brew / Witch's Cauldron** — first priority after parity matrix is built. Source: `WitcheryBrewRegistry.java`, `BlockCauldron.java`, `TileEntityCauldron.java`, `BrewAction*`, `DispersalInstant/Liquid/Gas/Triggered`, 44 potion effect classes. The practical composed action roster, generic containers/buckets, triggered dispersal, moving gas/liquid basics, deterministic moving-fluid contact, and a practical ritual release/backfire path are live. Open: exact target-modifier edge cases, old spell-projectile routing, non-Diseased incurable cure parity, Grotesque overlay polish, and deeper edge behavior.
 
 2. **Vampire / Werewolf progression** — Elle/Lilith chain ✅ source-shaped, Blood Crucible block/BE/render/fill/level-10 ultimate selection plus source recipe are live, Glass Goblet drained Villager/Village Guard conversion now spawns the Vampire mob, and source Zombie Respect targeting for level-10 vampires is restored. Elle now follows her owner to a valid large lava pool, transforms into Lilith, and friendly Lilith handles the blood-goblet, Garlic cure, Poppy mastery, and blessing handoffs. Moon Charm now covers the first practical manual werewolf transformation-control path. Remaining: broader Blood Power, exact werewolf Wolf Altar quests and wolf/wolfman level gates, Horn of Hunt/Huntsman step, and exact guard passive blood-regeneration/village-side-effect polish. Source: `ExtendedPlayer.java`, `Shapeshift.java`, infusion package, `EntityVampire.java`, `EntityWolfman.java`, `EntityVillagerWere.java`.
 

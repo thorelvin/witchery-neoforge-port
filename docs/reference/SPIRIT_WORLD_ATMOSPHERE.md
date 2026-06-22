@@ -104,8 +104,8 @@ Fixed 2026-06-19:
   column to the nearest two-block-tall landing space. `/witchery exit` uses the full Spirit World wake-up
   helper for those entries.
 - **Fog range is now explicitly shortened.** The source `getFogColor` supplied the three pink/green/red
-  palettes, but modern rendering also needs a fog-distance override; the port now gives dreams a 72-block
-  fog end, nightmares 48, and demonic nightmares 36 while retaining the source colours.
+  palettes, but modern rendering also needs a fog-distance override; the port now gives dreams a 52-block
+  fog end, nightmares 40, and demonic nightmares 32 while retaining the source colours.
 - **Dream wildlife is now a requested modern expansion.** Source Witchery reused Overworld generation and
   allowed peaceful spawns; the port's fixed Spirit World biome now opens that up beyond sheep/pig/chicken/cow
   to the broader vanilla passive animal roster across creature, ambient, water, cave-water, and axolotl spawn

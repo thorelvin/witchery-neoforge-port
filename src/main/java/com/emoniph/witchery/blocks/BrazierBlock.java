@@ -7,8 +7,10 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -78,7 +80,7 @@ public class BrazierBlock extends BaseEntityBlock {
             boolean extinguishes = stack.is(Items.WATER_BUCKET)
                     || stack.is(Items.POTION) && potionContents != null && potionContents.is(Potions.WATER);
             if (level.getBlockEntity(pos) instanceof BrazierBlockEntity be
-                    && ((extinguishes && (!be.isEmpty() || be.isBurning()))
+                    && ((extinguishes && canExtinguish(state, be))
                     || (stack.isEmpty() && be.isBurning()))) {
                 be.reset();
             }
@@ -98,10 +100,10 @@ public class BrazierBlock extends BaseEntityBlock {
 
         // Water bucket → reset
         if (stack.is(Items.WATER_BUCKET)) {
-            if (!be.isEmpty() || be.isBurning()) {
+            if (canExtinguish(state, be)) {
                 be.reset();
                 if (!player.isCreative()) player.setItemInHand(hand, new ItemStack(Items.BUCKET));
-                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.0f);
+                playDouseEffects(level, pos, SoundEvents.FIRE_EXTINGUISH, 0.8f, 1.0f);
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -110,12 +112,12 @@ public class BrazierBlock extends BaseEntityBlock {
         // Water bottle -> reset
         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
         if (stack.is(Items.POTION) && potionContents != null && potionContents.is(Potions.WATER)) {
-            if (!be.isEmpty() || be.isBurning()) {
+            if (canExtinguish(state, be)) {
                 be.reset();
                 if (!player.isCreative()) {
                     player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
                 }
-                level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.8f, 1.0f);
+                playDouseEffects(level, pos, SoundEvents.GENERIC_SPLASH, 0.8f, 1.0f);
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -142,6 +144,22 @@ public class BrazierBlock extends BaseEntityBlock {
             }
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    private static boolean canExtinguish(BlockState state, BrazierBlockEntity be) {
+        return !be.isEmpty() || be.isBurning() || state.getValue(LIT);
+    }
+
+    private static void playDouseEffects(Level level, BlockPos pos, SoundEvent sound, float volume, float pitch) {
+        level.playSound(null, pos, sound, SoundSource.BLOCKS, volume, pitch);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SMOKE,
+                    pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                    12, 0.25D, 0.1D, 0.25D, 0.02D);
+            serverLevel.sendParticles(ParticleTypes.SPLASH,
+                    pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                    8, 0.2D, 0.05D, 0.2D, 0.0D);
+        }
     }
 
     /** Redstone signal → auto-ignite. */

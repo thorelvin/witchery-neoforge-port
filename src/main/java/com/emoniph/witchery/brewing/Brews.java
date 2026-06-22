@@ -929,7 +929,7 @@ public final class Brews {
         }
         boolean triggeredItemPresent = delivery != Dispersal.TRIGGERED || hasTriggeredRitualItemTarget(level, center);
         boolean movingBrewCanPlace = delivery != Dispersal.GAS && delivery != Dispersal.LIQUID
-                || canPlaceRitualMovingBrew(target.level(), ritualMovingBrewPlacement(center, target), source);
+                || findRitualMovingBrewPlacement(target.level(), center, target, source).isPresent();
         return validateRitualDelivery(resolved, delivery, triggeredItemPresent, movingBrewCanPlace);
     }
 
@@ -979,8 +979,10 @@ public final class Brews {
                     : RitualDeliveryResult.NO_TRIGGER_ITEM;
         }
         if (delivery == Dispersal.GAS || delivery == Dispersal.LIQUID) {
-            boolean placed = placeMovingBrewFluid(target.level(), ritualMovingBrewPlacement(center, target), items,
-                    delivery, source, delivery == Dispersal.LIQUID, true, covenSize);
+            Optional<BlockPos> placement = findRitualMovingBrewPlacement(target.level(), center, target, source);
+            boolean placed = placement.isPresent()
+                    && placeMovingBrewFluid(target.level(), placement.get(), items, delivery, source,
+                            delivery == Dispersal.LIQUID, true, covenSize);
             if (placed) {
                 consumeRitualTargetOffering(target);
                 return RitualDeliveryResult.SUCCESS;
@@ -1025,8 +1027,27 @@ public final class Brews {
                         item.distanceToSqr(center.getX() + 0.5D, center.getY() + 1.0D, center.getZ() + 0.5D)));
     }
 
-    private static BlockPos ritualMovingBrewPlacement(BlockPos center, RitualTarget target) {
-        return target.explicit() ? target.pos().above() : center.above();
+    private static Optional<BlockPos> findRitualMovingBrewPlacement(ServerLevel level, BlockPos center,
+                                                                    RitualTarget target, Entity source) {
+        BlockPos anchor = target.explicit() ? target.pos() : center;
+        List<BlockPos> candidates = new ArrayList<>();
+        candidates.add(anchor.above());
+        candidates.add(anchor);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            candidates.add(anchor.above().relative(direction));
+        }
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            candidates.add(anchor.relative(direction));
+        }
+        candidates.add(anchor.above(2));
+
+        Set<BlockPos> seen = new HashSet<>();
+        for (BlockPos candidate : candidates) {
+            if (seen.add(candidate.immutable()) && canPlaceRitualMovingBrew(level, candidate, source)) {
+                return Optional.of(candidate);
+            }
+        }
+        return Optional.empty();
     }
 
     private static void consumeRitualTargetOffering(RitualTarget target) {

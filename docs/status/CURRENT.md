@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-06-22
+Last curated: 2026-06-23
 
 This is the compact living handoff for the Witchery NeoForge port. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -62,6 +62,10 @@ enough to read before starting work. Long historical deltas belong in
   stockade stack presentation while preserving contact damage, moved Death's
   Hand back to a source-style same-item scythe toggle, and nudged the Goddess
   statue / Crystal Ball GUI transforms.
+- Current parity polish tightened moving brew fluids, braziers, Spirit World
+  fog, Death's Hand held-side rendering, trap state sync, and cursed warning
+  cooldowns. Manual QA still needs eyes on the Death Hand pose and in-world
+  atmosphere feel.
 
 ## Docs Cleanup Note
 

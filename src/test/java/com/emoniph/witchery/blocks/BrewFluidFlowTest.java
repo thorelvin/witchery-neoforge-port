@@ -83,4 +83,12 @@ class BrewFluidFlowTest {
         assertFalse(BrewFluidBlock.shouldApplyGasContactOnRunTick(2));
         assertTrue(BrewFluidBlock.shouldApplyGasContactOnRunTick(3));
     }
+
+    @Test
+    void liquidContactPulseUsesTheSameSourceCadenceAsGas() {
+        assertFalse(BrewFluidBlock.shouldApplyLiquidContactOnRunTick(0));
+        assertTrue(BrewFluidBlock.shouldApplyLiquidContactOnRunTick(1));
+        assertFalse(BrewFluidBlock.shouldApplyLiquidContactOnRunTick(2));
+        assertTrue(BrewFluidBlock.shouldApplyLiquidContactOnRunTick(3));
+    }
 }

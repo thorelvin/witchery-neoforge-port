@@ -200,6 +200,8 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
                 level.setBlock(pos, state, Block.UPDATE_CLIENTS);
             }
         }
+        int runTicks = brew.incRunTicks();
+        applyLiquidContactPulse(level, pos, state, brew, runTicks);
 
         // Source BlockBrewLiquidEffect: each tick the pool may apply its block actions to neighbours.
         brew.applyAdjacentBlockPulse(level);
@@ -226,6 +228,23 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
             }
         }
         level.scheduleTick(pos, this, tickRate());
+    }
+
+    private void applyLiquidContactPulse(ServerLevel level, BlockPos pos, BlockState state,
+                                         BrewFluidBlockEntity brew, int runTicks) {
+        if (!shouldApplyLiquidContactOnRunTick(runTicks)) {
+            return;
+        }
+        double height = liquidHeightPixels(state.getValue(DISTANCE)) / 16.0D + 0.05D;
+        AABB contactBox = new AABB(pos.getX(), pos.getY(), pos.getZ(),
+                pos.getX() + 1.0D, pos.getY() + Math.min(1.0D, height), pos.getZ() + 1.0D);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, contactBox, LivingEntity::isAlive)) {
+            brew.applyContactEffect(living);
+        }
+    }
+
+    static boolean shouldApplyLiquidContactOnRunTick(int runTicks) {
+        return shouldApplyGasContactOnRunTick(runTicks);
     }
 
     /** Whether brew liquid can flow into a position (air / replaceable / same-fluid). */
@@ -362,14 +381,7 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                              InsideBlockEffectApplier effectApplier, boolean isMoved) {
-        if (gas
-                || level.isClientSide()
-                || !(entity instanceof LivingEntity living)
-                || !(level.getBlockEntity(pos) instanceof BrewFluidBlockEntity brew)
-                || level.random.nextInt(10) != 4) {
-            return;
-        }
-        brew.applyContactEffect(living);
+        // Scheduled ticks handle gas and liquid contact deterministically at the source cadence.
     }
 
     @Override

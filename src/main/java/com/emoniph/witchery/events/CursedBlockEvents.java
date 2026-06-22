@@ -135,7 +135,9 @@ public final class CursedBlockEvents {
                 warningCooldowns.remove(pos);
             } else {
                 ladderContacts.remove(pos);
-                warningCooldowns.remove(pos);
+                if (warnings.get(pos) == null) {
+                    warningCooldowns.remove(pos);
+                }
             }
         }
         if (stale != null) {

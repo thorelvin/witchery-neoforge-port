@@ -64,12 +64,12 @@ public final class SpiritWorldSpecialEffects {
     public static SpiritFog currentSpiritFog() {
         SpiritState state = currentSpiritState();
         if (state.demonic()) {
-            return new SpiritFog(2.0F, 36.0F);
+            return new SpiritFog(1.5F, 32.0F);
         }
         if (state.nightmare()) {
-            return new SpiritFog(4.0F, 48.0F);
+            return new SpiritFog(2.5F, 40.0F);
         }
-        return new SpiritFog(6.0F, 72.0F);
+        return new SpiritFog(3.0F, 52.0F);
     }
 
     /**

@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-06-22
+Last curated: 2026-06-23
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -61,7 +61,7 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Y should stay in the same column and only move enough to find a safe landing.
 - Run `/witchery exit` and confirm return to the stored Overworld coordinate.
 - Confirm dream, nightmare, and demonic nightmare colors/fog match the current
-  design.
+  design; normal dreams should read visibly foggy, with nightmares denser.
 - Confirm ordinary passive animals can spawn in Spirit World biomes.
 
 ### Cursed Blocks And Wells
@@ -72,6 +72,8 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   only under the intended trigger condition.
 - For warning brews, say a test line near the cauldron before bottling and
   confirm the text appears in purple actionbar text when triggered.
+- Re-trigger warning doors/buttons/levers and confirm repeated warnings respect
+  the cooldown instead of spamming every activation.
 - Cursed well: confirm top ladder warning uses `You feel uneasy.` without poison;
   lower ladder applies the actual curse once.
 
@@ -84,7 +86,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Retest Dog Tongue live cauldron release for supported custom-brew delivery
   shapes.
 - Retest gas/liquid brews for tint persistence, lifetime, source/flow behavior,
-  and Gas Mask protection.
+  deterministic contact refresh, and Gas Mask protection.
+- Block the first release space over a ritual cauldron and confirm gas/liquid
+  Dog Tongue release chooses a nearby safe space instead of failing immediately.
 
 ### Visuals And Creative Tab
 
