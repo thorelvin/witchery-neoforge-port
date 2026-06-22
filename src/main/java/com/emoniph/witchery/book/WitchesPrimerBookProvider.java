@@ -99,6 +99,18 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "\n\nThe notes below are drawn from the live brew registry. **Level** is the capacity "
                         + "an effect consumes. **Power** is altar power charged when the brew is bottled, "
                         + "bucketed, or released by ritual."));
+        pages.add(vesselRecipe("Brew: Drought Splash",
+                "Stir Nether Wart, Tear of the Goddess, Witches' Salt, then Gunpowder. Bottle it to dry "
+                        + "water source blocks near impact.",
+                WitcheryItems.SPLASH_BREW_BOTTLE.get(), 1,
+                List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(),
+                        WitcheryItems.WITCHES_SALT.get(), Items.GUNPOWDER, Items.GLASS_BOTTLE)));
+        pages.add(vesselRecipe("Brew: Drought Bucket",
+                "Swap Gunpowder for Wormwood, then scoop with a bucket. The moving brew eats water source "
+                        + "blocks it touches.",
+                WitcheryItems.BREW_BUCKET.get(), 1,
+                List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(),
+                        WitcheryItems.WITCHES_SALT.get(), WitcheryItems.WORMWOOD.get(), Items.BUCKET)));
 
         referenceSection(pages, "Capacity",
                 "Capacity ingredients widen the brew before an effect or action can fit.",
@@ -238,6 +250,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
             case "witchery:exhale_of_horned_one" -> "Exhale of the Horned One";
             case "witchery:mindrakebulb" -> "Mindrake Bulb";
             case "witchery:tear_of_goddess" -> "Tear of the Goddess";
+            case "witchery:witches_salt" -> "Witches' Salt";
             case "minecraft:dragon_breath" -> "Dragon's Breath";
             default -> titleCase(id.getPath());
         };
@@ -254,6 +267,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         return switch (key) {
             case "witchery.brew.extinguish" -> "Extinguish";
             case "witchery.brew.dissipate" -> "Dissipate";
+            case "witchery.brew.drought" -> "Drought";
             case "witchery.brew.flowers" -> "Grow Flowers";
             case "witchery.brew.fertilization" -> "Fertilization";
             case "witchery.brew.felling" -> "Felling";

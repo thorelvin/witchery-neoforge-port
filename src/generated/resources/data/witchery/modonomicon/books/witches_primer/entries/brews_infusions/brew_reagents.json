@@ -54,6 +54,106 @@
       "use_markdown_in_title": false
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:witches_salt",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glass_bottle",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:splash_brew_bottle",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Stir Nether Wart, Tear of the Goddess, Witches' Salt, then Gunpowder. Bottle it to dry water source blocks near impact.[#]()",
+      "title": "Brew: Drought Splash"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:witches_salt",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:wormwood",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:bucket",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_bucket",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Swap Gunpowder for Wormwood, then scoop with a bucket. The moving brew eats water source blocks it touches.[#]()",
+      "title": "Brew: Drought Bucket"
+    },
+    {
       "type": "witchery:item_reference",
       "anchor": "",
       "condition": {
@@ -588,12 +688,12 @@
           "text": "[#](53341a)**Stone** - Dissipate (level 1, sneak-stir).[#]()"
         },
         {
-          "item": "minecraft:dandelion",
-          "text": "[#](53341a)**Dandelion** - Grow Flowers (level 1, 200 power, sneak-stir).[#]()"
+          "item": "witchery:witches_salt",
+          "text": "[#](53341a)**Witches' Salt** - Drought (level 4, 500 power).[#]()"
         },
         {
-          "item": "minecraft:bone_meal",
-          "text": "[#](53341a)**Bone Meal** - Fertilization (level 1, 250 power, sneak-stir).[#]()"
+          "item": "minecraft:dandelion",
+          "text": "[#](53341a)**Dandelion** - Grow Flowers (level 1, 200 power, sneak-stir).[#]()"
         }
       ],
       "text": "[#](53341a)These ingredients perform an old craft action instead of applying a normal potion effect.[#]()",
@@ -606,6 +706,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "minecraft:bone_meal",
+          "text": "[#](53341a)**Bone Meal** - Fertilization (level 1, 250 power, sneak-stir).[#]()"
+        },
         {
           "item": "minecraft:string",
           "text": "[#](53341a)**String** - Felling (level 1).[#]()"
@@ -625,10 +729,6 @@
         {
           "item": "witchery:ent_twig",
           "text": "[#](53341a)**Ent Twig** - Sprouting (level 2, 350 power).[#]()"
-        },
-        {
-          "item": "minecraft:wheat_seeds",
-          "text": "[#](53341a)**Wheat Seeds** - Planting (level 1).[#]()"
         }
       ],
       "text": "",
@@ -641,6 +741,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "minecraft:wheat_seeds",
+          "text": "[#](53341a)**Wheat Seeds** - Planting (level 1).[#]()"
+        },
         {
           "item": "minecraft:ender_pearl",
           "text": "[#](53341a)**Ender Pearl** - Transposition (level 4, 1000 power).[#]()"
@@ -660,10 +764,6 @@
         {
           "item": "witchery:reek_of_misfortune",
           "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
-        },
-        {
-          "item": "witchery:purified_milk",
-          "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
         }
       ],
       "text": "",
@@ -676,6 +776,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "witchery:purified_milk",
+          "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
+        },
         {
           "item": "minecraft:pumpkin",
           "text": "[#](53341a)**Pumpkin** - Undeadbane (level 2, 200 power).[#]()"
@@ -695,10 +799,6 @@
         {
           "item": "witchery:silver_deposits",
           "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
-        },
-        {
-          "item": "minecraft:skeleton_skull",
-          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
         }
       ],
       "text": "",
@@ -711,6 +811,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "minecraft:skeleton_skull",
+          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
+        },
         {
           "item": "witchery:creeper_heart",
           "text": "[#](53341a)**Creeper Heart** - Potion Longevity (level 6, 5000 power).[#]()"

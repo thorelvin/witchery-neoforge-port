@@ -129,7 +129,7 @@ public final class Brews {
         }
 
         public enum BrewAction {
-            EXTINGUISH, DISSIPATE, GROW_FLOWERS, FERTILIZE,
+            EXTINGUISH, DISSIPATE, DROUGHT, GROW_FLOWERS, FERTILIZE,
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
             FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT,
@@ -388,6 +388,9 @@ public final class Brews {
         registerExplicit(Blocks.STONE.asItem(), Ingredient.action(Ingredient.BrewAction.DISSIPATE,
                 1, 0, 0x8B8B8B,
                 "witchery.brew.dissipate", null));
+        register(WitcheryItems.WITCHES_SALT.get(), Ingredient.action(Ingredient.BrewAction.DROUGHT,
+                4, 500, 0xD8D0B8,
+                "witchery.brew.drought", null));
         registerExplicit(Items.DANDELION, Ingredient.action(Ingredient.BrewAction.GROW_FLOWERS,
                 1, 200, 0xF2D447,
                 "witchery.brew.flowers", null));
@@ -1540,6 +1543,8 @@ public final class Brews {
                 extinguishFires(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.DISSIPATE) {
                 dissipateGasClouds(level, blockImpact, blockRadius, strength);
+            } else if (action.action() == Ingredient.BrewAction.DROUGHT) {
+                dryWaterSources(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.GROW_FLOWERS) {
                 growFlowers(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.FERTILIZE) {
@@ -1589,19 +1594,48 @@ public final class Brews {
         if (weakActions.isEmpty() && weakEffects.isEmpty()) {
             return;
         }
+        List<ActionApplication> contactDrought = actionsOfType(weakActions, Ingredient.BrewAction.DROUGHT);
+        if (!contactDrought.isEmpty()) {
+            for (Direction direction : Direction.values()) {
+                BlockPos target = fluidPos.relative(direction);
+                applyBlockImpactActions(level, Vec3.atCenterOf(target), target, direction.getOpposite(),
+                        contactDrought, source, SOURCE_ADJACENT_BLOCK_PULSE_RADIUS, ritualised, covenSize);
+            }
+        }
+        List<ActionApplication> randomPulseActions = actionsExcluding(weakActions, Ingredient.BrewAction.DROUGHT);
         for (Direction direction : Direction.values()) {
             if (level.random.nextDouble() >= SOURCE_ADJACENT_BLOCK_PULSE_CHANCE) {
                 continue;
             }
             BlockPos target = fluidPos.relative(direction);
-            if (!weakActions.isEmpty()) {
-                applyBlockImpactActions(level, Vec3.atCenterOf(target), target, direction.getOpposite(), weakActions, source,
+            if (!randomPulseActions.isEmpty()) {
+                applyBlockImpactActions(level, Vec3.atCenterOf(target), target, direction.getOpposite(), randomPulseActions, source,
                         SOURCE_ADJACENT_BLOCK_PULSE_RADIUS, ritualised, covenSize);
             }
             if (!weakEffects.isEmpty()) {
                 applyBlockImpactEffects(level, target, weakEffects, source, ritualised, covenSize);
             }
         }
+    }
+
+    private static List<ActionApplication> actionsOfType(List<ActionApplication> actions, Ingredient.BrewAction type) {
+        List<ActionApplication> out = new ArrayList<>();
+        for (ActionApplication action : actions) {
+            if (action.action() == type) {
+                out.add(action);
+            }
+        }
+        return out;
+    }
+
+    private static List<ActionApplication> actionsExcluding(List<ActionApplication> actions, Ingredient.BrewAction type) {
+        List<ActionApplication> out = new ArrayList<>();
+        for (ActionApplication action : actions) {
+            if (action.action() != type) {
+                out.add(action);
+            }
+        }
+        return out;
     }
 
     /** Reduced strength for the per-tick adjacent-block pulse (source {@code strengthPenalty++}). */
@@ -1741,6 +1775,25 @@ public final class Brews {
                 cloud.discard();
                 level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 2.0F);
             }
+        }
+    }
+
+    private static void dryWaterSources(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int effectiveRadius = Math.max(1, sourceBlockCircleRadius(radius, strength));
+        int removed = 0;
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effectiveRadius)) {
+            for (int y = center.getY() - effectiveRadius; y <= center.getY() + effectiveRadius; y++) {
+                BlockPos pos = new BlockPos(column.getX(), y, column.getZ());
+                if (sourceDroughtRemoves(level.getBlockState(pos)) && sourceMayModify(level, pos, source)) {
+                    level.removeBlock(pos, false);
+                    removed++;
+                }
+            }
+        }
+        if (removed > 0) {
+            level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.7F, 1.65F);
+            level.sendParticles(ParticleTypes.CLOUD, center.getX() + 0.5, center.getY() + 0.5,
+                    center.getZ() + 0.5, Math.min(24, 4 + removed), 0.45, 0.25, 0.45, 0.02);
         }
     }
 
@@ -2364,6 +2417,10 @@ public final class Brews {
 
     public static boolean sourceColdBlockHitShouldFreeze(BlockState state) {
         return state.is(Blocks.WATER);
+    }
+
+    public static boolean sourceDroughtRemoves(BlockState state) {
+        return state.is(Blocks.WATER) && state.getFluidState().isSource();
     }
 
     public static boolean sourceReplaceSphereCanRecurse(BlockPos center, BlockPos current, int radius) {

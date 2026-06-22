@@ -2,10 +2,12 @@ package com.emoniph.witchery.brewing;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,6 +58,14 @@ class BrewNatureActionTest {
     }
 
     @Test
+    void droughtOnlyRemovesWaterSourceBlocks() {
+        assertTrue(Brews.sourceDroughtRemoves(Blocks.WATER.defaultBlockState()));
+        assertFalse(Brews.sourceDroughtRemoves(Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 1)));
+        assertFalse(Brews.sourceDroughtRemoves(Blocks.ICE.defaultBlockState()));
+        assertFalse(Brews.sourceDroughtRemoves(Blocks.AIR.defaultBlockState()));
+    }
+
+    @Test
     void natureIngredientsAreRegistered() {
         Brews.bootstrap();
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.STRING));
@@ -64,6 +74,7 @@ class BrewNatureActionTest {
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.QUARTZ));
         assertTrue(Brews.isIngredient(net.minecraft.world.item.Items.WHEAT_SEEDS));
         assertTrue(Brews.isIngredient(com.emoniph.witchery.init.WitcheryItems.ENT_TWIG.get()));
+        assertTrue(Brews.isIngredient(com.emoniph.witchery.init.WitcheryItems.WITCHES_SALT.get()));
     }
 
     @Test

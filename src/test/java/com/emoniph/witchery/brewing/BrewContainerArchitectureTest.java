@@ -81,4 +81,28 @@ class BrewContainerArchitectureTest {
         assertSame(WitcheryItems.SPLASH_BREW_BOTTLE.get(), bottle.getItem());
         assertEquals(warning, bottle.get(WitcheryDataComponents.BREW_CONTENTS.get()));
     }
+
+    @Test
+    void droughtBrewRecipeResolvesForSplashBottleAndLiquidBottle() {
+        List<net.minecraft.world.item.Item> base = List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(), WitcheryItems.WITCHES_SALT.get());
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(base);
+        assertEquals(1, actions.size());
+        assertSame(Brews.Ingredient.BrewAction.DROUGHT, actions.get(0).action());
+        assertEquals("witchery.brew.drought", actions.get(0).nameKey());
+        assertEquals(650, Brews.powerCost(base));
+
+        BrewContents splash = new BrewContents(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(), WitcheryItems.WITCHES_SALT.get(), Items.GUNPOWDER));
+        assertSame(Brews.Dispersal.SPLASH, splash.bottledDispersal());
+        assertSame(WitcheryItems.SPLASH_BREW_BOTTLE.get(), BrewContainers.bottle(splash).getItem());
+
+        BrewContents liquid = new BrewContents(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(), WitcheryItems.WITCHES_SALT.get(),
+                WitcheryItems.WORMWOOD.get()));
+        assertSame(Brews.Dispersal.LIQUID, liquid.bottledDispersal());
+        assertSame(WitcheryItems.LIQUID_BREW_BOTTLE.get(), BrewContainers.bottle(liquid).getItem());
+        assertSame(WitcheryItems.BREW_BUCKET.get(), BrewContainers.bucket(liquid).getItem());
+    }
 }
