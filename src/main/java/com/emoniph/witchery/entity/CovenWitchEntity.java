@@ -102,7 +102,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     private long dismissArmedUntil;
     private static final long DISMISS_CONFIRM_TICKS = 100L; // 5s window to confirm casting a witch out
     private static final String TAG_HUT_HOME = "WITCHutHome";
-    /** When set (a Vanishing Witch Hut resident), the witch is tethered to her hut and won't wander out. */
+    /** When set, this witch is a Vanishing Witch Hut resident. */
     @Nullable
     private net.minecraft.core.BlockPos hutHome;
 
@@ -128,24 +128,11 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         setPersistenceRequired(); // a recruited (or once-recruited) witch never despawns
     }
 
-    /** Tether this witch to a Vanishing Witch Hut so she stays inside; null clears the tether. */
+    /** Mark this witch as a Vanishing Witch Hut resident; null clears the marker. */
     public void setHutHome(@Nullable net.minecraft.core.BlockPos pos) {
         this.hutHome = pos == null ? null : pos.immutable();
         if (pos != null) {
             setPersistenceRequired();
-        }
-    }
-
-    /** Keep a hut resident inside: pull her back whenever she drifts off the hearth (source cat-lady tether). */
-    private void moveTowardHome() {
-        if (hutHome == null) {
-            return;
-        }
-        double cx = hutHome.getX() + 0.5D;
-        double cy = hutHome.getY();
-        double cz = hutHome.getZ() + 0.5D;
-        if (distanceToSqr(cx, cy, cz) > 2.0D) {
-            getNavigation().moveTo(cx, cy, cz, 0.8D);
         }
     }
 
@@ -214,7 +201,17 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         });
         // A recruited witch fights for her coven leader — throw splash potions at the leader's foes.
         this.goalSelector.addGoal(2, new CovenAttackGoal());
-        this.goalSelector.addGoal(3, new OpenDoorGoal(this, true));
+        this.goalSelector.addGoal(3, new OpenDoorGoal(this, true) {
+            @Override
+            public boolean canUse() {
+                return hutHome == null && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return hutHome == null && super.canContinueToUse();
+            }
+        });
         this.goalSelector.addGoal(4, new LookAtTradingPlayerGoal(this));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -627,9 +624,6 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             if (!data.contains(covenOwner, getUUID())) {
                 data.add(covenOwner, getUUID());
             }
-        }
-        if (!level().isClientSide() && hutHome != null) {
-            moveTowardHome();
         }
     }
 

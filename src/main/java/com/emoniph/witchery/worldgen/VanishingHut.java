@@ -9,23 +9,29 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -62,6 +68,13 @@ public final class VanishingHut {
     public static final int ROOF_DY = SIZE_Y - 1;
     public static final int WALL_HEIGHT = ROOF_DY - FLOOR_DY;
 
+    private static final ResourceKey<LootTable> LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chests/vanishing_hut"));
+    private static final int SET_WITHOUT_DROPS = Block.UPDATE_CLIENTS
+            | Block.UPDATE_SUPPRESS_DROPS
+            | Block.UPDATE_KNOWN_SHAPE
+            | Block.UPDATE_SKIP_BLOCK_ENTITY_SIDEEFFECTS;
+
     private static final Set<String> OWNED_TEMPLATE_BLOCKS = Set.of(
             "minecraft:barrel",
             "minecraft:bookshelf",
@@ -71,6 +84,7 @@ public final class VanishingHut {
             "minecraft:decorated_pot",
             "minecraft:infested_cobblestone",
             "minecraft:lantern",
+            "minecraft:lever",
             "minecraft:mossy_stone_bricks",
             "minecraft:mossy_stone_brick_stairs",
             "minecraft:mossy_stone_brick_wall",
@@ -179,7 +193,10 @@ public final class VanishingHut {
             WitcheryMod.LOGGER.warn("[VanishingHut] Could not place template {} at {}", TEMPLATE, origin);
         }
 
-        backfillAnchorLayer(level, anchorPos, sampleSurfaceState(serverLevel, anchorPos));
+        BlockState surface = sampleSurfaceState(serverLevel, anchorPos);
+        backfillAnchorLayer(level, anchorPos, surface);
+        restoreSurfaceLayerHoles(level, anchorPos, surface);
+        installLootTables(level, anchorPos);
 
         level.setBlock(anchorPos, WitcheryBlocks.VANISHING_HUT_ANCHOR.get().defaultBlockState(), 3);
         if (level.getBlockEntity(anchorPos) instanceof VanishingHutAnchorBlockEntity be) {
@@ -209,6 +226,46 @@ public final class VanishingHut {
         }
     }
 
+    private static void restoreSurfaceLayerHoles(ServerLevelAccessor level, BlockPos anchorPos, BlockState surface) {
+        int ax = anchorPos.getX();
+        int az = anchorPos.getZ();
+        int surfaceY = groundY(anchorPos);
+        BlockState fill = normalizeSurface(surface);
+        if (fill == null) {
+            fill = Blocks.GRASS_BLOCK.defaultBlockState();
+        }
+        for (int dx = MIN_DX; dx <= MAX_DX; dx++) {
+            for (int dz = MIN_DZ; dz <= MAX_DZ; dz++) {
+                BlockPos pos = new BlockPos(ax + dx, surfaceY, az + dz);
+                if (level.getBlockState(pos).isAir()) {
+                    level.setBlock(pos, fill, 3);
+                }
+            }
+        }
+    }
+
+    private static void installLootTables(ServerLevelAccessor level, BlockPos anchorPos) {
+        ServerLevel serverLevel = level.getLevel();
+        int ax = anchorPos.getX();
+        int az = anchorPos.getZ();
+        for (int dx = MIN_DX; dx <= MAX_DX; dx++) {
+            for (int dz = MIN_DZ; dz <= MAX_DZ; dz++) {
+                for (int dy = FLOOR_DY; dy <= ROOF_DY; dy++) {
+                    BlockPos pos = new BlockPos(ax + dx, anchorPos.getY() + dy, az + dz);
+                    Identifier blockId = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+                    if (!blockId.getPath().contains("chest")) {
+                        continue;
+                    }
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof RandomizableContainer container) {
+                        container.setLootTable(LOOT_TABLE, serverLevel.random.nextLong());
+                        blockEntity.setChanged();
+                    }
+                }
+            }
+        }
+    }
+
     public static CovenWitchEntity spawnResident(ServerLevelAccessor level, BlockPos anchorPos) {
         ServerLevel sl = level.getLevel();
         BlockPos home = residentHome(anchorPos);
@@ -226,7 +283,7 @@ public final class VanishingHut {
     }
 
     public static BlockPos residentHome(BlockPos anchorPos) {
-        return new BlockPos(anchorPos.getX(), groundY(anchorPos) + 1, anchorPos.getZ());
+        return new BlockPos(anchorPos.getX(), groundY(anchorPos) + 1, anchorPos.getZ() + 1);
     }
 
     public static void vanish(ServerLevel level, BlockPos anchorPos) {
@@ -247,7 +304,7 @@ public final class VanishingHut {
                     BlockPos pos = new BlockPos(ax + dx, y, az + dz);
                     BlockState state = level.getBlockState(pos);
                     if (pos.equals(anchorPos) || isOwnedTemplateBlock(state)) {
-                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), SET_WITHOUT_DROPS);
                     }
                 }
                 level.setBlock(new BlockPos(ax + dx, anchorPos.getY(), az + dz), restoreSupport, 3);
