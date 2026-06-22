@@ -457,12 +457,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     stack(WitcheryItems.FOCUSED_WILL.get()), stack(WitcheryItems.CONDENSED_FEAR.get()),
                     stack(WitcheryItems.BREW_OF_HOLLOW_TEARS.get(), 4),
                     stack(WitcheryItems.BREW_OF_HOLLOW_TEARS.get(), 4));
-            case "distillery_demonic_blood_netherrack" -> distilleryRecipeNote(title, caption,
+            case "distillery_infernal_blood_netherrack" -> distilleryRecipeNote(title, caption,
                     WitcheryItems.DEMON_HEART.get(), Items.NETHERRACK, 2, stack(Items.SOUL_SAND),
-                    stack(WitcheryItems.DEMONIC_BLOOD.get()), stack(WitcheryItems.DEMONIC_BLOOD.get()));
-            case "distillery_demonic_blood" -> distilleryRecipeNote(title, caption,
+                    stack(WitcheryItems.INFERNAL_BLOOD.get()), stack(WitcheryItems.INFERNAL_BLOOD.get()));
+            case "distillery_infernal_blood" -> distilleryRecipeNote(title, caption,
                     WitcheryItems.DEMON_HEART.get(), WitcheryItems.DIAMOND_VAPOUR.get(), 4,
-                    stack(WitcheryItems.DEMONIC_BLOOD.get(), 2), stack(WitcheryItems.DEMONIC_BLOOD.get(), 2),
+                    stack(WitcheryItems.INFERNAL_BLOOD.get(), 2), stack(WitcheryItems.INFERNAL_BLOOD.get(), 2),
                     stack(WitcheryItems.REFINED_EVIL.get()));
             default -> throw new IllegalArgumentException("Unknown live recipe card: " + key);
         };
@@ -975,10 +975,10 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         distillery.add(stationRecipeCard("distillery_condensed_fear", "Condensed Fear",
                 "**Brew of Flowing Spirit** + **Oil of Vitriol**, with two clay jars, yields Focused Will, "
                         + "Condensed Fear, and two batches of Hollow Tears."));
-        distillery.add(stationRecipeCard("distillery_demonic_blood_netherrack", "Demonic Blood: Netherrack",
-                "**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Demonic Blood."));
-        distillery.add(stationRecipeCard("distillery_demonic_blood", "Demonic Blood: Vapour",
-                "**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Demonic Blood and "
+        distillery.add(stationRecipeCard("distillery_infernal_blood_netherrack", "Infernal Blood: Netherrack",
+                "**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Infernal Blood."));
+        distillery.add(stationRecipeCard("distillery_infernal_blood", "Infernal Blood: Vapour",
+                "**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Infernal Blood and "
                         + "Refined Evil."));
         cat.withEntries(
                 entry(cat, "distilling/distillery", "The Distillery", WitcheryItems.DISTILLERY.get(), 0, distillery),
@@ -1004,6 +1004,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "witch forgot to gild its heart."));
         chalk.add(recipe("chalk", "Chalk",
                 "Drawn from simple stuff. The stronger families are crafted or brewed from it."));
+        chalk.add(recipe("chalk_golden", "Golden Chalk",
+                "The golden centre mark for every rite. Craft it from ordinary chalk, gold, yellow dye, "
+                        + "and redstone."));
+        chalk.add(recipe("chalk_otherwhere", "Otherwhere Chalk",
+                "For rings that reach across worlds. Craft it from ordinary chalk, artichoke, ender pearl, "
+                        + "and lapis."));
+        chalk.add(recipe("chalk_infernal", "Infernal Chalk",
+                "For rites that lean below. Craft it from ordinary chalk, ember moss, blaze powder, and "
+                        + "red dye."));
         chalk.addAll(WitcheryBooks.prose("Stronger Chalks",
                 "From ordinary chalk you may draw the stronger families: **Golden** with a gold nugget, yellow "
                         + "dye, and redstone; **Otherwhere** with artichoke, ender pearl, and lapis; "
@@ -1050,7 +1059,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "jungle, rowan, alder, and hawthorn each answer to their own sapling.",
                         ritualCard("4000", 0, List.of(ringWhite("medium")),
                                 WitcheryItems.ROWAN_SAPLING.get(), WitcheryItems.WICKER_BUNDLE.get(),
-                                WitcheryItems.SPROUTING_BREW.get(), WitcheryItems.ENT_TWIG.get()),
+                                WitcheryItems.BREW_OF_SPROUTING.get(), WitcheryItems.ENT_TWIG.get()),
                         "Offer a **Wicker Bundle**, a **Brew of Sprouting**, and an **Ent Twig** around the "
                                 + "circle, with at least **4000 altar power**. A bound waystone in range can "
                                 + "raise the grove there instead.\n\nLearn it early if you mean to explore "
@@ -1159,11 +1168,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "Chalk** — plus **Gypsum**, an **Arthana**, and **1000 altar power**. The "
                                 + "Arthana returns.\n\nThe amount of dropped chalk decides which ring is "
                                 + "rewritten: one for small, two for medium, three for large."),
-                rite(cat, "circle_magic/natures_power", "Rite of Nature's Power", WitcheryItems.SPROUTING_BREW.get(), 13,
+                rite(cat, "circle_magic/natures_power", "Rite of Nature's Power", WitcheryItems.BREW_OF_SPROUTING.get(), 13,
                         "Not a burst of growth but a sustained medium-circle coaxing, urging the land toward "
                                 + "green abundance over time — fields, moss, saplings, and wild growth.",
                         ritualCard("none", 0, List.of(ringWhite("medium")),
-                                WitcheryItems.SPROUTING_BREW.get(), WitcheryItems.ROWAN_SAPLING.get(),
+                                WitcheryItems.BREW_OF_SPROUTING.get(), WitcheryItems.ROWAN_SAPLING.get(),
                                 WitcheryItems.ALDER_SAPLING.get(), WitcheryItems.HAWTHORN_SAPLING.get(),
                                 Items.OAK_SAPLING, Items.SPRUCE_SAPLING, Items.BIRCH_SAPLING,
                                 WitcheryItems.ATTUNED_STONE_CHARGED.get()),
@@ -1357,7 +1366,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         wicker.add(recipe("wicker_bundle", "Wicker Bundle",
                 "Nine saplings. Witchery saplings — rowan, alder, hawthorn — count too, once grown."));
         wicker.add(recipe("bloodied_wicker_bundle", "Bloodied Wicker",
-                "Five bundles and one **Demonic Blood** make five bloodied bundles. You need twenty for "
+                "Five bundles and one **Infernal Blood** make five bloodied bundles. You need twenty for "
                         + "the figure."));
         wicker.addAll(WitcheryBooks.prose("The Figure",
                 "Build a flat, human-shaped wall from exactly twenty Bloodied Wicker Bundles: two-wide "

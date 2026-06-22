@@ -71,7 +71,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     public HornedHuntsmanEntity(EntityType<? extends HornedHuntsmanEntity> type, Level level) {
         super(type, level);
         this.xpReward = 70;
-        this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(WitcheryItems.HUNTSMANS_SPEAR.get()));
+        this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(WitcheryItems.HUNTSMAN_SPEAR.get()));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -213,7 +213,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
         this.spawnAtLocation(level, createSourceEnchantedBook(level));
         this.spawnAtLocation(level, new ItemStack(WitcheryItems.INFERNAL_BLOOD.get()));
         if (random.nextInt(4) == 0) {
-            this.spawnAtLocation(level, new ItemStack(WitcheryItems.HUNTSMANS_SPEAR.get()));
+            this.spawnAtLocation(level, new ItemStack(WitcheryItems.HUNTSMAN_SPEAR.get()));
         }
     }
 

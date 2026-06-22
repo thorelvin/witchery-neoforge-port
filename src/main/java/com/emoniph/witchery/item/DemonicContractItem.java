@@ -131,26 +131,26 @@ public class DemonicContractItem extends Item {
     public static Optional<ContractKind> kind(ItemStack stack) {
         if (stack.isEmpty()) return Optional.empty();
         if (isOwnershipContract(stack)) return Optional.of(ContractKind.OWNERSHIP);
-        if (stack.is(WitcheryItems.CONTRACT_BLAZE.get()) || stack.is(WitcheryItems.LIVING_FLAME_CONTRACT.get())) {
+        if (stack.is(WitcheryItems.LIVING_FLAME_CONTRACT.get())) {
             return Optional.of(ContractKind.LIVING_FLAME);
         }
-        if (stack.is(WitcheryItems.CONTRACT_RESIST_FIRE.get()) || stack.is(WitcheryItems.FIERY_TOLERANCE_CONTRACT.get())) {
+        if (stack.is(WitcheryItems.FIERY_TOLERANCE_CONTRACT.get())) {
             return Optional.of(ContractKind.FIERY_TOLERANCE);
         }
-        if (stack.is(WitcheryItems.CONTRACT_EVAPORATE.get()) || stack.is(WitcheryItems.EVAPORATION_CONTRACT.get())) {
+        if (stack.is(WitcheryItems.EVAPORATION_CONTRACT.get())) {
             return Optional.of(ContractKind.EVAPORATION);
         }
-        if (stack.is(WitcheryItems.CONTRACT_FIERY_TOUCH.get()) || stack.is(WitcheryItems.FIERY_TOUCH_CONTRACT.get())) {
+        if (stack.is(WitcheryItems.FIERY_TOUCH_CONTRACT.get())) {
             return Optional.of(ContractKind.FIERY_TOUCH);
         }
-        if (stack.is(WitcheryItems.CONTRACT_SMELTING.get()) || stack.is(WitcheryItems.MELTING_TOUCH_CONTRACT.get())) {
+        if (stack.is(WitcheryItems.MELTING_TOUCH_CONTRACT.get())) {
             return Optional.of(ContractKind.MELTING_TOUCH);
         }
         return Optional.empty();
     }
 
     public static boolean isOwnershipContract(ItemStack stack) {
-        return stack.is(WitcheryItems.DEMONIC_CONTRACT.get()) || stack.is(WitcheryItems.CONTRACT_OWNERSHIP.get());
+        return stack.is(WitcheryItems.DEMONIC_CONTRACT.get());
     }
 
     public static boolean isSpellContract(ItemStack stack) {

@@ -18,11 +18,11 @@ public class IcySlippersItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
-        tooltip.accept(Component.translatable("item.witchery.ice_slippers.tip.1")
+        tooltip.accept(Component.translatable(getDescriptionId() + ".tip.1")
                 .withStyle(ChatFormatting.GRAY));
-        tooltip.accept(Component.translatable("item.witchery.ice_slippers.tip.2")
+        tooltip.accept(Component.translatable(getDescriptionId() + ".tip.2")
                 .withStyle(ChatFormatting.BLUE));
-        tooltip.accept(Component.translatable("item.witchery.ice_slippers.tip.3")
+        tooltip.accept(Component.translatable(getDescriptionId() + ".tip.3")
                 .withStyle(ChatFormatting.BLUE));
     }
 }

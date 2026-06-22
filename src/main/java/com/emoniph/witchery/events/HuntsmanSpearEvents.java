@@ -53,6 +53,6 @@ public final class HuntsmanSpearEvents {
     }
 
     private static boolean isHuntsmanSpear(ItemStack stack) {
-        return stack.is(WitcheryItems.HUNTSMANS_SPEAR.get()) || stack.is(WitcheryItems.HUNTSMAN_SPEAR.get());
+        return stack.is(WitcheryItems.HUNTSMAN_SPEAR.get());
     }
 }

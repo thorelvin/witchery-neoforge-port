@@ -8,7 +8,7 @@
         { "type": "minecraft:item", "name": "witchery:demon_heart",            "weight": 10 },
         { "type": "minecraft:item", "name": "witchery:infernal_animus",        "weight": 8  },
         { "type": "minecraft:item", "name": "witchery:condensed_fear",         "weight": 15 },
-        { "type": "minecraft:item", "name": "witchery:demonic_blood",          "weight": 15 },
+        { "type": "minecraft:item", "name": "witchery:infernal_blood",         "weight": 15 },
         { "type": "minecraft:item", "name": "witchery:refined_evil",           "weight": 12 },
         { "type": "minecraft:item", "name": "witchery:torment_scroll",         "weight": 3  },
         { "type": "minecraft:item", "name": "witchery:soul_of_the_world",      "weight": 5  },

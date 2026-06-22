@@ -328,8 +328,7 @@ public class HandBowItem extends Item {
                     || stack.is(WitcheryItems.BOLT_ANTI_MAGIC.get());
             case BOLT_BONE -> stack.is(WitcheryItems.BONE_BOLT.get())
                     || stack.is(WitcheryItems.BOLT_HOLY.get());
-            case BOLT_SPLITTING -> stack.is(WitcheryItems.SPLITTING_BOLT.get())
-                    || stack.is(WitcheryItems.BOLT_SPLITTING.get());
+            case BOLT_SPLITTING -> stack.is(WitcheryItems.SPLITTING_BOLT.get());
             case BOLT_SILVER -> stack.is(WitcheryItems.SILVER_BOLT.get());
             default -> false;
         };
@@ -337,30 +336,20 @@ public class HandBowItem extends Item {
 
     private static boolean isFullHunterSet(LivingEntity entity) {
         return isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.HEAD),
-                WitcheryItems.HUNTER_HELMET.get(),
                 WitcheryItems.HUNTER_HAT.get(),
-                WitcheryItems.HUNTER_HELMET_SILVERED.get(),
                 WitcheryItems.SILVERED_HUNTER_HAT.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_HAT.get(),
                 WitcheryItems.DAWN_HUNTER_HAT.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.CHEST),
-                WitcheryItems.HUNTER_CHESTPLATE.get(),
                 WitcheryItems.HUNTER_COAT.get(),
-                WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(),
                 WitcheryItems.SILVERED_HUNTER_COAT.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_COAT.get(),
                 WitcheryItems.DAWN_HUNTER_COAT.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.LEGS),
                 WitcheryItems.HUNTER_LEGGINGS.get(),
-                WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(),
                 WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get(),
                 WitcheryItems.DAWN_HUNTER_LEGGINGS.get())
                 && isAnyHunterPiece(entity.getItemBySlot(EquipmentSlot.FEET),
                 WitcheryItems.HUNTER_BOOTS.get(),
-                WitcheryItems.HUNTER_BOOTS_SILVERED.get(),
                 WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
-                WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get(),
                 WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 

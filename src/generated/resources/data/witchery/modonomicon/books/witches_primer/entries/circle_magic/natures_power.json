@@ -5,7 +5,7 @@
   "description": "",
   "hide_while_locked": false,
   "icon": {
-    "item": "witchery:sprouting_brew"
+    "item": "witchery:brew_of_sprouting"
   },
   "name": "Rite of Nature's Power",
   "pages": [
@@ -39,7 +39,7 @@
       "slots": [
         {
           "count": 1,
-          "item": "witchery:sprouting_brew",
+          "item": "witchery:brew_of_sprouting",
           "x": 23,
           "y": 68
         },

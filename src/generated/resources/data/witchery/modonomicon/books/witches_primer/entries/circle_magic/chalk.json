@@ -54,6 +54,39 @@
       "title2": ""
     },
     {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:chalk_golden",
+      "text": "[#](53341a)The golden centre mark for every rite. Craft it from ordinary chalk, gold, yellow dye, and redstone.[#]()",
+      "title1": "Golden Chalk",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:chalk_otherwhere",
+      "text": "[#](53341a)For rings that reach across worlds. Craft it from ordinary chalk, artichoke, ender pearl, and lapis.[#]()",
+      "title1": "Otherwhere Chalk",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "witchery:chalk_infernal",
+      "text": "[#](53341a)For rites that lean below. Craft it from ordinary chalk, ember moss, blaze powder, and red dye.[#]()",
+      "title1": "Infernal Chalk",
+      "title2": ""
+    },
+    {
       "type": "modonomicon:text",
       "anchor": "",
       "condition": {

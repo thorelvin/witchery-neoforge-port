@@ -564,7 +564,7 @@ final class RitualOfferings {
     }
 
     static boolean isInfernalBloodStack(ItemStack stack) {
-        return stack.is(WitcheryItems.INFERNAL_BLOOD.get()) || stack.is(WitcheryItems.DEMONIC_BLOOD.get());
+        return stack.is(WitcheryItems.INFERNAL_BLOOD.get());
     }
 
     static boolean isFilledTaglockStack(ItemStack stack) {
@@ -1067,7 +1067,7 @@ final class RitualOfferings {
         Optional<ItemEntity> odourOfPurity = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.ODOUR_OF_PURITY.get()));
         Optional<ItemEntity> whiffOfMagic = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()));
         Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
-        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.DEMONIC_BLOOD.get()));
+        Optional<ItemEntity> demonicBlood = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.INFERNAL_BLOOD.get()));
         if (tearOfTheGoddess.isEmpty() || odourOfPurity.isEmpty() || whiffOfMagic.isEmpty()
                 || diamond.isEmpty() || demonicBlood.isEmpty()) {
             return Optional.empty();

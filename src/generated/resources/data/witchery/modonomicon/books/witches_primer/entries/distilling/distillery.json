@@ -463,19 +463,19 @@
         },
         {
           "count": 1,
-          "item": "witchery:demonic_blood",
+          "item": "witchery:infernal_blood",
           "x": 90,
           "y": 18
         },
         {
           "count": 1,
-          "item": "witchery:demonic_blood",
+          "item": "witchery:infernal_blood",
           "x": 72,
           "y": 36
         }
       ],
-      "text": "[#](53341a)**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Demonic Blood.[#]()",
-      "title": "Demonic Blood: Netherrack"
+      "text": "[#](53341a)**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Infernal Blood.[#]()",
+      "title": "Infernal Blood: Netherrack"
     },
     {
       "type": "witchery:station_recipe",
@@ -509,13 +509,13 @@
         },
         {
           "count": 2,
-          "item": "witchery:demonic_blood",
+          "item": "witchery:infernal_blood",
           "x": 72,
           "y": 18
         },
         {
           "count": 2,
-          "item": "witchery:demonic_blood",
+          "item": "witchery:infernal_blood",
           "x": 90,
           "y": 18
         },
@@ -526,8 +526,8 @@
           "y": 36
         }
       ],
-      "text": "[#](53341a)**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Demonic Blood and Refined Evil.[#]()",
-      "title": "Demonic Blood: Vapour"
+      "text": "[#](53341a)**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Infernal Blood and Refined Evil.[#]()",
+      "title": "Infernal Blood: Vapour"
     }
   ],
   "show_when_any_parent_unlocked": false,

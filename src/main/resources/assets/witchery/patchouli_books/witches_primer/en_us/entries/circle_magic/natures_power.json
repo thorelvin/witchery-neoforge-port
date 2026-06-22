@@ -1,6 +1,6 @@
 {
   "name": "Rite of Nature's Power",
-  "icon": "witchery:sprouting_brew",
+  "icon": "witchery:brew_of_sprouting",
   "category": "witchery:circle_magic",
   "sortnum": 13,
   "pages": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:spotlight",
-      "item": "witchery:sprouting_brew",
+      "item": "witchery:brew_of_sprouting",
       "text": "The live port works this rite from a $(bold)medium ritual circle$(/) with $(item)Brew of Sprouting$() and a mixed grove offering: $(item)Rowan$(), $(item)Alder$(), $(item)Hawthorn$(), $(item)Oak$(), $(item)Spruce$(), and $(item)Birch Saplings$(), plus a $(item)Charged Attuned Stone$(). The stone returns as a plain attuned one after the work is accepted."
     },
     {

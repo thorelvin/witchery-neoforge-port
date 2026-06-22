@@ -298,17 +298,17 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_BOOTS.get());
 
         event.registerItem(new com.emoniph.witchery.client.HunterArmorClientExtensions(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_HELMET.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_HAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_CHESTPLATE.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.HUNTER_COAT.get(),
                 com.emoniph.witchery.init.WitcheryItems.HUNTER_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.HUNTER_BOOTS.get(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_HELMET_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_HAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_CHESTPLATE_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_COAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_LEGGINGS_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
-                com.emoniph.witchery.init.WitcheryItems.HUNTER_BOOTS_SILVERED.get(), com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
-                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_HAT.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_HAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_COAT.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_COAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_TROUSERS.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_LEGGINGS.get(),
-                com.emoniph.witchery.init.WitcheryItems.WITCH_HUNTER_DAWN_BOOTS.get(), com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_BOOTS.get());
+                com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_LEGGINGS.get(),
+                com.emoniph.witchery.init.WitcheryItems.SILVERED_HUNTER_BOOTS.get(),
+                com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_HAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_COAT.get(),
+                com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_LEGGINGS.get(),
+                com.emoniph.witchery.init.WitcheryItems.DAWN_HUNTER_BOOTS.get());
 
         event.registerItem(new com.emoniph.witchery.client.DeathArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.DEATHS_HOOD.get(),
@@ -316,7 +316,6 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.DEATHS_SHOES.get());
 
         event.registerItem(new com.emoniph.witchery.client.WitchesRobeArmorClientExtensions(),
-                com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBE.get(),
                 com.emoniph.witchery.init.WitcheryItems.WITCHES_ROBES.get());
 
         event.registerItem(new com.emoniph.witchery.client.BabasHatArmorClientExtensions(),
@@ -326,7 +325,6 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.NECROMANCER_ROBES.get());
 
         event.registerItem(new com.emoniph.witchery.client.WitchesShoesArmorClientExtensions(),
-                com.emoniph.witchery.init.WitcheryItems.ICE_SLIPPERS.get(),
                 com.emoniph.witchery.init.WitcheryItems.ICY_SLIPPERS.get(),
                 com.emoniph.witchery.init.WitcheryItems.RUBY_SLIPPERS.get(),
                 com.emoniph.witchery.init.WitcheryItems.SEEPING_SHOES.get());
@@ -338,8 +336,7 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.MOGS_QUIVER.get());
 
         event.registerItem(new com.emoniph.witchery.client.GulgsGirdleArmorClientExtensions(),
-                com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get(),
-                com.emoniph.witchery.init.WitcheryItems.GULGS_GRUDLE.get());
+                com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {

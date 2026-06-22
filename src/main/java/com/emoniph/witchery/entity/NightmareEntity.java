@@ -159,8 +159,7 @@ public class NightmareEntity extends Monster {
             return false;
         }
         ItemStack mainHand = living.getMainHandItem();
-        return mainHand.is(WitcheryItems.HUNTSMAN_SPEAR.get())
-                || mainHand.is(WitcheryItems.HUNTSMANS_SPEAR.get());
+        return mainHand.is(WitcheryItems.HUNTSMAN_SPEAR.get());
     }
 
     private boolean standingInFlowingSpirit() {

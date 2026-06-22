@@ -257,10 +257,27 @@ class PlacedModonomiconGeneratedBookTest {
                 "Transpose action should use its in-game source name");
         assertTrue(brewReagents.contains("**Creeper Head** - Spread Affliction"),
                 "Spread Affliction should not fall back to raw key text");
+        assertTrue(brewReagents.contains("**Witches' Salt** - Drought"),
+                "Drought should appear as a readable custom brew action");
         assertFalse(brewReagents.contains("Raiseland"),
                 "generated brew reagent page should not contain raw action key text");
         assertFalse(brewReagents.contains("Spreaddebuffs"),
                 "generated brew reagent page should not contain raw action key text");
+    }
+
+    @Test
+    void generatedChalkEntryShowsAllChalkCraftingRecipes() throws IOException {
+        String chalk = Files.readString(primerRoot()
+                .resolve("entries")
+                .resolve("circle_magic")
+                .resolve("chalk.json"));
+
+        assertTrue(chalk.contains("witchery:chalk_golden"),
+                "Golden Chalk should have a visual crafting recipe page");
+        assertTrue(chalk.contains("witchery:chalk_otherwhere"),
+                "Otherwhere Chalk should have a visual crafting recipe page");
+        assertTrue(chalk.contains("witchery:chalk_infernal"),
+                "Infernal Chalk should have a visual crafting recipe page");
     }
 
     private static Set<String> entryPaths() throws IOException {
