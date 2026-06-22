@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/ruby_slippers"
+    "model": "witchery:item/ruby_slippers",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 14483456
+      }
+    ]
   }
 }

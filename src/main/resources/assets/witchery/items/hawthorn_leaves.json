@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/hawthorn_leaves"
+    "model": "witchery:block/hawthorn_leaves",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10048922
+      }
+    ]
   }
 }

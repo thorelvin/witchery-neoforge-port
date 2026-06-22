@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/witches_shoes"
+    "model": "witchery:item/witches_shoes",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 2254387
+      }
+    ]
   }
 }

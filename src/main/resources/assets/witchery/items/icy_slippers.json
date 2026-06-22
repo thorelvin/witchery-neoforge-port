@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/icy_slippers"
+    "model": "witchery:item/icy_slippers",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 7842303
+      }
+    ]
   }
 }

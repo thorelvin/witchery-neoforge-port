@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/void_bramble"
+    "model": "witchery:block/void_bramble"
   }
 }

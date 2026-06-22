@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/hunter_leggings"
+    "model": "witchery:item/hunter_leggings",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 4798251
+      }
+    ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/bramble"
+    "model": "witchery:block/bramble"
   }
 }

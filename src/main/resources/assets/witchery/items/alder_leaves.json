@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "witchery:item/alder_leaves"
+    "model": "witchery:block/alder_leaves",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -13002445
+      }
+    ]
   }
 }
