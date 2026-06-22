@@ -1,3 +1,6 @@
 {
-  "parent": "witchery:item/endless_water_brew"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/endless_water_brew"
+  }
 }

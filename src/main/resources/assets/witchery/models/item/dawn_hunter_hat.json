@@ -1,3 +1,6 @@
 {
-  "parent": "witchery:item/witch_hunter_dawn_hat"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "witchery:item/witch_hunter_dawn_hat"
+  }
 }
