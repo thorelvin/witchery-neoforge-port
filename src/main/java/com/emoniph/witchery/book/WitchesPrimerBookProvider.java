@@ -1623,7 +1623,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "sleeping vampire to destroy them."
                         + "\n\nThe Glass Goblet is the other path — a level-9 vampire can fill it with 125 "
                         + "Blood Power, and drinking a filled goblet begins vampirism unless the drinker is a "
-                        + "werewolf."));
+                        + "werewolf. Lilith may also fill an empty goblet after she is bested; drink that "
+                        + "blood to accept the curse. Garlic asks her to lift vampirism, a poppy asks for "
+                        + "deeper mastery, and an enchantable item asks for her old blessing."));
 
         List<BookPageModel<?>> lycanthropy = new ArrayList<>(WitcheryBooks.prose("Lycanthropy",
                 "The wolf's curse comes in through a rite, or through the attention of one already afflicted, "

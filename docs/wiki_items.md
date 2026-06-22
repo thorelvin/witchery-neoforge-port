@@ -295,7 +295,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** In the NeoForge port, a level 9+ vampire can spend 125 Blood Power with an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
 - **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current port's starting blood.
 - **Stats:** N/A
-- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path is present in practical form, and vampire-blood goblets can convert transfixed, fully drained Villagers or Village Guards near Coffins into Vampire mobs.
+- **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path now follows the source shape: chicken blood starts Elle, Elle follows the owner to a source-shaped lava pool, and bested Lilith can fill an empty goblet with her blood. Vampire-blood goblets can also convert transfixed, fully drained Villagers or Village Guards near Coffins into Vampire mobs.
 
 ## Glass Goblet
 - **Obtain:** Craft from three Glass Bottles and one Glass using the Resurrected goblet recipe shape.
@@ -310,10 +310,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Matches the Resurrected consumable role in practical form; exact acquisition remains tied to the later vampire quest pass.
 
 ## Lilith's Blood
-- **Obtain:** Lilith quest source pending; exposed as a real rare item for QA.
+- **Obtain:** Best Lilith, then right-click friendly Lilith with an empty Glass Goblet to receive a Full Glass Goblet tagged with Lilith's blood. The standalone `liliths_blood` consumable remains exposed as a rare QA/practical item.
 - **Use:** In the current port, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
 - **Stats:** Stackable (16), rare.
-- **Notes:** The old 10-level vampire progression and Lilith level-up gates are still follow-up work.
+- **Notes:** Werewolves are refused to avoid vampire/werewolf hybrids. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
 
 ## Vampire Feeding
 - **Obtain:** Be a vampire in the current NeoForge port and empty-hand interact with a living target.

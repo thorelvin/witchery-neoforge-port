@@ -107,19 +107,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Behaviour:** Can teleport short distances; occasionally spawns hostile wolves with Resistance effect
 
 ## Lilith
-- **HP:** Not specified
-- **Damage:** Not specified
-- **Drops:** Chicken blood, enchanted items (when clicked with an item), vampire blood (when clicked with a Glass Goblet)
-- **Spawn:** Summoned by placing a skull, redstone dust ring, string ring with torches, and using a Boline on a chicken in a Glass Goblet
-- **Behaviour:** Strong regeneration; can be stopped from healing by deflecting her fireballs back to her; drinking her blood turns the player into a vampire; using garlic cures vampirism
-
-## Lilith
 - **HP:** 200
 - **Damage:** Fireballs (6)
-- **Drops:** Glass Goblet, Poppy, tool/weapon/armor with random enchantment, Garlic
-- **Spawn:** The Nether (near a large Lava lake after Elle is transformed)
-- **Behaviour:** Fires fireballs, heals over time, stops healing when hit by reflected fireballs, can cast spells like sending the player flying or giving them slowness, rains fire from the sky at half health
-- **Notes:** Best to deflect her fireballs back at her and use Demonbane brew with gas effect
+- **Drops:** Friendly reward interactions after defeat: empty Glass Goblet -> Lilith blood, Garlic -> vampirism cure, Poppy -> vampire level 6 to 7, enchantable item/book -> high-level blessing
+- **Spawn:** The chicken-blood skull rite summons persistent Elle; lead Elle to a large source-shaped lava pool and she transforms into Lilith.
+- **Behaviour:** Opens with invulnerability and healing, regenerates while hostile, caps incoming damage, uses fireballs, spell pressure, fire rain, and can be weakened by reflected large fireballs.
+- **Notes:** Best to deflect her fireballs and bring fire protection or Demonbane support. Her Lilith blood reward refuses werewolves, keeping the vampire and werewolf paths separate.
 
 ## Lord of Torment
 - **HP:** 500

@@ -48,7 +48,8 @@ public class ObservationsBookProvider implements BookSubProvider {
                                 + "stars."
                                 + "\n\nBlood poured over the skull draws Lilith's attention and sends the seeker "
                                 + "toward the Nether."
-                                + "\n\nStrength is proven to her in battle; the filled goblet begins the curse."))
+                                + "\n\nStrength is proven to her in battle; an empty goblet receives her blood, "
+                                + "and drinking it begins the curse."))
                 .withSortNumber(0);
 
         BookEntryModel curse = BookEntryModel.create(

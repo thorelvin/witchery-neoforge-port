@@ -68,6 +68,12 @@ public class VampireBloodItem extends Item {
 
     private static void drinkLilithsBlood(ServerPlayer player, WitcheryPlayerData data) {
         if (!data.isVampire()) {
+            if (data.isWerewolf()) {
+                player.displayClientMessage(Component.translatable("rite.witchery.wolf_curse.hybridsnotallow")
+                        .withStyle(ChatFormatting.DARK_RED), false);
+                playDrink(player);
+                return;
+            }
             data.setVampire(true);
             if (data.getBloodLevel() < STARTING_VAMPIRE_BLOOD) {
                 data.setBloodLevel(STARTING_VAMPIRE_BLOOD);

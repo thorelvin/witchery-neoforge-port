@@ -395,6 +395,15 @@ public class GlassGobletItem extends Item {
         return withBloodOwner(stack, player, false);
     }
 
+    public static ItemStack withLilithBlood() {
+        ItemStack stack = new ItemStack(WitcheryItems.FULL_GLASS_GOBLET.get());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(TAG_BLOOD_UUID, "lilith");
+            tag.putString(TAG_BLOOD_NAME, "Lilith");
+        });
+        return stack;
+    }
+
     private static ItemStack withBloodOwner(ItemStack stack, LivingEntity entity, boolean chickenBlood) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.putString(TAG_BLOOD_UUID, entity.getStringUUID());
