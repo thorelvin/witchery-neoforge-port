@@ -6,8 +6,11 @@ import com.emoniph.witchery.item.DeathsHandItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,7 +43,12 @@ public final class DeathsHandEvents {
         if (DeathsHandItem.isDeployed(held)) {
             hitDeployedScythe(level, player, target, damageSource);
         } else {
+            float healthBefore = target.getHealth();
+            float absorptionBefore = target.getAbsorptionAmount();
             target.hurt(damageSource, calculateDamage(target, 0.1F, 2.0F));
+            if (target.getHealth() < healthBefore || target.getAbsorptionAmount() < absorptionBefore || !target.isAlive()) {
+                playHandHitEffects(level, target, false);
+            }
         }
 
         player.setLastHurtMob(target);
@@ -57,6 +65,7 @@ public final class DeathsHandEvents {
             hit.hurt(damageSource, calculateDamage(hit, profile.damagePct(), profile.minDamage()));
             boolean damaged = hit.getHealth() < healthBefore || hit.getAbsorptionAmount() < absorptionBefore || !hit.isAlive();
             if (damaged) {
+                playHandHitEffects(level, hit, true);
                 if (profile.hungerRestore() > 0) {
                     player.getFoodData().eat(profile.hungerRestore(), 0.0F);
                 }
@@ -70,6 +79,19 @@ public final class DeathsHandEvents {
     private static float calculateDamage(LivingEntity target, float damagePct, float minDamage) {
         float maxHealth = Math.min(target.getMaxHealth(), 20.0F);
         return Math.min(Math.max(maxHealth * damagePct, minDamage), 15.0F);
+    }
+
+    private static void playHandHitEffects(ServerLevel level, LivingEntity target, boolean scythe) {
+        double y = target.getY() + target.getBbHeight() * 0.55D;
+        level.sendParticles(scythe ? ParticleTypes.SWEEP_ATTACK : ParticleTypes.SOUL,
+                target.getX(), y, target.getZ(),
+                scythe ? 1 : 6, 0.2D, 0.15D, 0.2D, 0.01D);
+        level.sendParticles(ParticleTypes.WITCH,
+                target.getX(), y, target.getZ(),
+                scythe ? 8 : 4, 0.25D, 0.2D, 0.25D, 0.02D);
+        level.playSound(null, target.blockPosition(),
+                scythe ? SoundEvents.PLAYER_ATTACK_SWEEP : SoundEvents.WITHER_HURT,
+                SoundSource.PLAYERS, scythe ? 0.8F : 0.45F, scythe ? 0.75F : 0.55F);
     }
 
     private record HungerProfile(float damagePct, float minDamage, int hungerRestore, int healthRestore) {

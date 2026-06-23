@@ -55,6 +55,16 @@ public enum DreamWeaveType {
         }
     }
 
+    public String itemTranslationKey() {
+        return switch (this) {
+            case FLEET_FOOT -> "item.witchery.weave_fleet_foot";
+            case IRON_ARM -> "item.witchery.weave_iron_arm";
+            case FASTING -> "item.witchery.weave_fasting";
+            case NIGHTMARES -> "item.witchery.weave_nightmares";
+            case INTENSITY -> "item.witchery.weave_intensity";
+        };
+    }
+
     public @Nullable static DreamWeaveType fromId(int id) {
         for (DreamWeaveType t : values()) if (t.id == id) return t;
         return null;

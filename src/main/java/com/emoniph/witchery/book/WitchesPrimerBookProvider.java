@@ -1420,18 +1420,18 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     private BookCategoryModel symbology() {
         BookCategoryModel cat = gated("symbology", "Symbology", WitcheryItems.MYSTIC_BRANCH.get(), 7, "wands");
         List<BookPageModel<?>> mystic = new ArrayList<>(WitcheryBooks.prose("Mystic Branch",
-                "The Mystic Branch is the witch's focus for stolen creature force. Old tales call it a wand "
-                        + "for tracing spells in the air, but in the live port its role is simpler: it "
-                        + "releases the creature power you have already stored within yourself."));
+                "The Mystic Branch is the witch's focus for traced workings and stolen creature force. "
+                        + "Raise it, hold the channel, and sweep your gaze through the old directional "
+                        + "signs until the branch knows the shape."));
         mystic.add(spotlight(WitcheryItems.MYSTIC_BRANCH.get(), "Mystic Branch",
                 "Work the night-only rite that turns an Ent Twig and Mystic Unguent into a branch on paired "
                         + "circles, for **3000 altar power**."));
         mystic.addAll(WitcheryBooks.prose("Current Use",
-                "Hold stored creature-power charges and use the branch to spend one, releasing your bound "
-                        + "power directly — swiftness, impossible leaps, healing, transposition, or "
-                        + "bat-light levitation, depending on what you carry."
-                        + "\n\nThe older air-glyph spellcasting is not fully restored, so treat the branch as "
-                        + "a creature-power focus first."));
+                "Hold use to begin tracing. The HUD marks each up, down, left, and right stroke; release "
+                        + "when the named sign appears to cast it, spending infused energy. Some signs demand "
+                        + "Demon-soul knowledge before they answer."
+                        + "\n\nThe branch now gives clear feedback when a sign answers or fails. It still also "
+                        + "belongs to the wider infusion path, where creature powers and stored charges matter."));
         cat.withEntries(
                 entry(cat, "symbology/mystic_branch", "Mystic Branch", WitcheryItems.MYSTIC_BRANCH.get(), 0, mystic),
                 gatedByItem("guide/obtained/mystic_branch", whatsNext(cat, "symbology", 1, "book_poppets", "Witchcraft: Poppets & Taglocks", WitcheryItems.BOOK_POPPETS.get(), "Poppets & Taglocks")));
@@ -1511,7 +1511,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "near the sleeping body shapes what happens when consciousness crosses the boundary "
                         + "and returns."
                         + "\n\nDifferent weavings give different effects on waking. Only one catcher near you "
-                        + "takes effect — choose deliberately."));
+                        + "takes effect — choose deliberately. A placed weave now chimes when it catches, "
+                        + "and waking feedback tells you which dream-thread stirred."));
         dream.add(recipe("weave_fleet_foot", "Fleet Foot",
                 "The old quickness weaving: Item Frame, Fanciful Thread, feathers, Diamond Vapour, Tormented "
                         + "Twine, and long swiftness/slowness splash potions."));
@@ -1536,7 +1537,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "2000 altar power ready."));
         crystal.add(spotlight(WitcheryItems.CRYSTAL_BALL.get(), "Crystal Ball",
                 "The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or "
-                        + "focus it with waystones and taglocks."));
+                        + "focus it with waystones and taglocks. Bad foci are refused before the altar is "
+                        + "charged; a true focus wakes the ball with violet motes."));
 
         cat.withEntries(
                 entry(cat, "spirit_world/spirit_world", "The Spirit World", WitcheryItems.BREW_OF_SLEEPING.get(), 0, spirit),

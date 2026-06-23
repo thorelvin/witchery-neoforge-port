@@ -6,9 +6,12 @@ import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -136,6 +139,14 @@ public class DreamCatcherBlockEntity extends BlockEntity {
                 continue;
             }
             weave.applyEffect(player, isDream, isEnhanced);
+            player.displayClientMessage(Component.translatable(isDream
+                    ? "witchery.dream_weaver.wake"
+                    : "witchery.dream_weaver.nightmare",
+                    Component.translatable(weave.itemTranslationKey()))
+                    .withStyle(isDream ? ChatFormatting.AQUA : ChatFormatting.DARK_PURPLE), true);
+            level.sendParticles(isDream ? ParticleTypes.ENCHANT : ParticleTypes.WITCH,
+                    player.getX(), player.getY() + player.getBbHeight() * 0.65D, player.getZ(),
+                    isDream ? 18 : 12, 0.35D, 0.35D, 0.35D, isDream ? 0.18D : 0.03D);
         }
     }
 

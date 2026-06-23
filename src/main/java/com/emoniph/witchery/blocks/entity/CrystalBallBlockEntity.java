@@ -6,6 +6,7 @@ import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -75,11 +76,7 @@ public class CrystalBallBlockEntity extends BlockEntity {
         if (subject instanceof net.minecraft.server.level.ServerPlayer subjectPlayer) {
             com.emoniph.witchery.predictions.Predictions.makePrediction(sl, subjectPlayer);
         }
-        sl.sendParticles(ParticleTypes.EXPLOSION,
-                worldPosition.getX() + 0.5,
-                worldPosition.getY() + 0.2,
-                worldPosition.getZ() + 0.5,
-                16, 0.2, 0.2, 0.2, 0.0);
+        sendFocusParticles(sl, 0x9D4EDD, 24);
         sl.playSound(null, worldPosition, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.75f, 1.0f);
         return true;
     }
@@ -90,9 +87,6 @@ public class CrystalBallBlockEntity extends BlockEntity {
      */
     public boolean tryScryWaystone(Player player, Level level, ItemStack waystone) {
         if (!(level instanceof ServerLevel sl)) return false;
-        if (!tryConsumePower(player, sl)) {
-            return false;
-        }
 
         Optional<BlockPos> targetPos = WaystoneItem.getBoundPos(waystone);
         Optional<net.minecraft.resources.ResourceKey<Level>> targetDim = WaystoneItem.getBoundDim(waystone);
@@ -108,14 +102,13 @@ public class CrystalBallBlockEntity extends BlockEntity {
                     .withStyle(ChatFormatting.DARK_PURPLE));
             return false;
         }
+        if (!tryConsumePower(player, sl)) {
+            return false;
+        }
 
         player.displayClientMessage(Component.literal("The crystal ball fixes on the waystone at "
                 + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ".").withStyle(ChatFormatting.LIGHT_PURPLE), false);
-        sl.sendParticles(ParticleTypes.PORTAL,
-                worldPosition.getX() + 0.5,
-                worldPosition.getY() + 0.8,
-                worldPosition.getZ() + 0.5,
-                32, 0.25, 0.35, 0.25, 0.2);
+        sendFocusParticles(sl, 0x7B61FF, 32);
         sl.sendParticles(ParticleTypes.WITCH,
                 pos.getX() + 0.5,
                 pos.getY() + 1.0,
@@ -134,9 +127,6 @@ public class CrystalBallBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!TaglockKitItem.isFilled(taglock)) {
             fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_unbound"));
-            return false;
-        }
-        if (!tryConsumePower(player, sl)) {
             return false;
         }
 
@@ -159,14 +149,13 @@ public class CrystalBallBlockEntity extends BlockEntity {
                     living.getDisplayName()));
             return false;
         }
+        if (!tryConsumePower(player, sl)) {
+            return false;
+        }
 
         player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_scry",
                 living.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE), false);
-        sl.sendParticles(ParticleTypes.PORTAL,
-                worldPosition.getX() + 0.5,
-                worldPosition.getY() + 0.8,
-                worldPosition.getZ() + 0.5,
-                32, 0.25, 0.35, 0.25, 0.2);
+        sendFocusParticles(sl, 0xC77DFF, 32);
         sl.sendParticles(ParticleTypes.WITCH,
                 living.getX(),
                 living.getY() + living.getBbHeight() * 0.5,
@@ -203,9 +192,27 @@ public class CrystalBallBlockEntity extends BlockEntity {
         return true;
     }
 
-    private static void fail(Player player, ServerLevel level, Component message) {
+    private void fail(Player player, ServerLevel level, Component message) {
         player.displayClientMessage(message, false);
-        level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
+        level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 1.0f, 0.8f);
+        level.sendParticles(ParticleTypes.SMOKE,
+                worldPosition.getX() + 0.5D,
+                worldPosition.getY() + 0.45D,
+                worldPosition.getZ() + 0.5D,
+                8, 0.18D, 0.12D, 0.18D, 0.01D);
+    }
+
+    private void sendFocusParticles(ServerLevel level, int color, int portalCount) {
+        level.sendParticles(ParticleTypes.PORTAL,
+                worldPosition.getX() + 0.5D,
+                worldPosition.getY() + 0.8D,
+                worldPosition.getZ() + 0.5D,
+                portalCount, 0.25D, 0.35D, 0.25D, 0.2D);
+        level.sendParticles(new DustParticleOptions(color, 0.7F),
+                worldPosition.getX() + 0.5D,
+                worldPosition.getY() + 0.75D,
+                worldPosition.getZ() + 0.5D,
+                16, 0.2D, 0.15D, 0.2D, 0.01D);
     }
 
     private Optional<AltarBlockEntity> findAltar(ServerLevel level) {

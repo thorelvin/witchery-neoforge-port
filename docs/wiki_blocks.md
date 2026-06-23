@@ -126,9 +126,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Must be placed on a grave marker to function.
 
 ## Crystal Ball
-- **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Obtain:** Rite of Infusion with a Quartz Sphere, Gold Ingot, Happenstance Oil, and 2000 altar power.
+- **Function:** Empty-hand use near a powered altar gives a prediction. Filled Taglock Kits and bound waystones can focus sustained scrying.
+- **Notes:** Uses 500 altar power for valid readings/foci; invalid scrying foci are refused before power is consumed.
 
 ## Death's Footwear
 - **Obtain:** Not specified in the provided text.

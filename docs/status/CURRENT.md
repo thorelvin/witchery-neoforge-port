@@ -63,9 +63,11 @@ enough to read before starting work. Long historical deltas belong in
   Hand back to a source-style same-item scythe toggle, and nudged the Goddess
   statue / Crystal Ball GUI transforms.
 - Current parity polish tightened moving brew fluids, braziers, Spirit World
-  fog, Death's Hand held-side rendering, trap state sync, and cursed warning
-  cooldowns. Manual QA still needs eyes on the Death Hand pose and in-world
-  atmosphere feel.
+  fog, Death's Hand held-side rendering plus hit/toggle cues, Mystic Branch
+  cast/fail feedback, Crystal Ball scry validation before altar-power charge,
+  brew bucket gas/liquid tooltip feedback, Dream Weaver placement/wake cues,
+  trap state sync, and cursed warning cooldowns. Manual QA still needs eyes on
+  the Death Hand pose and in-world atmosphere feel.
 
 ## Docs Cleanup Note
 

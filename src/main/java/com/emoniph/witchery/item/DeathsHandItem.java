@@ -43,6 +43,7 @@ public class DeathsHandItem extends Item {
                 if (level.isClientSide()) {
                     return InteractionResult.SUCCESS;
                 }
+                playToggleEffects(level, player, false);
                 return InteractionResult.SUCCESS.heldItemTransformedTo(normalCopy(stack));
             }
             return InteractionResult.PASS;
@@ -56,14 +57,7 @@ public class DeathsHandItem extends Item {
         ItemStack transformed = stack.transmuteCopy(WitcheryItems.DEATHS_HAND.get(), stack.getCount());
         setDeployed(transformed, deployed);
 
-        if (deployed) {
-            level.playSound(null, player.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 1.0F, 2.0F);
-            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.WITCH,
-                        player.getX(), player.getY() + 1.0D, player.getZ(),
-                        16, 0.45D, 0.75D, 0.45D, 0.02D);
-            }
-        }
+        playToggleEffects(level, player, deployed);
 
         return InteractionResult.SUCCESS_SERVER.heldItemTransformedTo(transformed);
     }
@@ -99,6 +93,9 @@ public class DeathsHandItem extends Item {
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.accept(Component.translatable("item.witchery.deaths_hand.tip").withStyle(ChatFormatting.BLUE));
+        tooltip.accept(Component.translatable(isDeployed(stack)
+                ? "item.witchery.deaths_hand.state.deployed"
+                : "item.witchery.deaths_hand.state.sheathed").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     public static boolean isDeployed(ItemStack stack) {
@@ -128,5 +125,19 @@ public class DeathsHandItem extends Item {
                 tag.remove(TAG_SCYTHE_DEPLOYED);
             }
         });
+    }
+
+    private static void playToggleEffects(Level level, Player player, boolean deployed) {
+        level.playSound(null, player.blockPosition(),
+                deployed ? SoundEvents.ENDER_DRAGON_GROWL : SoundEvents.WITHER_SKELETON_STEP,
+                SoundSource.PLAYERS, deployed ? 1.0F : 0.7F, deployed ? 2.0F : 0.6F);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(deployed ? ParticleTypes.WITCH : ParticleTypes.SMOKE,
+                    player.getX(), player.getY() + 1.0D, player.getZ(),
+                    deployed ? 16 : 12, 0.45D, 0.75D, 0.45D, deployed ? 0.02D : 0.01D);
+            serverLevel.sendParticles(ParticleTypes.SOUL,
+                    player.getX(), player.getY() + 0.9D, player.getZ(),
+                    deployed ? 8 : 4, 0.25D, 0.45D, 0.25D, 0.01D);
+        }
     }
 }

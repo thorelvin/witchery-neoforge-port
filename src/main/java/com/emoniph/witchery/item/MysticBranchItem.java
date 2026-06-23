@@ -5,8 +5,11 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
+import com.emoniph.witchery.symbol.SymbolEffectProjectile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -124,6 +127,7 @@ public class MysticBranchItem extends Item {
         }
 
         effect.perform(serverLevel, serverPlayer, spellLevel);
+        success(serverLevel, serverPlayer, effect, spellLevel);
         serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL,
                 SoundSource.PLAYERS, 0.7F, 1.2F);
 
@@ -138,6 +142,21 @@ public class MysticBranchItem extends Item {
         player.displayClientMessage(Component.translatable(messageKey).withStyle(ChatFormatting.RED), true);
         level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
                 SoundSource.PLAYERS, 0.6F, 0.7F);
+        level.sendParticles(ParticleTypes.SMOKE,
+                player.getX(), player.getEyeY() - 0.1D, player.getZ(),
+                8, 0.25D, 0.15D, 0.25D, 0.01D);
+    }
+
+    private static void success(ServerLevel level, ServerPlayer player, SymbolEffect effect, int spellLevel) {
+        player.displayClientMessage(Component.translatable("witchery.infuse.branch.cast",
+                Component.translatable(effect.getNameKey()), spellLevel).withStyle(ChatFormatting.LIGHT_PURPLE), true);
+        int color = effect instanceof SymbolEffectProjectile projectile ? projectile.getColor() : 0x9D4EDD;
+        level.sendParticles(new DustParticleOptions(color, 0.85F),
+                player.getX(), player.getEyeY() - 0.15D, player.getZ(),
+                14, 0.35D, 0.25D, 0.35D, 0.02D);
+        level.sendParticles(ParticleTypes.WITCH,
+                player.getX(), player.getEyeY() - 0.15D, player.getZ(),
+                8, 0.28D, 0.2D, 0.28D, 0.01D);
     }
 
     private static void sync(ServerPlayer player, WitcheryPlayerData data) {

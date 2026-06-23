@@ -193,7 +193,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Crafted using an Altar with a power of 2000.
 - **Use:** Allows seeing through another player's eyes or predicting the future by placing it within an active Altar radius.
 - **Stats:** None
-- **Notes:** Displays random messages when used. The Taglock Kit must contain the taglock of the player being observed.
+- **Notes:** Displays random messages when used empty-handed. Filled Taglock Kits and bound waystones can focus scrying; invalid, missing, cross-dimension, or too-distant foci are refused before altar power is spent.
 
 ## Dandelion of Ink
 - **Obtain:** Crafted using unknown recipe.
@@ -353,7 +353,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Hand of Death
 - **Obtain:** Drop from Death
-- **Use:** When attacking a creature, it deals Chill Touch damage that bypasses armor. Summons Death's Scythe for AoE and hunger-based damage when all Death's armor is worn.
+- **Use:** When attacking a creature, it deals Chill Touch damage that bypasses armor. With the full Death set worn, right-click toggles Death's Scythe for AoE and hunger-based damage; the tooltip shows whether the scythe is drawn.
 - **Stats:** Damage: 15% of target's max health (Chill Touch)
 - **Notes:** Using Death's Scythe causes great hunger and degrades one hunger point every second.
 
@@ -475,7 +475,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Mystic Branch
 - **Obtain:** Crafted on an altar with specific ingredients and power.
-- **Use:** Used to cast spells by drawing symbols in the air; can also deflect certain incoming spells.
+- **Use:** Used to cast spells by drawing symbols in the air; the HUD names a recognized sign and the branch gives cast/fail feedback on release. It can also deflect certain incoming spells.
 - **Stats:** No damage or durability specified; spell casting uses infused power.
 - **Notes:** Some spells require demonic infusions, boosting spell power involves Hobgoblin worship, and some spells have restrictions or cooldowns.
 

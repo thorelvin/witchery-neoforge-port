@@ -6,6 +6,8 @@ import com.emoniph.witchery.brewing.Brews;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -67,9 +69,20 @@ public class BrewBucketItem extends Item {
                 ? clicked : clicked.relative(ctx.getClickedFace());
 
         if (!Brews.placeMovingBrewFluid(serverLevel, target, brew.items(), dispersal, player, true)) {
+            if (player != null) {
+                player.displayClientMessage(Component.translatable("witchery.brew.bucket.blocked")
+                        .withStyle(ChatFormatting.DARK_PURPLE), true);
+            }
+            serverLevel.playSound(null, target, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.45F, 1.4F);
+            serverLevel.sendParticles(ParticleTypes.SMOKE,
+                    target.getX() + 0.5D, target.getY() + 0.5D, target.getZ() + 0.5D,
+                    8, 0.18D, 0.18D, 0.18D, 0.01D);
             return InteractionResult.FAIL;
         }
         level.playSound(null, target, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+        serverLevel.sendParticles(new DustParticleOptions(brew.color(), dispersal == Brews.Dispersal.GAS ? 1.0F : 0.7F),
+                target.getX() + 0.5D, target.getY() + 0.5D, target.getZ() + 0.5D,
+                dispersal == Brews.Dispersal.GAS ? 18 : 10, 0.25D, 0.25D, 0.25D, 0.02D);
 
         if (player == null || !player.getAbilities().instabuild) {
             ItemStack emptied = new ItemStack(Items.BUCKET);
@@ -95,7 +108,9 @@ public class BrewBucketItem extends Item {
         if (brew.isEmpty()) {
             return;
         }
-        tooltip.accept(Component.translatable("witchery.brew.dispersal.liquid").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable(brew.bottledDispersal() == Brews.Dispersal.GAS
+                ? "witchery.brew.dispersal.gas"
+                : "witchery.brew.dispersal.liquid").withStyle(ChatFormatting.GRAY));
         for (var effect : Brews.buildEffects(brew.items())) {
             Component name = Component.translatable(effect.getEffect().value().getDescriptionId());
             if (effect.getAmplifier() > 0) {
