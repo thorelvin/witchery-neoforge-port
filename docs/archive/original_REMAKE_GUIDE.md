@@ -1,20 +1,20 @@
-# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.11
+# Remake Guide — Witchery 1.7.10 → NeoForge 1.21.11
 
 ## Project Goal
 
 Rebuild the gameplay of **Witchery for Minecraft 1.7.10** as a modern **NeoForge** mod.
-This is a feature-by-feature modern port. Reuse decompiled logic where it works; rewrite where the API has changed or the original can be improved.
+This is a feature-by-feature modern remake. Reuse decompiled logic where it works; rewrite where the API has changed or the original can be improved.
 Old code is used as a **behavior reference only**, not as code to paste.
 
 ---
 
 ## Working Rules
 
-1. One subsystem at a time — never port the whole mod in one step.
+1. One subsystem at a time — never remake the whole mod in one step.
 2. Do not delete assets, data files, lang files, or textures unless explicitly told.
 3. Reuse decompiled source logic freely — adapt to NeoForge 1.21.11 APIs as needed. Rewrite only when the original approach is poor or the API has fundamentally changed.
 4. After every coding milestone, confirm `gradlew compileJava` passes.
-5. Keep PORTING_NOTES.md updated with API gotchas after each milestone.
+5. Keep REMAKE_NOTES.md updated with API gotchas after each milestone.
 6. Keep FEATURE_MATRIX.md status updated.
 7. When unsure about a NeoForge API, check decompiled NeoForge source or local Gradle cache — do not guess.
 
@@ -47,7 +47,7 @@ Old code is used as a **behavior reference only**, not as code to paste.
 
 ---
 
-## Porting strategy — current progress
+## Remaking strategy — current progress
 
 See FEATURE_MATRIX.md for full status.
 
@@ -78,7 +78,7 @@ See FEATURE_MATRIX.md for full status.
 
 ## Key API renames at a glance
 
-See **OLD_TO_NEW_API_MAP.md** for the full table and **PORTING_NOTES.md** for session gotchas.
+See **OLD_TO_NEW_API_MAP.md** for the full table and **REMAKE_NOTES.md** for session gotchas.
 
 | Old | New |
 |---|---|
@@ -139,7 +139,7 @@ All BESR blocks need `.noOcclusion()`.
 
 ---
 
-## Entity Models — porting from original ModelXxx
+## Entity Models — remaking from original ModelXxx
 
 Always check the decompiled `ModelXxx.java` for correct UV offsets, texture size, and part positions before writing a modern model.
 Textures were painted for the original UV layout; wrong UV = garbled or invisible model.

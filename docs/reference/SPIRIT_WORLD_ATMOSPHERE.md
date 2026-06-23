@@ -63,9 +63,9 @@ to anchor it, dotted with white wispy cotton and pale spirit pools, eerily quiet
 nightmare roars and banshee screams — turning to a dark **green** (or hellish **red**) night when a
 nightmare takes hold.
 
-## Modern-port mapping (NeoForge 1.21.1)
+## modern-remake mapping (NeoForge 1.21.1)
 
-Source method → modern equivalent for the port:
+Source method → modern equivalent for the remake:
 
 - `getFogColor` palettes → `DimensionSpecialEffects.getBrightnessDependentFogColor` (+ a custom
   `DimensionSpecialEffects` subtype) and/or biome `fog_color`; nightmare/demonic variants need a
@@ -77,9 +77,9 @@ Source method → modern equivalent for the port:
 - Wispy cotton / flowing-spirit decoration → biome placed features.
 - Silent spirits / nightmare roars / banshee screams → entity `SoundEvents`.
 
-## Port implementation status (2026-06-19)
+## Remake implementation status (2026-06-19)
 
-Already faithful in the port:
+Already faithful in the remake:
 
 - `SpiritWorldSpecialEffects` reproduces the exact fog-colour logic (pink/green/red palettes, the
   `cos·2+0.5` brightness factor, the 0.06/0.09 floors).
@@ -104,13 +104,13 @@ Fixed 2026-06-19:
   column to the nearest two-block-tall landing space. `/witchery exit` uses the full Spirit World wake-up
   helper for those entries.
 - **Fog range is now explicitly shortened.** The source `getFogColor` supplied the three pink/green/red
-  palettes, but modern rendering also needs a fog-distance override; the port now gives dreams a 52-block
+  palettes, but modern rendering also needs a fog-distance override; the remake now gives dreams a 52-block
   fog end, nightmares 40, and demonic nightmares 32 while retaining the source colours.
 - **Dream wildlife is now a requested modern expansion.** Source Witchery reused Overworld generation and
-  allowed peaceful spawns; the port's fixed Spirit World biome now opens that up beyond sheep/pig/chicken/cow
+  allowed peaceful spawns; the remake's fixed Spirit World biome now opens that up beyond sheep/pig/chicken/cow
   to the broader vanilla passive animal roster across creature, ambient, water, cave-water, and axolotl spawn
   categories.
 
-Still divergent from source (deliberate / low priority): the port colours the whole **sky** spirit-pink
+Still divergent from source (deliberate / low priority): the remake colours the whole **sky** spirit-pink
 (source only tinted the fog and left a dimmed vanilla sky); the dimension uses one custom biome rather
 than borrowing overworld biomes.

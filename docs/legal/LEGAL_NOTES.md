@@ -7,14 +7,14 @@
 - Original author appears inactive or unreachable.
 - Original Witchery material remains owned by Emoniph and/or the original rights holder.
 
-## This port
+## This remake
 
-- This is an unofficial fan port / rebuild / continuation.
+- This is an unofficial fan remake / rebuild / continuation.
 - The project uses original Witchery gameplay behavior as a reference.
-- The project owner allows decompiled jars and community ports to be used as development references where useful.
+- The project owner allows decompiled jars and community remakes to be used as development references where useful.
 - Original Witchery textures/assets may exist as development placeholders during private development.
 - Logic that works well may be reused/adapted to modern NeoForge APIs; logic that is obsolete or poor should be rewritten.
-- The goal is an accurate working port first, then modernization/expansion.
+- The goal is an accurate working remake first, then modernization/expansion.
 
 ## Attribution statement
 
@@ -31,11 +31,11 @@ Use this wording in README/release notes unless replaced:
 2. Audit every asset for source and license.
 3. Keep `docs/legal/ATTRIBUTION.md` or `THIRD_PARTY_NOTICES.md`.
 4. Consider a distinct release name/mod ID if needed.
-5. Review CurseForge/Modrinth fan-port and copyright guidelines.
+5. Review CurseForge/Modrinth fan-remake and copyright guidelines.
 6. Choose a license for newly written code only if you are ready to publish it.
 
 ## Referenced resources
 
 - Original Witchery 1.7.10 jar, used as behavior/development reference.
-- WitcheryResurrected 1.12.2 community port, used as reference.
+- WitcheryResurrected 1.12.2 community remake, used as reference.
 - Public wiki/changelog/community behavior notes.

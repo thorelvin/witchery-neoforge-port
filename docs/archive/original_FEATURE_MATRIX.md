@@ -1,4 +1,4 @@
-# Feature Matrix — Witchery NeoForge 1.21.11 Port
+# Feature Matrix — Witchery NeoForge 1.21.11 Remake
 
 Legend: ✅ Done · 🔄 Partial · 🔲 Not started · ⏸ Deferred
 

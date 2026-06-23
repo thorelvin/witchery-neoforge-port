@@ -1,17 +1,17 @@
-# Porting Guide — Witchery 1.7.10 → NeoForge 1.21.11
+# Remake Guide — Witchery 1.7.10 → NeoForge 1.21.11
 
 This is the fast implementation manual. For docs routing, start with
 `docs/DOCS_INDEX.md`. For exact API gotchas, search
-`docs/reference/PORTING_NOTES.md` and `docs/reference/API_MAP.md`.
+`docs/reference/REMAKE_NOTES.md` and `docs/reference/API_MAP.md`.
 
 ## Goal
 
-Build a working, feature-faithful Witchery fan port on modern NeoForge 1.21.11.
+Build a working, feature-faithful Witchery fan remake on modern NeoForge 1.21.11.
 
 - Preserve player-facing behavior where useful.
 - Use modern NeoForge architecture where old APIs are obsolete.
 - Reuse project patterns.
-- Keep port work separate from post-port expansions.
+- Keep remake work separate from post-remake expansions.
 
 ## Working rules
 
@@ -20,7 +20,7 @@ Build a working, feature-faithful Witchery fan port on modern NeoForge 1.21.11.
 3. Use `docs/status/CURRENT.md` for the current handoff; old roadmap snapshots may be stale.
 4. Use `BUGS.md` for active bugs and `QA_QUEUE.md` for active in-game verification.
 5. After each coding milestone, run `./gradlew compileJava` when practical.
-6. Add durable API lessons to `PORTING_NOTES.md`; put short session notes in `CURRENT.md`.
+6. Add durable API lessons to `REMAKE_NOTES.md`; put short session notes in `CURRENT.md`.
 7. Update `FEATURE_MATRIX.md` only when feature-level status changes.
 8. Do not delete assets/data/lang/textures unless explicitly told.
 9. If unsure about a NeoForge API, inspect local Gradle/decompiled NeoForge source; do not guess.
@@ -122,5 +122,5 @@ When a task finishes:
 - Move bugs from **Open** to **Fixed / Verify** in `BUGS.md`.
 - Add active in-game retests to `QA_QUEUE.md`.
 - Change feature rows in `FEATURE_MATRIX.md` only when the feature state changed.
-- Add durable API discoveries to `PORTING_NOTES.md`; keep ordinary handoff notes in `CURRENT.md`.
+- Add durable API discoveries to `REMAKE_NOTES.md`; keep ordinary handoff notes in `CURRENT.md`.
 - Add next small tasks to `NEXT_TASKS.md` if obvious.

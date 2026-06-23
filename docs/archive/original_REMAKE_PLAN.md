@@ -1,4 +1,4 @@
-# Witchery → NeoForge 1.21.11 — Detailed Porting Plan
+# Witchery → NeoForge 1.21.11 — Detailed Remaking Plan
 
 > Reference sources: original decompiled jars, WitcheryResurrected 1.12.2, weebly getting-started wiki  
 > Last updated: 2026-05-15
@@ -17,9 +17,9 @@ The mod loads, renders, and has working gameplay loops for:
 
 ---
 
-## Original Mod Scope (what we're porting to)
+## Original Mod Scope (what we're remaking to)
 
-| Category | Original count | Ported so far |
+| Category | Original count | Remade so far |
 |---|---|---|
 | Blocks | 42+ | ~35 registered, most lacking functionality |
 | Ingredient items | 70+ | 8 |
@@ -816,7 +816,7 @@ The **Magic Mirror** is a 2-block-tall structure. When a player walks through it
 - **EntityReflection:** Custom mob, copies player texture UUID on spawn
 - **EntityFairest:** Named subvariant; add nametag override + chat listener intercept
 - Gate behind high altar power (3000+); rare and late-game
-- **Milestone:** Phase G5 in PORTING_PLAN.md
+- **Milestone:** Phase G5 in REMAKE_PLAN.md
 
 ---
 
@@ -875,7 +875,7 @@ rechargePerTick = basePowerPerUpdate * rechargeScale
 ### Circle size → cost reduction
 - Larger chalk circles reduce the power cost of rites (scaled by circle radius)
 - A 7×7 circle might cost 500 power while a 3×3 costs the same rite at 300 power
-- **Not yet implemented in our port** — our `RitualExecutor` has fixed effects
+- **Not yet implemented in our remake** — our `RitualExecutor` has fixed effects
 
 ### Notes for implementation
 - Add `powerMultiplier` field to `AltarBlockEntity` that is recalculated based on nearby ritual circles
@@ -937,7 +937,7 @@ if (random.nextFloat() < 0.05f) { increaseTorment(); }
 This makes placing Torment Portals near other players a griefing tool.
 
 ### Notes for implementation
-- Torment dimension: separate dimension JSON + `ChunkGenerator` (Phase H1 in PORTING_PLAN)
+- Torment dimension: separate dimension JSON + `ChunkGenerator` (Phase H1 in REMAKE_PLAN)
 - `TormentumSymbolEffect`: projectile entity; on hit, call `player.changeDimension(tormentLevel, ...)`
 - Torment Portal passive hazard: `BlockTormentPortal.entityInside()` with 5% check
 - Gate: requires Infernal Infusion + charged Attuned Stone
@@ -1011,7 +1011,7 @@ These are all vanilla Witchery items already in the item texture directory. Regi
 
 ## Summary Table
 
-| Mechanic | Confidence | Source | Priority for Port |
+| Mechanic | Confidence | Source | Priority for Remake |
 |---|---|---|---|
 | Avada Kedavra kill curse | ✅ Confirmed | AvadaKedavraSymbolEffectMixin.java | Phase E (infusion abilities) |
 | Lilith vampire leash | ❌ Rumor | No code found | Do not implement |

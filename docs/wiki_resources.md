@@ -138,7 +138,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Cannot be replanted; Wispy Cotton remains in inventories when leaving the Spirit World.
 
 ## Drop of Luck
-- **Source:** Crafted from Mutandis Extremis above Refined Evil above a Water Bottle; the port also keeps the altar-powered Witch's Cauldron working.
+- **Source:** Crafted from Mutandis Extremis above Refined Evil above a Water Bottle; the remake also keeps the altar-powered Witch's Cauldron working.
 - **Uses:** Component for various recipes and Circle Rituals including Tool Protection Poppet, Armor Protection Poppet, Brew of Insanity, and more.
 - **Notes:** Not specified.
 
@@ -190,7 +190,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Fume Filter
 - **Source:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
 - **Uses:** Upgrades a Fume Funnel into a Filtered Fume Funnel.
-- **Notes:** Restored as a real item in the NeoForge port; the recipe uses the port's live Charged Attuned Stone item ID.
+- **Notes:** Restored as a real item in the NeoForge remake; the recipe uses the remake's live Charged Attuned Stone item ID.
 
 ## Glint Weed
 - **Source:** Not specified in provided text.
@@ -318,7 +318,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Higher form of Mutandis, can transform more items.
 
 ## Mutating Sprig
-- **Source:** Crafted from Mutandis Extremis surrounding an Ent Twig; the port also keeps the cauldron working route live.
+- **Source:** Crafted from Mutandis Extremis surrounding an Ent Twig; the remake also keeps the cauldron working route live.
 - **Uses:** Performs controlled block and plant mutations.
 - **Notes:** Durability tool used for classic structure mutations such as Grasspers, Leech Chests, Blood Roses, Brambles, and Wormwood.
 

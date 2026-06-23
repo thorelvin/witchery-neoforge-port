@@ -1,6 +1,6 @@
 # API Map — Old Forge 1.7.10 → NeoForge 1.21.11
 
-Use this as a quick reference. For session-specific gotchas, search `PORTING_NOTES.md`.
+Use this as a quick reference. For session-specific gotchas, search `REMAKE_NOTES.md`.
 
 ## Registration
 

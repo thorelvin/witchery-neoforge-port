@@ -2,17 +2,17 @@
   <img src="docs/witchery_rewoven.png" alt="Witchery: Rewoven" width="100%">
 </p>
 
-# Witchery NeoForge Port
+# Witchery NeoForge Remake
 
 > *The old craft, transcribed for a new age of Minecraft.*
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-5b8731)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.11.42-f16436)
 ![Java](https://img.shields.io/badge/Java-21-e8772e)
-![Status](https://img.shields.io/badge/status-active%20parity%20port-6b4a8a)
-![License](https://img.shields.io/badge/release-unofficial%20fan%20port-a23b3b)
+![Status](https://img.shields.io/badge/status-active%20parity%20remake-6b4a8a)
+![License](https://img.shields.io/badge/release-unofficial%20fan%20remake-a23b3b)
 
-An unofficial modern NeoForge port and continuation of the classic **Witchery** mod for Minecraft `1.21.11`.
+An unofficial modern NeoForge remake and continuation of the classic **Witchery** mod for Minecraft `1.21.11`.
 
 The aim is to restore the *feel* and mechanics of original Witchery first — the altar's hum, the cauldron's patience, the weight of a rite — then lean on community fan-mod inspiration and other references where they help close visual, item, or registry parity gaps.
 
@@ -31,13 +31,13 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 ## Current State
 
-The port is playable and well beyond prototype stage, but it remains an active parity port rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, and exact-ID promotion.
+The remake is playable and well beyond prototype stage, but it remains an active parity remake rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, and exact-ID promotion.
 
 Latest QA polish also tightened the everyday surface of the mod: source-shaped brew bottle art is used broadly, the live legacy placeholder roster is empty, internal utility blocks are hidden from the Witchery creative tab, Rowan/Alder/Hawthorn leaf items now use combined foliage art with visible berries/flowers instead of runtime tint layers, stockades stack with the lower post changing shape, Death's Hand deploys its scythe as source-style state on the same item with hand-aware held rendering and clearer hit/toggle feedback, Mystic Branch casts answer with named/colored feedback, Crystal Ball scrying refuses bad foci before charging altar power, brew buckets describe gas vs. liquid correctly, Dream Weavers report placement and wake effects, and braziers douse more reliably with water.
 
 High-level estimate:
 
-- Mechanical porting: roughly `95-96%`
+- Mechanical remake parity: roughly `95-96%`
 - Release-ready parity/polish: roughly `82-86%`
 - Best source of truth: [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md)
 
@@ -93,7 +93,7 @@ Consult [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) before choosing what to work on
 - [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) — backlog and slice candidates.
 - [docs/status/BUGS.md](docs/status/BUGS.md) — active/fixed bug board and parity notes.
 - [docs/status/ITEM_REVIEW.md](docs/status/ITEM_REVIEW.md) — item roster, exact-ID promotions, and follow-up decisions.
-- [docs/reference/PORTING_NOTES.md](docs/reference/PORTING_NOTES.md) — historical implementation notes and reference findings.
+- [docs/reference/REMAKE_NOTES.md](docs/reference/REMAKE_NOTES.md) — historical implementation notes and reference findings.
 
 ## Build
 
@@ -175,7 +175,7 @@ For Mirror World specifically, stale generated chunks can make new room logic ap
 Recommended loop — measure twice, cast once:
 
 1. Check [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md).
-2. Compare the port against original/decompiled behavior before choosing a bounded task.
+2. Compare the remake against original/decompiled behavior before choosing a bounded task.
 3. Implement one coherent parity slice or bug fix.
 4. Run `.\gradlew.bat compileJava processResources`.
 5. Update only the docs routed by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md).
@@ -185,12 +185,12 @@ Keep unrelated local art experiments, temp folders, or generated scratch files o
 
 ## Credits
 
-All credit for Witchery belongs to its creator, **Emoniph**. This port exists only because that original work was so good — the altars, the rites, the brews, the whole brooding world of the old craft are Emoniph's design, and every system here traces back to that vision. Enormous gratitude and respect to the original author. We are tending someone else's garden, not claiming it as our own.
+All credit for Witchery belongs to its creator, **Emoniph**. This remake exists only because that original work was so good — the altars, the rites, the brews, the whole brooding world of the old craft are Emoniph's design, and every system here traces back to that vision. Enormous gratitude and respect to the original author. We are tending someone else's garden, not claiming it as our own.
 
 ## Project Notes & Legal
 
-- This is an **unofficial fan port** inspired by the original Witchery mod by **Emoniph**. It is not affiliated with or endorsed by Emoniph, and it is not an official Witchery release.
+- This is an **unofficial fan remake** inspired by the original Witchery mod by **Emoniph**. It is not affiliated with or endorsed by Emoniph, and it is not an official Witchery release.
 - **All rights to original Witchery remain with Emoniph and/or the original rights holder.** Original art, textures, sounds, and other assets belong entirely to Emoniph; where any appear in this repository they are development placeholders only, to be replaced with original artwork before any public release.
-- **The code is an independent reimplementation, rewritten against the modern NeoForge `1.21.11` API rather than copied.** None of the original mod's source is shipped or copied verbatim — it targets a long-obsolete Minecraft version and will not run on modern Minecraft. Original gameplay behavior, decompiled jars, and community ports are studied as references to keep the port faithful, in the same spirit as other community continuation projects.
+- **The code is an independent reimplementation, rewritten against the modern NeoForge `1.21.11` API rather than copied.** None of the original mod's source is shipped or copied verbatim — it targets a long-obsolete Minecraft version and will not run on modern Minecraft. Original gameplay behavior, decompiled jars, and community remakes are studied as references to keep the remake faithful, in the same spirit as other community continuation projects.
 - The long-term art direction is to move toward original replacement art that keeps the same gameplay identity and mood, rather than treating old assets as the final public-release target.
 - If Emoniph or a legitimate rights holder requests removal or changes, the project will comply promptly.

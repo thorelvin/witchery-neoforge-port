@@ -82,7 +82,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Real-world implement used in herbalism and Wicca.
 
 ## Bone Bolt
-- **Obtain:** In the NeoForge port, craft 12 Bone Bolts from Wooden Bolts, Bone, and a Ghast Tear using the Resurrected recipe shape.
+- **Obtain:** In the NeoForge remake, craft 12 Bone Bolts from Wooden Bolts, Bone, and a Ghast Tear using the Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Crossbow Pistol. Deals six damage, fifty percent more to demons or undead.
 - **Stats:** Damage: 6 (7.5 vs demons/undead)
 - **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
@@ -181,11 +181,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Creative/QA item.
 - **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level.
 - **Stats:** None
-- **Notes:** Not intended for regular survival progression. The port maps the old werewolf-level side to the current 0-3 mastery model.
+- **Notes:** Not intended for regular survival progression. The remake maps the old werewolf-level side to the current 0-3 mastery model.
 
 ## Creative Bat/Wolf Token
 - **Obtain:** Available through creative mode or similar means.
-- **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level. Vampire level wraps after 10, while werewolf mastery wraps after 3 in the current port.
+- **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level. Vampire level wraps after 10, while werewolf mastery wraps after 3 in the current remake.
 - **Stats:** None
 - **Notes:** Not intended for regular play. Use `/witchery status` to confirm the synced player state.
 
@@ -271,13 +271,13 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Craft from a Fume Funnel and Fume Filter.
 - **Use:** Side-mounted Filtered Fume Funnels improve Witches' Oven fume byproduct odds with the old default 0.30 side-funnel chance. Like normal funnels, top placement speeds cooking only.
 - **Stats:** None
-- **Notes:** Real block item in the NeoForge port; final in-game placement/render QA is still pending.
+- **Notes:** Real block item in the NeoForge remake; final in-game placement/render QA is still pending.
 
 ## Fume Filter
 - **Obtain:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
 - **Use:** Used to upgrade fume funnels into filtered fume funnels.
 - **Stats:** Stackable (64)
-- **Notes:** The source Resurrected recipe uses the charged-attuned-stone role; the NeoForge port uses its live `attuned_stone_charged` item ID.
+- **Notes:** The source Resurrected recipe uses the charged-attuned-stone role; the NeoForge remake uses its live `attuned_stone_charged` item ID.
 
 ## Fume Funnel
 - **Obtain:** Craft from Buckets, a Lava Bucket, Glowstone, Iron Bars, and Iron Blocks using the source shape.
@@ -292,14 +292,14 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Not stackable.
 
 ## Glass Goblet (full)
-- **Obtain:** In the NeoForge port, a level 9+ vampire can spend 125 Blood Power with an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
-- **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current port's starting blood.
+- **Obtain:** In the NeoForge remake, a level 9+ vampire can spend 125 Blood Power with an empty Glass Goblet to fill it with their own blood. The exact `full_glass_goblet` ID and the older `glass_goblet_full` alias now share this full-goblet behavior.
+- **Use:** A non-vampire player can drink a vampire-filled goblet to become a vampire with the current remake's starting blood.
 - **Stats:** N/A
 - **Notes:** Not stackable. The chicken-over-skull Elle/Lilith path now follows the source shape: chicken blood starts Elle, Elle follows the owner to a source-shaped lava pool, and bested Lilith can fill an empty goblet with her blood. Vampire-blood goblets can also convert transfixed, fully drained Villagers or Village Guards near Coffins into Vampire mobs.
 
 ## Glass Goblet
 - **Obtain:** Craft from three Glass Bottles and one Glass using the Resurrected goblet recipe shape.
-- **Use:** Used in the vampire transformation process; in the current port a level 9+ vampire can spend 125 Blood Power to fill it.
+- **Use:** Used in the vampire transformation process; in the current remake a level 9+ vampire can spend 125 Blood Power to fill it.
 - **Stats:** N/A
 - **Notes:** Not stackable. Can be filled to create a Full Glass Goblet.
 
@@ -311,19 +311,19 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Lilith's Blood
 - **Obtain:** Best Lilith, then right-click friendly Lilith with an empty Glass Goblet to receive a Full Glass Goblet tagged with Lilith's blood. The standalone `liliths_blood` consumable remains exposed as a rare QA/practical item.
-- **Use:** In the current port, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
+- **Use:** In the current remake, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
 - **Stats:** Stackable (16), rare.
 - **Notes:** Werewolves are refused to avoid vampire/werewolf hybrids. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
 
 ## Vampire Feeding
-- **Obtain:** Be a vampire in the current NeoForge port and empty-hand interact with a living target.
+- **Obtain:** Be a vampire in the current NeoForge remake and empty-hand interact with a living target.
 - **Use:** Living targets restore vampire blood; villagers now track a persisted 500-blood store. Awake villagers yield a reduced drain, while sleeping or mesmerised villagers yield the full drain and can be depleted.
 - **Stats:** Villager blood cap 500; low-blood harm begins below 250 stored blood.
 - **Notes:** The old level quest counters, broader guard AI polish, and full 10-level progression are still follow-up work.
 
 ## Observations of an Immortal
 - **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.
-- **Use:** Source vampire-progression book. In the current port it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.
+- **Use:** Source vampire-progression book. In the current remake it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.
 - **Stats:** Not stackable.
 - **Notes:** Bookshop chest loot data now includes this book for the future Bookshop structure path.
 
@@ -364,7 +364,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Stackable (64)
 
 ## Horn of the Hunt
-- **Obtain:** Obtained during the Wolf Altar quest chain; the port also keeps the Resurrected `hunts_horn` alias.
+- **Obtain:** Obtained during the Wolf Altar quest chain; the remake also keeps the Resurrected `hunts_horn` alias.
 - **Use:** Hold for two seconds to sound the horn and summon a Horned Huntsman on safe nearby ground.
 - **Stats:** None
 - **Notes:** Not stackable. In survival it breaks only after a successful summon; the summoned Huntsman enters with source-like invulnerability, reduced health, and a delayed explosive entrance. Exact old horn sound asset still needs final QA.
@@ -498,7 +498,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Must be used during night.
 
 ## Nullifying Bolt
-- **Obtain:** In the NeoForge port, craft 3 Nullifying Bolts from Null Catalyst, 2 Belladonna, and 3 Bone Bolts.
+- **Obtain:** In the NeoForge remake, craft 3 Nullifying Bolts from Null Catalyst, 2 Belladonna, and 3 Bone Bolts.
 - **Use:** Used by Witch Hunter Pistol Crossbow. Deals 6 damage, ignores Bark Belt and Baba Yaga's thorns protection. Drains a third of the victim's infusion power when fired by someone in full Witch Hunter armor.
 - **Stats:** Damage 6
 - **Notes:** Projectile/crossbow behavior is still a follow-up; the old shot cost and power-drain behavior are not implemented yet.
@@ -644,20 +644,20 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Only a Boline can safely harvest these without damaging them.
 
 ## Silver Bolt (Witchery)
-- **Obtain:** In the NeoForge port, craft 6 Silver Bolts from 6 Wooden Bolts and 1 Silver Ingot using the Resurrected recipe shape.
+- **Obtain:** In the NeoForge remake, craft 6 Silver Bolts from 6 Wooden Bolts and 1 Silver Ingot using the Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Pistol Crossbow. Deals six damage and bypasses werewolf's natural resistance to attacks while dealing double damage.
 - **Stats:** Damage: 6.
 - **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
 
 ## Silver Sword (Witchery)
 - **Obtain:** Craft using unknown recipe, requires silver ingots.
-- **Use:** Primarily used as a weapon against werewolves because it can bypass their damage resistance and deals double damage to them. In the NeoForge port, a held Silver Sword now counts as silver damage against werewolf/vampire players and entity types tagged `witchery:vampires`.
+- **Use:** Primarily used as a weapon against werewolves because it can bypass their damage resistance and deals double damage to them. In the NeoForge remake, a held Silver Sword now counts as silver damage against werewolf/vampire players and entity types tagged `witchery:vampires`.
 - **Stats:** Durability: 33.
 - **Notes:** The sword degrades its enchantability down to iron levels.
 
 ## Stake
 - **Obtain:** Craft a Stick surrounded by Garlic, matching the Resurrected recipe.
-- **Use:** In the NeoForge port, right-clicking a sleeping vampire player with a Stake consumes one Stake and kills the vampire.
+- **Use:** In the NeoForge remake, right-clicking a sleeping vampire player with a Stake consumes one Stake and kills the vampire.
 - **Notes:** Also counts as wooden damage for Bark Belt bypass behavior.
 
 ## Silver Vat
@@ -697,7 +697,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Originates from the fairytale "Rumpelstiltskin".
 
 ## Splitting Bolt
-- **Obtain:** In the NeoForge port, craft 1 Splitting Bolt from 3 Wooden Bolts, String, and a Feather.
+- **Obtain:** In the NeoForge remake, craft 1 Splitting Bolt from 3 Wooden Bolts, String, and a Feather.
 - **Use:** Used by the Witch Hunter Pistol Crossbow. Splits into three wooden bolts midflight, dealing half damage each.
 - **Stats:** Deals 9 total damage (3 per bolt)
 - **Notes:** Projectile/crossbow behavior is still a follow-up; this pass restores the source crafting path.
@@ -973,14 +973,14 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Becomes invisible to other players.
 
 ## Moon Charm
-- **Obtain:** In the NeoForge port, a werewolf can right-click a Wolf Altar with three Gold Nuggets to create one.
+- **Obtain:** In the NeoForge remake, a werewolf can right-click a Wolf Altar with three Gold Nuggets to create one.
 - **Use:** Hold use to toggle werewolf transformation between human and wolf form. Carrying it prevents automatic moon-forced transformation changes, while Wolfsbane carried in the inventory blocks charm use and forces the beast back down.
 - **Stats:** Stack size 1, durability 49, rare, repairable with Gold Nuggets.
-- **Notes:** Current port restores the practical transformation-control item path. Exact old wolf/wolfman split and detailed Wolf Altar quest gates remain follow-up work.
+- **Notes:** Current remake restores the practical transformation-control item path. Exact old wolf/wolfman split and detailed Wolf Altar quest gates remain follow-up work.
 
 ## Wolf Altar
 - **Obtain:** Crafted using specific ingredients including Wolf Heads or Hellhound Heads.
-- **Use:** Used by werewolves to communicate with their god and receive quests. In the NeoForge port, it grants wolf mastery boons and can temper three Gold Nuggets into a Moon Charm for werewolves. Can be used to bless a wolfman into spreading the curse.
+- **Use:** Used by werewolves to communicate with their god and receive quests. In the NeoForge remake, it grants wolf mastery boons and can temper three Gold Nuggets into a Moon Charm for werewolves. Can be used to bless a wolfman into spreading the curse.
 - **Stats:** Unknown
 - **Notes:** Required for certain werewolf quests.
 
@@ -997,7 +997,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No known crafting uses.
 
 ## Wooden Bolt
-- **Obtain:** In the NeoForge port, craft 9 Wooden Bolts from String, Sticks, and Feathers using the old/Resurrected recipe shape.
+- **Obtain:** In the NeoForge remake, craft 9 Wooden Bolts from String, Sticks, and Feathers using the old/Resurrected recipe shape.
 - **Use:** Used by the Witch Hunter Crossbow Pistol. Weakness to Bark Belt and Baba Yaga's thorns, deals six damage.
 - **Stats:** Stackable (64)
 - **Notes:** Projectile/crossbow behavior is still a follow-up; this item now feeds the Silver, Bone, and Splitting Bolt recipe chains.

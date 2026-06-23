@@ -1,7 +1,7 @@
 # Witchery Mob Rework — Coven Witches, Hobgoblins, and Structure-Linked Mobs
 
 **Target:** Minecraft 1.21.11 / NeoForge 21.11  
-**Project context:** This document is for adding new mob behavior and integration layers to an already ported Witchery mod. It should extend existing Witchery mobs and systems, not redefine Witchery’s core gameplay.
+**Project context:** This document is for adding new mob behavior and integration layers to an already remade Witchery mod. It should extend existing Witchery mobs and systems, not redefine Witchery’s core gameplay.
 
 **Read this first:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This document is supporting detail for mobs, trust, jobs, and reactions. It should not override the handoff on canonical naming, scope, or implementation order.
 
@@ -700,7 +700,7 @@ Flavor moment:
 
 ## 5.1 Treefyd / plant guardian mobs
 
-If Treefyd-style mobs are present in the port, use them as grove and forest defenders.
+If Treefyd-style mobs are present in the remake, use them as grove and forest defenders.
 
 ### Role
 

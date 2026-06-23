@@ -1,6 +1,6 @@
 ## Item Texture Remaster Plan
 
-> Process note: before continuing new remaster production, read [ITEM_TEXTURE_REDO_RESET.md](C:/claude/witchery/witchery-port/docs/art/ITEM_TEXTURE_REDO_RESET.md). The current remaster batches are now treated as experimental output, and the redo process has been reset around darker values, stronger slot-scale readability, and stricter native `32x32` pixel construction.
+> Process note: before continuing new remaster production, read [ITEM_TEXTURE_REDO_RESET.md](C:/claude/witchery/witchery-remake/docs/art/ITEM_TEXTURE_REDO_RESET.md). The current remaster batches are now treated as experimental output, and the redo process has been reset around darker values, stronger slot-scale readability, and stricter native `32x32` pixel construction.
 
 This file tracks the staged migration of Witchery item textures from mixed legacy assets into a consistent remastered set.
 

@@ -1,4 +1,4 @@
-# Porting Backlog — Milestone Roadmap
+# Remake Backlog — Milestone Roadmap
 
 Last reconciled: 2026-06-13
 Source: feature matrix audit + FTB wiki scraped-file gap analysis.
@@ -189,9 +189,9 @@ All crafted from Perpetual Ice; standard Minecraft block family (fence/slab/stai
 
 ---
 
-## Post-port expansion (Milestone 14+)
+## Post-remake expansion (Milestone 14+)
 
-See `docs/roadmap/FUTURE_FEATURES.md` — do not implement during faithful-port work unless explicitly requested.
+See `docs/roadmap/FUTURE_FEATURES.md` — do not implement during faithful-remake work unless explicitly requested.
 
 - Mirror World / reflection system
 - Soul essence + storage jar

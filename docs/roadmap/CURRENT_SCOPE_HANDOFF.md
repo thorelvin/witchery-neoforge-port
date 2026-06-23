@@ -1,4 +1,4 @@
-# Current Scope Handoff - Witchery Port
+# Current Scope Handoff - Witchery Remake
 
 > Docs cleanup note (2026-06-21): this file remains the additive-scope roadmap
 > handoff. For the day-to-day current project state, use
@@ -9,7 +9,7 @@
 
 **2026-06-20 additive snapshot:** `vanishing_witch_hut` (§3.3 / §6) slice 1 is implemented — a block hut that relocates when unobserved (inside→exit→unwatched trigger), usually within the Overworld and ~25% crossing to the Spirit World at mirror coords, leaving ash/debris. It is a block structure (remove + rebuild), not a walking creature, per the structure doc. Built block-by-block around a hidden anchor BlockEntity; the resident reuses `CovenWitchEntity` (tethered to the hut, and carried to the new site on each move so it stays the same witch). The **salt-line counterplay is implemented**: a line of Witches' Salt (`SaltLineBlock`, item `witchery:witches_salt` — reuses the redstone-wire connection rendering, tinted white; smelt kelp in the Witches' Oven or buy from a Coven Witch) across the doorway holds the hut. Natural forest/swamp worldgen is in (`VanishingHutStructure` + `has_vanishing_hut` biome tag, random_spread). Remaining: the other "hold it" routes (red thread / iron nail / offering) plus an anger-on-restraint chance. QA: `/witchery setup|goto vanishing_hut`, `/witchery hut move|watch`.
 
-**2026-06-14 porting snapshot:** today's landed scope is still faithful-port work, not additive expansion: placed Modonomicon live pages/navigation, Waystone/Blooded Waystone/Taglock Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Apothecary cauldron-jobsite trade repair, triggered cursed-block brew dispersal, vanilla-shaped custom brew liquid polish, Gas Mask/lifetime gas parity, Disease brew/block spread parity, Purified Milk disease cleanup, and Dog Tongue ritualized custom-brew cauldron release. Next faithful-port follow-ups from this cluster are the wider dynamic brew action roster, exact ritual pulse/backfire/target-modifier parity, old spell-projectile routes, and final scrying/apothecary reload QA.
+**2026-06-14 remaking snapshot:** today's landed scope is still faithful-remake work, not additive expansion: placed Modonomicon live pages/navigation, Waystone/Blooded Waystone/Taglock Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Apothecary cauldron-jobsite trade repair, triggered cursed-block brew dispersal, vanilla-shaped custom brew liquid polish, Gas Mask/lifetime gas parity, Disease brew/block spread parity, Purified Milk disease cleanup, and Dog Tongue ritualized custom-brew cauldron release. Next faithful-remake follow-ups from this cluster are the wider dynamic brew action roster, exact ritual pulse/backfire/target-modifier parity, old spell-projectile routes, and final scrying/apothecary reload QA.
 
 ---
 
@@ -38,7 +38,7 @@ If two files conflict, the additive gameplay spec wins.
 
 ## 2. Non-Negotiable Rules
 
-Implement this as an additive expansion to the existing Witchery port.
+Implement this as an additive expansion to the existing Witchery remake.
 
 Always prefer extending existing Witchery systems:
 
@@ -217,7 +217,7 @@ Do not pull current implementation work from it, especially:
 
 Use this as the unified order for current work:
 
-1. **Port integration audit**
+1. **Remake integration audit**
    - Inspect existing registry helpers, ritual APIs, altar logic, taglock/poppet storage, familiar ownership, worldgen hooks, saved data, networking, config, and data-gen.
 
 2. **Blood and binding foundation**

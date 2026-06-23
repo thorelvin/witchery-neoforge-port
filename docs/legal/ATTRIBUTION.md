@@ -6,7 +6,7 @@ Keep this updated before public release.
 
 - Original project: Witchery for Minecraft 1.7.10
 - Original author: Emoniph
-- Relationship: unofficial fan port / continuation
+- Relationship: unofficial fan remake / continuation
 - Rights: all original rights remain with Emoniph and/or original rights holder
 - Removal policy: will remove or alter disputed material on legitimate rights-holder request
 

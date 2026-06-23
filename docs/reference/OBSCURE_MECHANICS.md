@@ -1,6 +1,6 @@
 # Obscure Mechanics Reference
 
-Use this as inspiration and as a checklist for later faithful-port edge cases. Mark uncertain mechanics clearly in code/docs.
+Use this as inspiration and as a checklist for later faithful-remake edge cases. Mark uncertain mechanics clearly in code/docs.
 
 ## Confidence labels
 
@@ -36,13 +36,13 @@ Implementation notes:
 
 **Confidence:** myth.
 
-Reported as hidden transformation/ritual, but evidence is weak. Good as an easter egg or future myth quest, not a faithful-port requirement.
+Reported as hidden transformation/ritual, but evidence is weak. Good as an easter egg or future myth quest, not a faithful-remake requirement.
 
 ### Mirror World / Reflection Demon
 
 **Confidence:** confirmed late Witchery feature.
 
-Core behavior to eventually port:
+Core behavior to eventually remake:
 - Magic mirror bound to a demon.
 - Player can enter mirror.
 - Reflection/demon encounter inside.
@@ -57,7 +57,7 @@ Core behavior to eventually port:
 
 The custom brew system could apply effects to doors, buttons, levers, pressure plates, and items. This is a high-value later system.
 
-2026-06-20 port status: first practical triggered-dispersal parity is live. Triggered brews can curse dropped items and can store invisible saved-data curses on buttons, levers, pressure plates, wooden doors, and ladders without replacing the block, preserving modern wood/block variants. Ladders trigger on contact entry, and warning-only records can share the same detector for atmospheric tells. Writable Book now acts as a warning-brew binder: speak near the heated cauldron, add the book, add Zombie Head for triggered dispersal, then bottle and throw it at a supported block or loose item to store a purple actionbar warning. The cursed cave well warns on the top ladder and seeds the triggered poison curse on a lower ladder. Remaining follow-up is broader dynamic action coverage.
+2026-06-20 remake status: first practical triggered-dispersal parity is live. Triggered brews can curse dropped items and can store invisible saved-data curses on buttons, levers, pressure plates, wooden doors, and ladders without replacing the block, preserving modern wood/block variants. Ladders trigger on contact entry, and warning-only records can share the same detector for atmospheric tells. Writable Book now acts as a warning-brew binder: speak near the heated cauldron, add the book, add Zombie Head for triggered dispersal, then bottle and throw it at a supported block or loose item to store a purple actionbar warning. The cursed cave well warns on the top ladder and seeds the triggered poison curse on a lower ladder. Remaining follow-up is broader dynamic action coverage.
 
 Implementation notes:
 - Design brew effects as data-driven handlers.

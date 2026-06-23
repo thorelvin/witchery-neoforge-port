@@ -1,10 +1,10 @@
 # Witchery NeoForge 1.21.11 — Additive Gameplay Feature Spec
 
-**Purpose:** Add new gameplay features to an already ported Witchery mod, originally from Minecraft 1.7.10 and now targeting **NeoForge / Minecraft 1.21.11**.
+**Purpose:** Add new gameplay features to an already remade Witchery mod, originally from Minecraft 1.7.10 and now targeting **NeoForge / Minecraft 1.21.11**.
 
-This is **not a remake** and **not a standalone mod design**. It is an expansion roadmap for the existing Witchery port. New features should plug into existing Witchery systems wherever possible: rituals, altar power, poppets, taglocks, brews, familiars, witches, covens, worldgen, and curse logic.
+This is **not a remake** and **not a standalone mod design**. It is an expansion roadmap for the existing Witchery remake. New features should plug into existing Witchery systems wherever possible: rituals, altar power, poppets, taglocks, brews, familiars, witches, covens, worldgen, and curse logic.
 
-**Important scope correction:** classic Witchery already provides the core gameplay. This document must not redefine that core loop. Treat everything here as additive content: new biomes, encounters, curses, familiars, ritual modifiers, structures, ingredients, and late-game integrations that strengthen the ported mod without replacing its existing systems.
+**Important scope correction:** classic Witchery already provides the core gameplay. This document must not redefine that core loop. Treat everything here as additive content: new biomes, encounters, curses, familiars, ritual modifiers, structures, ingredients, and late-game integrations that strengthen the remade mod without replacing its existing systems.
 
 **Design promise:** every feature should feel like genuine Witchery: physical, eerie, useful, counterable, and story-generating.
 
@@ -14,7 +14,7 @@ This is **not a remake** and **not a standalone mod design**. It is an expansion
 
 ## 1. One-Sentence Direction
 
-Extend the ported Witchery mod with a stronger **physical occult loop**: players discover the Witch Forest, gather blood and red thread, bind curses to hidden anchors, send mosquitoes to steal blood, trade with vanishing huts, empower rituals through shelves and place, and eventually bind heart-based forest familiars and grow a Witch Grove.
+Extend the remade Witchery mod with a stronger **physical occult loop**: players discover the Witch Forest, gather blood and red thread, bind curses to hidden anchors, send mosquitoes to steal blood, trade with vanishing huts, empower rituals through shelves and place, and eventually bind heart-based forest familiars and grow a Witch Grove.
 
 The red thread is literal and mechanical:
 
@@ -24,9 +24,9 @@ Folklore should be felt through atmosphere and mechanics, not presented as a fol
 
 ---
 
-## 2. Existing-Port Integration Rules
+## 2. Existing-Remake Integration Rules
 
-Before implementing anything, inspect the current port and reuse existing systems.
+Before implementing anything, inspect the current remake and reuse existing systems.
 
 ### Reuse or extend existing systems
 
@@ -45,13 +45,13 @@ Before implementing anything, inspect the current port and reuse existing system
 
 ### Avoid duplicate systems
 
-Do not create a parallel curse, ritual, taglock, or familiar framework unless the existing port cannot support the new behavior. If a classic Witchery feature already exists, extend it.
+Do not create a parallel curse, ritual, taglock, or familiar framework unless the existing remake cannot support the new behavior. If a classic Witchery feature already exists, extend it.
 
 ### Version note: Minecraft / NeoForge target
 
 The target is **Minecraft 1.21.11 on NeoForge 21.11**. Treat modern vanilla content from the 1.21 line as available for design planning, including Pale Garden / Creaking-era concepts where present in the target environment.
 
-For this 1.21.11 expansion, Creaking, Creaking Heart, Pale Garden, resin, and eyeblossom concepts should be treated as **first-class integration points** rather than backport placeholders. When implementing, prefer extending or wrapping vanilla behavior over duplicating it. Only create Witchery-owned variants when the existing port needs custom curse/familiar/grove behavior that vanilla blocks or entities cannot safely support.
+For this 1.21.11 expansion, Creaking, Creaking Heart, Pale Garden, resin, and eyeblossom concepts should be treated as **first-class integration points** rather than backport placeholders. When implementing, prefer extending or wrapping vanilla behavior over duplicating it. Only create Witchery-owned variants when the existing remake needs custom curse/familiar/grove behavior that vanilla blocks or entities cannot safely support.
 
 
 ### Integration walkover: use old Witchery as the spine
@@ -62,7 +62,7 @@ These new features should not sit beside Witchery as a second mod. Each one shou
 |---|---|---|
 | Witch Forest | Altar power, worldgen, witch huts, herbs, circle ritual conditions | Make the biome a high-value place for existing Witchery activity. It should boost or modify rites; it should not create a separate progression track. |
 | Hanging Witch Puppets | Poppets, taglocks, curse anchors | Treat puppets as environmental poppet fragments or minor anchors. A rare puppet can hold a real curse link. |
-| Blood Vials / Witch Needle | Taglock Kits, poppets, curses | Blood should be an advanced taglock tier. If the port already has taglock storage, Blood Vials should reuse the same target identity model. |
+| Blood Vials / Witch Needle | Taglock Kits, poppets, curses | Blood should be an advanced taglock tier. If the remake already has taglock storage, Blood Vials should reuse the same target identity model. |
 | Red Thread | Poppets, ritual circles, shelves, curse anchors | Red Thread should visibly connect Witchery objects: poppet → anchor → shelf → blood vial. Use it to make existing systems feel more physical. |
 | Mosquito in a Bottle | Taglock collection, poppets, curse rites | The mosquito is a mobile taglock collector. Its output should feed existing poppet/cursing systems instead of inventing separate blood magic. |
 | Anchored curses | Existing curse logic, poppet protection, cleansing rites | Add optional physical anchors to existing curses. Direct curses still exist; anchored curses are stronger and more story-rich. |
@@ -102,7 +102,7 @@ If the answer is “none,” redesign the feature until it plugs into Witchery.
 
 ### Avoid parallel systems
 
-Do not add a second ritual engine, second curse registry, second familiar ownership model, or second taglock identity format unless the port has no usable equivalent. The cleanest result is that existing Witchery players can use familiar old tools to discover the new content.
+Do not add a second ritual engine, second curse registry, second familiar ownership model, or second taglock identity format unless the remake has no usable equivalent. The cleanest result is that existing Witchery players can use familiar old tools to discover the new content.
 
 ---
 
@@ -110,7 +110,7 @@ Do not add a second ritual engine, second curse registry, second familiar owners
 
 ### 3.1 Witchery first, folklore as flavor
 
-The expansion should feel like lost Witchery content, not a new theme mod. It should build on the ported mod’s existing Witchery gameplay and add more reasons to use it. Prioritize:
+The expansion should feel like lost Witchery content, not a new theme mod. It should build on the remade mod’s existing Witchery gameplay and add more reasons to use it. Prioritize:
 
 - rituals
 - poppets
@@ -123,11 +123,11 @@ The expansion should feel like lost Witchery content, not a new theme mod. It sh
 - shelves and altar rooms
 - forests, groves, wells, and crossroads
 
-Folklore informs the mood. The ported Witchery mod already defines the core gameplay.
+Folklore informs the mood. The remade Witchery mod already defines the core gameplay.
 
 ### 3.2 No mana bar
 
-Do not alter the port with a generic mana system. New content should continue to reward preparation:
+Do not alter the remake with a generic mana system. New content should continue to reward preparation:
 
 - altar base power
 - moon phase
@@ -470,7 +470,7 @@ On right-click:
 - within configurable range
 - alive
 - not creative/spectator
-- respects team/coven exclusions if existing port supports them
+- respects team/coven exclusions if existing remake supports them
 - blocked or reduced by counterplay
 
 ### Counterplay
@@ -1372,9 +1372,9 @@ Each plant should have a clear use. Avoid adding plants that are only generic cr
 
 ## 24. Recommended Implementation Order
 
-### Slice 0 — Port Integration Audit
+### Slice 0 — Remake Integration Audit
 
-Inspect existing Witchery port:
+Inspect existing Witchery remake:
 
 - mod id and package layout
 - registry helpers
@@ -1783,9 +1783,9 @@ This is the right kind of gratification for Witchery: slow, physical, mischievou
 
 ## 30. Final Implementation Instruction
 
-Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) first, then implement this as an **additive expansion** to the existing Witchery NeoForge 1.21.11 port.
+Read [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md) first, then implement this as an **additive expansion** to the existing Witchery NeoForge 1.21.11 remake.
 
-Prefer small PR-sized slices. Use the port’s current code style, registry patterns, data-gen conventions, configs, storage, and networking. If a new feature conflicts with an existing Witchery mechanic, adapt the new feature to the old mechanic rather than replacing the old mechanic.
+Prefer small PR-sized slices. Use the remake’s current code style, registry patterns, data-gen conventions, configs, storage, and networking. If a new feature conflicts with an existing Witchery mechanic, adapt the new feature to the old mechanic rather than replacing the old mechanic.
 
 The target feeling is:
 

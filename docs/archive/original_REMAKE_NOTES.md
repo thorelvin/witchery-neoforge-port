@@ -1,4 +1,4 @@
-# Porting Notes
+# Remake Notes
 
 ## Current target
 - Minecraft: 1.21.11
@@ -31,7 +31,7 @@
 - [x] **M23** — Lycanthropy + 3D werewolf render layer (WerewolfModel: HierarchicalModel from ModelWerewolf 64×64, body hunched PI/9, digitigrade legs, ears/snout/mane/tail; WerewolfLayer: RenderLayer on PlayerRenderer via EntityRenderersEvent.AddLayers; only renders when isWerewolf+fullMoon+isNight; texture=wolfman.png copied from resurrected werewolf.png; API notes: AddLayers.getSkins() returns Set<PlayerSkin.Model> not Set<String> in 1.21.11; renderToBuffer(PoseStack, VertexConsumer, light, overlay) order — PoseStack first) (WerewolfEvents.java: full moon=getMoonPhase()==0; wolf form on full-moon night: Speed III+Strength II+Jump II+Hunger II+NightVision refreshed every 100t; transformationLevel set to 1f on first activation; Curse of the Wolf ritual=LARGE+BONE/BONE_BLOCK; TODO: silver weakness, wolfsbane debuff, howling)
 - [x] **M22** — Vampirism (VampireEvents.java: tick drain 1/100t, igniteForTicks(40) sunburn in daylight+sky+no helmet, blood thresholds 0-50 frenzy/51-150 weak/151-349 night vision/350-500 speed+strength; EntityInteract bite=empty hand+non-player LivingEntity→2 damage+bloodValue; Creatures of the Night ritual=MEDIUM+DEMON_HEART→setVampire+250 blood; API note: setSecondsOnFire→igniteForTicks in 1.21.11)
 - [x] **M21** — Environment & Transport Rituals (7 new rites; SMALL: Transposition=ender_pearl→respawn point, PriorIncarnation=rotten_flesh→recall items from last death within 16b; MEDIUM: SkysWrath=gunpowder→12 real lightning strikes, Sanctity=gold_ingot→repel mobs 25b + Resistance II, Imprisonment=obsidian→Slowness V+Weakness on mobs in 10b; LARGE: MovingEarth=dirt/gravel/sand→raise 5×5 column 5b, BrokenEarth=flint→dig 3-wide 5-deep trench in look direction; WitcheryPlayerData gains lastDeathPos+lastDeathDimension; PoppetEvents LOWEST-priority handler records death pos when not cancelled)
-- [x] **M20** — Familiar Entities (Owl/Cat/Toad custom entities extending TamableAnimal; WitcheryEntities DeferredRegister; OwlModel+ToadModel ported from original 64x32/32x32 UV layouts; CatFamiliarModel simplified cat shape; three MobRenderer subclasses; RiteBindFamiliar via feather/fish/slimeball in SMALL circle; Owl warns of nearby mobs, Toad collects dropped items, Cat avoids Phantoms/Creepers)
+- [x] **M20** — Familiar Entities (Owl/Cat/Toad custom entities extending TamableAnimal; WitcheryEntities DeferredRegister; OwlModel+ToadModel remade from original 64x32/32x32 UV layouts; CatFamiliarModel simplified cat shape; three MobRenderer subclasses; RiteBindFamiliar via feather/fish/slimeball in SMALL circle; Owl warns of nearby mobs, Toad collects dropped items, Cat avoids Phantoms/Creepers)
 - [x] **M19** — Infusion Base System (InfusionType enum; WitcheryPlayerData + SyncPayload updated; 10 new items: 4 brew bases, mystic unguent, flying ointment, happenstance oil, infused brew base + 2 infused brews; 4 kettle recipes; Rite of Infusion dispatches per brew base; InfusionEvents passive tick effects; all item/block textures audited and filled from original assets)
 - [x] **M18** — Taglock Kit + remaining poppets (TaglockKitItem collects UUID+name via right-click; ProtectionPoppetItem with 6 ProtectionTypes; VoodooPoppetItem; VampiricPoppetItem; PoppetEvents handles death prevention across all types + vampiric damage redirect)
 - [x] **M10** — Poppet MVP (right-click player to bind UUID; tooltip shows bound player; death prevention consumes poppet + restores 2 hearts + totem particles)
@@ -173,7 +173,7 @@
 - Screen registered via RegisterMenuScreensEvent on the MOD bus (in WitcheryClient @EventBusSubscriber MOD)
 - Menu type registered via WitcheryMenuTypes.MENU_TYPES.register(modEventBus) in WitcheryMod constructor
 - openMenu(be, pos) pattern: ServerPlayer.openMenu(MenuProvider, Consumer<FriendlyByteBuf>) or the overload ServerPlayer.openMenu(menuProvider, blockPos)
-- Official Witchery site scraped: full rite names, complete item list, dream catcher types, additional brews confirmed — PORTING_PLAN.md updated
+- Official Witchery site scraped: full rite names, complete item list, dream catcher types, additional brews confirmed — REMAKE_PLAN.md updated
 
 ### 2026-05-15 (Crop block fix)
 - CropBlock.createBlockStateDefinition uses the STATIC field CropBlock.AGE (AGE_7), not this.getAgeProperty(). Overriding only getAgeProperty() is not enough — must also override createBlockStateDefinition to register the correct property (AGE_4). The Java constant name (BELLADONNA_AGE etc.) is irrelevant; the property's actual name is "age" (from BlockStateProperties.AGE_4 = IntegerProperty.create("age", 0, 4)). Blockstate JSON variants must use "age=0" through "age=4".
@@ -219,7 +219,7 @@
 - Standard BESR transform: translate(0.5,0.5,0.5) → rotateZ(180) → translate(0,-1,0) → rotateY(-90)
 - noOcclusion() required on all BESR blocks so block below is visible through legs/frame gaps
 - Blocks placed before noOcclusion was set need to be broken and replaced to refresh light
-- Zero-dimension boxes (W=0/H=0/D=0) port correctly to CubeListBuilder; negative UV offsets clamp to 0 and give correct texture sampling (e.g. chalice cup sides)
+- Zero-dimension boxes (W=0/H=0/D=0) remake correctly to CubeListBuilder; negative UV offsets clamp to 0 and give correct texture sampling (e.g. chalice cup sides)
 - LeechChest uses different transform: translate(0,1,1) + scale(1,-1,-1) instead of standard rotateZ pattern
 
 ### 2026-05-15 (M25/M28 — Dimensions)

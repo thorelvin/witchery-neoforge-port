@@ -1,6 +1,6 @@
 # FX Techniques — deliberate visual effects for Witchery
 
-Reusable rendering tricks discovered during the port, written up so we can use them *on purpose*
+Reusable rendering tricks discovered during the remake, written up so we can use them *on purpose*
 later. Each entry: what it looks like, why it happens, how to author it, how to tune it, and where it
 fits the mod's mood.
 

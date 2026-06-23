@@ -1,7 +1,7 @@
 # Witchery Structure Generation Redo
 
 **Target:** Minecraft 1.21.11 / NeoForge 21.11  
-**Project context:** This document is for adding new structure/world-generation gameplay to an already ported Witchery mod. It should extend existing Witchery systems, not redefine Witchery’s core gameplay.
+**Project context:** This document is for adding new structure/world-generation gameplay to an already remade Witchery mod. It should extend existing Witchery systems, not redefine Witchery’s core gameplay.
 
 **Read this first:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This document is supporting detail for structure and worldgen implementation. It should not override the current handoff on scope, naming, or implementation order.
 
@@ -818,7 +818,7 @@ Structure integrations:
 
 ## 14. Current NBT Structure Pipeline
 
-Designer-built structures should enter the port as Minecraft structure NBT whenever the shape is authored in-game. JSON should describe placement, biome tags, structure sets, loot, tags, and small data knobs; it should not be used as a hand-written block-by-block structure format unless the structure is tiny or procedural by nature.
+Designer-built structures should enter the remake as Minecraft structure NBT whenever the shape is authored in-game. JSON should describe placement, biome tags, structure sets, loot, tags, and small data knobs; it should not be used as a hand-written block-by-block structure format unless the structure is tiny or procedural by nature.
 
 Live first slice:
 

@@ -2,7 +2,7 @@
 
 Last curated: 2026-06-23
 
-This is the compact living handoff for the Witchery NeoForge port. Keep it short
+This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
 `docs/archive/CHANGELOG.md` or a focused reference file.
 
@@ -11,10 +11,10 @@ enough to read before starting work. Long historical deltas belong in
 - Minecraft target: `1.21.11`
 - NeoForge target: `21.11.42`
 - Java target: JDK `21`
-- Overall shape: playable active parity port, with many systems implemented and
+- Overall shape: playable active parity remake, with many systems implemented and
   the remaining work concentrated in QA, source-feel polish, edge cases, and
   release hardening.
-- Current estimates from the README: mechanical porting roughly `95-96%`;
+- Current estimates from the README: Mechanical remake parity roughly `95-96%`;
   release-ready parity/polish roughly `82-86%`.
 
 ## Current Focus

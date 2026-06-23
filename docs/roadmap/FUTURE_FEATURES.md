@@ -1,6 +1,6 @@
-# Future Features — Post-Port Expansion
+# Future Features — Post-Remake Expansion
 
-These ideas are for after the faithful 1.7.10-style port is stable. Do not implement during normal port tasks unless explicitly asked.
+These ideas are for after the faithful 1.7.10-style remake is stable. Do not implement during normal remake tasks unless explicitly asked.
 
 **Current scope note:** start with [CURRENT_SCOPE_HANDOFF.md](./CURRENT_SCOPE_HANDOFF.md). This file is backlog-only and should not be used to widen current implementation scope.
 
@@ -278,9 +278,9 @@ Minimum viable version:
 3. Three poses based on nearest altar current-power / max-power ratio.
 4. No altar bonus, no GUI, no redstone output.
 
-## Recommended order after port
+## Recommended order after remake
 
-1. Stabilize port + replace placeholder assets.
+1. Stabilize remake + replace placeholder assets.
 2. Mirror World and reflection system.
 3. Soul essence foundation.
 4. Spirit devices and shell entity.

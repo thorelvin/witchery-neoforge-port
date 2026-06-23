@@ -47,7 +47,7 @@ for players changed. Do not copy every dev-note into them.
 
 ## Reference Docs
 
-- [reference/PORTING_GUIDE.md](reference/PORTING_GUIDE.md) - porting workflow.
+- [reference/REMAKE_GUIDE.md](reference/REMAKE_GUIDE.md) - remake workflow.
 - [reference/API_MAP.md](reference/API_MAP.md) - useful source/API mapping.
 - [reference/DECOMPILED_SOURCES.md](reference/DECOMPILED_SOURCES.md) - source
   research locations.
@@ -64,7 +64,7 @@ today", put it in `status/CURRENT.md` or the changelog instead.
 ## Historical Or Frozen Docs
 
 - [archive/](archive/) - old snapshots and moved history.
-- [reference/PORTING_NOTES.md](reference/PORTING_NOTES.md) - large chronological
+- [reference/REMAKE_NOTES.md](reference/REMAKE_NOTES.md) - large chronological
   implementation log; useful for archaeology, not day-to-day updates.
 - [archive/status/QA_PARITY_PLAN.md](archive/status/QA_PARITY_PLAN.md) - superseded by
   `status/QA_QUEUE.md` for new QA notes.
@@ -79,7 +79,7 @@ today", put it in `status/CURRENT.md` or the changelog instead.
 - [archive/status/PROCESS_SUGGESTIONS.md](archive/status/PROCESS_SUGGESTIONS.md)
   - old process notes; current routing rules live in this index.
 - [wiki_raw/](wiki_raw/) and `wiki_*.md` - scraped/source-reference material.
-  Treat as evidence, not as current port truth.
+  Treat as evidence, not as current remake truth.
 
 ## Update Rules
 
