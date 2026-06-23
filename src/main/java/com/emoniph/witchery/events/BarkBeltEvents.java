@@ -3,6 +3,10 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.BarkBeltItem;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -43,14 +47,23 @@ public final class BarkBeltEvents {
         }
 
         int max = BarkBeltItem.getMaxChargeLevel(player);
+        BarkBeltItem.rememberMaxChargeLevel(belt, max);
         int current = BarkBeltItem.getChargeLevel(belt);
         if (current >= max) {
             return;
         }
 
-        BarkBeltItem.setChargeLevel(belt, Math.min(current + 1, max));
+        int next = Math.min(current + 1, max);
+        BarkBeltItem.setChargeLevel(belt, next, max);
         player.level().playSound(null, player.blockPosition(), SoundEvents.WOOD_PLACE,
                 SoundSource.PLAYERS, 0.35F, 0.8F + player.getRandom().nextFloat() * 0.3F);
+        if (player.level() instanceof ServerLevel level) {
+            level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                    player.getX(), player.getY() + 0.15D, player.getZ(),
+                    5, 0.25D, 0.05D, 0.25D, 0.0D);
+        }
+        player.displayClientMessage(Component.translatable("item.witchery.bark_belt.recharge", next, max)
+                .withStyle(ChatFormatting.DARK_GREEN), true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -67,15 +80,19 @@ public final class BarkBeltEvents {
             return;
         }
 
-        int current = Math.min(BarkBeltItem.getChargeLevel(belt), BarkBeltItem.getMaxChargeLevel(player));
+        int max = BarkBeltItem.getMaxChargeLevel(player);
+        BarkBeltItem.rememberMaxChargeLevel(belt, max);
+        int current = Math.min(BarkBeltItem.getChargeLevel(belt), max);
         if (current <= 0) {
             return;
         }
 
         int cost = current > 1 && player.getRandom().nextDouble() < 0.25 ? 2 : 1;
-        BarkBeltItem.setChargeLevel(belt, Math.max(current - cost, 0));
+        BarkBeltItem.setChargeLevel(belt, Math.max(current - cost, 0), max);
         event.setNewDamage(0.0F);
         dropSpentBark(player, cost);
+        player.displayClientMessage(Component.translatable("item.witchery.bark_belt.block", Math.max(current - cost, 0), max)
+                .withStyle(ChatFormatting.DARK_GREEN), true);
     }
 
     private static boolean isRechargeBlockBelow(ServerPlayer player) {
@@ -109,5 +126,10 @@ public final class BarkBeltEvents {
         }
         player.level().playSound(null, player.blockPosition(), SoundEvents.WOOD_HIT,
                 SoundSource.PLAYERS, 0.45F, 0.8F + player.getRandom().nextFloat() * 0.2F);
+        if (player.level() instanceof ServerLevel level) {
+            level.sendParticles(ParticleTypes.CRIT,
+                    player.getX(), player.getY() + 1.0D, player.getZ(),
+                    10, 0.35D, 0.45D, 0.35D, 0.05D);
+        }
     }
 }

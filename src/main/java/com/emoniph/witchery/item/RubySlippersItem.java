@@ -8,6 +8,7 @@ import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -221,9 +222,17 @@ public class RubySlippersItem extends Item {
     }
 
     private static void teleportTo(ServerPlayer player, ServerLevel dest, BlockPos safe) {
+        if (player.level() instanceof ServerLevel source) {
+            source.sendParticles(ParticleTypes.PORTAL,
+                    player.getX(), player.getY() + 0.8D, player.getZ(),
+                    24, 0.35D, 0.45D, 0.35D, 0.08D);
+        }
         dest.playSound(null, safe, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
         player.teleportTo(dest, safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5,
                 java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+        dest.sendParticles(ParticleTypes.WITCH,
+                safe.getX() + 0.5D, safe.getY() + 0.8D, safe.getZ() + 0.5D,
+                18, 0.25D, 0.4D, 0.25D, 0.0D);
     }
 
     private static boolean spendInfusionEnergy(ServerPlayer player, int amount) {

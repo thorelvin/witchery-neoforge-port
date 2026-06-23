@@ -4,12 +4,19 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.SpectreEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -104,6 +111,9 @@ public class FetishBlockEntity extends BlockEntity {
         boolean raiseAlarm = false;
 
         for (Player player : players) {
+            if (player.isSpectator() || !player.isAlive()) {
+                continue;
+            }
             boolean inList = be.knownPlayers.contains(player.getName().getString())
                     || be.knownPlayers.contains(player.getGameProfile().name());
             boolean trigger = switch (be.alarmMode) {
@@ -143,46 +153,77 @@ public class FetishBlockEntity extends BlockEntity {
             }
             case EFFECT_SENTINEL -> applysentinel(level, pos, targets);
             case EFFECT_SHRIEKING -> applyShrieking(level, pos);
-            case EFFECT_DISORIENTATION -> applyDisorientation(targets);
+            case EFFECT_DISORIENTATION -> applyDisorientation(level, pos, targets);
             case EFFECT_GHOST_WALKING -> applyGhostWalking(targets);
         }
     }
 
     private void applysentinel(Level level, BlockPos pos, List<LivingEntity> targets) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
         for (LivingEntity target : targets) {
             int count = targets.size() > 1 ? 1 : 2;
             for (int i = 0; i < count; i++) {
                 SpectreEntity spectre = WitcheryEntities.SPECTRE.get().create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
                 if (spectre != null) {
                     spectre.setPos(target.getX(), target.getY(), target.getZ());
-                    spectre.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
-                            ((net.minecraft.server.level.ServerLevel) level).getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
+                    spectre.finalizeSpawn(serverLevel,
+                            serverLevel.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
                     spectre.setTarget(target);
                     level.addFreshEntity(spectre);
                 }
             }
         }
+        serverLevel.playSound(null, pos, SoundEvents.VEX_AMBIENT, SoundSource.BLOCKS, 0.55F, 0.8F);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5D, pos.getY() + 0.7D, pos.getZ() + 0.5D,
+                16, 0.35D, 0.35D, 0.35D, 0.0D);
     }
 
     private void applyShrieking(Level level, BlockPos pos) {
-        level.playSound(null,
-                pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5,
-                net.minecraft.sounds.SoundEvents.WITHER_AMBIENT,
-                net.minecraft.sounds.SoundSource.BLOCKS,
-                0.5f, 1.4f);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.WITCH,
+                    pos.getX() + 0.5D, pos.getY() + 0.3D, pos.getZ() + 0.5D,
+                    8, 0.2D, 0.2D, 0.2D, 0.0D);
+        }
+        if (!level.getBlockState(pos).is(WitcheryBlocks.FETISH_WITCHS_LADDER.get())) {
+            level.playSound(null,
+                    pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5,
+                    SoundEvents.WITHER_AMBIENT,
+                    SoundSource.BLOCKS,
+                    0.5f, 1.4f);
+        }
     }
 
-    private void applyDisorientation(List<LivingEntity> targets) {
+    private void applyDisorientation(Level level, BlockPos pos, List<LivingEntity> targets) {
         for (LivingEntity entity : targets) {
             if (!(entity instanceof Player player)) continue;
             // Only affect armed or armored players (matching original "threat" detection)
             boolean armed = !player.getMainHandItem().isEmpty();
             boolean armored = player.getArmorValue() > 0;
             if (armed || armored) {
-                player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
-                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 80, 0));
+                turnPlayerFromFetish(player, pos);
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.PORTAL,
+                            player.getX(), player.getY() + 0.9D, player.getZ(),
+                            8, 0.25D, 0.35D, 0.25D, 0.02D);
+                }
             }
         }
+    }
+
+    private void turnPlayerFromFetish(Player player, BlockPos pos) {
+        if (!(player instanceof ServerPlayer serverPlayer) || !(player.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        double yawRadians = Math.atan2(
+                player.getZ() - (pos.getZ() + 0.5D),
+                player.getX() - (pos.getX() + 0.5D));
+        float yaw = Mth.wrapDegrees((float) Math.toDegrees(yawRadians) + 270.0F);
+        serverPlayer.teleportTo(serverLevel, player.getX(), player.getY(), player.getZ(),
+                java.util.Set.of(), yaw, player.getXRot(), false);
     }
 
     private void applyGhostWalking(List<LivingEntity> targets) {

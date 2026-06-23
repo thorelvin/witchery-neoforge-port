@@ -6,10 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -106,18 +108,20 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         sync();
     }
 
-    public void storePlayer(Player player) {
+    public boolean storePlayer(Player player) {
         if (level == null || level.isClientSide() || player == null) {
-            return;
+            return false;
         }
         UUID uuid = player.getUUID();
         String name = player.getName().getString();
         if (hasStoredPlayer(uuid, name)) {
-            return;
+            return false;
         }
 
         addStoredPlayer(uuid, name);
         sync();
+        playStoredFeedback();
+        return true;
     }
 
     public LeechChestDrainResult drainStoredPlayerExcept(Player usingPlayer) {
@@ -144,6 +148,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             if (onlinePlayer != null && onlinePlayer.isAlive()) {
                 removeStoredPlayer(i);
                 sync();
+                playDrainFeedback();
                 return LeechChestDrainResult.success(onlinePlayer.getUUID(), onlinePlayer.getName().getString());
             }
 
@@ -206,6 +211,28 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             BlockState state = getBlockState();
             level.sendBlockUpdated(worldPosition, state, state, 3);
         }
+    }
+
+    private void playStoredFeedback() {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.BLOCKS, 0.25f, 0.55f);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                worldPosition.getX() + 0.5D, worldPosition.getY() + 0.75D, worldPosition.getZ() + 0.5D,
+                4, 0.18D, 0.12D, 0.18D, 0.0D);
+    }
+
+    private void playDrainFeedback() {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, worldPosition, SoundEvents.SILVERFISH_HURT,
+                SoundSource.BLOCKS, 0.35f, 0.75f);
+        serverLevel.sendParticles(ParticleTypes.POOF,
+                worldPosition.getX() + 0.5D, worldPosition.getY() + 0.8D, worldPosition.getZ() + 0.5D,
+                8, 0.22D, 0.18D, 0.22D, 0.01D);
     }
 
     public int getOpenCount() {

@@ -179,6 +179,8 @@ public class SeerStoneItem extends Item {
                             .withStyle(ChatFormatting.RED),
                     false);
         }
+
+        playReadEffects(reader, target);
     }
 
     private static List<String> describeTrackedCurses(ServerPlayer target, WitcheryPlayerData data) {
@@ -214,6 +216,7 @@ public class SeerStoneItem extends Item {
 
         AABB bounds = player.getBoundingBox().inflate(COVEN_CALL_RADIUS_XZ, COVEN_CALL_RADIUS_Y, COVEN_CALL_RADIUS_XZ);
         List<CovenWitchEntity> witches = new ArrayList<>(level.getEntitiesOfClass(CovenWitchEntity.class, bounds));
+        witches.removeIf(witch -> !witch.isRecruitedBy(player));
         if (witches.isEmpty()) {
             level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.6f, 0.7f);
             player.displayClientMessage(Component.translatable("item.witchery.seer_stone.noanswer")
@@ -238,6 +241,22 @@ public class SeerStoneItem extends Item {
         level.playSound(null, summonPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1.0f, 1.15f);
         player.displayClientMessage(Component.translatable("item.witchery.seer_stone.call")
                 .withStyle(ChatFormatting.GREEN), false);
+    }
+
+    private static void playReadEffects(ServerPlayer reader, ServerPlayer target) {
+        if (!(reader.level() instanceof ServerLevel level)) {
+            return;
+        }
+        level.playSound(null, reader.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.45f, target == reader ? 1.15f : 1.35f);
+        level.sendParticles(ParticleTypes.WITCH,
+                target.getX(), target.getY() + target.getBbHeight() * 0.65D, target.getZ(),
+                10, 0.25D, 0.35D, 0.25D, 0.0D);
+        if (target != reader) {
+            level.sendParticles(ParticleTypes.PORTAL,
+                    reader.getX(), reader.getY() + 0.9D, reader.getZ(),
+                    8, 0.25D, 0.35D, 0.25D, 0.02D);
+        }
     }
 
     @Nullable

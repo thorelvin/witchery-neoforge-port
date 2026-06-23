@@ -1306,11 +1306,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "Stone, a Necromantic Stone, and a Boline, then sacrifice the required spirits near "
                         + "the circle. The rite binds them to the vessel."));
         fetishes.addAll(WitcheryBooks.prose("What a Fetish Does",
-                "**Voodoo Protection** makes carried protection poppets more effective nearby. **Sentinel** "
+                "**Voodoo Protection** makes Voodoo Protection Poppets endure more hostile poppet "
+                        + "pressure nearby. **Sentinel** "
                         + "sends spectres against uninvited guests. **Shrieking** emits a redstone pulse and a "
-                        + "banshee's cry. **Disorientation** leaves armed or armored trespassers with "
-                        + "unreliable senses. **Ghost Walking** spares those walking the spirit world nearby "
-                        + "from being hurried back."
+                        + "banshee's cry. **Disorientation** turns armed or armored trespassers around and "
+                        + "leaves them sickened. **Ghost Walking** spares those walking the spirit world "
+                        + "nearby from being hurried back."
                         + "\n\nUse a Boline to cycle the trigger mode, and a Taglock Kit to say who counts as "
                         + "an intruder."));
 

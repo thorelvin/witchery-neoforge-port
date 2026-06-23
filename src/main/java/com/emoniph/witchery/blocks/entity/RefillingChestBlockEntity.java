@@ -3,9 +3,12 @@ package com.emoniph.witchery.blocks.entity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,6 +109,11 @@ public class RefillingChestBlockEntity extends ChestBlockEntity {
         }
 
         setChanged();
+        serverLevel.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.BLOCKS, 0.45F, 0.75F);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5D, pos.getY() + 0.8D, pos.getZ() + 0.5D,
+                10, 0.25D, 0.2D, 0.25D, 0.0D);
     }
 
     @Override

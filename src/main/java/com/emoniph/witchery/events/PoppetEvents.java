@@ -1,6 +1,7 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.entity.FetishBlockEntity;
 import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.WitchHunterEntity;
@@ -382,8 +383,21 @@ public class PoppetEvents {
     public static boolean damageBoundPoppet(ServerPlayer player, Item poppetItem, int amount) {
         PoppetLocation location = findFirstBoundPoppet(player, stack -> stack.is(poppetItem));
         if (location == null) return false;
-        damagePoppet(location, amount);
+        damagePoppet(location, adjustedPoppetDamage(player, poppetItem, amount));
         return true;
+    }
+
+    private static int adjustedPoppetDamage(ServerPlayer player, Item poppetItem, int amount) {
+        if (poppetItem == WitcheryItems.VOODOO_PROTECTION_POPPET.get()
+                && FetishBlockEntity.isNearFetish(player, FetishBlockEntity.EFFECT_VOODOO_PROTECTION)) {
+            if (player.level() instanceof ServerLevel level) {
+                level.sendParticles(ParticleTypes.WITCH,
+                        player.getX(), player.getY() + 1.0D, player.getZ(),
+                        8, 0.3D, 0.4D, 0.3D, 0.0D);
+            }
+            return Math.max(1, amount / 2);
+        }
+        return amount;
     }
 
     public static int destroyBoundPoppets(ServerPlayer player, Item poppetItem, int amount, int maxCount) {

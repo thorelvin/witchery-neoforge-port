@@ -120,6 +120,10 @@ public final class ParasyticLouseEvents {
         LivingEntity target = chooseBitingBeltTarget(selected, player, attacker);
         target.addEffect(new MobEffectInstance(selected));
         playBiteEffects((ServerLevel) player.level(), target, player);
+        player.displayClientMessage(Component.translatable(target == player
+                        ? "item.witchery.biting_belt.self"
+                        : "item.witchery.biting_belt.attacker")
+                .withStyle(ChatFormatting.DARK_PURPLE), true);
         setBitingBeltEffects(belt, remaining);
         applyBiteCost(player);
     }

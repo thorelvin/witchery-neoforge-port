@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 @SuppressWarnings({"deprecation", "removal"})
 public class BarkBeltItem extends Item {
     private static final String TAG_BARK_PIECES = "witchery_bark_pieces";
+    private static final String SOURCE_TAG_BARK_PIECES = "WITCBarkPieces";
+    private static final String TAG_BARK_CAPACITY = "witchery_bark_capacity";
     private static final int CHARGE_PER_WITCHERY_CLOTHING_PIECE = 2;
 
     public BarkBeltItem(Properties properties) {
@@ -28,13 +30,34 @@ public class BarkBeltItem extends Item {
     }
 
     public static int getChargeLevel(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag()
-                .getIntOr(TAG_BARK_PIECES, 0);
+        var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return Math.max(0, tag.getIntOr(TAG_BARK_PIECES, tag.getIntOr(SOURCE_TAG_BARK_PIECES, 0)));
     }
 
     public static void setChargeLevel(ItemStack stack, int level) {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TAG_BARK_PIECES, Math.max(0, level)));
+        setChargeLevel(stack, level, getKnownMaxChargeLevel(stack));
+    }
+
+    public static void setChargeLevel(ItemStack stack, int level, int maxLevel) {
+        int capacity = Math.max(CHARGE_PER_WITCHERY_CLOTHING_PIECE, maxLevel);
+        int charge = Math.min(Math.max(0, level), capacity);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putInt(TAG_BARK_PIECES, charge);
+            tag.putInt(SOURCE_TAG_BARK_PIECES, charge);
+            tag.putInt(TAG_BARK_CAPACITY, capacity);
+        });
+    }
+
+    public static void rememberMaxChargeLevel(ItemStack stack, int maxLevel) {
+        int capacity = Math.max(CHARGE_PER_WITCHERY_CLOTHING_PIECE, maxLevel);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TAG_BARK_CAPACITY, capacity));
+    }
+
+    public static int getKnownMaxChargeLevel(ItemStack stack) {
+        return Math.max(CHARGE_PER_WITCHERY_CLOTHING_PIECE, stack
+                .getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag()
+                .getIntOr(TAG_BARK_CAPACITY, CHARGE_PER_WITCHERY_CLOTHING_PIECE));
     }
 
     public static int getMaxChargeLevel(LivingEntity entity) {
@@ -67,8 +90,8 @@ public class BarkBeltItem extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return Math.round(13.0F * Math.min(getChargeLevel(stack), CHARGE_PER_WITCHERY_CLOTHING_PIECE)
-                / (float) CHARGE_PER_WITCHERY_CLOTHING_PIECE);
+        int max = getKnownMaxChargeLevel(stack);
+        return Math.round(13.0F * Math.min(getChargeLevel(stack), max) / (float) max);
     }
 
     @Override
@@ -81,6 +104,6 @@ public class BarkBeltItem extends Item {
                                 net.minecraft.world.item.component.TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.accept(Component.translatable("item.witchery.bark_belt.tip",
-                getChargeLevel(stack), CHARGE_PER_WITCHERY_CLOTHING_PIECE).withStyle(ChatFormatting.GRAY));
+                getChargeLevel(stack), getKnownMaxChargeLevel(stack)).withStyle(ChatFormatting.GRAY));
     }
 }

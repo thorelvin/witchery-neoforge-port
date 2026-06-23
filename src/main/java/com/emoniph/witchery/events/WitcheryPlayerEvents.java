@@ -547,6 +547,8 @@ public class WitcheryPlayerEvents {
         if (!WitcheryItems.isIcySlippers(shoes)) return;
 
         int y = Mth.floor(player.getY() - 1.0D);
+        boolean frozeWater = false;
+        boolean hardenedLava = false;
         for (int i = 0; i < 4; i++) {
             int x = Mth.floor(player.getX() + (double) ((i % 2 * 2 - 1) * 0.5F));
             int z = Mth.floor(player.getZ() + (double) (((i / 2) % 2 * 2 - 1) * 0.5F));
@@ -555,12 +557,23 @@ public class WitcheryPlayerEvents {
 
             if (state.is(Blocks.WATER)) {
                 level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+                frozeWater = true;
             } else if (state.is(Blocks.LAVA)) {
                 level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+                hardenedLava = true;
                 if (level.random.nextInt(10) == 0) {
                     shoes.hurtAndBreak(1, player, EquipmentSlot.FEET);
                 }
             }
+        }
+        if (frozeWater || hardenedLava) {
+            level.playSound(null, player.blockPosition(),
+                    hardenedLava ? net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH : net.minecraft.sounds.SoundEvents.GLASS_PLACE,
+                    net.minecraft.sounds.SoundSource.PLAYERS, 0.35F, hardenedLava ? 1.5F : 1.25F);
+            level.sendParticles(hardenedLava ? net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE
+                            : net.minecraft.core.particles.ParticleTypes.CLOUD,
+                    player.getX(), player.getY() + 0.1D, player.getZ(),
+                    hardenedLava ? 6 : 4, 0.25D, 0.05D, 0.25D, 0.0D);
         }
     }
 
@@ -758,6 +771,7 @@ public class WitcheryPlayerEvents {
         if (!removed) return;
 
         BlockPos center = player.blockPosition();
+        int grown = 0;
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-3, -1, -3), center.offset(3, 1, 3))) {
             int dx = pos.getX() - center.getX();
             int dz = pos.getZ() - center.getZ();
@@ -769,8 +783,14 @@ public class WitcheryPlayerEvents {
                     && bonemealable.isValidBonemealTarget(level, pos, state)
                     && bonemealable.isBonemealSuccess(level, level.random, pos, state)) {
                 bonemealable.performBonemeal(level, level.random, pos, state);
+                grown++;
             }
         }
+        level.playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.GRASS_PLACE,
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.45F, 0.9F + level.random.nextFloat() * 0.25F);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER,
+                player.getX(), player.getY() + 0.2D, player.getZ(),
+                Math.max(6, Math.min(18, grown + 6)), 0.35D, 0.08D, 0.35D, 0.0D);
     }
 
     private static void tickDemonicNightmare(ServerPlayer player, ServerLevel spiritWorld) {
