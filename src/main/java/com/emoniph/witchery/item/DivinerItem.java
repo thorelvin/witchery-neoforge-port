@@ -18,8 +18,12 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class DivinerItem extends Item {
     private static final int MAX_USE_TICKS = 400;
@@ -50,7 +54,7 @@ public class DivinerItem extends Item {
         if (level.isClientSide() || !(livingEntity instanceof Player player)) return;
 
         int elapsedTicks = getUseDuration(stack, livingEntity) - remainingUseDuration;
-        HitResult hit = player.pick(6.0, 1.0f, false);
+        HitResult hit = pickDiviningTarget(player, 6.0);
 
         if (!(hit instanceof BlockHitResult blockHit) || blockHit.getDirection() != Direction.UP) {
             player.playSound(SoundEvents.NOTE_BLOCK_SNARE.value(), 0.5f, 1.0f);
@@ -82,5 +86,23 @@ public class DivinerItem extends Item {
                     ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
             stack.hurtAndBreak(1, player, slot);
         }
+    }
+
+    private static HitResult pickDiviningTarget(Player player, double range) {
+        HitResult blockHit = player.pick(range, 1.0f, true);
+        Vec3 eye = player.getEyePosition(1.0F);
+        Vec3 reach = player.getViewVector(1.0F).scale(range);
+        AABB searchBox = player.getBoundingBox().expandTowards(reach).inflate(1.0D);
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(player, eye, eye.add(reach), searchBox,
+                entity -> entity != player && entity.isPickable(), range * range);
+        if (entityHit == null) {
+            return blockHit;
+        }
+        if (blockHit.getType() == HitResult.Type.MISS) {
+            return entityHit;
+        }
+        return entityHit.getLocation().distanceToSqr(eye) < blockHit.getLocation().distanceToSqr(eye)
+                ? entityHit
+                : blockHit;
     }
 }

@@ -261,9 +261,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Not specified in the provided text.
 
 ## Lava Diviner
-- **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Obtain:** This is an item, crafted from a Water Diviner and Blaze Rods.
+- **Function:** Hold use while aiming at the top face of a block or lava surface to scan straight down for lava.
+- **Notes:** See `docs/wiki_items.md` for the full item behavior.
 
 ## Leech Chest
 - **Obtain:** Not specified in the provided text.
@@ -481,9 +481,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Not specified in the provided text.
 
 ## Water Diviner
-- **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Obtain:** This is an item, crafted from sticks, Water Potions, and a Tear of the Goddess.
+- **Function:** Hold use while aiming at the top face of a block or water surface to scan straight down for water.
+- **Notes:** See `docs/wiki_items.md` for the full item behavior.
 
 ## Waystone
 - **Obtain:** Crafted using a stone, an eye of ender, and a compass.

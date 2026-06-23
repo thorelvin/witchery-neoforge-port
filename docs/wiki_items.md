@@ -444,10 +444,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No known crafting uses.
 
 ## Lava Diviner
-- **Obtain:** Crafting recipe not provided.
-- **Use:** Used to divine sources of lava. Exudes blue-green particles if lava is beneath the block, black particles otherwise. Durability is used.
-- **Stats:** None
-- **Notes:** No known crafting uses.
+- **Obtain:** Crafted from a Water Diviner and Blaze Rods.
+- **Use:** Hold use while aiming at the top face of a block or lava surface. It scans straight down from that column, one block per tick, and gives magic-crit/orb feedback if lava is found before bedrock or the bottom of the world. Smoke and a snare note mean no lava was found.
+- **Stats:** Durability 50.
+- **Notes:** A completed scan costs 1 durability. Invalid aim, including a closer pickable entity blocking the line, fizzles without spending durability.
 
 ## Leech Chest
 - **Obtain:** Mutated from a Trapped Chest with Vines and Water source blocks using a Mutating Sprig.
@@ -817,10 +817,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Configurable in Witchery mod settings.
 
 ## Water Diviner
-- **Obtain:** Not specified.
-- **Use:** Detects water sources beneath the block the player is standing on, exuding black particles if water is present. Does not use durability if no water is detected.
-- **Stats:** None.
-- **Notes:** Can be used to create Lava Diviner and Water Sigil.
+- **Obtain:** Crafted from sticks, Water Potions, and a Tear of the Goddess.
+- **Use:** Hold use while aiming at the top face of a block or water surface. It scans straight down from that column, one block per tick, and gives magic-crit/orb feedback if water is found before bedrock or the bottom of the world. Smoke and a snare note mean no water was found.
+- **Stats:** Durability 50.
+- **Notes:** A completed scan costs 1 durability. Invalid aim, including a closer pickable entity blocking the line, fizzles without spending durability. Can be used to create Lava Diviner and Water Sigil.
 
 ## Waystone
 - **Obtain:** Not specified.
