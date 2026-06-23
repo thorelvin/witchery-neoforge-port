@@ -3,7 +3,11 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +34,7 @@ public class PoppetShelfCompassItem extends Item {
 
         Optional<ShelfSignal> signal = findNearestShelf(level, player);
         if (signal.isEmpty()) {
+            playCompassFail(level, player);
             player.displayClientMessage(Component.translatable("witchery.poppet_shelf_compass.none")
                     .withStyle(ChatFormatting.GRAY), false);
             return InteractionResult.SUCCESS;
@@ -43,6 +48,7 @@ public class PoppetShelfCompassItem extends Item {
         player.displayClientMessage(Component.translatable("witchery.poppet_shelf_compass.locate",
                 distance, direction, Component.translatable("witchery.poppet_shelf_compass.signal." + nearest.band()))
                 .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        playShelfSignal(level, player, nearest);
         return InteractionResult.SUCCESS;
     }
 
@@ -128,6 +134,31 @@ public class PoppetShelfCompassItem extends Item {
             return "N";
         }
         return "NE";
+    }
+
+    private static void playCompassFail(Level level, Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
+                SoundSource.PLAYERS, 0.45F, 0.7F);
+        serverLevel.sendParticles(ParticleTypes.SMOKE,
+                player.getX(), player.getY() + 0.8D, player.getZ(),
+                6, 0.18D, 0.2D, 0.18D, 0.01D);
+    }
+
+    private static void playShelfSignal(Level level, Player player, ShelfSignal signal) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.55F, 1.2F + signal.band() * 0.06F);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                player.getX(), player.getY() + 0.85D, player.getZ(),
+                8 + signal.band(), 0.22D, 0.28D, 0.22D, 0.02D);
+        serverLevel.sendParticles(ParticleTypes.ENCHANT,
+                signal.pos().getX() + 0.5D, signal.pos().getY() + 0.75D, signal.pos().getZ() + 0.5D,
+                8, 0.35D, 0.35D, 0.35D, 0.02D);
     }
 
     private record ShelfSignal(BlockPos pos, double distanceSq, int band) {

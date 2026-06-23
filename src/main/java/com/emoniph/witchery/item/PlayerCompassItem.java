@@ -2,10 +2,13 @@ package com.emoniph.witchery.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -55,6 +58,7 @@ public class PlayerCompassItem extends Item {
         }
 
         bind(stack, targetPlayer);
+        playBindEffects(user, targetPlayer);
         user.displayClientMessage(Component.translatable("witchery.player_compass.bound", targetPlayer.getName())
                 .withStyle(ChatFormatting.GREEN), false);
         return InteractionResult.CONSUME;
@@ -68,6 +72,7 @@ public class PlayerCompassItem extends Item {
         }
 
         if (!isBound(stack)) {
+            playCompassFail(level, user);
             user.displayClientMessage(Component.translatable("witchery.player_compass.unbound")
                     .withStyle(ChatFormatting.GRAY), false);
             return InteractionResult.PASS;
@@ -80,12 +85,14 @@ public class PlayerCompassItem extends Item {
 
         ServerPlayer target = ((ServerLevel) level).getServer().getPlayerList().getPlayer(targetUUID);
         if (target == null) {
+            playCompassFail(level, user);
             user.displayClientMessage(Component.translatable("witchery.player_compass.offline", getBoundName(stack))
                     .withStyle(ChatFormatting.GRAY), false);
             return InteractionResult.SUCCESS;
         }
 
         if (target.level() != level) {
+            playCompassFail(level, user);
             user.displayClientMessage(Component.translatable("witchery.player_compass.other_dimension", getBoundName(stack))
                     .withStyle(ChatFormatting.GRAY), false);
             return InteractionResult.SUCCESS;
@@ -97,6 +104,7 @@ public class PlayerCompassItem extends Item {
 
         user.displayClientMessage(Component.translatable("witchery.player_compass.locate",
                 getBoundName(stack), dist, cardinal).withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        playLocateEffects((ServerLevel) level, user, target);
         return InteractionResult.SUCCESS;
     }
 
@@ -197,5 +205,43 @@ public class PlayerCompassItem extends Item {
             return "N";
         }
         return "NE";
+    }
+
+    private static void playBindEffects(Player user, Player target) {
+        if (!(user.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, user.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.6F, 1.15F);
+        serverLevel.sendParticles(ParticleTypes.ENCHANT,
+                user.getX(), user.getY() + 0.85D, user.getZ(),
+                12, 0.25D, 0.3D, 0.25D, 0.02D);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                target.getX(), target.getY() + 0.85D, target.getZ(),
+                8, 0.22D, 0.28D, 0.22D, 0.02D);
+    }
+
+    private static void playLocateEffects(ServerLevel level, Player user, ServerPlayer target) {
+        level.playSound(null, user.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.45F, 1.45F);
+        level.sendParticles(ParticleTypes.WITCH,
+                user.getX(), user.getY() + 0.85D, user.getZ(),
+                8, 0.22D, 0.28D, 0.22D, 0.02D);
+        if (user.distanceToSqr(target) < 4096.0D) {
+            level.sendParticles(ParticleTypes.ENCHANT,
+                    target.getX(), target.getY() + 0.85D, target.getZ(),
+                    6, 0.25D, 0.3D, 0.25D, 0.02D);
+        }
+    }
+
+    private static void playCompassFail(Level level, Player user) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, user.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
+                SoundSource.PLAYERS, 0.45F, 0.7F);
+        serverLevel.sendParticles(ParticleTypes.SMOKE,
+                user.getX(), user.getY() + 0.8D, user.getZ(),
+                6, 0.18D, 0.2D, 0.18D, 0.01D);
     }
 }

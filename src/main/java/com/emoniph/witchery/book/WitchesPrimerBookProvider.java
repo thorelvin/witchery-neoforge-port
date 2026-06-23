@@ -1399,8 +1399,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "to a giant, harder still to fell."));
         leonard.addAll(WitcheryBooks.prose("Reward",
                 "A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its "
-                        + "precise uses await further investigation — but the standing it confers among "
-                        + "creatures of the night is real."));
+                        + "use is concrete enough: store thrown brews from your other hand, sneak-use to "
+                        + "change focus, then release the chosen brew without spending the stored focus. "
+                        + "The Mystic Branch's four urn glyphs draw from those same focuses."));
 
         cat.withEntries(
                 entry(cat, "conjuration/brazier", "The Brazier", WitcheryItems.BRAZIER.get(), 0, brazier),
@@ -1607,7 +1608,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "applies strong slowness. Right-click to open or close it."));
         traps.add(recipe("wolftrap", "Wolftrap",
                 "Upgrade a Beartrap with Silver, Null Catalysts, and Wolfsbane. Werewolves trigger it; "
-                        + "others do not. It drops nothing when broken."));
+                        + "others do not. Beside a Wolf Altar, with a leashed sheep close by, an open "
+                        + "Wolftrap can lure a Wolfman on the full moon; catching that beast makes it "
+                        + "infectious. It drops nothing when broken."));
 
         cat.withEntries(
                 entry(cat, "creatures/familiars", "Familiars", WitcheryItems.OWL_SPAWN_EGG.get(), 0, familiars),

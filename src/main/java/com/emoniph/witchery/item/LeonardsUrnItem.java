@@ -3,9 +3,11 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.entity.ThrownBrewEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -112,6 +114,7 @@ public class LeonardsUrnItem extends Item {
         }
         player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.stored",
                 stored.getHoverName()), true);
+        playUrnStoreEffects(player);
     }
 
     private static void castStoredBrew(Level level, Player player, ItemStack urn) {
@@ -121,6 +124,7 @@ public class LeonardsUrnItem extends Item {
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5f, 1.0f);
+            playUrnFailEffects(level, player);
             return;
         }
 
@@ -134,6 +138,7 @@ public class LeonardsUrnItem extends Item {
         }
         projectile.shootFromSourceThrower(player);
         level.addFreshEntity(projectile);
+        playUrnCastEffects(level, player);
         player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
                 stored.getHoverName()), true);
     }
@@ -151,6 +156,7 @@ public class LeonardsUrnItem extends Item {
             ItemStack stored = getStored(urn, slot);
             if (!ThrowableBrewSupport.isThrowableBrew(stored)) {
                 player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
+                playUrnFailEffects(level, player);
                 return false;
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -163,7 +169,7 @@ public class LeonardsUrnItem extends Item {
             }
             projectile.shootFromSourceThrower(player);
             level.addFreshEntity(projectile);
-            setStored(urn, slot, ItemStack.EMPTY);
+            playUrnCastEffects(level, player);
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
                     stored.getHoverName()), true);
             return true;
@@ -173,6 +179,38 @@ public class LeonardsUrnItem extends Item {
 
     private static boolean isStorableBrew(ItemStack stack) {
         return ThrowableBrewSupport.isThrowableBrew(stack);
+    }
+
+    private static void playUrnStoreEffects(Player player) {
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.45F, 0.85F);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                10, 0.25D, 0.35D, 0.25D, 0.02D);
+    }
+
+    private static void playUrnCastEffects(Level level, Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.sendParticles(ParticleTypes.PORTAL,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                18, 0.25D, 0.45D, 0.25D, 0.08D);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                8, 0.18D, 0.25D, 0.18D, 0.02D);
+    }
+
+    private static void playUrnFailEffects(Level level, Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.sendParticles(ParticleTypes.SMOKE,
+                player.getX(), player.getY() + 0.8D, player.getZ(),
+                6, 0.18D, 0.2D, 0.18D, 0.01D);
     }
 
     private static int firstAvailableSlot(ItemStack urn) {

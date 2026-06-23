@@ -1,8 +1,14 @@
 package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -63,6 +69,11 @@ public final class ParasyticLouseEvents {
             }
 
             contents.applyToLivingEntity(target, 1.0F);
+            playBiteEffects((ServerLevel) player.level(), target, player);
+            player.displayClientMessage(Component.translatable(target == player
+                            ? "witchery.parasytic_louse.hotbar.self"
+                            : "witchery.parasytic_louse.hotbar.attacker")
+                    .withStyle(ChatFormatting.DARK_PURPLE), true);
             stack.remove(DataComponents.POTION_CONTENTS);
             player.getInventory().setChanged();
             applyBiteCost(player);
@@ -106,7 +117,9 @@ public final class ParasyticLouseEvents {
             return;
         }
 
-        chooseBitingBeltTarget(selected, player, attacker).addEffect(new MobEffectInstance(selected));
+        LivingEntity target = chooseBitingBeltTarget(selected, player, attacker);
+        target.addEffect(new MobEffectInstance(selected));
+        playBiteEffects((ServerLevel) player.level(), target, player);
         setBitingBeltEffects(belt, remaining);
         applyBiteCost(player);
     }
@@ -145,6 +158,19 @@ public final class ParasyticLouseEvents {
             player.hurt(player.damageSources().magic(), 1.0F);
         } finally {
             SELF_BITE_DAMAGE.remove(player.getUUID());
+        }
+    }
+
+    private static void playBiteEffects(ServerLevel level, LivingEntity target, LivingEntity source) {
+        level.playSound(null, target.blockPosition(), SoundEvents.SILVERFISH_HURT,
+                SoundSource.PLAYERS, 0.65F, 0.7F);
+        level.sendParticles(ParticleTypes.WITCH,
+                target.getX(), target.getY() + 0.6D, target.getZ(),
+                14, 0.25D, 0.35D, 0.25D, 0.02D);
+        if (source != target) {
+            level.sendParticles(ParticleTypes.POOF,
+                    source.getX(), source.getY() + 0.7D, source.getZ(),
+                    6, 0.2D, 0.25D, 0.2D, 0.01D);
         }
     }
 }

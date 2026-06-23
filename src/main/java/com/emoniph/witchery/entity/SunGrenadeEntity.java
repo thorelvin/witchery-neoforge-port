@@ -11,6 +11,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -98,6 +100,9 @@ public class SunGrenadeEntity extends ThrowableProjectile
             impacted = true;
             setDeltaMovement(0.0, 0.0, 0.0);
             setNoGravity(true);
+            if (level() instanceof ServerLevel sl) {
+                playImpactEffects(sl);
+            }
         }
     }
 
@@ -131,6 +136,9 @@ public class SunGrenadeEntity extends ThrowableProjectile
         maintainLightBlock(sl);
         if (impacted) {
             igniteNearbyUndead(sl, ACTIVE_UNDEAD_RADIUS, ACTIVE_UNDEAD_RADIUS, 3.0f);
+            if (tickCount % 20 == 0) {
+                playChargingEffects(sl);
+            }
         }
 
         if (tickCount >= MAX_RELEASE_TICKS) {
@@ -194,6 +202,8 @@ public class SunGrenadeEntity extends ThrowableProjectile
 
     private void explode(ServerLevel level) {
         clearLightBlock(level);
+        level.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.55F, 1.45F);
+        level.playSound(null, blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.7F, 1.8F);
         level.sendParticles(ParticleTypes.EXPLOSION, getX(), getY(), getZ(), 4, 0.4, 0.4, 0.4, 0.0);
         level.sendParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 32,
                 FINAL_XZ_RADIUS * 0.5, FINAL_Y_RADIUS * 0.5, FINAL_XZ_RADIUS * 0.5, 0.1);
@@ -206,6 +216,9 @@ public class SunGrenadeEntity extends ThrowableProjectile
             if (entity == getOwner()) continue;
             if (isSunGrenadeUndead(entity)) {
                 entity.igniteForSeconds(5.0f);
+                level.sendParticles(ParticleTypes.FLAME,
+                        entity.getX(), entity.getY() + 0.6D, entity.getZ(),
+                        8, 0.25D, 0.35D, 0.25D, 0.02D);
             }
             entity.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 20 * (10 + level.random.nextInt(3)), 0, true, true));
         }
@@ -314,7 +327,24 @@ public class SunGrenadeEntity extends ThrowableProjectile
                 continue;
             }
             entity.igniteForSeconds(seconds);
+            if (tickCount % 10 == 0) {
+                level.sendParticles(ParticleTypes.FLAME,
+                        entity.getX(), entity.getY() + 0.6D, entity.getZ(),
+                        4, 0.2D, 0.25D, 0.2D, 0.02D);
+            }
         }
+    }
+
+    private void playImpactEffects(ServerLevel level) {
+        level.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.45F, 1.6F);
+        level.sendParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                18, 0.25D, 0.25D, 0.25D, 0.05D);
+    }
+
+    private void playChargingEffects(ServerLevel level) {
+        level.playSound(null, blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.18F, 1.9F);
+        level.sendParticles(ParticleTypes.END_ROD, getX(), getY() + 0.05D, getZ(),
+                8, 0.18D, 0.18D, 0.18D, 0.03D);
     }
 
     private void attractAttention(ServerLevel level, ReflectionEntity reflection, Entity owner) {

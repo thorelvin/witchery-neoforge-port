@@ -2,9 +2,11 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -72,6 +74,9 @@ public class ParasyticLouseEntity extends Monster {
         ItemEntity item = new ItemEntity(level(), getX(), getY() + 0.4, getZ(), stack);
         item.setDefaultPickUpDelay();
         level().addFreshEntity(item);
+        if (level() instanceof ServerLevel serverLevel) {
+            playPayloadEffects(serverLevel, this, bitePotionContents.hasEffects());
+        }
         discard();
         return InteractionResult.SUCCESS_SERVER;
     }
@@ -81,9 +86,18 @@ public class ParasyticLouseEntity extends Monster {
         boolean hurt = super.doHurtTarget(level, target);
         if (hurt && target instanceof LivingEntity living && bitePotionContents.hasEffects()) {
             bitePotionContents.applyToLivingEntity(living, 1.0F);
+            playPayloadEffects(level, living, true);
             bitePotionContents = PotionContents.EMPTY;
         }
         return hurt;
+    }
+
+    private static void playPayloadEffects(ServerLevel level, Entity target, boolean carriedPotion) {
+        level.playSound(null, target.blockPosition(), SoundEvents.SILVERFISH_HURT, SoundSource.HOSTILE,
+                carriedPotion ? 0.7F : 0.45F, carriedPotion ? 0.8F : 1.1F);
+        level.sendParticles(carriedPotion ? ParticleTypes.WITCH : ParticleTypes.POOF,
+                target.getX(), target.getY() + 0.35D, target.getZ(),
+                carriedPotion ? 14 : 8, 0.25D, 0.25D, 0.25D, 0.02D);
     }
 
     @Override

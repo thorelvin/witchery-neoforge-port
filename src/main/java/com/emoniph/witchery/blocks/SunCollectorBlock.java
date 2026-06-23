@@ -5,7 +5,11 @@ import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -69,6 +73,7 @@ public class SunCollectorBlock extends BaseEntityBlock {
         if (!stack.is(WitcheryItems.QUARTZ_SPHERE.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         be.insertSphere(stack, level);
+        playCollectorFeedback(level, pos, true);
         player.displayClientMessage(Component.translatable("witchery.sun_collector.inserted"), true);
         return InteractionResult.SUCCESS;
     }
@@ -87,6 +92,7 @@ public class SunCollectorBlock extends BaseEntityBlock {
         if (!player.addItem(result)) {
             Block.popResource(level, pos, result);
         }
+        playCollectorFeedback(level, pos, false);
         player.displayClientMessage(Component.translatable("witchery.sun_collector.retrieved"), true);
         return InteractionResult.SUCCESS;
     }
@@ -111,5 +117,17 @@ public class SunCollectorBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
+    }
+
+    private static void playCollectorFeedback(Level level, BlockPos pos, boolean inserting) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, pos,
+                inserting ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.BEACON_POWER_SELECT,
+                SoundSource.BLOCKS, inserting ? 0.65F : 0.45F, inserting ? 1.25F : 0.8F);
+        serverLevel.sendParticles(inserting ? ParticleTypes.END_ROD : ParticleTypes.POOF,
+                pos.getX() + 0.5D, pos.getY() + 0.62D, pos.getZ() + 0.5D,
+                inserting ? 14 : 8, 0.2D, 0.2D, 0.2D, inserting ? 0.03D : 0.01D);
     }
 }

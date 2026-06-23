@@ -556,6 +556,8 @@
   "item.witchery.polynesia_charm.tip": "He talks to the animals...",
   "item.witchery.charm_of_disrupted_dreams": "Charm of Disrupted Dreams",
   "item.witchery.parasytic_louse": "Parasytic Louse",
+  "witchery.parasytic_louse.hotbar.attacker": "The louse bites back.",
+  "witchery.parasytic_louse.hotbar.self": "The louse bites you.",
   "item.witchery.leaping_lily_item": "Leaping Lily",
   "item.witchery.bucket_spirit": "Spirit Bucket",
   "item.witchery.hand_bow": "Witch Hunter Pistol Crossbow",

@@ -4,7 +4,10 @@ import com.emoniph.witchery.entity.ParasyticLouseEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -73,10 +76,16 @@ public class ParasyticLouseItem extends Item {
         }
 
         louse.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, player.getYRot(), 0.0F);
-        louse.setBitePotionContents(stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY));
+        PotionContents contents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        louse.setBitePotionContents(contents);
         louse.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.MOB_SUMMONED, null);
         louse.setPersistenceRequired();
         serverLevel.addFreshEntity(louse);
+        serverLevel.playSound(null, spawnPos, SoundEvents.SILVERFISH_AMBIENT, SoundSource.HOSTILE,
+                contents.hasEffects() ? 0.7F : 0.5F, contents.hasEffects() ? 0.8F : 1.1F);
+        serverLevel.sendParticles(contents.hasEffects() ? ParticleTypes.WITCH : ParticleTypes.POOF,
+                spawnPos.getX() + 0.5D, spawnPos.getY() + 0.25D, spawnPos.getZ() + 0.5D,
+                contents.hasEffects() ? 14 : 8, 0.25D, 0.2D, 0.25D, 0.02D);
         serverLevel.gameEvent(player, GameEvent.ENTITY_PLACE, spawnPos);
         player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
         if (!player.getAbilities().instabuild) {

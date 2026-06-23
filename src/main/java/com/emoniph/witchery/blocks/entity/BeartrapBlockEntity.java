@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -106,32 +108,45 @@ public class BeartrapBlockEntity extends BlockEntity {
                 || !beartrapBlock.isSilvered()) {
             return;
         }
-        if (state.getValue(BeartrapBlock.CLOSED)
-                || trap.spawnedWolfUuid != null
-                || serverLevel.getGameTime() % WOLFTRAP_CHECK_INTERVAL != 0L) {
+        if (state.getValue(BeartrapBlock.CLOSED)) {
             return;
         }
 
-        if (trap.hasWolftrapBait(serverLevel, pos) && isFullMoonNight(serverLevel)) {
+        if (trap.spawnedWolfUuid != null) {
+            trap.tickLuredWolfman(serverLevel, pos);
+            return;
+        }
+
+        if (serverLevel.getGameTime() % WOLFTRAP_CHECK_INTERVAL != 0L) {
+            return;
+        }
+
+        Animal bait = trap.findWolftrapBait(serverLevel, pos);
+        if (bait != null && isFullMoonNight(serverLevel)) {
             long time = serverLevel.getGameTime();
             if (trap.wolftrapStartTime > 0L && time > trap.wolftrapStartTime) {
                 trap.trySummonBaitWerewolf(serverLevel, pos);
             } else {
                 trap.setWolftrapStartTime(time);
+                trap.playWolftrapBaitEffects(serverLevel, pos);
             }
         } else {
             trap.setWolftrapStartTime(0L);
         }
     }
 
-    private boolean hasWolftrapBait(ServerLevel level, BlockPos pos) {
+    @Nullable
+    private Animal findWolftrapBait(ServerLevel level, BlockPos pos) {
         if (!hasAdjacentWolfAltar(level, pos)) {
-            return false;
+            return null;
         }
         AABB area = new AABB(pos).inflate(BAIT_RANGE);
-        return !level.getEntitiesOfClass(Animal.class, area, animal -> animal.getType() == EntityType.SHEEP
+        for (Animal animal : level.getEntitiesOfClass(Animal.class, area, animal -> animal.getType() == EntityType.SHEEP
                 && animal.isLeashed()
-                && animal.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= BAIT_RANGE_SQUARED).isEmpty();
+                && animal.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= BAIT_RANGE_SQUARED)) {
+            return animal;
+        }
+        return null;
     }
 
     private static boolean hasAdjacentWolfAltar(ServerLevel level, BlockPos pos) {
@@ -174,8 +189,16 @@ public class BeartrapBlockEntity extends BlockEntity {
             wolf.finalizeSpawn(level, level.getCurrentDifficultyAt(wolf.blockPosition()),
                     EntitySpawnReason.EVENT, null);
             level.addFreshEntity(wolf);
+            Animal bait = findWolftrapBait(level, pos);
+            if (bait != null) {
+                wolf.setTarget(bait);
+                wolf.getNavigation().moveTo(bait, 1.05D);
+            }
+            level.playSound(null, pos, SoundEvents.WOLF_SHAKE, SoundSource.HOSTILE, 1.0F, 0.65F);
             level.sendParticles(ParticleTypes.SMOKE, x + 0.5D, y + 0.5D, z + 0.5D,
                     24, 0.5D, 0.5D, 0.5D, 0.02D);
+            level.sendParticles(ParticleTypes.SOUL, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D,
+                    16, 0.45D, 0.2D, 0.45D, 0.02D);
             spawnedWolfUuid = wolf.getUUID();
             setChanged();
             return;
@@ -187,9 +210,55 @@ public class BeartrapBlockEntity extends BlockEntity {
         if (spawnedWolfUuid != null && living instanceof WolfmanEntity wolf
                 && wolf.getUUID().equals(spawnedWolfUuid)) {
             wolf.setInfectious();
+            spawnedWolfUuid = null;
+            wolftrapStartTime = 0L;
+            if (living.level() instanceof ServerLevel level) {
+                level.playSound(null, living.blockPosition(), SoundEvents.WOLF_SHAKE, SoundSource.HOSTILE, 1.0F, 0.9F);
+                level.sendParticles(ParticleTypes.SOUL,
+                        living.getX(), living.getY() + 0.7D, living.getZ(),
+                        20, 0.35D, 0.35D, 0.35D, 0.03D);
+                level.sendParticles(ParticleTypes.WITCH,
+                        worldPosition.getX() + 0.5D, worldPosition.getY() + 0.25D, worldPosition.getZ() + 0.5D,
+                        12, 0.25D, 0.2D, 0.25D, 0.02D);
+            }
+            setChanged();
             return true;
         }
         return false;
+    }
+
+    private void tickLuredWolfman(ServerLevel level, BlockPos pos) {
+        if (spawnedWolfUuid == null || level.getGameTime() % 20L != 0L) {
+            return;
+        }
+
+        if (!(level.getEntity(spawnedWolfUuid) instanceof WolfmanEntity wolf) || !wolf.isAlive()) {
+            spawnedWolfUuid = null;
+            wolftrapStartTime = 0L;
+            setChanged();
+            return;
+        }
+
+        Animal bait = findWolftrapBait(level, pos);
+        if (bait != null && bait.isAlive()) {
+            wolf.setTarget(bait);
+            wolf.getNavigation().moveTo(bait, 1.05D);
+        } else if (wolf.distanceToSqr(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D) > 6.25D) {
+            wolf.getNavigation().moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0.95D);
+        }
+
+        if (level.getGameTime() % 80L == 0L) {
+            level.sendParticles(ParticleTypes.SOUL,
+                    pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D,
+                    4, 0.3D, 0.1D, 0.3D, 0.01D);
+        }
+    }
+
+    private void playWolftrapBaitEffects(ServerLevel level, BlockPos pos) {
+        level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 0.35F, 0.7F);
+        level.sendParticles(ParticleTypes.SMOKE,
+                pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D,
+                8, 0.35D, 0.15D, 0.35D, 0.01D);
     }
 
     private void setWolftrapStartTime(long startTime) {
