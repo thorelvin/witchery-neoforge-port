@@ -11,6 +11,9 @@ import com.emoniph.witchery.item.PoppetItem;
 import com.emoniph.witchery.item.ProtectionPoppetItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +28,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -51,6 +55,7 @@ public class PoppetEvents {
     private static final String TAG_POPPET_DAMAGE = "witchery_damage";
     private static final int POPPET_MAX_DAMAGE = 1000;
     private static final int VAMPIRIC_POPPET_DAMAGE = 66;
+    private static final int VOODOO_PROTECTION_DAMAGE = 350;
 
     private record PoppetLocation(ItemStack stack, @org.jetbrains.annotations.Nullable Inventory inventory,
                                   @org.jetbrains.annotations.Nullable PoppetShelfBlockEntity shelf, int slot) {
@@ -73,6 +78,14 @@ public class PoppetEvents {
         LivingEntity victim = PoppetItem.findLivingEntity(((ServerLevel) player.level()).getServer(), victimUUID)
                 .orElse(null);
         if (victim == null || victim == player) return;
+
+        if (victim instanceof ServerPlayer victimPlayer
+                && triggerVoodooProtection(victimPlayer, player, true)) {
+            damagePoppet(location, VOODOO_PROTECTION_DAMAGE);
+            player.displayClientMessage(Component.translatable("witchery.poppet.vampiric.blocked",
+                    victim.getName()).withStyle(ChatFormatting.DARK_PURPLE), false);
+            return;
+        }
 
         float redirectedDamage = event.getNewDamage();
         victim.hurt(event.getSource(), redirectedDamage);
@@ -98,7 +111,8 @@ public class PoppetEvents {
         PoppetLocation typedProtection = findFirstBoundPoppet(player,
                 stack -> stack.getItem() instanceof ProtectionPoppetItem protection
                         && protection.getProtectionType() != ProtectionPoppetItem.ProtectionType.POPPET_SHIELD
-                        && damageMatchesProtection(source, protection.getProtectionType()));
+                        && damageMatchesProtection(source, protection.getProtectionType())
+                        && shouldSpecificProtectionTrigger(healthAfterDamage, protection.getProtectionType()));
         if (typedProtection != null) {
             activateSpecificProtection(event, player, typedProtection,
                     ((ProtectionPoppetItem) typedProtection.stack().getItem()).getProtectionType());
@@ -114,14 +128,6 @@ public class PoppetEvents {
             }
         }
 
-        if (healthAfterDamage <= 2.0F && source.is(DamageTypes.STARVE)) {
-            PoppetLocation hungerRescue = findFirstBoundPoppet(player,
-                    stack -> stack.getItem() instanceof ProtectionPoppetItem protection
-                            && protection.getProtectionType() == ProtectionPoppetItem.ProtectionType.HUNGER);
-            if (hungerRescue != null) {
-                activateSpecificProtection(event, player, hungerRescue, ProtectionPoppetItem.ProtectionType.HUNGER);
-            }
-        }
     }
 
     private static boolean damageMatchesProtection(DamageSource source, ProtectionPoppetItem.ProtectionType type) {
@@ -135,22 +141,50 @@ public class PoppetEvents {
         };
     }
 
+    private static boolean shouldSpecificProtectionTrigger(float healthAfterDamage, ProtectionPoppetItem.ProtectionType type) {
+        return switch (type) {
+            case HUNGER -> healthAfterDamage <= 2.0F;
+            default -> healthAfterDamage <= 0.0F;
+        };
+    }
+
     private static void activateSpecificProtection(LivingDamageEvent.Pre event, ServerPlayer player,
                                                    PoppetLocation location,
                                                    ProtectionPoppetItem.ProtectionType type) {
         String itemId = location.stack().getItem().getDescriptionId();
-        consumeOne(location);
+        if (type == ProtectionPoppetItem.ProtectionType.VOODOO) {
+            damagePoppet(location, adjustedPoppetDamage(player,
+                    WitcheryItems.VOODOO_PROTECTION_POPPET.get(), VOODOO_PROTECTION_DAMAGE));
+        } else {
+            consumeOne(location);
+        }
         event.setNewDamage(0.0F);
 
         switch (type) {
-            case FIRE -> player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60, 0));
-            case WATER -> player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 60, 0));
-            case HUNGER -> player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 60, 0));
+            case FIRE -> {
+                restoreMinimumHealth(player, 10.0F);
+                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60, 0));
+            }
+            case WATER -> {
+                restoreMinimumHealth(player, 10.0F);
+                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 60, 0));
+            }
+            case HUNGER -> {
+                restoreMinimumHealth(player, 10.0F);
+                player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 60, 0));
+            }
             default -> {
             }
         }
 
         playProtectionEffects(player, itemId);
+    }
+
+    private static void restoreMinimumHealth(ServerPlayer player, float minimumHealth) {
+        float targetHealth = Math.min(minimumHealth, player.getMaxHealth());
+        if (player.getHealth() < targetHealth) {
+            player.setHealth(targetHealth);
+        }
     }
 
     private static void activateDeathProtection(LivingDamageEvent.Pre event, ServerPlayer player,
@@ -188,52 +222,6 @@ public class PoppetEvents {
 
         WitcheryMod.LOGGER.info("Poppet ({}) saved {} from damage.",
                 itemId, player.getName().getString());
-    }
-
-    @SubscribeEvent
-    public static void onSympatheticPoppet(LivingDamageEvent.Pre event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (event.getNewDamage() <= 0) return;
-
-        PoppetLocation location = findFirstBoundPoppet(player,
-                stack -> stack.is(WitcheryItems.POPPET.get()) && PoppetItem.isBound(stack));
-        if (location == null) return;
-
-        Optional<UUID> targetUUID = PoppetItem.getBoundUUID(location.stack());
-        if (targetUUID.isEmpty()) return;
-
-        LivingEntity target = PoppetItem.findLivingEntity(((ServerLevel) player.level()).getServer(), targetUUID.get())
-                .orElse(null);
-        if (target == null || target == player) return;
-
-        player.level().playSound(null, player.blockPosition(),
-                SoundEvents.SKELETON_HURT, SoundSource.PLAYERS, 0.4F, 0.5F);
-
-        target.hurt(player.damageSources().magic(), event.getNewDamage());
-        if (target instanceof ServerPlayer targetPlayer) {
-            targetPlayer.displayClientMessage(Component.translatable("witchery.poppet.sympathetic.target_hurt",
-                    player.getName()), false);
-        }
-
-        int charges = getSympathyCharges(location.stack());
-        if (charges <= 1) {
-            consumeOne(location);
-            player.displayClientMessage(Component.translatable("witchery.poppet.sympathetic.consumed",
-                    PoppetItem.getBoundName(location.stack())), false);
-        } else {
-            setSympathyCharges(location.stack(), charges - 1);
-            markDirty(location);
-        }
-    }
-
-    private static int getSympathyCharges(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getIntOr("sympathy_charges", 5);
-    }
-
-    private static void setSympathyCharges(ItemStack stack, int charges) {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                tag -> tag.putInt("sympathy_charges", charges));
     }
 
     /**
@@ -387,6 +375,39 @@ public class PoppetEvents {
         return true;
     }
 
+    public static boolean triggerVoodooProtection(ServerPlayer target, Player attacker, ItemStack attackingPoppet) {
+        if (!triggerVoodooProtection(target, attacker, true)) {
+            return false;
+        }
+        damageDirectPoppet(attackingPoppet, VOODOO_PROTECTION_DAMAGE);
+        return true;
+    }
+
+    private static boolean triggerVoodooProtection(ServerPlayer target, Player attacker, boolean allowLightning) {
+        PoppetLocation defense = findFirstBoundPoppet(target,
+                stack -> stack.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()));
+        if (defense == null) {
+            return false;
+        }
+
+        damagePoppet(defense, adjustedPoppetDamage(target,
+                WitcheryItems.VOODOO_PROTECTION_POPPET.get(), VOODOO_PROTECTION_DAMAGE));
+        target.displayClientMessage(Component.translatable("witchery.poppet.voodoo.blocked")
+                .withStyle(ChatFormatting.DARK_PURPLE), false);
+        if (attacker != null) {
+            attacker.displayClientMessage(Component.translatable("witchery.poppet.voodoo.rebuffed",
+                    target.getName()).withStyle(ChatFormatting.DARK_PURPLE), false);
+            if (allowLightning && attacker.level() instanceof ServerLevel level) {
+                LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+                if (bolt != null) {
+                    bolt.setPos(attacker.getX(), attacker.getY(), attacker.getZ());
+                    level.addFreshEntity(bolt);
+                }
+            }
+        }
+        return true;
+    }
+
     private static int adjustedPoppetDamage(ServerPlayer player, Item poppetItem, int amount) {
         if (poppetItem == WitcheryItems.VOODOO_PROTECTION_POPPET.get()
                 && FetishBlockEntity.isNearFetish(player, FetishBlockEntity.EFFECT_VOODOO_PROTECTION)) {
@@ -438,6 +459,22 @@ public class PoppetEvents {
         CustomData.update(DataComponents.CUSTOM_DATA, location.stack(),
                 tag -> tag.putInt(TAG_POPPET_DAMAGE, newDamage));
         markDirty(location);
+    }
+
+    private static void damageDirectPoppet(ItemStack stack, int amount) {
+        if (stack == null || stack.isEmpty() || amount <= 0) {
+            return;
+        }
+        int damage = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getIntOr(TAG_POPPET_DAMAGE, 0);
+        damage = Math.min(damage + amount, POPPET_MAX_DAMAGE);
+        if (damage >= POPPET_MAX_DAMAGE) {
+            stack.shrink(1);
+            return;
+        }
+        int newDamage = damage;
+        CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                tag -> tag.putInt(TAG_POPPET_DAMAGE, newDamage));
     }
 
     private static void markDirty(PoppetLocation location) {

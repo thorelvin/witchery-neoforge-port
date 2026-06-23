@@ -93,7 +93,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its precise uses await further investigation — but the standing it confers among creatures of the night is real.[#]()",
+      "text": "[#](53341a)A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its use is concrete enough: store thrown brews from your other hand, sneak-use to change focus, then release the chosen brew without spending the stored focus. Crafting two urns together combines their capacity and stored focuses, up to four slots. The Mystic Branch's four urn glyphs draw from those same focuses.[#]()",
       "title": "Reward",
       "use_markdown_in_title": false
     }

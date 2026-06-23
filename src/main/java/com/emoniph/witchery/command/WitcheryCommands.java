@@ -654,7 +654,7 @@ public class WitcheryCommands {
         com.emoniph.witchery.brewing.BrewContents brew = new com.emoniph.witchery.brewing.BrewContents(
                 java.util.List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
         ItemStack stack = new ItemStack(WitcheryItems.SPLASH_BREW_BOTTLE.get(), 8);
-        stack.set(com.emoniph.witchery.init.WitcheryDataComponents.BREW_CONTENTS.get(), brew);
+        com.emoniph.witchery.item.BrewContainers.stamp(stack, brew);
         if (!p.getInventory().add(stack)) {
             p.drop(stack, false);
         }

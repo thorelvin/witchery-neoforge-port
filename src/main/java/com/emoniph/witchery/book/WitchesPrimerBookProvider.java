@@ -1402,7 +1402,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its "
                         + "use is concrete enough: store thrown brews from your other hand, sneak-use to "
                         + "change focus, then release the chosen brew without spending the stored focus. "
-                        + "The Mystic Branch's four urn glyphs draw from those same focuses."));
+                        + "Crafting two urns together combines their capacity and stored focuses, up to "
+                        + "four slots. The Mystic Branch's four urn glyphs draw from those same focuses."));
 
         cat.withEntries(
                 entry(cat, "conjuration/brazier", "The Brazier", WitcheryItems.BRAZIER.get(), 0, brazier),
@@ -1459,14 +1460,18 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "An effigy shaped to resemble a person and bound to them through a taglock carries a thread "
                         + "of the sympathy that connects all things. What happens to the effigy tends to "
                         + "happen to its subject — and it works in both directions."
-                        + "\n\nBind a poppet by right-clicking it with a filled taglock. Then place it on a "
-                        + "Poppet Shelf, or carry a protection poppet in your own inventory."));
+                        + "\n\nBind a poppet by crafting it with a filled Taglock Kit, or right-click a living "
+                        + "creature directly with the poppet. The plain Poppet is the foundation; Voodoo "
+                        + "and Vampiric forms do the hostile work, while protection "
+                        + "forms are carried in your inventory or kept on a Poppet Shelf."));
         poppetsList.add(recipe("voodoo_poppet", "Voodoo Poppet",
-                "The Voodoo Poppet is the foundation of this practice. From it, other forms follow."));
+                "Hold and release it to throw the bound target, sneak-release with a Bone Needle to prick "
+                        + "them, drown it to choke them, or touch it to lava to burn it out."));
         poppetsList.addAll(WitcheryBooks.prose("On Protection",
-                "Protection poppets are consumed when triggered — they give themselves to prevent something "
-                        + "worse happening to you. Death, Earth, Water, Fire, Hunger; each covers a different "
-                        + "category of misfortune, and Voodoo Protection counters hostile poppet workings."
+                "Most protection poppets trigger when matching harm would become dire, and are consumed "
+                        + "in the saving. Death, Earth, Water, Fire, Hunger; each covers "
+                        + "a different category of misfortune. Voodoo Protection wears down instead, "
+                        + "turning aside hostile Voodoo and Vampiric workings and biting back at the caster."
                         + "\n\nKeep spares. The shelf holds nine."));
 
         List<BookPageModel<?>> shelf = new ArrayList<>(WitcheryBooks.prose("The Poppet Shelf",

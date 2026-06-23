@@ -37,11 +37,12 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
     private static final int BUBBLE_LIGHT = 0xAAA9875A;
     private static final Identifier FURNACE_FLAME = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
 
-    // Ritual ring diagram (canvas-relative, before scale). Rings are concentric dashed glyph circles.
-    private static final int RING_CENTER_X_OFFSET = 0; // added to bgWidth/2
-    private static final int RING_CENTER_Y = 34;
-    private static final float RING_SQUASH = 0.62F; // ellipse flatten, evokes a circle drawn on the ground
-    private static final int GOLD_CENTER = 0xFFE8C020;
+    // Ritual ring diagram: centered old glyph art, baked from the same footprints used by RitualCircleDetector.
+    private static final int RING_CANVAS_W = 96;
+    private static final int RING_CANVAS_H = 64;
+    private static final int RING_TOP_Y = 2;
+    private static final Identifier RING_CENTER = Identifier.fromNamespaceAndPath(WitcheryMod.MODID,
+            "textures/gui/book/ritual_ring_center.png");
     private static final int FACE_SIZE = 12;
     private static final int FACE_GAP = 2;
     private static final int FACE_ROW_Y = 106;
@@ -116,8 +117,7 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
             bottom = Math.max(bottom, Math.round((slot.y() + 16) * scale));
         }
         if (!this.page.getRings().isEmpty()) {
-            bottom = Math.max(bottom, Math.round((RING_CENTER_Y
-                    + sizeRadius(largestRingSize()) * RING_SQUASH + 2) * scale));
+            bottom = Math.max(bottom, Math.round((RING_TOP_Y + RING_CANVAS_H) * scale));
         }
         if (this.page.getCovenFaces() > 0) {
             bottom = Math.max(bottom, Math.round((FACE_ROW_Y + FACE_SIZE) * scale));
@@ -125,69 +125,57 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
         return bottom == 0 ? drawnH : bottom;
     }
 
-    private String largestRingSize() {
-        String largest = "small";
-        for (StationRecipePage.Ring ring : this.page.getRings()) {
-            if (sizeRadius(ring.size()) > sizeRadius(largest)) {
-                largest = ring.size();
-            }
-        }
-        return largest;
-    }
-
     /**
-     * Draw the rite's chalk circles as concentric dashed glyph rings (largest first), centred in the
-     * upper canvas. Each ring is a ring of small coloured squares — count tied to the in-world glyph
-     * count (small=8, medium=16, large=28) — in the chalk colour, around a golden centre.
+     * Draw the rite's chalk circles from centered baked old-art layers. Each layer uses the same
+     * source glyph family and footprint count as its matching in-world circle.
      */
     private void renderRings(GuiGraphics graphics, int bgX, int panelTop, float scale, int bgWidth) {
-        int centerX = bgX + Math.round((bgWidth / 2.0F + RING_CENTER_X_OFFSET) * scale);
-        int centerY = panelTop + Math.round(RING_CENTER_Y * scale);
-
-        // Largest first so smaller companion rings sit visibly inside.
+        int x = bgX + Math.round(((bgWidth - RING_CANVAS_W) / 2.0F) * scale);
+        int y = panelTop + Math.round(RING_TOP_Y * scale);
         List<StationRecipePage.Ring> ordered = new ArrayList<>(this.page.getRings());
-        ordered.sort((a, b) -> Integer.compare(sizeRadius(b.size()), sizeRadius(a.size())));
+        ordered.sort((a, b) -> Integer.compare(ringSizeWeight(b.size()), ringSizeWeight(a.size())));
 
         for (StationRecipePage.Ring ring : ordered) {
-            int radiusX = Math.max(4, Math.round(sizeRadius(ring.size()) * scale));
-            int radiusY = Math.max(2, Math.round(radiusX * RING_SQUASH));
-            int dots = sizeGlyphCount(ring.size());
-            int color = chalkColor(ring.color());
-            int dotSize = Math.max(2, Math.round(2.5F * scale));
-            for (int i = 0; i < dots; i++) {
-                double angle = 2.0 * Math.PI * i / dots;
-                int x = centerX + (int) Math.round(Math.cos(angle) * radiusX);
-                int y = centerY + (int) Math.round(Math.sin(angle) * radiusY);
-                graphics.fill(x - dotSize / 2, y - dotSize / 2, x - dotSize / 2 + dotSize, y - dotSize / 2 + dotSize, color);
-            }
+            renderRingLayer(graphics, ritualRingTexture(ring.color(), ring.size()), x, y, scale);
         }
-        int gold = Math.max(2, Math.round(3 * scale));
-        graphics.fill(centerX - gold / 2, centerY - gold / 2, centerX - gold / 2 + gold, centerY - gold / 2 + gold, GOLD_CENTER);
+        renderRingLayer(graphics, RING_CENTER, x, y, scale);
     }
 
-    private static int sizeRadius(String size) {
-        return switch (size) {
-            case "small" -> 15;
-            case "large" -> 35;
-            default -> 25; // medium
-        };
+    private static void renderRingLayer(GuiGraphics graphics, Identifier texture, int x, int y, float scale) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(scale, scale);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0.0F, 0.0F,
+                RING_CANVAS_W, RING_CANVAS_H, RING_CANVAS_W, RING_CANVAS_H);
+        graphics.pose().popMatrix();
     }
 
-    private static int sizeGlyphCount(String size) {
-        // Source ring footprints: small 7x7 = 16 glyphs, medium 11x11 = 28, large 15x15 = 40.
-        return switch (size) {
-            case "small" -> 16;
-            case "large" -> 40;
-            default -> 28; // medium
-        };
+    private static Identifier ritualRingTexture(String color, String size) {
+        return Identifier.fromNamespaceAndPath(WitcheryMod.MODID,
+                "textures/gui/book/ritual_ring_" + ringColorName(color) + "_" + ringSizeName(size) + ".png");
     }
 
-    private static int chalkColor(String color) {
+    private static String ringColorName(String color) {
         return switch (color) {
-            case "red" -> 0xFFE03A3A;     // infernal
-            case "purple" -> 0xFFA64DFF;  // otherwhere
-            case "blue" -> 0xFF3A7AE0;
-            default -> 0xFFEDEDED;        // white / ritual
+            case "red", "infernal" -> "red";
+            case "purple", "blue", "otherwhere" -> "purple";
+            default -> "white";
+        };
+    }
+
+    private static String ringSizeName(String size) {
+        return switch (size) {
+            case "small" -> "small";
+            case "large" -> "large";
+            default -> "medium";
+        };
+    }
+
+    private static int ringSizeWeight(String size) {
+        return switch (size) {
+            case "large" -> 3;
+            case "medium" -> 2;
+            default -> 1;
         };
     }
 

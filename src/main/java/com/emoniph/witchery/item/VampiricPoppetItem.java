@@ -50,7 +50,7 @@ public class VampiricPoppetItem extends PoppetItem {
         // Second click: bind the victim
         ItemStack boundStack = stack.copyWithCount(1);
         bindVictim(boundStack, target);
-        user.setItemInHand(hand, boundStack);
+        replaceOneWithBound(user, hand, stack, boundStack);
         user.displayClientMessage(Component.translatable("witchery.poppet.vampiric.victim_bound",
                 target.getDisplayName()).withStyle(ChatFormatting.DARK_RED), false);
         return InteractionResult.CONSUME;

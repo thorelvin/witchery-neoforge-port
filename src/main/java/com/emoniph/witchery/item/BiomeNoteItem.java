@@ -26,18 +26,51 @@ public class BiomeNoteItem extends Item {
 
     public static final List<ResourceKey<Biome>> BIOME_PAGES = List.of(
             Biomes.BEACH,
+            Biomes.SNOWY_BEACH,
+            Biomes.STONY_SHORE,
             Biomes.FOREST,
+            Biomes.FLOWER_FOREST,
+            Biomes.BIRCH_FOREST,
+            Biomes.DARK_FOREST,
+            Biomes.OLD_GROWTH_BIRCH_FOREST,
             Biomes.WINDSWEPT_HILLS,
+            Biomes.WINDSWEPT_GRAVELLY_HILLS,
+            Biomes.WINDSWEPT_FOREST,
             Biomes.BADLANDS,
+            Biomes.ERODED_BADLANDS,
+            Biomes.WOODED_BADLANDS,
             Biomes.JAGGED_PEAKS,
+            Biomes.STONY_PEAKS,
+            Biomes.FROZEN_PEAKS,
+            Biomes.SNOWY_SLOPES,
+            Biomes.GROVE,
+            Biomes.MEADOW,
             Biomes.PLAINS,
+            Biomes.SUNFLOWER_PLAINS,
             Biomes.DESERT,
             Biomes.SNOWY_PLAINS,
+            Biomes.ICE_SPIKES,
+            Biomes.SNOWY_TAIGA,
             Biomes.SWAMP,
+            Biomes.MANGROVE_SWAMP,
             Biomes.RIVER,
+            Biomes.FROZEN_RIVER,
             Biomes.OCEAN,
-            Biomes.DARK_FOREST,
+            Biomes.DEEP_OCEAN,
+            Biomes.WARM_OCEAN,
+            Biomes.LUKEWARM_OCEAN,
+            Biomes.DEEP_LUKEWARM_OCEAN,
+            Biomes.COLD_OCEAN,
+            Biomes.DEEP_COLD_OCEAN,
+            Biomes.FROZEN_OCEAN,
+            Biomes.DEEP_FROZEN_OCEAN,
+            Biomes.JUNGLE,
+            Biomes.SPARSE_JUNGLE,
+            Biomes.BAMBOO_JUNGLE,
             Biomes.CHERRY_GROVE,
+            Biomes.OLD_GROWTH_PINE_TAIGA,
+            Biomes.OLD_GROWTH_SPRUCE_TAIGA,
+            Biomes.TAIGA,
             Biomes.MUSHROOM_FIELDS
     );
 
@@ -117,13 +150,7 @@ public class BiomeNoteItem extends Item {
     }
 
     private static String biomeId(ResourceKey<Biome> biomeKey) {
-        String text = biomeKey.toString();
-        int split = text.lastIndexOf(" / ");
-        int end = text.lastIndexOf(']');
-        if (split >= 0 && end > split) {
-            return text.substring(split + 3, end);
-        }
-        return "minecraft:plains";
+        return biomeKey.identifier().toString();
     }
 
     private static CompoundTag customData(ItemStack stack) {

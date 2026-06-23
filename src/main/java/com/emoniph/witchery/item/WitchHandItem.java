@@ -20,6 +20,7 @@ import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -63,6 +64,8 @@ public class WitchHandItem extends Item {
     private static final String RECALL_Y = "WITCRecallY";
     private static final String RECALL_Z = "WITCRecallZ";
     private static final String RECALL_DIM = "WITCRecallDim";
+    private static final String COOLDOWN_UNTIL = "WITCHandCooldownUntil";
+    private static final int OTHERWHERE_COOLDOWN_TICKS = 1500;
 
     public WitchHandItem(Properties properties) {
         super(properties.stacksTo(1).rarity(Rarity.UNCOMMON));
@@ -70,6 +73,15 @@ public class WitchHandItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            ItemStack stack = player.getItemInHand(hand);
+            long remaining = cooldownRemaining(serverPlayer, stack);
+            if (remaining > 0L) {
+                serverPlayer.displayClientMessage(Component.translatable("item.witchery.witch_hand.cooldown",
+                        Math.max(1L, (remaining + 19L) / 20L)).withStyle(ChatFormatting.GRAY), true);
+                return InteractionResult.FAIL;
+            }
+        }
         return ItemUtils.startUsingInstantly(level, player, hand);
     }
 
@@ -220,8 +232,17 @@ public class WitchHandItem extends Item {
             player.level().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_PLING.value(),
                     SoundSource.PLAYERS, 0.5F, 1.2F);
         } else if (!player.isShiftKeyDown() && elapsed > 0 && elapsed % 20 == 0) {
-            player.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
-                    SoundSource.PLAYERS, 0.25F, 1.0F);
+            int range = Math.min(120, 40 + 20 * Math.max(0, elapsed / 20));
+            HitResult hit = player.pick(range, 1.0F, true);
+            boolean canTeleport = hit instanceof BlockHitResult blockHit
+                    && findSafeLanding((ServerLevel) player.level(), blockHit) != null;
+            player.displayClientMessage(Component.translatable(canTeleport
+                    ? "item.witchery.witch_hand.canteleport"
+                    : "item.witchery.witch_hand.cannotteleport").withStyle(canTeleport
+                    ? ChatFormatting.GRAY : ChatFormatting.RED), true);
+            player.level().playSound(null, player.blockPosition(),
+                    canTeleport ? SoundEvents.EXPERIENCE_ORB_PICKUP : SoundEvents.NOTE_BLOCK_SNARE.value(),
+                    SoundSource.PLAYERS, 0.25F, canTeleport ? 1.0F : 0.7F);
         }
     }
 
@@ -232,9 +253,17 @@ public class WitchHandItem extends Item {
             return true;
         }
         if (player.isShiftKeyDown()) {
-            return recall(stack, player, data);
+            boolean recalled = recall(stack, player, data);
+            if (recalled) {
+                setCooldown(stack, player, OTHERWHERE_COOLDOWN_TICKS);
+            }
+            return recalled;
         }
-        return teleportToLook(player, data, Math.min(120.0D, 40.0D + 20.0D * Math.max(0, elapsed / 20)));
+        boolean teleported = teleportToLook(player, data, Math.min(120.0D, 40.0D + 20.0D * Math.max(0, elapsed / 20)));
+        if (teleported) {
+            setCooldown(stack, player, OTHERWHERE_COOLDOWN_TICKS);
+        }
+        return teleported;
     }
 
     /** Source InfusionOverworld block-top release: raise a pillar of earth, lifting whatever stands on it. */
@@ -621,15 +650,21 @@ public class WitchHandItem extends Item {
 
     private static boolean recall(ItemStack stack, ServerPlayer player, WitcheryPlayerData data) {
         CompoundTag tag = getTag(stack);
-        if (!hasRecall(tag) || isEnderInhibited(player) || !spendInfusionEnergy(player, data, 2)) {
+        if (!hasRecall(tag) || isEnderInhibited(player)) {
             fail(player);
             return false;
         }
         try {
             ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION,
                     Identifier.parse(tag.getStringOr(RECALL_DIM, "")));
+            if (isOtherwhereBlocked(player.level().dimension(), dimension)) {
+                player.displayClientMessage(Component.translatable("item.witchery.witch_hand.dimension_blocked")
+                        .withStyle(ChatFormatting.RED), true);
+                fail(player);
+                return false;
+            }
             ServerLevel destination = ((ServerLevel) player.level()).getServer().getLevel(dimension);
-            if (destination == null) {
+            if (destination == null || !spendInfusionEnergy(player, data, 2)) {
                 fail(player);
                 return false;
             }
@@ -648,6 +683,13 @@ public class WitchHandItem extends Item {
     private static boolean otherwhereRecallDrag(ItemStack stack, ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
         CompoundTag tag = getTag(stack);
         if (!hasRecall(tag) || isEnderInhibited(player)) {
+            fail(player);
+            return true;
+        }
+        ResourceKey<Level> recallDimension = recallDimension(tag);
+        if (recallDimension == null || isOtherwhereBlocked(player.level().dimension(), recallDimension)) {
+            player.displayClientMessage(Component.translatable("item.witchery.witch_hand.dimension_blocked")
+                    .withStyle(ChatFormatting.RED), true);
             fail(player);
             return true;
         }
@@ -679,6 +721,24 @@ public class WitchHandItem extends Item {
         }
     }
 
+    private static ResourceKey<Level> recallDimension(CompoundTag tag) {
+        try {
+            return ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getStringOr(RECALL_DIM, "")));
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private static boolean isOtherwhereBlocked(ResourceKey<Level> source, ResourceKey<Level> target) {
+        return isSpecialVeil(source) || isSpecialVeil(target);
+    }
+
+    private static boolean isSpecialVeil(ResourceKey<Level> dimension) {
+        return dimension.equals(WitcheryDimensions.SPIRIT_WORLD)
+                || dimension.equals(WitcheryDimensions.TORMENT)
+                || dimension.equals(WitcheryDimensions.MIRROR_WORLD);
+    }
+
     private static boolean isEnderInhibited(LivingEntity entity) {
         return entity.hasEffect(WitcheryMobEffects.ENDER_INHIBITION);
     }
@@ -690,11 +750,15 @@ public class WitchHandItem extends Item {
         }
         HitResult hit = player.pick(range, 1.0F, true);
         if (!(hit instanceof BlockHitResult blockHit)) {
+            player.displayClientMessage(Component.translatable("item.witchery.witch_hand.cannotteleport")
+                    .withStyle(ChatFormatting.RED), true);
             fail(player);
             return false;
         }
         BlockPos landing = findSafeLanding((ServerLevel) player.level(), blockHit);
         if (landing == null) {
+            player.displayClientMessage(Component.translatable("item.witchery.witch_hand.cannotteleport")
+                    .withStyle(ChatFormatting.RED), true);
             fail(player);
             return false;
         }
@@ -740,6 +804,16 @@ public class WitchHandItem extends Item {
 
     private static CompoundTag getTag(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    private static long cooldownRemaining(ServerPlayer player, ItemStack stack) {
+        long until = getTag(stack).getLongOr(COOLDOWN_UNTIL, 0L);
+        return Math.max(0L, until - player.level().getGameTime());
+    }
+
+    private static void setCooldown(ItemStack stack, ServerPlayer player, int ticks) {
+        long until = player.level().getGameTime() + Math.max(0, ticks);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putLong(COOLDOWN_UNTIL, until));
     }
 
     private static boolean hasRecall(CompoundTag tag) {

@@ -387,7 +387,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item>      BOOK_CREATURES       = ITEMS.register("book_creatures", id -> primerGuide(id, "creatures", "creatures/familiars"));
     public static final DeferredItem<Item>      BOOK_TRANSFORMATIONS = ITEMS.register("book_transformations", id -> primerGuide(id, "transformations", "transformations/vampirism"));
     public static final DeferredItem<Item>      CAULDRON_BOOK        = ITEMS.register("cauldron_book", id -> new com.emoniph.witchery.item.WitchesPrimerItem(itemProps(id).stacksTo(1), "item.witchery.cauldron_book.tip", com.emoniph.witchery.book.WitcheryBooks.CAULDRON, com.emoniph.witchery.book.WitcheryBooks.id("brewing"), com.emoniph.witchery.book.WitcheryBooks.id("brewing/the_cauldron")));
-    public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new Item(itemProps(id).stacksTo(1)));
+    public static final DeferredItem<Item>      BOOK_BIOMES          = ITEMS.register("book_biomes", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      EXTENDED_BIOMES_BOOK = ITEMS.register("extended_biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      BIOMES_BOOK          = ITEMS.register("biomes_book", id -> new com.emoniph.witchery.item.BiomeBookItem(itemProps(id)));
     public static final DeferredItem<Item>      ROWAN_DOOR_KEY       = ITEMS.register("rowan_door_key", id -> new com.emoniph.witchery.item.RowanDoorKeyItem(itemProps(id)));

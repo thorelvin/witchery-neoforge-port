@@ -66,7 +66,9 @@ enough to read before starting work. Long historical deltas belong in
   fog, Death's Hand held-side rendering plus hit/toggle cues, Mystic Branch
   cast/fail feedback, Crystal Ball scry validation before altar-power charge,
   brew bucket gas/liquid tooltip feedback, Dream Weaver placement/wake cues,
-  trap state sync, cursed warning cooldowns, Leonard's Urn focus release,
+  trap state sync, cursed warning cooldowns, Leonard's Urn focus release and
+  capacity upgrades, Witch Hand Otherwhere cooldown/feedback, Duplication
+  Grenade mirror charging, Book of Biomes climate page stats,
   Wolftrap lured-wolf steering/capture feedback, Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.

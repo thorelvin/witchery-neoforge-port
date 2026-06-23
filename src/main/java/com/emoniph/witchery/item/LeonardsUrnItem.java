@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.ThrownBrewEntity;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -45,7 +46,7 @@ public class LeonardsUrnItem extends Item {
             if (!level.isClientSide()) {
                 cycleSelectedSlot(urn);
                 int selected = selectedSlot(urn);
-                int capacity = capacity(urn);
+                int capacity = getCapacity(urn);
                 player.displayClientMessage(Component.translatable(
                         "item.witchery.leonards_urn.selected", selected + 1, capacity), true);
             }
@@ -85,7 +86,7 @@ public class LeonardsUrnItem extends Item {
                 .withStyle(ChatFormatting.BLUE));
 
         int selected = selectedSlot(stack);
-        int capacity = capacity(stack);
+        int capacity = getCapacity(stack);
         tooltip.accept(Component.translatable("item.witchery.leonards_urn.tooltip.selected",
                 selected + 1, capacity).withStyle(ChatFormatting.GRAY));
 
@@ -218,7 +219,7 @@ public class LeonardsUrnItem extends Item {
         if (getStored(urn, selected).isEmpty()) {
             return selected;
         }
-        int capacity = capacity(urn);
+        int capacity = getCapacity(urn);
         for (int slot = 0; slot < capacity; slot++) {
             if (getStored(urn, slot).isEmpty()) {
                 return slot;
@@ -240,8 +241,30 @@ public class LeonardsUrnItem extends Item {
         return ItemStack.EMPTY;
     }
 
+    public static ItemStack getStoredBrew(ItemStack urn, int slot) {
+        return getStored(urn, slot);
+    }
+
+    public static boolean tryInsertStoredBrew(ItemStack urn, ItemStack brew) {
+        if (!isStorableBrew(brew)) {
+            return false;
+        }
+        int slot = firstAvailableSlot(urn);
+        if (slot < 0) {
+            return false;
+        }
+        setStored(urn, slot, brew.copyWithCount(1));
+        return true;
+    }
+
+    public static ItemStack createWithCapacity(int capacity) {
+        ItemStack urn = new ItemStack(WitcheryItems.LEONARDS_URN.get());
+        setCapacity(urn, capacity);
+        return urn;
+    }
+
     private static void setStored(ItemStack urn, int slot, ItemStack stored) {
-        int capacity = capacity(urn);
+        int capacity = getCapacity(urn);
         int clampedSlot = clamp(slot, 0, capacity - 1);
         CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
             root.putInt(TAG_CAPACITY, capacity);
@@ -270,12 +293,12 @@ public class LeonardsUrnItem extends Item {
     }
 
     private static void cycleSelectedSlot(ItemStack urn) {
-        int capacity = capacity(urn);
+        int capacity = getCapacity(urn);
         setSelectedSlot(urn, (selectedSlot(urn) + 1) % capacity);
     }
 
     private static void setSelectedSlot(ItemStack urn, int slot) {
-        int capacity = capacity(urn);
+        int capacity = getCapacity(urn);
         CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
             root.putInt(TAG_CAPACITY, capacity);
             root.putInt(TAG_SELECTED, clamp(slot, 0, capacity - 1));
@@ -284,12 +307,20 @@ public class LeonardsUrnItem extends Item {
 
     private static int selectedSlot(ItemStack urn) {
         CompoundTag tag = customData(urn);
-        return clamp(tag.getIntOr(TAG_SELECTED, 0), 0, capacity(urn) - 1);
+        return clamp(tag.getIntOr(TAG_SELECTED, 0), 0, getCapacity(urn) - 1);
     }
 
-    private static int capacity(ItemStack urn) {
+    public static int getCapacity(ItemStack urn) {
         CompoundTag tag = customData(urn);
         return clamp(tag.getIntOr(TAG_CAPACITY, DEFAULT_CAPACITY), DEFAULT_CAPACITY, MAX_CAPACITY);
+    }
+
+    public static void setCapacity(ItemStack urn, int capacity) {
+        int clamped = clamp(capacity, DEFAULT_CAPACITY, MAX_CAPACITY);
+        CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
+            root.putInt(TAG_CAPACITY, clamped);
+            root.putInt(TAG_SELECTED, clamp(root.getIntOr(TAG_SELECTED, 0), 0, clamped - 1));
+        });
     }
 
     private static CompoundTag customData(ItemStack stack) {

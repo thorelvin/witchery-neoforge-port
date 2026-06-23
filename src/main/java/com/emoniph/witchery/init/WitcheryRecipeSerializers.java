@@ -9,6 +9,7 @@ import com.emoniph.witchery.crafting.BiomeNoteCopyRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipe;
 import com.emoniph.witchery.crafting.ImpregnatedLeatherRepairRecipe;
 import com.emoniph.witchery.crafting.BitingBeltPotionRecipe;
+import com.emoniph.witchery.crafting.LeonardsUrnUpgradeRecipe;
 import com.emoniph.witchery.crafting.ParasyticLousePotionRecipe;
 import com.emoniph.witchery.crafting.PlayerCompassBindingRecipe;
 import com.emoniph.witchery.crafting.PoppetTaglockBindingRecipe;
@@ -68,6 +69,10 @@ public class WitcheryRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<BiomeNoteCopyRecipe>> BIOME_NOTE_COPY =
             RECIPE_SERIALIZERS.register("biome_note_copy",
                     () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(BiomeNoteCopyRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<LeonardsUrnUpgradeRecipe>> LEONARDS_URN_UPGRADE =
+            RECIPE_SERIALIZERS.register("leonards_urn_upgrade",
+                    () -> new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(LeonardsUrnUpgradeRecipe::new));
 
     public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.CustomRecipe.Serializer<UpdateImmortalsObservationsBookRecipe>> UPDATE_IMMORTALS_OBSERVATIONS_BOOK =
             RECIPE_SERIALIZERS.register("update_immortals_observations_book",

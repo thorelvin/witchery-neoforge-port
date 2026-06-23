@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Bind a poppet by right-clicking it with a filled taglock. Then place it on a Poppet Shelf, or carry a protection poppet in your own inventory.[#]()",
+      "text": "[#](53341a)Bind a poppet by crafting it with a filled Taglock Kit, or right-click a living creature directly with the poppet. The plain Poppet is the foundation; Voodoo and Vampiric forms do the hostile work, while protection forms are carried in your inventory or kept on a Poppet Shelf.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "recipe_id_1": "witchery:voodoo_poppet",
-      "text": "[#](53341a)The Voodoo Poppet is the foundation of this practice. From it, other forms follow.[#]()",
+      "text": "[#](53341a)Hold and release it to throw the bound target, sneak-release with a Bone Needle to prick them, drown it to choke them, or touch it to lava to burn it out.[#]()",
       "title1": "Voodoo Poppet",
       "title2": ""
     },
@@ -49,7 +49,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Protection poppets are consumed when triggered — they give themselves to prevent something worse happening to you.[#]()",
+      "text": "[#](53341a)Most protection poppets trigger when matching harm would become dire, and are consumed in the saving.[#]()",
       "title": "On Protection",
       "use_markdown_in_title": false
     },
@@ -60,7 +60,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Death, Earth, Water, Fire, Hunger; each covers a different category of misfortune, and Voodoo Protection counters hostile poppet workings.[#]() [#](53341a)Keep spares. The shelf holds nine.[#]()",
+      "text": "[#](53341a)Death, Earth, Water, Fire, Hunger; each covers a different category of misfortune. Voodoo Protection wears down instead, turning aside hostile Voodoo and Vampiric workings and biting back at the caster.[#]() [#](53341a)Keep spares. The shelf holds nine.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

@@ -126,9 +126,9 @@ public final class PlacedModonomiconPages {
     private static final int STATION_PANEL_TOP_NO_TITLE = 7;
     private static final int STATION_TEXT_GAP = 3;
     private static final int STATION_ITEM_SIZE = 16;
-    private static final int RITUAL_RING_CENTER_Y = 34;
-    private static final float RITUAL_RING_SQUASH = 0.62F;
-    private static final int RITUAL_GOLD_CENTER = 0xFFE8C020;
+    private static final int RITUAL_RING_CANVAS_W = 96;
+    private static final int RITUAL_RING_CANVAS_H = 64;
+    private static final int RITUAL_RING_TOP_Y = 2;
     private static final int RITUAL_FACE_SIZE = 12;
     private static final int RITUAL_FACE_GAP = 2;
     private static final int RITUAL_FACE_ROW_Y = 106;
@@ -141,6 +141,8 @@ public final class PlacedModonomiconPages {
             Identifier.withDefaultNamespace("textures/atlas/gui.png");
     private static final Identifier FURNACE_FLAME =
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
+    private static final Identifier RITUAL_RING_CENTER =
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/book/ritual_ring_center.png");
     private static final Identifier[] COVEN_SKINS = {
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch1.png"),
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/entity/covenwitch2.png"),
@@ -606,8 +608,7 @@ public final class PlacedModonomiconPages {
             bottom = Math.max(bottom, Math.round((slot.y() + STATION_ITEM_SIZE) * scale));
         }
         if (!page.getRings().isEmpty()) {
-            bottom = Math.max(bottom, Math.round((RITUAL_RING_CENTER_Y
-                    + ritualRingRadius(largestRingSize(page)) * RITUAL_RING_SQUASH + 2) * scale));
+            bottom = Math.max(bottom, Math.round((RITUAL_RING_TOP_Y + RITUAL_RING_CANVAS_H) * scale));
         }
         if (page.getCovenFaces() > 0) {
             bottom = Math.max(bottom, Math.round((RITUAL_FACE_ROW_Y + RITUAL_FACE_SIZE) * scale));
@@ -623,44 +624,22 @@ public final class PlacedModonomiconPages {
         return bottom == 0 ? drawnH : bottom;
     }
 
-    private static String largestRingSize(StationRecipePage page) {
-        String largest = "small";
-        for (StationRecipePage.Ring ring : page.getRings()) {
-            if (ritualRingRadius(ring.size()) > ritualRingRadius(largest)) {
-                largest = ring.size();
-            }
-        }
-        return largest;
-    }
-
     private static void submitRitualRings(StationRecipePage page, PoseStack ps,
                                           SubmitNodeCollector collector, int lightCoords,
                                           int bgX, int panelTop, float scale, int bgWidth) {
-        int centerX = bgX + Math.round((bgWidth / 2.0F) * scale);
-        int centerY = panelTop + Math.round(RITUAL_RING_CENTER_Y * scale);
+        int x = bgX + Math.round(((bgWidth - RITUAL_RING_CANVAS_W) / 2.0F) * scale);
+        int y = panelTop + Math.round(RITUAL_RING_TOP_Y * scale);
+        int width = Math.max(1, Math.round(RITUAL_RING_CANVAS_W * scale));
+        int height = Math.max(1, Math.round(RITUAL_RING_CANVAS_H * scale));
         List<StationRecipePage.Ring> ordered = new ArrayList<>(page.getRings());
-        ordered.sort((a, b) -> Integer.compare(ritualRingRadius(b.size()), ritualRingRadius(a.size())));
+        ordered.sort((a, b) -> Integer.compare(ritualRingSizeWeight(b.size()), ritualRingSizeWeight(a.size())));
 
         for (StationRecipePage.Ring ring : ordered) {
-            int radiusX = Math.max(4, Math.round(ritualRingRadius(ring.size()) * scale));
-            int radiusY = Math.max(2, Math.round(radiusX * RITUAL_RING_SQUASH));
-            int dots = ritualGlyphCount(ring.size());
-            int color = ritualChalkColor(ring.color());
-            int dotSize = Math.max(2, Math.round(2.5F * scale));
-            for (int i = 0; i < dots; i++) {
-                double angle = 2.0 * Math.PI * i / dots;
-                int x = centerX + (int) Math.round(Math.cos(angle) * radiusX);
-                int y = centerY + (int) Math.round(Math.sin(angle) * radiusY);
-                submitRect(ps, collector, lightCoords,
-                        x - dotSize / 2.0F, y - dotSize / 2.0F,
-                        x - dotSize / 2.0F + dotSize, y - dotSize / 2.0F + dotSize, color);
-            }
+            submitTextureRegion(ps, collector, lightCoords, ritualRingTexture(ring.color(), ring.size()),
+                    x, y, width, height, 0.0F, 0.0F, 1.0F, 1.0F);
         }
-
-        int gold = Math.max(2, Math.round(3 * scale));
-        submitRect(ps, collector, lightCoords,
-                centerX - gold / 2.0F, centerY - gold / 2.0F,
-                centerX - gold / 2.0F + gold, centerY - gold / 2.0F + gold, RITUAL_GOLD_CENTER);
+        submitTextureRegion(ps, collector, lightCoords, RITUAL_RING_CENTER,
+                x, y, width, height, 0.0F, 0.0F, 1.0F, 1.0F);
     }
 
     private static void submitCovenFaces(PoseStack ps, SubmitNodeCollector collector, int lightCoords,
@@ -680,28 +659,32 @@ public final class PlacedModonomiconPages {
         }
     }
 
-    private static int ritualRingRadius(String size) {
-        return switch (size) {
-            case "small" -> 15;
-            case "large" -> 35;
-            default -> 25;
-        };
+    private static Identifier ritualRingTexture(String color, String size) {
+        return Identifier.fromNamespaceAndPath(WitcheryMod.MODID,
+                "textures/gui/book/ritual_ring_" + ritualRingColorName(color) + "_" + ritualRingSizeName(size) + ".png");
     }
 
-    private static int ritualGlyphCount(String size) {
-        return switch (size) {
-            case "small" -> 16;
-            case "large" -> 40;
-            default -> 28;
-        };
-    }
-
-    private static int ritualChalkColor(String color) {
+    private static String ritualRingColorName(String color) {
         return switch (color) {
-            case "red" -> 0xFFE03A3A;
-            case "purple" -> 0xFFA64DFF;
-            case "blue" -> 0xFF3A7AE0;
-            default -> 0xFFEDEDED;
+            case "red", "infernal" -> "red";
+            case "purple", "blue", "otherwhere" -> "purple";
+            default -> "white";
+        };
+    }
+
+    private static String ritualRingSizeName(String size) {
+        return switch (size) {
+            case "small" -> "small";
+            case "large" -> "large";
+            default -> "medium";
+        };
+    }
+
+    private static int ritualRingSizeWeight(String size) {
+        return switch (size) {
+            case "large" -> 3;
+            case "medium" -> 2;
+            default -> 1;
         };
     }
 

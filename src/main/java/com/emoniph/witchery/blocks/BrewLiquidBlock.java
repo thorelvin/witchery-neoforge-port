@@ -1,9 +1,8 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity;
-import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryFluids;
-import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.BrewContainers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -52,8 +51,7 @@ public class BrewLiquidBlock extends LiquidBlock implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof BrewFluidBlockEntity brew) || brew.getContents().isEmpty()) {
             return ItemStack.EMPTY;
         }
-        ItemStack stack = new ItemStack(WitcheryItems.BREW_BUCKET.get());
-        stack.set(WitcheryDataComponents.BREW_CONTENTS.get(), brew.getContents());
+        ItemStack stack = BrewContainers.bucket(brew.getContents());
         level.removeBlock(pos, false);
         return stack;
     }

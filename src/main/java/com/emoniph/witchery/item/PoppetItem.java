@@ -62,10 +62,6 @@ public class PoppetItem extends Item {
         if (isBound(stack)) {
             tooltip.accept(Component.translatable("witchery.poppet.tooltip.bound", getBoundName(stack))
                     .withStyle(ChatFormatting.GRAY));
-            net.minecraft.nbt.CompoundTag tag = getTag(stack);
-            int charges = tag.getIntOr("sympathy_charges", 5);
-            tooltip.accept(Component.translatable("witchery.poppet.tooltip.charges", charges)
-                    .withStyle(ChatFormatting.DARK_GRAY));
         } else {
             tooltip.accept(Component.translatable("witchery.poppet.tooltip.unbound")
                     .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
