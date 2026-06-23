@@ -160,6 +160,7 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.SymbolHud.render(event.getGuiGraphics(),
                 event.getPartialTick().getGameTimeDeltaPartialTick(false));
         com.emoniph.witchery.client.InfusionEnergyHud.render(event.getGuiGraphics());
+        com.emoniph.witchery.client.BarkBeltHud.render(event.getGuiGraphics());
     }
 
     @SubscribeEvent

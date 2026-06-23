@@ -2,6 +2,7 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.BarkBeltItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,8 +56,8 @@ public final class BarkBeltEvents {
 
         int next = Math.min(current + 1, max);
         BarkBeltItem.setChargeLevel(belt, next, max);
-        player.level().playSound(null, player.blockPosition(), SoundEvents.WOOD_PLACE,
-                SoundSource.PLAYERS, 0.35F, 0.8F + player.getRandom().nextFloat() * 0.3F);
+        player.level().playSound(null, player.blockPosition(), WitcherySoundEvents.RANDOM_WOOD_CREAK.get(),
+                SoundSource.PLAYERS, 0.5F, 0.8F + player.getRandom().nextFloat() * 0.4F);
         if (player.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
                     player.getX(), player.getY() + 0.15D, player.getZ(),

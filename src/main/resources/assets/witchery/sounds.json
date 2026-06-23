@@ -67,5 +67,12 @@
     "sounds": [
       "witchery:random/heartbeat1"
     ]
+  },
+  "random.wood_creak": {
+    "sounds": [
+      "witchery:random/wood_creak1",
+      "witchery:random/wood_creak2",
+      "witchery:random/wood_creak3"
+    ]
   }
 }
