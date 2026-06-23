@@ -1608,10 +1608,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
         List<BookPageModel<?>> traps = new ArrayList<>(WitcheryBooks.prose("Creature Traps",
                 "Some creatures are better studied after they have stopped moving. The traps are low metal "
-                        + "plates: place one, give it a moment to arm, and keep your own feet clear."));
+                        + "plates: place one closed, then right-click it open. A moment later it is armed; "
+                        + "keep your own feet clear."));
         traps.add(recipe("beartrap", "Beartrap",
-                "Iron and shears. Once armed it catches living creatures, snaps shut for four damage, and "
-                        + "applies strong slowness. Right-click to open or close it."));
+                "Iron and shears. It rests closed when placed. Open it to arm the jaws; once armed it catches "
+                        + "living creatures, snaps shut for four damage, and applies strong slowness."));
         traps.add(recipe("wolftrap", "Wolftrap",
                 "Upgrade a Beartrap with Silver, Null Catalysts, and Wolfsbane. Werewolves trigger it; "
                         + "others do not. Beside a Wolf Altar, with a leashed sheep close by, an open "

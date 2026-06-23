@@ -59,7 +59,7 @@ public class BeartrapBlock extends BaseEntityBlock {
         super(properties);
         this.silvered = silvered;
         registerDefaultState(stateDefinition.any()
-                .setValue(CLOSED, false)
+                .setValue(CLOSED, true)
                 .setValue(ARMED, false)
                 .setValue(AXIS, Direction.Axis.X));
     }
@@ -98,6 +98,7 @@ public class BeartrapBlock extends BaseEntityBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(AXIS, context.getHorizontalDirection().getAxis())
+                .setValue(CLOSED, true)
                 .setValue(ARMED, false);
     }
 
