@@ -106,7 +106,7 @@ public final class ParasyticLouseEvents {
         List<MobEffectInstance> remaining = new ArrayList<>();
         for (MobEffectInstance effect : contents.getAllEffects()) {
             MobEffectInstance copy = new MobEffectInstance(effect);
-            if (selected == null && canBitingBeltUse(player, copy)) {
+            if (selected == null && canBitingBeltUse(player, attacker, copy)) {
                 selected = copy;
             } else {
                 remaining.add(copy);
@@ -128,8 +128,12 @@ public final class ParasyticLouseEvents {
         applyBiteCost(player);
     }
 
-    private static boolean canBitingBeltUse(ServerPlayer player, MobEffectInstance effect) {
-        return !player.hasEffect(effect.getEffect()) && !isBeneficialInstantEffect(effect);
+    private static boolean canBitingBeltUse(ServerPlayer player, LivingEntity attacker, MobEffectInstance effect) {
+        if (player.hasEffect(effect.getEffect()) || isBeneficialInstantEffect(effect)) {
+            return false;
+        }
+        return effect.getEffect().value().getCategory() != MobEffectCategory.HARMFUL
+                || (attacker != null && attacker.isAlive());
     }
 
     private static boolean isBeneficialInstantEffect(MobEffectInstance effect) {
