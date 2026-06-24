@@ -513,10 +513,22 @@ public class WitcheryPlayerEvents {
 
     private static void tickDeathsHoodEffect(ServerPlayer player, ServerLevel level) {
         if (!player.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DEATHS_HOOD.get())) return;
-        if (level.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, player.blockPosition()) < 8) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 240, 1, true, false));
-        }
 
+        int offset = (int)(level.getGameTime() % 10L);
+        if (offset == 1) {
+            tickDeathsHoodFreeze(player);
+        } else if (offset == 2
+                && level.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, player.blockPosition()) < 8) {
+            MobEffectInstance nightVision = player.getEffect(MobEffects.NIGHT_VISION);
+            if (nightVision == null || nightVision.getDuration() <= 300) {
+                player.removeEffect(MobEffects.NIGHT_VISION);
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 400, 0, true, false));
+            }
+        }
+    }
+
+    private static void tickDeathsHoodFreeze(ServerPlayer player) {
+        if (!WitcheryConfig.ALLOW_DEATHS_HOOD_FREEZE.get()) return;
         Vec3 eyePos = player.getEyePosition();
         Vec3 lookEnd = eyePos.add(player.getLookAngle().scale(16.0));
         AABB searchBox = player.getBoundingBox().expandTowards(player.getLookAngle().scale(16.0)).inflate(1.0);

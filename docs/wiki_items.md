@@ -227,7 +227,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Death's Hood
 - **Obtain:** Drops from killing Death.
-- **Use:** Changes the player's face to appear as Death, grants Night Vision in dark places and during night, and gives Slowness to anything the wearer stares at.
+- **Use:** Changes the player's face to appear as Death, grants Night Vision in dark places, and slows creatures the wearer stares at.
 - **Stats:** Durability 166, Armor 2.
 - **Notes:** Can be repaired with Iron Ingots. If someone wears all of Death's gear, a witch summoning Death might summon that player instead.
 

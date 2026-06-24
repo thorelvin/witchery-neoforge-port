@@ -14,6 +14,7 @@ public class WitcheryConfig {
 
     public static final ModConfigSpec.BooleanValue DEBUG;
     public static final ModConfigSpec.IntValue TOWN_ZOMBIE_ATTACK_REDUCTION_MODE;
+    public static final ModConfigSpec.BooleanValue ALLOW_DEATHS_HOOD_FREEZE;
 
     // ── Vampire ───────────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue VAMPIRE_BLOOD_DRAIN_INTERVAL;
@@ -49,6 +50,9 @@ public class WitcheryConfig {
         TOWN_ZOMBIE_ATTACK_REDUCTION_MODE = BUILDER
                 .comment("Source TownZombieAttackReductionMode: 0 disables village zombie protection, 1 reduces zombie damage to villagers, 2 also clears zombie villager targets. Default: 1")
                 .defineInRange("TownZombieAttackReductionMode", 1, 0, 2);
+        ALLOW_DEATHS_HOOD_FREEZE = BUILDER
+                .comment("Source AllowDeathsHoodToFreezeVictims: if true, Death's Hood slows creatures the wearer stares at. Default: true")
+                .define("AllowDeathsHoodToFreezeVictims", true);
         BUILDER.pop();
 
         BUILDER.push("vampire");
