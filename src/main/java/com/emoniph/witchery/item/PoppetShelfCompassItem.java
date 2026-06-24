@@ -41,7 +41,8 @@ public class PoppetShelfCompassItem extends Item {
         }
 
         ShelfSignal nearest = signal.get();
-        Vec3 diff = Vec3.atCenterOf(nearest.pos()).subtract(player.position());
+        Vec3 shelfAnchor = new Vec3(nearest.pos().getX(), player.getY(), nearest.pos().getZ());
+        Vec3 diff = shelfAnchor.subtract(player.position());
         int distance = (int) Math.sqrt(nearest.distanceSq());
         String direction = getCardinal(Math.atan2(diff.z, diff.x));
 
@@ -72,7 +73,7 @@ public class PoppetShelfCompassItem extends Item {
                 continue;
             }
             BlockPos pos = shelf.getBlockPos();
-            double distSq = player.distanceToSqr(pos.getX() + 0.5, player.getY(), pos.getZ() + 0.5);
+            double distSq = shelfDistanceSq(player.position(), pos);
             if (distSq < nearestDistSq) {
                 nearest = shelf;
                 nearestDistSq = distSq;
@@ -88,7 +89,13 @@ public class PoppetShelfCompassItem extends Item {
         return signalBand(distanceSq) / 5.0F;
     }
 
-    private static int signalBand(double distanceSq) {
+    public static double shelfDistanceSq(Vec3 ownerPos, BlockPos shelfPos) {
+        double dx = ownerPos.x - shelfPos.getX();
+        double dz = ownerPos.z - shelfPos.getZ();
+        return dx * dx + dz * dz;
+    }
+
+    static int signalBand(double distanceSq) {
         if (distanceSq < 64.0) {
             return 5;
         }

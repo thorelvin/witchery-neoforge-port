@@ -323,12 +323,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Poppet Shelf
 - **Obtain:** Crafted using a specific recipe involving various Witchery components.
 - **Function:** Used to store and manage poppets, which are used for magical rituals and curses.
-- **Notes:** Must be placed on a flat surface. Can hold up to 16 poppets.
+- **Notes:** Must be placed on a flat surface. Can hold up to 9 poppets.
 
 ## Poppet Shelf Compass
-- **Obtain:** Crafted using a compass and poppet dust.
-- **Function:** Used to orient the Poppet Shelf, allowing it to function correctly.
-- **Notes:** Must be placed on the Poppet Shelf in the correct orientation.
+- **Obtain:** This is an item, crafted from Gold Ingots, Diamonds, a Clock, and a Null Catalyst.
+- **Function:** Indicates the nearest loaded Poppet Shelf with six source distance bands; right-click reports distance and direction.
+- **Notes:** It does not orient or configure Poppet Shelves.
 
 ## Ritual Chalk
 - **Obtain:** Obtained by crafting with chalk and a witch's cauldron.

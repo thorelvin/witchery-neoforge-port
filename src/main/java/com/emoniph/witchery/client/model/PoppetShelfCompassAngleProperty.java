@@ -29,9 +29,7 @@ public record PoppetShelfCompassAngleProperty() implements RangeSelectItemModelP
         Vec3 ownerPos = owner.position();
         double closest = Double.MAX_VALUE;
         for (PoppetShelfBlockEntity shelf : PoppetShelfBlockEntity.getActiveShelves(level)) {
-            double dx = ownerPos.x - shelf.getBlockPos().getX();
-            double dz = ownerPos.z - shelf.getBlockPos().getZ();
-            double distanceSq = dx * dx + dz * dz;
+            double distanceSq = PoppetShelfCompassItem.shelfDistanceSq(ownerPos, shelf.getBlockPos());
             if (distanceSq < closest) {
                 closest = distanceSq;
             }

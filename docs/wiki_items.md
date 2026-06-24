@@ -536,10 +536,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Keeps the chunk loaded, no known crafting uses.
 
 ## Poppet Shelf Compass
-- **Obtain:** Craft using specific ingredients (recipe not detailed).
-- **Use:** Detects a Poppet Shelf up to 128 blocks away.
-- **Stats:** N/A
-- **Notes:** Not stackable.
+- **Obtain:** Crafted from Gold Ingots, Diamonds, a Clock, and a Null Catalyst.
+- **Use:** The item icon brightens through six source distance bands when a loaded Poppet Shelf is nearby. Right-click for a practical distance and direction readout to the nearest loaded same-dimension shelf.
+- **Stats:** Six signal bands, strongest within 8 blocks and fading beyond 128 blocks.
+- **Notes:** The compass follows loaded shelves only, matching the old client-side shelf scan.
 
 ## Poppy of Ink
 - **Obtain:** Harvested with a Boline; explodes into ink upon impact.
