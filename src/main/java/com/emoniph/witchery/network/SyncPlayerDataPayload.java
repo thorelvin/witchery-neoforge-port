@@ -14,6 +14,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record SyncPlayerDataPayload(
         int entityId,
         boolean vampire,
+        int vampireLevel,
+        int bloodPower,
+        int bloodReserve,
         boolean werewolf,
         int bloodLevel,
         float transformationLevel,
@@ -41,6 +44,9 @@ public record SyncPlayerDataPayload(
                     return new SyncPlayerDataPayload(
                             buf.readInt(),
                             buf.readBoolean(),
+                            buf.readInt(),
+                            buf.readInt(),
+                            buf.readInt(),
                             buf.readBoolean(),
                             buf.readInt(),
                             buf.readFloat(),
@@ -63,6 +69,9 @@ public record SyncPlayerDataPayload(
                 public void encode(RegistryFriendlyByteBuf buf, SyncPlayerDataPayload payload) {
                     buf.writeInt(payload.entityId());
                     buf.writeBoolean(payload.vampire());
+                    buf.writeInt(payload.vampireLevel());
+                    buf.writeInt(payload.bloodPower());
+                    buf.writeInt(payload.bloodReserve());
                     buf.writeBoolean(payload.werewolf());
                     buf.writeInt(payload.bloodLevel());
                     buf.writeFloat(payload.transformationLevel());
@@ -84,7 +93,11 @@ public record SyncPlayerDataPayload(
     public static SyncPlayerDataPayload from(Player player, WitcheryPlayerData data) {
         return new SyncPlayerDataPayload(
                 player.getId(),
-                data.isVampire(), data.isWerewolf(),
+                data.isVampire(),
+                data.getVampireLevel(),
+                data.getBloodPower(),
+                data.getBloodReserve(),
+                data.isWerewolf(),
                 data.getBloodLevel(), data.getTransformationLevel(),
                 data.getFamiliarUUID().map(java.util.UUID::toString).orElse(""),
                 data.getFamiliarType(),

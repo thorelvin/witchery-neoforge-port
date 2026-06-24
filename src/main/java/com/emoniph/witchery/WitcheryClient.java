@@ -490,6 +490,9 @@ public class WitcheryClient {
             if (!(entity instanceof Player target)) return;
             WitcheryPlayerData data = WitcheryAttachments.get(target);
             data.setVampire(payload.vampire());
+            data.setVampireLevel(payload.vampireLevel());
+            data.setBloodPower(payload.bloodPower());
+            data.setBloodReserve(payload.bloodReserve());
             data.setWerewolf(payload.werewolf());
             data.setBloodLevel(payload.bloodLevel());
             data.setTransformationLevel(payload.transformationLevel());

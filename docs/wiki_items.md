@@ -155,9 +155,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Cane Sword
 - **Obtain:** Crafted from Woven Cruor, a Diamond Sword, and a Gold Ingot.
-- **Use:** Sneak-use to draw or sheathe. Drawn Cane Swords work as the high-damage form; sheathed Cane Swords can extract stored blood into vampire blood power.
+- **Use:** Sneak-use to draw or sheathe. Drawn Cane Swords work as the high-damage form; sheathed Cane Swords can extract the wielder's stored vampire reserve into vampire blood power.
 - **Stats:** Durability 1561, rare. Sheathed attack damage is low; drawn attack damage follows the source combo-weapon profile.
-- **Notes:** Vampire kills against villagers or players with the drawn sword fill its internal blood reservoir up to 250. Drawing and sheathing use the original Witchery sword sounds.
+- **Notes:** Vampire kills against villagers or players with the drawn sword fill the wielder's source-style blood reserve up to 250. Drawing and sheathing use the original Witchery sword sounds.
 
 ## Chalice (Filled)
 - **Obtain:** Crafted from Redstone Soup above an empty Chalice, or by filling a placed empty Chalice with Redstone Soup.

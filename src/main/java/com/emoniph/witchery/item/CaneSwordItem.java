@@ -7,7 +7,6 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -28,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -36,10 +34,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.function.Consumer;
 
 public class CaneSwordItem extends Item {
-    private static final String TAG_BLOOD_RESERVE = "WITCBloodReserve";
     private static final int SOURCE_DIAMOND_DURABILITY = 1561;
     private static final int SOURCE_IRON_ENCHANTABILITY = 14;
-    private static final int MAX_BLOOD_RESERVE = 250;
+    public static final int MAX_BLOOD_RESERVE = 250;
     private static final double SHEATHED_ATTACK_DAMAGE = 1.0D;
     private static final double DRAWN_ATTACK_DAMAGE = 11.0D;
     private static final double DRAWN_ATTACK_SPEED = -2.4D;
@@ -100,7 +97,7 @@ public class CaneSwordItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        if (player instanceof ServerPlayer serverPlayer && extractReserve(serverPlayer, stack)) {
+        if (player instanceof ServerPlayer serverPlayer && extractReserve(serverPlayer)) {
             return InteractionResult.SUCCESS_SERVER;
         }
 
@@ -109,21 +106,16 @@ public class CaneSwordItem extends Item {
         return InteractionResult.SUCCESS_SERVER;
     }
 
-    private static boolean extractReserve(ServerPlayer player, ItemStack stack) {
-        int reserve = getBloodReserve(stack);
-        if (reserve <= 0) {
-            return false;
-        }
-
+    private static boolean extractReserve(ServerPlayer player) {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        int missingPower = data.getMaxBloodPower() - data.getBloodPower();
-        if (!data.isVampire() || missingPower <= 0) {
+        if (!data.isVampire() || !data.isBloodReserveReady() || data.getBloodPower() >= data.getMaxBloodPower()) {
             return false;
         }
 
-        int extracted = Math.min(reserve, missingPower);
-        data.addBloodPower(extracted);
-        setBloodReserve(stack, reserve - extracted);
+        int extracted = data.useBloodReserve();
+        if (extracted <= 0) {
+            return false;
+        }
         PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
 
         ServerLevel level = (ServerLevel) player.level();
@@ -152,8 +144,6 @@ public class CaneSwordItem extends Item {
                 .withStyle(ChatFormatting.GRAY));
         tooltip.accept(Component.translatable("item.witchery.cane_sword.tip.capture")
                 .withStyle(ChatFormatting.GRAY));
-        tooltip.accept(Component.translatable("item.witchery.cane_sword.tip.reserve",
-                getBloodReserve(stack), MAX_BLOOD_RESERVE).withStyle(ChatFormatting.DARK_RED));
     }
 
     public static void tryAbsorbBloodFromKill(ServerPlayer player, LivingEntity killed) {
@@ -172,14 +162,14 @@ public class CaneSwordItem extends Item {
             return;
         }
 
-        int oldReserve = getBloodReserve(stack);
-        int newReserve = Math.min(MAX_BLOOD_RESERVE, oldReserve + amount);
+        int oldReserve = data.getBloodReserve();
+        data.addBloodReserve(amount);
+        int newReserve = data.getBloodReserve();
         if (newReserve <= oldReserve) {
             return;
         }
 
-        setBloodReserve(stack, newReserve);
-        player.containerMenu.broadcastChanges();
+        PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         player.displayClientMessage(Component.translatable("item.witchery.cane_sword.reserve",
                 newReserve, MAX_BLOOD_RESERVE).withStyle(ChatFormatting.DARK_RED), true);
     }
@@ -194,20 +184,4 @@ public class CaneSwordItem extends Item {
         return 0;
     }
 
-    public static int getBloodReserve(ItemStack stack) {
-        return Math.clamp(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag()
-                .getIntOr(TAG_BLOOD_RESERVE, 0), 0, MAX_BLOOD_RESERVE);
-    }
-
-    private static void setBloodReserve(ItemStack stack, int reserve) {
-        int clamped = Math.clamp(reserve, 0, MAX_BLOOD_RESERVE);
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            if (clamped > 0) {
-                tag.putInt(TAG_BLOOD_RESERVE, clamped);
-            } else {
-                tag.remove(TAG_BLOOD_RESERVE);
-            }
-        });
-    }
 }

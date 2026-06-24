@@ -71,6 +71,7 @@ public class WitcheryPlayerData {
         public int ultimate = 0;
         public int ultimateCharges = 0;
         public int bloodPower = 0;
+        public int bloodReserve = 0;
         // Max level the player can reach without quest-gating items; 10 = uncapped during dev.
         public int levelCap = 10;
         public int questCounter = 0;
@@ -80,12 +81,14 @@ public class WitcheryPlayerData {
         public VampireState() {}
 
         private VampireState(boolean vampire, int level, int ultimate, int ultimateCharges,
-                             int bloodPower, int levelCap, int questCounter, java.util.List<Long> visitedVillages) {
+                             int bloodPower, int bloodReserve, int levelCap, int questCounter,
+                             java.util.List<Long> visitedVillages) {
             this.vampire = vampire;
             this.level = Math.clamp(level, 0, 10);
             this.ultimate = Math.clamp(ultimate, 0, 3);
             this.ultimateCharges = Math.max(0, ultimateCharges);
             this.bloodPower = Math.max(0, bloodPower);
+            this.bloodReserve = Math.clamp(bloodReserve, 0, 250);
             this.levelCap = Math.clamp(levelCap, 1, 10);
             this.questCounter = Math.max(0, questCounter);
             this.visitedVillages.addAll(visitedVillages);
@@ -97,6 +100,7 @@ public class WitcheryPlayerData {
             Codec.INT.optionalFieldOf("ultimate", 0).forGetter(s -> s.ultimate),
             Codec.INT.optionalFieldOf("ultimate_charges", 0).forGetter(s -> s.ultimateCharges),
             Codec.INT.optionalFieldOf("blood_power", 0).forGetter(s -> s.bloodPower),
+            Codec.INT.optionalFieldOf("blood_reserve", 0).forGetter(s -> s.bloodReserve),
             Codec.INT.optionalFieldOf("level_cap", 10).forGetter(s -> s.levelCap),
             Codec.INT.optionalFieldOf("quest_counter", 0).forGetter(s -> s.questCounter),
             Codec.LONG.listOf().optionalFieldOf("visited_villages", java.util.List.of()).forGetter(s -> s.visitedVillages)
@@ -336,7 +340,7 @@ public class WitcheryPlayerData {
     public void setVampire(boolean v) {
         vs.vampire = v;
         if (v && vs.level == 0) vs.level = 1;
-        if (!v) { vs.level = 0; vs.bloodPower = 0; vs.questCounter = 0; }
+        if (!v) { vs.level = 0; vs.bloodPower = 0; vs.bloodReserve = 0; vs.questCounter = 0; }
     }
     public void setVampireLevel(int level) {
         int clamped = Math.clamp(level, 0, 10);
@@ -368,6 +372,24 @@ public class WitcheryPlayerData {
     public boolean canIncreaseVampireLevel() { return vs.level < vs.levelCap && vs.level < 10; }
     public void setBloodPower(int p) { vs.bloodPower = Math.clamp(p, 0, getMaxBloodPower()); }
     public void addBloodPower(int amount) { setBloodPower(vs.bloodPower + amount); }
+    public int getBloodReserve() { return isVampire() ? vs.bloodReserve : 0; }
+    public void setBloodReserve(int blood) { vs.bloodReserve = Math.clamp(blood, 0, 250); }
+    public void addBloodReserve(int amount) {
+        if (amount > 0) {
+            setBloodReserve(vs.bloodReserve + amount);
+        }
+    }
+    public boolean isBloodReserveReady() { return getBloodReserve() > 0; }
+    public int useBloodReserve() {
+        int reserve = getBloodReserve();
+        if (reserve <= 0 || getBloodPower() >= getMaxBloodPower()) {
+            return 0;
+        }
+        int before = getBloodPower();
+        vs.bloodReserve = 0;
+        addBloodPower(reserve);
+        return getBloodPower() - before;
+    }
     public boolean spendBloodPower(int amount) {
         if (vs.bloodPower < amount) return false;
         setBloodPower(vs.bloodPower - amount);
@@ -563,7 +585,8 @@ public class WitcheryPlayerData {
 
     public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
         this.vs = new VampireState(other.vs.vampire, other.vs.level, other.vs.ultimate, other.vs.ultimateCharges,
-                other.vs.bloodPower, other.vs.levelCap, other.vs.questCounter, other.vs.visitedVillages);
+                other.vs.bloodPower, other.vs.bloodReserve, other.vs.levelCap, other.vs.questCounter,
+                other.vs.visitedVillages);
         this.werewolf = other.werewolf;
         this.transformationLevel = other.transformationLevel;
         this.familiar = new FamiliarState(other.familiar.uuid, other.familiar.type, other.familiar.name, other.familiar.sitting, other.familiar.nameVisible);
