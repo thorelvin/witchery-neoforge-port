@@ -1,6 +1,13 @@
 package com.emoniph.witchery.entity;
 
+import com.mojang.datafixers.util.Pair;
 import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -15,18 +22,32 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Spirit - passive flying Spirit World mob. Flees from players and drops its matching subdued item.
  */
 public class SpiritEntity extends Monster {
     private static final String TAG_SPIRIT_TYPE = "SpiritType";
+    private static final String TAG_SUICIDE_IN = "SuicideIn";
+    private static final String TAG_VILLAGE_WAYPOINT = "VillageWaypoint";
     private static final int SPIRIT_TYPE_NORMAL = 0;
     private static final int SPIRIT_TYPE_VILLAGE = 1;
+    private static final int VILLAGE_SPIRIT_TTL_TICKS = 20 * 10;
+    private static final int VILLAGE_SEARCH_RADIUS_CHUNKS = 8;
+    private static final List<String> VILLAGE_STRUCTURE_IDS = List.of(
+            "village_plains", "village_savanna", "village_taiga",
+            "village_snowy", "village_desert", "village_meadow");
 
     private int spiritType = SPIRIT_TYPE_NORMAL;
+    private int timeToLive = -1;
+    private BlockPos villageWaypoint;
 
     public SpiritEntity(EntityType<? extends SpiritEntity> type, Level level) {
         super(type, level);
@@ -57,34 +78,82 @@ public class SpiritEntity extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<Player>(this, Player.class, 8f, 1.0, 1.2));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(2, new FlyToVillageWaypointGoal(this));
+        this.goalSelector.addGoal(3, new AvoidEntityGoal<Player>(this, Player.class, 8f, 1.0, 1.2));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8f));
     }
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(level, new ItemStack(getSubduedDropItem(), 1));
+        dropSubduedItem(level);
     }
 
     public void setVillageTarget(boolean villageTarget) {
         this.spiritType = villageTarget ? SPIRIT_TYPE_VILLAGE : SPIRIT_TYPE_NORMAL;
+        if (villageTarget && level() instanceof ServerLevel serverLevel) {
+            startVillageFlight(serverLevel);
+        }
     }
 
     public boolean isVillageTarget() {
         return spiritType == SPIRIT_TYPE_VILLAGE;
     }
 
+    private void startVillageFlight(ServerLevel level) {
+        this.timeToLive = VILLAGE_SPIRIT_TTL_TICKS;
+        this.villageWaypoint = findNearestVillage(level, blockPosition());
+    }
+
+    private static BlockPos findNearestVillage(ServerLevel level, BlockPos origin) {
+        List<Holder<Structure>> holders = new ArrayList<>();
+        level.registryAccess().lookup(Registries.STRUCTURE).ifPresent(registry -> {
+            for (String id : VILLAGE_STRUCTURE_IDS) {
+                ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE,
+                        Identifier.withDefaultNamespace(id));
+                registry.get(key).ifPresent(holders::add);
+            }
+        });
+        if (holders.isEmpty()) {
+            return null;
+        }
+        Pair<BlockPos, Holder<Structure>> result = level.getChunkSource().getGenerator()
+                .findNearestMapStructure(level, HolderSet.direct(holders), origin,
+                        VILLAGE_SEARCH_RADIUS_CHUNKS, false);
+        return result == null ? null : result.getFirst();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!(level() instanceof ServerLevel serverLevel) || timeToLive < 0) {
+            return;
+        }
+        if (--timeToLive <= 0) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION,
+                    getX(), getY() + 0.1D, getZ(), 8, 0.25D, 0.25D, 0.25D, 0.0D);
+            dropSubduedItem(serverLevel);
+            discard();
+        }
+    }
+
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(TAG_SPIRIT_TYPE, spiritType);
+        tag.putInt(TAG_SUICIDE_IN, timeToLive);
+        if (villageWaypoint != null) {
+            tag.putLong(TAG_VILLAGE_WAYPOINT, villageWaypoint.asLong());
+        }
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         spiritType = tag.getIntOr(TAG_SPIRIT_TYPE, SPIRIT_TYPE_NORMAL);
+        timeToLive = tag.getIntOr(TAG_SUICIDE_IN, -1);
+        long waypoint = tag.getLongOr(TAG_VILLAGE_WAYPOINT, Long.MIN_VALUE);
+        villageWaypoint = waypoint == Long.MIN_VALUE ? null : BlockPos.of(waypoint);
     }
 
     private net.minecraft.world.item.Item getSubduedDropItem() {
@@ -93,4 +162,40 @@ public class SpiritEntity extends Monster {
                 : WitcheryItems.SUBDUED_SPIRIT.get();
     }
 
+    private void dropSubduedItem(ServerLevel level) {
+        this.spawnAtLocation(level, new ItemStack(getSubduedDropItem(), 1));
+    }
+
+    private static class FlyToVillageWaypointGoal extends Goal {
+        private final SpiritEntity spirit;
+
+        private FlyToVillageWaypointGoal(SpiritEntity spirit) {
+            this.spirit = spirit;
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return spirit.villageWaypoint != null && spirit.timeToLive >= 0;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return canUse();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            BlockPos target = spirit.villageWaypoint;
+            double x = target.getX() + 0.5D;
+            double y = target.getY() + 2.0D;
+            double z = target.getZ() + 0.5D;
+            spirit.getMoveControl().setWantedPosition(x, y, z, 0.8D);
+        }
+    }
 }
