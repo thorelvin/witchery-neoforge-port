@@ -237,6 +237,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** Durability 241, Armor 6.
 - **Notes:** Can be repaired with Iron Ingots. If someone wears all of Death's gear, a witch summoning Death might summon that player instead.
 
+## Devil's Tongue Charm
+- **Obtain:** Crafted as the demonic upgrade of the Polynesia Charm.
+- **Use:** Protects the holder from most Demon attention, with the old small failure chance still present. It shares the Polynesia Charm's animal-speech handling for valid animal-like creatures, while Demon trading is still a separate follow-up.
+- **Stats:** Durability 50, stack size 1, uncommon.
+- **Notes:** Hold in either hand for Demon avoidance.
+
 ## Distillery
 - **Obtain:** Crafted using a specific recipe.
 - **Use:** Allows the extraction of higher-tier essences and uses a nearby Altar as a power source.
@@ -528,6 +534,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Use:** Shows the direction of the bound person.
 - **Stats:** N/A
 - **Notes:** Not stackable.
+
+## Polynesia Charm
+- **Obtain:** Crafted from witchcraft ingredients and carried as a durable charm.
+- **Use:** Right-click an adult, calm animal-like creature within five blocks to open its small trade list. Valid creatures include common animals, bats, squids, spiders, and special robe-gated creepers or undead. Each animal keeps its own saved stock after the first opening.
+- **Stats:** Durability 50, stack size 1, uncommon.
+- **Notes:** Trades are source-flavored: herbs, saplings, mushrooms, common drops, Bat Wool, Spectral Dust, Treefyd Seeds, and rare animal-specific goods can appear.
 
 ## Poppet Shelf
 - **Obtain:** Craft using specific ingredients (recipe not detailed).

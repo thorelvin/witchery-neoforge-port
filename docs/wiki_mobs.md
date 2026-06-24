@@ -48,7 +48,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Damage:** Melee: up to 18, Ranged: Fire Charges
 - **Drops:** Demon Heart, Gunpowder, Magma Cream
 - **Spawn:** Anywhere with the Rite of Summoning ritual
-- **Behaviour:** Hostile; launches fireballs and punches; immune to fire-based attacks; can be traded with using a Devil's Tongue Charm
+- **Behaviour:** Hostile; launches fireballs and punches; immune to fire-based attacks; usually ignores players carrying a Devil's Tongue Charm, though the old small failure chance remains.
 - **Notes:** Demons are native to the Nether but do not spawn there naturally. They must be summoned via a Rite of Summoning.
 
 ## Demon Heart
