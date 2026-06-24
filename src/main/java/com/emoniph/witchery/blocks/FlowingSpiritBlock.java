@@ -16,7 +16,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.tags.EntityTypeTags;
@@ -27,7 +26,7 @@ import net.minecraft.world.entity.EntityType;
  * into wispy cotton and applied regeneration/weakness depending on the creature
  * standing in it.
  */
-public class FlowingSpiritBlock extends Block {
+public class FlowingSpiritBlock extends SpiritLiquidBlock {
 
     public FlowingSpiritBlock(Properties properties) {
         super(properties);

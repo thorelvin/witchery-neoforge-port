@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.SpiritLiquidBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,10 +57,6 @@ public class SpiritBucketItem extends Item {
 
         if (!level.isClientSide()) {
             BlockState state = placedBlock.get().defaultBlockState();
-            BlockState oldState = level.getBlockState(placePos);
-            if (!oldState.getFluidState().isEmpty()) {
-                level.destroyBlock(placePos, true);
-            }
             level.setBlock(placePos, state, Block.UPDATE_ALL);
             level.playSound(null, placePos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PLACE, placePos);
@@ -73,9 +70,6 @@ public class SpiritBucketItem extends Item {
     }
 
     private static boolean canPlaceAt(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        return state.isAir()
-                || state.canBeReplaced()
-                || (!state.isSolid() && !state.hasBlockEntity());
+        return SpiritLiquidBlock.canDisplace(level.getBlockState(pos));
     }
 }

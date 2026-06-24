@@ -369,6 +369,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Stats:** None
 - **Notes:** Stackable (64)
 
+## Hollow Tears Bucket
+- **Obtain:** Fill through Witchery progression or use creative/QA access.
+- **Use:** Places Hollow Tears and returns an empty Bucket in survival. The placed liquid weakens ordinary living creatures and regenerates undead or demonic creatures.
+- **Stats:** Stack size 1.
+- **Notes:** Hollow Tears spreads as a finite five-level Witchery liquid and will not replace real fluids or block entities.
+
 ## Horn of the Hunt
 - **Obtain:** Obtained during the Wolf Altar quest chain; the remake also keeps the Resurrected `hunts_horn` alias.
 - **Use:** Hold for two seconds to sound the horn and summon a Horned Huntsman on safe nearby ground.
@@ -707,6 +713,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Use:** Used to make strings and threads.
 - **Stats:** Hardness 3.5, Blast Resistance 17.5
 - **Notes:** Originates from the fairytale "Rumpelstiltskin".
+
+## Spirit Bucket
+- **Obtain:** Fill through Spirit World progression or use creative/QA access.
+- **Use:** Places Flowing Spirit and returns an empty Bucket in survival. Flowing Spirit regenerates ordinary living creatures, weakens undead/demonic creatures, cleanses Disturbed Cotton into Wispy Cotton, and can ignite Spirit Portals in the Spirit World when placed over the correct snow base.
+- **Stats:** Stack size 1.
+- **Notes:** Flowing Spirit spreads as a finite five-level Witchery liquid and will not replace real fluids or block entities.
 
 ## Splitting Bolt
 - **Obtain:** In the NeoForge remake, craft 1 Splitting Bolt from 3 Wooden Bolts, String, and a Feather.

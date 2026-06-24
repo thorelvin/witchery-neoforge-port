@@ -1,5 +1,9 @@
 {
   "variants": {
-    "": { "model": "witchery:block/flowing_spirit" }
+    "level=0": { "model": "witchery:block/flowing_spirit" },
+    "level=1": { "model": "witchery:block/flowing_spirit" },
+    "level=2": { "model": "witchery:block/flowing_spirit" },
+    "level=3": { "model": "witchery:block/flowing_spirit" },
+    "level=4": { "model": "witchery:block/flowing_spirit" }
   }
 }

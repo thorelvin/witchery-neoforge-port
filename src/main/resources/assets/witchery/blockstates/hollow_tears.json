@@ -1,5 +1,9 @@
 {
   "variants": {
-    "": { "model": "witchery:block/hollow_tears" }
+    "level=0": { "model": "witchery:block/hollow_tears" },
+    "level=1": { "model": "witchery:block/hollow_tears" },
+    "level=2": { "model": "witchery:block/hollow_tears" },
+    "level=3": { "model": "witchery:block/hollow_tears" },
+    "level=4": { "model": "witchery:block/hollow_tears" }
   }
 }

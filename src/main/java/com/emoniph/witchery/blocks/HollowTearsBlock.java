@@ -13,11 +13,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /** Source-style Hollow Tears stand-in until the custom fluid system is rebuilt. */
-public class HollowTearsBlock extends Block {
+public class HollowTearsBlock extends SpiritLiquidBlock {
     public HollowTearsBlock(Properties properties) {
         super(properties);
     }
