@@ -73,6 +73,16 @@
       "witchery:random/horn"
     ]
   },
+  "random.sworddraw": {
+    "sounds": [
+      "witchery:random/sworddraw"
+    ]
+  },
+  "random.swordsheathe": {
+    "sounds": [
+      "witchery:random/swordsheathe"
+    ]
+  },
   "random.wood_creak": {
     "sounds": [
       "witchery:random/wood_creak1",

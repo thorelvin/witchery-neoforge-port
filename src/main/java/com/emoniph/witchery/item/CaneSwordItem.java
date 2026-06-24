@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -83,13 +84,10 @@ public class CaneSwordItem extends Item {
                     sheathed ? WitcheryItems.DRAWN_CANE_SWORD.get() : WitcheryItems.CANE_SWORD.get(),
                     stack.getCount());
             if (!level.isClientSide()) {
-                if (sheathed) {
-                    level.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_IRON.value(),
-                            SoundSource.PLAYERS, 0.8F, 1.25F);
-                } else {
-                    level.playSound(null, player.blockPosition(), SoundEvents.CHAIN_PLACE,
-                            SoundSource.PLAYERS, 0.8F, 0.75F);
-                }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        sheathed ? WitcherySoundEvents.RANDOM_SWORD_DRAW.get()
+                                : WitcherySoundEvents.RANDOM_SWORD_SHEATHE.get(),
+                        SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS.heldItemTransformedTo(transformed);
         }
