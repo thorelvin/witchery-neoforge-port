@@ -1,6 +1,33 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/spectral_stone"
+    "type": "minecraft:range_dispatch",
+    "property": "witchery:spectral_stone_type",
+    "entries": [
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/spectral_stone_spectre"
+        }
+      },
+      {
+        "threshold": 2.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/spectral_stone_banshee"
+        }
+      },
+      {
+        "threshold": 3.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/spectral_stone_poltergeist"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "witchery:item/spectral_stone"
+    }
   }
 }

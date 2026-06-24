@@ -706,7 +706,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Created from an attuned stone with the Rite of Binding.
 - **Use:** Stores up to three ghosts (Banshees, Poltergeists, or Spectres) and binds them to the player for control via Necromantic Stone.
 - **Stats:** None
-- **Notes:** Can only be used during night.
+- **Notes:** Bound stones show distinct source-style icons for Spectre, Banshee, and Poltergeist contents. Can only be used during night.
 
 ## Spinning Wheel (Witchery)
 - **Obtain:** Crafted using a recipe involving various ingredients.
