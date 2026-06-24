@@ -25,6 +25,7 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_LEONARD_HIT = register("entity.leonard.hit");
     public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_LEONARD_DEATH = register("entity.leonard.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HEARTBEAT = register("random.heartbeat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HORN = register("random.horn");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_WOOD_CREAK = register("random.wood_creak");
 
     private WitcherySoundEvents() {}

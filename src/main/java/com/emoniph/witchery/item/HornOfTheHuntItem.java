@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -59,7 +60,7 @@ public class HornOfTheHuntItem extends Item {
         }
 
         ServerLevel serverLevel = (ServerLevel) level;
-        serverLevel.playSound(null, player.blockPosition(), SoundEvents.RAID_HORN.value(),
+        serverLevel.playSound(null, player.blockPosition(), WitcherySoundEvents.RANDOM_HORN.get(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         if (!summonHuntsman(serverLevel, player)) {
             player.displayClientMessage(Component.translatable("item.witchery.horn_of_the_hunt.failed")
