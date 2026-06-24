@@ -118,10 +118,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** None
 
 ## Brew Bag
-- **Obtain:** Crafting recipe (details not provided).
-- **Use:** Carries brews; can hold up to eight brews, is dyeable, and allows throwing selected brews.
+- **Obtain:** Craft with Impregnated Leather around Golden Thread.
+- **Use:** Carries up to eight throwable brews. Use with a throwable brew in the other hand to store one, sneak-use to choose the next slot, and use normally to throw the selected brew.
 - **Stats:** None
-- **Notes:** None
+- **Notes:** Craft a Brew Bag with any dye to recolor the bag without emptying it.
 
 ## Brew of Flowing Spirit
 - **Obtain:** Brewing recipe in the Spirit World with specific ingredients.

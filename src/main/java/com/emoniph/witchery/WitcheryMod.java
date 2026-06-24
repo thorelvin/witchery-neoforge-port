@@ -71,6 +71,7 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerScreens);
             modEventBus.addListener(WitcheryClient::registerBookPageRenderers);
             modEventBus.addListener(WitcheryClient::registerBlockColors);
+            modEventBus.addListener(WitcheryClient::registerItemTintSources);
             modEventBus.addListener(WitcheryClient::onModifyBakingResult);
             modEventBus.addListener(WitcheryClient::registerClientExtensions);
             modEventBus.addListener(WitcheryClient::onAddLayers);

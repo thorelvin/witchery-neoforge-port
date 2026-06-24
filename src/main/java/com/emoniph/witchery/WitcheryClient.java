@@ -25,6 +25,7 @@ import com.emoniph.witchery.client.renderer.LeonardRenderer;
 import com.emoniph.witchery.client.renderer.LilithRenderer;
 import com.emoniph.witchery.client.renderer.NightmareRenderer;
 import com.emoniph.witchery.client.renderer.SpiritRenderer;
+import com.emoniph.witchery.client.color.BrewBagTint;
 import com.emoniph.witchery.client.screen.DistilleryScreen;
 import com.emoniph.witchery.client.screen.SpinningWheelScreen;
 import com.emoniph.witchery.client.screen.WitchesOvenScreen;
@@ -230,6 +231,11 @@ public class WitcheryClient {
         // The salt line reuses the redstone-dust models; tint their (red) dust white so it reads as salt.
         event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? 0xFFFFFF : -1,
                 WitcheryBlocks.SALT_LINE.get());
+    }
+
+    public static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "brew_bag_color"),
+                BrewBagTint.MAP_CODEC);
     }
 
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {

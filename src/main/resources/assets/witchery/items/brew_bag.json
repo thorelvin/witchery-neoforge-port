@@ -4,8 +4,7 @@
     "model": "witchery:item/brew_bag",
     "tints": [
       {
-        "type": "minecraft:constant",
-        "value": 5057301
+        "type": "witchery:brew_bag_color"
       }
     ]
   }

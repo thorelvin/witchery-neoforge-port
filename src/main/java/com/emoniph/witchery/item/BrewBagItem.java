@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
+import java.util.OptionalInt;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"deprecation", "removal"})
@@ -28,6 +29,8 @@ public class BrewBagItem extends Item {
     private static final String TAG_ITEMS = "Items";
     private static final String TAG_SLOT = "Slot";
     private static final String TAG_STACK = "Stack";
+    private static final String TAG_COLOR = "WITCColor";
+    public static final int DEFAULT_COLOR = 5_057_301;
     private static final int SLOT_COUNT = 8;
 
     public BrewBagItem(Properties properties) {
@@ -145,6 +148,35 @@ public class BrewBagItem extends Item {
 
     private static boolean isStorableBrew(ItemStack stack) {
         return ThrowableBrewSupport.isThrowableBrew(stack);
+    }
+
+    public static int getColor(ItemStack stack) {
+        return customData(stack).getIntOr(TAG_COLOR, DEFAULT_COLOR);
+    }
+
+    public static void setColor(ItemStack stack, int color) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                root -> root.putInt(TAG_COLOR, color & 0xFFFFFF));
+    }
+
+    public static OptionalInt colorForDye(ItemStack stack) {
+        if (stack.is(Items.BLACK_DYE)) return OptionalInt.of(1_118_481);
+        if (stack.is(Items.RED_DYE)) return OptionalInt.of(12_464_176);
+        if (stack.is(Items.GREEN_DYE)) return OptionalInt.of(5_732_898);
+        if (stack.is(Items.BROWN_DYE)) return OptionalInt.of(DEFAULT_COLOR);
+        if (stack.is(Items.BLUE_DYE)) return OptionalInt.of(2_247_599);
+        if (stack.is(Items.PURPLE_DYE)) return OptionalInt.of(8_532_146);
+        if (stack.is(Items.CYAN_DYE)) return OptionalInt.of(3_968_688);
+        if (stack.is(Items.LIGHT_GRAY_DYE)) return OptionalInt.of(11_513_789);
+        if (stack.is(Items.GRAY_DYE)) return OptionalInt.of(7_763_574);
+        if (stack.is(Items.PINK_DYE)) return OptionalInt.of(15_574_987);
+        if (stack.is(Items.LIME_DYE)) return OptionalInt.of(8_639_516);
+        if (stack.is(Items.YELLOW_DYE)) return OptionalInt.of(15_197_994);
+        if (stack.is(Items.LIGHT_BLUE_DYE)) return OptionalInt.of(12_179_199);
+        if (stack.is(Items.MAGENTA_DYE)) return OptionalInt.of(14_383_829);
+        if (stack.is(Items.ORANGE_DYE)) return OptionalInt.of(15_113_780);
+        if (stack.is(Items.WHITE_DYE)) return OptionalInt.of(0xFFFFFF);
+        return OptionalInt.empty();
     }
 
     private static int firstAvailableSlot(ItemStack bag, ItemStack brew) {
