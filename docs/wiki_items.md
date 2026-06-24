@@ -239,9 +239,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Devil's Tongue Charm
 - **Obtain:** Crafted as the demonic upgrade of the Polynesia Charm.
-- **Use:** Protects the holder from most Demon attention, with the old small failure chance still present. It shares the Polynesia Charm's animal-speech handling for valid animal-like creatures, while Demon trading is still a separate follow-up.
+- **Use:** Protects the holder from most Demon attention, with the old small failure chance still present. It also lets players bargain with Demons; holding the charm lowers most prices and wears the charm when a bargain is struck.
 - **Stats:** Durability 50, stack size 1, uncommon.
-- **Notes:** Hold in either hand for Demon avoidance.
+- **Notes:** Demon bargains can offer enchanted books, Demon Hearts, Spectral Dust, Tongue of Dog, Redstone Soup, Blaze Powder, and Magma Cream.
 
 ## Distillery
 - **Obtain:** Crafted using a specific recipe.
