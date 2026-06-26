@@ -3,6 +3,10 @@ package com.emoniph.witchery.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.ai.NpcKnowledgeBase;
+import com.emoniph.witchery.ai.NpcBrainResponse;
+import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcMemoryData;
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.AltarBlock;
 import com.emoniph.witchery.blocks.ChaliceBlock;
@@ -19,6 +23,7 @@ import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
 import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
@@ -249,6 +254,33 @@ public class WitcheryCommands {
 
                 .then(Commands.literal("status")
                         .executes(ctx -> showStatus(ctx.getSource())))
+
+                .then(Commands.literal("ai")
+                        .then(Commands.literal("status")
+                                .executes(ctx -> aiStatus(ctx.getSource())))
+                        .then(Commands.literal("memory")
+                                .executes(ctx -> aiMemoryNearest(ctx.getSource())))
+                        .then(Commands.literal("chat")
+                                .then(Commands.argument("message", StringArgumentType.greedyString())
+                                        .executes(ctx -> aiChatNearest(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "message")))))
+                        .then(Commands.literal("knowledge")
+                                .then(Commands.argument("query", StringArgumentType.greedyString())
+                                        .executes(ctx -> aiKnowledge(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "query")))))
+                        .then(Commands.literal("probe")
+                                .executes(ctx -> aiProbe(ctx.getSource(),
+                                        "Say one short coven witch greeting."))
+                                .then(Commands.argument("prompt", StringArgumentType.greedyString())
+                                        .executes(ctx -> aiProbe(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "prompt")))))
+                        .then(Commands.literal("reload")
+                                .executes(ctx -> aiReload(ctx.getSource())))
+                        .then(Commands.literal("forget")
+                                .executes(ctx -> aiForgetNearest(ctx.getSource()))
+                                .then(Commands.argument("target", StringArgumentType.word())
+                                        .executes(ctx -> aiForget(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "target"))))))
 
                 // ── Dimensions ───────────────────────────────────────────────
                 .then(Commands.literal("dream")
@@ -509,6 +541,124 @@ public class WitcheryCommands {
     }
 
     // ── Guide progression (debug) ───────────────────────────────────────────────
+
+    private static int aiStatus(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.literal(NpcBrainService.INSTANCE.statusLine()), false);
+        return 1;
+    }
+
+    private static int aiMemoryNearest(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        CovenWitchEntity witch = nearestCovenWitch(player);
+        if (witch == null) {
+            src.sendFailure(Component.literal("[AI] No Coven Witch within 16 blocks."));
+            return 0;
+        }
+        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : witch.getStringUUID();
+        String context = NpcMemoryData.get((ServerLevel) player.level()).getContext(witch.getUUID(), player.getUUID());
+        sendAiText(src, "[AI] Memory for " + witchName + ":", context);
+        return 1;
+    }
+
+    private static int aiChatNearest(CommandSourceStack src, String message)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        CovenWitchEntity witch = nearestCovenWitch(player);
+        if (witch == null) {
+            src.sendFailure(Component.literal("[AI] No Coven Witch within 16 blocks."));
+            return 0;
+        }
+        String cleaned = NpcBrainResponse.sanitize(message, 220);
+        if (cleaned.isBlank()) {
+            src.sendFailure(Component.literal("[AI] Give the witch something to answer."));
+            return 0;
+        }
+        if (!NpcBrainService.INSTANCE.requestCovenChat(witch, player, cleaned)) {
+            src.sendFailure(Component.literal("[AI] Coven Witch is busy, cooling down, or local AI is disabled."));
+            return 0;
+        }
+        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : witch.getStringUUID();
+        src.sendSuccess(() -> Component.literal("[AI] Queued chat for " + witchName + ": " + cleaned), false);
+        return 1;
+    }
+
+    private static int aiKnowledge(CommandSourceStack src, String query) {
+        String context = NpcKnowledgeBase.relevantContext(query, "", "");
+        sendAiText(src, "[AI] Knowledge for \"" + query + "\":", context);
+        return context.isBlank() ? 0 : 1;
+    }
+
+    private static int aiProbe(CommandSourceStack src, String prompt) {
+        return NpcBrainService.INSTANCE.probe(src, prompt);
+    }
+
+    private static int aiReload(CommandSourceStack src) {
+        NpcBrainService.INSTANCE.reload();
+        src.sendSuccess(() -> Component.literal("[AI] Reloaded local NPC brain config and cleared cooldowns."), false);
+        return 1;
+    }
+
+    private static int aiForgetNearest(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        CovenWitchEntity witch = nearestCovenWitch(player);
+        if (witch == null) {
+            src.sendFailure(Component.literal("[AI] No Coven Witch within 16 blocks."));
+            return 0;
+        }
+        int removed = NpcMemoryData.get((ServerLevel) player.level()).forgetNpc(witch.getUUID());
+        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : witch.getStringUUID();
+        src.sendSuccess(() -> Component.literal("[AI] Forgot " + removed + " memory record(s) for " + witchName + "."), false);
+        return removed;
+    }
+
+    private static int aiForget(CommandSourceStack src, String target)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        String normalized = target.trim().toLowerCase(java.util.Locale.ROOT);
+        if (normalized.equals("nearest")) {
+            return aiForgetNearest(src);
+        }
+        if (normalized.equals("all")) {
+            int removed = NpcMemoryData.get(src.getLevel()).clearAll();
+            src.sendSuccess(() -> Component.literal("[AI] Forgot " + removed + " NPC memory record(s)."), false);
+            return removed;
+        }
+        try {
+            java.util.UUID uuid = java.util.UUID.fromString(target);
+            int removed = NpcMemoryData.get(src.getLevel()).forgetNpc(uuid);
+            src.sendSuccess(() -> Component.literal("[AI] Forgot " + removed + " memory record(s) for NPC " + uuid + "."), false);
+            return removed;
+        } catch (IllegalArgumentException ex) {
+            src.sendFailure(Component.literal("[AI] Use forget nearest, forget all, or forget <npc-uuid>."));
+            return 0;
+        }
+    }
+
+    private static void sendAiText(CommandSourceStack src, String header, String text) {
+        String cleaned = text == null || text.isBlank() ? "none" : text;
+        if (cleaned.length() > 1200) {
+            cleaned = cleaned.substring(0, 1197).stripTrailing() + "...";
+        }
+        String message = cleaned;
+        src.sendSuccess(() -> Component.literal(header), false);
+        src.sendSuccess(() -> Component.literal(message), false);
+    }
+
+    private static CovenWitchEntity nearestCovenWitch(ServerPlayer player) {
+        List<CovenWitchEntity> witches = ((ServerLevel) player.level()).getEntitiesOfClass(
+                CovenWitchEntity.class, player.getBoundingBox().inflate(16.0));
+        CovenWitchEntity nearest = null;
+        double best = Double.MAX_VALUE;
+        for (CovenWitchEntity witch : witches) {
+            double distance = player.distanceToSqr(witch);
+            if (distance < best) {
+                best = distance;
+                nearest = witch;
+            }
+        }
+        return nearest;
+    }
 
     /** Guide-section keys, matching the {@code witchery:guide/<key>} chain advancements. */
     private static final List<String> GUIDE_BOOKS = List.of(

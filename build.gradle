@@ -35,6 +35,10 @@ neoForge {
         client {
             client()
             jvmArguments.addAll '-Xmx6G', '-Xms512M'
+            def witcheryRunArgs = System.getenv('WITCHERY_RUN_ARGS')
+            if (witcheryRunArgs != null && !witcheryRunArgs.isBlank()) {
+                programArguments.addAll witcheryRunArgs.trim().split(/\s+/)
+            }
         }
 
         server {

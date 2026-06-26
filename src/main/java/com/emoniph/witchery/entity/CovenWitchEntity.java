@@ -1,5 +1,6 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -7,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -63,6 +65,10 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     private static final String TAG_QUEST_KIND = "WITCQuestKind";
     /** Persistent-data tag the witch stamps onto a fight-quest monster (and its drop) — source {@code WITCQuestOwnerID}. */
     public static final String TAG_QUEST_WITCH_UUID = "WITCQuestWitchUUID";
+    private static final long ATTENTION_PENDING_TICKS = 90L * 20L;
+    private static final long ATTENTION_AFTER_REPLY_TICKS = 90L * 20L;
+    private static final long ATTENTION_BRIEF_TICKS = 60L * 20L;
+    private static final double ATTENTION_MAX_DISTANCE_SQR = 24.0 * 24.0;
     private static final EntityDataAccessor<Integer> SKIN =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
@@ -105,6 +111,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     /** When set, this witch is a Vanishing Witch Hut resident. */
     @Nullable
     private net.minecraft.core.BlockPos hutHome;
+    @Nullable
+    private java.util.UUID attentionPlayer;
+    private long attentionUntil;
 
     public CovenWitchEntity(EntityType<? extends CovenWitchEntity> type, Level level) {
         super(type, level);
@@ -201,7 +210,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         });
         // A recruited witch fights for her coven leader — throw splash potions at the leader's foes.
         this.goalSelector.addGoal(2, new CovenAttackGoal());
-        this.goalSelector.addGoal(3, new OpenDoorGoal(this, true) {
+        this.goalSelector.addGoal(3, new PlayerAttentionGoal());
+        this.goalSelector.addGoal(4, new OpenDoorGoal(this, true) {
             @Override
             public boolean canUse() {
                 return hutHome == null && super.canUse();
@@ -212,12 +222,77 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
                 return hutHome == null && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(4, new LookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new LookAtTradingPlayerGoal(this));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         // Targeting: defend the coven leader and retaliate against attackers (never the leader herself).
         this.targetSelector.addGoal(1, new CovenDefendTargetGoal());
+    }
+
+    public void beginPlayerConversation(Player player) {
+        holdPlayerAttention(player, ATTENTION_PENDING_TICKS, true);
+    }
+
+    public void completePlayerConversation(Player player) {
+        holdPlayerAttention(player, ATTENTION_AFTER_REPLY_TICKS, false);
+    }
+
+    public void nudgePlayerAttention(Player player) {
+        holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
+    }
+
+    private void holdPlayerAttention(Player player, long ticks, boolean extendOnly) {
+        if (level().isClientSide() || player == null || !player.isAlive() || player.level() != level()) {
+            return;
+        }
+        long until = level().getGameTime() + ticks;
+        if (extendOnly && player.getUUID().equals(attentionPlayer) && attentionUntil >= until) {
+            faceAttentionPlayer(player);
+            stopMovingForAttention();
+            return;
+        }
+        attentionPlayer = player.getUUID();
+        attentionUntil = until;
+        faceAttentionPlayer(player);
+        stopMovingForAttention();
+    }
+
+    @Nullable
+    private Player activeAttentionPlayer() {
+        if (attentionPlayer == null || level().getGameTime() > attentionUntil) {
+            clearAttention();
+            return null;
+        }
+        Player player = level().getPlayerByUUID(attentionPlayer);
+        if (player == null || !player.isAlive() || player.level() != level()
+                || distanceToSqr(player) > ATTENTION_MAX_DISTANCE_SQR) {
+            clearAttention();
+            return null;
+        }
+        return player;
+    }
+
+    private void clearAttention() {
+        attentionPlayer = null;
+        attentionUntil = 0L;
+    }
+
+    private void stopMovingForAttention() {
+        getNavigation().stop();
+        setDeltaMovement(getDeltaMovement().multiply(0.0, 1.0, 0.0));
+    }
+
+    private void faceAttentionPlayer(Player player) {
+        getLookControl().setLookAt(player, 30.0F, 30.0F);
+        double dx = player.getX() - getX();
+        double dz = player.getZ() - getZ();
+        if (dx * dx + dz * dz > 1.0E-4) {
+            float yaw = (float) (Mth.atan2(dz, dx) * (180.0F / Math.PI)) - 90.0F;
+            setYRot(yaw);
+            setYBodyRot(yaw);
+            setYHeadRot(yaw);
+        }
     }
 
     @Override
@@ -273,17 +348,23 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             if (level().isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
+            beginPlayerConversation(player);
             return handleCovenInteraction(player);
         }
         if (level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
+        beginPlayerConversation(player);
         String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
-        player.displayClientMessage(
-                Component.literal("\u00a79<" + witchName + "> \u00a7r")
-                        .append(Component.translatable(GREET_KEYS[random.nextInt(GREET_KEYS.length)])),
-                false);
+        Component fallbackGreeting = Component.literal("\u00a79<" + witchName + "> \u00a7r")
+                .append(Component.translatable(GREET_KEYS[random.nextInt(GREET_KEYS.length)]));
+        boolean queued = player instanceof ServerPlayer serverPlayer
+                && NpcBrainService.INSTANCE.requestCovenGreeting(this, serverPlayer, fallbackGreeting);
+        if (!queued) {
+            beginPlayerConversation(player);
+            player.displayClientMessage(fallbackGreeting, false);
+        }
         setTradingPlayer(player);
         openTradingScreen(player, getDisplayName(), 1);
         player.awardStat(Stats.TALKED_TO_VILLAGER);
@@ -458,6 +539,45 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
 
     // ── Coven combat — recruited witches defend their leader (source: EntityCovenWitch fights) ──
 
+    // Conversation attention: pause wandering while an NPC response is pending.
+    private final class PlayerAttentionGoal extends Goal {
+        PlayerAttentionGoal() {
+            setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return activeAttentionPlayer() != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return activeAttentionPlayer() != null;
+        }
+
+        @Override
+        public void start() {
+            stopMovingForAttention();
+        }
+
+        @Override
+        public void stop() {
+            if (activeAttentionPlayer() == null) {
+                clearAttention();
+            }
+        }
+
+        @Override
+        public void tick() {
+            Player player = activeAttentionPlayer();
+            if (player == null) {
+                return;
+            }
+            stopMovingForAttention();
+            faceAttentionPlayer(player);
+        }
+    }
+
     /** The recruited witch's coven leader, if loaded nearby. */
     @Nullable
     private Player covenLeader() {
@@ -617,6 +737,11 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     @Override
     public void tick() {
         super.tick();
+        Player player = activeAttentionPlayer();
+        if (player != null) {
+            stopMovingForAttention();
+            faceAttentionPlayer(player);
+        }
         // Heal a recruited witch into the persisted roster once (e.g. one recruited before the roster existed).
         if (!rosterReconciled && covenOwner != null && level() instanceof ServerLevel sl) {
             rosterReconciled = true;

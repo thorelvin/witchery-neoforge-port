@@ -41,6 +41,17 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_BRAMBLE_PATCHES;
     public static final ModConfigSpec.IntValue VILLAGE_WALL_SPAWN_PERCENT;
 
+    // Local-only NPC LLM experiment
+    public static final ModConfigSpec.BooleanValue LLM_ENABLED;
+    public static final ModConfigSpec.ConfigValue<String> LLM_PROVIDER;
+    public static final ModConfigSpec.ConfigValue<String> LLM_ENDPOINT;
+    public static final ModConfigSpec.ConfigValue<String> LLM_MODEL;
+    public static final ModConfigSpec.IntValue LLM_TIMEOUT_MILLIS;
+    public static final ModConfigSpec.IntValue LLM_MAX_CONCURRENT_REQUESTS;
+    public static final ModConfigSpec.IntValue LLM_MAX_TOKENS;
+    public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
+    public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
+
     static {
         DEBUG = BUILDER
                 .comment("Enable extra Witchery diagnostic logging for QA. Default: false")
@@ -113,6 +124,36 @@ public class WitcheryConfig {
         VILLAGE_WALL_SPAWN_PERCENT = BUILDER
                 .comment("Percent chance (0-100) that a village receives adaptive Witchery walls. Deterministic per village. 0 = never, 100 = every village. Default: 40")
                 .defineInRange("villageWallSpawnPercent", VillageWallGenerator.DEFAULT_WALL_SPAWN_PERCENT, 0, 100);
+        BUILDER.pop();
+
+        BUILDER.push("llm");
+        LLM_ENABLED = BUILDER
+                .comment("Enable experimental local NPC LLM dialogue. Default: false")
+                .define("enabled", false);
+        LLM_PROVIDER = BUILDER
+                .comment("Local LLM provider: ollama or openai_compatible. Default: ollama")
+                .define("provider", "ollama");
+        LLM_ENDPOINT = BUILDER
+                .comment("Local provider endpoint. Ollama default: http://127.0.0.1:11434")
+                .define("endpoint", "http://127.0.0.1:11434");
+        LLM_MODEL = BUILDER
+                .comment("Local model name. Tested branch target: witchery-eva-qwen2.5-1.5b-q4km-4k")
+                .define("model", "witchery-eva-qwen2.5-1.5b-q4km-4k");
+        LLM_TIMEOUT_MILLIS = BUILDER
+                .comment("Maximum time to wait for an NPC LLM response before falling back. Default: 3000")
+                .defineInRange("timeoutMillis", 3000, 250, 30000);
+        LLM_MAX_CONCURRENT_REQUESTS = BUILDER
+                .comment("Maximum concurrent NPC LLM requests. Default: 1")
+                .defineInRange("maxConcurrentRequests", 1, 1, 4);
+        LLM_MAX_TOKENS = BUILDER
+                .comment("Maximum generated tokens for one NPC line. Default: 80")
+                .defineInRange("maxTokens", 80, 16, 256);
+        LLM_COOLDOWN_TICKS = BUILDER
+                .comment("Cooldown per NPC/player dialogue trigger in ticks. Default: 100")
+                .defineInRange("cooldownTicks", 100, 20, 12000);
+        LLM_ALLOW_LAN_ENDPOINT = BUILDER
+                .comment("Allow non-loopback LLM endpoints for a LAN sidecar machine. Default: false")
+                .define("allowLanEndpoint", false);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
