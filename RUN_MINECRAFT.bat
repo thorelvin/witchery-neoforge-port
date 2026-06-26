@@ -120,6 +120,18 @@ if defined RAM_GB (
 
 if /I "%~1"=="--diagnose" goto diagnose
 
+if not exist "tools\setup_witchery_ai.ps1" goto ai_setup_missing
+echo Checking Witchery local AI setup...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%tools\setup_witchery_ai.ps1" -LogPath "%LAUNCHER_LOG_ABS%"
+set "AI_SETUP_EXIT=%ERRORLEVEL%"
+>> "%LAUNCHER_LOG%" echo AI setup helper exit code: %AI_SETUP_EXIT%
+goto ai_setup_done
+
+:ai_setup_missing
+>> "%LAUNCHER_LOG%" echo AI setup helper not found; skipping local AI preflight.
+
+:ai_setup_done
+
 echo.
 echo Launcher diagnostics: %LAUNCHER_LOG_ABS%
 echo.

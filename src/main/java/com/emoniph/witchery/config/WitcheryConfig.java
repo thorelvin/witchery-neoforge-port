@@ -128,8 +128,8 @@ public class WitcheryConfig {
 
         BUILDER.push("llm");
         LLM_ENABLED = BUILDER
-                .comment("Enable experimental local NPC LLM dialogue. Default: false")
-                .define("enabled", false);
+                .comment("Enable experimental local NPC LLM dialogue. Default: true. RUN_MINECRAFT.bat asks before downloading local AI files.")
+                .define("enabled", true);
         LLM_PROVIDER = BUILDER
                 .comment("Local LLM provider: ollama or openai_compatible. Default: ollama")
                 .define("provider", "ollama");
