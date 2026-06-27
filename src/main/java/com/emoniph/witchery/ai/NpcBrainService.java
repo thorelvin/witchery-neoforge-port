@@ -384,9 +384,7 @@ public final class NpcBrainService {
                 fallbackSpeech = alternate.get();
             }
         }
-        successes.incrementAndGet();
-        player.displayClientMessage(Component.literal("\u00a79<" + persona.displayName(entity) + "> \u00a7r" + fallbackSpeech), false);
-        rememberExchange(persona, entity, player, playerMessage, fallbackSpeech);
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, fallbackSpeech, Optional.empty());
         return true;
     }
 
@@ -452,6 +450,7 @@ public final class NpcBrainService {
                                                                ServerPlayer player, String playerMessage,
                                                                String speech, Optional<String> supportFollowup) {
         String npcName = persona.displayName(entity);
+        persona.nudgeAttention(entity, player);
         successes.incrementAndGet();
         player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + speech), false);
         supportFollowup.ifPresent(followup ->
