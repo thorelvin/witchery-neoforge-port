@@ -13,9 +13,12 @@ import java.util.Set;
 
 public final class NpcKnowledgeBase {
     private static final String RESOURCE = "/data/witchery/ai/coven_witch_knowledge.md";
+    private static final String CARD_INDEX_RESOURCE = "/data/witchery/ai/cards/index.txt";
+    private static final String CARD_RESOURCE_DIR = "/data/witchery/ai/cards/";
     private static final String TARGETED_PREFIX = "- [triggers:";
     private static final int MAX_CONTEXT_LENGTH = 1400;
     private static final int MAX_RELEVANT_SECTIONS = 3;
+    private static final int MAX_TARGETED_NOTES = 6;
     private static final String MARKDOWN = loadMarkdown();
     private static final List<Section> SECTIONS = loadSections(MARKDOWN);
     private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes(MARKDOWN);
@@ -66,6 +69,12 @@ public final class NpcKnowledgeBase {
                     "Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore."),
             new TargetedNote("oven|witches oven|witch's oven|fume|fumes|clay jar|jar|sapling|saplings",
                     "Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts."),
+            new TargetedNote("whiff of magic|whif of magic|rowan sapling",
+                    "Targeted fact: Whiff of Magic comes from cooking a Rowan Sapling in a Witch's Oven; use fuel and a Clay Jar, and expect Wood Ash as the other oven output."),
+            new TargetedNote("what uses whiff of magic|what use whiff of magic|uses whiff of magic|use whiff of magic|recipe uses whiff|recipes use whiff|specific recipe uses whiff",
+                    "Targeted fact: Whiff of Magic is used in Brew of Sleeping, Brew of Love, Attuned Stone, Book of Circle Magic, and later workings."),
+            new TargetedNote("sleeping brew recipe|brew of sleeping recipe|ingredients for sleeping brew|exact recipe for brew of sleeping",
+                    "Targeted fact: Brew of Sleeping is brewed from Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke; the recipe makes three bottles."),
             new TargetedNote("kettle|cauldron|witches cauldron|recipe|recipes|exact recipe|exact ingredients|ingredient list|missing recipe",
                     "Targeted fact: Exact recipe and ingredient lists must come from the Primer, recipe book, or runtime recipe export before naming ingredients."),
             new TargetedNote("distillery|spinning wheel|spinning",
@@ -93,11 +102,9 @@ public final class NpcKnowledgeBase {
         Set<String> terms = terms((playerMessage == null ? "" : playerMessage) + " " + biome + " " + timeOfDay);
         List<SectionScore> scored = new ArrayList<>();
         StringBuilder context = new StringBuilder();
-        for (TargetedNote note : TARGETED_NOTES) {
-            if (note.matches(normalized)) {
-                appendText(context, note.note());
-            }
-        }
+        targetedMatches(normalized).stream()
+                .limit(MAX_TARGETED_NOTES)
+                .forEach(match -> appendText(context, match.note().note()));
         for (Section section : SECTIONS) {
             int score = score(section, terms);
             if (score > 0) {
@@ -121,10 +128,9 @@ public final class NpcKnowledgeBase {
         if (queryTerms.isEmpty() || (!looksLikeKnowledgeQuestion(playerMessage) && !containsKnowledgeCue(normalized))) {
             return Optional.empty();
         }
-        for (TargetedNote note : TARGETED_NOTES) {
-            if (note.matches(normalized)) {
-                return Optional.of(NpcBrainResponse.sanitize(note.spokenFact(), 180));
-            }
+        Optional<TargetedMatch> targeted = targetedMatches(normalized).stream().findFirst();
+        if (targeted.isPresent()) {
+            return Optional.of(NpcBrainResponse.sanitize(targeted.get().note().spokenFact(), 180));
         }
         Set<String> contextTerms = terms(playerMessage + " " + biome + " " + timeOfDay);
         return SECTIONS.stream()
@@ -203,6 +209,14 @@ public final class NpcKnowledgeBase {
         return score;
     }
 
+    private static List<TargetedMatch> targetedMatches(String normalized) {
+        return TARGETED_NOTES.stream()
+                .map(note -> new TargetedMatch(note, note.matchScore(normalized)))
+                .filter(match -> match.score() > 0)
+                .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
+                .toList();
+    }
+
     private static Set<String> terms(String text) {
         Set<String> terms = new LinkedHashSet<>();
         for (String term : text.toLowerCase(Locale.ROOT).split("[^a-z0-9_]+")) {
@@ -215,7 +229,7 @@ public final class NpcKnowledgeBase {
 
     private static String normalize(String text) {
         return text == null ? "" : text.toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9' ]+", " ")
+                .replaceAll("[^a-z0-9 ]+", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
     }
@@ -277,7 +291,10 @@ public final class NpcKnowledgeBase {
                 "witchery", "rumor", "rumour", "gossip", "baba yaga", "death", "poison", "blight",
                 "chalk", "garlic", "vampire", "vampires", "storm", "weather", "raining",
                 "fume", "fumes", "clay jar", "jar", "sapling", "saplings", "dream catcher", "dreamcatcher",
-                "well", "whisper", "whispers");
+                "well", "whisper", "whispers", "whiff", "whif", "whiff of magic", "whif of magic",
+                "mutandis", "mutandis extremis", "attuned stone", "exhale", "exhale of the horned one",
+                "breath of the goddess", "hint of rebirth", "reek of misfortune", "odour of purity",
+                "odor of purity", "odour", "odor", "reek", "foul fume", "witches salt recipe", "witch salt recipe");
     }
 
     private static boolean isFavoriteHerbQuestion(String normalized) {
@@ -305,10 +322,16 @@ public final class NpcKnowledgeBase {
 
     private static boolean containsTerm(String normalized, String term) {
         if (term.indexOf(' ') >= 0) {
-            return normalized.contains(term);
+            return normalized.contains(term) || stripArticles(normalized).contains(stripArticles(term));
         }
         String suffix = term.endsWith("s") ? "" : "s?";
         return normalized.matches(".*\\b" + java.util.regex.Pattern.quote(term) + suffix + "\\b.*");
+    }
+
+    private static String stripArticles(String normalized) {
+        return normalized.replaceAll("\\b(a|an|the)\\b", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private static List<Section> loadSections(String markdown) {
@@ -322,7 +345,32 @@ public final class NpcKnowledgeBase {
     }
 
     private static String loadMarkdown() {
-        try (InputStream stream = NpcKnowledgeBase.class.getResourceAsStream(RESOURCE)) {
+        StringBuilder markdown = new StringBuilder();
+        appendMarkdown(markdown, loadResource(RESOURCE));
+        String index = loadResource(CARD_INDEX_RESOURCE);
+        for (String rawLine : index.split("\\R")) {
+            String line = rawLine.strip();
+            if (line.isBlank() || line.startsWith("#")) {
+                continue;
+            }
+            String resource = line.startsWith("/") ? line : CARD_RESOURCE_DIR + line;
+            appendMarkdown(markdown, loadResource(resource));
+        }
+        return markdown.toString();
+    }
+
+    private static void appendMarkdown(StringBuilder markdown, String text) {
+        if (text.isBlank()) {
+            return;
+        }
+        if (!markdown.isEmpty()) {
+            markdown.append("\n\n");
+        }
+        markdown.append(text);
+    }
+
+    private static String loadResource(String resource) {
+        try (InputStream stream = NpcKnowledgeBase.class.getResourceAsStream(resource)) {
             if (stream == null) {
                 return "";
             }
@@ -408,15 +456,30 @@ public final class NpcKnowledgeBase {
     private record AnswerScore(String sentence, int score) {
     }
 
+    private record TargetedMatch(TargetedNote note, int score) {
+    }
+
     private record TargetedNote(String triggers, String note) {
         boolean matches(String normalized) {
+            return matchScore(normalized) > 0;
+        }
+
+        int matchScore(String normalized) {
+            int best = 0;
             for (String trigger : triggers.split("\\|")) {
                 String cleaned = normalize(trigger.strip());
                 if (!cleaned.isBlank() && containsTerm(normalized, cleaned)) {
-                    return true;
+                    int words = terms(cleaned).size();
+                    int score = Math.max(1, words * 10 + cleaned.length() / 8);
+                    if (normalized.equals(cleaned)) {
+                        score += 100;
+                    } else if (normalized.contains(cleaned)) {
+                        score += 5;
+                    }
+                    best = Math.max(best, score);
                 }
             }
-            return false;
+            return best;
         }
 
         String spokenFact() {

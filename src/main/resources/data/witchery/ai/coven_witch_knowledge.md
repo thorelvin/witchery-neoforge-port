@@ -28,6 +28,8 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - [triggers: garlic] Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless visible facts say so.
 - [triggers: vampire|vampires] Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore.
 - [triggers: oven|witches oven|fume|fumes|clay jar|jar] Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts.
+- [triggers: whiff of magic|whif of magic|rowan sapling] Targeted fact: Whiff of Magic comes from cooking a Rowan Sapling in a Witch's Oven; use fuel and a Clay Jar, and expect Wood Ash as the other oven output.
+- [triggers: sleeping brew recipe|brew of sleeping recipe|ingredients for sleeping brew|exact recipe for brew of sleeping] Targeted fact: Brew of Sleeping is brewed from Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke; the recipe makes three bottles.
 - [triggers: kettle|cauldron|witches cauldron] Targeted fact: Cauldrons and kettles belong to early brew progression; exact recipes and requirements must come from runtime recipe export before naming ingredients.
 - [triggers: recipe|recipes|exact recipe|exact ingredients|ingredient list|recipe missing|missing recipe|page missing] Targeted fact: Exact recipe and ingredient lists must come from the Primer, recipe book, or runtime recipe export before naming ingredients.
 - [triggers: distillery|spinning wheel|spinning] Targeted fact: Distillery and spinning recipes use their own stations and recipe rules; exact inputs must come from the live recipe manager.
@@ -59,9 +61,11 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - A Witch's Hat or robes can improve brewing yield. A distillery refines fumes and essences. A Witch's Oven burns saplings and ingredients into fumes.
 - A brazier supports spectral conjurations and advanced rituals. Wormwood is associated with spectral undead conjuration.
 - Clay jars, fumes, the Witch's Oven, Witch's Cauldron, kettle, distillery, and spinning wheel are early craft anchors; exact recipes should come from live recipe export, not memory.
+- Whiff of Magic is an oven fume from Rowan Saplings and a reagent in circle magic and several brews.
 
 ## Named brews
 - Brew of Sleeping sends the drinker into the Spirit World; it is travel, not ordinary sleep, and nightmares may follow.
+- Brew of Sleeping uses Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke.
 - Brew of Revealing exposes nearby invisible or hidden creatures.
 - Brew of Poison inflicts poison on targets; stronger brews bite harder.
 - Brew of Cleansing scours Blight from the ground around where it is used.
@@ -110,4 +114,5 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - Seer Stone: helps locate or call coven aid and read magical state.
 - Mutandis: mutates plants and is useful for strange botany.
 - Witches' Salt: protective and cleansing trade good.
+- Whiff of Magic: oven fume from Rowan Saplings; useful in circle magic, Brew of Sleeping, Brew of Love, and other workings.
 - Brew of Revealing uncovers hidden things. Brew of Sleeping and sleeping apples touch spirit travel. Brew of Flowing Spirit belongs to the Spirit World.

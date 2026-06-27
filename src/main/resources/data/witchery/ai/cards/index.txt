@@ -1,0 +1,7 @@
+# Markdown knowledge cards loaded by NpcKnowledgeBase.
+# Keep these files compact: the witch receives only cards matching the player's words.
+basic_recipes.md
+starter_reagents.md
+brews.md
+machines.md
+rites.md

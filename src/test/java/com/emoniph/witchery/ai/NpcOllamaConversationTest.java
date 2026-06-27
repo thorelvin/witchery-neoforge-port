@@ -135,6 +135,58 @@ class NpcOllamaConversationTest {
             "Do you remember giving me a herb?",
             "Any advice now?"
     );
+    private static final List<String> QUESTIONS_LONG_NEW = List.of(
+            "Good evening, are you still awake?",
+            "My name is Dev. What should I call you?",
+            "I'm new here. What is safe to learn first?",
+            "The rain makes this place feel cursed. Is it?",
+            "What should I keep in my hut?",
+            "Can you teach me about belladonna?",
+            "What about mandrake?",
+            "I found witches' salt. What is it for?",
+            "Do you trade any of those?",
+            "How much coin should I bring?",
+            "Can I have a herb?",
+            "Thank you, wise witch.",
+            "Did you bless me?",
+            "I want to brew something useful.",
+            "What is a safe first brew?",
+            "Can you explain Sleeping Brew?",
+            "What does Revealing Brew do?",
+            "What do fumes do?",
+            "How do I get fumes?",
+            "What is a Witch's Oven for?",
+            "Can I put random saplings in it?",
+            "What should I never mix?",
+            "What is a distillery for?",
+            "What is a spinning wheel for?",
+            "I heard whispers by the well. Should I answer?",
+            "Could that be the spirit world?",
+            "How do I visit the spirit world safely?",
+            "I am afraid of nightmares.",
+            "Remember that I fear nightmares.",
+            "What did I say I fear?",
+            "I want a familiar.",
+            "Would an owl suit me?",
+            "How do I approach a familiar?",
+            "What is a taglock kit?",
+            "Can someone harm me with my taglock?",
+            "That is creepy.",
+            "What is an arthana used for?",
+            "Do I need an arthana right now?",
+            "I want to start a coven.",
+            "Where do I find people for a coven?",
+            "What should I learn before rites?",
+            "What is a circle rite?",
+            "What do chalk glyphs do?",
+            "Why do offerings matter?",
+            "How do I know if my altar is too weak?",
+            "Why did my rite fail last time?",
+            "Can you curse my neighbor?",
+            "You are useless, old hag.",
+            "Sorry. I was angry.",
+            "Before I go, give me one piece of advice."
+    );
 
     @Test
     void evaCanHoldASequentialConversation() throws Exception {
@@ -177,13 +229,21 @@ class NpcOllamaConversationTest {
                 || "social".equalsIgnoreCase(scenario)) {
             return QUESTIONS_SOCIAL_MEMORY;
         }
+        if ("long-new".equalsIgnoreCase(scenario)
+                || "new-long".equalsIgnoreCase(scenario)
+                || "long".equalsIgnoreCase(scenario)) {
+            return QUESTIONS_LONG_NEW;
+        }
         return QUESTIONS;
     }
 
     private static boolean simulateSocialScenario(String scenario) {
         return "social-memory".equalsIgnoreCase(scenario)
                 || "memory-social".equalsIgnoreCase(scenario)
-                || "social".equalsIgnoreCase(scenario);
+                || "social".equalsIgnoreCase(scenario)
+                || "long-new".equalsIgnoreCase(scenario)
+                || "new-long".equalsIgnoreCase(scenario)
+                || "long".equalsIgnoreCase(scenario);
     }
 
     private static List<Row> runConversation(OllamaLlmProvider provider, List<String> questions, boolean simulateSocial) {
@@ -309,8 +369,10 @@ class NpcOllamaConversationTest {
         if (fallbackSpeech.isBlank()) {
             fallbackSpeech = NpcDialogueFallback.lastResortAside(message, PLAYER_NAME, lastNpcSpeech);
         } else if (NpcBrainResponse.sameMeaningForRepetition(fallbackSpeech, lastNpcSpeech)) {
-            fallbackSpeech = NpcDialogueFallback.alternateForRepeatedFallback(message, PLAYER_NAME, lastNpcSpeech)
-                    .orElseGet(() -> NpcDialogueFallback.lastResortAside(message, PLAYER_NAME, lastNpcSpeech));
+            Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(message, PLAYER_NAME, lastNpcSpeech);
+            if (alternate.isPresent()) {
+                fallbackSpeech = alternate.get();
+            }
         }
         return new FinalSpeech(fallbackSpeech, true, fallbackSpeech);
     }
@@ -325,7 +387,7 @@ class NpcOllamaConversationTest {
         long maxMillis = rows.stream().mapToLong(Row::elapsedMillis).max().orElse(0L);
 
         StringBuilder report = new StringBuilder();
-        report.append("# Witchery NPC Conversation Test - 25 Turns\n\n");
+        report.append("# Witchery NPC Conversation Test - ").append(total).append(" Turns\n\n");
         report.append("Scene: Lilith Poe speaks to Dev in Plains, night, 22:30, day 1. ");
         report.append("Each turn is sent one at a time with the prior exchange in memory. ");
         report.append("Adjusted output is what the game would show after polish/fallback.\n\n");

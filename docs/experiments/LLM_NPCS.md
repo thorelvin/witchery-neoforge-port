@@ -20,12 +20,15 @@ ollama serve
 ```toml
 [llm]
 enabled = true
+prewarmEnabled = true
 provider = "ollama"
 endpoint = "http://127.0.0.1:11434"
 model = "witchery-eva-qwen2.5-1.5b-q4km-4k"
-timeoutMillis = 15000
+timeoutMillis = 3000
+prewarmTimeoutMillis = 30000
 maxConcurrentRequests = 1
 maxTokens = 80
+keepAliveMinutes = 30
 cooldownTicks = 100
 allowLanEndpoint = false
 ```
@@ -47,6 +50,18 @@ Set `allowLanEndpoint = true` only when the model is running on a trusted LAN si
 Coven Witch trade greetings and nearby player chat replies are wired. Prompt context includes the witch name, player name, current biome, time of day, day count, weather, nearby threat, relationship state, and compact memory. Existing trading, recruitment, quests, dismissal, and combat remain authoritative. The model may produce flavor text and a validated intent, but it cannot grant items, change trades, bypass quest gates, run commands, or control combat logic. Small social reactions are deterministic: praise can earn a short blessing, insults can earn a short curse, and an explicit herb request can receive one free herb per witch/player memory.
 
 Nearby chat replies trigger when the player is close to a Coven Witch and addresses her by name/`witch`, asks a question, says a greeting, or looks at her while sending a short conversational message.
+
+## Knowledge Cards
+
+Practical witch knowledge is split into compact markdown cards under `src/main/resources/data/witchery/ai/cards/` and packaged as `data/witchery/ai/cards/`. `NpcKnowledgeBase` loads the files listed in `cards/index.txt`, then retrieves only the matching facts for the player's words. This keeps the prompt small while letting the witch teach real recipes, brews, machine use, starter reagents, and rites.
+
+Card lines use this shape:
+
+```text
+- [triggers: whiff|whif|whiff of magic] Targeted fact: Whiff of Magic is crafted with ...
+```
+
+The cards are guidance, not a hard script. The prompt presents them as targeted facts, the model phrases the answer in character, and deterministic fallback uses them only when the raw answer is unsafe or too vague. Tests also compare key recipe cards against the local recipe JSON so the witch does not drift away from the mod's actual content.
 
 ## Model Comparison
 

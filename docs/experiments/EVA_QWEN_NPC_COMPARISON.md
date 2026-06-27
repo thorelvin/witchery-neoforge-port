@@ -81,7 +81,7 @@ EVA has a livelier roleplay tone, but it is more prone to narration, self-introd
 - `The taglock is a protective device...`
 - `The arthana is an ancient relic...`
 
-Recommendation: keep `qwen2.5:1.5b-instruct` as the default. Keep the 4k EVA alias available as a personality experiment, but do not switch the mod to EVA yet.
+Historical note: after this early run, the recommendation was to keep `qwen2.5:1.5b-instruct` as the default and treat the 4k EVA alias as a personality experiment. Later playtests superseded that recommendation because EVA's voice was stronger once prompt polish, fallback hardening, and targeted lore context were added.
 
 ## Prompt/Polish Pass Follow-up
 

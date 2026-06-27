@@ -43,6 +43,95 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void smokePromptIncludesExactRecipeCardWhenKnown() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke(
+                "tell me the exact recipe for Brew of Sleeping", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("purified milk"), user);
+        assertTrue(user.contains("whiff of magic"), user);
+        assertTrue(user.contains("icy needle"), user);
+        assertTrue(user.contains("you may name those ingredients exactly"), user);
+    }
+
+    @Test
+    void smokePromptIncludesWhiffSourceCard() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke("how do I get whif of magic?", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("rowan sapling"), user);
+        assertTrue(user.contains("witch's oven"), user);
+        assertTrue(user.contains("clay jar"), user);
+    }
+
+    @Test
+    void smokePromptIncludesWhiffUsageCardForUseQuestions() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke(
+                "what specific recipe uses Whiff of Magic?", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("brew of sleeping"), user);
+        assertTrue(user.contains("brew of love"), user);
+        assertTrue(user.contains("attuned stone"), user);
+    }
+
+    @Test
+    void smokePromptIncludesStarterReagentCards() {
+        NpcBrainPrompt mutandis = NpcPromptBuilder.covenWitchSmoke("how do I make Mutandis?", "");
+        String mutandisUser = mutandis.userPrompt().toLowerCase();
+
+        assertTrue(mutandisUser.contains("wood ash"), mutandisUser);
+        assertTrue(mutandisUser.contains("hint of rebirth"), mutandisUser);
+        assertTrue(mutandisUser.contains("mandrake root"), mutandisUser);
+        assertTrue(mutandisUser.contains("bone meal"), mutandisUser);
+
+        NpcBrainPrompt attuned = NpcPromptBuilder.covenWitchSmoke("what do I need for Attuned Stone?", "");
+        String attunedUser = attuned.userPrompt().toLowerCase();
+
+        assertTrue(attunedUser.contains("whiff of magic"), attunedUser);
+        assertTrue(attunedUser.contains("diamond"), attunedUser);
+        assertTrue(attunedUser.contains("lava bucket"), attunedUser);
+    }
+
+    @Test
+    void smokePromptUsesSaltRecipeCardForHowToGetSaltQuestions() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke("how do I get witches' salt?", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("kelp"), user);
+        assertTrue(user.contains("witch's oven"), user);
+        assertTrue(user.contains("two salt"), user);
+    }
+
+    @Test
+    void smokePromptIncludesStarterCardsForTerseMentions() {
+        NpcBrainPrompt whiff = NpcPromptBuilder.covenWitchSmoke("Whiff?", "");
+        String whiffUser = whiff.userPrompt().toLowerCase();
+
+        assertTrue(whiffUser.contains("whiff of magic"), whiffUser);
+        assertTrue(whiffUser.contains("rowan sapling"), whiffUser);
+
+        NpcBrainPrompt mutandis = NpcPromptBuilder.covenWitchSmoke("Mutandis?", "");
+        String mutandisUser = mutandis.userPrompt().toLowerCase();
+
+        assertTrue(mutandisUser.contains("mutandis"), mutandisUser);
+        assertTrue(mutandisUser.contains("mutates") || mutandisUser.contains("mutation"), mutandisUser);
+
+        NpcBrainPrompt attuned = NpcPromptBuilder.covenWitchSmoke("Attuned Stone?", "");
+        String attunedUser = attuned.userPrompt().toLowerCase();
+
+        assertTrue(attunedUser.contains("attuned stone"), attunedUser);
+        assertTrue(attunedUser.contains("whiff of magic"), attunedUser);
+        assertTrue(attunedUser.contains("lava bucket"), attunedUser);
+
+        NpcBrainPrompt exhale = NpcPromptBuilder.covenWitchSmoke("Exhale?", "");
+        String exhaleUser = exhale.userPrompt().toLowerCase();
+
+        assertTrue(exhaleUser.contains("exhale of the horned one"), exhaleUser);
+        assertTrue(exhaleUser.contains("oak sapling"), exhaleUser);
+    }
+
+    @Test
     void smokePromptDoesNotUseLeakProneLegacyLabels() {
         NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke("hi", "");
         String user = prompt.userPrompt().toLowerCase();

@@ -148,6 +148,7 @@ public final class NpcPromptBuilder {
                 # Grounding
                 Use Witchery facts when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the witch's voice.
+                If a Targeted fact lists exact recipe ingredients, you may name those ingredients exactly and briefly.
                 If the player asks for an exact recipe, ritual offering, altar power, circle size, dimension, moon condition, familiar requirement, coven requirement, or unlock gate and the facts do not contain it, say the page is absent from your grimoire and offer a safe next step.
                 If facts are thin, answer honestly in-world and keep it short.
                 Do not invent recipe amounts, ingredient counts, named places, prophecies, or hidden player powers.
@@ -157,6 +158,7 @@ public final class NpcPromptBuilder {
                 Do not introduce named herbs, stock, rites, demons, or brews unless the player, memory, scene, or facts make them relevant.
                 If the player asks what you trade, name concrete stock from this set in a natural order: witches' salt, taglock kits, fumes, bat wool, Revealing brews, Sleeping brews, belladonna, or mandrake.
                 If the player asks a lore or item question, give one grounded Witchery fact, not a vague mystical lecture.
+                If the player names a brew, answer that exact brew; do not borrow Sleeping Brew facts for Revealing Brew or another named brew.
                 If the player is only greeting, reacting, or making small talk, do not introduce Witchery as a topic.
                 If the player mentions ordinary food or preferences, answer the small talk directly; do not list trade stock.
                 If the player asks your favorite herb, name one or two herbs as your own taste, not a rite.
@@ -206,6 +208,8 @@ public final class NpcPromptBuilder {
                         "{\"speech\":\"Circle, chalk, offerings, altar power, and better sense than haste.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
                 example("what is Flowing Spirit?",
                         "{\"speech\":\"Flowing Spirit places spirit liquid; in the Spirit World, it matters for return paths and wispy cotton.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what does Revealing Brew do?",
+                        "{\"speech\":\"Brew of Revealing exposes nearby invisible or hidden creatures.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("I like potatoes",
                         "{\"speech\":\"Keep that taste; small comforts outlast grand omens.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what is your favorite herb?",

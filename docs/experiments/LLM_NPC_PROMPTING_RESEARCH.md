@@ -16,7 +16,7 @@ Date: 2026-06-26
 The model should not be boxed into sterile one-line utility answers. The better shape is:
 
 - A compact role and scene contract: witch identity, player identity, place, time, weather, biome, memory.
-- Concrete world facts from Witchery notes when the player asks for knowledge.
+- Concrete world facts from targeted Witchery primer cards when the player asks for knowledge.
 - One vivid spoken line, optionally with one small beat such as `*narrows her eyes* "..."`.
 - Memory as history, not a script to repeat.
 - Schema only around the response envelope, not around style.
@@ -27,6 +27,8 @@ This lets EVA keep its roleplay flavor while the mod still protects game-state t
 
 - `OllamaLlmProvider` now sends a JSON schema for `speech`, `intent`, and `memory`.
 - `NpcPromptBuilder` now asks for a real in-scene witch response, allows one safe performance beat, and nudges concrete Witchery nouns instead of generic fantasy filler.
+- `NpcKnowledgeBase` now loads indexed markdown cards from `data/witchery/ai/cards/` and retrieves compact facts for recipes, brews, starter reagents, machines, and rites. The cards act like soft context for the LLM, not a forced response script.
+- Exact recipe and starter-machine cards are covered by tests that compare key facts against local recipe JSON where possible.
 - `NpcBrainResponse` now canonicalizes common roleplay formats:
   - `*nods thoughtfully* Witches' salt is...` -> `*nods* "Witches' salt is..."`
   - `*leans closer* 'It is 22:30...'` -> `*leans closer* "It is 22:30..."`
@@ -34,7 +36,7 @@ This lets EVA keep its roleplay flavor while the mod still protects game-state t
 - The validator still rejects fake game actions, clipped lines, prompt leaks, generic payment-memory repeats, "not for sale" trade answers, and unsupported mandrake/mana filler.
 - Local dev config now points to `witchery-eva-qwen2.5-1.5b-q4km-4k` for playtesting.
 
-## Latest Two-Model Run
+## Two-Model Harness Snapshot
 
 Command:
 
@@ -47,4 +49,4 @@ Command:
 | `qwen2.5:1.5b-instruct` | 5/12 | 7/12 | 383 | 12/12 |
 | `witchery-eva-qwen2.5-1.5b-q4km-4k` | 2/12 | 10/12 | 475 | 12/12 |
 
-Interpretation: Qwen is still better at obeying the harness. EVA has the more interesting witch voice, but it over-narrates, invents lore, and sometimes ignores the JSON wrapper. The current branch chooses EVA for local playtest because the fallback/polish layer catches the failures while we continue tuning for immersion.
+Interpretation from this snapshot: Qwen obeyed the harness better, while EVA had the more interesting witch voice but needed more polish support. Later playtests kept EVA as the default because the softer prompt, targeted knowledge cards, and fallback layer made its in-game voice more memorable.

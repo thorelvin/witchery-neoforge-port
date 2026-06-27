@@ -2,6 +2,7 @@ package com.emoniph.witchery.ai;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -404,12 +405,123 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void answersRitePreparationWithoutMemoryRecap() {
+        Optional<String> speech = NpcDialogueFallback.covenChat("What should I learn before trying a rite?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("chalk"), speech.get());
+        assertTrue(speech.get().contains("offerings"), speech.get());
+        assertTrue(speech.get().contains("altar power"), speech.get());
+        assertTrue(!speech.get().contains("coin"), speech.get());
+    }
+
+    @Test
+    void answersWitchNameWhenPlayerStatesOwnNameAndAsksWitchName() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "My name is Dev. What should I call you?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertEquals("I am Lilith Poe.", speech.get());
+    }
+
+    @Test
+    void answersSafeFirstLearningWithBeginnerPath() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "I'm new here. What is safe to learn first?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Primer") || speech.get().contains("visible brew"), speech.get());
+        assertTrue(!speech.get().contains("teeth"), speech.get());
+    }
+
+    @Test
+    void answersPlainHutSafetyQuestion() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What should I keep in my hut?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("salt") || speech.get().contains("threshold"), speech.get());
+    }
+
+    @Test
+    void teachesSpecificHerbBeforeGenericLesson() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Can you teach me about belladonna?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L);
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Belladonna"), speech.get());
+        assertTrue(!speech.get().contains("taglocks bind"), speech.get());
+    }
+
+    @Test
+    void answersFearMemoryFollowupFromPlayerPerspective() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What did I say I fear?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L,
+                "Long memory: Dev is afraid of nightmares.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("nightmare"), speech.get());
+        assertTrue(!speech.get().startsWith("I fear"), speech.get());
+    }
+
+    @Test
+    void answersFearMemoryWhenStoredAsWary() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What did I say I fear?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L,
+                "Long memory: Dev is wary of nightmares.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("nightmare"), speech.get());
+    }
+
+    @Test
+    void answersCovenPeopleRecruiting() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Where do I find people for a coven?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("coven witch") || speech.get().contains("familiar"), speech.get());
+    }
+
+    @Test
+    void answersBrewMixingWithoutInventedPair() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What brews should I never mix?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("recipe page"), speech.get());
+        assertTrue(!speech.get().contains("fumes with bat wool"), speech.get());
+    }
+
+    @Test
     void answersSpecificBrewQuestionFromMarkdownKnowledge() {
         Optional<String> speech = NpcKnowledgeBase.compactAnswer("Can you brew Sleeping Brew?", "Plains", "night");
 
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("Brew of Sleeping"));
         assertTrue(speech.get().contains("Spirit World"));
+    }
+
+    @Test
+    void exactKnownRecipeFallbackUsesPrimerCard() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Tell me the exact recipe for Brew of Sleeping.", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Purified Milk"), speech.get());
+        assertTrue(speech.get().contains("Whiff of Magic"), speech.get());
+        assertTrue(!speech.get().contains("absent from my grimoire"), speech.get());
+    }
+
+    @Test
+    void whiffUsageFallbackNamesRecipesInsteadOfSource() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What specific recipe uses Whiff of Magic?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Brew of Sleeping"), speech.get());
+        assertTrue(speech.get().contains("Brew of Love"), speech.get());
+        assertTrue(!speech.get().contains("cooking a Rowan Sapling"), speech.get());
     }
 
     @Test
@@ -485,8 +597,9 @@ class NpcDialogueFallbackTest {
                 "what should I bring for a familiar rite?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L);
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("Circle"));
-        assertTrue(speech.get().contains("altar power"));
+        String lower = speech.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("circle"));
+        assertTrue(lower.contains("altar power"));
     }
 
     @Test
@@ -720,14 +833,84 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
-    void answersExactRecipeRequestWithoutInventingIngredients() {
+    void answersExactKnownRecipeRequestFromCard() {
         Optional<String> speech = NpcDialogueFallback.covenChat(
                 "Tell me the exact ingredients for Sleeping Brew.", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("exact Sleeping Brew page"), speech.get());
-        assertTrue(speech.get().contains("recipe book"), speech.get());
-        assertTrue(!speech.get().matches(".*\\d+.*"), speech.get());
+        assertTrue(speech.get().contains("Purified Milk"), speech.get());
+        assertTrue(speech.get().contains("Whiff of Magic"), speech.get());
+        assertTrue(speech.get().contains("Icy Needle"), speech.get());
+    }
+
+    @Test
+    void answersStarterRecipeRequestsFromCards() {
+        Optional<String> mutandis = NpcDialogueFallback.covenChat(
+                "How do I make Mutandis?", "Lilith Poe", "Dev");
+
+        assertTrue(mutandis.isPresent());
+        assertTrue(mutandis.get().contains("Wood Ash"), mutandis.get());
+        assertTrue(mutandis.get().contains("Hint of Rebirth"), mutandis.get());
+        assertTrue(mutandis.get().contains("Mandrake Root"), mutandis.get());
+
+        Optional<String> attuned = NpcDialogueFallback.covenChat(
+                "What do I need for Attuned Stone?", "Lilith Poe", "Dev");
+
+        assertTrue(attuned.isPresent());
+        assertTrue(attuned.get().contains("Whiff of Magic"), attuned.get());
+        assertTrue(attuned.get().contains("Diamond"), attuned.get());
+        assertTrue(attuned.get().contains("Lava Bucket"), attuned.get());
+    }
+
+    @Test
+    void answersTerseStarterReagentMentionsFromCards() {
+        Optional<String> whiff = NpcDialogueFallback.covenChat(
+                "Whiff?", "Lilith Poe", "Dev");
+
+        assertTrue(whiff.isPresent());
+        assertTrue(whiff.get().contains("Whiff of Magic"), whiff.get());
+        assertTrue(whiff.get().contains("Rowan Sapling"), whiff.get());
+
+        Optional<String> mutandis = NpcDialogueFallback.covenChat(
+                "Mutandis?", "Lilith Poe", "Dev");
+
+        assertTrue(mutandis.isPresent());
+        assertTrue(mutandis.get().contains("Mutandis"), mutandis.get());
+        assertTrue(mutandis.get().contains("mutates") || mutandis.get().contains("mutation"), mutandis.get());
+
+        Optional<String> attuned = NpcDialogueFallback.covenChat(
+                "Attuned Stone?", "Lilith Poe", "Dev");
+
+        assertTrue(attuned.isPresent());
+        assertTrue(attuned.get().contains("Attuned Stone"), attuned.get());
+        assertTrue(attuned.get().contains("Whiff of Magic"), attuned.get());
+
+        Optional<String> exhale = NpcDialogueFallback.covenChat(
+                "Exhale?", "Lilith Poe", "Dev");
+
+        assertTrue(exhale.isPresent());
+        assertTrue(exhale.get().contains("Exhale of the Horned One"), exhale.get());
+        assertTrue(exhale.get().contains("Oak Sapling"), exhale.get());
+    }
+
+    @Test
+    void answersSaltSourceBeforeBroadSaltLore() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "How do I get witches' salt?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Kelp"), speech.get());
+        assertTrue(speech.get().contains("Witch's Oven"), speech.get());
+    }
+
+    @Test
+    void answersMutandisUseAsMutationNotFertilizer() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What does Mutandis do?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("changes") || speech.get().contains("mutation"), speech.get());
+        assertTrue(!speech.get().toLowerCase(Locale.ROOT).contains("fertilizer"), speech.get());
     }
 
     @Test
