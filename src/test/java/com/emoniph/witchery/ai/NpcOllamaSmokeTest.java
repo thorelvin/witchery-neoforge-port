@@ -99,7 +99,7 @@ class NpcOllamaSmokeTest {
     }
 
     private static Optional<String> finalSpeech(NpcBrainResponse response, Case testCase) {
-        if (response == null || !response.intent().allowedForCovenWitch(false)) {
+        if (response == null || !CovenWitchPersona.allowsIntent(response.intent(), false)) {
             return Optional.empty();
         }
         Optional<String> polished = NpcBrainResponse.polishSpeech(

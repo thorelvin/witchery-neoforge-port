@@ -34,10 +34,4 @@ public enum NpcIntent {
         return Optional.empty();
     }
 
-    public boolean allowedForCovenWitch(boolean recruitedByPlayer) {
-        return switch (this) {
-            case NONE, OPEN_TRADE, QUEST_HINT, WARN_THREAT, COMBAT_TAUNT -> true;
-            case FOLLOW_OWNER -> recruitedByPlayer;
-        };
-    }
 }

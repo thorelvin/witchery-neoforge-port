@@ -348,7 +348,7 @@ class NpcOllamaConversationTest {
 
     private static FinalSpeech finalSpeech(NpcBrainResponse response, String message,
                                            String memory, String lastNpcSpeech) {
-        if (response != null && response.intent().allowedForCovenWitch(false)) {
+        if (response != null && CovenWitchPersona.allowsIntent(response.intent(), false)) {
             Optional<String> polished = NpcBrainResponse.polishSpeechOrGroundedFollowup(
                     response.speech(), WITCH_NAME, PLAYER_NAME, message, memory, "22:30");
             if (polished.isPresent() && !NpcBrainResponse.sameMeaningForRepetition(polished.get(), lastNpcSpeech)) {

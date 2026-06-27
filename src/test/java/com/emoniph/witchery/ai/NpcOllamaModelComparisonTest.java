@@ -110,7 +110,7 @@ class NpcOllamaModelComparisonTest {
     }
 
     private static Optional<String> rawUsableSpeech(NpcBrainResponse response, Case testCase) {
-        if (response == null || !response.intent().allowedForCovenWitch(false)) {
+        if (response == null || !CovenWitchPersona.allowsIntent(response.intent(), false)) {
             return Optional.empty();
         }
         Optional<String> polished = NpcBrainResponse.polishSpeech(

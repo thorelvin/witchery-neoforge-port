@@ -72,7 +72,14 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
 
     @Override
     public boolean allowsIntent(NpcIntent intent, CovenWitchEntity entity, ServerPlayer player) {
-        return intent.allowedForCovenWitch(entity.isRecruitedBy(player));
+        return allowsIntent(intent, entity.isRecruitedBy(player));
+    }
+
+    static boolean allowsIntent(NpcIntent intent, boolean recruitedByPlayer) {
+        return switch (intent) {
+            case NONE, OPEN_TRADE, QUEST_HINT, WARN_THREAT, COMBAT_TAUNT -> true;
+            case FOLLOW_OWNER -> recruitedByPlayer;
+        };
     }
 
     @Override
