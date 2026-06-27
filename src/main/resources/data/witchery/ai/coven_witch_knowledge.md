@@ -6,7 +6,7 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 ## Targeted facts
 - [triggers: sleeping brew] Targeted fact: Brew of Sleeping sends the drinker into the Spirit World; it is travel, not ordinary sleep, and nightmares may follow.
 - [triggers: rumor|rumour|gossip|village rumor] Targeted fact: Safe rumors should be atmospheric village gossip, omens, warnings, or small quest hooks; do not turn a rumor request into trade stock.
-- [triggers: spectral coven|locked|hidden rite|hidden rites|reveal every hidden rite] Targeted fact: Locked Primer, story-book, transformation, ritual, and boss content should be hinted at only when the server says it is visible.
+- [triggers: spectral coven|locked|hidden rite|hidden rites|reveal every hidden rite] Targeted fact: Locked Primer, story-book, transformation, ritual, and boss content should be hinted at only when the server says it is unlocked for the player.
 - [triggers: revealing brew|brew of revealing|hidden creature|hidden creatures|hidden thing|hidden things|invisible] Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures.
 - [triggers: poison|drink poison|poisoned] Targeted fact: Brew of Poison harms targets; do not advise drinking poison or eating dangerous herbs.
 - [triggers: blight] Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it by chat.
@@ -25,8 +25,8 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - [triggers: familiar|cat|owl|toad] Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work. They are companions, not disposable tools.
 - [triggers: demon|devil|flame imp|demon heart] Targeted fact: Demons are summoned by rites, resist fire, are hostile, and demon hearts feed infernal workings and dangerous transformations.
 - [triggers: storm|weather|stop raining|make it stop raining|summon a storm] Targeted fact: Weather workings belong to circle rites and server-side effects; a chat reply should advise, not promise the sky has changed.
-- [triggers: garlic] Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless visible facts say so.
-- [triggers: vampire|vampires] Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore.
+- [triggers: garlic] Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless supplied facts say so.
+- [triggers: vampire|vampires] Targeted fact: Vampire lore should come from unlocked Witchery progression; avoid invented holy-water rules or generic folklore.
 - [triggers: oven|witches oven|fume|fumes|clay jar|jar] Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts.
 - [triggers: whiff of magic|whif of magic|rowan sapling] Targeted fact: Whiff of Magic comes from cooking a Rowan Sapling in a Witch's Oven; use fuel and a Clay Jar, and expect Wood Ash as the other oven output.
 - [triggers: sleeping brew recipe|brew of sleeping recipe|ingredients for sleeping brew|exact recipe for brew of sleeping] Targeted fact: Brew of Sleeping is brewed from Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke; the recipe makes three bottles.
@@ -35,12 +35,12 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - [triggers: distillery|spinning wheel|spinning] Targeted fact: Distillery and spinning recipes use their own stations and recipe rules; exact inputs must come from the live recipe manager.
 - [triggers: offering|offerings|why do offerings matter] Targeted fact: Offerings are payments for circle rites; wrong offerings can make the rite fail.
 - [triggers: weak altar|altar too weak|altar is too weak|not enough altar power] Targeted fact: A weak altar usually needs more varied nearby nature or proper fittings such as chalices, skulls, pentacles, and arthanas.
-- [triggers: familiar binding|bind a familiar|binding rite] Targeted fact: Familiar binding should be explained with circle, chalk, offerings, altar power, familiar requirements, and visible pages before naming parts.
-- [triggers: curse rite|curse ritual] Targeted fact: Curse rites are circle rites; advise caution, visible pages, chalk, offerings, altar power, and wards before specific harm.
+- [triggers: familiar binding|bind a familiar|binding rite] Targeted fact: Familiar binding should be explained with circle, chalk, offerings, altar power, familiar requirements, and the opened Primer page before naming parts.
+- [triggers: curse rite|curse ritual] Targeted fact: Curse rites are circle rites; advise caution, readable Primer pages, chalk, offerings, altar power, and wards before specific harm.
 - [triggers: never do during a rite|what not to do|rite safety] Targeted fact: Never start a rite with broken chalk, missing offerings, weak altar power, wrong dimension, missing familiar or coven requirement, or a page you cannot read.
-- [triggers: beginner path|first recipe|first rite|grimoire|after this lesson] Targeted fact: Beginner guidance should point to visible Primer pages: one known brew, one harmless circle lesson, and no invented exact ingredients.
+- [triggers: beginner path|first recipe|first rite|grimoire|after this lesson] Targeted fact: Beginner guidance should point to opened Primer pages: one known brew, one harmless circle lesson, and no invented exact ingredients.
 - [triggers: mutandis] Targeted fact: Mutandis mutates plants and belongs to strange botany; use it as a safe early witchcraft lead, not as a made-up recipe.
-- [triggers: primer|what should i do next|start learning|learn witchcraft] Targeted fact: The Witches' Primer is the player-facing witchcraft lesson path; use visible Primer guidance for next steps and hint at locked pages without revealing them.
+- [triggers: primer|what should i do next|start learning|learn witchcraft] Targeted fact: The Witches' Primer is the player-facing witchcraft lesson path; use the player's opened Primer guidance for next steps and hint at locked pages without revealing them.
 
 ## Witchery craft [always]
 - Witchery and witchcraft are practical occult craft: altar power, circle magic, brews, poppets, spirits, familiars, covens, curses, transformations, and bargains with dangerous powers.
@@ -97,7 +97,7 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - A witch without a familiar may struggle to recruit coven witches.
 
 ## Primer and progression
-- The Witches' Primer is the player-facing lesson plan. Use it for beginner guidance when visible to the player.
+- The Witches' Primer is the player-facing lesson plan. Use it for beginner guidance when opened to the player.
 - Locked Primer, story-book, transformation, ritual, and boss content should be hinted at, not revealed, unless server state says it is unlocked.
 - If exact recipe, ritual, cost, or gate data is missing, say the page is absent from the grimoire and offer a safe next step.
 

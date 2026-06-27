@@ -17,7 +17,7 @@ Compact recipe cards for practical player teaching. These cards are grounded in 
 ## Chalk
 - [triggers: chalk recipe|make chalk|craft chalk|ritual chalk] Targeted fact: Chalk is crafted from Wood Ash, Gypsum, and Tear of the Goddess in the chalk recipe pattern; use it for circle glyphs and rites.
 - Chalk is the first serious circle tool.
-- If a player asks exact placement, tell them to check the visible recipe page.
+- If a player asks exact placement, tell them to check the recipe page their book shows.
 
 ## Brew of Sleeping Recipe
 - [triggers: sleeping brew recipe|brew of sleeping recipe|sleeping brew ingredients|brew of sleeping ingredients|ingredients for sleeping brew|exact recipe for brew of sleeping|recipe for brew of sleeping|make sleeping brew|make brew of sleeping|how do i brew sleeping brew|how do i brew brew of sleeping|what do i need for sleeping brew|what do i need for brew of sleeping|what do i need to brew sleeping brew|what do i need to brew brew of sleeping] Targeted fact: Brew of Sleeping is brewed from Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke; the recipe makes three bottles.

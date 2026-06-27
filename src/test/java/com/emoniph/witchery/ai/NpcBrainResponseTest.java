@@ -355,6 +355,100 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishKeepsYawnBeatForActionCue() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*yawns* \"Ask again when the moon has finished chewing.\"",
+                "Lilith Poe", "Dev", "what?");
+
+        assertTrue(speech.isPresent());
+        assertEquals("*yawns* \"Ask again when the moon has finished chewing.\"", speech.get());
+        assertEquals(Optional.of("yawns"), NpcBrainResponse.visibleBeat(speech.get()));
+    }
+
+    @Test
+    void supportDoesNotDuplicateKnownExactRecipeIngredients() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke.",
+                "Lilith Poe", "Dev", "Tell me the exact ingredients for Sleeping Brew.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(NpcBrainResponse.supportFollowup("Tell me the exact ingredients for Sleeping Brew.",
+                speech.get()).isEmpty());
+    }
+
+    @Test
+    void polishRejectsWeakBasicBrewRecipeAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Brew of Sleeping is an ingredient in Brew of Love.",
+                "Lilith Poe", "Dev", "Can you explain a basic brew recipe?");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void relaxedPolishRejectsInventedBrewQuantities() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"A basic recipe. Use 1 bottle of moon liquid and 1/2 bottle of sleep potion.\"",
+                "Lilith Poe", "Dev", "Can you explain a basic brew recipe?", "", "22:30");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void relaxedPolishRejectsThinSpinningWheelClothAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"A spinning wheel spins thread into woven cloth.\"",
+                "Lilith Poe", "Dev", "What is a spinning wheel for?", "", "22:30");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void fallbackPolishKeepsSpinningWheelCardAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechAfterFallback(
+                "*gestures* \"The spinning wheel is a recipe station: fibre plus modifiers, altar power, and threadwork like Fanciful Thread.\"",
+                "Lilith Poe", "Dev", "What is a spinning wheel for?", "", "22:30");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void relaxedPolishRejectsOfferingAnswerWithoutPaymentOrFailure() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"A circle rite is an altar ritual. Chalk, offerings, and altar power are key.\"",
+                "Lilith Poe", "Dev", "Why do offerings matter?", "", "22:30");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void relaxedPolishRejectsWeakAltarInspectionPromise() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"I'll have to check that altar. It's been neglected for too long.\"",
+                "Lilith Poe", "Dev", "How can I tell if my altar is too weak?", "", "22:30");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void relaxedPolishRejectsNoChalkBeginnerRite() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"First path is Wood Ash and fumes at Witches' Oven. It's a safe rite for beginners; no chalk needed.\"",
+                "Lilith Poe", "Dev", "Give me a safe beginner path: first recipe, first rite.", "", "22:30");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsClippedRiteFailureAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Circle rite failure: Chalk layout failed.",
+                "Lilith Poe", "Dev", "Why did my rite fail?");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
     void polishFinishesShortTrailingCommaActionSpeech() {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
                 "*nods* Ah. Mandrake root is a common trade good for coven witches,",
@@ -2363,7 +2457,7 @@ class NpcBrainResponseTest {
     @Test
     void polishAcceptsGrimoireRecipeRiteSummary() {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
-                "Write this: recipes need the right station and visible page; rites need chalk, offerings, altar power, and patience.",
+                "Write this: recipes need the right station and a page your Primer has opened; rites need chalk, offerings, altar power, and patience.",
                 "Lilith Poe", "Dev", "What should I write in my grimoire after this lesson?");
 
         assertTrue(speech.isPresent());

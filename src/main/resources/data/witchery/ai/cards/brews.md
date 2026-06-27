@@ -3,12 +3,12 @@
 Short effect cards for when the player asks what a brew does or what to learn first.
 
 ## Brew Basics
-- [triggers: basic brew|safe first brew|first brew|learn brewing|brew beginner|brewing beginner] Targeted fact: A safe beginner path is one visible Primer brew, labeled ingredients, enough altar or kettle support, and no free-mixing from guesses.
-- Brews use the right station, visible recipe page, heat or water when called for, and the named ingredients.
+- [triggers: basic brew|safe first brew|first brew|learn brewing|brew beginner|brewing beginner] Targeted fact: A safe beginner path is one opened Primer brew, labeled ingredients, enough altar or kettle support, and no free-mixing from guesses.
+- Brews use the right station, a recipe page your book shows, heat or water when called for, and the named ingredients.
 - Witches should teach one concrete next step, not a full lecture.
 
 ## Brew Safety
-- [triggers: never mix|what should i never mix|what not to mix|dangerous mix|bad mix] Targeted fact: Do not free-mix from guesses; follow the visible recipe page, add only named ingredients, and label the bottle.
+- [triggers: never mix|what should i never mix|what not to mix|dangerous mix|bad mix] Targeted fact: Do not free-mix from guesses; follow the recipe page your Primer has opened, add only named ingredients, and label the bottle.
 - If a player asks for forbidden pairs and no recipe says it, avoid inventing a pair.
 
 ## Brew of Sleeping

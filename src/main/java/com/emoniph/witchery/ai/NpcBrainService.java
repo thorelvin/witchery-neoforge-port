@@ -8,8 +8,10 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Locale;
@@ -432,12 +434,62 @@ public final class NpcBrainService {
                                                                String speech, Optional<String> supportFollowup) {
         String npcName = persona.displayName(entity);
         persona.nudgeAttention(entity, player);
+        playVisibleBeat(level, entity, speech);
         successes.incrementAndGet();
         player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + speech), false);
         supportFollowup.ifPresent(followup ->
                 player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + followup), false));
         String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
         rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
+    }
+
+    private static void playVisibleBeat(ServerLevel level, LivingEntity entity, String speech) {
+        Optional<String> beat = NpcBrainResponse.visibleBeat(speech);
+        if (beat.isEmpty()) {
+            return;
+        }
+        String cue = beat.get();
+        if (swingsForBeat(cue)) {
+            entity.swing(InteractionHand.MAIN_HAND, true);
+        }
+        SoundEvent sound = soundForBeat(cue);
+        float volume = volumeForBeat(cue);
+        float pitch = pitchForBeat(cue);
+        level.playSound(null, entity.blockPosition(), sound, SoundSource.NEUTRAL, volume, pitch);
+    }
+
+    private static boolean swingsForBeat(String beat) {
+        return switch (beat) {
+            case "gestures", "studies your coin", "taps a finger", "shrugs", "folds her arms",
+                    "adjusts her robe" -> true;
+            default -> false;
+        };
+    }
+
+    private static SoundEvent soundForBeat(String beat) {
+        return switch (beat) {
+            case "nods", "smiles thinly" -> SoundEvents.VILLAGER_YES;
+            case "narrows her eyes", "folds her arms" -> SoundEvents.VILLAGER_NO;
+            case "sighs", "shrugs", "yawns" -> SoundEvents.WITCH_AMBIENT;
+            default -> SoundEvents.WITCH_AMBIENT;
+        };
+    }
+
+    private static float volumeForBeat(String beat) {
+        return switch (beat) {
+            case "lowers her voice", "leans closer", "studies you", "studies your coin" -> 0.28F;
+            case "yawns", "sighs", "shrugs" -> 0.35F;
+            default -> 0.42F;
+        };
+    }
+
+    private static float pitchForBeat(String beat) {
+        return switch (beat) {
+            case "yawns" -> 0.62F;
+            case "sighs", "shrugs", "narrows her eyes", "folds her arms" -> 0.78F;
+            case "nods", "smiles thinly" -> 0.9F;
+            default -> 0.82F;
+        };
     }
 
     private <E extends LivingEntity> boolean tryHandleSocialInteraction(NpcPersona<E> persona, E entity,

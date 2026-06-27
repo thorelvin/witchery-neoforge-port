@@ -490,7 +490,7 @@ class NpcKnowledgeBaseTest {
         assertTrue(answer.isPresent());
         String lower = answer.get().toLowerCase(Locale.ROOT);
         assertTrue(lower.contains("witches' primer") || lower.contains("witches primer"), answer.get());
-        assertTrue(lower.contains("visible recipe"), answer.get());
+        assertTrue(lower.contains("recipe pages") && lower.contains("opened"), answer.get());
         assertTrue(lower.contains("exact layout"), answer.get());
     }
 
@@ -515,7 +515,7 @@ class NpcKnowledgeBaseTest {
         String lower = answer.get().toLowerCase(Locale.ROOT);
         assertTrue(lower.contains("water"), answer.get());
         assertTrue(lower.contains("heat"), answer.get());
-        assertTrue(lower.contains("visible ingredients"), answer.get());
+        assertTrue(lower.contains("ingredients from the opened recipe"), answer.get());
         assertTrue(lower.contains("altar power"), answer.get());
     }
 

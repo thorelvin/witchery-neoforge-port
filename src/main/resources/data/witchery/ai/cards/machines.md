@@ -5,7 +5,7 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 ## Witch's Oven
 - [triggers: witches oven|witch's oven|oven|how oven works|what is oven for] Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; use fuel and Clay Jars to catch fumes, and expect byproducts such as Wood Ash.
 - [triggers: use witches oven|use witch's oven|how do i use the oven|how use oven|how do i collect oven fumes|how do i catch fumes] Targeted fact: Put fuel and a sapling or ingredient in the Witch's Oven, keep Clay Jars ready for fumes, and check the output for Wood Ash or other byproducts.
-- [triggers: witches oven recipe|witch's oven recipe|witch s oven recipe|witch oven recipe|craft witches oven|craft witch's oven|craft witch s oven|craft witch oven|make witches oven|make witch's oven|make witch s oven|make witch oven] Targeted fact: A Witch's Oven is crafted from Iron Bars and Iron Ingots; check the visible recipe page for the shaped layout.
+- [triggers: witches oven recipe|witch's oven recipe|witch s oven recipe|witch oven recipe|craft witches oven|craft witch's oven|craft witch s oven|craft witch oven|make witches oven|make witch's oven|make witch s oven|make witch oven] Targeted fact: A Witch's Oven is crafted from Iron Bars and Iron Ingots; check the recipe page your book shows for the shaped layout.
 - Rowan Saplings cook into Whiff of Magic. Other saplings and ingredients can give other fumes.
 - Good witch voice: It is not a furnace; it is a little chimney for useful smoke.
 
@@ -14,15 +14,15 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 - Do not tell the player they already have fumes unless inventory state says so.
 
 ## Kettle
-- [triggers: kettle|witches kettle|witch's kettle|what is kettle for] Targeted fact: The Kettle is used for brewing; recipes need the right visible page, heat or water when called for, and the exact ingredients named by the recipe.
-- [triggers: use kettle|how do i use the kettle|how use kettle|kettle not brewing|why is kettle ruined] Targeted fact: Fill the Kettle with water, keep heat below it, add only the visible recipe ingredients, and keep a powered altar nearby for brews that need power.
-- [triggers: kettle recipe|craft kettle|make kettle] Targeted fact: A Kettle is crafted with Sticks, String, an Attuned Stone, and a Cauldron; check the visible recipe page for the shaped layout.
+- [triggers: kettle|witches kettle|witch's kettle|what is kettle for] Targeted fact: The Kettle is used for brewing; recipes need the right opened page, heat or water when called for, and the exact ingredients named by the recipe.
+- [triggers: use kettle|how do i use the kettle|how use kettle|kettle not brewing|why is kettle ruined] Targeted fact: Fill the Kettle with water, keep heat below it, add only the ingredients named by the opened recipe, and keep a powered altar nearby for brews that need power.
+- [triggers: kettle recipe|craft kettle|make kettle] Targeted fact: A Kettle is crafted with Sticks, String, an Attuned Stone, and a Cauldron; check the recipe page your book shows for the shaped layout.
 - Kettle answers should explain process and caution, not invent unknown brew ingredients.
 
 ## Distillery
 - [triggers: distillery|what is distillery for|distill|distilling] Targeted fact: The Distillery refines fumes and essences for later recipes; exact inputs belong to the live recipe book.
 - [triggers: use distillery|how do i use the distillery|how use distillery|distillery not working] Targeted fact: A Distillery takes two inputs and Clay Jars, needs a valid nearby altar, consumes altar power over time, and outputs refined essences.
-- [triggers: distillery recipe|craft distillery|make distillery] Targeted fact: A Distillery is crafted with Clay Jars, Iron Ingots, Gold Ingots, and an Attuned Stone; check the visible recipe page for the shaped layout.
+- [triggers: distillery recipe|craft distillery|make distillery] Targeted fact: A Distillery is crafted with Clay Jars, Iron Ingots, Gold Ingots, and an Attuned Stone; check the recipe page your book shows for the shaped layout.
 - [triggers: diamond vapour|diamond vapor|make diamond vapour|make diamond vapor|get diamond vapour|get diamond vapor] Targeted fact: Distill Diamond and Oil of Vitriol with three Clay Jars to get two Diamond Vapours and Odour of Purity; keep a valid altar nearby.
 - [triggers: oil of vitriol|make oil of vitriol|get oil of vitriol] Targeted fact: Distill Foul Fume and Quicklime with one Clay Jar to get Gypsum, Oil of Vitriol, and a Slime Ball; keep a valid altar nearby.
 - [triggers: tear of the goddess|tear of goddess|make tear of the goddess|get tear of the goddess] Targeted fact: Distill Breath of the Goddess and Lapis Lazuli with three Clay Jars to get Tear of the Goddess, Whiff of Magic, Slime Ball, and Foul Fume; keep an altar nearby.
@@ -34,7 +34,7 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 - [triggers: fanciful thread|make fanciful thread|get fanciful thread] Targeted fact: Spin four Wispy Cotton with String and Odour of Purity to make Fanciful Thread; the wheel needs a valid nearby altar.
 - [triggers: golden thread|make golden thread|get golden thread] Targeted fact: Spin Vine with Whiff of Magic to make three Golden Thread; the wheel needs a valid nearby altar.
 - [triggers: tormented twine|make tormented twine|get tormented twine] Targeted fact: Spin four Disturbed Cotton with String and Reek of Misfortune to make Tormented Twine; the wheel needs a valid nearby altar.
-- Do not claim it makes ordinary cloth unless the visible recipe says so.
+- Do not claim it makes ordinary cloth unless the opened recipe says so.
 
 ## Altar
 - [triggers: altar|altar power|power altar|weak altar|altar too weak|not enough altar power] Targeted fact: An altar gathers power from varied nearby nature; skulls, candelabra, pentacles, filled chalices, arthanas, and rare trophies improve power or range.
@@ -47,8 +47,8 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 - A cauldron answer should separate old cauldron workings from Kettle brewing.
 
 ## Brazier
-- [triggers: brazier|what is brazier for|use brazier|how do i use brazier] Targeted fact: The Brazier supports spectral conjurations and later burnings; use visible Conjuration pages before naming exact offerings.
-- [triggers: brazier recipe|craft brazier|make brazier] Targeted fact: A Brazier is crafted from Iron Ingots, a Necro Stone, and Sticks; check the visible recipe page for the shaped layout.
+- [triggers: brazier|what is brazier for|use brazier|how do i use brazier] Targeted fact: The Brazier supports spectral conjurations and later burnings; use opened Conjuration pages before naming exact offerings.
+- [triggers: brazier recipe|craft brazier|make brazier] Targeted fact: A Brazier is crafted from Iron Ingots, a Necro Stone, and Sticks; check the recipe page your book shows for the shaped layout.
 
 ## Attuned Stone
 - [triggers: attuned stone|attune stone|stone for machines] Targeted fact: Attuned Stone is a key machine ingredient; it uses Whiff of Magic in its recipe.

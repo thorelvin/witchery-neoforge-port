@@ -105,8 +105,9 @@ public final class NpcPromptBuilder {
                 Speech shape:
                 one complete in-world line; two short sentences only if needed.
                 Prefer 8 to 24 words. If the thought may be cut off, answer shorter and stop cleanly.
-                A single visible beat is allowed before speech, formatted exactly as: *nods* "Spoken words."
-                Safe beats: nods, leans closer, lowers her voice, studies you, studies your coin, narrows her eyes, gestures, sighs, shrugs.
+                A single body beat is useful when it fits, formatted exactly as: *nods* "Spoken words."
+                Safe beats: nods, leans closer, lowers her voice, studies you, studies your coin, narrows her eyes, gestures, sighs, shrugs, yawns.
+                Use beats as small body cues, not every line.
                 Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
                 Do not write pure narration; always include spoken words if a beat is used.
                 Do not ask "How are you today?" or "What brings you here?"
@@ -116,7 +117,7 @@ public final class NpcPromptBuilder {
                 If the player asks for a power, blessing, cure, weather change, curse, fight, summon, escort, or inspection you cannot confirm, answer as advice, limitation, rumor, or trade.
 
                 Reply with exactly one JSON object and nothing else:
-                {"speech":"short in-character spoken line, optionally with one safe visible beat","intent":"none","memory":"optional compact memory"}
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
                 Speech must be 220 characters or less. Memory must be 240 characters or less.
                 Allowed intents: none, open_trade, quest_hint, warn_threat, combat_taunt%s.
                 """.formatted(recruited ? ", follow_owner" : "");
@@ -152,7 +153,7 @@ public final class NpcPromptBuilder {
                 If the player asks for an exact recipe, ritual offering, altar power, circle size, dimension, moon condition, familiar requirement, coven requirement, or unlock gate and the facts do not contain it, say the page is absent from your grimoire and offer a safe next step.
                 If facts are thin, answer honestly in-world and keep it short.
                 Do not invent recipe amounts, ingredient counts, named places, prophecies, or hidden player powers.
-                Do not reveal locked Primer, story-book, transformation, ritual, or boss content unless the facts say it is visible.
+                Do not reveal locked Primer, story-book, transformation, ritual, or boss content unless the facts say it is unlocked for this player.
                 If asked to do something the game has not done, do not say "I can" or "I will" as a promise; say what you know, what you sell, or what the player should try.
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
                 Do not introduce named herbs, stock, rites, demons, or brews unless the player, memory, scene, or facts make them relevant.
@@ -199,19 +200,19 @@ public final class NpcPromptBuilder {
                 example("hi",
                         "{\"speech\":\"Hello, %s.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
                 example("what do you trade?",
-                        "{\"speech\":\"Salt, taglocks, fumes, bat wool, herbs, and a few brews if your coin is clean.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                        "{\"speech\":\"*studies your coin* \\\"Salt, taglocks, fumes, bat wool, herbs, and a few brews if your coin is clean.\\\"\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
                 example("what is witches salt for?",
                         "{\"speech\":\"Witches' salt cleanses, wards, and keeps hostile workings from crossing the line.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what can I do with this taglock kit?",
                         "{\"speech\":\"A taglock links magic to a creature or player; poppets need the right link before they can work.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what do I need before summoning anything?",
-                        "{\"speech\":\"Circle, chalk, offerings, altar power, and better sense than haste.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                        "{\"speech\":\"*lowers her voice* \\\"Circle, chalk, offerings, altar power, and better sense than haste.\\\"\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
                 example("what is Flowing Spirit?",
                         "{\"speech\":\"Flowing Spirit places spirit liquid; in the Spirit World, it matters for return paths and wispy cotton.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what does Revealing Brew do?",
                         "{\"speech\":\"Brew of Revealing exposes nearby invisible or hidden creatures.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("I like potatoes",
-                        "{\"speech\":\"Keep that taste; small comforts outlast grand omens.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                        "{\"speech\":\"*shrugs* \\\"Keep that taste; small comforts outlast grand omens.\\\"\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what is your favorite herb?",
                         "{\"speech\":\"Mandrake, when it keeps quiet; snowbell, when the cold bites.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("do you earn a lot on your trades?",

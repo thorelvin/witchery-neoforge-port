@@ -144,7 +144,7 @@ final class NpcDialogueFallback {
         if (asksTeachMe(normalized)) {
             Optional<String> knowledge = NpcKnowledgeBase.compactAnswer(playerMessage, biome, timeOfDay);
             if (knowledge.isPresent()) {
-                return Optional.of(knowledge.get());
+                return Optional.of(teachingKnowledgeAnswer(knowledge.get(), normalized, name));
             }
             return Optional.of(teachingAnswer(normalized, name));
         }
@@ -184,7 +184,7 @@ final class NpcDialogueFallback {
             return brew;
         }
         if (asksMixingWarning(normalized)) {
-            return Optional.of("Do not free-mix from guesses; follow the visible recipe page, then label the bottle.");
+            return Optional.of("Do not free-mix from guesses; follow the recipe page your Primer has opened, then label the bottle.");
         }
         if (containsAny(normalized, "potion", "potions", "brew", "brewing", "cauldron", "kettle")) {
             return Optional.of("I know potions and brews. Ask for a brew by name: Sleeping, Revealing, Poison, Cleansing, Sprouting, or Flowing Spirit.");
@@ -318,7 +318,7 @@ final class NpcDialogueFallback {
         } else if (asksExactRecipe(normalized) || asksMissingRecipeCheck(normalized)) {
             line = "If the exact page is absent, use the Primer or recipe book; I will not invent ingredients.";
         } else if (asksCauldronPrep(normalized)) {
-            line = "Before the cauldron, prepare water, heat, a visible page, and the ingredients it names.";
+            line = "Before the cauldron, prepare water, heat, the page your Primer has opened, and the ingredients it names.";
         } else if (asksWeakAltar(normalized)) {
             line = "A weak altar wants varied nearby nature and proper fittings, not louder chanting.";
         } else if (asksOfferings(normalized)) {
@@ -344,7 +344,7 @@ final class NpcDialogueFallback {
         } else if (asksCovenRecruiting(normalized)) {
             line = "Seek wandering coven witches, earn a familiar's bond, and be ready for a trial.";
         } else if (asksMixingWarning(normalized)) {
-            line = "Do not free-mix from guesses; follow the visible recipe page, then label the bottle.";
+            line = "Do not free-mix from guesses; follow the recipe page your Primer has opened, then label the bottle.";
         }
         if (line.isBlank() || NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
             return Optional.empty();
@@ -357,10 +357,10 @@ final class NpcDialogueFallback {
             return Optional.of("Before a rite, learn chalk layout, offerings, and altar power; if one is wrong, step back.");
         }
         if (asksRecipeRiteLearning(normalized)) {
-            return Optional.of("Start with the Primer, " + playerName + ": recipes need a visible page and station; rites need chalk, offerings, and altar power.");
+            return Optional.of("*nods* \"Start with the Primer, " + playerName + ": recipes need an opened page and the right station; rites need chalk, offerings, and altar power.\"");
         }
         if (asksMissingRecipeCheck(normalized)) {
-            return Optional.of("Check the Primer page, the right station, visible recipe book, altar power, unlock gates, and the exact name you asked for.");
+            return Optional.of("Check the Primer page, the right station, the recipe your book shows, altar power, what your Primer has unlocked, and the exact name you asked for.");
         }
         if (asksExactRecipe(normalized)) {
             Optional<String> knownRecipe = NpcKnowledgeBase.compactAnswer(normalized, "Plains", "night");
@@ -376,10 +376,10 @@ final class NpcDialogueFallback {
             return Optional.of("The exact page is absent from my grimoire; check your Primer or recipe book before naming ingredients.");
         }
         if (asksCauldronPrep(normalized)) {
-            return Optional.of("Before the cauldron, prepare water, heat, a visible brew page, and only the ingredients that page names.");
+            return Optional.of("Before the cauldron, prepare water, heat, the brew page your Primer has opened, and only the ingredients that page names.");
         }
         if (asksBasicBrewRecipe(normalized)) {
-            return Optional.of("A brew recipe needs the right station, water or heat when called for, named ingredients, and a page you can actually read.");
+            return Optional.of("*gestures* \"A brew recipe needs the right station, water or heat when called for, named ingredients, and a page your Primer has opened.\"");
         }
         if (asksFumeSafety(normalized)) {
             return Optional.of("Use a Witch's Oven with saplings or ingredients and clay jars; catch fumes on purpose, not by guesswork.");
@@ -388,22 +388,22 @@ final class NpcDialogueFallback {
             return Optional.of("A Witch's Oven burns saplings and ingredients into fumes; clay jars catch them for brews and rites.");
         }
         if (asksSpinningWheel(normalized)) {
-            return Optional.of("The spinning wheel takes fibre and modifiers, drinks altar power, and spins threadwork like Fanciful Thread.");
+            return Optional.of("*gestures* \"The spinning wheel is a recipe station: fibre plus modifiers, altar power, and threadwork like Fanciful Thread.\"");
         }
         if (asksDistillery(normalized)) {
             return Optional.of("A distillery takes two inputs and clay jars, drinks altar power, and refines fumes into useful essences.");
         }
         if (asksGrimoireSummary(normalized)) {
-            return Optional.of("Write this: recipes need the right station and visible page; rites need chalk, offerings, altar power, and patience.");
+            return Optional.of("Write this: recipes need the right station and a page your Primer has opened; rites need chalk, offerings, altar power, and patience.");
         }
         if (asksBeginnerPath(normalized)) {
-            return Optional.of("Begin with one visible brew from the Primer, then a harmless circle lesson; no hidden recipe from memory.");
+            return Optional.of("*nods* \"Primer next steps: Witches' Oven for Wood Ash and fumes, then Kettle brews your Primer has opened; practice chalk and altar power before binding.\"");
         }
         if (asksRiteSafety(normalized)) {
-            return Optional.of("Never start a rite with broken chalk, missing offerings, weak altar power, or a page you cannot read.");
+            return Optional.of("*lowers her voice* \"Never start a rite with broken chalk, missing offerings, weak altar power, or a page you cannot read.\"");
         }
         if (asksFailedRite(normalized)) {
-            return Optional.of("Check chalk layout, offerings, altar power, familiar or coven requirements, dimension limits, and unlock gates before guessing.");
+            return Optional.of("*taps a finger* \"Check chalk layout, offerings, altar power, familiar or coven requirements, dimension limits, and unlock gates before guessing.\"");
         }
         if (asksOfferings(normalized)) {
             return Optional.of("Offerings tell a rite what debt is paid; wrong offerings make circles sulk or fail.");
@@ -412,13 +412,13 @@ final class NpcDialogueFallback {
             return Optional.of("A weak altar usually wants more varied nearby nature and proper fittings, not louder chanting.");
         }
         if (asksFamiliarBindingRite(normalized)) {
-            return Optional.of("A familiar binding rite needs the right circle, chalk, offerings, altar power, and familiar; check the visible page before naming parts.");
+            return Optional.of("A familiar binding rite needs the right circle, chalk, offerings, altar power, and familiar; check the opened Primer page before naming parts.");
         }
         if (asksSummoningRite(normalized)) {
             return Optional.of("A summoning rite brings something to the circle; match chalk, offerings, altar power, unlock gates, and the named entity.");
         }
         if (asksCurseRite(normalized)) {
-            return Optional.of("Curse rites are not tavern tricks; use circles, chalk, offerings, altar power, and a visible page before naming a victim.");
+            return Optional.of("Curse rites are not tavern tricks; use circles, chalk, offerings, altar power, and a page your Primer has opened before naming a victim.");
         }
         return Optional.empty();
     }
@@ -841,20 +841,20 @@ final class NpcDialogueFallback {
 
     private static String oldWitchAside(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
-                "Speak louder, " + playerName + "; these old ears hear spirits better than mumbling.",
+                "*leans closer* \"Speak louder, " + playerName + "; these old ears hear spirits better than mumbling.\"",
                 "May your boots miss graves and your pockets find honest coin.",
                 "The kettle says three bubbles and a cracked moon; make of that what you can.",
-                "A crow once told me the same thing, or maybe it was a turnip.",
+                "*shrugs* \"A crow once told me the same thing, or maybe it was a turnip.\"",
                 "Mind your shadow after midnight; it learns bad habits.",
                 "If the moon answers first, pretend you did not hear it.",
-                "Never trust a quiet jar; silence ferments.",
+                "*narrows her eyes* \"Never trust a quiet jar; silence ferments.\"",
                 "Salt at the door, ash at the hearth, and questions where I can see them.",
                 "A good omen arrives late and complains about the road.",
                 "If you mean trouble, stand downwind so I can smell it coming.",
                 "Some questions need rainwater. Some need teeth.",
                 "Keep one pocket for coin and one for consequences.",
                 "The old paths open for patience, not stomping.",
-                "I have seen braver faces on boiled cabbage, but yours may yet improve.",
+                "*yawns* \"I have seen braver faces on boiled cabbage, but yours may yet improve.\"",
                 "Ask again with fewer elbows in the sentence."
         };
         int start = Math.floorMod(normalized.hashCode(), lines.length);
@@ -882,6 +882,20 @@ final class NpcDialogueFallback {
             return "First coven lesson: a familiar opens doors, but a witch's trial decides if you may enter.";
         }
         return "First lesson: salt wards, taglocks bind, and every rite asks payment before it asks permission.";
+    }
+
+    private static String teachingKnowledgeAnswer(String knowledge, String normalized, String playerName) {
+        String answer = knowledge == null ? "" : knowledge.trim();
+        if (answer.isBlank()) {
+            return teachingAnswer(normalized, playerName);
+        }
+        if (containsAny(normalized, "learn witchcraft", "start learning", "how do i start")
+                && answer.contains("Primer")
+                && !containsAny(normalize(answer), "next step", "next steps", "lesson", "first lesson")) {
+            return NpcBrainResponse.sanitize(answer + " Next lesson: follow one opened Primer page before chasing secrets.",
+                    NpcBrainResponse.MAX_SPEECH_LENGTH);
+        }
+        return answer;
     }
 
     private static boolean isSpecificAnswerPrompt(String normalized) {

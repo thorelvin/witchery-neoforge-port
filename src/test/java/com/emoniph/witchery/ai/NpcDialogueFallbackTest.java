@@ -430,7 +430,7 @@ class NpcDialogueFallbackTest {
                 "I'm new here. What is safe to learn first?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("Primer") || speech.get().contains("visible brew"), speech.get());
+        assertTrue(speech.get().contains("Primer") || speech.get().contains("opened brew"), speech.get());
         assertTrue(!speech.get().contains("teeth"), speech.get());
     }
 
@@ -924,12 +924,12 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
-    void answersCauldronPrepWithVisiblePage() {
+    void answersCauldronPrepWithOpenedPage() {
         Optional<String> speech = NpcDialogueFallback.covenChat(
                 "What do I need before I touch the cauldron?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("visible brew page"), speech.get());
+        assertTrue(speech.get().contains("brew page your Primer has opened"), speech.get());
         assertTrue(speech.get().contains("ingredients"), speech.get());
     }
 
@@ -987,12 +987,12 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
-    void answersCurseRiteWithCautionAndVisiblePage() {
+    void answersCurseRiteWithCautionAndOpenedPage() {
         Optional<String> speech = NpcDialogueFallback.covenChat(
                 "Can you explain a curse rite?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("visible page"), speech.get());
+        assertTrue(speech.get().contains("page your Primer has opened"), speech.get());
         assertTrue(speech.get().contains("altar power"), speech.get());
     }
 
@@ -1013,6 +1013,8 @@ class NpcDialogueFallbackTest {
 
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("Primer"), speech.get());
+        assertTrue(speech.get().contains("Witches' Oven"), speech.get());
+        assertTrue(speech.get().contains("altar power"), speech.get());
         assertTrue(!speech.get().contains("healing potion"), speech.get());
     }
 
