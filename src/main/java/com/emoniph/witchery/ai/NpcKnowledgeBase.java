@@ -23,71 +23,6 @@ public final class NpcKnowledgeBase {
     private static final List<Section> SECTIONS = loadSections(MARKDOWN);
     private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes(MARKDOWN);
 
-    private static List<TargetedNote> defaultTargetedNotes() {
-        return List.of(
-            new TargetedNote("sleeping brew",
-                    "Targeted fact: Brew of Sleeping sends the drinker into the Spirit World; it is travel, not ordinary sleep, and nightmares may follow."),
-            new TargetedNote("revealing brew|brew of revealing",
-                    "Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures."),
-            new TargetedNote("hidden|invisible",
-                    "Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures."),
-            new TargetedNote("poison|drink poison|poisoned",
-                    "Targeted fact: Brew of Poison harms targets; do not advise drinking poison or eating dangerous herbs."),
-            new TargetedNote("blight",
-                    "Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it by chat."),
-            new TargetedNote("flowing spirit",
-                    "Targeted fact: Brew of Flowing Spirit places spirit liquid; in the Spirit World it matters for portals, return paths, and wispy cotton."),
-            new TargetedNote("spirit world|spirit|dream|nightmare",
-                    "Targeted fact: The Spirit World mirrors the Overworld; Sleeping Brew can send a traveler there, and nightmares may follow."),
-            new TargetedNote("belladonna",
-                    "Targeted fact: Belladonna is a useful witch herb and common coven trade good; speak of it as an ingredient, not food."),
-            new TargetedNote("mandrake",
-                    "Targeted fact: Mandrake is a witch herb and common coven trade good; it can be grown, traded for, or searched for in old gardens."),
-            new TargetedNote("herb|herbs|plant|plants",
-                    "Targeted fact: Useful witch herbs depend on the work; ask after the named herb, grow what you can, trade for the rest, and keep dangerous herbs away from idle hands."),
-            new TargetedNote("witches salt|witch salt|salt",
-                    "Targeted fact: Witches' salt is protective and cleansing, useful for wards, purification, and keeping hostile magic at a distance."),
-            new TargetedNote("altar|chalice",
-                    "Targeted fact: An altar gathers power from varied nearby nature; skulls, candelabra, pentacles, filled chalices, arthanas, and rare trophies improve power or range."),
-            new TargetedNote("rite|ritual|circle magic|summon|summoning",
-                    "Targeted fact: Circle rites use chalk glyphs, offerings, and altar power; known workings include binding familiars, summoning, storms, curses, waystones, and banishing demons."),
-            new TargetedNote("chalk",
-                    "Targeted fact: Chalk is for circle glyphs and rite work; not every witchcraft task needs it, but rites do."),
-            new TargetedNote("arthana",
-                    "Targeted fact: Arthana is a ritual blade and altar range upgrade, and helps draw useful Witchery drops from some mobs."),
-            new TargetedNote("taglock|tag lock|poppet",
-                    "Targeted fact: A taglock links magic to a creature or player; poppets need the right link before they can protect or affect a target."),
-            new TargetedNote("familiar|familiars|cat|owl|toad",
-                    "Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work. They are companions, not disposable tools."),
-            new TargetedNote("demon|devil|flame imp|demon heart",
-                    "Targeted fact: Demons are summoned by rites, resist fire, are hostile, and demon hearts feed infernal workings and dangerous transformations."),
-            new TargetedNote("storm|weather|stop raining|make it stop raining|summon a storm",
-                    "Targeted fact: Weather workings belong to circle rites and server-side effects; a chat reply should advise, not promise the sky has changed."),
-            new TargetedNote("garlic",
-                    "Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless visible facts say so."),
-            new TargetedNote("vampire|vampires",
-                    "Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore."),
-            new TargetedNote("oven|witches oven|witch's oven|fume|fumes|clay jar|jar|sapling|saplings",
-                    "Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts."),
-            new TargetedNote("whiff of magic|whif of magic|rowan sapling",
-                    "Targeted fact: Whiff of Magic comes from cooking a Rowan Sapling in a Witch's Oven; use fuel and a Clay Jar, and expect Wood Ash as the other oven output."),
-            new TargetedNote("what uses whiff of magic|what use whiff of magic|uses whiff of magic|use whiff of magic|recipe uses whiff|recipes use whiff|specific recipe uses whiff",
-                    "Targeted fact: Whiff of Magic is used in Brew of Sleeping, Brew of Love, Attuned Stone, Book of Circle Magic, and later workings."),
-            new TargetedNote("sleeping brew recipe|brew of sleeping recipe|ingredients for sleeping brew|exact recipe for brew of sleeping",
-                    "Targeted fact: Brew of Sleeping is brewed from Purified Milk, a Cookie, Brew of Love, Whiff of Magic, an Icy Needle, and an Artichoke; the recipe makes three bottles."),
-            new TargetedNote("kettle|cauldron|witches cauldron|recipe|recipes|exact recipe|exact ingredients|ingredient list|missing recipe",
-                    "Targeted fact: Exact recipe and ingredient lists must come from the Primer, recipe book, or runtime recipe export before naming ingredients."),
-            new TargetedNote("distillery|spinning wheel|spinning",
-                    "Targeted fact: Distillery and spinning recipes use their own stations and recipe rules; exact inputs must come from the live recipe manager."),
-            new TargetedNote("offering|offerings",
-                    "Targeted fact: Offerings are payments for circle rites; wrong offerings can make the rite fail."),
-            new TargetedNote("weak altar|altar too weak|altar is too weak",
-                    "Targeted fact: A weak altar usually needs more varied nearby nature or proper fittings such as chalices, skulls, pentacles, and arthanas."),
-            new TargetedNote("curse rite|curse ritual|never do during a rite|beginner path|first recipe|first rite|grimoire",
-                    "Targeted fact: For rites, avoid invented exact steps; use visible pages, chalk, offerings, altar power, and cautious beginner guidance.")
-        );
-    }
-
     private NpcKnowledgeBase() {
     }
 
@@ -341,7 +276,7 @@ public final class NpcKnowledgeBase {
 
     private static List<TargetedNote> loadTargetedNotes(String markdown) {
         List<TargetedNote> notes = parseTargetedNotes(markdown);
-        return notes.isEmpty() ? defaultTargetedNotes() : List.copyOf(notes);
+        return List.copyOf(notes);
     }
 
     private static String loadMarkdown() {
