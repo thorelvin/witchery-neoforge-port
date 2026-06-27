@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NpcMemoryDataTest {
     @Test
-    void contextIncludesWitchPlayerAndRecentExchange() {
+    void contextIncludesRolePlayerAndRecentExchange() {
         NpcMemoryData data = new NpcMemoryData();
         UUID witch = UUID.randomUUID();
         UUID player = UUID.randomUUID();
@@ -17,12 +17,27 @@ class NpcMemoryDataTest {
         data.rememberExchange(witch, player, "Lilith Poe", "Dev",
                 "what will you do today?", "I'll help you with your potion.", 20L);
 
-        String context = data.getContext(witch, player);
+        String context = data.getContext(witch, player, "witch");
         assertTrue(context.contains("witch is Lilith Poe"));
         assertTrue(context.contains("player is Dev"));
         assertTrue(context.contains("what will you do today?"));
         assertTrue(context.contains("witch answered \"I'll help you with your potion.\""));
         assertTrue(context.contains("I'll help you with your potion."));
+    }
+
+    @Test
+    void defaultContextUsesGenericNpcRole() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID npc = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(npc, player, "Zul", "Dev",
+                "hi", "Hello, Dev.", 20L);
+
+        String context = data.getContext(npc, player);
+        assertTrue(context.contains("npc is Zul"));
+        assertTrue(context.contains("npc answered \"Hello, Dev.\""));
+        assertFalse(context.contains("witch answered"));
     }
 
     @Test

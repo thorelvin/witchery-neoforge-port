@@ -129,7 +129,7 @@ public final class NpcMemoryData extends SavedData {
     }
 
     public String getContext(UUID npc, UUID player) {
-        return getContext(npc, player, "witch");
+        return getContext(npc, player, "npc");
     }
 
     public String getContext(UUID npc, UUID player, String roleName) {
