@@ -1,8 +1,12 @@
 package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +15,11 @@ import java.util.Optional;
 
 public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     public static final CovenWitchPersona INSTANCE = new CovenWitchPersona();
+    private static final long SOCIAL_EFFECT_TICKS = 20L * 60L * 5L;
+    private static final long SOCIAL_COOLDOWN_TICKS = 20L * 60L * 5L;
+    private static final String FLAG_HERB_GIFT = "coven_witch_herb_gift";
+    private static final String FLAG_BLESSED = "coven_witch_blessed";
+    private static final String FLAG_CURSED = "coven_witch_cursed";
 
     private CovenWitchPersona() {
     }
@@ -96,6 +105,17 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public boolean handleSocialAction(CovenWitchEntity entity, ServerPlayer player, String playerMessage,
+                                      NpcSocialAction action, NpcSocialContext<CovenWitchEntity> context) {
+        switch (action) {
+            case HERB_GIFT -> handleHerbGift(entity, player, context);
+            case INSULT -> handleInsult(entity, player, context);
+            case PRAISE -> handlePraise(entity, player, context);
+        }
+        return true;
+    }
+
+    @Override
     public Optional<String> supportFollowup(String playerMessage, String speech) {
         return NpcBrainResponse.supportFollowup(playerMessage, speech);
     }
@@ -133,6 +153,53 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                                                          String playerMessage, String avoidSpeech) {
         return NpcDialogueFallback.alternateForRepeatedFallback(playerMessage, player.getName().getString(),
                 avoidSpeech);
+    }
+
+    private static void handlePraise(CovenWitchEntity witch, ServerPlayer player,
+                                     NpcSocialContext<CovenWitchEntity> context) {
+        if (context.markCooldown("bless", SOCIAL_COOLDOWN_TICKS)) {
+            player.addEffect(new MobEffectInstance(MobEffects.LUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            context.memoryData().setFlag(witch.getUUID(), player.getUUID(), FLAG_BLESSED,
+                    context.level().getGameTime());
+            context.playFeedback(true);
+            context.say("Kind words have roots, " + player.getName().getString()
+                    + ". Take a little luck before it spoils.");
+            return;
+        }
+        context.say("Flattery twice in one sitting curdles. Keep the luck you have.");
+    }
+
+    private static void handleInsult(CovenWitchEntity witch, ServerPlayer player,
+                                     NpcSocialContext<CovenWitchEntity> context) {
+        if (context.markCooldown("curse", SOCIAL_COOLDOWN_TICKS)) {
+            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            context.memoryData().setFlag(witch.getUUID(), player.getUUID(), FLAG_CURSED,
+                    context.level().getGameTime());
+            context.playFeedback(false);
+            context.say("Tongues have shadows. Wear yours for five minutes, "
+                    + player.getName().getString() + ".");
+            return;
+        }
+        context.say("Again? Hush now, before I find a fresher curse.");
+    }
+
+    private static void handleHerbGift(CovenWitchEntity witch, ServerPlayer player,
+                                       NpcSocialContext<CovenWitchEntity> context) {
+        NpcMemoryData memoryData = context.memoryData();
+        if (memoryData.hasFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT)) {
+            context.say("Once, " + player.getName().getString() + ". A gift plucked twice becomes a debt.");
+            return;
+        }
+        ItemStack gift = context.level().random.nextBoolean()
+                ? new ItemStack(WitcheryItems.BELLADONNA.get())
+                : new ItemStack(WitcheryItems.MANDRAKE_ROOT.get());
+        String giftName = gift.getHoverName().getString();
+        if (!player.addItem(gift.copy())) {
+            player.drop(gift.copy(), false);
+        }
+        memoryData.setFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT, context.level().getGameTime());
+        context.playFeedback(true);
+        context.say("One herb, freely given: " + giftName + ". Spend kindness better than coin.");
     }
 
     private static String normalizeFlag(String flag) {

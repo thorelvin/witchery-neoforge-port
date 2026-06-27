@@ -2,7 +2,6 @@ package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.CovenWitchEntity;
-import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,10 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -31,12 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class NpcBrainService {
     public static final NpcBrainService INSTANCE = new NpcBrainService();
     private static final long CHAT_COOLDOWN_TICKS = 20L;
-    private static final long SOCIAL_EFFECT_TICKS = 20L * 60L * 5L;
-    private static final long SOCIAL_COOLDOWN_TICKS = 20L * 60L * 5L;
     private static final int WARMUP_MAX_TOKENS = 24;
-    private static final String FLAG_HERB_GIFT = "coven_witch_herb_gift";
-    private static final String FLAG_BLESSED = "coven_witch_blessed";
-    private static final String FLAG_CURSED = "coven_witch_cursed";
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
@@ -429,16 +420,6 @@ public final class NpcBrainService {
                         NpcPromptBuilder.clockTime(level.getDayTime())));
     }
 
-    private void displayCovenSpeech(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
-                                    String playerMessage, String speech) {
-        displayPersonaSpeech(level, NpcPersonas.COVEN_WITCH, witch, player, playerMessage, speech);
-    }
-
-    private void displayCovenSpeech(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
-                                    String playerMessage, String speech, Optional<String> supportFollowup) {
-        displayPersonaSpeech(level, NpcPersonas.COVEN_WITCH, witch, player, playerMessage, speech, supportFollowup);
-    }
-
     private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
                                                                ServerPlayer player, String playerMessage,
                                                                String speech) {
@@ -465,75 +446,45 @@ public final class NpcBrainService {
         if (action.isEmpty()) {
             return false;
         }
-        if (!(entity instanceof CovenWitchEntity witch)) {
-            return false;
-        }
-        switch (action.get()) {
-            case HERB_GIFT -> handleHerbGift(witch, player, playerMessage);
-            case INSULT -> handleInsult(witch, player, playerMessage);
-            case PRAISE -> handlePraise(witch, player, playerMessage);
-        }
-        return true;
-    }
-
-    private void handlePraise(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
         ServerLevel level = (ServerLevel) player.level();
-        if (markSocialCooldown(level, witch, player, "bless", SOCIAL_COOLDOWN_TICKS)) {
-            player.addEffect(new MobEffectInstance(MobEffects.LUCK, (int) SOCIAL_EFFECT_TICKS, 0));
-            NpcMemoryData.get(level).setFlag(witch.getUUID(), player.getUUID(), FLAG_BLESSED, level.getGameTime());
-            socialFx(level, player, true);
-            displayCovenSpeech(level, witch, player, playerMessage,
-                    "Kind words have roots, " + player.getName().getString() + ". Take a little luck before it spoils.",
-                    Optional.empty());
-            return;
-        }
-        displayCovenSpeech(level, witch, player, playerMessage,
-                "Flattery twice in one sitting curdles. Keep the luck you have.",
-                Optional.empty());
+        return persona.handleSocialAction(entity, player, playerMessage, action.get(),
+                socialContext(level, persona, entity, player, playerMessage));
     }
 
-    private void handleInsult(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
-        ServerLevel level = (ServerLevel) player.level();
-        if (markSocialCooldown(level, witch, player, "curse", SOCIAL_COOLDOWN_TICKS)) {
-            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, (int) SOCIAL_EFFECT_TICKS, 0));
-            NpcMemoryData.get(level).setFlag(witch.getUUID(), player.getUUID(), FLAG_CURSED, level.getGameTime());
-            socialFx(level, player, false);
-            displayCovenSpeech(level, witch, player, playerMessage,
-                    "Tongues have shadows. Wear yours for five minutes, " + player.getName().getString() + ".",
-                    Optional.empty());
-            return;
-        }
-        displayCovenSpeech(level, witch, player, playerMessage,
-                "Again? Hush now, before I find a fresher curse.",
-                Optional.empty());
+    private <E extends LivingEntity> NpcSocialContext<E> socialContext(ServerLevel level, NpcPersona<E> persona,
+                                                                       E entity, ServerPlayer player,
+                                                                       String playerMessage) {
+        return new NpcSocialContext<>() {
+            @Override
+            public ServerLevel level() {
+                return level;
+            }
+
+            @Override
+            public NpcMemoryData memoryData() {
+                return NpcMemoryData.get(level);
+            }
+
+            @Override
+            public boolean markCooldown(String action, long ticks) {
+                return markSocialCooldown(level, entity, player, action, ticks);
+            }
+
+            @Override
+            public void playFeedback(boolean pleasant) {
+                socialFx(level, player, pleasant);
+            }
+
+            @Override
+            public void say(String speech) {
+                displayPersonaSpeech(level, persona, entity, player, playerMessage, speech, Optional.empty());
+            }
+        };
     }
 
-    private void handleHerbGift(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
-        ServerLevel level = (ServerLevel) player.level();
-        NpcMemoryData memoryData = NpcMemoryData.get(level);
-        if (memoryData.hasFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT)) {
-            displayCovenSpeech(level, witch, player, playerMessage,
-                    "Once, " + player.getName().getString() + ". A gift plucked twice becomes a debt.",
-                    Optional.empty());
-            return;
-        }
-        ItemStack gift = level.random.nextBoolean()
-                ? new ItemStack(WitcheryItems.BELLADONNA.get())
-                : new ItemStack(WitcheryItems.MANDRAKE_ROOT.get());
-        String giftName = gift.getHoverName().getString();
-        if (!player.addItem(gift.copy())) {
-            player.drop(gift.copy(), false);
-        }
-        memoryData.setFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT, level.getGameTime());
-        socialFx(level, player, true);
-        displayCovenSpeech(level, witch, player, playerMessage,
-                "One herb, freely given: " + giftName + ". Spend kindness better than coin.",
-                Optional.empty());
-    }
-
-    private boolean markSocialCooldown(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
+    private boolean markSocialCooldown(ServerLevel level, LivingEntity entity, ServerPlayer player,
                                        String action, long ticks) {
-        String key = witch.getUUID() + ":" + player.getUUID() + ":" + action;
+        String key = entity.getUUID() + ":" + player.getUUID() + ":" + action;
         long now = level.getGameTime();
         Long blockedUntil = socialCooldownUntil.get(key);
         if (blockedUntil != null && blockedUntil > now) {

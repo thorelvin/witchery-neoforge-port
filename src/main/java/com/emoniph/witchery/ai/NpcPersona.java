@@ -45,6 +45,11 @@ public interface NpcPersona<E extends LivingEntity> {
         return Optional.empty();
     }
 
+    default boolean handleSocialAction(E entity, ServerPlayer player, String playerMessage, NpcSocialAction action,
+                                       NpcSocialContext<E> context) {
+        return false;
+    }
+
     default Optional<String> polishRaw(String rawSpeech, E entity, ServerPlayer player, String playerMessage,
                                        String memoryContext, String expectedClock) {
         return NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),
