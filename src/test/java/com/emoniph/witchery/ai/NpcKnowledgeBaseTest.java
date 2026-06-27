@@ -484,6 +484,54 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void teachingPrimerAnswersRecipeDisciplineQuestions() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("how do I learn real recipes?", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("witches' primer") || lower.contains("witches primer"), answer.get());
+        assertTrue(lower.contains("visible recipe"), answer.get());
+        assertTrue(lower.contains("exact layout"), answer.get());
+    }
+
+    @Test
+    void teachingPrimerAnswersStationChoiceQuestions() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("which machine do I need for this?", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("oven"), answer.get());
+        assertTrue(lower.contains("kettle"), answer.get());
+        assertTrue(lower.contains("distillery"), answer.get());
+        assertTrue(lower.contains("spinning wheel"), answer.get());
+        assertTrue(!lower.contains("belladonna"), answer.get());
+    }
+
+    @Test
+    void teachingPrimerAnswersBrewTroubleshootingQuestions() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("my brew failed in the kettle", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("water"), answer.get());
+        assertTrue(lower.contains("heat"), answer.get());
+        assertTrue(lower.contains("visible ingredients"), answer.get());
+        assertTrue(lower.contains("altar power"), answer.get());
+    }
+
+    @Test
+    void teachingPrimerAnswersRiteTroubleshootingQuestions() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("why won't my rite start?", "Plains", "night");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("chalk"), answer.get());
+        assertTrue(lower.contains("offerings"), answer.get());
+        assertTrue(lower.contains("altar power"), answer.get());
+        assertTrue(lower.contains("unlock"), answer.get());
+    }
+
+    @Test
     void compactAnswerSkipsSmallTalk() {
         Optional<String> answer = NpcKnowledgeBase.compactAnswer("hi", "Plains", "day");
 

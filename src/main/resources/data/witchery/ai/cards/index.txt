@@ -6,3 +6,4 @@ brews.md
 machines.md
 rites.md
 primer_path.md
+teaching_primer.md
