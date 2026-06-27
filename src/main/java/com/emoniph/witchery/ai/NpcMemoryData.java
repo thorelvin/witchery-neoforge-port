@@ -137,6 +137,12 @@ public final class NpcMemoryData extends SavedData {
     }
 
     public String getContext(UUID npc, UUID player, String roleName, String currentNpcName, String currentPlayerName) {
+        return getContext(npc, player, roleName, currentNpcName, currentPlayerName,
+                (name, flags) -> "");
+    }
+
+    public String getContext(UUID npc, UUID player, String roleName, String currentNpcName, String currentPlayerName,
+                             RelationshipNoteFormatter relationshipNoteFormatter) {
         Memory memory = memories.get(new Key(npc, player));
         if (memory == null) {
             return "";
@@ -155,7 +161,9 @@ public final class NpcMemoryData extends SavedData {
         if (!memory.text().isBlank()) {
             appendSentence(context, "Long memory: " + memory.text());
         }
-        String relationship = relationshipNotes(playerName, memory.flags());
+        String relationship = relationshipNoteFormatter == null
+                ? ""
+                : relationshipNoteFormatter.relationshipNotes(playerName, memory.flags());
         if (!relationship.isBlank()) {
             appendSentence(context, "Relationship notes: " + relationship);
         }
@@ -178,6 +186,11 @@ public final class NpcMemoryData extends SavedData {
             }
         }
         return NpcBrainResponse.sanitize(context.toString(), MAX_CONTEXT_LENGTH);
+    }
+
+    @FunctionalInterface
+    public interface RelationshipNoteFormatter {
+        String relationshipNotes(String playerName, List<String> flags);
     }
 
     private static String sanitizeRole(String roleName) {
@@ -372,28 +385,6 @@ public final class NpcMemoryData extends SavedData {
 
     private static String joinMemory(List<String> notes) {
         return String.join(" ", notes);
-    }
-
-    private static String relationshipNotes(String playerName, List<String> flags) {
-        if (flags == null || flags.isEmpty()) {
-            return "";
-        }
-        String name = playerName == null || playerName.isBlank() ? "The player" : playerName;
-        List<String> notes = new ArrayList<>();
-        for (String flag : flags) {
-            String normalized = normalizeFlag(flag);
-            switch (normalized) {
-                case "coven_witch_herb_gift" ->
-                        notes.add(name + " received one herb gift from this witch.");
-                case "coven_witch_blessed" ->
-                        notes.add(name + " was blessed with luck after praising this witch.");
-                case "coven_witch_cursed" ->
-                        notes.add(name + " was cursed with bad luck after insulting this witch.");
-                default -> {
-                }
-            }
-        }
-        return NpcBrainResponse.sanitize(String.join(" ", notes), 220);
     }
 
     private static List<Exchange> clampExchanges(List<Exchange> exchanges) {

@@ -237,11 +237,16 @@ class NpcMemoryDataTest {
         data.setFlag(witch, player, "coven_witch_cursed", 80L);
 
         assertTrue(data.hasFlag(witch, player, "coven_witch_herb_gift"));
-        String context = data.getContext(witch, player);
-        assertTrue(context.contains("Relationship notes:"));
-        assertTrue(context.contains("Dev received one herb gift from this witch."));
-        assertTrue(context.contains("Dev was blessed with luck after praising this witch."));
-        assertTrue(context.contains("Dev was cursed with bad luck after insulting this witch."));
-        assertFalse(context.contains("coven_witch_herb_gift"));
+        String genericContext = data.getContext(witch, player, "demon", "Zul", "Dev");
+        assertFalse(genericContext.contains("Relationship notes:"));
+        assertFalse(genericContext.contains("coven_witch_herb_gift"));
+
+        String witchContext = data.getContext(witch, player, "witch", "Lilith Poe", "Dev",
+                CovenWitchPersona.INSTANCE::relationshipNotes);
+        assertTrue(witchContext.contains("Relationship notes:"));
+        assertTrue(witchContext.contains("Dev received one herb gift from this witch."));
+        assertTrue(witchContext.contains("Dev was blessed with luck after praising this witch."));
+        assertTrue(witchContext.contains("Dev was cursed with bad luck after insulting this witch."));
+        assertFalse(witchContext.contains("coven_witch_herb_gift"));
     }
 }

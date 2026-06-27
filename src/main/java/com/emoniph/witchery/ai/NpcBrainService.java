@@ -283,7 +283,7 @@ public final class NpcBrainService {
     private <E extends LivingEntity> String contextFor(NpcPersona<E> persona, E entity, ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
         return NpcMemoryData.get(level).getContext(entity.getUUID(), player.getUUID(), persona.roleName(),
-                persona.displayName(entity), player.getName().getString());
+                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
     }
 
     private static long cooldownTicks(String trigger) {
@@ -322,7 +322,7 @@ public final class NpcBrainService {
         }
         NpcMemoryData memoryData = NpcMemoryData.get(level);
         String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
-                persona.displayName(entity), player.getName().getString());
+                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
         var polishedSpeech = persona.polishRaw(response.speech(), entity, player, playerMessage, memoryContext,
                 NpcPromptBuilder.clockTime(level.getDayTime()));
         if (polishedSpeech.isEmpty()) {
@@ -369,7 +369,7 @@ public final class NpcBrainService {
         }
         NpcMemoryData memoryData = NpcMemoryData.get(level);
         String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
-                persona.displayName(entity), player.getName().getString());
+                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
         var fallback = persona.fallback(level, entity, player, playerMessage, memoryContext)
                 .flatMap(speech -> persona.polishFallback(speech, entity, player, playerMessage, memoryContext,
                         NpcPromptBuilder.clockTime(level.getDayTime())));

@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface NpcPersona<E extends LivingEntity> {
@@ -54,6 +55,10 @@ public interface NpcPersona<E extends LivingEntity> {
 
     default Optional<String> supportFollowup(String playerMessage, String speech) {
         return Optional.empty();
+    }
+
+    default String relationshipNotes(String playerName, List<String> flags) {
+        return "";
     }
 
     default String lastResortFallback(E entity, ServerPlayer player, String playerMessage, String avoidSpeech) {

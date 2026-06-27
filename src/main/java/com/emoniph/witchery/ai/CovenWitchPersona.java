@@ -4,6 +4,9 @@ import com.emoniph.witchery.entity.CovenWitchEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
@@ -80,6 +83,28 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public String relationshipNotes(String playerName, List<String> flags) {
+        if (flags == null || flags.isEmpty()) {
+            return "";
+        }
+        String name = playerName == null || playerName.isBlank() ? "The player" : playerName;
+        List<String> notes = new ArrayList<>();
+        for (String flag : flags) {
+            switch (normalizeFlag(flag)) {
+                case "coven_witch_herb_gift" ->
+                        notes.add(name + " received one herb gift from this witch.");
+                case "coven_witch_blessed" ->
+                        notes.add(name + " was blessed with luck after praising this witch.");
+                case "coven_witch_cursed" ->
+                        notes.add(name + " was cursed with bad luck after insulting this witch.");
+                default -> {
+                }
+            }
+        }
+        return NpcBrainResponse.sanitize(String.join(" ", notes), 220);
+    }
+
+    @Override
     public String lastResortFallback(CovenWitchEntity entity, ServerPlayer player, String playerMessage,
                                      String avoidSpeech) {
         return NpcDialogueFallback.lastResortAside(playerMessage, player.getName().getString(), avoidSpeech);
@@ -90,5 +115,13 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                                                          String playerMessage, String avoidSpeech) {
         return NpcDialogueFallback.alternateForRepeatedFallback(playerMessage, player.getName().getString(),
                 avoidSpeech);
+    }
+
+    private static String normalizeFlag(String flag) {
+        return NpcBrainResponse.sanitize(flag, 48)
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9_.:-]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
     }
 }
