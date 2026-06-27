@@ -55,4 +55,13 @@ public interface NpcPersona<E extends LivingEntity> {
     default Optional<String> supportFollowup(String playerMessage, String speech) {
         return Optional.empty();
     }
+
+    default String lastResortFallback(E entity, ServerPlayer player, String playerMessage, String avoidSpeech) {
+        return "I heard you, but not clearly.";
+    }
+
+    default Optional<String> alternateForRepeatedFallback(E entity, ServerPlayer player, String playerMessage,
+                                                          String avoidSpeech) {
+        return Optional.empty();
+    }
 }

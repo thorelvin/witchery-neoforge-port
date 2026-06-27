@@ -78,4 +78,17 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     public Optional<String> supportFollowup(String playerMessage, String speech) {
         return NpcBrainResponse.supportFollowup(playerMessage, speech);
     }
+
+    @Override
+    public String lastResortFallback(CovenWitchEntity entity, ServerPlayer player, String playerMessage,
+                                     String avoidSpeech) {
+        return NpcDialogueFallback.lastResortAside(playerMessage, player.getName().getString(), avoidSpeech);
+    }
+
+    @Override
+    public Optional<String> alternateForRepeatedFallback(CovenWitchEntity entity, ServerPlayer player,
+                                                         String playerMessage, String avoidSpeech) {
+        return NpcDialogueFallback.alternateForRepeatedFallback(playerMessage, player.getName().getString(),
+                avoidSpeech);
+    }
 }

@@ -373,13 +373,13 @@ public final class NpcBrainService {
         var fallback = persona.fallback(level, entity, player, playerMessage, memoryContext)
                 .flatMap(speech -> persona.polishFallback(speech, entity, player, playerMessage, memoryContext,
                         NpcPromptBuilder.clockTime(level.getDayTime())));
-        String playerName = player.getName().getString();
-        String fallbackSpeech = fallback.orElseGet(() -> NpcDialogueFallback.lastResortAside(playerMessage, playerName));
         String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
+        String fallbackSpeech = fallback.orElseGet(() ->
+                persona.lastResortFallback(entity, player, playerMessage, lastNpcSpeech));
         if (NpcBrainResponse.sameMeaningForRepetition(fallbackSpeech, lastNpcSpeech)
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), fallbackSpeech)) {
-            Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(
-                    playerMessage, playerName, lastNpcSpeech);
+            Optional<String> alternate = persona.alternateForRepeatedFallback(entity, player, playerMessage,
+                    lastNpcSpeech);
             if (alternate.isPresent()) {
                 fallbackSpeech = alternate.get();
             }
