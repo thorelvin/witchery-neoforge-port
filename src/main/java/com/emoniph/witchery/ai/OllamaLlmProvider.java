@@ -48,6 +48,9 @@ public final class OllamaLlmProvider implements LlmProvider {
         body.addProperty("model", config.model());
         body.addProperty("stream", false);
         body.add("format", npcResponseSchema());
+        if (config.keepAliveMinutes() > 0) {
+            body.addProperty("keep_alive", config.keepAliveMinutes() + "m");
+        }
 
         JsonObject options = new JsonObject();
         options.addProperty("temperature", 0.5);

@@ -194,15 +194,22 @@ class NpcMemoryDataTest {
     }
 
     @Test
-    void flagsPersistOutsideVisibleContext() {
+    void flagsBecomeRelationshipNotesWithoutRawFlagNames() {
         NpcMemoryData data = new NpcMemoryData();
         UUID witch = UUID.randomUUID();
         UUID player = UUID.randomUUID();
 
         data.rememberExchange(witch, player, "Lilith Poe", "Dev", "hi", "Hello, Dev.", 20L);
         data.setFlag(witch, player, "coven_witch_herb_gift", 40L);
+        data.setFlag(witch, player, "coven_witch_blessed", 60L);
+        data.setFlag(witch, player, "coven_witch_cursed", 80L);
 
         assertTrue(data.hasFlag(witch, player, "coven_witch_herb_gift"));
-        assertFalse(data.getContext(witch, player).contains("coven_witch_herb_gift"));
+        String context = data.getContext(witch, player);
+        assertTrue(context.contains("Relationship notes:"));
+        assertTrue(context.contains("Dev received one herb gift from this witch."));
+        assertTrue(context.contains("Dev was blessed with luck after praising this witch."));
+        assertTrue(context.contains("Dev was cursed with bad luck after insulting this witch."));
+        assertFalse(context.contains("coven_witch_herb_gift"));
     }
 }

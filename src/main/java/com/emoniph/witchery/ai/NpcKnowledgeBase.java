@@ -28,12 +28,16 @@ public final class NpcKnowledgeBase {
                     "Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures."),
             new TargetedNote("hidden|invisible",
                     "Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures."),
+            new TargetedNote("poison|drink poison|poisoned",
+                    "Targeted fact: Brew of Poison harms targets; do not advise drinking poison or eating dangerous herbs."),
+            new TargetedNote("blight",
+                    "Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it by chat."),
             new TargetedNote("flowing spirit",
                     "Targeted fact: Brew of Flowing Spirit places spirit liquid; in the Spirit World it matters for portals, return paths, and wispy cotton."),
             new TargetedNote("spirit world|spirit|dream|nightmare",
                     "Targeted fact: The Spirit World mirrors the Overworld; Sleeping Brew can send a traveler there, and nightmares may follow."),
             new TargetedNote("belladonna",
-                    "Targeted fact: Belladonna is a useful witch herb and common coven trade good; speak of it as an ingredient, not as a generic flower."),
+                    "Targeted fact: Belladonna is a useful witch herb and common coven trade good; speak of it as an ingredient, not food."),
             new TargetedNote("mandrake",
                     "Targeted fact: Mandrake is a witch herb and common coven trade good; it can be grown, traded for, or searched for in old gardens."),
             new TargetedNote("herb|herbs|plant|plants",
@@ -44,14 +48,34 @@ public final class NpcKnowledgeBase {
                     "Targeted fact: An altar gathers power from varied nearby nature; skulls, candelabra, pentacles, filled chalices, arthanas, and rare trophies improve power or range."),
             new TargetedNote("rite|ritual|circle magic|summon|summoning",
                     "Targeted fact: Circle rites use chalk glyphs, offerings, and altar power; known workings include binding familiars, summoning, storms, curses, waystones, and banishing demons."),
+            new TargetedNote("chalk",
+                    "Targeted fact: Chalk is for circle glyphs and rite work; not every witchcraft task needs it, but rites do."),
             new TargetedNote("arthana",
                     "Targeted fact: Arthana is a ritual blade and altar range upgrade, and helps draw useful Witchery drops from some mobs."),
             new TargetedNote("taglock|tag lock|poppet",
                     "Targeted fact: A taglock links magic to a creature or player; poppets need the right link before they can protect or affect a target."),
             new TargetedNote("familiar|familiars|cat|owl|toad",
-                    "Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work."),
+                    "Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work. They are companions, not disposable tools."),
             new TargetedNote("demon|devil|flame imp|demon heart",
-                    "Targeted fact: Demons are summoned by rites, resist fire, are hostile, and demon hearts feed infernal workings and dangerous transformations.")
+                    "Targeted fact: Demons are summoned by rites, resist fire, are hostile, and demon hearts feed infernal workings and dangerous transformations."),
+            new TargetedNote("storm|weather|stop raining|make it stop raining|summon a storm",
+                    "Targeted fact: Weather workings belong to circle rites and server-side effects; a chat reply should advise, not promise the sky has changed."),
+            new TargetedNote("garlic",
+                    "Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless visible facts say so."),
+            new TargetedNote("vampire|vampires",
+                    "Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore."),
+            new TargetedNote("oven|witches oven|witch's oven|fume|fumes|clay jar|jar|sapling|saplings",
+                    "Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts."),
+            new TargetedNote("kettle|cauldron|witches cauldron|recipe|recipes|exact recipe|exact ingredients|ingredient list|missing recipe",
+                    "Targeted fact: Exact recipe and ingredient lists must come from the Primer, recipe book, or runtime recipe export before naming ingredients."),
+            new TargetedNote("distillery|spinning wheel|spinning",
+                    "Targeted fact: Distillery and spinning recipes use their own stations and recipe rules; exact inputs must come from the live recipe manager."),
+            new TargetedNote("offering|offerings",
+                    "Targeted fact: Offerings are payments for circle rites; wrong offerings can make the rite fail."),
+            new TargetedNote("weak altar|altar too weak|altar is too weak",
+                    "Targeted fact: A weak altar usually needs more varied nearby nature or proper fittings such as chalices, skulls, pentacles, and arthanas."),
+            new TargetedNote("curse rite|curse ritual|never do during a rite|beginner path|first recipe|first rite|grimoire",
+                    "Targeted fact: For rites, avoid invented exact steps; use visible pages, chalk, offerings, altar power, and cautious beginner guidance.")
         );
     }
 
@@ -250,7 +274,10 @@ public final class NpcKnowledgeBase {
                 "spirit world", "nightmare", "arthana", "oven", "brazier", "circle", "rite", "ritual", "summon",
                 "summoning", "chalice", "hidden", "invisible", "herb", "herbs", "plant", "plants",
                 "rowan", "wormwood", "snowbell", "wolfsbane", "cat", "owl", "toad", "witchcraft",
-                "witchery", "rumor", "rumour", "gossip", "baba yaga", "death");
+                "witchery", "rumor", "rumour", "gossip", "baba yaga", "death", "poison", "blight",
+                "chalk", "garlic", "vampire", "vampires", "storm", "weather", "raining",
+                "fume", "fumes", "clay jar", "jar", "sapling", "saplings", "dream catcher", "dreamcatcher",
+                "well", "whisper", "whispers");
     }
 
     private static boolean isFavoriteHerbQuestion(String normalized) {

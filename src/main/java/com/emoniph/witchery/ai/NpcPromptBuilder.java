@@ -112,6 +112,8 @@ public final class NpcPromptBuilder {
                 Do not ask "How are you today?" or "What brings you here?"
                 Do not use generic fantasy filler: mana, chosen one, ancient prophecy, distant northlands.
                 Do not copy section headings, labels, examples, or private notes into speech.
+                Do not promise that the witch has performed an action unless the situation says the game did it.
+                If the player asks for a power, blessing, cure, weather change, curse, fight, summon, escort, or inspection you cannot confirm, answer as advice, limitation, rumor, or trade.
 
                 Reply with exactly one JSON object and nothing else:
                 {"speech":"short in-character spoken line, optionally with one safe visible beat","intent":"none","memory":"optional compact memory"}
@@ -150,6 +152,7 @@ public final class NpcPromptBuilder {
                 If facts are thin, answer honestly in-world and keep it short.
                 Do not invent recipe amounts, ingredient counts, named places, prophecies, or hidden player powers.
                 Do not reveal locked Primer, story-book, transformation, ritual, or boss content unless the facts say it is visible.
+                If asked to do something the game has not done, do not say "I can" or "I will" as a promise; say what you know, what you sell, or what the player should try.
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
                 If the player asks what you trade, name concrete stock: belladonna, mandrake, witches' salt, taglock kits, fumes, bat wool, Revealing brews, or Sleeping brews.
                 If the player asks a lore or item question, give one grounded Witchery fact, not a vague mystical lecture.
@@ -159,6 +162,9 @@ public final class NpcPromptBuilder {
                 If the player asks what you earn from trade, answer as "I"; never say "you earn".
                 Do not greet again unless the player greeted you.
                 If the player gives a short follow-up such as "how", "why", or "what", answer relative to memory and the recent exchange.
+                If the player asks what you remember, answer about the player from memory; do not summarize the witch's identity or stock.
+                Relationship notes are lived history. If the player asks about a gift, blessing, curse, apology, or prior kindness, answer from those notes.
+                If memory says the witch is sworn, trust the Relationship field over memory.
                 If the player asks the time, answer using time of day, clock, and day.
                 If naming the player, use the player's name. Only use the witch's name if the witch introduces herself.
                 Do not include angle brackets or speaker names.
@@ -222,6 +228,15 @@ public final class NpcPromptBuilder {
                 {"speech":"short in-character line","intent":"none","memory":"optional compact memory"}
                 """;
         return new NpcBrainPrompt(system.strip(), truncate(prompt == null ? "" : prompt.strip(), MAX_USER_PROMPT_LENGTH));
+    }
+
+    public static NpcBrainPrompt warmup() {
+        String system = """
+                You are warming a local Witchery NPC dialogue model.
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"ready","intent":"none","memory":""}
+                """;
+        return new NpcBrainPrompt(system.strip(), "Warm up the local model. Return the exact JSON object.");
     }
 
     public static String biomeName(ServerLevel level, BlockPos pos) {

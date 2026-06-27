@@ -53,4 +53,13 @@ class NpcPromptBuilderTest {
         assertTrue(!user.contains("entity/player memory file:"));
         assertTrue(!user.contains("player chat message:"));
     }
+
+    @Test
+    void warmupPromptUsesInvisibleReadyJson() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.warmup();
+
+        assertTrue(prompt.systemPrompt().contains("{\"speech\":\"ready\",\"intent\":\"none\",\"memory\":\"\"}"));
+        assertTrue(prompt.userPrompt().toLowerCase().contains("warm up"));
+        assertEquals(0, prompt.examples().size());
+    }
 }

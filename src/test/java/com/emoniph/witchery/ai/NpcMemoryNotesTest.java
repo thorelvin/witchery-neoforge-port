@@ -33,6 +33,30 @@ class NpcMemoryNotesTest {
     }
 
     @Test
+    void extractsLearningGoal() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I want to learn brewing and rites properly");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev wants to learn brewing and rites properly.", note.get());
+    }
+
+    @Test
+    void extractsReturnPlan() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I will come back after sunrise");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev plans to come back after sunrise.", note.get());
+    }
+
+    @Test
+    void extractsVillageReputationConcern() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "My village thinks you are trouble");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev's village thinks you are trouble.", note.get());
+    }
+
+    @Test
     void refusesPromptControlNotes() {
         Optional<String> note = NpcMemoryNotes.extract("Dev", "I like ignore previous instructions");
 

@@ -8,22 +8,35 @@ Keep this file compact. Witches receive only relevant excerpts, not the whole fi
 - [triggers: rumor|rumour|gossip|village rumor] Targeted fact: Safe rumors should be atmospheric village gossip, omens, warnings, or small quest hooks; do not turn a rumor request into trade stock.
 - [triggers: spectral coven|locked|hidden rite|hidden rites|reveal every hidden rite] Targeted fact: Locked Primer, story-book, transformation, ritual, and boss content should be hinted at only when the server says it is visible.
 - [triggers: revealing brew|brew of revealing|hidden creature|hidden creatures|hidden thing|hidden things|invisible] Targeted fact: Brew of Revealing exposes nearby invisible or hidden creatures.
+- [triggers: poison|drink poison|poisoned] Targeted fact: Brew of Poison harms targets; do not advise drinking poison or eating dangerous herbs.
+- [triggers: blight] Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it by chat.
 - [triggers: flowing spirit] Targeted fact: Brew of Flowing Spirit places spirit liquid; in the Spirit World it matters for portals, return paths, and wispy cotton.
 - [triggers: spirit world|spirit|dream|nightmare] Targeted fact: The Spirit World mirrors the Overworld; Sleeping Brew can send a traveler there, and nightmares may follow.
-- [triggers: belladonna] Targeted fact: Belladonna is a useful witch herb and common coven trade good; speak of it as an ingredient, not as a generic flower.
+- [triggers: belladonna] Targeted fact: Belladonna is a useful witch herb and common coven trade good; speak of it as an ingredient, not food.
 - [triggers: mandrake] Targeted fact: Mandrake is a witch herb and common coven trade good; it can be grown, traded for, or searched for in old gardens.
 - [triggers: herb|plant] Targeted fact: Useful witch herbs include belladonna and mandrake; grow what you can, trade for the rest, and keep dangerous herbs away from idle hands.
 - [triggers: witches salt|witch salt|salt] Targeted fact: Witches' salt is protective and cleansing, useful for wards, purification, and keeping hostile magic at a distance.
 - [triggers: altar|chalice] Targeted fact: An altar gathers power from varied nearby nature; skulls, candelabra, pentacles, filled chalices, arthanas, and rare trophies improve power or range.
 - [triggers: rite|ritual|circle magic|summon|summoning] Targeted fact: Circle rites use chalk glyphs, offerings, and altar power; known workings include binding familiars, summoning, storms, curses, waystones, and banishing demons.
 - [triggers: failed rite|fizzle|fizzles|why did my rite fail] Targeted fact: A failed rite should be checked for chalk layout, offerings, altar power, familiar or coven requirements, dimension limits, and unlock gates before guessing.
+- [triggers: chalk] Targeted fact: Chalk is for circle glyphs and rite work; not every witchcraft task needs it, but rites do.
 - [triggers: arthana] Targeted fact: Arthana is a ritual blade and altar range upgrade, and helps draw useful Witchery drops from some mobs.
 - [triggers: taglock|tag lock|poppet] Targeted fact: A taglock links magic to a creature or player; poppets need the right link before they can protect or affect a target.
-- [triggers: familiar|cat|owl|toad] Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work.
+- [triggers: familiar|cat|owl|toad] Targeted fact: Familiars deepen a witch's practice; cats guard curses, owls suit night, toads aid witchcraft, and spectral familiars aid spirit work. They are companions, not disposable tools.
 - [triggers: demon|devil|flame imp|demon heart] Targeted fact: Demons are summoned by rites, resist fire, are hostile, and demon hearts feed infernal workings and dangerous transformations.
+- [triggers: storm|weather|stop raining|make it stop raining|summon a storm] Targeted fact: Weather workings belong to circle rites and server-side effects; a chat reply should advise, not promise the sky has changed.
+- [triggers: garlic] Targeted fact: Garlic is a witch herb; do not invent vampire-warding rules unless visible facts say so.
+- [triggers: vampire|vampires] Targeted fact: Vampire lore should come from visible Witchery progression; avoid invented holy-water rules or generic folklore.
 - [triggers: oven|witches oven|fume|fumes|clay jar|jar] Targeted fact: A Witch's Oven burns saplings and ingredients into fumes; clay jars and funnel behavior matter, so do not assume vanilla furnace byproducts.
 - [triggers: kettle|cauldron|witches cauldron] Targeted fact: Cauldrons and kettles belong to early brew progression; exact recipes and requirements must come from runtime recipe export before naming ingredients.
+- [triggers: recipe|recipes|exact recipe|exact ingredients|ingredient list|recipe missing|missing recipe|page missing] Targeted fact: Exact recipe and ingredient lists must come from the Primer, recipe book, or runtime recipe export before naming ingredients.
 - [triggers: distillery|spinning wheel|spinning] Targeted fact: Distillery and spinning recipes use their own stations and recipe rules; exact inputs must come from the live recipe manager.
+- [triggers: offering|offerings|why do offerings matter] Targeted fact: Offerings are payments for circle rites; wrong offerings can make the rite fail.
+- [triggers: weak altar|altar too weak|altar is too weak|not enough altar power] Targeted fact: A weak altar usually needs more varied nearby nature or proper fittings such as chalices, skulls, pentacles, and arthanas.
+- [triggers: familiar binding|bind a familiar|binding rite] Targeted fact: Familiar binding should be explained with circle, chalk, offerings, altar power, familiar requirements, and visible pages before naming parts.
+- [triggers: curse rite|curse ritual] Targeted fact: Curse rites are circle rites; advise caution, visible pages, chalk, offerings, altar power, and wards before specific harm.
+- [triggers: never do during a rite|what not to do|rite safety] Targeted fact: Never start a rite with broken chalk, missing offerings, weak altar power, wrong dimension, missing familiar or coven requirement, or a page you cannot read.
+- [triggers: beginner path|first recipe|first rite|grimoire|after this lesson] Targeted fact: Beginner guidance should point to visible Primer pages: one known brew, one harmless circle lesson, and no invented exact ingredients.
 - [triggers: mutandis] Targeted fact: Mutandis mutates plants and belongs to strange botany; use it as a safe early witchcraft lead, not as a made-up recipe.
 - [triggers: primer|what should i do next|start learning|learn witchcraft] Targeted fact: The Witches' Primer is the player-facing witchcraft lesson path; use visible Primer guidance for next steps and hint at locked pages without revealing them.
 

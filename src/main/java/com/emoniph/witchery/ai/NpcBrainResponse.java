@@ -154,6 +154,22 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, false);
     }
 
+    public static Optional<String> polishSpeechOrGroundedFollowup(String rawSpeech, String npcName, String playerName,
+                                                                  String playerMessage, String memoryContext,
+                                                                  String expectedClock) {
+        Optional<String> polished = polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, true);
+        if (polished.isPresent()) {
+            return polished;
+        }
+        Optional<String> relaxed = polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, false);
+        if (relaxed.isPresent()
+                && canKeepRawWithGroundedFollowup(relaxed.get(), playerMessage, npcName)
+                && supportFollowup(playerMessage, relaxed.get()).isPresent()) {
+            return relaxed;
+        }
+        return Optional.empty();
+    }
+
     private static Optional<String> polishSpeech(String rawSpeech, String npcName, String playerName,
                                                  String playerMessage, String memoryContext,
                                                  String expectedClock, boolean requireAskedContext) {
@@ -229,6 +245,19 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         boolean wantsHidden = player.contains("hidden") || player.contains("invisible");
         boolean wantsDemon = player.contains("demon") || player.contains("devil");
         boolean wantsSummoning = player.contains("summon") || player.contains("summoning");
+        boolean wantsPoison = player.contains("poison");
+        boolean wantsBlight = player.contains("blight");
+        boolean wantsChalk = player.contains("chalk");
+        boolean wantsGarlic = player.contains("garlic");
+        boolean wantsVampire = player.contains("vampire");
+        boolean wantsWeather = player.contains("storm") || player.contains("weather") || player.contains("raining");
+        boolean wantsOven = player.contains("oven") || player.contains("witch s oven")
+                || player.contains("witches oven") || player.contains("sapling") || player.contains("saplings")
+                || player.contains("fume") || player.contains("fumes") || player.contains("clay jar") || player.contains("jar");
+        boolean wantsRecipe = asksRecipeQuestion(player);
+        boolean wantsSpinning = asksSpinningWheelQuestion(player);
+        boolean wantsDistillery = asksDistilleryQuestion(player);
+        boolean wantsOfferings = asksOfferingsQuestion(player);
         boolean plantingAdviceAnswered = asksPlantingAdvice(player) && mentionsUsefulHerbs(normalizedSpeech);
         boolean needsHelp = (wantsSalt && !looksLikeWitchesSaltAnswer(normalizedSpeech))
                 || (wantsArthana && !looksLikeArthanaAnswer(normalizedSpeech))
@@ -241,7 +270,20 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || (wantsHerb && !mentionsUsefulHerbs(normalizedSpeech))
                 || (wantsHidden && !looksLikeRevealingAnswer(normalizedSpeech))
                 || (wantsDemon && !looksLikeDemonAnswer(normalizedSpeech))
-                || (wantsSummoning && !looksLikeRiteAnswer(normalizedSpeech));
+                || (wantsSummoning && !looksLikeRiteAnswer(normalizedSpeech))
+                || (wantsPoison && !normalizedSpeech.contains("poison"))
+                || (wantsBlight && !normalizedSpeech.contains("blight"))
+                || (wantsChalk && !normalizedSpeech.contains("chalk"))
+                || (wantsGarlic && !normalizedSpeech.contains("garlic"))
+                || (wantsVampire && !normalizedSpeech.contains("vampire"))
+                || (wantsWeather && !(normalizedSpeech.contains("weather")
+                    || normalizedSpeech.contains("storm")
+                    || normalizedSpeech.contains("rain")))
+                || (wantsOven && !looksLikeOvenFumeAnswer(normalizedSpeech))
+                || (wantsRecipe && !looksLikeRecipeAnswer(normalizedSpeech))
+                || (wantsSpinning && !looksLikeStationRecipeAnswer(normalizedSpeech, "spinning"))
+                || (wantsDistillery && !looksLikeStationRecipeAnswer(normalizedSpeech, "distillery"))
+                || (wantsOfferings && !looksLikeOfferingAnswer(normalizedSpeech));
         if (!needsHelp) {
             return Optional.empty();
         }
@@ -530,11 +572,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || throwsParrotingComplaintBack(speech, playerMessage)
                 || addressesNpcAsPlayer(speech, npcName)
                 || isOnlyNpcName(speech, npcName)
+                || reversesApprenticeRole(speech)
                 || speech.toLowerCase(Locale.ROOT).startsWith("the player ")
                 || containsNpcNarration(speech, npcName)
                 || unwantedSelfIntroduction(speech, npcName, playerMessage)
                 || unwarrantedPlayerPossession(speech, playerMessage)
                 || isBlandNonAnswer(speech, playerMessage)
+                || promisesUnsupportedAction(speech, playerMessage)
                 || isUnsupportedGeneralAdvice(speech, playerMessage);
     }
 
@@ -779,6 +823,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         String player = normalizeForComparison(playerMessage);
+        if (asksRememberRequest(player)) {
+            return false;
+        }
         if (asksRumor(player) && !answersRumor(speech)) {
             return true;
         }
@@ -828,10 +875,32 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (asksMemory(player) && !answersMemoryQuestion(speech, memoryContext)) {
             return true;
         }
+        if (asksMemory(player)
+                && !containsAnyTerm(normalizeForComparison(speech), "remember", "you have", "you like",
+                "you are", "know your name", "not given me much", "not told me much")) {
+            return true;
+        }
+        if (missesRelationshipMemory(speech, player, memoryContext)) {
+            return true;
+        }
+        if (asksSpiritReturnFollowup(player, memoryContext) && !answersSpiritReturnFollowup(speech)) {
+            return true;
+        }
+        if (asksDemonTrust(player)
+                && !looksLikeDemonAnswer(normalizeForComparison(speech))
+                && !answersDemonTrustWithPronoun(speech)) {
+            return true;
+        }
+        if (asksRoadAdvice(player) && isCoinCleaningAdvice(speech)) {
+            return true;
+        }
         if (asksPlace(player) && !looksLikePlaceAnswer(speech)) {
             return true;
         }
         if (asksFollowRequest(player) && !answersFollowRequest(speech)) {
+            return true;
+        }
+        if (containsUnsupportedLoreClaim(speech, player)) {
             return true;
         }
         return asksKnowledge(player)
@@ -839,6 +908,69 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || isVagueKnowledgeAnswer(speech)
                     || containsUnsupportedExactMechanic(speech)
                     || containsUnsupportedLoreClaim(speech, player));
+    }
+
+    private static boolean missesRelationshipMemory(String speech, String normalizedPlayerMessage,
+                                                    String memoryContext) {
+        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedMemory = normalizeForComparison(memoryContext);
+        if (containsAnyTerm(normalizedPlayerMessage, "did you bless me", "am i blessed", "your blessing",
+                "you blessed me", "the luck")
+                && normalizedMemory.contains("blessed with luck")
+                && !containsAnyTerm(normalizedSpeech, "luck", "bless", "blessed")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "did you curse me", "am i cursed", "your curse",
+                "you cursed me", "still cursed")
+                && normalizedMemory.contains("cursed with bad luck")
+                && (!containsAnyTerm(normalizedSpeech, "curse", "cursed", "shadow", "tongue", "luck")
+                    || containsAnyTerm(normalizedSpeech, "do not curse you", "don t curse you",
+                    "i do not curse", "i don t curse"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "sorry", "apologize", "apology", "that was rude")
+                && normalizedMemory.contains("cursed with bad luck")
+                && !containsAnyTerm(normalizedSpeech, "apology", "heard", "sorry", "rude", "shadow", "tongue",
+                "forgive")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "do you remember giving me a herb", "giving me a herb",
+                "gave me a herb", "herb gift", "another herb", "more herbs")
+                && normalizedMemory.contains("received one herb gift")
+                && !containsAnyTerm(normalizedSpeech, "herb", "gift", "gave", "given", "plant", "brew")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "what scares me", "what did i say scares me",
+                "what am i scared of", "what am i afraid of")
+                && normalizedMemory.contains("nightmare")
+                && !containsAnyTerm(normalizedSpeech, "nightmare", "dream catcher", "dream", "fear",
+                "scare", "wary")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "what am i looking for", "what was i looking for",
+                "what did i look for", "still looking")
+                && normalizedMemory.contains("arthana")
+                && !normalizedSpeech.contains("arthana")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "did you expect me back", "expected me back",
+                "i came back", "came back")
+                && normalizedMemory.contains("come back after sunrise")
+                && (normalizedSpeech.startsWith("i ll be back")
+                    || normalizedSpeech.startsWith("i will be back")
+                    || normalizedSpeech.startsWith("i ll return")
+                    || normalizedSpeech.startsWith("i will return")
+                    || !containsAnyTerm(normalizedSpeech, "back", "sunrise", "expected", "return",
+                    "daylight", "boots"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "are they wrong", "were they wrong")
+                && normalizedMemory.contains("village thinks you are trouble")
+                && !containsAnyTerm(normalizedSpeech, "trouble", "village", "wrong", "eyes", "fear",
+                "not entirely")) {
+            return true;
+        }
+        return false;
     }
 
     private static boolean hasUsefulSupportFollowup(String playerMessage, String speech) {
@@ -940,7 +1072,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return normalizedPlayerMessage.equals("hi")
                 || normalizedPlayerMessage.equals("hello")
                 || normalizedPlayerMessage.equals("hey")
-                || normalizedPlayerMessage.equals("greetings");
+                || normalizedPlayerMessage.equals("greetings")
+                || normalizedPlayerMessage.equals("good evening")
+                || normalizedPlayerMessage.startsWith("good evening ")
+                || normalizedPlayerMessage.equals("good morning")
+                || normalizedPlayerMessage.startsWith("good morning ")
+                || normalizedPlayerMessage.equals("good day")
+                || normalizedPlayerMessage.startsWith("good day ");
     }
 
     private static boolean answersGreeting(String speech) {
@@ -1168,7 +1306,6 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("full moon")
                 || normalizedSpeech.contains("only grows")
                 || normalizedSpeech.contains("grows under")
-                || normalizedSpeech.contains("coin")
                 || normalizedSpeech.contains("ware")) {
             return false;
         }
@@ -1177,14 +1314,16 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedSpeech.contains("not told me much")
                     || normalizedSpeech.contains("know your name")
                     || normalizedSpeech.contains("do not know much")
-                    || normalizedSpeech.contains("don t know much");
+                || normalizedSpeech.contains("don t know much");
         }
         for (String term : normalizedMemory.split(" ")) {
             if (isMemorySubjectTerm(term) && normalizedSpeech.contains(term)) {
                 return true;
             }
         }
-        return false;
+        return normalizedSpeech.contains("i remember")
+                && normalizedMemory.contains("coin")
+                && normalizedSpeech.contains("coin");
     }
 
     private static boolean isMemorySubjectTerm(String term) {
@@ -1205,6 +1344,16 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.startsWith("are you well")) {
             return false;
         }
+        if (asksRecipeQuestion(normalizedPlayerMessage)
+                || asksSpinningWheelQuestion(normalizedPlayerMessage)
+                || asksDistilleryQuestion(normalizedPlayerMessage)
+                || asksOfferingsQuestion(normalizedPlayerMessage)
+                || asksWeakAltarQuestion(normalizedPlayerMessage)
+                || asksCauldronPrepQuestion(normalizedPlayerMessage)
+                || asksRiteSafetyQuestion(normalizedPlayerMessage)
+                || asksBeginnerPathQuestion(normalizedPlayerMessage)) {
+            return true;
+        }
         return normalizedPlayerMessage.startsWith("what is ")
                 || normalizedPlayerMessage.startsWith("what are ")
                 || normalizedPlayerMessage.startsWith("what does ")
@@ -1220,6 +1369,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || ((normalizedPlayerMessage.startsWith("do you know ")
                         || normalizedPlayerMessage.startsWith("can you ")
                         || normalizedPlayerMessage.startsWith("can i ")
+                        || normalizedPlayerMessage.startsWith("can someone ")
+                        || normalizedPlayerMessage.startsWith("would ")
                         || normalizedPlayerMessage.startsWith("what can ")
                         || normalizedPlayerMessage.startsWith("which ")
                         || normalizedPlayerMessage.startsWith("what should ")
@@ -1231,7 +1382,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                         || normalizedPlayerMessage.startsWith("is ")
                         || normalizedPlayerMessage.startsWith("is it ")
                         || normalizedPlayerMessage.startsWith("should i ")
-                        || normalizedPlayerMessage.startsWith("do you have "))
+                        || normalizedPlayerMessage.startsWith("do you have ")
+                        || normalizedPlayerMessage.startsWith("i found ")
+                        || normalizedPlayerMessage.startsWith("i have ")
+                        || normalizedPlayerMessage.startsWith("i saw ")
+                        || normalizedPlayerMessage.startsWith("i think "))
                     && containsKnowledgeCue(normalizedPlayerMessage));
     }
 
@@ -1303,6 +1458,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedPlayerMessage.contains("help"));
     }
 
+    private static boolean asksCovenPath(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "start a coven", "make a coven", "before a coven",
+                "learn before a coven", "before starting a coven", "before joining a coven",
+                "recruit coven", "recruit a coven", "where can i recruit", "find coven");
+    }
+
     private static boolean answersNpcEarnings(String speech) {
         String normalized = normalizeForComparison(speech);
         if (normalized.startsWith("you ")
@@ -1370,11 +1531,202 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalizedSpeech.equals("i think")
                 || normalizedSpeech.equals("i am here")
                 || normalizedSpeech.equals("i m here")
+                || normalizedSpeech.equals("i am listening")
+                || normalizedSpeech.equals("i m listening")
+                || normalizedSpeech.equals("i m listening dev")
                 || normalizedSpeech.equals("here")
-                || normalizedSpeech.equals("ask")) {
+                || normalizedSpeech.equals("your humble servant")
+                || normalizedSpeech.equals("ask")
+                || normalizedSpeech.equals("the salt")) {
+            return !asksListening(normalizedPlayer);
+        }
+        if (normalizedSpeech.startsWith("i m listening")
+                || normalizedSpeech.startsWith("i am listening")) {
+            return !asksListening(normalizedPlayer);
+        }
+        if (normalizedSpeech.equals("i have no idea")
+                || normalizedSpeech.equals("the name s lilith poe")
+                || normalizedSpeech.equals("i ll need my wand")
+                || normalizedSpeech.equals("i ll need a clay jar")
+                || normalizedSpeech.equals("i m here for you")
+                || normalizedSpeech.equals("ask for coin")
+                || normalizedSpeech.equals("you trade")
+                || normalizedSpeech.equals("dream catcher")) {
+            return true;
+        }
+        if ((normalizedSpeech.contains("safe space in my hut")
+                    || normalizedSpeech.contains("no promises through closed doors"))
+                && !containsAnyTerm(normalizedPlayer, "hut", "door", "threshold", "village", "safe")) {
+            return true;
+        }
+        if ((normalizedSpeech.contains("i see you re in need of some guidance")
+                    || normalizedSpeech.contains("what is your purpose here")
+                    || normalizedSpeech.contains("what do you hope")
+                    || normalizedSpeech.contains("old paths are open to those who can wait"))
+                && !containsAnyTerm(normalizedPlayer, "guidance", "purpose", "old path", "old paths", "hope")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedSpeech, "villagers are laughing", "villagers laugh", "laughing at your nightmares",
+                "something stronger")
+                && !containsAnyTerm(normalizedPlayer, "villager", "villagers", "laugh", "laughed", "nightmare", "nightmares")) {
+            return true;
+        }
+        if (normalizedSpeech.contains("i can show you")
+                && !asksTeachingRequest(normalizedPlayer)
+                && !asksNamedBrew(normalizedPlayer)) {
+            return true;
+        }
+        if (normalizedPlayer.contains("dream catcher")
+                && normalizedSpeech.length() <= 30
+                && normalizedSpeech.contains("dream catcher")) {
+            return true;
+        }
+        if (normalizedPlayer.startsWith("should i sleep")
+                && (normalizedSpeech.startsWith("i ll sleep") || normalizedSpeech.startsWith("i will sleep"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayer, "i like that you remember", "glad you remember", "good memory")
+                && !containsAnyTerm(normalizedSpeech, "remember", "memory", "jar", "lid")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("careful apprentice")
+                && containsAnyTerm(normalizedSpeech, "you have coin", "you like", "you are looking for")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("careful apprentice")
+                && !containsAnyTerm(normalizedSpeech, "apprentice", "label", "jar", "offering", "whisper",
+                "salt", "ward", "craft", "learn")) {
+            return true;
+        }
+        if (normalizedSpeech.contains("i ll be right back")
+                || normalizedSpeech.contains("i will be right back")
+                || normalizedSpeech.contains("i d be happy to throw")
+                || (!normalizedPlayer.contains("sleep")
+                    && !normalizedPlayer.contains("dream")
+                    && !normalizedPlayer.contains("nightmare")
+                    && normalizedSpeech.contains("go back to bed"))) {
+            return true;
+        }
+        if (!asksTrade(normalizedPlayer)
+                && (normalizedSpeech.contains("fine coin for a witch")
+                    || (normalizedPlayer.contains("what are you doing")
+                        && normalizedSpeech.contains("coven witch")
+                        && normalizedSpeech.contains("trade")
+                        && normalizedSpeech.contains("coin")))) {
+            return true;
+        }
+        if (!asksTrade(normalizedPlayer)
+                && !asksDanger(normalizedPlayer)
+                && asksKnowledge(normalizedPlayer)
+                && tradeStockTerms(normalizedSpeech) >= 3) {
+            return true;
+        }
+        if (normalizedPlayer.contains("village thinks")
+                && (tradeStockTerms(normalizedSpeech) >= 2 || looksLikeWitchesSaltAnswer(normalizedSpeech))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayer, "are they wrong", "were they wrong")
+                && (tradeStockTerms(normalizedSpeech) >= 1 || normalizedSpeech.contains("what can i offer"))) {
+            return true;
+        }
+        if (normalizedPlayer.contains("do you like potatoes")
+                && (!normalizedSpeech.contains("potato")
+                    || normalizedSpeech.contains("sworn to a player")
+                    || tradeStockTerms(normalizedSpeech) >= 1)) {
+            return true;
+        }
+        if (normalizedPlayer.contains("lonely") && normalizedSpeech.contains("coin")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("what should i keep by the door")
+                && !containsAnyTerm(normalizedSpeech, "salt", "ward", "door", "threshold")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("safe little hut")
+                && !containsAnyTerm(normalizedSpeech, "salt", "ward", "threshold", "door", "light")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("uneasy")
+                && (normalizedSpeech.contains("that s great")
+                    || normalizedSpeech.contains("i can help you with that")
+                    || normalizedSpeech.contains("safe little hut"))) {
+            return true;
+        }
+        if (normalizedPlayer.contains("familiar")
+                && (normalizedSpeech.contains("stay close")
+                    || normalizedSpeech.contains("keep watch")
+                    || normalizedSpeech.contains("keep an eye")
+                    || normalizedSpeech.contains("made by the witchcraft")
+                    || normalizedSpeech.contains("any creature")
+                    || normalizedSpeech.contains("watch over your back")
+                    || (!normalizedSpeech.contains("familiar") && containsAnyTerm(normalizedSpeech, "sign", "roof")))) {
+            return true;
+        }
+        if (normalizedPlayer.contains("owl")
+                && !normalizedPlayer.contains("familiar")
+                && (normalizedSpeech.startsWith("i see an owl")
+                    || normalizedSpeech.contains("guarding your home")
+                    || normalizedSpeech.contains("warding off any unwanted")
+                    || normalizedSpeech.contains("watching for owls")
+                    || normalizedSpeech.contains("if i were to follow")
+                    || normalizedSpeech.contains("where would i go"))) {
+            return true;
+        }
+        if (normalizedPlayer.contains("spirits")
+                && (normalizedSpeech.contains("clay jar")
+                    || !containsAnyTerm(normalizedSpeech, "spirit", "spirits", "whisper", "well", "water", "salt"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayer, "what should i do instead", "do instead", "maybe not")
+                && containsAnyTerm(normalizedSpeech, "what s your poison", "what is your poison", "poison dev")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("lonely")
+                && !containsAnyTerm(normalizedSpeech, "lonely", "alone", "company", "dark", "night", "old")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("careful apprentice")
+                && containsAnyTerm(normalizedSpeech, "coin clean", "keep your coin clean", "not to worry about it")) {
+            return true;
+        }
+        if (normalizedSpeech.contains("sworn to a player")
+                && !containsAnyTerm(normalizedPlayer, "sworn", "recruited", "coven")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("coven")
+                && (normalizedSpeech.equals("i ll take it") || normalizedSpeech.equals("i will take it"))) {
+            return true;
+        }
+        if (asksCovenPath(normalizedPlayer)
+                && containsAnyTerm(normalizedSpeech, "belladonna", "mandrake", "trade", "potions",
+                "keep our numbers secret", "cauldron warm", "clean coin", "heavy purse")
+                && !containsAnyTerm(normalizedSpeech, "familiar", "trial", "coven is earned", "coven witch")) {
+            return true;
+        }
+        if (asksCovenPath(normalizedPlayer)
+                && containsAnyTerm(normalizedSpeech, "i m a witch", "i am a witch", "whole reason for being")
+                && !containsAnyTerm(normalizedSpeech, "familiar", "trial", "coven is earned", "coven witch")) {
+            return true;
+        }
+        if ((normalizedPlayer.contains("come back after sunrise")
+                    || normalizedPlayer.contains("back after sunrise")
+                    || normalizedPlayer.contains("come back later"))
+                && (containsAnyTerm(normalizedSpeech, "belladonna", "mandrake", "trade", "stock")
+                    || normalizedSpeech.startsWith("i ll return")
+                    || normalizedSpeech.startsWith("i will return")
+                    || !containsAnyTerm(normalizedSpeech, "back", "sunrise", "return", "daylight", "boots",
+                    "expected"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayer, "any advice now", "advice now", "what now")
+                && containsAnyTerm(normalizedSpeech, "belladonna", "mandrake", "arthana", "coin", "stock")
+                && normalizedSpeech.length() < 90) {
             return true;
         }
         if (normalizedSpeech.matches("(belladonna|mandrake|arthana|poppet|salt|witches salt|brew|coin)")) {
+            if (asksTeachingRequest(normalizedPlayer)) {
+                return true;
+            }
             return !asksTrade(normalizedPlayer)
                     && !asksFavoriteHerb(normalizedPlayer)
                     && !containsKnowledgeCue(normalizedPlayer)
@@ -1401,13 +1753,289 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && normalizedSpeech.matches("(belladonna|mandrake|salt|arthana|poppet|brew)");
     }
 
+    private static boolean promisesUnsupportedAction(String speech, String playerMessage) {
+        String normalizedSpeech = normalizeForComparison(spokenWithoutAction(speech));
+        String normalizedPlayer = normalizeForComparison(playerMessage);
+        if (!asksForDirectAction(normalizedPlayer)) {
+            return false;
+        }
+        if (answersAsLimitationOrAdvice(normalizedSpeech)) {
+            return false;
+        }
+        if (asksTrade(normalizedPlayer) || asksTeachingRequest(normalizedPlayer) || asksRumor(normalizedPlayer)
+                || asksUnsafeReveal(normalizedPlayer) || asksMemory(normalizedPlayer)) {
+            return false;
+        }
+        if (asksNamedBrew(normalizedPlayer) && looksLikeNamedBrewAnswer(normalizedSpeech, normalizedPlayer)) {
+            return false;
+        }
+        if (normalizedPlayer.contains("curse")
+                && (normalizedSpeech.contains("you can curse")
+                    || normalizedSpeech.contains("you could curse")
+                    || normalizedSpeech.contains("go curse"))) {
+            return true;
+        }
+        boolean promisesCapability = normalizedSpeech.matches(".*\\b(i\\s+(can|will|shall|could|ll)|i'll|i\\s+would)\\b.*");
+        if (!promisesCapability) {
+            return false;
+        }
+        return containsAnyTerm(normalizedPlayer,
+                "bless", "blessing", "heal", "cure", "fix", "stop raining", "make it stop",
+                "summon storm", "storm", "curse", "fight", "protect", "follow", "come home",
+                "see invisible", "invisible", "turn me", "make me", "open portal", "teleport", "blight");
+    }
+
+    private static boolean asksForDirectAction(String normalizedPlayerMessage) {
+        return normalizedPlayerMessage.startsWith("can you ")
+                || normalizedPlayerMessage.startsWith("could you ")
+                || normalizedPlayerMessage.startsWith("will you ")
+                || normalizedPlayerMessage.startsWith("would you ")
+                || normalizedPlayerMessage.startsWith("please ")
+                || normalizedPlayerMessage.startsWith("give me ")
+                || normalizedPlayerMessage.startsWith("make ")
+                || normalizedPlayerMessage.startsWith("summon ")
+                || normalizedPlayerMessage.startsWith("curse ")
+                || normalizedPlayerMessage.startsWith("heal ")
+                || normalizedPlayerMessage.startsWith("bless ");
+    }
+
+    private static boolean asksTeachingRequest(String normalizedPlayerMessage) {
+        return normalizedPlayerMessage.contains("teach me")
+                || normalizedPlayerMessage.contains("show me")
+                || normalizedPlayerMessage.contains("lesson")
+                || normalizedPlayerMessage.contains("learn witchcraft")
+                || normalizedPlayerMessage.contains("start learning");
+    }
+
+    private static boolean asksListening(String normalizedPlayerMessage) {
+        return normalizedPlayerMessage.contains("still listening")
+                || normalizedPlayerMessage.contains("are you listening")
+                || normalizedPlayerMessage.contains("can you hear me")
+                || normalizedPlayerMessage.contains("do you hear me");
+    }
+
+    private static boolean asksSpiritReturnFollowup(String normalizedPlayerMessage, String memoryContext) {
+        if (!containsAnyTerm(normalizedPlayerMessage, "get back", "return", "wake up", "how would i get back",
+                "how do i get back")) {
+            return false;
+        }
+        String memory = normalizeForComparison(memoryContext);
+        return memory.contains("spirit world")
+                || memory.contains("sleeping brew")
+                || memory.contains("nightmare")
+                || memory.contains("return path");
+    }
+
+    private static boolean answersSpiritReturnFollowup(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return normalized.contains("return")
+                || normalized.contains("path")
+                || normalized.contains("wake")
+                || normalized.contains("spirit world")
+                || normalized.contains("where you crossed")
+                || normalized.contains("dream");
+    }
+
+    private static boolean asksDemonTrust(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "demon", "demons", "devil", "imp")
+                && containsAnyTerm(normalizedPlayerMessage, "trust", "bargain", "bargains", "deal", "deals");
+    }
+
+    private static boolean answersDemonTrustWithPronoun(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return containsAnyTerm(normalized, "trust", "bargain", "word", "deal")
+                && containsAnyTerm(normalized, "them", "they", "their");
+    }
+
+    private static boolean asksRoadAdvice(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "final advice", "advice for the road", "for the road",
+                "before i leave", "before i go", "before leaving");
+    }
+
+    private static boolean isCoinCleaningAdvice(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return normalized.contains("coin worth cleaning")
+                || normalized.contains("clean it and come back")
+                || normalized.contains("coin clean enough");
+    }
+
+    private static boolean answersAsLimitationOrAdvice(String normalizedSpeech) {
+        return normalizedSpeech.contains("not by chatter")
+                || normalizedSpeech.contains("not by speech")
+                || normalizedSpeech.contains("not from here")
+                || normalizedSpeech.contains("cannot")
+                || normalizedSpeech.contains("can t")
+                || normalizedSpeech.contains("won t")
+                || normalizedSpeech.contains("will not")
+                || normalizedSpeech.contains("would not")
+                || normalizedSpeech.contains("i know a")
+                || normalizedSpeech.contains("ask for")
+                || normalizedSpeech.contains("bring ")
+                || normalizedSpeech.contains("use ")
+                || normalizedSpeech.contains("trade for")
+                || normalizedSpeech.contains("right click")
+                || normalizedSpeech.contains("right click");
+    }
+
+    private static boolean reversesApprenticeRole(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return normalized.contains("i could be your apprentice")
+                || normalized.contains("i can be your apprentice")
+                || normalized.contains("i will be your apprentice")
+                || normalized.contains("i ll be your apprentice");
+    }
+
+    private static boolean canKeepRawWithGroundedFollowup(String speech, String playerMessage, String npcName) {
+        String normalizedPlayer = normalizeForComparison(playerMessage);
+        String normalizedSpeech = normalizeForComparison(speech);
+        if (normalizedSpeech.isBlank()
+                || isBlandNonAnswer(speech, playerMessage)
+                || promisesUnsupportedAction(speech, playerMessage)
+                || containsUnsupportedLoreClaim(speech, normalizedPlayer)
+                || unwantedSelfIntroduction(speech, npcName, playerMessage)
+                || (isSelfIntro(speech, npcName) && !asksIdentity(playerMessage))) {
+            return false;
+        }
+        if (!asksKnowledge(normalizedPlayer)) {
+            return true;
+        }
+        return sharesUsefulSubject(normalizedPlayer, normalizedSpeech);
+    }
+
+    private static boolean sharesUsefulSubject(String normalizedPlayerMessage, String normalizedSpeech) {
+        for (String required : requiredKnowledgeTerms(normalizedPlayerMessage)) {
+            if (normalizedSpeech.contains(required)) {
+                return true;
+            }
+        }
+        for (String term : normalizedPlayerMessage.split(" ")) {
+            if (isGroundingSubjectTerm(term) && normalizedSpeech.contains(term)) {
+                return true;
+            }
+        }
+        return ((normalizedPlayerMessage.contains("taglock") || normalizedPlayerMessage.contains("tag lock"))
+                && containsAnyTerm(normalizedSpeech, "taglock", "tag lock", "kit", "kits", "poppet", "poppets", "link"))
+                || (normalizedPlayerMessage.contains("familiar")
+                    && containsAnyTerm(normalizedSpeech, "familiar", "familiars", "owl", "cat", "toad"))
+                || ((normalizedPlayerMessage.contains("oven") || normalizedPlayerMessage.contains("sapling")
+                    || normalizedPlayerMessage.contains("fume") || normalizedPlayerMessage.contains("clay jar"))
+                    && containsAnyTerm(normalizedSpeech, "oven", "sapling", "saplings", "fume", "fumes", "jar"));
+    }
+
+    private static boolean isSelfIntro(String speech, String npcName) {
+        if (npcName == null || npcName.isBlank()) {
+            return false;
+        }
+        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedName = normalizeForComparison(npcName);
+        return normalizedSpeech.startsWith("i am " + normalizedName)
+                    || normalizedSpeech.startsWith("i m " + normalizedName);
+    }
+
+    private static boolean isGroundingSubjectTerm(String term) {
+        return isKnowledgeSubjectTerm(term)
+                && !term.matches("(some|someone|should|could|would|against|worried|worry|chest|found|have|with|without|anger|angering|nearby|random|true)");
+    }
+
     private static boolean containsUnsupportedLoreClaim(String speech, String normalizedPlayerMessage) {
         String normalized = normalizeForComparison(speech);
         if (normalized.contains("belladonna is edible")
                 || normalized.contains("ingested belladonna")
                 || normalized.contains("drink it")
                 || normalized.contains("see things in the dark")
-                || normalized.contains("see through your eyes")) {
+                || normalized.contains("see through your eyes")
+                || normalized.contains("holy water")) {
+            return true;
+        }
+        if ((asksRecipeQuestion(normalizedPlayerMessage)
+                    || asksExactRecipeQuestion(normalizedPlayerMessage)
+                    || asksGrimoireLessonQuestion(normalizedPlayerMessage))
+                && (containsUnsupportedRecipeQuantity(normalized)
+                    || containsAnyTerm(normalized, "moonwort", "sleepy head potion", "healing potion",
+                        "minor wounds", "best potions in the world", "whole library of powerful"))) {
+            return true;
+        }
+        if ((asksRecipeRiteLearningQuestion(normalizedPlayerMessage)
+                    || asksRecipeMissingCheckQuestion(normalizedPlayerMessage)
+                    || asksFumeSafetyQuestion(normalizedPlayerMessage))
+                && containsAnyTerm(normalized, "best potions in the world", "whole library of powerful",
+                    "create the best potions", "learn brewing and circle rites properly")) {
+            return true;
+        }
+        if (asksRevealingBrewQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "sleeping brew", "brew of sleeping", "spirit world", "nightmare", "sleep")
+                && !looksLikeRevealingAnswer(normalized)) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("fume")
+                && containsAnyTerm(normalized, "fumes from a brew of sleeping", "brew of sleeping fumes",
+                    "sleeping brew fumes", "necromantic purposes", "brewing of sleeping", "brew you want is",
+                    "brew you need is")) {
+            return true;
+        }
+        if (asksFumeSafetyQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "i have fumes for you", "have fumes for you")) {
+            return true;
+        }
+        if (asksDistilleryQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "brewing of sleeping", "brew you want is", "brew you need is")) {
+            return true;
+        }
+        if (asksSpinningWheelQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "weaving spells", "weaving charms", "spells and charms",
+                    "spin threads", "threads into fabric", "weaving patterns", "floss", "thread",
+                    "threads into cloth", "weaving threads into cloth")) {
+            return true;
+        }
+        if (asksCircleRiteQuestion(normalizedPlayerMessage)
+                && normalized.contains("create an altar")) {
+            return true;
+        }
+        if (asksOfferingsQuestion(normalizedPlayerMessage)
+                && (isStandaloneGreeting(normalized)
+                    || containsAnyTerm(normalized, "welcome to lilith", "little corner of the world"))) {
+            return true;
+        }
+        if (asksWeakAltarQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "hold your coin", "can t hold your coin", "no offerings",
+                    "can t cast a spell", "cannot cast a spell")) {
+            return true;
+        }
+        if (asksFamiliarBindingRiteQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "master s coin", "binds to its master", "its master",
+                    "i can explain a familiar binding rite")) {
+            return true;
+        }
+        if (asksRiteSafetyQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "whispering is best", "speak louder", "raise your voice",
+                    "too far away", "too close", "touch the cauldron before it is ready",
+                    "cauldron before it is ready")) {
+            return true;
+        }
+        if (asksBeginnerPathQuestion(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "witchery is a place", "coven is a group", "magical learning",
+                    "brews are simple circles", "first brews are simple circles", "safe potions and charms")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("garlic")
+                && (normalized.contains("ward off vampire")
+                    || normalized.contains("wards off vampire")
+                    || normalized.contains("wards off vampires")
+                    || normalized.contains("wards vampires")
+                    || normalized.contains("wards all evil")
+                    || normalized.contains("held that garlic wards")
+                    || normalized.contains("true in some ways")
+                    || normalized.contains("repels vampire")
+                    || normalized.contains("wards demons")
+                    || normalized.contains("ward demons")
+                    || normalized.contains("human world")
+                    || normalized.contains("lycanthrope"))) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("taglock") || normalizedPlayerMessage.contains("tag lock"))
+                && normalizedPlayerMessage.contains("against me")
+                && (normalized.contains("against me")
+                    || normalized.contains("use your taglock against me"))) {
             return true;
         }
         if (normalized.contains("mandrake grows best in deep shade")
@@ -1422,6 +2050,68 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalized.contains("change colors")
                     || normalized.contains("ghosts")
                     || normalized.contains("whispers in the wind"))) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("sleeping brew")
+                && (normalized.contains("sleep in a tree")
+                    || normalized.contains("stay out all night")
+                    || normalized.contains("just a nap"))) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("belladonna")
+                && containsAnyTerm(normalizedPlayerMessage, "danger", "dangerous", "safe")
+                && !containsAnyTerm(normalized, "danger", "dangerous", "poison", "toxic", "careful",
+                "not food", "not edible", "do not eat", "don t eat", "dont eat")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("belladonna")
+                && containsAnyTerm(normalizedPlayerMessage, "danger", "dangerous", "safe")
+                && (normalized.contains("safe to gather")
+                    || normalized.contains("good luck")
+                    || normalized.contains("ward off bad")
+                    || normalized.contains("sleep better")
+                    || normalized.contains("poison ivy")
+                    || normalized.contains("extreme hallucination")
+                    || normalized.contains("extreme hallucinations")
+                    || normalized.contains("not dangerous for those who know"))) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("nightmare")
+                && containsAnyTerm(normalized, "belladonna", "sleep better")) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("whisper") || normalizedPlayerMessage.contains("well"))
+                && containsAnyTerm(normalized, "just your imagination", "natural spring", "does not talk",
+                "doesn t talk")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("coven")
+                && containsAnyTerm(normalized, "i ll take it", "i will take it")) {
+            return true;
+        }
+        if (asksCovenPath(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "belladonna", "mandrake", "potions", "trade",
+                "cauldron warm", "clean coin", "heavy purse")
+                && !containsAnyTerm(normalized, "familiar", "trial", "coven is earned", "coven witch")) {
+            return true;
+        }
+        if (asksCovenPath(normalizedPlayerMessage)
+                && containsAnyTerm(normalized, "i m a witch", "i am a witch", "whole reason for being")
+                && !containsAnyTerm(normalized, "familiar", "trial", "coven is earned", "coven witch")) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("come back after sunrise")
+                    || normalizedPlayerMessage.contains("back after sunrise"))
+                && (normalized.contains("belladonna")
+                    || normalized.startsWith("i ll return")
+                    || normalized.startsWith("i will return")
+                    || !containsAnyTerm(normalized, "back", "sunrise", "return", "daylight", "boots",
+                    "expected"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "any advice now", "advice now", "what now")
+                && normalized.contains("belladonna")
+                && normalized.length() < 90) {
             return true;
         }
         if ((asksRite(normalizedPlayerMessage) || asksPlantingAdvice(normalizedPlayerMessage))
@@ -1456,11 +2146,44 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && (normalized.contains("spirit world")
                     || normalized.contains("cross into")
                     || normalized.contains("portal")
-                    || normalized.contains("return path"))) {
+                    || normalized.contains("return path")
+                    || normalized.contains("conjuration")
+                    || normalized.contains("conjure")
+                    || normalized.contains("essences")
+                    || normalized.contains("elixirs")
+                    || normalized.contains("smudge")
+                    || normalized.contains("incense")
+                    || normalized.contains("even a poison")
+                    || normalized.contains("strong scent")
+                    || normalized.contains("negative effects")
+                    || normalized.contains("dark magic")
+                    || normalized.contains("spectral images"))) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("sapling") || normalizedPlayerMessage.contains("oven")
+                || normalizedPlayerMessage.contains("fume") || normalizedPlayerMessage.contains("clay jar"))
+                && (normalized.contains("belladonna and mandrake are common trade goods")
+                    || normalized.contains("various purposes")
+                    || normalized.contains("random saplings")
+                    || normalized.contains("excellent brew")
+                    || normalized.contains("guide your incantation")
+                    || normalized.contains("magic contained"))) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("whisper") || normalizedPlayerMessage.contains("well"))
+                && (normalized.contains("thousand spirits")
+                    || normalized.contains("pleading for mercy")
+                    || normalized.contains("pleading for death")
+                    || normalized.contains("your skin crawls")
+                    || normalized.contains("as you walk"))) {
             return true;
         }
         if ((normalizedPlayerMessage.contains("curse") || normalizedPlayerMessage.contains("cursed"))
                 && normalized.contains("map")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("village thinks")
+                && containsAnyTerm(normalized, "call me", "occult merchant", "i am lilith", "i m lilith")) {
             return true;
         }
         return (normalizedPlayerMessage.contains("demon") || normalizedPlayerMessage.contains("devil"))
@@ -1472,6 +2195,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         String normalized = normalizeForComparison(speech);
         return normalized.matches(".*\\b\\d+\\s*(litre|litres|liter|liters|hour|hours|minute|minutes|second|seconds|gold|silver|emerald|emeralds|coin|coins)\\b.*")
                 || normalized.matches(".*\\b\\d+\\s*(block|blocks|tile|tiles)\\b.*")
+                || normalized.matches(".*\\b\\d+\\s*(g|gram|grams|mg|kg|root|roots|leaf|leaves|pinch|pinches)\\b.*")
+                || normalized.matches(".*\\b\\d+\\s+(belladonna|mandrake|wormwood|moonwort)\\b.*")
                 || normalized.contains("lasts 8")
                 || normalized.contains("last for 8")
                 || normalized.contains("duration")
@@ -1522,6 +2247,32 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalizedPlayerMessage.contains("potion") && !normalizedPlayerMessage.contains("brew")) {
             return false;
         }
+        if (asksRecipeMissingCheckQuestion(normalizedPlayerMessage)
+                && !looksLikeRecipeMissingCheckAnswer(normalizedSpeech)) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksCauldronPrepQuestion(normalizedPlayerMessage)
+                && !looksLikeCauldronPrepAnswer(normalizedSpeech)) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksGrimoireLessonQuestion(normalizedPlayerMessage) && looksLikeGrimoireSummary(normalizedSpeech)) {
+            return false;
+        }
+        if (asksRecipeQuestion(normalizedPlayerMessage) && !looksLikeRecipeAnswer(normalizedSpeech)) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksSpinningWheelQuestion(normalizedPlayerMessage) && !looksLikeStationRecipeAnswer(normalizedSpeech, "spinning")) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksDistilleryQuestion(normalizedPlayerMessage) && !looksLikeStationRecipeAnswer(normalizedSpeech, "distillery")) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksOfferingsQuestion(normalizedPlayerMessage) && !looksLikeOfferingAnswer(normalizedSpeech)) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
+        if (asksWeakAltarQuestion(normalizedPlayerMessage) && !looksLikeAltarAnswer(normalizedSpeech)) {
+            return !isThinKnowledgeResponse(normalizedSpeech);
+        }
         if (asksRite(normalizedPlayerMessage)) {
             return !looksLikeRiteAnswer(normalizedSpeech) && !isThinKnowledgeResponse(normalizedSpeech);
         }
@@ -1557,8 +2308,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (containsTerm(normalizedPlayerMessage, "witches salt") || containsTerm(normalizedPlayerMessage, "witch salt")) {
             return new String[]{"salt"};
         }
+        if (asksGrimoireLessonQuestion(normalizedPlayerMessage)) {
+            return new String[]{"recipe"};
+        }
         String[] important = {"altar", "taglock", "poppet", "mandrake", "belladonna", "demon", "familiar",
-                "owl", "cat", "toad", "witchcraft", "witchery", "oven", "brazier", "fume", "artichoke"};
+                "owl", "cat", "toad", "witchcraft", "witchery", "oven", "brazier", "fume", "artichoke",
+                "recipe", "grimoire", "cauldron", "kettle", "distillery", "spinning", "offering", "glyph",
+                "chalk", "primer"};
         for (String term : important) {
             if (containsTerm(normalizedPlayerMessage, term)) {
                 return new String[]{term};
@@ -1571,6 +2327,150 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return new String[]{"potion"};
         }
         return new String[0];
+    }
+
+    private static boolean containsUnsupportedRecipeQuantity(String normalizedSpeech) {
+        return normalizedSpeech.matches(".*\\b\\d+\\s*(g|gram|grams|mg|kg|root|roots|leaf|leaves|pinch|pinches)\\b.*")
+                || normalizedSpeech.matches(".*\\b\\d+\\s+(belladonna|mandrake|wormwood|moonwort)\\b.*");
+    }
+
+    private static boolean asksRecipeRiteLearningQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "learn brewing", "learn brews", "learn recipes",
+                "brewing and rites", "brewing and rituals", "recipes and rites", "recipes and rituals",
+                "learn witchcraft properly");
+    }
+
+    private static boolean asksRecipeQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "recipe", "recipes", "ingredients for",
+                "ingredient list", "exact ingredients", "exact recipe", "cauldron", "kettle", "grimoire")
+                || asksRecipeRiteLearningQuestion(normalizedPlayerMessage)
+                || asksBasicBrewRecipeQuestion(normalizedPlayerMessage)
+                || asksRecipeMissingCheckQuestion(normalizedPlayerMessage);
+    }
+
+    private static boolean asksExactRecipeQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "exact recipe", "exact ingredients", "ingredient list",
+                "ingredients for", "recipe for", "what is the recipe", "witch s oven recipe", "witches oven recipe");
+    }
+
+    private static boolean asksBasicBrewRecipeQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "basic brew recipe", "basic recipe", "simple brew recipe",
+                "explain a brew recipe", "explain basic brew", "how do recipes work");
+    }
+
+    private static boolean asksRecipeMissingCheckQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "recipe is missing", "recipe missing",
+                "exact recipe is missing", "exact recipe missing", "missing recipe", "recipe absent",
+                "page is missing", "page missing");
+    }
+
+    private static boolean asksFumeSafetyQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "fume", "fumes")
+                && containsAnyTerm(normalizedPlayerMessage, "safely", "safe", "get", "gather", "catch", "collect");
+    }
+
+    private static boolean asksCauldronPrepQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "cauldron", "kettle", "brew", "brewing")
+                && containsAnyTerm(normalizedPlayerMessage, "before", "need before", "prepare", "ready", "touch");
+    }
+
+    private static boolean asksRevealingBrewQuestion(String normalizedPlayerMessage) {
+        return (normalizedPlayerMessage.contains("revealing")
+                    || normalizedPlayerMessage.contains("hidden")
+                    || normalizedPlayerMessage.contains("invisible"))
+                && (normalizedPlayerMessage.contains("brew")
+                    || normalizedPlayerMessage.contains("reveal")
+                    || normalizedPlayerMessage.contains("revealing"));
+    }
+
+    private static boolean asksSpinningWheelQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "spinning wheel", "spinning");
+    }
+
+    private static boolean asksDistilleryQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "distillery", "distill");
+    }
+
+    private static boolean asksOfferingsQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "offering", "offerings", "why offer", "what do i offer");
+    }
+
+    private static boolean asksWeakAltarQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "altar is too weak", "altar too weak", "weak altar",
+                "altar not strong", "altar lacks power", "not enough altar power");
+    }
+
+    private static boolean asksFamiliarBindingRiteQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "familiar binding", "bind a familiar", "binding rite")
+                && containsAnyTerm(normalizedPlayerMessage, "familiar", "rite", "ritual", "circle");
+    }
+
+    private static boolean asksCircleRiteQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "circle rite", "circle ritual", "circle magic");
+    }
+
+    private static boolean asksRiteSafetyQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "never do during a rite", "never do in a rite",
+                "never do during ritual", "should i never do", "what not to do")
+                && containsAnyTerm(normalizedPlayerMessage, "rite", "ritual", "circle");
+    }
+
+    private static boolean asksBeginnerPathQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "safe beginner path", "beginner path", "first recipe",
+                "first rite", "first ritual", "start learning");
+    }
+
+    private static boolean asksGrimoireLessonQuestion(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "write in my grimoire", "write in the grimoire",
+                "write down", "after this lesson", "grimoire after");
+    }
+
+    private static boolean looksLikeRecipeAnswer(String normalizedSpeech) {
+        if (containsUnsupportedRecipeQuantity(normalizedSpeech)
+                || containsAnyTerm(normalizedSpeech, "moonwort", "healing potion", "minor wounds")) {
+            return false;
+        }
+        return containsAnyTerm(normalizedSpeech, "recipe", "recipes", "ingredient", "ingredients",
+                "station", "cauldron", "kettle", "page", "primer", "grimoire", "brew", "brewing");
+    }
+
+    private static boolean looksLikeRecipeMissingCheckAnswer(String normalizedSpeech) {
+        int checks = 0;
+        if (containsAnyTerm(normalizedSpeech, "primer", "page", "recipe book", "visible page")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "station", "cauldron", "kettle")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "altar power", "power")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "unlock", "gate", "gates")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "name", "named")) checks++;
+        return checks >= 2;
+    }
+
+    private static boolean looksLikeCauldronPrepAnswer(String normalizedSpeech) {
+        int checks = 0;
+        if (containsAnyTerm(normalizedSpeech, "water", "heat")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "visible page", "visible brew page", "recipe book", "primer", "page")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "ingredient", "ingredients", "named")) checks++;
+        if (containsAnyTerm(normalizedSpeech, "cauldron", "kettle", "station")) checks++;
+        return checks >= 2;
+    }
+
+    private static boolean looksLikeGrimoireSummary(String normalizedSpeech) {
+        return containsAnyTerm(normalizedSpeech, "recipe", "recipes")
+                && containsAnyTerm(normalizedSpeech, "rite", "rites")
+                && containsAnyTerm(normalizedSpeech, "station", "page", "chalk", "offerings", "altar power");
+    }
+
+    private static boolean looksLikeStationRecipeAnswer(String normalizedSpeech, String station) {
+        if (station.equals("spinning")) {
+            return containsAnyTerm(normalizedSpeech, "station", "recipe book", "live recipe", "exact inputs", "recipe rules")
+                    || (containsAnyTerm(normalizedSpeech, "spinning", "wheel")
+                        && containsAnyTerm(normalizedSpeech, "recipe", "recipes"));
+        }
+        return normalizedSpeech.contains(station)
+                || containsAnyTerm(normalizedSpeech, "station", "recipe book", "live recipe", "fumes", "essences");
+    }
+
+    private static boolean looksLikeOfferingAnswer(String normalizedSpeech) {
+        return containsAnyTerm(normalizedSpeech, "offering", "offerings", "payment", "debt", "rite", "circle");
     }
 
     private static boolean asksBrewKnowledge(String normalizedPlayerMessage) {
@@ -1611,7 +2511,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "witchery", "witches salt", "witch salt", "spirit world", "arthana",
                 "oven", "brazier", "circle", "rite", "ritual", "summon", "summoning",
                 "chalice", "hidden", "invisible", "herb", "plant", "danger", "threat",
-                "fume", "fumes", "water artichoke", "artichoke", "curse", "cursed");
+                "fume", "fumes", "water artichoke", "artichoke", "curse", "cursed",
+                "poison", "blight", "chalk", "garlic", "vampire", "vampires", "storm", "weather", "raining",
+                "sapling", "saplings", "clay jar", "jar", "dream catcher", "dreamcatcher", "well", "whisper", "whispers",
+                "recipe", "recipes", "grimoire", "primer", "cauldron", "kettle", "distillery", "spinning wheel",
+                "spinning", "offering", "offerings", "glyph", "glyphs");
     }
 
     private static boolean asksGeneralBrewOptions(String normalizedPlayerMessage) {
@@ -2077,6 +2981,16 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("trust");
     }
 
+    private static boolean looksLikeOvenFumeAnswer(String normalizedSpeech) {
+        return (normalizedSpeech.contains("oven") || normalizedSpeech.contains("fume")
+                || normalizedSpeech.contains("clay jar") || normalizedSpeech.contains("sapling"))
+                && (normalizedSpeech.contains("burn")
+                    || normalizedSpeech.contains("ingredient")
+                    || normalizedSpeech.contains("jar")
+                    || normalizedSpeech.contains("fume")
+                    || normalizedSpeech.contains("distill"));
+    }
+
     private static boolean looksLikeArthanaAnswer(String normalizedSpeech) {
         if (normalizedSpeech.contains("seed")
                 || normalizedSpeech.contains("summon")
@@ -2314,6 +3228,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         String a = normalizeForComparison(speech);
         String b = normalizeForComparison(playerMessage);
         if (a.isBlank() || b.isBlank()) {
+            return false;
+        }
+        if (asksRememberRequest(b) && a.contains("remember")) {
             return false;
         }
         String speechFingerprint = contentFingerprint(a);

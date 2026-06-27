@@ -43,12 +43,15 @@ public class WitcheryConfig {
 
     // Local-only NPC LLM experiment
     public static final ModConfigSpec.BooleanValue LLM_ENABLED;
+    public static final ModConfigSpec.BooleanValue LLM_PREWARM_ENABLED;
     public static final ModConfigSpec.ConfigValue<String> LLM_PROVIDER;
     public static final ModConfigSpec.ConfigValue<String> LLM_ENDPOINT;
     public static final ModConfigSpec.ConfigValue<String> LLM_MODEL;
     public static final ModConfigSpec.IntValue LLM_TIMEOUT_MILLIS;
+    public static final ModConfigSpec.IntValue LLM_PREWARM_TIMEOUT_MILLIS;
     public static final ModConfigSpec.IntValue LLM_MAX_CONCURRENT_REQUESTS;
     public static final ModConfigSpec.IntValue LLM_MAX_TOKENS;
+    public static final ModConfigSpec.IntValue LLM_KEEP_ALIVE_MINUTES;
     public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
     public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
 
@@ -130,6 +133,9 @@ public class WitcheryConfig {
         LLM_ENABLED = BUILDER
                 .comment("Enable experimental local NPC LLM dialogue. Default: true. RUN_MINECRAFT.bat asks before downloading local AI files.")
                 .define("enabled", true);
+        LLM_PREWARM_ENABLED = BUILDER
+                .comment("Send one invisible startup request so the local model is loaded before the first player chat. Default: true")
+                .define("prewarmEnabled", true);
         LLM_PROVIDER = BUILDER
                 .comment("Local LLM provider: ollama or openai_compatible. Default: ollama")
                 .define("provider", "ollama");
@@ -142,12 +148,18 @@ public class WitcheryConfig {
         LLM_TIMEOUT_MILLIS = BUILDER
                 .comment("Maximum time to wait for an NPC LLM response before falling back. Default: 3000")
                 .defineInRange("timeoutMillis", 3000, 250, 30000);
+        LLM_PREWARM_TIMEOUT_MILLIS = BUILDER
+                .comment("Maximum time to allow the invisible startup warmup request. Cold local models can need longer than normal chat. Default: 30000")
+                .defineInRange("prewarmTimeoutMillis", 30000, 1000, 120000);
         LLM_MAX_CONCURRENT_REQUESTS = BUILDER
                 .comment("Maximum concurrent NPC LLM requests. Default: 1")
                 .defineInRange("maxConcurrentRequests", 1, 1, 4);
         LLM_MAX_TOKENS = BUILDER
                 .comment("Maximum generated tokens for one NPC line. Default: 80")
                 .defineInRange("maxTokens", 80, 16, 256);
+        LLM_KEEP_ALIVE_MINUTES = BUILDER
+                .comment("Ollama keep_alive duration after NPC requests, in minutes. Keeps prewarmed models resident. 0 uses provider default. Default: 30")
+                .defineInRange("keepAliveMinutes", 30, 0, 240);
         LLM_COOLDOWN_TICKS = BUILDER
                 .comment("Cooldown per NPC/player dialogue trigger in ticks. Default: 100")
                 .defineInRange("cooldownTicks", 100, 20, 12000);

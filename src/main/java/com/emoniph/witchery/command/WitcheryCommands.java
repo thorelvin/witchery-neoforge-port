@@ -258,6 +258,8 @@ public class WitcheryCommands {
                 .then(Commands.literal("ai")
                         .then(Commands.literal("status")
                                 .executes(ctx -> aiStatus(ctx.getSource())))
+                        .then(Commands.literal("warmup")
+                                .executes(ctx -> aiWarmup(ctx.getSource())))
                         .then(Commands.literal("memory")
                                 .executes(ctx -> aiMemoryNearest(ctx.getSource())))
                         .then(Commands.literal("chat")
@@ -547,6 +549,14 @@ public class WitcheryCommands {
         return 1;
     }
 
+    private static int aiWarmup(CommandSourceStack src) {
+        boolean queued = NpcBrainService.INSTANCE.prewarm();
+        src.sendSuccess(() -> Component.literal(queued
+                ? "[AI] Invisible model warmup queued."
+                : "[AI] Warmup was not queued: " + NpcBrainService.INSTANCE.statusLine()), false);
+        return queued ? 1 : 0;
+    }
+
     private static int aiMemoryNearest(CommandSourceStack src)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = src.getPlayerOrException();
@@ -595,7 +605,9 @@ public class WitcheryCommands {
 
     private static int aiReload(CommandSourceStack src) {
         NpcBrainService.INSTANCE.reload();
-        src.sendSuccess(() -> Component.literal("[AI] Reloaded local NPC brain config and cleared cooldowns."), false);
+        boolean queued = NpcBrainService.INSTANCE.prewarm();
+        src.sendSuccess(() -> Component.literal("[AI] Reloaded local NPC brain config and cleared cooldowns."
+                + (queued ? " Invisible model warmup queued." : "")), false);
         return 1;
     }
 

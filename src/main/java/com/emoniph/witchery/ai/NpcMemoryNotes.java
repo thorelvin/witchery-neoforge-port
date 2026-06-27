@@ -14,10 +14,20 @@ final class NpcMemoryNotes {
             Pattern.compile("(?i)\\bi\\s+(?:like|love)\\s+(.{2,70})");
     private static final Pattern PLAYER_DISLIKES =
             Pattern.compile("(?i)\\bi\\s+(?:hate|dislike|fear)\\s+(.{2,70})");
+    private static final Pattern PLAYER_AFRAID_OF =
+            Pattern.compile("(?i)\\bi(?:\\s+am|'m)\\s+afraid\\s+of\\s+(.{2,70})");
     private static final Pattern PLAYER_LOOKING_FOR =
             Pattern.compile("(?i)\\b(?:i\\s+(?:need|want)|i(?:\\s+am|'m)\\s+looking\\s+for|looking\\s+for)\\s+(.{2,70})");
+    private static final Pattern PLAYER_WANTS_TO_LEARN =
+            Pattern.compile("(?i)\\bi\\s+(?:want\\s+to\\s+learn|need\\s+to\\s+learn|am\\s+learning|'m\\s+learning)\\s+(.{2,70})");
     private static final Pattern PLAYER_HAS =
             Pattern.compile("(?i)\\bi(?:\\s+have|\\s+carry|\\s+got|\\s+have\\s+got|'ve\\s+got)\\s+(.{2,70})");
+    private static final Pattern PLAYER_WILL_RETURN =
+            Pattern.compile("(?i)\\bi\\s+(?:will|ll|'ll|can)\\s+come\\s+back\\s+(.{2,70})");
+    private static final Pattern PLAYER_VILLAGE_THINKS =
+            Pattern.compile("(?i)\\bmy\\s+village\\s+thinks\\s+(.{2,90})");
+    private static final Pattern PLAYER_STRUGGLES =
+            Pattern.compile("(?i)\\bi\\s+(?:keep\\s+failing|failed|fail|struggle\\s+with|can't\\s+manage|cant\\s+manage)\\s+(.{2,70})");
 
     private NpcMemoryNotes() {
     }
@@ -31,9 +41,14 @@ final class NpcMemoryNotes {
         return firstMatch(speech, PREFERRED_NAME, match -> name + " prefers to be called " + match.group(1) + ".")
                 .or(() -> firstMatch(speech, PLAYER_ROLE, match -> name + " said they are a " + match.group(1).toLowerCase(Locale.ROOT) + "."))
                 .or(() -> firstMatch(speech, PLAYER_LIKES, match -> name + " likes " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_LOOKING_FOR, match -> name + " is looking for " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_HAS, match -> name + " has " + cleanFact(match.group(1)) + "."));
+                .or(() -> firstMatch(speech, PLAYER_HAS, match -> name + " has " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_WILL_RETURN, match -> name + " plans to come back " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_VILLAGE_THINKS, match -> name + "'s village thinks " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_STRUGGLES, match -> name + " is struggling with " + cleanFact(match.group(1)) + "."));
     }
 
     private interface MatchFormatter {
@@ -53,6 +68,7 @@ final class NpcMemoryNotes {
         String cleaned = NpcBrainResponse.sanitize(fact, 80)
                 .replaceAll("[\"`<>]", "")
                 .replaceAll("(?i)\\b(?:please|thanks|thank\\s+you)\\b", "")
+                .replaceAll("(?i)\\b(?:what\\s+now|now\\s+what|what\\s+should\\s+i\\s+do|what\\s+do\\s+i\\s+do)\\b.*$", "")
                 .replaceAll("[.?!]+$", "")
                 .replaceAll("\\s+", " ")
                 .trim();

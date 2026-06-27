@@ -2,6 +2,8 @@ package com.emoniph.witchery.ai;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 final class NpcDialogueFallback {
     private NpcDialogueFallback() {
@@ -35,6 +37,10 @@ final class NpcDialogueFallback {
         if (addressesWitchByName(normalized, witchName)) {
             return Optional.of("I'm listening, " + name + "; ask plain.");
         }
+        Optional<String> contextual = contextualFollowup(normalized, memoryContext, name);
+        if (contextual.isPresent()) {
+            return contextual;
+        }
         if (asksHerbGift(normalized)) {
             return Optional.of("Ask with an empty hand and honest need; herbs remember greedy fingers.");
         }
@@ -63,11 +69,24 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "lost", "can't find my way", "cant find my way")) {
             return Optional.of("If you are lost, follow water downhill and do not trust lights that answer back.");
         }
+        if (asksHutOrDoorSafety(normalized)) {
+            return Optional.of("Witches' salt by the threshold, light inside, and no promises made through a closed door.");
+        }
+        if (containsAny(normalized, "dream catcher", "dreamcatcher")) {
+            return Optional.of("Keep a Dream Catcher near the bed if you must sleep close to strange magic.");
+        }
+        if (containsAny(normalized, "owl", "owls") && !containsAny(normalized, "familiar", "familiars")) {
+            return Optional.of("An owl on the roof is a warning, not a command. Watch it, then ward your door.");
+        }
         if (containsAny(normalized, "cat", "cats")) {
             return Optional.of("Cats stare at what owes them, " + name + ". Best not owe a cat.");
         }
         if (containsAny(normalized, "egg", "eggs")) {
             return Optional.of("Eggs are honest little moons; crack one and it tells you what it was hiding.");
+        }
+        if (containsAny(normalized, "potato", "potatoes")
+                && containsAny(normalized, "do you", "you like", "too", "favorite", "favourite")) {
+            return Optional.of("Potatoes? Sensible roots. Less dramatic than mandrake, and better in stew.");
         }
         if (containsAny(normalized, "pocket", "pockets", "inventory")) {
             return Optional.of("In these pockets? String, dust, and enough trouble to leave uncounted.");
@@ -88,6 +107,9 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "nice", "good answer", "well said")) {
             return Optional.of("Careful, " + name + "; compliments have uses.");
         }
+        if (containsAny(normalized, "i like that you remember", "glad you remember", "good memory")) {
+            return Optional.of("Memory is a jar, " + name + "; useful only if the lid stays on.");
+        }
         if (statesPersonalPreference(normalized)) {
             return Optional.of("Keep that taste, " + name + "; small comforts outlast grand omens.");
         }
@@ -103,8 +125,30 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "rumor", "rumour", "gossip")) {
             return Optional.of("Village rumor? The well hears more than the mayor; listen near doors after rain.");
         }
+        if (containsAny(normalized, "village thinks you are trouble", "village think you are trouble")) {
+            return Optional.of("Then your village has eyes. Trouble and I are old neighbors.");
+        }
+        if (asksRoadAdvice(normalized)) {
+            return Optional.of("Keep salt dry, coin hidden, and do not answer voices that know your name too sweetly.");
+        }
+        if (asksDemonTrust(normalized)) {
+            return Optional.of("Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
+        }
+        Optional<String> recipeOrRite = recipeOrRiteAnswer(normalized, name);
+        if (recipeOrRite.isPresent()) {
+            return recipeOrRite;
+        }
         if (asksTeachMe(normalized)) {
             return Optional.of(teachingAnswer(normalized, name));
+        }
+        if (containsAny(normalized, "what should i do instead", "do instead", "maybe not")) {
+            return Optional.of("Let fools laugh. Ward your door, learn your craft, and spend curses only when they have teeth.");
+        }
+        if (containsAny(normalized, "lonely", "alone")) {
+            return Optional.of("Lonely? No. The dark talks too much, and I have learned which parts to ignore.");
+        }
+        if (containsAny(normalized, "careful apprentice", "apprentice")) {
+            return Optional.of("A careful apprentice labels jars, counts offerings twice, and never mistakes a whisper for permission.");
         }
         if (asksCovenRecruiting(normalized)) {
             return Optional.of("Find a wandering coven witch, bring a bound familiar, and be ready for her trial. A coven is earned, not collected.");
@@ -121,6 +165,10 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "coin", "coins", "emerald", "emeralds", "trade", "wares", "buy", "sell")) {
             return Optional.of(tradeStockAnswer());
         }
+        recipeOrRite = recipeOrRiteAnswer(normalized, name);
+        if (recipeOrRite.isPresent()) {
+            return recipeOrRite;
+        }
         Optional<String> brew = brewAnswer(normalized);
         if (brew.isPresent()) {
             return brew;
@@ -128,10 +176,27 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "potion", "potions", "brew", "brewing", "cauldron", "kettle")) {
             return Optional.of("I know potions and brews. Ask for a brew by name: Sleeping, Revealing, Poison, Cleansing, Sprouting, or Flowing Spirit.");
         }
+        if (containsAny(normalized, "mandrake") && containsAny(normalized, "clay jar", "jar")) {
+            return Optional.of("Mandrake is an ingredient; clay jars belong with oven work. Learn which fumes the recipe asks for first.");
+        }
+        if (containsAny(normalized, "fume", "fumes")) {
+            return Optional.of("Witch's Oven fumes serve brews and rites; catch them in jars before trusting the mystery.");
+        }
+        if (containsAny(normalized, "oven", "witch's oven", "witches oven", "sapling", "saplings", "fume", "fumes",
+                "clay jar", "jar")) {
+            return Optional.of("A Witch's Oven burns saplings and ingredients into fumes; clay jars matter, so do not treat it like a furnace.");
+        }
         if (containsAny(normalized, "water artichoke", "artichoke")) {
             return Optional.of("Water artichoke is a witch herb; useful as an ingredient, not a doorway.");
         }
+        if (containsAny(normalized, "taglock", "tag lock", "poppet", "poppets")
+                && containsAny(normalized, "against me", "use my", "my taglock", "worried")) {
+            return Optional.of("A taglock links magic to a person; guard yours like a tooth with your name carved in it.");
+        }
         if (containsAny(normalized, "curse", "cursed")) {
+            if (containsAny(normalized, "can you curse", "could you curse", "curse the", "curse him", "curse her")) {
+                return Optional.of("Not for bruised pride. Learn wards first; curses collect interest.");
+            }
             return Optional.of("A cursed place shows patterns: sick luck, sour animals, and shadows that seem too interested.");
         }
         Optional<String> knowledge = NpcKnowledgeBase.compactAnswer(playerMessage, biome, timeOfDay);
@@ -151,6 +216,9 @@ final class NpcDialogueFallback {
             return Optional.of("An altar draws from varied nearby nature; chalices, skulls, pentacles, and arthanas improve power or range.");
         }
         if (containsAny(normalized, "taglock", "tag lock", "poppet", "poppets")) {
+            if (containsAny(normalized, "against me", "use my", "my taglock", "worried")) {
+                return Optional.of("A taglock links magic to a person; guard yours like a tooth with your name carved in it.");
+            }
             return Optional.of("A taglock links magic to a person or creature; poppets need the right link before they can work.");
         }
         if (containsAny(normalized, "mandrake")) {
@@ -160,13 +228,19 @@ final class NpcDialogueFallback {
             return Optional.of("Belladonna is a witch herb and common coven trade good; grow it, trade for it, or ask a coven witch.");
         }
         if (containsAny(normalized, "herb", "herbs", "plant", "plants", "snowbell", "wolfsbane", "garlic")) {
+            if (containsAny(normalized, "garlic")) {
+                return Optional.of("Garlic is a witch herb, not a wall against every evil. Salt your threshold too.");
+            }
             return Optional.of("Plant belladonna and mandrake first; trade for stranger herbs until your garden earns its keep.");
         }
         if (containsAny(normalized, "baba yaga", "yaga")) {
             return Optional.of("Baba Yaga is no market witch; bring protection, manners, and a quick exit.");
         }
         if (containsAny(normalized, "demon", "demons", "imp", "torment", "hell")) {
-            return Optional.of("Demons answer bindings and bargains better than blades.");
+            return Optional.of("Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
+        }
+        if (containsAny(normalized, "spirit", "spirits", "whispers", "well")) {
+            return Optional.of("Could be spirits, could be water talking to stone. Mark the place and return with salt.");
         }
         if (containsAny(normalized, "time", "what time", "clock", "day is it", "what day")) {
             return Optional.of(sceneTime(timeOfDay, clock, day)
@@ -197,10 +271,111 @@ final class NpcDialogueFallback {
 
     static Optional<String> alternateForRepeatedFallback(String playerMessage, String playerName, String avoidSpeech) {
         String normalized = normalize(playerMessage);
-        if (normalized.isBlank() || isSpecificAnswerPrompt(normalized)) {
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+        Optional<String> specific = specificAlternate(normalized, safeName(playerName), avoidSpeech);
+        if (specific.isPresent()) {
+            return specific;
+        }
+        if (isSpecificAnswerPrompt(normalized)) {
             return Optional.empty();
         }
         return Optional.of(oldWitchAside(normalized, safeName(playerName), avoidSpeech));
+    }
+
+    private static Optional<String> specificAlternate(String normalized, String playerName, String avoidSpeech) {
+        String line = "";
+        if (asksHutOrDoorSafety(normalized)) {
+            line = "Salt the threshold, keep a light burning, and make no bargains through the door.";
+        } else if (containsAny(normalized, "oven", "witch's oven", "witches oven", "sapling", "saplings", "fume", "fumes",
+                "clay jar", "jar")) {
+            line = "In a Witch's Oven, saplings feed fumes; clay jars are the clever bit, not random smoke.";
+        } else if (asksExactRecipe(normalized) || asksMissingRecipeCheck(normalized)) {
+            line = "If the exact page is absent, use the Primer or recipe book; I will not invent ingredients.";
+        } else if (asksCauldronPrep(normalized)) {
+            line = "Before the cauldron, prepare water, heat, a visible page, and the ingredients it names.";
+        } else if (asksWeakAltar(normalized)) {
+            line = "A weak altar wants varied nearby nature and proper fittings, not louder chanting.";
+        } else if (asksOfferings(normalized)) {
+            line = "Offerings are the rite's payment; wrong payment makes the circle sulk.";
+        } else if (asksRiteSafety(normalized)) {
+            line = "Never start a rite with broken chalk, missing offerings, weak power, or a page you cannot read.";
+        } else if (containsAny(normalized, "dream catcher", "dreamcatcher", "nightmare", "nightmares")) {
+            line = "Keep the Dream Catcher near your bed, " + playerName + "; strange sleep leaves muddy footprints.";
+        } else if (containsAny(normalized, "familiar", "familiars", "owl", "cat", "toad")) {
+            line = "A familiar is met with patience and respect; if it watches you first, mind your manners.";
+        } else if (containsAny(normalized, "taglock", "tag lock", "poppet", "poppets")) {
+            line = "Guard your taglocks, " + playerName + "; sympathetic magic loves a careless pocket.";
+        }
+        if (line.isBlank() || NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+            return Optional.empty();
+        }
+        return Optional.of(line);
+    }
+
+    private static Optional<String> recipeOrRiteAnswer(String normalized, String playerName) {
+        if (asksRecipeRiteLearning(normalized)) {
+            return Optional.of("Start with the Primer, " + playerName + ": recipes need a visible page and station; rites need chalk, offerings, and altar power.");
+        }
+        if (asksMissingRecipeCheck(normalized)) {
+            return Optional.of("Check the Primer page, the right station, visible recipe book, altar power, unlock gates, and the exact name you asked for.");
+        }
+        if (asksExactRecipe(normalized)) {
+            if (normalized.contains("sleeping")) {
+                return Optional.of("The exact Sleeping Brew page is absent from my grimoire; check your Primer or recipe book before naming ingredients. The brew sends travelers into the Spirit World.");
+            }
+            if (containsAny(normalized, "oven", "witch's oven", "witches oven")) {
+                return Optional.of("The exact Witch's Oven craft belongs to the recipe book; what matters here is that it burns saplings and ingredients into fumes.");
+            }
+            return Optional.of("The exact page is absent from my grimoire; check your Primer or recipe book before naming ingredients.");
+        }
+        if (asksCauldronPrep(normalized)) {
+            return Optional.of("Before the cauldron, prepare water, heat, a visible brew page, and only the ingredients that page names.");
+        }
+        if (asksBasicBrewRecipe(normalized)) {
+            return Optional.of("A brew recipe needs the right station, water or heat when called for, named ingredients, and a page you can actually read.");
+        }
+        if (asksFumeSafety(normalized)) {
+            return Optional.of("Use a Witch's Oven with saplings or ingredients and clay jars; catch fumes on purpose, not by guesswork.");
+        }
+        if (asksFumeUse(normalized)) {
+            return Optional.of("A Witch's Oven burns saplings and ingredients into fumes; clay jars catch them for brews and rites.");
+        }
+        if (asksSpinningWheel(normalized)) {
+            return Optional.of("The spinning wheel is a recipe station; exact inputs belong to the live recipe book, not my crooked memory.");
+        }
+        if (asksDistillery(normalized)) {
+            return Optional.of("A distillery refines fumes and essences; exact inputs belong to the live recipe book.");
+        }
+        if (asksGrimoireSummary(normalized)) {
+            return Optional.of("Write this: recipes need the right station and visible page; rites need chalk, offerings, altar power, and patience.");
+        }
+        if (asksBeginnerPath(normalized)) {
+            return Optional.of("Begin with one visible brew from the Primer, then a harmless circle lesson; no hidden recipe from memory.");
+        }
+        if (asksRiteSafety(normalized)) {
+            return Optional.of("Never start a rite with broken chalk, missing offerings, weak altar power, or a page you cannot read.");
+        }
+        if (asksFailedRite(normalized)) {
+            return Optional.of("Check chalk layout, offerings, altar power, familiar or coven requirements, dimension limits, and unlock gates before guessing.");
+        }
+        if (asksOfferings(normalized)) {
+            return Optional.of("Offerings tell a rite what debt is paid; wrong offerings make circles sulk or fail.");
+        }
+        if (asksWeakAltar(normalized)) {
+            return Optional.of("A weak altar usually wants more varied nearby nature and proper fittings, not louder chanting.");
+        }
+        if (asksFamiliarBindingRite(normalized)) {
+            return Optional.of("A familiar binding rite needs the right circle, chalk, offerings, altar power, and familiar; check the visible page before naming parts.");
+        }
+        if (asksSummoningRite(normalized)) {
+            return Optional.of("A summoning rite brings something to the circle; match chalk, offerings, altar power, unlock gates, and the named entity.");
+        }
+        if (asksCurseRite(normalized)) {
+            return Optional.of("Curse rites are not tavern tricks; use circles, chalk, offerings, altar power, and a visible page before naming a victim.");
+        }
+        return Optional.empty();
     }
 
     private static Optional<String> brewAnswer(String normalized) {
@@ -271,7 +446,8 @@ final class NpcDialogueFallback {
     static boolean asksHerbGift(String normalized) {
         return containsAny(normalized, "give me herb", "give me a herb", "spare herb", "spare a herb",
                 "can i have herb", "can i have a herb", "may i have herb", "may i have a herb",
-                "gift me herb", "gift me a herb", "give me belladonna", "give me mandrake");
+                "gift me herb", "gift me a herb", "give me belladonna", "give me mandrake",
+                "another herb", "more herbs", "can i have another herb", "can i have more herb");
     }
 
     private static boolean mentionsCoinOnly(String normalized) {
@@ -352,11 +528,177 @@ final class NpcDialogueFallback {
 
     private static boolean asksCovenRecruiting(String normalized) {
         return containsAny(normalized, "start a coven", "make a coven", "recruit coven", "recruit a coven",
-                "recruit witches", "recruit witch", "where can i recruit", "find coven");
+                "recruit witches", "recruit witch", "where can i recruit", "find coven", "before a coven",
+                "learn before a coven", "before starting a coven", "before joining a coven",
+                "learn before coven");
     }
 
     private static boolean asksFollowRequest(String normalized) {
         return containsAny(normalized, "follow me", "come with me", "come home", "follow home");
+    }
+
+    private static boolean asksHutOrDoorSafety(String normalized) {
+        return containsAny(normalized, "safe little hut", "safe hut", "build a safe", "near the village",
+                "by the door", "by my door", "near the door", "at the door", "threshold");
+    }
+
+    private static boolean asksRoadAdvice(String normalized) {
+        return containsAny(normalized, "final advice", "advice for the road", "for the road",
+                "before i leave", "before i go", "before leaving");
+    }
+
+    private static boolean asksDemonTrust(String normalized) {
+        return containsAny(normalized, "demon", "demons", "devil", "imp")
+                && containsAny(normalized, "trust", "bargain", "bargains", "deal", "deals");
+    }
+
+    private static boolean asksRecipeRiteLearning(String normalized) {
+        return containsAny(normalized, "learn brewing", "learn brews", "learn recipes", "learn a recipe",
+                "brewing and rites", "brewing and rituals", "recipes and rites", "recipes and rituals",
+                "learn brewing and rites", "learn witchcraft properly");
+    }
+
+    private static boolean asksExactRecipe(String normalized) {
+        return containsAny(normalized, "exact recipe", "exact ingredients", "ingredient list", "ingredients for",
+                "recipe for", "what is the recipe", "witch's oven recipe", "witches oven recipe");
+    }
+
+    private static boolean asksMissingRecipeCheck(String normalized) {
+        return containsAny(normalized, "recipe is missing", "recipe missing", "exact recipe is missing",
+                "exact recipe missing", "missing recipe", "recipe absent", "page is missing", "page missing");
+    }
+
+    private static boolean asksCauldronPrep(String normalized) {
+        return containsAny(normalized, "before i touch the cauldron", "before touching the cauldron",
+                "before the cauldron", "prepare the cauldron", "ready the cauldron", "need before")
+                && containsAny(normalized, "cauldron", "kettle", "brew", "brewing");
+    }
+
+    private static boolean asksBasicBrewRecipe(String normalized) {
+        return containsAny(normalized, "basic brew recipe", "basic recipe", "simple brew recipe",
+                "explain a brew recipe", "explain basic brew", "how do recipes work")
+                && containsAny(normalized, "brew", "brewing", "potion", "recipe");
+    }
+
+    private static boolean asksFumeUse(String normalized) {
+        return containsAny(normalized, "fume", "fumes");
+    }
+
+    private static boolean asksFumeSafety(String normalized) {
+        return containsAny(normalized, "fume", "fumes")
+                && containsAny(normalized, "safely", "safe", "get", "gather", "catch", "collect");
+    }
+
+    private static boolean asksSpinningWheel(String normalized) {
+        return containsAny(normalized, "spinning wheel", "spinning");
+    }
+
+    private static boolean asksDistillery(String normalized) {
+        return containsAny(normalized, "distillery", "distill");
+    }
+
+    private static boolean asksOfferings(String normalized) {
+        return containsAny(normalized, "offering", "offerings", "why offer", "what do i offer");
+    }
+
+    private static boolean asksWeakAltar(String normalized) {
+        return containsAny(normalized, "altar is too weak", "altar too weak", "weak altar",
+                "altar not strong", "altar lacks power", "not enough altar power");
+    }
+
+    private static boolean asksFailedRite(String normalized) {
+        return containsAny(normalized, "rite fail", "rite failed", "ritual fail", "ritual failed",
+                "why did my rite fail", "why did my ritual fail", "fizzled", "fizzle");
+    }
+
+    private static boolean asksFamiliarBindingRite(String normalized) {
+        return containsAny(normalized, "familiar binding", "bind a familiar", "binding rite")
+                && containsAny(normalized, "familiar", "rite", "ritual", "circle");
+    }
+
+    private static boolean asksSummoningRite(String normalized) {
+        return containsAny(normalized, "summoning rite", "summon rite", "summoning ritual", "summon ritual")
+                || (containsAny(normalized, "summon", "summoning") && containsAny(normalized, "explain", "rite", "ritual"));
+    }
+
+    private static boolean asksCurseRite(String normalized) {
+        return containsAny(normalized, "curse rite", "curse ritual", "cursing rite", "cursing ritual")
+                || (containsAny(normalized, "curse", "cursed") && containsAny(normalized, "explain", "rite", "ritual"));
+    }
+
+    private static boolean asksRiteSafety(String normalized) {
+        return containsAny(normalized, "never do during a rite", "never do in a rite", "never do during ritual",
+                "should i never do", "what not to do")
+                && containsAny(normalized, "rite", "ritual", "circle");
+    }
+
+    private static boolean asksBeginnerPath(String normalized) {
+        return containsAny(normalized, "safe beginner path", "beginner path", "first recipe",
+                "first rite", "first ritual", "start learning");
+    }
+
+    private static boolean asksGrimoireSummary(String normalized) {
+        return containsAny(normalized, "write in my grimoire", "write in the grimoire", "write down",
+                "after this lesson", "grimoire after");
+    }
+
+    private static Optional<String> contextualFollowup(String normalized, String memoryContext, String playerName) {
+        String memory = normalize(memoryContext);
+        if (containsAny(normalized, "are they wrong", "were they wrong")
+                && containsAny(memory, "village thinks you are trouble", "village think you are trouble")) {
+            return Optional.of("Not entirely. Trouble follows me, " + playerName + "; I just keep mine better trained.");
+        }
+        if (containsAny(normalized, "did you bless me", "am i blessed", "your blessing", "you blessed me", "the luck")
+                && containsAny(memory, "blessed with luck", "coven_witch_blessed")) {
+            return Optional.of("A small luck, " + playerName + "; spend it before pride eats the shine off.");
+        }
+        if (containsAny(normalized, "did you curse me", "am i cursed", "your curse", "you cursed me", "still cursed")
+                && containsAny(memory, "cursed with bad luck", "coven_witch_cursed")) {
+            return Optional.of("A five-minute shadow, not a life sentence. Mind your tongue when it lifts.");
+        }
+        if (containsAny(normalized, "sorry", "apologize", "apology", "that was rude")
+                && containsAny(memory, "cursed with bad luck", "insulting this witch")) {
+            return Optional.of("Apology heard, " + playerName + "; let the shadow finish its walk, then mind your tongue.");
+        }
+        if (containsAny(normalized, "that herb", "the herb", "herb gift", "giving me a herb", "gave me a herb",
+                "do you remember giving me a herb", "another herb", "more herbs")
+                && containsAny(memory, "received one herb gift", "coven_witch_herb_gift")) {
+            return Optional.of("I gave one herb freely, " + playerName + "; plant it, brew it, or owe it respect.");
+        }
+        if (containsAny(normalized, "what scares me", "what did i say scares me", "nightmare", "nightmares", "bad dreams")
+                && containsAny(memory, "wary of nightmares", "afraid of nightmares")) {
+            return Optional.of("I remember your nightmare fear, " + playerName + "; keep a Dream Catcher close and mark your way back.");
+        }
+        if (containsAny(normalized, "what am i looking for", "what was i looking for", "still looking", "where start")
+                && containsAny(memory, "looking for an arthana")) {
+            return Optional.of("Still chasing the arthana, " + playerName + "? Ask after ritual blades and altar range, not table knives.");
+        }
+        if (containsAny(normalized, "that sounds creepy", "sounds creepy", "creepy")
+                && containsAny(memory, "taglock", "poppet")) {
+            return Optional.of("Creepy keeps fools careful. Taglocks are tools, not toys.");
+        }
+        if (containsAny(normalized, "how would i get back", "how do i get back", "get back", "return")
+                && containsAny(memory, "spirit world", "sleeping brew", "nightmare")) {
+            return Optional.of("Mark where you crossed, keep to return paths, and do not treat dreams like roads.");
+        }
+        if (containsAny(normalized, "come back after sunrise", "back after sunrise", "after sunrise")) {
+            return Optional.of("Then come with daylight on your boots, " + playerName + "; night debts keep poor records.");
+        }
+        if (containsAny(normalized, "did you expect me back", "expected me back", "i came back", "came back")
+                && containsAny(memory, "plans to come back after sunrise", "come back after sunrise")) {
+            return Optional.of("I expected a shadow at sunrise; you brought boots. Good enough.");
+        }
+        if (containsAny(normalized, "village thinks you are trouble", "village think you are trouble")) {
+            return Optional.of("Then your village has eyes. Trouble and I are old neighbors.");
+        }
+        if (containsAny(normalized, "any advice now", "advice now", "what now")) {
+            if (containsAny(memory, "received one herb gift", "blessed with luck", "cursed with bad luck",
+                    "looking for an arthana", "afraid of nightmares", "wary of nightmares")) {
+                return Optional.of("Keep the gifted herb, keep a Dream Catcher close, and let the little shadow expire before boasting.");
+            }
+            return Optional.of("Keep salt dry, coin hidden, and questions sharper than fear.");
+        }
+        return Optional.empty();
     }
 
     private static boolean asksRememberRequest(String normalized) {
@@ -369,12 +711,29 @@ final class NpcDialogueFallback {
     private static String rememberRequestAnswer(String normalized, String playerName) {
         String subject = normalized
                 .replaceFirst("^remember\\s+(that\\s+|this\\s+)?", "")
-                .replaceFirst("^i\\s+", "you ")
                 .trim();
+        subject = playerMemoryPerspective(subject);
         if (subject.isBlank()) {
             return "I'll remember that, " + playerName + ".";
         }
         return NpcBrainResponse.sanitize("I'll remember that, " + playerName + ": " + subject + ".", 180);
+    }
+
+    private static String playerMemoryPerspective(String subject) {
+        String text = subject == null ? "" : subject.trim();
+        if (text.isBlank()) {
+            return "";
+        }
+        text = text.replaceFirst("^i\\s+owe\\s+you\\b", "you owe me");
+        text = text.replaceFirst("^i\\s+gave\\s+you\\b", "you gave me");
+        text = text.replaceFirst("^i\\s+paid\\s+you\\b", "you paid me");
+        text = text.replaceFirst("^i\\s+am\\s+afraid\\s+of\\b", "you are afraid of");
+        text = text.replaceFirst("^i'm\\s+afraid\\s+of\\b", "you are afraid of");
+        text = text.replaceFirst("^i\\s+am\\b", "you are");
+        text = text.replaceFirst("^i'm\\b", "you are");
+        text = text.replaceFirst("^i\\s+", "you ");
+        text = text.replaceAll("\\bmy\\b", "your");
+        return text.trim();
     }
 
     private static String tradeStockAnswer() {
@@ -454,7 +813,7 @@ final class NpcDialogueFallback {
         if (summary.isBlank()) {
             return Optional.empty();
         }
-        return Optional.of(NpcBrainResponse.sanitize("I remember this, " + playerName + ": " + summary + ".", 180));
+        return Optional.of(NpcBrainResponse.sanitize("I remember this, " + playerName + ": " + summary + ".", NpcBrainResponse.MAX_SPEECH_LENGTH));
     }
 
     private static String memorySummary(String memoryContext) {
@@ -463,18 +822,63 @@ final class NpcDialogueFallback {
             return "";
         }
         String longMemory = section(cleaned, "Long memory:", "Recent conversation:");
+        String relationship = section(cleaned, "Relationship notes:", "Recent conversation:");
         String source = longMemory.isBlank() ? cleaned : longMemory;
+        if (!relationship.isBlank()) {
+            source = (source.isBlank() ? "" : source + " ") + relationship;
+        }
         source = source
                 .replaceAll("(?i)Entity memory:[^.]*\\.\\s*", "")
                 .replaceAll("(?i)Recent conversation:", "")
+                .replaceAll("(?i)Relationship notes:", "")
                 .replaceAll("(?i)Long memory:", "")
                 .replaceAll("player said \"[^\"]+\";\\s*", "")
                 .replaceAll("witch answered \"[^\"]+\"\\.?", "")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+received\\s+one\\s+herb\\s+gift\\s+from\\s+this\\s+witch\\b", "you received one herb gift from me")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+was\\s+blessed\\s+with\\s+luck\\s+after\\s+praising\\s+this\\s+witch\\b", "you were blessed with luck after praising me")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+was\\s+cursed\\s+with\\s+bad\\s+luck\\s+after\\s+insulting\\s+this\\s+witch\\b", "you were cursed with bad luck after insulting me")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+has\\b", "you have")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+likes\\b", "you like")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+is\\s+wary\\s+of\\b", "you are wary of")
+                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+is\\s+looking\\s+for\\b", "you are looking for")
+                .replaceAll("(?i)([,;]\\s*)likes\\b", "$1you like")
+                .replaceAll("(?i)([,;]\\s*)is\\s+wary\\s+of\\b", "$1you are wary of")
+                .replaceAll("(?i)\\band\\s+is\\s+looking\\s+for\\b", "and you are looking for")
+                .replaceAll("(?i)([,;]\\s*)is\\s+looking\\s+for\\b", "$1you are looking for")
+                .replaceAll("(?i);\\s*(what\\s+now|now\\s+what|d)\\b", "")
+                .replaceAll("(?i);\\s*none\\b", "")
                 .replaceAll("[.!?]+\\s*", "; ")
                 .replaceAll(";\\s*$", "")
                 .replaceAll("\\s+", " ")
                 .trim();
-        return NpcBrainResponse.sanitize(source, 120);
+        return compactMemorySummary(source, 170);
+    }
+
+    private static String compactMemorySummary(String source, int maxLength) {
+        String[] notes = source.split(";\\s*");
+        StringBuilder summary = new StringBuilder();
+        for (String raw : notes) {
+            String note = raw.trim();
+            if (note.isBlank()) {
+                continue;
+            }
+            if (summary.isEmpty()) {
+                if (note.length() <= maxLength) {
+                    summary.append(note);
+                }
+                continue;
+            }
+            if (summary.length() + 2 + note.length() > maxLength) {
+                continue;
+            }
+            summary.append("; ").append(note);
+        }
+        return NpcBrainResponse.sanitize(summary.toString(), maxLength);
+    }
+
+    private static String playerNameFromMemory(String memoryContext) {
+        Matcher matcher = Pattern.compile("(?i)player\\s+is\\s+([A-Za-z0-9_]{2,24})").matcher(memoryContext);
+        return matcher.find() ? matcher.group(1) : "Dev";
     }
 
     private static String section(String text, String startMarker, String endMarker) {
@@ -544,7 +948,7 @@ final class NpcDialogueFallback {
     }
 
     private static boolean isGreeting(String normalized) {
-        return normalized.matches(".*\\b(hello|hi|hey|greetings)\\b.*");
+        return normalized.matches(".*\\b(hello|hi|hey|greetings|good evening|good morning|good day)\\b.*");
     }
 
     private static String normalize(String text) {

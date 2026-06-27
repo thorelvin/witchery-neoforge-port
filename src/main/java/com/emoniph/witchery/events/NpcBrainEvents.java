@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 import java.util.Comparator;
@@ -48,6 +49,11 @@ public final class NpcBrainEvents {
         if (!NpcBrainService.INSTANCE.requestCovenChat(witch, player, message)) {
             witch.nudgePlayerAttention(player);
         }
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        NpcBrainService.INSTANCE.prewarm();
     }
 
     @SubscribeEvent

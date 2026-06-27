@@ -32,19 +32,62 @@ public final class NpcBrainService {
     private static final long CHAT_COOLDOWN_TICKS = 20L;
     private static final long SOCIAL_EFFECT_TICKS = 20L * 60L * 5L;
     private static final long SOCIAL_COOLDOWN_TICKS = 20L * 60L * 5L;
+    private static final int WARMUP_MAX_TOKENS = 24;
     private static final String FLAG_HERB_GIFT = "coven_witch_herb_gift";
+    private static final String FLAG_BLESSED = "coven_witch_blessed";
+    private static final String FLAG_CURSED = "coven_witch_cursed";
 
     private final Object executorLock = new Object();
+    private final Object warmupExecutorLock = new Object();
+    private final Object warmupLock = new Object();
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicLong successes = new AtomicLong();
     private final AtomicLong failures = new AtomicLong();
     private final AtomicLong rejected = new AtomicLong();
+    private final AtomicLong warmups = new AtomicLong();
     private final ConcurrentHashMap<String, Long> cooldownUntil = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Long> socialCooldownUntil = new ConcurrentHashMap<>();
     private volatile ExecutorService executor;
+    private volatile ExecutorService warmupExecutor;
+    private volatile String warmedConfigKey = "";
+    private volatile boolean warmupInFlight;
+    private volatile long lastWarmupMillis = -1L;
+    private volatile String lastWarmupError = "";
     private volatile String lastError = "";
 
     private NpcBrainService() {
+    }
+
+    public boolean prewarm() {
+        if (!WitcheryConfig.LLM_ENABLED.get() || !WitcheryConfig.LLM_PREWARM_ENABLED.get()) {
+            return false;
+        }
+        String key = warmupConfigKey();
+        synchronized (warmupLock) {
+            if (warmupInFlight || key.equals(warmedConfigKey)) {
+                return false;
+            }
+            warmupInFlight = true;
+            lastWarmupError = "";
+        }
+
+        LlmProvider provider;
+        try {
+            provider = providerFromConfig(
+                    Math.max(WitcheryConfig.LLM_TIMEOUT_MILLIS.get(), WitcheryConfig.LLM_PREWARM_TIMEOUT_MILLIS.get()),
+                    WARMUP_MAX_TOKENS,
+                    warmupExecutor());
+        } catch (IllegalArgumentException ex) {
+            completeWarmup(key, -1L, ex);
+            return false;
+        }
+
+        long started = System.nanoTime();
+        provider.generate(NpcPromptBuilder.warmup())
+                .orTimeout(WitcheryConfig.LLM_PREWARM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
+                .whenComplete((response, error) ->
+                        completeWarmup(key, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started), error));
+        return true;
     }
 
     public boolean requestCovenGreeting(CovenWitchEntity witch, ServerPlayer player, Component fallback) {
@@ -155,6 +198,8 @@ public final class NpcBrainService {
                 + ", endpoint=" + WitcheryConfig.LLM_ENDPOINT.get()
                 + ", endpointValid=" + validation.allowed()
                 + ", inFlight=" + inFlight.get()
+                + ", warmup=" + warmupStatus()
+                + ", warmups=" + warmups.get()
                 + ", ok=" + successes.get()
                 + ", failed=" + failures.get()
                 + ", rejected=" + rejected.get()
@@ -164,6 +209,7 @@ public final class NpcBrainService {
     public void reload() {
         cooldownUntil.clear();
         socialCooldownUntil.clear();
+        resetWarmup();
         lastError = "";
     }
 
@@ -174,7 +220,42 @@ public final class NpcBrainService {
                 executor = null;
             }
         }
+        synchronized (warmupExecutorLock) {
+            if (warmupExecutor != null) {
+                warmupExecutor.shutdownNow();
+                warmupExecutor = null;
+            }
+        }
         inFlight.set(0);
+        resetWarmup();
+    }
+
+    private void resetWarmup() {
+        synchronized (warmupLock) {
+            warmedConfigKey = "";
+            warmupInFlight = false;
+            lastWarmupMillis = -1L;
+            lastWarmupError = "";
+        }
+    }
+
+    private String warmupStatus() {
+        if (!WitcheryConfig.LLM_ENABLED.get() || !WitcheryConfig.LLM_PREWARM_ENABLED.get()) {
+            return "off";
+        }
+        String currentKey = warmupConfigKey();
+        synchronized (warmupLock) {
+            if (warmupInFlight) {
+                return "warming";
+            }
+            if (currentKey.equals(warmedConfigKey)) {
+                return lastWarmupMillis >= 0L ? "ready(" + lastWarmupMillis + "ms)" : "ready";
+            }
+            if (!lastWarmupError.isBlank()) {
+                return "failed(" + lastWarmupError + ")";
+            }
+            return "pending";
+        }
     }
 
     public void rememberCovenExchange(CovenWitchEntity witch, ServerPlayer player, String playerSpeech, String npcSpeech) {
@@ -228,7 +309,7 @@ public final class NpcBrainService {
         String playerName = player.getName().getString();
         NpcMemoryData memoryData = NpcMemoryData.get(level);
         String memoryContext = memoryData.getContext(witchId, player.getUUID());
-        var polishedSpeech = NpcBrainResponse.polishSpeech(response.speech(), witchName, playerName,
+        var polishedSpeech = NpcBrainResponse.polishSpeechOrGroundedFollowup(response.speech(), witchName, playerName,
                 playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime()));
         if (polishedSpeech.isEmpty()) {
             Optional<String> relaxedSpeech = rawAfterRepeatedFallback(level, witchId, player, witch,
@@ -281,7 +362,7 @@ public final class NpcBrainService {
                         NpcPromptBuilder.clockTime(level.getDayTime()),
                         level.getDayTime() / 24000L,
                         memoryContext)
-                .flatMap(speech -> NpcBrainResponse.polishSpeech(speech, witchName, playerName,
+                .flatMap(speech -> NpcBrainResponse.polishSpeechAfterFallback(speech, witchName, playerName,
                         playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime())));
         String fallbackSpeech = fallback.orElseGet(() -> NpcDialogueFallback.lastResortAside(playerMessage, playerName));
         String lastNpcSpeech = memoryData.getLastNpcSpeech(witchId, player.getUUID());
@@ -335,7 +416,7 @@ public final class NpcBrainService {
                         NpcPromptBuilder.clockTime(level.getDayTime()),
                         level.getDayTime() / 24000L,
                         memoryContext)
-                .flatMap(speech -> NpcBrainResponse.polishSpeech(speech, witchName, playerName,
+                .flatMap(speech -> NpcBrainResponse.polishSpeechAfterFallback(speech, witchName, playerName,
                         playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime())));
     }
 
@@ -380,6 +461,7 @@ public final class NpcBrainService {
         ServerLevel level = (ServerLevel) player.level();
         if (markSocialCooldown(level, witch, player, "bless", SOCIAL_COOLDOWN_TICKS)) {
             player.addEffect(new MobEffectInstance(MobEffects.LUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            NpcMemoryData.get(level).setFlag(witch.getUUID(), player.getUUID(), FLAG_BLESSED, level.getGameTime());
             socialFx(level, player, true);
             displayCovenSpeech(level, witch, player, playerMessage,
                     "Kind words have roots, " + player.getName().getString() + ". Take a little luck before it spoils.",
@@ -395,6 +477,7 @@ public final class NpcBrainService {
         ServerLevel level = (ServerLevel) player.level();
         if (markSocialCooldown(level, witch, player, "curse", SOCIAL_COOLDOWN_TICKS)) {
             player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            NpcMemoryData.get(level).setFlag(witch.getUUID(), player.getUUID(), FLAG_CURSED, level.getGameTime());
             socialFx(level, player, false);
             displayCovenSpeech(level, witch, player, playerMessage,
                     "Tongues have shadows. Wear yours for five minutes, " + player.getName().getString() + ".",
@@ -461,12 +544,18 @@ public final class NpcBrainService {
     }
 
     private LlmProvider providerFromConfig() {
+        return providerFromConfig(WitcheryConfig.LLM_TIMEOUT_MILLIS.get(), WitcheryConfig.LLM_MAX_TOKENS.get(),
+                executor());
+    }
+
+    private LlmProvider providerFromConfig(int timeoutMillis, int maxTokens, ExecutorService requestExecutor) {
         LlmProviderConfig config = new LlmProviderConfig(
                 WitcheryConfig.LLM_ENDPOINT.get(),
                 WitcheryConfig.LLM_MODEL.get(),
-                WitcheryConfig.LLM_TIMEOUT_MILLIS.get(),
-                WitcheryConfig.LLM_MAX_TOKENS.get(),
-                WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get());
+                timeoutMillis,
+                maxTokens,
+                WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get(),
+                WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get());
         LlmEndpointValidator.Validation validation = LlmEndpointValidator.validate(
                 config.endpoint(), config.allowLanEndpoint());
         if (!validation.allowed()) {
@@ -474,12 +563,12 @@ public final class NpcBrainService {
         }
         String provider = WitcheryConfig.LLM_PROVIDER.get().trim().toLowerCase(Locale.ROOT);
         if (provider.equals("openai_compatible") || provider.equals("openai-compatible")) {
-            return new OpenAiCompatibleLlmProvider(config, executor());
+            return new OpenAiCompatibleLlmProvider(config, requestExecutor);
         }
         if (!provider.equals("ollama")) {
             throw new IllegalArgumentException("Unsupported LLM provider: " + WitcheryConfig.LLM_PROVIDER.get());
         }
-        return new OllamaLlmProvider(config, executor());
+        return new OllamaLlmProvider(config, requestExecutor);
     }
 
     private ExecutorService executor() {
@@ -495,6 +584,43 @@ public final class NpcBrainService {
                 });
             }
             return executor;
+        }
+    }
+
+    private ExecutorService warmupExecutor() {
+        synchronized (warmupExecutorLock) {
+            if (warmupExecutor == null || warmupExecutor.isShutdown()) {
+                warmupExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+                    @Override
+                    public Thread newThread(Runnable runnable) {
+                        Thread thread = new Thread(runnable, "Witchery NPC LLM Warmup");
+                        thread.setDaemon(true);
+                        return thread;
+                    }
+                });
+            }
+            return warmupExecutor;
+        }
+    }
+
+    private static String warmupConfigKey() {
+        return WitcheryConfig.LLM_PROVIDER.get().trim().toLowerCase(Locale.ROOT)
+                + "|" + WitcheryConfig.LLM_ENDPOINT.get().trim()
+                + "|" + WitcheryConfig.LLM_MODEL.get().trim()
+                + "|" + WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get();
+    }
+
+    private void completeWarmup(String key, long elapsedMillis, Throwable error) {
+        synchronized (warmupLock) {
+            warmupInFlight = false;
+            lastWarmupMillis = elapsedMillis;
+            if (error == null) {
+                warmedConfigKey = key;
+                lastWarmupError = "";
+                warmups.incrementAndGet();
+            } else {
+                lastWarmupError = shortError(error);
+            }
         }
     }
 

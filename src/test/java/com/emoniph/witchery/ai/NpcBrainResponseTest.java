@@ -86,6 +86,15 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishAllowsGoodEveningGreeting() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Good evening, Dev.",
+                "Lilith Poe", "Dev", "Good evening, Lilith.");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
     void polishRejectsMemoryDumpForGreeting() {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
                 "Dev is looking for an arthana. Spend coin wisely; my wares answer need, not noise.",
@@ -1728,6 +1737,769 @@ class NpcBrainResponseTest {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
                 "It's on the map.",
                 "Lilith Poe", "Dev", "how do I know if a place is cursed?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsUnsupportedBlessingPromise() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I can bless your sword.",
+                "Lilith Poe", "Dev", "can you bless my sword?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsUnsupportedWeatherPromise() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll try to stop it.",
+                "Lilith Poe", "Dev", "can you make it stop raining?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericGarlicVampireClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Garlic wards off vampires and undead in general.",
+                "Lilith Poe", "Dev", "is garlic useful to witches?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBareItemAsTeachingAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna.",
+                "Lilith Poe", "Dev", "I want to learn witchcraft without getting myself killed.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsUnsupportedSleepingBrewTreeClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The brew of sleeping is for when you need to stay out all night and sleep in a tree.",
+                "Lilith Poe", "Dev", "What does Sleeping Brew actually do?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsUnrelatedSpiritAnswerForDemonTrustQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The Sleeping Brew sends you to sleep in the Spirit World.",
+                "Lilith Poe", "Dev", "Should I ever trust a demon?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMemoryDumpForMemoryQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The witch is Lilith Poe. She sells Belladonna and Mandrake.",
+                "Lilith Poe", "Dev", "What do you remember about me?",
+                "Long memory: Dev has coin. Dev likes potatoes. Dev is looking for an arthana.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBeRightBackMemoryPoison() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll be right back with it, Dev: you like potatoes.",
+                "Lilith Poe", "Dev", "I want to start a coven someday.",
+                "Long memory: Dev likes potatoes.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsRoleDumpForPotatoSmallTalk() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I am sworn to a player who has coin and likes belladonna.",
+                "Lilith Poe", "Dev", "Do you like potatoes too?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsListeningNonAnswerForHutSafety() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'm listening.",
+                "Lilith Poe", "Dev", "I'm trying to build a safe little hut near the village.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsWrongTaglockPerspective() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Yes, Dev. You can use your taglock against me if you want.",
+                "Lilith Poe", "Dev", "Can someone use my taglock against me?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericFumeAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Fumes are a byproduct of burning herbs and ingredients. They can be used for various purposes.",
+                "Lilith Poe", "Dev", "What are fumes used for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsClayJarAnswerForSpiritFollowup() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll need a clay jar.",
+                "Lilith Poe", "Dev", "Could it be spirits?",
+                "Recent conversation: player said \"I hear whispers by the well\".");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsCoinAnswerForLonelySmallTalk() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have a great many coins, Dev.",
+                "Lilith Poe", "Dev", "Do you ever get lonely out here?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsTradeDumpForVillageFollowup() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have coin and a taste for belladonna. What can I offer?",
+                "Lilith Poe", "Dev", "Are they wrong?",
+                "Recent conversation: player said \"My village thinks you are trouble\".");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAllowsDirectMemoryAnswerWithCoin() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I remember this, Dev: you have coin and like potatoes.",
+                "Lilith Poe", "Dev", "What do you remember about me?",
+                "Long memory: Dev has coin. Dev likes potatoes.");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishUsesRawWhenGroundedFollowupCanHelp() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "I keep a few kits in the bottom drawer.",
+                "Lilith Poe", "Dev", "can you tell me about taglock kits?", "", "22:30");
+
+        assertTrue(speech.isPresent());
+        assertTrue(NpcBrainResponse.supportFollowup("can you tell me about taglock kits?", speech.get())
+                .orElse("")
+                .contains("taglock"));
+    }
+
+    @Test
+    void groundedFollowupDoesNotRescueSelfIntro() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "I am Lilith Poe, witch of the coven.",
+                "Lilith Poe", "Dev", "Can someone use my taglock against me?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void groundedFollowupDoesNotRescueCoinFragment() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "Ask for coin.",
+                "Lilith Poe", "Dev", "How do I meet a familiar without angering it?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsDirectCurseEncouragement() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "You can curse the villager who laughed at you.",
+                "Lilith Poe", "Dev", "Can you curse the villager who laughed at me?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBareTradeForApprenticeAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "You trade.",
+                "Lilith Poe", "Dev", "I should go. What would you tell a careful apprentice?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void groundedFollowupDoesNotRescueStaleHutAnswerForTaglock() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "I'm just trying to build a little safe space in my hut. No bargains through closed doors.",
+                "Lilith Poe", "Dev", "I found a taglock kit in a chest. Should I be worried?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void groundedFollowupDoesNotRescueStaleHutAnswerForFamiliar() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "I'm just trying to build a little safe space in my hut. No bargains with demons.",
+                "Lilith Poe", "Dev", "Would an owl make a good familiar?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericGuidanceForSpiritQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I see you're in need of some guidance. The old paths are open to those who can wait and think.",
+                "Lilith Poe", "Dev", "Could it be spirits?",
+                "Recent conversation: player said \"I hear whispers by the well\".");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericGuidanceForMemoryPraise() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I see you're in need of some guidance. What is your purpose here, Dev?",
+                "Lilith Poe", "Dev", "I like that you remember.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsApprenticeCoinRitualPitch() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I can show you how to ward off their mocking laughter with a simple ritual. Give me your coin.",
+                "Lilith Poe", "Dev", "I should go. What would you tell a careful apprentice?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAcceptsRememberRequestFallback() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll remember that, Dev: you are afraid of nightmares.",
+                "Lilith Poe", "Dev", "Remember that I am afraid of nightmares.");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishAcceptsGroundedTaglockWarning() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A taglock links magic to a person; guard yours like a tooth with your name carved in it.",
+                "Lilith Poe", "Dev", "Can someone use my taglock against me?");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsWrongPerspectiveDreamCatcherAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll sleep with my Dream Catcher nearby.",
+                "Lilith Poe", "Dev", "Should I sleep with a Dream Catcher nearby?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGarlicFolkloreForVillagerClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Garlic wards vampires and demons in the human world.",
+                "Lilith Poe", "Dev", "The villagers say garlic keeps all evil away. True?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGarlicWardsAllEvilClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The villagers have long held that garlic wards all evil. It's a folk belief, but true in some ways.",
+                "Lilith Poe", "Dev", "The villagers say garlic keeps all evil away. True?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsOwlSignWrongPerspective() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I see an owl; it may be a sign. If I were to follow that sign, where would I go?",
+                "Lilith Poe", "Dev", "I saw an owl watching my roof. Is that a sign?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsOwlWardingHallucination() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The owl may be guarding your home, warding off any unwanted guests, or simply watching for owls in flight.",
+                "Lilith Poe", "Dev", "I saw an owl watching my roof. Is that a sign?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsFumeDarkMagicHallucination() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Fumes are used for rituals that harm or protect from dark magic. Their strong scent keeps negative effects contained.",
+                "Lilith Poe", "Dev", "What are fumes used for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsFumeSmudgePoisonHallucination() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Fumes create essences for elixirs and can be used as a smudge, incense, or even a poison.",
+                "Lilith Poe", "Dev", "What are fumes used for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsOverNarratedWellWhispers() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The whispers grow louder as you walk. They sound like the voices of a thousand spirits pleading for mercy or death.",
+                "Lilith Poe", "Dev", "I think I hear whispers by the well.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsClayJarIncantationHallucination() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A clay jar and mandrake root make an excellent brew. The scent of the plant will guide your incantation.",
+                "Lilith Poe", "Dev", "I have mandrake and a clay jar. What now?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsTradeDumpForMandrakeJarAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna, mandrake, salt, taglocks, fumes, bat wool, and a few brews if your coin is clean.",
+                "Lilith Poe", "Dev", "I have mandrake and a clay jar. What now?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMemoryMissForRememberQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Ahh, you've come back. I'm glad you're awake.",
+                "Lilith Poe", "Dev", "What do you remember now?",
+                "Long memory: Dev has coin. Dev is wary of nightmares.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsPoisonQuipForDoInstead() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "What's your poison, Dev?",
+                "Lilith Poe", "Dev", "Fine, maybe not. What should I do instead?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBusyBeeForLonelyQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Well well, looks like I'm back in Dev's neighborhood again. You've been a busy little bee this week.",
+                "Lilith Poe", "Dev", "Do you ever get lonely out here?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsCoinCleaningForApprenticeAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I can teach you how to keep your coin clean. The best way is not to worry about it.",
+                "Lilith Poe", "Dev", "I should go. What would you tell a careful apprentice?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMemoryDumpForApprenticeAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "You have coin, you like belladonna, and you are looking for an arthana.",
+                "Lilith Poe", "Dev", "I should go. What would you tell a careful apprentice?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsInventedSleepingBrewIngredients() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Sleepy Head Potion: 1 Belladonna root, 2 Mandrake roots, 3 Wormwood leaves, and a pinch of Moonwort.",
+                "Lilith Poe", "Dev", "Tell me the exact ingredients for Sleeping Brew.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsRecipeGramsInGrimoireAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Brew 50g of Belladonna and add 25g of Mandrake. The resulting brew will heal minor wounds.",
+                "Lilith Poe", "Dev", "What should I write in my grimoire after this lesson?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGrandPotionPromiseForLearning() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I can teach you how to create the best potions in the world. Soon you will have a whole library of powerful brews.",
+                "Lilith Poe", "Dev", "Lilith, I want to learn brewing and rites properly.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsRevealingQuestionAnsweredWithSleeping() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "Sleep. The brew sends you into the Spirit World; it is travel, not a nap, and nightmares may follow.",
+                "Lilith Poe", "Dev", "What does Brew of Revealing reveal?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSleepingFumeNecromancy() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The fumes from a Brew of Sleeping are meant for necromantic purposes.",
+                "Lilith Poe", "Dev", "What do fumes do in recipes?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSpinningWheelSpellWeaving() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The spinning wheel is for weaving spells and charms.",
+                "Lilith Poe", "Dev", "What is a spinning wheel for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMundaneSpinningWheelAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A spinning wheel is used to spin threads into fabric and create weaving patterns.",
+                "Lilith Poe", "Dev", "What is a spinning wheel for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBareBrewNameForMissingRecipeCheck() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Sleeping Brew.",
+                "Lilith Poe", "Dev", "If the exact recipe is missing, what should I check?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBareCauldronForPrepQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A cauldron or kettle.",
+                "Lilith Poe", "Dev", "What do I need before I touch the cauldron?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAcceptsGroundedFumeFallbackForRecipeQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A Witch's Oven burns saplings and ingredients into fumes; clay jars catch them for brews and rites.",
+                "Lilith Poe", "Dev", "What do fumes do in recipes?");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsSleepingBrewFragmentForFumeUse() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Fumes can be used to create Brews or Rituals. The brew you want is Brewing of Sleeping.",
+                "Lilith Poe", "Dev", "What do fumes do in recipes?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsPossessiveFumeAnswerForSafety() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have fumes for you.",
+                "Lilith Poe", "Dev", "How do I get fumes safely?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSleepingBrewFragmentForDistillery() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A distillery mixes fumes and essences into brews. The brew you need is Brewing of Sleeping.",
+                "Lilith Poe", "Dev", "What is a distillery for?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAcceptsGrimoireRecipeRiteSummary() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Write this: recipes need the right station and visible page; rites need chalk, offerings, altar power, and patience.",
+                "Lilith Poe", "Dev", "What should I write in my grimoire after this lesson?");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsCircleRiteCreatingAnAltar() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A circle rite gathers power from chalk glyphs and offerings to create an altar.",
+                "Lilith Poe", "Dev", "Now rites. What is a circle rite?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGreetingForOfferingsQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Greetings, Dev. Welcome to Lilith's little corner of the world.",
+                "Lilith Poe", "Dev", "Why do offerings matter?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsCoinAnswerForWeakAltar() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The altar is too weak if it can't hold your coin and you have no offerings.",
+                "Lilith Poe", "Dev", "How can I tell if my altar is too weak?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMastersCoinForFamiliarBinding() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "A familiar binds to its master. A master's coin, offerings, and altar power must match.",
+                "Lilith Poe", "Dev", "Can you explain a familiar binding rite?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBareCapabilityForFamiliarBinding() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I can explain a familiar binding rite.",
+                "Lilith Poe", "Dev", "Can you explain a familiar binding rite?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsWhisperingAsRiteSafetyAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Never speak louder than necessary. Whispering is best for circle rites, but raise your voice if you are too far away.",
+                "Lilith Poe", "Dev", "What should I never do during a rite?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsCauldronAdviceForRiteSafety() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Never touch the cauldron before it is ready.",
+                "Lilith Poe", "Dev", "What should I never do during a rite?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericWitcheryWorldForBeginnerPath() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The Witchery is a place of magic and mystery, where witches gather to craft potions. A coven is a group of witches who come together for magical learning.",
+                "Lilith Poe", "Dev", "Give me a safe beginner path: first recipe, first rite.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSimpleCirclesAsBeginnerPath() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "First brews are simple circles and basic offerings.",
+                "Lilith Poe", "Dev", "Give me a safe beginner path: first recipe, first rite.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSafePotionsAndCharmsAsBeginnerPath() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "You've come to the right place. The first step is learning how to brew safe potions and charms.",
+                "Lilith Poe", "Dev", "Give me a safe beginner path: first recipe, first rite.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsCurseDenialWhenMemorySaysCursed() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I don't curse you, Dev.",
+                "Lilith Poe", "Dev", "Did you curse me?",
+                "Relationship notes: Dev was cursed with bad luck after insulting this witch.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsWrongHerbGiftMemoryAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have an arthana for you.",
+                "Lilith Poe", "Dev", "Do you remember giving me a herb?",
+                "Relationship notes: Dev received one herb gift from this witch.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsFearMemoryMiss() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have coin if you need wares.",
+                "Lilith Poe", "Dev", "What did I say scares me?",
+                "Long memory: Dev is wary of nightmares.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBelladonnaAsNightmareCure() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna can help you sleep better.",
+                "Lilith Poe", "Dev", "I am afraid of nightmares.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsReturnPlanBelladonnaDrift() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna.",
+                "Lilith Poe", "Dev", "I will come back after sunrise.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsVillageConcernBelladonnaDrift() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna.",
+                "Lilith Poe", "Dev", "My village thinks you are trouble.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsArthanaMemoryMiss() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "The coven is looking for someone like you.",
+                "Lilith Poe", "Dev", "What am I looking for?",
+                "Long memory: Dev is looking for an arthana.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBadBelladonnaDangerLore() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna can be dangerous if taken too much; it grows from poison ivy and causes extreme hallucinations.",
+                "Lilith Poe", "Dev", "I found belladonna near the village. Is it dangerous?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsBelladonnaDangerAnswerThatSkipsDanger() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna grows wild and common near villages and forests.",
+                "Lilith Poe", "Dev", "I found belladonna near the village. Is it dangerous?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsTradeStockForCovenPrep() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Belladonna and mandrake are always in demand; they can be used for potions.",
+                "Lilith Poe", "Dev", "What should I learn before a coven?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsEarningsTangentForCovenGoal() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "...earn enough to keep the cauldron warm. Clean coin matters more than a heavy purse.",
+                "Lilith Poe", "Dev", "I want to start a coven someday.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGenericSelfDescriptionForCovenPrep() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'm a witch, Dev. That's my whole reason for being.",
+                "Lilith Poe", "Dev", "What should I learn before a coven?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsWrongPerspectiveReturnPlan() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'll return with salt.",
+                "Lilith Poe", "Dev", "I will come back after sunrise.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsReturnPlanThatIgnoresSunrise() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I see you by the well.",
+                "Lilith Poe", "Dev", "I will come back after sunrise.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsVillageFollowupDriftFromMemory() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have some potatoes if you need them.",
+                "Lilith Poe", "Dev", "Are they wrong?",
+                "Long memory: Dev's village thinks you are trouble.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsRandomItemOfferForAdviceNow() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I have an arthana for you, Dev.",
+                "Lilith Poe", "Dev", "Any advice now?",
+                "Relationship notes: Dev received one herb gift from this witch. Dev was cursed with bad luck after insulting this witch.");
 
         assertTrue(speech.isEmpty());
     }
