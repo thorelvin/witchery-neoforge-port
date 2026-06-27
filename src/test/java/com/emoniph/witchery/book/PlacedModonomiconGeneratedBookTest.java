@@ -266,6 +266,23 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     @Test
+    void generatedDistilleryEntryMatchesLiveMachineRequirements() throws IOException {
+        String distillery = Files.readString(primerRoot()
+                .resolve("entries")
+                .resolve("distilling")
+                .resolve("distillery.json"));
+
+        assertTrue(distillery.contains("valid nearby altar"),
+                "Distillery guide should mention the live altar requirement");
+        assertTrue(distillery.contains("Clay jars, iron, gold, and an attuned stone"),
+                "Distillery guide caption should match the live crafting recipe");
+        assertFalse(distillery.contains("needs no altar"),
+                "Distillery guide should not contradict live altar-powered behavior");
+        assertFalse(distillery.contains("brewing stand"),
+                "Distillery guide should not name ingredients from an old recipe");
+    }
+
+    @Test
     void generatedChalkEntryShowsAllChalkCraftingRecipes() throws IOException {
         String chalk = Files.readString(primerRoot()
                 .resolve("entries")

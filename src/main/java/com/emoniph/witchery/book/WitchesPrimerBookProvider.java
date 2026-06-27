@@ -944,10 +944,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         List<BookPageModel<?>> distillery = new ArrayList<>(WitcheryBooks.prose("The Distillery",
                 "Some essences cannot be coaxed directly from raw materials. They must be drawn out through "
                         + "heat and pressure — concentrated and refined until only the potent core remains."
-                        + "\n\nThe Distillery takes two inputs and fuel, and needs no altar."));
+                        + "\n\nThe Distillery takes two inputs and clay jars, then draws steady power "
+                        + "from a valid nearby altar."));
         distillery.add(recipe("distillery", "Distillery",
-                "Iron, glass, and a brewing stand. The distillery is not complicated; what you put inside it "
-                        + "often is."));
+                "Clay jars, iron, gold, and an attuned stone. The distillery is not complicated; what you put "
+                        + "inside it often is."));
         distillery.add(stationRecipeCard("distillery_oil_of_vitriol", "Oil of Vitriol",
                 "**Foul Fume** + **Quicklime**, with one clay jar, yields Gypsum, Oil of Vitriol, and a Slimeball."));
         distillery.add(stationRecipeCard("distillery_diamond_vapour", "Diamond Vapour",
