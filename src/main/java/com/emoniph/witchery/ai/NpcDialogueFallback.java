@@ -25,8 +25,24 @@ final class NpcDialogueFallback {
         }
 
         String name = safeName(playerName);
+        String witch = safeDisplayName(witchName, "Witch");
         if (asksPlayerName(normalized)) {
             return Optional.of("Your name is " + name + "; I heard it before the kettle did.");
+        }
+        if (asksNpcName(normalized)) {
+            return Optional.of("I am " + witch + ".");
+        }
+        if (addressesWitchByName(normalized, witchName)) {
+            return Optional.of("I'm listening, " + name + "; ask plain.");
+        }
+        if (asksHerbGift(normalized)) {
+            return Optional.of("Ask with an empty hand and honest need; herbs remember greedy fingers.");
+        }
+        if (isInsult(normalized)) {
+            return Optional.of("Mind your tongue, " + name + "; old women know where curses sleep.");
+        }
+        if (isPraise(normalized)) {
+            return Optional.of("Careful, " + name + "; compliments have roots.");
         }
         if (containsAny(normalized, "parrot", "parroting", "repeat", "repeating", "same thing")) {
             return Optional.of("No. The last answer was poor craft; ask again, " + name + ".");
@@ -49,6 +65,9 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "cat", "cats")) {
             return Optional.of("Cats stare at what owes them, " + name + ". Best not owe a cat.");
+        }
+        if (containsAny(normalized, "egg", "eggs")) {
+            return Optional.of("Eggs are honest little moons; crack one and it tells you what it was hiding.");
         }
         if (containsAny(normalized, "pocket", "pockets", "inventory")) {
             return Optional.of("In these pockets? String, dust, and enough trouble to leave uncounted.");
@@ -83,6 +102,12 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "rumor", "rumour", "gossip")) {
             return Optional.of("Village rumor? The well hears more than the mayor; listen near doors after rain.");
+        }
+        if (asksTeachMe(normalized)) {
+            return Optional.of(teachingAnswer(normalized, name));
+        }
+        if (asksCovenRecruiting(normalized)) {
+            return Optional.of("Find a wandering coven witch, bring a bound familiar, and be ready for her trial. A coven is earned, not collected.");
         }
         if (containsAny(normalized, "what are you doing", "what you doing", "today plan", "todays plan", "today's plan")) {
             return Optional.of("Keeping stock, reading the weather, and watching who comes too close.");
@@ -161,9 +186,21 @@ final class NpcDialogueFallback {
     }
 
     static String lastResortAside(String playerMessage, String playerName) {
+        return lastResortAside(playerMessage, playerName, "");
+    }
+
+    static String lastResortAside(String playerMessage, String playerName, String avoidSpeech) {
         String normalized = normalize(playerMessage);
         String name = safeName(playerName);
-        return oldWitchAside(normalized.isBlank() ? "mumble" : normalized, name);
+        return oldWitchAside(normalized.isBlank() ? "mumble" : normalized, name, avoidSpeech);
+    }
+
+    static Optional<String> alternateForRepeatedFallback(String playerMessage, String playerName, String avoidSpeech) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank() || isSpecificAnswerPrompt(normalized)) {
+            return Optional.empty();
+        }
+        return Optional.of(oldWitchAside(normalized, safeName(playerName), avoidSpeech));
     }
 
     private static Optional<String> brewAnswer(String normalized) {
@@ -216,6 +253,25 @@ final class NpcDialogueFallback {
                 || normalized.contains("do you know how to trade")
                 || normalized.contains("how to trade")
                 || normalized.contains("how do i trade");
+    }
+
+    static boolean isInsult(String normalized) {
+        return containsAny(normalized,
+                "stupid", "idiot", "fool", "useless", "shut up", "old hag", "hag",
+                "ugly", "dumb", "trash", "garbage", "fuck you", "screw you", "no shit");
+    }
+
+    static boolean isPraise(String normalized) {
+        return containsAny(normalized,
+                "thank you", "thanks", "good witch", "kind witch", "nice witch", "wise witch",
+                "you are kind", "youre kind", "you are wise", "youre wise", "you are helpful",
+                "youre helpful", "i like you", "you helped me", "well done", "good answer");
+    }
+
+    static boolean asksHerbGift(String normalized) {
+        return containsAny(normalized, "give me herb", "give me a herb", "spare herb", "spare a herb",
+                "can i have herb", "can i have a herb", "may i have herb", "may i have a herb",
+                "gift me herb", "gift me a herb", "give me belladonna", "give me mandrake");
     }
 
     private static boolean mentionsCoinOnly(String normalized) {
@@ -272,6 +328,33 @@ final class NpcDialogueFallback {
                 || normalized.contains("who am i");
     }
 
+    private static boolean asksNpcName(String normalized) {
+        return normalized.contains("your name")
+                || normalized.contains("who are you")
+                || normalized.contains("what are you called")
+                || normalized.contains("what should i call you");
+    }
+
+    private static boolean addressesWitchByName(String normalized, String witchName) {
+        String witch = normalize(witchName);
+        if (witch.isBlank()) {
+            return false;
+        }
+        String firstName = witch.contains(" ") ? witch.substring(0, witch.indexOf(' ')) : witch;
+        return normalized.equals(witch) || normalized.equals(firstName)
+                || normalized.equals(witch + "?") || normalized.equals(firstName + "?");
+    }
+
+    private static boolean asksTeachMe(String normalized) {
+        return containsAny(normalized, "teach me", "show me", "teach something", "teach me something",
+                "lesson", "learn witchcraft", "start learning");
+    }
+
+    private static boolean asksCovenRecruiting(String normalized) {
+        return containsAny(normalized, "start a coven", "make a coven", "recruit coven", "recruit a coven",
+                "recruit witches", "recruit witch", "where can i recruit", "find coven");
+    }
+
     private static boolean asksFollowRequest(String normalized) {
         return containsAny(normalized, "follow me", "come with me", "come home", "follow home");
     }
@@ -299,14 +382,64 @@ final class NpcDialogueFallback {
     }
 
     private static String oldWitchAside(String normalized, String playerName) {
+        return oldWitchAside(normalized, playerName, "");
+    }
+
+    private static String oldWitchAside(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
                 "Speak louder, " + playerName + "; these old ears hear spirits better than mumbling.",
                 "May your boots miss graves and your pockets find honest coin.",
                 "The kettle says three bubbles and a cracked moon; make of that what you can.",
                 "A crow once told me the same thing, or maybe it was a turnip.",
-                "Mind your shadow after midnight; it learns bad habits."
+                "Mind your shadow after midnight; it learns bad habits.",
+                "If the moon answers first, pretend you did not hear it.",
+                "Never trust a quiet jar; silence ferments.",
+                "Salt at the door, ash at the hearth, and questions where I can see them.",
+                "A good omen arrives late and complains about the road.",
+                "If you mean trouble, stand downwind so I can smell it coming.",
+                "Some questions need rainwater. Some need teeth.",
+                "Keep one pocket for coin and one for consequences.",
+                "The old paths open for patience, not stomping.",
+                "I have seen braver faces on boiled cabbage, but yours may yet improve.",
+                "Ask again with fewer elbows in the sentence."
         };
-        return lines[Math.floorMod(normalized.hashCode(), lines.length)];
+        int start = Math.floorMod(normalized.hashCode(), lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[(start + i) % lines.length];
+            if (avoidSpeech == null || avoidSpeech.isBlank()
+                    || !NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+                return line;
+            }
+        }
+        return lines[start];
+    }
+
+    private static String teachingAnswer(String normalized, String playerName) {
+        if (containsAny(normalized, "learn witchcraft", "start learning")) {
+            return "Open your Witches' Primer, " + playerName + "; its first lesson is ash, herbs, circles, and patience.";
+        }
+        if (containsAny(normalized, "rite", "ritual", "circle")) {
+            return "First rite lesson, " + playerName + ": draw the right chalk, feed the altar, place only named offerings, then stand back.";
+        }
+        if (containsAny(normalized, "brew", "potion", "cauldron", "kettle")) {
+            return "First brew lesson: know the effect you want before the kettle knows your name.";
+        }
+        if (containsAny(normalized, "coven")) {
+            return "First coven lesson: a familiar opens doors, but a witch's trial decides if you may enter.";
+        }
+        return "First lesson: salt wards, taglocks bind, and every rite asks payment before it asks permission.";
+    }
+
+    private static boolean isSpecificAnswerPrompt(String normalized) {
+        return asksPlayerName(normalized)
+                || asksNpcName(normalized)
+                || asksTradeDetails(normalized)
+                || asksMemory(normalized)
+                || asksCovenRecruiting(normalized)
+                || asksTeachMe(normalized)
+                || containsAny(normalized, "time", "where are we", "where am i", "witches salt",
+                "taglock", "poppet", "belladonna", "mandrake", "arthana", "altar", "rite", "ritual",
+                "brew", "potion", "spirit world");
     }
 
     private static boolean asksMemory(String normalized) {
@@ -358,6 +491,14 @@ final class NpcDialogueFallback {
     private static String safeName(String playerName) {
         String cleaned = NpcBrainResponse.sanitize(playerName, 24).replaceAll("[^A-Za-z0-9_]", "");
         return cleaned.isBlank() ? "traveler" : cleaned;
+    }
+
+    private static String safeDisplayName(String value, String fallback) {
+        String cleaned = NpcBrainResponse.sanitize(value, 40)
+                .replaceAll("[^A-Za-z0-9_ .'-]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+        return cleaned.isBlank() ? fallback : cleaned;
     }
 
     private static Optional<String> sceneTime(String timeOfDay, String clock, long day) {

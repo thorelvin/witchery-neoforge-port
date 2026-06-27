@@ -44,7 +44,7 @@ Set `allowLanEndpoint = true` only when the model is running on a trusted LAN si
 
 ## Current Scope
 
-Coven Witch trade greetings and nearby player chat replies are wired. Prompt context includes the witch name, player name, current biome, time of day, day count, weather, nearby threat, relationship state, and compact memory. Existing trading, recruitment, quests, dismissal, and combat remain authoritative. The model may produce flavor text and a validated intent, but it cannot grant items, change trades, bypass quest gates, run commands, or control combat logic.
+Coven Witch trade greetings and nearby player chat replies are wired. Prompt context includes the witch name, player name, current biome, time of day, day count, weather, nearby threat, relationship state, and compact memory. Existing trading, recruitment, quests, dismissal, and combat remain authoritative. The model may produce flavor text and a validated intent, but it cannot grant items, change trades, bypass quest gates, run commands, or control combat logic. Small social reactions are deterministic: praise can earn a short blessing, insults can earn a short curse, and an explicit herb request can receive one free herb per witch/player memory.
 
 Nearby chat replies trigger when the player is close to a Coven Witch and addresses her by name/`witch`, asks a question, says a greeting, or looks at her while sending a short conversational message.
 

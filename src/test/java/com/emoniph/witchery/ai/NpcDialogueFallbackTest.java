@@ -293,7 +293,17 @@ class NpcDialogueFallbackTest {
                 || speech.get().contains("boots")
                 || speech.get().contains("kettle")
                 || speech.get().contains("crow")
-                || speech.get().contains("shadow"));
+                || speech.get().contains("shadow")
+                || speech.get().contains("moon")
+                || speech.get().contains("jar")
+                || speech.get().contains("Salt")
+                || speech.get().contains("omen")
+                || speech.get().contains("downwind")
+                || speech.get().contains("rainwater")
+                || speech.get().contains("pocket")
+                || speech.get().contains("paths")
+                || speech.get().contains("cabbage")
+                || speech.get().contains("elbows"));
     }
 
     @Test
@@ -322,6 +332,55 @@ class NpcDialogueFallbackTest {
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("Dev"));
         assertTrue(!speech.get().contains("Lilith Poe"));
+    }
+
+    @Test
+    void answersNpcNameQuestionWithWitchName() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "what's your name?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertEquals("I am Lilith Poe.", speech.get());
+    }
+
+    @Test
+    void answersAddressedWitchNameAsListening() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Lilith?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("I'm listening"));
+        assertTrue(!speech.get().contains("I'm Dev"));
+    }
+
+    @Test
+    void answersTeachMeWithGeneralLesson() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "teach me something", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("First lesson"));
+        assertTrue(speech.get().contains("salt"));
+    }
+
+    @Test
+    void answersCovenRecruitingWithFamiliarAndTrial() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "where can I recruit coven", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("familiar"));
+        assertTrue(speech.get().contains("trial"));
+    }
+
+    @Test
+    void answersEggSmallTalkWithoutHerbLore() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Do you like eggs?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Eggs"));
+        assertTrue(!speech.get().contains("Belladonna"));
     }
 
     @Test
@@ -379,5 +438,15 @@ class NpcDialogueFallbackTest {
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("cursed place"));
         assertTrue(speech.get().contains("patterns"));
+    }
+
+    @Test
+    void alternateFallbackAvoidsRecentAside() {
+        String last = NpcDialogueFallback.lastResortAside("blargle snorp?", "Dev");
+        Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(
+                "blargle snorp?", "Dev", last);
+
+        assertTrue(alternate.isPresent());
+        assertTrue(!NpcBrainResponse.sameMeaningForRepetition(last, alternate.get()));
     }
 }

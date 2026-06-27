@@ -2,11 +2,18 @@ package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -23,6 +30,9 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class NpcBrainService {
     public static final NpcBrainService INSTANCE = new NpcBrainService();
     private static final long CHAT_COOLDOWN_TICKS = 20L;
+    private static final long SOCIAL_EFFECT_TICKS = 20L * 60L * 5L;
+    private static final long SOCIAL_COOLDOWN_TICKS = 20L * 60L * 5L;
+    private static final String FLAG_HERB_GIFT = "coven_witch_herb_gift";
 
     private final Object executorLock = new Object();
     private final AtomicInteger inFlight = new AtomicInteger();
@@ -30,6 +40,7 @@ public final class NpcBrainService {
     private final AtomicLong failures = new AtomicLong();
     private final AtomicLong rejected = new AtomicLong();
     private final ConcurrentHashMap<String, Long> cooldownUntil = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long> socialCooldownUntil = new ConcurrentHashMap<>();
     private volatile ExecutorService executor;
     private volatile String lastError = "";
 
@@ -48,6 +59,9 @@ public final class NpcBrainService {
     public boolean requestCovenChat(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
+        }
+        if (tryHandleCovenSocialInteraction(witch, player, playerMessage)) {
+            return true;
         }
         return requestCovenResponse(witch, player,
                 NpcPromptBuilder.covenWitchChat(witch, player, contextFor(witch, player), playerMessage),
@@ -149,6 +163,7 @@ public final class NpcBrainService {
 
     public void reload() {
         cooldownUntil.clear();
+        socialCooldownUntil.clear();
         lastError = "";
     }
 
@@ -272,7 +287,11 @@ public final class NpcBrainService {
         String lastNpcSpeech = memoryData.getLastNpcSpeech(witchId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(fallbackSpeech, lastNpcSpeech)
                 || memoryData.repeatsRecentPlayerSpeech(witchId, player.getUUID(), fallbackSpeech)) {
-            return false;
+            Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(
+                    playerMessage, playerName, lastNpcSpeech);
+            if (alternate.isPresent()) {
+                fallbackSpeech = alternate.get();
+            }
         }
         successes.incrementAndGet();
         player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + fallbackSpeech), false);
@@ -335,6 +354,110 @@ public final class NpcBrainService {
                 player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + followup), false));
         String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
         rememberCovenExchange(witch, player, playerMessage, rememberedSpeech);
+    }
+
+    private boolean tryHandleCovenSocialInteraction(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
+        String normalized = normalizeSocial(playerMessage);
+        if (normalized.isBlank()) {
+            return false;
+        }
+        if (NpcDialogueFallback.asksHerbGift(normalized)) {
+            handleHerbGift(witch, player, playerMessage);
+            return true;
+        }
+        if (NpcDialogueFallback.isInsult(normalized)) {
+            handleInsult(witch, player, playerMessage);
+            return true;
+        }
+        if (NpcDialogueFallback.isPraise(normalized)) {
+            handlePraise(witch, player, playerMessage);
+            return true;
+        }
+        return false;
+    }
+
+    private void handlePraise(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
+        ServerLevel level = (ServerLevel) player.level();
+        if (markSocialCooldown(level, witch, player, "bless", SOCIAL_COOLDOWN_TICKS)) {
+            player.addEffect(new MobEffectInstance(MobEffects.LUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            socialFx(level, player, true);
+            displayCovenSpeech(level, witch, player, playerMessage,
+                    "Kind words have roots, " + player.getName().getString() + ". Take a little luck before it spoils.",
+                    Optional.empty());
+            return;
+        }
+        displayCovenSpeech(level, witch, player, playerMessage,
+                "Flattery twice in one sitting curdles. Keep the luck you have.",
+                Optional.empty());
+    }
+
+    private void handleInsult(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
+        ServerLevel level = (ServerLevel) player.level();
+        if (markSocialCooldown(level, witch, player, "curse", SOCIAL_COOLDOWN_TICKS)) {
+            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, (int) SOCIAL_EFFECT_TICKS, 0));
+            socialFx(level, player, false);
+            displayCovenSpeech(level, witch, player, playerMessage,
+                    "Tongues have shadows. Wear yours for five minutes, " + player.getName().getString() + ".",
+                    Optional.empty());
+            return;
+        }
+        displayCovenSpeech(level, witch, player, playerMessage,
+                "Again? Hush now, before I find a fresher curse.",
+                Optional.empty());
+    }
+
+    private void handleHerbGift(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
+        ServerLevel level = (ServerLevel) player.level();
+        NpcMemoryData memoryData = NpcMemoryData.get(level);
+        if (memoryData.hasFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT)) {
+            displayCovenSpeech(level, witch, player, playerMessage,
+                    "Once, " + player.getName().getString() + ". A gift plucked twice becomes a debt.",
+                    Optional.empty());
+            return;
+        }
+        ItemStack gift = level.random.nextBoolean()
+                ? new ItemStack(WitcheryItems.BELLADONNA.get())
+                : new ItemStack(WitcheryItems.MANDRAKE_ROOT.get());
+        String giftName = gift.getHoverName().getString();
+        if (!player.addItem(gift.copy())) {
+            player.drop(gift.copy(), false);
+        }
+        memoryData.setFlag(witch.getUUID(), player.getUUID(), FLAG_HERB_GIFT, level.getGameTime());
+        socialFx(level, player, true);
+        displayCovenSpeech(level, witch, player, playerMessage,
+                "One herb, freely given: " + giftName + ". Spend kindness better than coin.",
+                Optional.empty());
+    }
+
+    private boolean markSocialCooldown(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
+                                       String action, long ticks) {
+        String key = witch.getUUID() + ":" + player.getUUID() + ":" + action;
+        long now = level.getGameTime();
+        Long blockedUntil = socialCooldownUntil.get(key);
+        if (blockedUntil != null && blockedUntil > now) {
+            return false;
+        }
+        socialCooldownUntil.put(key, now + ticks);
+        return true;
+    }
+
+    private static void socialFx(ServerLevel level, ServerPlayer player, boolean pleasant) {
+        level.playSound(null, player.blockPosition(),
+                pleasant ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.WITCH_CELEBRATE,
+                SoundSource.NEUTRAL, 0.7F, pleasant ? 1.35F : 0.75F);
+        level.sendParticles(pleasant ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.WITCH,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                12, 0.45D, 0.45D, 0.45D, 0.02D);
+    }
+
+    private static String normalizeSocial(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9' ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private LlmProvider providerFromConfig() {

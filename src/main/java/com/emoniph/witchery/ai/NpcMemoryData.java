@@ -19,6 +19,7 @@ public final class NpcMemoryData extends SavedData {
     private static final int MAX_EXCHANGES = 8;
     private static final int MAX_EXCHANGE_TEXT = 160;
     private static final int MAX_CONTEXT_LENGTH = 700;
+    private static final int MAX_FLAGS = 16;
 
     private final Map<Key, Memory> memories = new HashMap<>();
 
@@ -39,17 +40,18 @@ public final class NpcMemoryData extends SavedData {
     }
 
     public record Memory(String text, long updatedGameTime, String npcName, String playerName,
-                         List<Exchange> exchanges) {
+                         List<Exchange> exchanges, List<String> flags) {
         public Memory {
             text = NpcBrainResponse.sanitize(text, NpcBrainResponse.MAX_MEMORY_LENGTH);
             npcName = NpcBrainResponse.sanitize(npcName, 80);
             playerName = NpcBrainResponse.sanitize(playerName, 80);
             exchanges = clampExchanges(exchanges);
+            flags = clampFlags(flags);
         }
     }
 
     private record Entry(UUID npc, UUID player, String memory, long updatedGameTime, String npcName,
-                         String playerName, List<Exchange> exchanges) {
+                         String playerName, List<Exchange> exchanges, List<String> flags) {
         static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 UUIDUtil.CODEC.fieldOf("npc").forGetter(Entry::npc),
                 UUIDUtil.CODEC.fieldOf("player").forGetter(Entry::player),
@@ -57,7 +59,8 @@ public final class NpcMemoryData extends SavedData {
                 Codec.LONG.fieldOf("updated_game_time").forGetter(Entry::updatedGameTime),
                 Codec.STRING.optionalFieldOf("npc_name", "").forGetter(Entry::npcName),
                 Codec.STRING.optionalFieldOf("player_name", "").forGetter(Entry::playerName),
-                Exchange.CODEC.listOf().optionalFieldOf("exchanges", List.of()).forGetter(Entry::exchanges)
+                Exchange.CODEC.listOf().optionalFieldOf("exchanges", List.of()).forGetter(Entry::exchanges),
+                Codec.STRING.listOf().optionalFieldOf("flags", List.of()).forGetter(Entry::flags)
         ).apply(i, Entry::new));
     }
 
@@ -67,7 +70,7 @@ public final class NpcMemoryData extends SavedData {
                             .map(e -> new Entry(e.getKey().npc(), e.getKey().player(),
                                     e.getValue().text(), e.getValue().updatedGameTime(),
                                     e.getValue().npcName(), e.getValue().playerName(),
-                                    e.getValue().exchanges()))
+                                    e.getValue().exchanges(), e.getValue().flags()))
                             .toList())
     ).apply(i, NpcMemoryData::fromCodec));
 
@@ -81,8 +84,8 @@ public final class NpcMemoryData extends SavedData {
         NpcMemoryData data = new NpcMemoryData();
         for (Entry entry : entries) {
             Memory memory = new Memory(entry.memory(), entry.updatedGameTime(), entry.npcName(),
-                    entry.playerName(), entry.exchanges());
-            if (!memory.text().isBlank() || !memory.exchanges().isEmpty()) {
+                    entry.playerName(), entry.exchanges(), entry.flags());
+            if (!memory.text().isBlank() || !memory.exchanges().isEmpty() || !memory.flags().isEmpty()) {
                 data.memories.put(new Key(entry.npc(), entry.player()), memory);
             }
         }
@@ -96,6 +99,33 @@ public final class NpcMemoryData extends SavedData {
     public String getMemory(UUID npc, UUID player) {
         Memory memory = memories.get(new Key(npc, player));
         return memory == null ? "" : memory.text();
+    }
+
+    public boolean hasFlag(UUID npc, UUID player, String flag) {
+        Memory memory = memories.get(new Key(npc, player));
+        return memory != null && memory.flags().contains(normalizeFlag(flag));
+    }
+
+    public void setFlag(UUID npc, UUID player, String flag, long gameTime) {
+        String normalized = normalizeFlag(flag);
+        if (normalized.isBlank()) {
+            return;
+        }
+        Key key = new Key(npc, player);
+        Memory previous = memories.get(key);
+        List<String> flags = new ArrayList<>(previous == null ? List.of() : previous.flags());
+        if (flags.contains(normalized)) {
+            return;
+        }
+        flags.add(normalized);
+        memories.put(key, new Memory(
+                previous == null ? "" : previous.text(),
+                gameTime,
+                previous == null ? "" : previous.npcName(),
+                previous == null ? "" : previous.playerName(),
+                previous == null ? List.of() : previous.exchanges(),
+                flags));
+        setDirty();
     }
 
     public String getContext(UUID npc, UUID player) {
@@ -189,7 +219,8 @@ public final class NpcMemoryData extends SavedData {
         memories.put(key, new Memory(merged, gameTime,
                 previous == null ? "" : previous.npcName(),
                 previous == null ? "" : previous.playerName(),
-                previous == null ? List.of() : previous.exchanges()));
+                previous == null ? List.of() : previous.exchanges(),
+                previous == null ? List.of() : previous.flags()));
         setDirty();
     }
 
@@ -209,7 +240,8 @@ public final class NpcMemoryData extends SavedData {
                 gameTime,
                 npcName,
                 playerName,
-                exchanges));
+                exchanges,
+                previous == null ? List.of() : previous.flags()));
         setDirty();
     }
 
@@ -317,5 +349,28 @@ public final class NpcMemoryData extends SavedData {
         }
         int start = Math.max(0, exchanges.size() - MAX_EXCHANGES);
         return List.copyOf(exchanges.subList(start, exchanges.size()));
+    }
+
+    private static List<String> clampFlags(List<String> flags) {
+        if (flags == null || flags.isEmpty()) {
+            return List.of();
+        }
+        List<String> cleaned = new ArrayList<>();
+        for (String flag : flags) {
+            String normalized = normalizeFlag(flag);
+            if (!normalized.isBlank() && !cleaned.contains(normalized)) {
+                cleaned.add(normalized);
+            }
+        }
+        int start = Math.max(0, cleaned.size() - MAX_FLAGS);
+        return List.copyOf(cleaned.subList(start, cleaned.size()));
+    }
+
+    private static String normalizeFlag(String flag) {
+        return NpcBrainResponse.sanitize(flag, 48)
+                .toLowerCase()
+                .replaceAll("[^a-z0-9_.:-]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
     }
 }
