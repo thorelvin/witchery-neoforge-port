@@ -52,14 +52,14 @@ public interface NpcPersona<E extends LivingEntity> {
 
     default Optional<String> polishRaw(String rawSpeech, E entity, ServerPlayer player, String playerMessage,
                                        String memoryContext, String expectedClock) {
-        return NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),
-                player.getName().getString(), playerMessage, memoryContext, expectedClock);
+        String speech = NpcBrainResponse.sanitize(rawSpeech, NpcBrainResponse.MAX_SPEECH_LENGTH);
+        return speech.isBlank() ? Optional.empty() : Optional.of(speech);
     }
 
     default Optional<String> polishFallback(String speech, E entity, ServerPlayer player, String playerMessage,
                                             String memoryContext, String expectedClock) {
-        return NpcBrainResponse.polishSpeechAfterFallback(speech, displayName(entity),
-                player.getName().getString(), playerMessage, memoryContext, expectedClock);
+        String cleaned = NpcBrainResponse.sanitize(speech, NpcBrainResponse.MAX_SPEECH_LENGTH);
+        return cleaned.isBlank() ? Optional.empty() : Optional.of(cleaned);
     }
 
     default Optional<String> supportFollowup(String playerMessage, String speech) {

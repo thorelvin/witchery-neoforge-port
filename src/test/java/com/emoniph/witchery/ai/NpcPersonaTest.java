@@ -7,13 +7,32 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NpcPersonaTest {
     @Test
     void socialActionsAreOptInForPersonas() {
-        NpcPersona<LivingEntity> persona = new NpcPersona<>() {
+        NpcPersona<LivingEntity> persona = testPersona();
+
+        assertTrue(persona.socialAction("thank you").isEmpty());
+        assertFalse(persona.handleSocialAction(null, null, "thank you", NpcSocialAction.PRAISE, null));
+    }
+
+    @Test
+    void defaultPolishIsNeutralAndNotCovenSpecific() {
+        NpcPersona<LivingEntity> persona = testPersona();
+
+        assertEquals(Optional.of("I am not a coven witch."),
+                persona.polishRaw("I am not a coven witch.", null, null, "", "", ""));
+        assertEquals(Optional.of("The village likes bread."),
+                persona.polishFallback("The village likes bread.", null, null, "", "", ""));
+        assertTrue(persona.polishRaw("   ", null, null, "", "", "").isEmpty());
+    }
+
+    private static NpcPersona<LivingEntity> testPersona() {
+        return new NpcPersona<>() {
             @Override
             public String id() {
                 return "test";
@@ -56,8 +75,5 @@ class NpcPersonaTest {
                 return Optional.empty();
             }
         };
-
-        assertTrue(persona.socialAction("thank you").isEmpty());
-        assertFalse(persona.handleSocialAction(null, null, "thank you", NpcSocialAction.PRAISE, null));
     }
 }

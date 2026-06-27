@@ -121,6 +121,20 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public Optional<String> polishRaw(String rawSpeech, CovenWitchEntity entity, ServerPlayer player,
+                                      String playerMessage, String memoryContext, String expectedClock) {
+        return NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),
+                player.getName().getString(), playerMessage, memoryContext, expectedClock);
+    }
+
+    @Override
+    public Optional<String> polishFallback(String speech, CovenWitchEntity entity, ServerPlayer player,
+                                           String playerMessage, String memoryContext, String expectedClock) {
+        return NpcBrainResponse.polishSpeechAfterFallback(speech, displayName(entity),
+                player.getName().getString(), playerMessage, memoryContext, expectedClock);
+    }
+
+    @Override
     public String relationshipNotes(String playerName, List<String> flags) {
         if (flags == null || flags.isEmpty()) {
             return "";
