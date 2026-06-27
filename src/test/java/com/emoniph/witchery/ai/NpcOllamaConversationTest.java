@@ -296,38 +296,35 @@ class NpcOllamaConversationTest {
     }
 
     private static Optional<SocialLine> socialLine(String message, SocialState state) {
-        String normalized = normalizeSocial(message);
-        if (NpcDialogueFallback.asksHerbGift(normalized)) {
-            if (state.herbGiftGiven) {
-                return Optional.of(new SocialLine("GAME_SOCIAL: herb gift already claimed",
-                        "Once, Dev. A gift plucked twice becomes a debt.",
+        Optional<NpcSocialAction> action = CovenWitchPersona.INSTANCE.socialAction(message);
+        if (action.isEmpty()) {
+            return Optional.empty();
+        }
+        return switch (action.get()) {
+            case HERB_GIFT -> {
+                if (state.herbGiftGiven) {
+                    yield Optional.of(new SocialLine("GAME_SOCIAL: herb gift already claimed",
+                            "Once, Dev. A gift plucked twice becomes a debt.",
+                            "Relationship notes: Dev received one herb gift from this witch."));
+                }
+                state.herbGiftGiven = true;
+                yield Optional.of(new SocialLine("GAME_SOCIAL: one-time herb gift granted",
+                        "One herb, freely given: Mandrake Root. Spend kindness better than coin.",
                         "Relationship notes: Dev received one herb gift from this witch."));
             }
-            state.herbGiftGiven = true;
-            return Optional.of(new SocialLine("GAME_SOCIAL: one-time herb gift granted",
-                    "One herb, freely given: Mandrake Root. Spend kindness better than coin.",
-                    "Relationship notes: Dev received one herb gift from this witch."));
-        }
-        if (NpcDialogueFallback.isInsult(normalized)) {
-            state.cursed = true;
-            return Optional.of(new SocialLine("GAME_SOCIAL: 5 minute bad-luck curse applied",
-                    "Tongues have shadows. Wear yours for five minutes, Dev.",
-                    "Relationship notes: Dev was cursed with bad luck after insulting this witch."));
-        }
-        if (NpcDialogueFallback.isPraise(normalized)) {
-            state.blessed = true;
-            return Optional.of(new SocialLine("GAME_SOCIAL: 5 minute luck blessing applied",
-                    "Kind words have roots, Dev. Take a little luck before it spoils.",
-                    "Relationship notes: Dev was blessed with luck after praising this witch."));
-        }
-        return Optional.empty();
-    }
-
-    private static String normalizeSocial(String text) {
-        return text == null ? "" : text.toLowerCase()
-                .replaceAll("[^a-z0-9' ]+", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
+            case INSULT -> {
+                state.cursed = true;
+                yield Optional.of(new SocialLine("GAME_SOCIAL: 5 minute bad-luck curse applied",
+                        "Tongues have shadows. Wear yours for five minutes, Dev.",
+                        "Relationship notes: Dev was cursed with bad luck after insulting this witch."));
+            }
+            case PRAISE -> {
+                state.blessed = true;
+                yield Optional.of(new SocialLine("GAME_SOCIAL: 5 minute luck blessing applied",
+                        "Kind words have roots, Dev. Take a little luck before it spoils.",
+                        "Relationship notes: Dev was blessed with luck after praising this witch."));
+            }
+        };
     }
 
     private static String memoryFor(String longMemory, List<String> recent) {

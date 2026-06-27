@@ -78,6 +78,24 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public Optional<NpcSocialAction> socialAction(String playerMessage) {
+        String normalized = normalizeSocial(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+        if (NpcDialogueFallback.asksHerbGift(normalized)) {
+            return Optional.of(NpcSocialAction.HERB_GIFT);
+        }
+        if (NpcDialogueFallback.isInsult(normalized)) {
+            return Optional.of(NpcSocialAction.INSULT);
+        }
+        if (NpcDialogueFallback.isPraise(normalized)) {
+            return Optional.of(NpcSocialAction.PRAISE);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<String> supportFollowup(String playerMessage, String speech) {
         return NpcBrainResponse.supportFollowup(playerMessage, speech);
     }
@@ -123,5 +141,15 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                 .replaceAll("[^a-z0-9_.:-]+", "_")
                 .replaceAll("_+", "_")
                 .replaceAll("^_|_$", "");
+    }
+
+    private static String normalizeSocial(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9' ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }

@@ -41,6 +41,10 @@ public interface NpcPersona<E extends LivingEntity> {
     Optional<String> fallback(ServerLevel level, E entity, ServerPlayer player, String playerMessage,
                               String memoryContext);
 
+    default Optional<NpcSocialAction> socialAction(String playerMessage) {
+        return Optional.empty();
+    }
+
     default Optional<String> polishRaw(String rawSpeech, E entity, ServerPlayer player, String playerMessage,
                                        String memoryContext, String expectedClock) {
         return NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),

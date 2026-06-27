@@ -105,10 +105,10 @@ public final class NpcBrainService {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
-        if (tryHandleCovenSocialInteraction(witch, player, playerMessage)) {
+        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
+        if (tryHandleSocialInteraction(persona, witch, player, playerMessage)) {
             return true;
         }
-        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
         return requestPersonaResponse(persona, witch, player,
                 persona.chatPrompt(witch, player, contextFor(persona, witch, player), playerMessage),
                 "chat", playerMessage, null, false);
@@ -459,24 +459,21 @@ public final class NpcBrainService {
         rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
     }
 
-    private boolean tryHandleCovenSocialInteraction(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
-        String normalized = normalizeSocial(playerMessage);
-        if (normalized.isBlank()) {
+    private <E extends LivingEntity> boolean tryHandleSocialInteraction(NpcPersona<E> persona, E entity,
+                                                                        ServerPlayer player, String playerMessage) {
+        Optional<NpcSocialAction> action = persona.socialAction(playerMessage);
+        if (action.isEmpty()) {
             return false;
         }
-        if (NpcDialogueFallback.asksHerbGift(normalized)) {
-            handleHerbGift(witch, player, playerMessage);
-            return true;
+        if (!(entity instanceof CovenWitchEntity witch)) {
+            return false;
         }
-        if (NpcDialogueFallback.isInsult(normalized)) {
-            handleInsult(witch, player, playerMessage);
-            return true;
+        switch (action.get()) {
+            case HERB_GIFT -> handleHerbGift(witch, player, playerMessage);
+            case INSULT -> handleInsult(witch, player, playerMessage);
+            case PRAISE -> handlePraise(witch, player, playerMessage);
         }
-        if (NpcDialogueFallback.isPraise(normalized)) {
-            handlePraise(witch, player, playerMessage);
-            return true;
-        }
-        return false;
+        return true;
     }
 
     private void handlePraise(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
@@ -553,16 +550,6 @@ public final class NpcBrainService {
         level.sendParticles(pleasant ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.WITCH,
                 player.getX(), player.getY() + 1.0D, player.getZ(),
                 12, 0.45D, 0.45D, 0.45D, 0.02D);
-    }
-
-    private static String normalizeSocial(String text) {
-        if (text == null) {
-            return "";
-        }
-        return text.toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9' ]+", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
     }
 
     private LlmProvider providerFromConfig() {
