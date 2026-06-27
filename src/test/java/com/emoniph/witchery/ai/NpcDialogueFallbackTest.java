@@ -751,8 +751,8 @@ class NpcDialogueFallbackTest {
                 "teach me something", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("First lesson"));
-        assertTrue(speech.get().contains("salt"));
+        assertTrue(speech.get().contains("one useful next step"));
+        assertTrue(speech.get().contains("station") || speech.get().contains("reagent") || speech.get().contains("page"));
     }
 
     @Test

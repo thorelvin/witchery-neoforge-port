@@ -401,6 +401,69 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void primerPathAnswersBeginnerProgressionQuestions() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("what should I build first?", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("oven"), answer.get());
+        assertTrue(lower.contains("wood ash") || lower.contains("fumes"), answer.get());
+        assertTrue(lower.contains("mutandis"), answer.get());
+    }
+
+    @Test
+    void primerPathGivesOneTeachingStepForVagueLessons() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer("teach me something", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(lower.contains("one useful next step"), answer.get());
+        assertTrue(lower.contains("station") || lower.contains("reagent") || lower.contains("page"), answer.get());
+    }
+
+    @Test
+    void circleMagicBookCardMatchesRecipeJson() throws Exception {
+        assertCardMatchesRecipe("how do I start circle magic?", "/data/witchery/recipe/book_circle_magic.json");
+    }
+
+    @Test
+    void taglockKitCardMatchesRecipeJson() throws Exception {
+        assertCardMatchesRecipe("how do I make a taglock kit?", "/data/witchery/recipe/taglock_kit.json");
+    }
+
+    @Test
+    void retrievesMachineUseCards() {
+        Optional<String> kettle = NpcKnowledgeBase.compactAnswer("how do I use the kettle?", "Plains", "day");
+
+        assertTrue(kettle.isPresent());
+        String kettleLower = kettle.get().toLowerCase(Locale.ROOT);
+        assertTrue(kettleLower.contains("water"), kettle.get());
+        assertTrue(kettleLower.contains("heat"), kettle.get());
+        assertTrue(kettleLower.contains("altar"), kettle.get());
+
+        Optional<String> distillery = NpcKnowledgeBase.compactAnswer("how do I use the distillery?", "Plains", "day");
+
+        assertTrue(distillery.isPresent());
+        String distilleryLower = distillery.get().toLowerCase(Locale.ROOT);
+        assertTrue(distilleryLower.contains("clay jar"), distillery.get());
+        assertTrue(distilleryLower.contains("altar"), distillery.get());
+        assertTrue(distilleryLower.contains("power"), distillery.get());
+
+        Optional<String> spinning = NpcKnowledgeBase.compactAnswer("how do I use the spinning wheel?", "Plains", "day");
+
+        assertTrue(spinning.isPresent());
+        String spinningLower = spinning.get().toLowerCase(Locale.ROOT);
+        assertTrue(spinningLower.contains("fibre") || spinningLower.contains("fiber"), spinning.get());
+        assertTrue(spinningLower.contains("altar"), spinning.get());
+        assertTrue(spinningLower.contains("power"), spinning.get());
+    }
+
+    @Test
+    void brazierCardMatchesRecipeJson() throws Exception {
+        assertCardMatchesRecipe("how do I make a brazier?", "/data/witchery/recipe/brazier.json");
+    }
+
+    @Test
     void compactAnswerSkipsSmallTalk() {
         Optional<String> answer = NpcKnowledgeBase.compactAnswer("hi", "Plains", "day");
 

@@ -229,7 +229,9 @@ public final class NpcKnowledgeBase {
                 "well", "whisper", "whispers", "whiff", "whif", "whiff of magic", "whif of magic",
                 "mutandis", "mutandis extremis", "attuned stone", "exhale", "exhale of the horned one",
                 "breath of the goddess", "hint of rebirth", "reek of misfortune", "odour of purity",
-                "odor of purity", "odour", "odor", "reek", "foul fume", "witches salt recipe", "witch salt recipe");
+                "odor of purity", "odour", "odor", "reek", "foul fume", "witches salt recipe", "witch salt recipe",
+                "teach me", "lesson", "next step", "what next", "what now", "build first",
+                "where do i start", "start witchery", "start witchcraft");
     }
 
     private static boolean isFavoriteHerbQuestion(String normalized) {

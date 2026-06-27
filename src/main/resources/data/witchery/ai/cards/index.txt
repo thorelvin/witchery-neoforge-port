@@ -5,3 +5,4 @@ starter_reagents.md
 brews.md
 machines.md
 rites.md
+primer_path.md
