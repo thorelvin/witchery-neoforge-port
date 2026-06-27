@@ -121,6 +121,9 @@ public final class NpcBrainService {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
+        if (!entity.isAlive() || entity.level() != player.level()) {
+            return false;
+        }
         ServerLevel level = (ServerLevel) player.level();
         long now = level.getGameTime();
         String cooldownKey = entity.getUUID() + ":" + player.getUUID() + ":" + trigger;
@@ -295,9 +298,10 @@ public final class NpcBrainService {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
-        if (entity.isAlive() && entity.level() == level) {
-            persona.completeConversation(entity, player);
+        if (!entity.isAlive() || entity.level() != level) {
+            return;
         }
+        persona.completeConversation(entity, player);
         if (error != null || response == null) {
             failure(error);
             if (showFallback && fallback != null) {
