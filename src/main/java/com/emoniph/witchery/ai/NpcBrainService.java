@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Locale;
@@ -94,8 +95,9 @@ public final class NpcBrainService {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
-        return requestCovenResponse(witch, player,
-                NpcPromptBuilder.covenWitchGreeting(witch, player, contextFor(witch, player)),
+        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
+        return requestPersonaResponse(persona, witch, player,
+                persona.greetingPrompt(witch, player, contextFor(persona, witch, player)),
                 "greet", "", fallback, true);
     }
 
@@ -106,19 +108,22 @@ public final class NpcBrainService {
         if (tryHandleCovenSocialInteraction(witch, player, playerMessage)) {
             return true;
         }
-        return requestCovenResponse(witch, player,
-                NpcPromptBuilder.covenWitchChat(witch, player, contextFor(witch, player), playerMessage),
+        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
+        return requestPersonaResponse(persona, witch, player,
+                persona.chatPrompt(witch, player, contextFor(persona, witch, player), playerMessage),
                 "chat", playerMessage, null, false);
     }
 
-    private boolean requestCovenResponse(CovenWitchEntity witch, ServerPlayer player, NpcBrainPrompt prompt,
-                                         String trigger, String playerMessage, Component fallback, boolean showFallback) {
+    private <E extends LivingEntity> boolean requestPersonaResponse(NpcPersona<E> persona, E entity,
+                                                                    ServerPlayer player, NpcBrainPrompt prompt,
+                                                                    String trigger, String playerMessage,
+                                                                    Component fallback, boolean showFallback) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
         ServerLevel level = (ServerLevel) player.level();
         long now = level.getGameTime();
-        String cooldownKey = witch.getUUID() + ":" + player.getUUID() + ":" + trigger;
+        String cooldownKey = entity.getUUID() + ":" + player.getUUID() + ":" + trigger;
         Long blockedUntil = cooldownUntil.get(cooldownKey);
         if (blockedUntil != null && blockedUntil > now) {
             return false;
@@ -140,13 +145,13 @@ public final class NpcBrainService {
             return false;
         }
 
-        witch.beginPlayerConversation(player);
+        persona.beginConversation(entity, player);
         provider.generate(prompt)
                 .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
                     inFlight.decrementAndGet();
                     MinecraftServer server = level.getServer();
-                    server.execute(() -> handleCovenResponse(level, witch.getUUID(), player, witch,
+                    server.execute(() -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
                             playerMessage, fallback, showFallback, response, error));
                 });
         return true;
@@ -259,18 +264,23 @@ public final class NpcBrainService {
     }
 
     public void rememberCovenExchange(CovenWitchEntity witch, ServerPlayer player, String playerSpeech, String npcSpeech) {
-        if (witch == null || player == null || player.level() != witch.level()) {
+        rememberExchange(NpcPersonas.COVEN_WITCH, witch, player, playerSpeech, npcSpeech);
+    }
+
+    public <E extends LivingEntity> void rememberExchange(NpcPersona<E> persona, E entity, ServerPlayer player,
+                                                          String playerSpeech, String npcSpeech) {
+        if (persona == null || entity == null || player == null || player.level() != entity.level()) {
             return;
         }
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
-        NpcMemoryData.get((ServerLevel) player.level()).rememberExchange(witch.getUUID(), player.getUUID(),
-                witchName, player.getName().getString(), playerSpeech, npcSpeech,
+        NpcMemoryData.get((ServerLevel) player.level()).rememberExchange(entity.getUUID(), player.getUUID(),
+                persona.displayName(entity), player.getName().getString(), playerSpeech, npcSpeech,
                 ((ServerLevel) player.level()).getGameTime());
     }
 
-    private String contextFor(CovenWitchEntity witch, ServerPlayer player) {
+    private <E extends LivingEntity> String contextFor(NpcPersona<E> persona, E entity, ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
-        return NpcMemoryData.get(level).getContext(witch.getUUID(), player.getUUID());
+        return NpcMemoryData.get(level).getContext(entity.getUUID(), player.getUUID(), persona.roleName(),
+                persona.displayName(entity), player.getName().getString());
     }
 
     private static long cooldownTicks(String trigger) {
@@ -278,46 +288,46 @@ public final class NpcBrainService {
         return "chat".equals(trigger) ? Math.min(configured, CHAT_COOLDOWN_TICKS) : configured;
     }
 
-    private void handleCovenResponse(ServerLevel level, UUID witchId, ServerPlayer player, CovenWitchEntity witch,
-                                     String playerMessage, Component fallback, boolean showFallback,
-                                     NpcBrainResponse response, Throwable error) {
+    private <E extends LivingEntity> void handlePersonaResponse(ServerLevel level, NpcPersona<E> persona, UUID entityId,
+                                                                ServerPlayer player, E entity, String playerMessage,
+                                                                Component fallback, boolean showFallback,
+                                                                NpcBrainResponse response, Throwable error) {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
-        if (witch.isAlive() && witch.level() == level) {
-            witch.completePlayerConversation(player);
+        if (entity.isAlive() && entity.level() == level) {
+            persona.completeConversation(entity, player);
         }
         if (error != null || response == null) {
             failure(error);
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayCovenFallback(level, witchId, player, witch, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
             }
             return;
         }
-        if (!response.intent().allowedForCovenWitch(witch.isRecruitedBy(player))) {
+        if (!persona.allowsIntent(response.intent(), entity, player)) {
             rejected.incrementAndGet();
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayCovenFallback(level, witchId, player, witch, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
             }
             return;
         }
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
-        String playerName = player.getName().getString();
         NpcMemoryData memoryData = NpcMemoryData.get(level);
-        String memoryContext = memoryData.getContext(witchId, player.getUUID());
-        var polishedSpeech = NpcBrainResponse.polishSpeechOrGroundedFollowup(response.speech(), witchName, playerName,
-                playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime()));
+        String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
+                persona.displayName(entity), player.getName().getString());
+        var polishedSpeech = persona.polishRaw(response.speech(), entity, player, playerMessage, memoryContext,
+                NpcPromptBuilder.clockTime(level.getDayTime()));
         if (polishedSpeech.isEmpty()) {
-            Optional<String> relaxedSpeech = rawAfterRepeatedFallback(level, witchId, player, witch,
-                    playerMessage, response.speech(), witchName, playerName, memoryContext);
+            Optional<String> relaxedSpeech = rawAfterRepeatedFallback(level, persona, entityId, player, entity,
+                    playerMessage, response.speech(), memoryContext);
             if (relaxedSpeech.isPresent()) {
-                displayCovenSpeech(level, witch, player, playerMessage, relaxedSpeech.get());
+                displayPersonaSpeech(level, persona, entity, player, playerMessage, relaxedSpeech.get());
                 if (!response.memory().isBlank()) {
-                    NpcMemoryData.get(level).remember(witchId, player.getUUID(), response.memory(), level.getGameTime());
+                    NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
                 }
                 return;
             }
@@ -325,49 +335,45 @@ public final class NpcBrainService {
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayCovenFallback(level, witchId, player, witch, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
             }
             return;
         }
-        String lastNpcSpeech = memoryData.getLastNpcSpeech(witchId, player.getUUID());
+        String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
-                || memoryData.repeatsRecentPlayerSpeech(witchId, player.getUUID(), polishedSpeech.get())) {
+                || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
             rejected.incrementAndGet();
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayCovenFallback(level, witchId, player, witch, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
             }
             return;
         }
-        Optional<String> supportFollowup = NpcBrainResponse.supportFollowup(playerMessage, polishedSpeech.get());
-        displayCovenSpeech(level, witch, player, playerMessage, polishedSpeech.get(), supportFollowup);
+        Optional<String> supportFollowup = persona.supportFollowup(playerMessage, polishedSpeech.get());
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, polishedSpeech.get(), supportFollowup);
         if (!response.memory().isBlank()) {
-            NpcMemoryData.get(level).remember(witchId, player.getUUID(), response.memory(), level.getGameTime());
+            NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
         }
     }
 
-    private boolean tryDisplayCovenFallback(ServerLevel level, UUID witchId, ServerPlayer player,
-                                            CovenWitchEntity witch, String playerMessage) {
+    private <E extends LivingEntity> boolean tryDisplayPersonaFallback(ServerLevel level, NpcPersona<E> persona,
+                                                                       UUID entityId, ServerPlayer player, E entity,
+                                                                       String playerMessage) {
         if (playerMessage == null || playerMessage.isBlank()) {
             return false;
         }
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
-        String playerName = player.getName().getString();
         NpcMemoryData memoryData = NpcMemoryData.get(level);
-        String memoryContext = memoryData.getContext(witchId, player.getUUID());
-        var fallback = NpcDialogueFallback.covenChat(playerMessage, witchName, playerName,
-                        NpcPromptBuilder.biomeName(level, witch.blockPosition()),
-                        NpcPromptBuilder.timeName(level.getDayTime()),
-                        NpcPromptBuilder.clockTime(level.getDayTime()),
-                        level.getDayTime() / 24000L,
-                        memoryContext)
-                .flatMap(speech -> NpcBrainResponse.polishSpeechAfterFallback(speech, witchName, playerName,
-                        playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime())));
+        String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
+                persona.displayName(entity), player.getName().getString());
+        var fallback = persona.fallback(level, entity, player, playerMessage, memoryContext)
+                .flatMap(speech -> persona.polishFallback(speech, entity, player, playerMessage, memoryContext,
+                        NpcPromptBuilder.clockTime(level.getDayTime())));
+        String playerName = player.getName().getString();
         String fallbackSpeech = fallback.orElseGet(() -> NpcDialogueFallback.lastResortAside(playerMessage, playerName));
-        String lastNpcSpeech = memoryData.getLastNpcSpeech(witchId, player.getUUID());
+        String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(fallbackSpeech, lastNpcSpeech)
-                || memoryData.repeatsRecentPlayerSpeech(witchId, player.getUUID(), fallbackSpeech)) {
+                || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), fallbackSpeech)) {
             Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(
                     playerMessage, playerName, lastNpcSpeech);
             if (alternate.isPresent()) {
@@ -375,66 +381,79 @@ public final class NpcBrainService {
             }
         }
         successes.incrementAndGet();
-        player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + fallbackSpeech), false);
-        rememberCovenExchange(witch, player, playerMessage, fallbackSpeech);
+        player.displayClientMessage(Component.literal("\u00a79<" + persona.displayName(entity) + "> \u00a7r" + fallbackSpeech), false);
+        rememberExchange(persona, entity, player, playerMessage, fallbackSpeech);
         return true;
     }
 
-    private Optional<String> rawAfterRepeatedFallback(ServerLevel level, UUID witchId, ServerPlayer player,
-                                                      CovenWitchEntity witch, String playerMessage,
-                                                      String rawSpeech, String witchName, String playerName,
-                                                      String memoryContext) {
+    private <E extends LivingEntity> Optional<String> rawAfterRepeatedFallback(ServerLevel level,
+                                                                               NpcPersona<E> persona, UUID entityId,
+                                                                               ServerPlayer player, E entity,
+                                                                               String playerMessage,
+                                                                               String rawSpeech,
+                                                                               String memoryContext) {
         if (playerMessage == null || playerMessage.isBlank()) {
             return Optional.empty();
         }
-        Optional<String> fallback = covenFallback(level, witch, playerMessage, witchName, playerName, memoryContext);
+        Optional<String> fallback = personaFallback(level, persona, entity, player, playerMessage, memoryContext);
         if (fallback.isEmpty()) {
             return Optional.empty();
         }
         NpcMemoryData memoryData = NpcMemoryData.get(level);
-        if (!memoryData.hasRecentNpcAnswerForPlayerSpeech(witchId, player.getUUID(), playerMessage, fallback.get())) {
+        if (!memoryData.hasRecentNpcAnswerForPlayerSpeech(entityId, player.getUUID(), playerMessage, fallback.get())) {
             return Optional.empty();
         }
-        Optional<String> relaxed = NpcBrainResponse.polishSpeechAfterFallback(rawSpeech, witchName, playerName,
-                playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime()));
+        Optional<String> relaxed = persona.polishFallback(rawSpeech, entity, player, playerMessage, memoryContext,
+                NpcPromptBuilder.clockTime(level.getDayTime()));
         if (relaxed.isEmpty()) {
             return Optional.empty();
         }
-        String lastNpcSpeech = memoryData.getLastNpcSpeech(witchId, player.getUUID());
+        String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(relaxed.get(), lastNpcSpeech)
-                || memoryData.repeatsRecentPlayerSpeech(witchId, player.getUUID(), relaxed.get())) {
+                || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), relaxed.get())) {
             return Optional.empty();
         }
         return relaxed;
     }
 
-    private Optional<String> covenFallback(ServerLevel level, CovenWitchEntity witch, String playerMessage,
-                                           String witchName, String playerName, String memoryContext) {
-        return NpcDialogueFallback.covenChat(playerMessage, witchName, playerName,
-                        NpcPromptBuilder.biomeName(level, witch.blockPosition()),
-                        NpcPromptBuilder.timeName(level.getDayTime()),
-                        NpcPromptBuilder.clockTime(level.getDayTime()),
-                        level.getDayTime() / 24000L,
-                        memoryContext)
-                .flatMap(speech -> NpcBrainResponse.polishSpeechAfterFallback(speech, witchName, playerName,
-                        playerMessage, memoryContext, NpcPromptBuilder.clockTime(level.getDayTime())));
+    private <E extends LivingEntity> Optional<String> personaFallback(ServerLevel level, NpcPersona<E> persona,
+                                                                      E entity, ServerPlayer player,
+                                                                      String playerMessage, String memoryContext) {
+        if (player == null) {
+            return Optional.empty();
+        }
+        return persona.fallback(level, entity, player, playerMessage, memoryContext)
+                .flatMap(speech -> persona.polishFallback(speech, entity, player, playerMessage, memoryContext,
+                        NpcPromptBuilder.clockTime(level.getDayTime())));
     }
 
     private void displayCovenSpeech(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
                                     String playerMessage, String speech) {
-        displayCovenSpeech(level, witch, player, playerMessage, speech,
-                NpcBrainResponse.supportFollowup(playerMessage, speech));
+        displayPersonaSpeech(level, NpcPersonas.COVEN_WITCH, witch, player, playerMessage, speech);
     }
 
     private void displayCovenSpeech(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
                                     String playerMessage, String speech, Optional<String> supportFollowup) {
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
+        displayPersonaSpeech(level, NpcPersonas.COVEN_WITCH, witch, player, playerMessage, speech, supportFollowup);
+    }
+
+    private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
+                                                               ServerPlayer player, String playerMessage,
+                                                               String speech) {
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, speech,
+                persona.supportFollowup(playerMessage, speech));
+    }
+
+    private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
+                                                               ServerPlayer player, String playerMessage,
+                                                               String speech, Optional<String> supportFollowup) {
+        String npcName = persona.displayName(entity);
         successes.incrementAndGet();
-        player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + speech), false);
+        player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + speech), false);
         supportFollowup.ifPresent(followup ->
-                player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + followup), false));
+                player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + followup), false));
         String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
-        rememberCovenExchange(witch, player, playerMessage, rememberedSpeech);
+        rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
     }
 
     private boolean tryHandleCovenSocialInteraction(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {

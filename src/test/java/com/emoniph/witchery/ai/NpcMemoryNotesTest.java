@@ -33,11 +33,27 @@ class NpcMemoryNotesTest {
     }
 
     @Test
+    void inventoryFactDropsFollowingQuestion() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I have a little coin. What is useful for a beginner?");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev has a little coin.", note.get());
+    }
+
+    @Test
     void extractsLearningGoal() {
         Optional<String> note = NpcMemoryNotes.extract("Dev", "I want to learn brewing and rites properly");
 
         assertTrue(note.isPresent());
         assertEquals("Dev wants to learn brewing and rites properly.", note.get());
+    }
+
+    @Test
+    void learningGoalFlipsFirstPersonReflexive() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I want to learn witchcraft without getting myself killed");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev wants to learn witchcraft without getting themselves killed.", note.get());
     }
 
     @Test

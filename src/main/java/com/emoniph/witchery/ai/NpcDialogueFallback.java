@@ -86,7 +86,7 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "potato", "potatoes")
                 && containsAny(normalized, "do you", "you like", "too", "favorite", "favourite")) {
-            return Optional.of("Potatoes? Sensible roots. Less dramatic than mandrake, and better in stew.");
+            return Optional.of("Potatoes? Sensible roots. Better in stew than in omens.");
         }
         if (containsAny(normalized, "pocket", "pockets", "inventory")) {
             return Optional.of("In these pockets? String, dust, and enough trouble to leave uncounted.");
@@ -114,7 +114,7 @@ final class NpcDialogueFallback {
             return Optional.of("Keep that taste, " + name + "; small comforts outlast grand omens.");
         }
         if (asksFavoriteHerb(normalized)) {
-            return Optional.of("Belladonna, when it behaves; mandrake, when it keeps quiet.");
+            return Optional.of("Mandrake, when it keeps quiet; snowbell, when the cold bites.");
         }
         if (asksNpcEarnings(normalized)) {
             return Optional.of("I earn enough to keep the cauldron warm; clean coin matters more than a heavy purse.");
@@ -156,14 +156,17 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "what are you doing", "what you doing", "today plan", "todays plan", "today's plan")) {
             return Optional.of("Keeping stock, reading the weather, and watching who comes too close.");
         }
+        if (asksFirstGathering(normalized)) {
+            return Optional.of("Start with salt, clay jars, ash, and the herb your page names; guessing feeds bad brews.");
+        }
         if (asksTradeDetails(normalized)) {
-            return Optional.of(tradeStockAnswer());
+            return Optional.of(tradeStockAnswer(normalized));
         }
         if (mentionsCoinOnly(normalized)) {
             return Optional.of("Spend it wisely; my wares answer need, not noise.");
         }
         if (containsAny(normalized, "coin", "coins", "emerald", "emeralds", "trade", "wares", "buy", "sell")) {
-            return Optional.of(tradeStockAnswer());
+            return Optional.of(tradeStockAnswer(normalized));
         }
         recipeOrRite = recipeOrRiteAnswer(normalized, name);
         if (recipeOrRite.isPresent()) {
@@ -199,6 +202,10 @@ final class NpcDialogueFallback {
             }
             return Optional.of("A cursed place shows patterns: sick luck, sour animals, and shadows that seem too interested.");
         }
+        if (containsAny(normalized, "belladonna")
+                && containsAny(normalized, "danger", "dangerous", "safe", "eat", "edible", "food")) {
+            return Optional.of("Belladonna is useful but dangerous, not food; handle it as an ingredient and keep it from idle mouths.");
+        }
         Optional<String> knowledge = NpcKnowledgeBase.compactAnswer(playerMessage, biome, timeOfDay);
         if (knowledge.isPresent()) {
             return Optional.of(knowledge.get());
@@ -225,13 +232,16 @@ final class NpcDialogueFallback {
             return Optional.of("Mandrake is a witch herb and common coven trade good; grow it, trade for it, or search old gardens.");
         }
         if (containsAny(normalized, "belladonna")) {
+            if (containsAny(normalized, "danger", "dangerous", "safe", "eat", "edible", "food")) {
+                return Optional.of("Belladonna is useful but dangerous, not food; handle it as an ingredient and keep it from idle mouths.");
+            }
             return Optional.of("Belladonna is a witch herb and common coven trade good; grow it, trade for it, or ask a coven witch.");
         }
         if (containsAny(normalized, "herb", "herbs", "plant", "plants", "snowbell", "wolfsbane", "garlic")) {
             if (containsAny(normalized, "garlic")) {
                 return Optional.of("Garlic is a witch herb, not a wall against every evil. Salt your threshold too.");
             }
-            return Optional.of("Plant belladonna and mandrake first; trade for stranger herbs until your garden earns its keep.");
+            return Optional.of("Ask after the herb your work needs; grow the common ones and trade for stranger roots.");
         }
         if (containsAny(normalized, "baba yaga", "yaga")) {
             return Optional.of("Baba Yaga is no market witch; bring protection, manners, and a quick exit.");
@@ -303,6 +313,10 @@ final class NpcDialogueFallback {
             line = "Never start a rite with broken chalk, missing offerings, weak power, or a page you cannot read.";
         } else if (containsAny(normalized, "dream catcher", "dreamcatcher", "nightmare", "nightmares")) {
             line = "Keep the Dream Catcher near your bed, " + playerName + "; strange sleep leaves muddy footprints.";
+        } else if (containsAny(normalized, "potato", "potatoes")) {
+            line = "A potato keeps its secrets underground; respectable vegetable, that.";
+        } else if (asksDemonTrust(normalized) || containsAny(normalized, "demon", "demons", "devil", "imp")) {
+            line = "If a demon sounds reasonable, " + playerName + ", count your wards and step back twice.";
         } else if (containsAny(normalized, "familiar", "familiars", "owl", "cat", "toad")) {
             line = "A familiar is met with patience and respect; if it watches you first, mind your manners.";
         } else if (containsAny(normalized, "taglock", "tag lock", "poppet", "poppets")) {
@@ -526,6 +540,12 @@ final class NpcDialogueFallback {
                 "lesson", "learn witchcraft", "start learning");
     }
 
+    private static boolean asksFirstGathering(String normalized) {
+        return containsAny(normalized, "what should i gather first", "what do i gather first",
+                "what should i gather", "what do i gather", "gather first", "gather before dark",
+                "gather for a brew", "gather for brewing");
+    }
+
     private static boolean asksCovenRecruiting(String normalized) {
         return containsAny(normalized, "start a coven", "make a coven", "recruit coven", "recruit a coven",
                 "recruit witches", "recruit witch", "where can i recruit", "find coven", "before a coven",
@@ -538,8 +558,10 @@ final class NpcDialogueFallback {
     }
 
     private static boolean asksHutOrDoorSafety(String normalized) {
-        return containsAny(normalized, "safe little hut", "safe hut", "build a safe", "near the village",
-                "by the door", "by my door", "near the door", "at the door", "threshold");
+        return containsAny(normalized, "safe little hut", "safe hut", "build a safe",
+                "by the door", "by my door", "near the door", "at the door", "threshold")
+                || (normalized.contains("near the village")
+                    && containsAny(normalized, "hut", "house", "home", "build", "door", "threshold"));
     }
 
     private static boolean asksRoadAdvice(String normalized) {
@@ -736,8 +758,25 @@ final class NpcDialogueFallback {
         return text.trim();
     }
 
-    private static String tradeStockAnswer() {
-        return "I trade belladonna, mandrake, witches' salt, taglock kits, fumes, bat wool, and Revealing or Sleeping brews; right-click if you mean business.";
+    private static String tradeStockAnswer(String normalized) {
+        String[] stock = {
+                "witches' salt",
+                "taglock kits",
+                "fumes",
+                "bat wool",
+                "Revealing or Sleeping brews",
+                "belladonna",
+                "mandrake"
+        };
+        int start = Math.floorMod(normalized == null ? 0 : normalized.hashCode(), stock.length);
+        StringBuilder answer = new StringBuilder("I trade ");
+        for (int i = 0; i < stock.length; i++) {
+            if (i > 0) {
+                answer.append(i == stock.length - 1 ? ", and " : ", ");
+            }
+            answer.append(stock[(start + i) % stock.length]);
+        }
+        return answer.append("; right-click if you mean business.").toString();
     }
 
     private static String oldWitchAside(String normalized, String playerName) {
@@ -827,6 +866,7 @@ final class NpcDialogueFallback {
         if (!relationship.isBlank()) {
             source = (source.isBlank() ? "" : source + " ") + relationship;
         }
+        String rememberedPlayerName = playerNameFromMemory(cleaned);
         source = source
                 .replaceAll("(?i)Entity memory:[^.]*\\.\\s*", "")
                 .replaceAll("(?i)Recent conversation:", "")
@@ -834,13 +874,9 @@ final class NpcDialogueFallback {
                 .replaceAll("(?i)Long memory:", "")
                 .replaceAll("player said \"[^\"]+\";\\s*", "")
                 .replaceAll("witch answered \"[^\"]+\"\\.?", "")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+received\\s+one\\s+herb\\s+gift\\s+from\\s+this\\s+witch\\b", "you received one herb gift from me")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+was\\s+blessed\\s+with\\s+luck\\s+after\\s+praising\\s+this\\s+witch\\b", "you were blessed with luck after praising me")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+was\\s+cursed\\s+with\\s+bad\\s+luck\\s+after\\s+insulting\\s+this\\s+witch\\b", "you were cursed with bad luck after insulting me")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+has\\b", "you have")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+likes\\b", "you like")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+is\\s+wary\\s+of\\b", "you are wary of")
-                .replaceAll("(?i)\\b" + Pattern.quote(playerNameFromMemory(cleaned)) + "\\s+is\\s+looking\\s+for\\b", "you are looking for")
+                .replaceAll("(?i)\\b[A-Za-z0-9_]{2,24}(?:\\s+[A-Za-z0-9_]{2,24})?:\\s*[^;.!?]{0,140}(?:[;.!?]|$)", "");
+        source = rewritePlayerMemoryPerspective(source, rememberedPlayerName)
+                .replaceAll("(?i)without\\s+getting\\s+themselves\\s+killed", "without getting yourself killed")
                 .replaceAll("(?i)([,;]\\s*)likes\\b", "$1you like")
                 .replaceAll("(?i)([,;]\\s*)is\\s+wary\\s+of\\b", "$1you are wary of")
                 .replaceAll("(?i)\\band\\s+is\\s+looking\\s+for\\b", "and you are looking for")
@@ -854,12 +890,37 @@ final class NpcDialogueFallback {
         return compactMemorySummary(source, 170);
     }
 
+    private static String rewritePlayerMemoryPerspective(String source, String playerName) {
+        String player = NpcBrainResponse.sanitize(playerName, 80);
+        if (player.isBlank()) {
+            return source;
+        }
+        String name = Pattern.quote(player);
+        return source
+                .replaceAll("(?i)\\b" + name + "\\s+received\\s+one\\s+herb\\s+gift\\s+from\\s+this\\s+witch\\b", "you received one herb gift from me")
+                .replaceAll("(?i)\\b" + name + "\\s+was\\s+blessed\\s+with\\s+luck\\s+after\\s+praising\\s+this\\s+witch\\b", "you were blessed with luck after praising me")
+                .replaceAll("(?i)\\b" + name + "\\s+was\\s+cursed\\s+with\\s+bad\\s+luck\\s+after\\s+insulting\\s+this\\s+witch\\b", "you were cursed with bad luck after insulting me")
+                .replaceAll("(?i)\\b" + name + "\\s+has\\b", "you have")
+                .replaceAll("(?i)\\b" + name + "\\s+likes\\b", "you like")
+                .replaceAll("(?i)\\b" + name + "\\s+prefers\\s+to\\s+be\\s+called\\b", "you prefer to be called")
+                .replaceAll("(?i)\\b" + name + "\\s+said\\s+they\\s+are\\b", "you said you are")
+                .replaceAll("(?i)\\b" + name + "\\s+wants\\s+to\\s+learn\\b", "you want to learn")
+                .replaceAll("(?i)\\b" + name + "\\s+is\\s+wary\\s+of\\b", "you are wary of")
+                .replaceAll("(?i)\\b" + name + "\\s+is\\s+looking\\s+for\\b", "you are looking for")
+                .replaceAll("(?i)\\b" + name + "\\s+is\\s+struggling\\s+with\\b", "you are struggling with")
+                .replaceAll("(?i)\\b" + name + "\\s+plans\\s+to\\s+come\\s+back\\b", "you plan to come back")
+                .replaceAll("(?i)\\b" + name + "'s\\s+village\\s+thinks\\b", "your village thinks");
+    }
+
     private static String compactMemorySummary(String source, int maxLength) {
         String[] notes = source.split(";\\s*");
         StringBuilder summary = new StringBuilder();
         for (String raw : notes) {
             String note = raw.trim();
             if (note.isBlank()) {
+                continue;
+            }
+            if (isBadMemorySummaryNote(note)) {
                 continue;
             }
             if (summary.isEmpty()) {
@@ -876,9 +937,30 @@ final class NpcDialogueFallback {
         return NpcBrainResponse.sanitize(summary.toString(), maxLength);
     }
 
+    private static boolean isBadMemorySummaryNote(String note) {
+        String normalized = normalize(note);
+        return normalized.length() <= 3
+                || (!normalized.startsWith("you ") && !normalized.startsWith("your "))
+                || normalized.startsWith("what ")
+                || normalized.startsWith("how ")
+                || normalized.startsWith("where ")
+                || normalized.startsWith("when ")
+                || normalized.startsWith("why ")
+                || normalized.startsWith("can ")
+                || normalized.startsWith("do ")
+                || normalized.startsWith("does ")
+                || normalized.startsWith("should ")
+                || normalized.startsWith("would ");
+    }
+
     private static String playerNameFromMemory(String memoryContext) {
         Matcher matcher = Pattern.compile("(?i)player\\s+is\\s+([A-Za-z0-9_]{2,24})").matcher(memoryContext);
-        return matcher.find() ? matcher.group(1) : "Dev";
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        Matcher fact = Pattern.compile("(?i)\\b([A-Za-z0-9_]{2,24})\\s+(?:has|likes|prefers\\s+to\\s+be\\s+called|said\\s+they\\s+are|wants\\s+to\\s+learn|is\\s+wary\\s+of|is\\s+looking\\s+for|is\\s+struggling\\s+with|plans\\s+to\\s+come\\s+back|received\\s+one\\s+herb\\s+gift|was\\s+blessed|was\\s+cursed)\\b")
+                .matcher(memoryContext);
+        return fact.find() ? fact.group(1) : "";
     }
 
     private static String section(String text, String startMarker, String endMarker) {

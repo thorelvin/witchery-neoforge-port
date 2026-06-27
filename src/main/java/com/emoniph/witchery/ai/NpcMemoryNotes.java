@@ -67,6 +67,11 @@ final class NpcMemoryNotes {
     private static String cleanFact(String fact) {
         String cleaned = NpcBrainResponse.sanitize(fact, 80)
                 .replaceAll("[\"`<>]", "")
+                .replaceAll("(?i)[.?!]\\s*(?:what|how|where|when|why|who|which|can|could|should|would|do|does|did|is|are|am)\\b.*$", "")
+                .replaceAll("(?i)\\b(?:what\\s+is\\s+useful|what\\s+would\\s+be\\s+useful|what\\s+should\\s+i|what\\s+do\\s+i|what\\s+can\\s+i)\\b.*$", "")
+                .replaceAll("(?i)\\bmyself\\b", "themselves")
+                .replaceAll("(?i)\\bmy\\b", "their")
+                .replaceAll("(?i)\\bmine\\b", "theirs")
                 .replaceAll("(?i)\\b(?:please|thanks|thank\\s+you)\\b", "")
                 .replaceAll("(?i)\\b(?:what\\s+now|now\\s+what|what\\s+should\\s+i\\s+do|what\\s+do\\s+i\\s+do)\\b.*$", "")
                 .replaceAll("[.?!]+$", "")

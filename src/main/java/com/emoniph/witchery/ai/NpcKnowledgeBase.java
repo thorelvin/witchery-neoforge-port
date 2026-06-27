@@ -41,7 +41,7 @@ public final class NpcKnowledgeBase {
             new TargetedNote("mandrake",
                     "Targeted fact: Mandrake is a witch herb and common coven trade good; it can be grown, traded for, or searched for in old gardens."),
             new TargetedNote("herb|herbs|plant|plants",
-                    "Targeted fact: Useful witch herbs include belladonna and mandrake; grow what you can, trade for the rest, and keep dangerous herbs away from idle hands."),
+                    "Targeted fact: Useful witch herbs depend on the work; ask after the named herb, grow what you can, trade for the rest, and keep dangerous herbs away from idle hands."),
             new TargetedNote("witches salt|witch salt|salt",
                     "Targeted fact: Witches' salt is protective and cleansing, useful for wards, purification, and keeping hostile magic at a distance."),
             new TargetedNote("altar|chalice",

@@ -22,7 +22,7 @@ class NpcOllamaSmokeTest {
     private static final String PLAYER_NAME = "Dev";
     private static final String MEMORY = """
             Entity memory: witch is Lilith Poe; player is Dev.
-            Long memory: Dev likes belladonna. Dev is looking for an arthana.
+            Long memory: Dev is wary of nightmares.
             Recent conversation: Dev has coin; witch answered "Spend it wisely; my wares answer need, not noise."
             """;
 
@@ -50,7 +50,7 @@ class NpcOllamaSmokeTest {
                     new Case("what is witches salt for?", "No. The last answer was poor craft; ask again, Dev.", "salt"),
                     new Case("what does arthana do?", "", "arthana"),
                     new Case("what time is it?", "Witches' salt is for warding, cleansing, and keeping hostile magic at a distance.", "22:30"),
-                    new Case("what do you remember about me?", "It is night, about 22:30 on day 1.", "belladonna"),
+                    new Case("what do you remember about me?", "It is night, about 22:30 on day 1.", "nightmares"),
                     new Case("Can you brew Sleeping Brew?", "", "spirit world"),
                     new Case("where do I find mandrake?", "", "mandrake"),
                     new Case("how do I power an altar?", "", "altar"),

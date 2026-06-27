@@ -26,7 +26,6 @@ class NpcOllamaConversationTest {
     private static final String PLAYER_NAME = "Dev";
     private static final String BASE_MEMORY = """
             Entity memory: witch is Lilith Poe; player is Dev.
-            Long memory: Dev has coin, likes belladonna, and is looking for an arthana.
             """;
     private static final List<String> QUESTIONS = List.of(
             "Good evening, Lilith.",
@@ -246,7 +245,7 @@ class NpcOllamaConversationTest {
             }
             state.herbGiftGiven = true;
             return Optional.of(new SocialLine("GAME_SOCIAL: one-time herb gift granted",
-                    "One herb, freely given: Belladonna. Spend kindness better than coin.",
+                    "One herb, freely given: Mandrake Root. Spend kindness better than coin.",
                     "Relationship notes: Dev received one herb gift from this witch."));
         }
         if (NpcDialogueFallback.isInsult(normalized)) {

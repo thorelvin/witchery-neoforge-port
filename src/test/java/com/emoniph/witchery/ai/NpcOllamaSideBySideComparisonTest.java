@@ -26,7 +26,7 @@ class NpcOllamaSideBySideComparisonTest {
     private static final String PLAYER_NAME = "Dev";
     private static final String MEMORY = """
             Entity memory: witch is Lilith Poe; player is Dev.
-            Long memory: Dev likes belladonna. Dev is looking for an arthana.
+            Long memory: Dev is wary of nightmares.
             Recent conversation: Dev has coin; witch answered "Spend it wisely; my wares answer need, not noise."
             """;
     private static final List<Case> BASELINE_CASES = List.of(

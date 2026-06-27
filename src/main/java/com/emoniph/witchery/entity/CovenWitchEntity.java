@@ -160,7 +160,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         String id = player.getUUID().toString();
         for (CovenWitchEntity w : player.level().getEntitiesOfClass(CovenWitchEntity.class, bounds)) {
             if (w.questItem != null && w.questFor.equals(id)) {
-                String name = w.hasCustomName() ? w.getCustomName().getString() : "Witch";
+                String name = w.getDisplayName().getString();
                 return new OfferedQuest(name, QuestKind.fromOrdinal(w.questKind), w.questItem, w.questRemaining);
             }
         }
@@ -356,7 +356,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         }
 
         beginPlayerConversation(player);
-        String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
+        String witchName = getDisplayName().getString();
         Component fallbackGreeting = Component.literal("\u00a79<" + witchName + "> \u00a7r")
                 .append(Component.translatable(GREET_KEYS[random.nextInt(GREET_KEYS.length)]));
         boolean queued = player instanceof ServerPlayer serverPlayer
@@ -401,7 +401,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         if (!(level() instanceof ServerLevel serverLevel)) {
             return InteractionResult.CONSUME;
         }
-        String witchName = hasCustomName() ? getCustomName().getString() : "Witch";
+        String witchName = getDisplayName().getString();
         boolean full = com.emoniph.witchery.world.CovenData.get(serverLevel).isFull(player.getUUID());
         boolean hasFamiliar = !com.emoniph.witchery.init.WitcheryAttachments.get(player).getFamiliarType().isBlank();
         boolean offeredToYou = questItem != null && questFor.equals(player.getUUID().toString());

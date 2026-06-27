@@ -21,7 +21,39 @@ class NpcMemoryDataTest {
         assertTrue(context.contains("witch is Lilith Poe"));
         assertTrue(context.contains("player is Dev"));
         assertTrue(context.contains("what will you do today?"));
+        assertTrue(context.contains("witch answered \"I'll help you with your potion.\""));
         assertTrue(context.contains("I'll help you with your potion."));
+    }
+
+    @Test
+    void contextCanUsePersonaRoleLabel() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID demon = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(demon, player, "Zul", "Dev",
+                "hi", "Hello, Dev.", 20L);
+
+        String context = data.getContext(demon, player, "demon");
+        assertTrue(context.contains("demon is Zul"));
+        assertTrue(context.contains("demon answered \"Hello, Dev.\""));
+        assertFalse(context.contains("witch answered"));
+    }
+
+    @Test
+    void contextUsesCurrentNamesOverStoredNames() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID witch = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(witch, player, "Old Witch", "OldPlayer",
+                "hi", "Hello, OldPlayer.", 20L);
+
+        String context = data.getContext(witch, player, "witch", "Raven Moone", "NewPlayer");
+        assertTrue(context.contains("witch is Raven Moone"));
+        assertTrue(context.contains("player is NewPlayer"));
+        assertFalse(context.contains("witch is Old Witch"));
+        assertFalse(context.contains("player is OldPlayer"));
     }
 
     @Test

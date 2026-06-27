@@ -80,6 +80,15 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void answersFirstGatheringQuestionDirectly() {
+        Optional<String> speech = NpcDialogueFallback.covenChat("What should I gather first?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("salt"));
+        assertTrue(speech.get().contains("jars") || speech.get().contains("herb"));
+    }
+
+    @Test
     void answersGeneralPotionKnowledgeQuestion() {
         Optional<String> speech = NpcDialogueFallback.covenChat("do you know potions?", "Lilith Poe", "Dev");
 
@@ -111,7 +120,7 @@ class NpcDialogueFallbackTest {
         Optional<String> speech = NpcDialogueFallback.covenChat("What are your favorite herb?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("Belladonna"));
+        assertTrue(speech.get().contains("Mandrake"));
         assertTrue(!speech.get().contains("Circle rites"));
     }
 
@@ -254,6 +263,22 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void memoryAnswerDropsQuestionFragmentsAndUsesPlayerPerspective() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What do you remember about me?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L,
+                "Entity memory: witch is Lilith Poe; player is Dev. Long memory: Dev wants to learn witchcraft without getting themselves killed. Dev has a little coin. What is useful for a beginner. Dev's village thinks you are trouble. De.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("you want to learn witchcraft without getting yourself killed"), speech.get());
+        assertTrue(speech.get().contains("you have a little coin"), speech.get());
+        assertTrue(speech.get().contains("your village thinks you are trouble"), speech.get());
+        assertTrue(!speech.get().contains("What is useful"), speech.get());
+        assertTrue(!speech.get().contains("Dev: I"), speech.get());
+        assertTrue(!speech.get().contains("Lilith Poe:"), speech.get());
+        assertTrue(!speech.get().endsWith("De."), speech.get());
+    }
+
+    @Test
     void dreamCatcherFallbackDoesNotHitCatBranch() {
         Optional<String> speech = NpcDialogueFallback.covenChat("Should I sleep with a Dream Catcher nearby?", "Lilith Poe", "Dev");
 
@@ -308,6 +333,27 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void repeatedDemonFallbackStaysOnDemonTopic() {
+        Optional<String> speech = NpcDialogueFallback.alternateForRepeatedFallback(
+                "Should I ever trust a demon?", "Dev",
+                "Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("demon"));
+        assertTrue(speech.get().contains("ward"));
+    }
+
+    @Test
+    void repeatedPotatoFallbackStaysOnSmallTalk() {
+        Optional<String> speech = NpcDialogueFallback.alternateForRepeatedFallback(
+                "Do you like potatoes too?", "Dev",
+                "Potatoes? Sensible roots. Less dramatic than mandrake, and better in stew.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("potato") || speech.get().contains("Potato"), speech.get());
+    }
+
+    @Test
     void memoryAnswerUsesPlayerPerspectiveGrammar() {
         Optional<String> speech = NpcDialogueFallback.covenChat(
                 "What do you remember about me?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L,
@@ -315,6 +361,19 @@ class NpcDialogueFallbackTest {
 
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("you have coin, you like belladonna, and you are looking for an arthana"), speech.get());
+    }
+
+    @Test
+    void memoryAnswerUsesDynamicPlayerAndWitchNames() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What do you remember about me?", "Raven Moone", "Mira", "Plains", "night", "22:30", 1L,
+                "Entity memory: witch is Raven Moone; player is Mira. Long memory: Mira likes potatoes.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().startsWith("I remember this, Mira:"), speech.get());
+        assertTrue(speech.get().contains("you like potatoes"), speech.get());
+        assertTrue(!speech.get().contains("Dev"), speech.get());
+        assertTrue(!speech.get().contains("Lilith"), speech.get());
     }
 
     @Test
@@ -397,6 +456,17 @@ class NpcDialogueFallbackTest {
 
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("Belladonna"));
+    }
+
+    @Test
+    void answersBelladonnaDangerWithCaution() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "I found belladonna near the village. Is it dangerous?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L);
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Belladonna"));
+        assertTrue(speech.get().contains("ingredient"));
+        assertTrue(!speech.get().contains("common coven trade good"));
     }
 
     @Test

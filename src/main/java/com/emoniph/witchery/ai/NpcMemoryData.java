@@ -129,22 +129,33 @@ public final class NpcMemoryData extends SavedData {
     }
 
     public String getContext(UUID npc, UUID player) {
+        return getContext(npc, player, "witch");
+    }
+
+    public String getContext(UUID npc, UUID player, String roleName) {
+        return getContext(npc, player, roleName, "", "");
+    }
+
+    public String getContext(UUID npc, UUID player, String roleName, String currentNpcName, String currentPlayerName) {
         Memory memory = memories.get(new Key(npc, player));
         if (memory == null) {
             return "";
         }
+        String role = sanitizeRole(roleName);
+        String npcName = currentName(currentNpcName, memory.npcName());
+        String playerName = currentName(currentPlayerName, memory.playerName());
         StringBuilder context = new StringBuilder();
-        if (!memory.npcName().isBlank() || !memory.playerName().isBlank()) {
-            context.append("Entity memory: witch is ")
-                    .append(memory.npcName().isBlank() ? "unknown" : memory.npcName())
+        if (!npcName.isBlank() || !playerName.isBlank()) {
+            context.append("Entity memory: ").append(role).append(" is ")
+                    .append(npcName.isBlank() ? "unknown" : npcName)
                     .append("; player is ")
-                    .append(memory.playerName().isBlank() ? "unknown" : memory.playerName())
+                    .append(playerName.isBlank() ? "unknown" : playerName)
                     .append('.');
         }
         if (!memory.text().isBlank()) {
             appendSentence(context, "Long memory: " + memory.text());
         }
-        String relationship = relationshipNotes(memory.playerName(), memory.flags());
+        String relationship = relationshipNotes(playerName, memory.flags());
         if (!relationship.isBlank()) {
             appendSentence(context, "Relationship notes: " + relationship);
         }
@@ -154,12 +165,12 @@ public final class NpcMemoryData extends SavedData {
                 if (isUnsafeMemoryText(exchange.playerSpeech())) {
                     continue;
                 }
-                if (NpcBrainResponse.polishSpeech(exchange.npcSpeech(), memory.npcName(), memory.playerName(),
+                if (NpcBrainResponse.polishSpeech(exchange.npcSpeech(), npcName, playerName,
                         exchange.playerSpeech()).isEmpty()) {
                     continue;
                 }
-                turns.append(' ').append(contextPlayerTurn(memory.playerName(), exchange.playerSpeech()))
-                        .append("; witch answered \"")
+                turns.append(' ').append(contextPlayerTurn(playerName, exchange.playerSpeech()))
+                        .append("; ").append(role).append(" answered \"")
                         .append(exchange.npcSpeech()).append("\".");
             }
             if (!turns.toString().equals("Recent conversation:")) {
@@ -167,6 +178,22 @@ public final class NpcMemoryData extends SavedData {
             }
         }
         return NpcBrainResponse.sanitize(context.toString(), MAX_CONTEXT_LENGTH);
+    }
+
+    private static String sanitizeRole(String roleName) {
+        String role = roleName == null ? "" : roleName.toLowerCase(java.util.Locale.ROOT)
+                .replaceAll("[^a-z0-9 _-]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        return role.isBlank() ? "npc" : NpcBrainResponse.sanitize(role, 40);
+    }
+
+    private static String currentName(String current, String stored) {
+        String cleanedCurrent = NpcBrainResponse.sanitize(current, 80);
+        if (!cleanedCurrent.isBlank()) {
+            return cleanedCurrent;
+        }
+        return NpcBrainResponse.sanitize(stored, 80);
     }
 
     public String getLastNpcSpeech(UUID npc, UUID player) {

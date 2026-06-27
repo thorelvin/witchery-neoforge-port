@@ -33,7 +33,7 @@ public final class NpcPromptBuilder {
     private static NpcBrainPrompt covenWitch(CovenWitchEntity witch, ServerPlayer player, String memory,
                                             String situation, String playerMessage, String task) {
         ServerLevel level = (ServerLevel) player.level();
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
+        String witchName = displayName(witch, "Witch");
         String playerName = player.getName().getString();
         String time = timeName(level.getDayTime());
         String clock = clockTime(level.getDayTime());
@@ -154,7 +154,8 @@ public final class NpcPromptBuilder {
                 Do not reveal locked Primer, story-book, transformation, ritual, or boss content unless the facts say it is visible.
                 If asked to do something the game has not done, do not say "I can" or "I will" as a promise; say what you know, what you sell, or what the player should try.
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
-                If the player asks what you trade, name concrete stock: belladonna, mandrake, witches' salt, taglock kits, fumes, bat wool, Revealing brews, or Sleeping brews.
+                Do not introduce named herbs, stock, rites, demons, or brews unless the player, memory, scene, or facts make them relevant.
+                If the player asks what you trade, name concrete stock from this set in a natural order: witches' salt, taglock kits, fumes, bat wool, Revealing brews, Sleeping brews, belladonna, or mandrake.
                 If the player asks a lore or item question, give one grounded Witchery fact, not a vague mystical lecture.
                 If the player is only greeting, reacting, or making small talk, do not introduce Witchery as a topic.
                 If the player mentions ordinary food or preferences, answer the small talk directly; do not list trade stock.
@@ -196,7 +197,7 @@ public final class NpcPromptBuilder {
                 example("hi",
                         "{\"speech\":\"Hello, %s.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
                 example("what do you trade?",
-                        "{\"speech\":\"Belladonna, mandrake, salt, taglocks, fumes, bat wool, and a few brews if your coin is clean.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                        "{\"speech\":\"Salt, taglocks, fumes, bat wool, herbs, and a few brews if your coin is clean.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
                 example("what is witches salt for?",
                         "{\"speech\":\"Witches' salt cleanses, wards, and keeps hostile workings from crossing the line.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what can I do with this taglock kit?",
@@ -208,7 +209,7 @@ public final class NpcPromptBuilder {
                 example("I like potatoes",
                         "{\"speech\":\"Keep that taste; small comforts outlast grand omens.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what is your favorite herb?",
-                        "{\"speech\":\"Belladonna, when it behaves; mandrake, when it keeps quiet.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                        "{\"speech\":\"Mandrake, when it keeps quiet; snowbell, when the cold bites.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("do you earn a lot on your trades?",
                         "{\"speech\":\"I earn enough to keep the cauldron warm; clean coin matters more than a heavy purse.\",\"intent\":\"none\",\"memory\":\"\"}")
         );
@@ -272,5 +273,10 @@ public final class NpcPromptBuilder {
         long hour = shifted / 1000L;
         long minute = (shifted % 1000L) * 60L / 1000L;
         return "%02d:%02d".formatted(hour, minute);
+    }
+
+    private static String displayName(LivingEntity entity, String fallback) {
+        String name = entity.getDisplayName() == null ? "" : entity.getDisplayName().getString();
+        return name.isBlank() ? fallback : name;
     }
 }
