@@ -275,6 +275,26 @@ public class WitcheryClient {
             }
         }, WitcheryFluids.BREW_LIQUID_TYPE.value());
 
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            private static final Identifier SPIRIT_STILL = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "block/flowspirit_still");
+            private static final Identifier SPIRIT_FLOW = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "block/flowspirit_flow");
+
+            @Override
+            public Identifier getStillTexture() {
+                return SPIRIT_STILL;
+            }
+
+            @Override
+            public Identifier getFlowingTexture() {
+                return SPIRIT_FLOW;
+            }
+
+            @Override
+            public int getTintColor() {
+                return 0xCCFFFFFF;
+            }
+        }, WitcheryFluids.FLOWING_SPIRIT_TYPE.value());
+
         // Vampire clothing wears a custom coat/dress/chestplate model (not the flat armor silhouette).
         event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
                         com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE),
@@ -335,6 +355,9 @@ public class WitcheryClient {
 
         event.registerItem(new com.emoniph.witchery.client.GulgsGirdleArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get());
+
+        event.registerItem(new com.emoniph.witchery.client.WoodenScannerClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.WOODEN_SCANNER.get());
     }
 
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
@@ -350,6 +373,8 @@ public class WitcheryClient {
                 DeathsHandDeployedProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "spectral_stone_type"),
                 SpectralStoneTypeProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "wooden_scanner_using"),
+                WoodenScannerUsingProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_pull"),
                 HandBowPullProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_pulling"),

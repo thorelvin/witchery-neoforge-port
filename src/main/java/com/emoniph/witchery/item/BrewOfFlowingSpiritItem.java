@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.SpiritLiquidBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -80,7 +81,7 @@ public class BrewOfFlowingSpiritItem extends BrewItem {
 
     private static boolean placeFlowingSpirit(ServerLevel level, BlockPos pos) {
         BlockState current = level.getBlockState(pos);
-        if (current.isSolid() || current.hasBlockEntity()) {
+        if (!SpiritLiquidBlock.canDisplace(current)) {
             return false;
         }
 

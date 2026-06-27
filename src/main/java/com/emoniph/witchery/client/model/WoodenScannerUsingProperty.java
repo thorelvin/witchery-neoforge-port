@@ -1,0 +1,24 @@
+package com.emoniph.witchery.client.model;
+
+import com.emoniph.witchery.item.WoodenScannerItem;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
+import net.minecraft.world.entity.ItemOwner;
+import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
+
+public record WoodenScannerUsingProperty() implements RangeSelectItemModelProperty {
+    public static final MapCodec<WoodenScannerUsingProperty> MAP_CODEC =
+            MapCodec.unit(new WoodenScannerUsingProperty());
+
+    @Override
+    public float get(ItemStack stack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
+        return WoodenScannerItem.isUsing(stack, owner) ? 1.0F : 0.0F;
+    }
+
+    @Override
+    public MapCodec<WoodenScannerUsingProperty> type() {
+        return MAP_CODEC;
+    }
+}

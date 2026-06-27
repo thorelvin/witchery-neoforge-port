@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "WITCHERY_WOODEN_SCANNER_HOLD",
+      "constructor": "(ZZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "com/emoniph/witchery/client/WoodenScannerClientEnumParams",
+        "field": "WOODEN_SCANNER_HOLD"
+      }
+    }
+  ]
+}

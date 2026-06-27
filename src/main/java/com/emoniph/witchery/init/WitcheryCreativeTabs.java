@@ -213,9 +213,11 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ICY_NEEDLE.get(),
                 WitcheryItems.WATER_DIVINER.get(),
                 WitcheryItems.LAVA_DIVINER.get(),
+                WitcheryItems.WOODEN_SCANNER.get(),
                 WitcheryItems.CIRCLE_TALISMAN.get(),
                 WitcheryItems.WITCH_HAND.get(),
                 WitcheryItems.STAFF_OF_DUPLICATION.get(),
+                WitcheryItems.BREW_BAG.get(),
                 WitcheryItems.BUCKET_SPIRIT.get(),
                 WitcheryItems.BUCKET_HOLLOW_TEARS.get());
     }
@@ -425,7 +427,6 @@ public class WitcheryCreativeTabs {
 
     private static void addBrewsAndInfusions(CreativeModeTab.Output output) {
         add(output,
-                WitcheryItems.BREW_BAG.get(),
                 WitcheryItems.BREW_BOTTLE.get(),
                 WitcheryItems.SPLASH_BREW_BOTTLE.get(),
                 WitcheryItems.LINGERING_BREW_BOTTLE.get(),

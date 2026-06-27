@@ -46,8 +46,11 @@ import java.util.function.Predicate;
  * Use on air          → own active brew timers and any center underfoot in the action bar.
  */
 public class DebugInspectorItem extends Item {
+    private static final int VARIANT_RITUAL = 1;
     private static final int VARIANT_INFERNAL = 3;
     private static final int BLIGHT_RITE_POWER = 3000;
+    private static final double INSPECTOR_DROPPED_OFFERING_RADIUS = 4.0D;
+    private static final double BIND_SPECTRAL_STONE_RADIUS = 16.0D;
 
     public DebugInspectorItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -177,16 +180,17 @@ public class DebugInspectorItem extends Item {
         String altar = describeAvailableRitualAltar(level, center);
         String active = RitualExecutor.describeActiveRitual(level, center);
         String blight = describeBlightReadiness(level, center, variants);
-        String blightLine = blight.isEmpty() ? "" : "\n  " + blight;
+        String dropped = describeDroppedRiteReadiness(level, center, variants);
+        String readinessLine = readinessLine(blight, dropped);
         if (rings.isEmpty()) {
             return "[Inspector] Ritual center @ " + center.toShortString() + origin + "\n"
                     + "  no complete rings\n"
-                    + "  " + active + blightLine + "\n"
+                    + "  " + active + readinessLine + "\n"
                     + "  " + altar;
         }
         return "[Inspector] Ritual center @ " + center.toShortString() + origin + "\n"
                 + "  rings=" + rings + "\n"
-                + "  " + active + blightLine + "\n"
+                + "  " + active + readinessLine + "\n"
                 + "  " + altar;
     }
 
@@ -258,6 +262,50 @@ public class DebugInspectorItem extends Item {
         return missing.isEmpty() ? "blight=ready" : "blight missing=" + String.join(", ", missing);
     }
 
+    private static String describeDroppedRiteReadiness(Level level, BlockPos center, int[] variants) {
+        if (variants.length < 2 || variants[1] != VARIANT_RITUAL) {
+            return "";
+        }
+
+        boolean blankStone = hasDroppedOffering(level, center,
+                stack -> stack.is(WitcheryItems.SPECTRAL_STONE.get()) && !SpectralStoneItem.isBound(stack));
+        boolean spectralDust = hasDroppedOffering(level, center, stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()));
+        boolean boline = hasDroppedOffering(level, center, stack -> stack.is(WitcheryItems.BOLINE.get()));
+        SpectralBindCandidate candidate = nearestSpectralBindCandidate(level, center);
+
+        if (!blankStone && !spectralDust && !boline && candidate.count() <= 0) {
+            return "";
+        }
+
+        List<String> missing = new ArrayList<>();
+        if (!blankStone) {
+            missing.add("Blank Spectral Stone");
+        }
+        if (!spectralDust) {
+            missing.add("Spectral Dust");
+        }
+        if (!boline) {
+            missing.add("Boline");
+        }
+        if (candidate.count() <= 0) {
+            missing.add("spectre, banshee, or poltergeist within 16 blocks");
+        }
+
+        return missing.isEmpty()
+                ? "bind spectral stone=ready (" + candidate.name() + " x" + candidate.count() + ")"
+                : "bind spectral stone missing=" + String.join(", ", missing);
+    }
+
+    private static String readinessLine(String... lines) {
+        List<String> present = new ArrayList<>();
+        for (String line : lines) {
+            if (line != null && !line.isEmpty()) {
+                present.add(line);
+            }
+        }
+        return present.isEmpty() ? "" : "\n  " + String.join("\n  ", present);
+    }
+
     private static void appendMissingOffering(List<String> missing, String name, Level level, BlockPos center,
                                               Predicate<ItemStack> matcher) {
         if (!hasDroppedOffering(level, center, matcher)) {
@@ -267,14 +315,54 @@ public class DebugInspectorItem extends Item {
 
     private static boolean hasDroppedOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
-        double radiusSq = 1.5D * 1.5D;
-        AABB bounds = new AABB(centerPoint, centerPoint).inflate(1.5D);
+        double radiusSq = INSPECTOR_DROPPED_OFFERING_RADIUS * INSPECTOR_DROPPED_OFFERING_RADIUS;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(INSPECTOR_DROPPED_OFFERING_RADIUS);
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
             if (matcher.test(itemEntity.getItem()) && itemEntity.position().distanceToSqr(centerPoint) < radiusSq) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static SpectralBindCandidate nearestSpectralBindCandidate(Level level, BlockPos center) {
+        SpectralBindCandidate best = SpectralBindCandidate.NONE;
+        best = nearer(best, spectralCandidate(level, center,
+                com.emoniph.witchery.entity.SpectreEntity.class, "Spectre"));
+        best = nearer(best, spectralCandidate(level, center,
+                com.emoniph.witchery.entity.BansheeEntity.class, "Banshee"));
+        best = nearer(best, spectralCandidate(level, center,
+                com.emoniph.witchery.entity.PoltergeistEntity.class, "Poltergeist"));
+        return best;
+    }
+
+    private static SpectralBindCandidate nearer(SpectralBindCandidate current, SpectralBindCandidate candidate) {
+        if (candidate.count() <= 0) {
+            return current;
+        }
+        return current.count() <= 0 || candidate.nearestDistanceSqr() < current.nearestDistanceSqr()
+                ? candidate
+                : current;
+    }
+
+    private static <T extends LivingEntity> SpectralBindCandidate spectralCandidate(Level level, BlockPos center,
+                                                                                   Class<T> entityClass,
+                                                                                   String name) {
+        Vec3 centerPoint = Vec3.atCenterOf(center);
+        double radiusSq = BIND_SPECTRAL_STONE_RADIUS * BIND_SPECTRAL_STONE_RADIUS;
+        AABB bounds = new AABB(centerPoint, centerPoint).inflate(BIND_SPECTRAL_STONE_RADIUS);
+        int count = 0;
+        double nearestDistanceSqr = Double.MAX_VALUE;
+        for (T entity : level.getEntitiesOfClass(entityClass, bounds)) {
+            double distance = entity.position().distanceToSqr(centerPoint);
+            if (distance > radiusSq) {
+                continue;
+            }
+            count++;
+            nearestDistanceSqr = Math.min(nearestDistanceSqr, distance);
+        }
+        return count == 0 ? SpectralBindCandidate.NONE
+                : new SpectralBindCandidate(name, Math.min(count, 3), nearestDistanceSqr);
     }
 
     private static boolean hasBlightAltarPower(Level level, BlockPos center) {
@@ -316,4 +404,7 @@ public class DebugInspectorItem extends Item {
     }
 
     private record CenterScan(BlockPos center, int[] variants) {}
+    private record SpectralBindCandidate(String name, int count, double nearestDistanceSqr) {
+        private static final SpectralBindCandidate NONE = new SpectralBindCandidate("", 0, Double.MAX_VALUE);
+    }
 }

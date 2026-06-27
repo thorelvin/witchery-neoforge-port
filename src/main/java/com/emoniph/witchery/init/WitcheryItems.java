@@ -461,6 +461,8 @@ public class WitcheryItems {
             id -> new BrewBagItem(itemProps(id)));
     public static final DeferredItem<Item> WATER_DIVINER = ITEMS.register("water_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.WATER, itemProps(id).durability(50)));
     public static final DeferredItem<Item> LAVA_DIVINER = ITEMS.register("lava_diviner", id -> new com.emoniph.witchery.item.DivinerItem(net.minecraft.world.level.block.Blocks.LAVA, itemProps(id).durability(50)));
+    public static final DeferredItem<Item> WOODEN_SCANNER = ITEMS.register("wooden_scanner",
+            id -> new WoodenScannerItem(itemProps(id).durability(128)));
     public static final DeferredItem<Item> CIRCLE_TALISMAN = ITEMS.register("circle_talisman", id -> new com.emoniph.witchery.item.CircleTalismanItem(itemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> WITCH_HAND = ITEMS.register("witch_hand",
             id -> new WitchHandItem(itemProps(id)));

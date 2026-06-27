@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-06-23
+Last curated: 2026-06-25
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -130,3 +130,14 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   book.
 - Confirm `Book_of_Shadows.html` and README match player-facing recipes,
   commands, and setup requirements.
+
+### Witch's Triangle Scanner
+
+- Craft `witchery:wooden_scanner` from Rowan Planks and Ender Dew, or take it
+  from the tools section of the Witchery creative tab.
+- Hold right-click while aiming at a block and at a living creature. Confirm the
+  item is held in the two-arm bow-style pose, its centre switches to purple
+  portal art while in use, and portal/witch particles appear at the target.
+- Confirm a first scan of each unique block/entity id adds research points to
+  the item tooltip, while repeated scans report the target as already understood
+  and do not add points.

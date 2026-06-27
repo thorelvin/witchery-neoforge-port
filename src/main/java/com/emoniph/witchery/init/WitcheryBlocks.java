@@ -500,7 +500,11 @@ public class WitcheryBlocks {
                     .isViewBlocking(NEVER));
     public static final DeferredBlock<FlowingSpiritBlock> FLOWING_SPIRIT = registerBlock("flowing_spirit",
             FlowingSpiritBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.0f).noOcclusion().noCollision());
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.EMPTY)
+                    .replaceable().noCollision().strength(100.0F)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)
+                    .noLootTable().liquid()
+                    .isRedstoneConductor(NEVER).isSuffocating(NEVER).isViewBlocking(NEVER));
     public static final DeferredBlock<HollowTearsBlock> HOLLOW_TEARS = registerBlock("hollow_tears",
             HollowTearsBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WATER).sound(SoundType.GRASS)

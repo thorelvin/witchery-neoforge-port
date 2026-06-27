@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.fluid.BrewLiquidFluid;
+import com.emoniph.witchery.fluid.SpiritFluid;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -27,4 +28,17 @@ public class WitcheryFluids {
             FLUIDS.register("brew_liquid", BrewLiquidFluid.Source::new);
     public static final DeferredHolder<Fluid, BrewLiquidFluid.Flowing> BREW_LIQUID_FLOWING =
             FLUIDS.register("flowing_brew_liquid", BrewLiquidFluid.Flowing::new);
+
+    public static final DeferredHolder<FluidType, FluidType> FLOWING_SPIRIT_TYPE = FLUID_TYPES.register(
+            "flowing_spirit",
+            () -> new FluidType(FluidType.Properties.create()
+                    .descriptionId("fluid_type.witchery.flowing_spirit")
+                    .canConvertToSource(false)
+                    .canExtinguish(false)
+                    .supportsBoating(false)));
+
+    public static final DeferredHolder<Fluid, SpiritFluid.Source> FLOWING_SPIRIT_SOURCE =
+            FLUIDS.register("flowing_spirit", SpiritFluid.Source::new);
+    public static final DeferredHolder<Fluid, SpiritFluid.Flowing> FLOWING_SPIRIT_FLOWING =
+            FLUIDS.register("flowing_spirit_flowing", SpiritFluid.Flowing::new);
 }

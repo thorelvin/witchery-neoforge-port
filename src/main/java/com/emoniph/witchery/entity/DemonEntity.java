@@ -104,12 +104,29 @@ public class DemonEntity extends Monster implements RangedAttackMob, Merchant {
             return InteractionResult.SUCCESS;
         }
 
+        return openDemonTrade(player) ? InteractionResult.CONSUME : InteractionResult.PASS;
+    }
+
+    public boolean openDevilsTongueTrade(Player player, InteractionHand hand, ItemStack stack) {
+        if (!isDevilsTongueCharm(stack) || !isAlive() || isTrading() || player.isSecondaryUseActive()) {
+            return false;
+        }
+        if (level().isClientSide()) {
+            return true;
+        }
+        return openDemonTrade(player);
+    }
+
+    private boolean openDemonTrade(Player player) {
+        if (!isAlive() || isTrading()) {
+            return false;
+        }
         setTradingPlayer(player);
         setTarget(null);
         getNavigation().stop();
         openTradingScreen(player, getDisplayName(), 1);
         player.awardStat(Stats.TALKED_TO_VILLAGER);
-        return InteractionResult.CONSUME;
+        return true;
     }
 
     @Override

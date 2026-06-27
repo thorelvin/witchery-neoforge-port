@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.entity.SpiritEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -39,7 +40,7 @@ public class SubduedSpiritItem extends Item {
         }
 
         ServerLevel serverLevel = (ServerLevel) level;
-        BlockPos spawnPos = findSpawnPos(serverLevel, context.getClickedPos());
+        BlockPos spawnPos = findSpawnPos(serverLevel, context.getClickedPos(), context.getClickedFace());
         if (spawnPos == null) {
             return InteractionResult.FAIL;
         }
@@ -70,21 +71,30 @@ public class SubduedSpiritItem extends Item {
         return InteractionResult.SUCCESS_SERVER;
     }
 
-    private static BlockPos findSpawnPos(Level level, BlockPos origin) {
-        int x = origin.getX();
-        int y = origin.getY();
-        int z = origin.getZ();
-        int maxY = Math.min(origin.getY() + 8, level.getMaxY() - 2);
-
-        while (!isOpen(level, new BlockPos(x, y, z)) && y < maxY) {
-            y++;
+    private static BlockPos findSpawnPos(Level level, BlockPos clicked, Direction face) {
+        BlockPos start = level.getBlockState(clicked).canBeReplaced()
+                ? clicked
+                : clicked.relative(face);
+        for (int offset = 0; offset <= 8; offset++) {
+            BlockPos candidate = start.above(offset);
+            if (canSpawnSpirit(level, candidate)) {
+                return candidate;
+            }
         }
-        while (isOpen(level, new BlockPos(x, y, z)) && y > level.getMinY()) {
-            y--;
+        for (int offset = 1; offset <= 4; offset++) {
+            BlockPos candidate = start.below(offset);
+            if (canSpawnSpirit(level, candidate)) {
+                return candidate;
+            }
         }
+        return null;
+    }
 
-        BlockPos spawn = new BlockPos(x, y + 1, z);
-        return isOpen(level, spawn) && isOpen(level, spawn.above()) ? spawn : null;
+    private static boolean canSpawnSpirit(Level level, BlockPos pos) {
+        return isOpen(level, pos)
+                && isOpen(level, pos.above())
+                && !level.getBlockState(pos.below()).canBeReplaced()
+                && level.getBlockState(pos.below()).getFluidState().isEmpty();
     }
 
     private static boolean isOpen(Level level, BlockPos pos) {

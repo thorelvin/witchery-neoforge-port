@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-06-23
+Last curated: 2026-06-25
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -72,6 +72,10 @@ enough to read before starting work. Long historical deltas belong in
   Wolftrap lured-wolf steering/capture feedback, Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.
+- A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
+  triangle that uses a two-arm hold pose, lights its centre with purple portal
+  art while scanning, remembers unique scanned block/entity ids on the item, and
+  counts simple research points for those discoveries.
 
 ## Docs Cleanup Note
 

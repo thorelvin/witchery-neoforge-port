@@ -6,12 +6,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -33,7 +36,7 @@ import java.util.List;
 /**
  * Spirit - passive flying Spirit World mob. Flees from players and drops its matching subdued item.
  */
-public class SpiritEntity extends Monster {
+public class SpiritEntity extends PathfinderMob {
     private static final String TAG_SPIRIT_TYPE = "SpiritType";
     private static final String TAG_SUICIDE_IN = "SuicideIn";
     private static final String TAG_VILLAGE_WAYPOINT = "VillageWaypoint";
@@ -67,12 +70,11 @@ public class SpiritEntity extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 4.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.FLYING_SPEED, 0.4)
-                .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.ATTACK_DAMAGE, 4.0);
+                .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
     @Override
@@ -120,12 +122,21 @@ public class SpiritEntity extends Monster {
         Pair<BlockPos, Holder<Structure>> result = level.getChunkSource().getGenerator()
                 .findNearestMapStructure(level, HolderSet.direct(holders), origin,
                         VILLAGE_SEARCH_RADIUS_CHUNKS, false);
-        return result == null ? null : result.getFirst();
+        return result == null ? null : safeSurfaceWaypoint(level, result.getFirst());
+    }
+
+    private static BlockPos safeSurfaceWaypoint(ServerLevel level, BlockPos pos) {
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+        return new BlockPos(pos.getX(), y, pos.getZ());
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (level().isClientSide()) {
+            spawnSpiritParticles();
+            return;
+        }
         if (!(level() instanceof ServerLevel serverLevel) || timeToLive < 0) {
             return;
         }
@@ -135,6 +146,18 @@ public class SpiritEntity extends Monster {
             dropSubduedItem(serverLevel);
             discard();
         }
+    }
+
+    private void spawnSpiritParticles() {
+        if (random.nextInt(4) != 0) {
+            return;
+        }
+        int color = isVillageTarget() ? 0xFFF0B8 : 0xD9FFE8;
+        level().addParticle(new DustParticleOptions(color, 0.55F),
+                getX() + (random.nextDouble() - 0.5D) * 0.45D,
+                getY() + 0.2D + random.nextDouble() * 0.25D,
+                getZ() + (random.nextDouble() - 0.5D) * 0.45D,
+                0.0D, 0.01D, 0.0D);
     }
 
     @Override

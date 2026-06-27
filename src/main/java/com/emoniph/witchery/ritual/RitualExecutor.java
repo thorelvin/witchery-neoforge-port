@@ -113,6 +113,7 @@ public class RitualExecutor {
     private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
     private static final int BLIGHT_RITE_POWER = 3000;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
+    private static final double BIND_SPECTRAL_STONE_RADIUS = 16.0;
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
     private static final ThreadLocal<Boolean> EXECUTING_RITUAL_ACTIVATION = ThreadLocal.withInitial(() -> false);
 
@@ -4128,13 +4129,13 @@ public class RitualExecutor {
             return false;
         }
 
-        SpectralStoneItem.StoredType storedType = findNearestSpectralType(sl, center, 5.0);
+        SpectralStoneItem.StoredType storedType = findNearestSpectralType(sl, center, BIND_SPECTRAL_STONE_RADIUS);
         if (storedType == SpectralStoneItem.StoredType.NONE) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);
             return false;
         }
-        List<Entity> capturedSpectralEntities = findNearbySpectralCreatures(sl, center, storedType, 5.0, 3);
+        List<Entity> capturedSpectralEntities = findNearbySpectralCreatures(sl, center, storedType, BIND_SPECTRAL_STONE_RADIUS, 3);
         if (capturedSpectralEntities.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.bind_spectral.none"), false);

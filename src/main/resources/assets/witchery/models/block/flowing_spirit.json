@@ -1,1 +1,23 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "witchery:block/flowspirit_still" } }
+{
+  "ambientocclusion": false,
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "witchery:block/flowspirit_still",
+    "still": "witchery:block/flowspirit_still",
+    "flow": "witchery:block/flowspirit_flow"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 15, 16],
+      "faces": {
+        "down": { "texture": "#still", "cullface": "down" },
+        "up": { "texture": "#still" },
+        "north": { "uv": [0, 1, 16, 16], "texture": "#flow", "cullface": "north" },
+        "south": { "uv": [0, 1, 16, 16], "texture": "#flow", "cullface": "south" },
+        "west": { "uv": [0, 1, 16, 16], "texture": "#flow", "cullface": "west" },
+        "east": { "uv": [0, 1, 16, 16], "texture": "#flow", "cullface": "east" }
+      }
+    }
+  ]
+}

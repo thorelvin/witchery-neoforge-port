@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.animal.feline.Ocelot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.animal.squid.Squid;
+import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.spider.Spider;
@@ -122,6 +124,11 @@ public class PolynesiaCharmItem extends Item {
     }
 
     private static boolean tryOpenAnimalMerchant(Player player, LivingEntity target, ItemStack stack, InteractionHand hand) {
+        if (target instanceof DemonEntity demon) {
+            return stack.getItem() instanceof PolynesiaCharmItem charm
+                    && charm.charmsDemons()
+                    && demon.openDevilsTongueTrade(player, hand, stack);
+        }
         if (!canCharm(player, target)) {
             return false;
         }
@@ -392,6 +399,12 @@ public class PolynesiaCharmItem extends Item {
         } else if (animal instanceof Chicken) {
             currencies.add(Items.FEATHER);
             addGoods(goods, new ItemStack(Items.EGG, 10), new ItemStack(Items.CHICKEN, 5));
+        } else if (animal instanceof Turtle) {
+            addCurrencies(currencies, Items.SEAGRASS, Items.KELP, Items.COD);
+            addGoods(goods,
+                    new ItemStack(Items.TURTLE_EGG, 2),
+                    new ItemStack(Items.TURTLE_SCUTE, 3),
+                    new ItemStack(Items.TURTLE_HELMET));
         } else if (animal instanceof Sheep) {
             currencies.add(Items.LEATHER);
         } else if (animal instanceof Squid) {
@@ -470,6 +483,7 @@ public class PolynesiaCharmItem extends Item {
         return stack.is(Items.SADDLE)
                 || stack.is(Items.IRON_HORSE_ARMOR)
                 || stack.is(Items.GOLDEN_HORSE_ARMOR)
+                || stack.is(Items.TURTLE_HELMET)
                 || stack.is(WitcheryItems.TREEFYD_SEEDS.get())
                 || animal.getType().is(EntityTypeTags.UNDEAD);
     }

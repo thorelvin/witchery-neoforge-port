@@ -1,5 +1,7 @@
 package com.emoniph.witchery.events;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.BeartrapBlock;
 import com.emoniph.witchery.blocks.entity.BeartrapBlockEntity;
@@ -16,11 +18,20 @@ import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -54,6 +65,7 @@ public class WitcheryClientEvents {
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
         com.emoniph.witchery.client.ScryingCameraState.clientTick();
+        com.emoniph.witchery.client.WoodenScannerPoseHarness.clientTick();
         applySwimmingBoost();
         syncBroomControls();
         refreshCottonOnNightmareChange();
@@ -146,13 +158,131 @@ public class WitcheryClientEvents {
     @SubscribeEvent
     public static void onRenderFramePost(RenderFrameEvent.Post event) {
         com.emoniph.witchery.client.ScryingCameraState.afterRenderFrame();
+        com.emoniph.witchery.client.WoodenScannerPoseHarness.afterRenderFrame();
+    }
+
+    @SubscribeEvent
+    public static void onScreenRenderPost(net.neoforged.neoforge.client.event.ScreenEvent.Render.Post event) {
+        com.emoniph.witchery.client.WoodenScannerPoseHarness.afterScreenRender(event.getScreen());
     }
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
         if (com.emoniph.witchery.client.ScryingCameraState.isActive()) {
             event.setCanceled(true);
+            return;
         }
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.player instanceof AbstractClientPlayer player) || !isUsingWoodenScanner(player)) {
+            return;
+        }
+        InteractionHand renderHand = com.emoniph.witchery.client.WoodenScannerPoseHarness.isRenderingScanner(player)
+                ? InteractionHand.MAIN_HAND
+                : player.getUsedItemHand();
+        if (event.getHand() == renderHand) {
+            renderWoodenScannerFirstPerson(event, player);
+        }
+        event.setCanceled(true);
+    }
+
+    private static boolean isUsingWoodenScanner(Player player) {
+        return (player.isUsingItem()
+                && player.getUseItem().is(com.emoniph.witchery.init.WitcheryItems.WOODEN_SCANNER.get()))
+                || com.emoniph.witchery.client.WoodenScannerPoseHarness.isRenderingScanner(player);
+    }
+
+    private static void renderWoodenScannerFirstPerson(RenderHandEvent event, AbstractClientPlayer player) {
+        boolean harnessScanner = com.emoniph.witchery.client.WoodenScannerPoseHarness.isRenderingScanner(player);
+        ItemStack stack = harnessScanner ? player.getMainHandItem() : player.getUseItem();
+        PoseStack poseStack = event.getPoseStack();
+        SubmitNodeCollector collector = event.getSubmitNodeCollector();
+        int packedLight = event.getPackedLight();
+
+        float useTicks = harnessScanner
+                ? com.emoniph.witchery.client.WoodenScannerPoseHarness.useTicksWithPartial(player, event.getPartialTick())
+                : player.getTicksUsingItem() + event.getPartialTick();
+        float focus = Mth.clamp(useTicks / 20.0F, 0.0F, 1.0F);
+        focus = (focus * focus + focus * 2.0F) / 3.0F;
+        float tension = focus > 0.1F ? Mth.sin((useTicks - 0.1F) * 1.3F) * (focus - 0.1F) : 0.0F;
+        float portalCenterLift = focus * 0.22F;
+        float portalCenterNudge = focus * -0.03F;
+        float armSwing = scannerArmSwing(focus, event.getSwingProgress());
+
+        poseStack.pushPose();
+        poseStack.translate(0.22F + portalCenterNudge - (1.0F - focus) * 0.06F,
+                0.02F + portalCenterLift - (1.0F - focus) * 0.08F
+                        - event.getEquipProgress() * 0.05F + tension * 0.004F,
+                -1.08F + focus * 0.03F);
+        poseStack.mulPose(Axis.XP.rotationDegrees((1.0F - focus) * -4.0F));
+        poseStack.scale(0.94F, 0.94F, 0.94F + focus * 0.06F);
+        Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()
+                .renderItem(player, stack, ItemDisplayContext.FIXED, poseStack, collector, packedLight);
+        poseStack.popPose();
+
+        renderWoodenScannerHands(poseStack, collector, packedLight, player, event.getEquipProgress(),
+                focus, tension, portalCenterLift, portalCenterNudge, armSwing);
+    }
+
+    private static void renderWoodenScannerHands(PoseStack poseStack, SubmitNodeCollector collector,
+                                                 int packedLight, AbstractClientPlayer player, float equipProgress,
+                                                 float focus, float tension, float portalCenterLift,
+                                                 float portalCenterNudge, float armSwing) {
+        Minecraft mc = Minecraft.getInstance();
+        if (player.isInvisible()) {
+            return;
+        }
+        AvatarRenderer<AbstractClientPlayer> renderer = mc.getEntityRenderDispatcher().getPlayerRenderer(player);
+        float handLift = portalCenterLift * 0.30F;
+
+        poseStack.pushPose();
+        poseStack.translate(0.22F + portalCenterNudge - (1.0F - focus) * 0.05F,
+                0.38F + handLift - equipProgress * 0.12F + tension * 0.004F,
+                -0.76F + focus * 0.02F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+        renderWoodenScannerHand(renderer, poseStack, collector, packedLight, player, HumanoidArm.RIGHT, armSwing);
+        renderWoodenScannerHand(renderer, poseStack, collector, packedLight, player, HumanoidArm.LEFT, armSwing);
+        poseStack.popPose();
+    }
+
+    private static float scannerArmSwing(float focus, float vanillaSwingProgress) {
+        float useGrip = focus * focus * (3.0F - 2.0F * focus);
+        float vanillaSwing = Mth.sin(Mth.sqrt(vanillaSwingProgress) * (float) Math.PI) * 0.12F;
+        return Mth.clamp(useGrip + vanillaSwing * (1.0F - useGrip), 0.0F, 1.0F);
+    }
+
+    private static void renderWoodenScannerHand(AvatarRenderer<AbstractClientPlayer> renderer, PoseStack poseStack,
+                                                SubmitNodeCollector collector, int packedLight,
+                                                AbstractClientPlayer player, HumanoidArm arm, float armSwing) {
+        poseStack.pushPose();
+        boolean rightArm = arm == HumanoidArm.RIGHT;
+        float side = rightArm ? 1.0F : -1.0F;
+        if (!rightArm) {
+            poseStack.translate(-0.14F, -0.14F, 0.0F);
+        }
+        float gripSpread = rightArm
+                ? Mth.lerp(armSwing, 0.50F, 0.66F)
+                : Mth.lerp(armSwing, 0.30F, 0.22F);
+        float gripY = rightArm
+                ? Mth.lerp(armSwing, -1.10F, -1.23F)
+                : Mth.lerp(armSwing, -1.12F, -1.28F);
+        float gripZ = rightArm
+                ? Mth.lerp(armSwing, 0.42F, 0.40F)
+                : Mth.lerp(armSwing, 0.46F, 0.43F);
+        float pitch = Mth.lerp(armSwing, 45.0F, 47.0F);
+        float roll = side * Mth.lerp(armSwing, -39.0F, -35.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(92.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(pitch));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(roll));
+        poseStack.translate(side * gripSpread, gripY, gripZ);
+        Identifier skin = player.getSkin().body().texturePath();
+        if (arm == HumanoidArm.RIGHT) {
+            renderer.renderRightHand(poseStack, collector, packedLight, skin,
+                    player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE), player);
+        } else {
+            renderer.renderLeftHand(poseStack, collector, packedLight, skin,
+                    player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE), player);
+        }
+        poseStack.popPose();
     }
 
     @SubscribeEvent

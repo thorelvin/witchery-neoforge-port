@@ -4,6 +4,17 @@
     "level=1": { "model": "witchery:block/flowing_spirit" },
     "level=2": { "model": "witchery:block/flowing_spirit" },
     "level=3": { "model": "witchery:block/flowing_spirit" },
-    "level=4": { "model": "witchery:block/flowing_spirit" }
+    "level=4": { "model": "witchery:block/flowing_spirit" },
+    "level=5": { "model": "witchery:block/flowing_spirit" },
+    "level=6": { "model": "witchery:block/flowing_spirit" },
+    "level=7": { "model": "witchery:block/flowing_spirit" },
+    "level=8": { "model": "witchery:block/flowing_spirit" },
+    "level=9": { "model": "witchery:block/flowing_spirit" },
+    "level=10": { "model": "witchery:block/flowing_spirit" },
+    "level=11": { "model": "witchery:block/flowing_spirit" },
+    "level=12": { "model": "witchery:block/flowing_spirit" },
+    "level=13": { "model": "witchery:block/flowing_spirit" },
+    "level=14": { "model": "witchery:block/flowing_spirit" },
+    "level=15": { "model": "witchery:block/flowing_spirit" }
   }
 }

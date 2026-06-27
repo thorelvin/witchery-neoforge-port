@@ -6,6 +6,7 @@ import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.tags.EntityTypeTags;
@@ -26,10 +28,10 @@ import net.minecraft.world.entity.EntityType;
  * into wispy cotton and applied regeneration/weakness depending on the creature
  * standing in it.
  */
-public class FlowingSpiritBlock extends SpiritLiquidBlock {
+public class FlowingSpiritBlock extends LiquidBlock {
 
     public FlowingSpiritBlock(Properties properties) {
-        super(properties);
+        super(WitcheryFluids.FLOWING_SPIRIT_SOURCE.get(), properties);
     }
 
     @Override

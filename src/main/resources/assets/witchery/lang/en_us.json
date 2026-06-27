@@ -1715,6 +1715,13 @@
   "item.witchery.torn_page": "Torn Page",
   "item.witchery.woven_cruor": "Woven Cruor",
   "item.witchery.stake": "Stake",
-  "item.witchery.golden_heart": "Heart of Gold"
+  "item.witchery.golden_heart": "Heart of Gold",
+  "item.witchery.wooden_scanner": "Witch's Triangle",
+  "item.witchery.wooden_scanner.tip": "Hold use to study blocks and creatures.",
+  "item.witchery.wooden_scanner.points": "Wild points: %s",
+  "item.witchery.wooden_scanner.scanned": "Discoveries: %s",
+  "item.witchery.wooden_scanner.discovered": "Studied %s (+%s wild points)",
+  "item.witchery.wooden_scanner.known": "%s is already understood.",
+  "item.witchery.wooden_scanner.failed": "The triangle finds nothing to study."
 
 }

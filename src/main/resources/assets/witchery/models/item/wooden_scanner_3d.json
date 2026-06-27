@@ -1,0 +1,54 @@
+{
+  "loader": "neoforge:obj",
+  "model": "witchery:models/item/wooden_scanner_3d.obj",
+  "mtl_override": "witchery:models/item/wooden_scanner_3d.mtl",
+  "automatic_culling": false,
+  "shade_quads": true,
+  "flip_v": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "frame": "witchery:item/wooden_scanner_3d_frame",
+    "pane": "witchery:item/wooden_scanner_3d_pane",
+    "particle": "witchery:item/wooden_scanner_3d_frame"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 70, 0],
+      "right_rotation": [180, 0, 24],
+      "translation": [2.50, 2.00, -17.50],
+      "scale": [0.56, 0.56, 0.56]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 70, 0],
+      "right_rotation": [180, 0, 24],
+      "translation": [2.50, 2.00, -17.50],
+      "scale": [0.56, 0.56, 0.56]
+    },
+    "firstperson_righthand": {
+      "rotation": [-90, 0, 0],
+      "translation": [0, 1.25, -2.5],
+      "scale": [0.36, 0.36, 0.36]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-90, 0, 0],
+      "translation": [0, 1.25, -2.5],
+      "scale": [0.36, 0.36, 0.36]
+    },
+    "ground": {
+      "rotation": [-90, 0, 0],
+      "translation": [0, 2.75, 0],
+      "scale": [0.28, 0.28, 0.28]
+    },
+    "fixed": {
+      "rotation": [-90, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.40, 0.40, 0.40]
+    },
+    "gui": {
+      "rotation": [30, 135, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.40, 0.40, 0.40]
+    }
+  }
+}
