@@ -949,7 +949,22 @@ class NpcDialogueFallbackTest {
                 "What is a spinning wheel for?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("recipe station"), speech.get());
+        assertTrue(speech.get().contains("fibre"), speech.get());
+        assertTrue(speech.get().contains("modifiers"), speech.get());
+        assertTrue(speech.get().contains("altar power"), speech.get());
+        assertTrue(speech.get().contains("Fanciful Thread"), speech.get());
+    }
+
+    @Test
+    void answersDistilleryAsAltarPoweredStation() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What is a distillery for?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("two inputs"), speech.get());
+        assertTrue(speech.get().contains("clay jars"), speech.get());
+        assertTrue(speech.get().contains("altar power"), speech.get());
+        assertTrue(speech.get().contains("essences"), speech.get());
     }
 
     @Test

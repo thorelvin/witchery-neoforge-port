@@ -388,10 +388,10 @@ final class NpcDialogueFallback {
             return Optional.of("A Witch's Oven burns saplings and ingredients into fumes; clay jars catch them for brews and rites.");
         }
         if (asksSpinningWheel(normalized)) {
-            return Optional.of("The spinning wheel is a recipe station; exact inputs belong to the live recipe book, not my crooked memory.");
+            return Optional.of("The spinning wheel takes fibre and modifiers, drinks altar power, and spins threadwork like Fanciful Thread.");
         }
         if (asksDistillery(normalized)) {
-            return Optional.of("A distillery refines fumes and essences; exact inputs belong to the live recipe book.");
+            return Optional.of("A distillery takes two inputs and clay jars, drinks altar power, and refines fumes into useful essences.");
         }
         if (asksGrimoireSummary(normalized)) {
             return Optional.of("Write this: recipes need the right station and visible page; rites need chalk, offerings, altar power, and patience.");
