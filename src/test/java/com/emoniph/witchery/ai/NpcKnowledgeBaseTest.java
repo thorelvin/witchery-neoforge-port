@@ -459,6 +459,26 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void distilleryProductCardsMatchRecipeJson() throws Exception {
+        assertDistilleryCardMatchesRecipe(
+                "how do I make Diamond Vapour?", "/data/witchery/recipe/distillery/diamond_to_vapour.json");
+        assertDistilleryCardMatchesRecipe(
+                "how do I make Oil of Vitriol?", "/data/witchery/recipe/distillery/oil_of_vitriol.json");
+        assertDistilleryCardMatchesRecipe(
+                "how do I get Tear of the Goddess?", "/data/witchery/recipe/distillery/tear_of_goddess.json");
+    }
+
+    @Test
+    void spinningProductCardsMatchRecipeJson() throws Exception {
+        assertSpinningCardMatchesRecipe(
+                "how do I make Fanciful Thread?", "/data/witchery/recipe/spinning/cotton_to_thread.json");
+        assertSpinningCardMatchesRecipe(
+                "how do I make Golden Thread?", "/data/witchery/recipe/spinning/golden_thread.json");
+        assertSpinningCardMatchesRecipe(
+                "how do I make Tormented Twine?", "/data/witchery/recipe/spinning/berries_to_thread.json");
+    }
+
+    @Test
     void brazierCardMatchesRecipeJson() throws Exception {
         assertCardMatchesRecipe("how do I make a brazier?", "/data/witchery/recipe/brazier.json");
     }
@@ -502,6 +522,35 @@ class NpcKnowledgeBaseTest {
         assertTrue(lower.contains("oven"), answer.get());
         if (expectClayJar) {
             assertTrue(lower.contains("clay jar"), answer.get());
+        }
+    }
+
+    private static void assertDistilleryCardMatchesRecipe(String question, String resource) throws Exception {
+        JsonObject recipe = resourceJson(resource);
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer(question, "Plains", "night");
+
+        assertTrue(answer.isPresent(), "No distillery card answer for " + question);
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(containsIngredient(lower, ingredientName(recipe.get("ingredient1"))), answer.get());
+        assertTrue(containsIngredient(lower, ingredientName(recipe.get("ingredient2"))), answer.get());
+        assertTrue(lower.contains("clay jar"), answer.get());
+        assertTrue(lower.contains("altar"), answer.get());
+        for (JsonElement output : recipe.getAsJsonArray("outputs")) {
+            assertTrue(containsIngredient(lower, ingredientName(output)), ingredientName(output) + " missing from: " + answer.get());
+        }
+    }
+
+    private static void assertSpinningCardMatchesRecipe(String question, String resource) throws Exception {
+        JsonObject recipe = resourceJson(resource);
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer(question, "Plains", "night");
+
+        assertTrue(answer.isPresent(), "No spinning card answer for " + question);
+        String lower = answer.get().toLowerCase(Locale.ROOT);
+        assertTrue(containsIngredient(lower, ingredientName(recipe.get("fibre"))), answer.get());
+        assertTrue(containsIngredient(lower, ingredientName(recipe.get("result"))), answer.get());
+        assertTrue(lower.contains("altar"), answer.get());
+        for (JsonElement modifier : recipe.getAsJsonArray("modifiers")) {
+            assertTrue(containsIngredient(lower, ingredientName(modifier)), ingredientName(modifier) + " missing from: " + answer.get());
         }
     }
 

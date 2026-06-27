@@ -231,7 +231,9 @@ public final class NpcKnowledgeBase {
                 "breath of the goddess", "hint of rebirth", "reek of misfortune", "odour of purity",
                 "odor of purity", "odour", "odor", "reek", "foul fume", "witches salt recipe", "witch salt recipe",
                 "teach me", "lesson", "next step", "what next", "what now", "build first",
-                "where do i start", "start witchery", "start witchcraft");
+                "where do i start", "start witchery", "start witchcraft",
+                "diamond vapour", "diamond vapor", "oil of vitriol", "tear of the goddess",
+                "fanciful thread", "golden thread", "tormented twine");
     }
 
     private static boolean isFavoriteHerbQuestion(String normalized) {

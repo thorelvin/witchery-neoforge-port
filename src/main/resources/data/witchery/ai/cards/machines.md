@@ -23,11 +23,17 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 - [triggers: distillery|what is distillery for|distill|distilling] Targeted fact: The Distillery refines fumes and essences for later recipes; exact inputs belong to the live recipe book.
 - [triggers: use distillery|how do i use the distillery|how use distillery|distillery not working] Targeted fact: A Distillery takes two inputs and Clay Jars, needs a valid nearby altar, consumes altar power over time, and outputs refined essences.
 - [triggers: distillery recipe|craft distillery|make distillery] Targeted fact: A Distillery is crafted with Clay Jars, Iron Ingots, Gold Ingots, and an Attuned Stone; check the visible recipe page for the shaped layout.
+- [triggers: diamond vapour|diamond vapor|make diamond vapour|make diamond vapor|get diamond vapour|get diamond vapor] Targeted fact: Distill Diamond and Oil of Vitriol with three Clay Jars to get two Diamond Vapours and Odour of Purity; keep a valid altar nearby.
+- [triggers: oil of vitriol|make oil of vitriol|get oil of vitriol] Targeted fact: Distill Foul Fume and Quicklime with one Clay Jar to get Gypsum, Oil of Vitriol, and a Slime Ball; keep a valid altar nearby.
+- [triggers: tear of the goddess|tear of goddess|make tear of the goddess|get tear of the goddess] Targeted fact: Distill Breath of the Goddess and Lapis Lazuli with three Clay Jars to get Tear of the Goddess, Whiff of Magic, Slime Ball, and Foul Fume; keep an altar nearby.
 - It is a recipe station, not a generic potion upgrade table.
 
 ## Spinning Wheel
 - [triggers: spinning wheel|spinning|thread|fanciful thread] Targeted fact: The Spinning Wheel is a recipe station for threads and woven ingredients; exact inputs belong to the live recipe book.
 - [triggers: use spinning wheel|how do i use the spinning wheel|how use spinning wheel|spinning wheel not working] Targeted fact: A Spinning Wheel takes fibre plus recipe modifiers, needs a valid nearby altar, consumes altar power over time, and outputs threads or woven ingredients.
+- [triggers: fanciful thread|make fanciful thread|get fanciful thread] Targeted fact: Spin four Wispy Cotton with String and Odour of Purity to make Fanciful Thread; the wheel needs a valid nearby altar.
+- [triggers: golden thread|make golden thread|get golden thread] Targeted fact: Spin Vine with Whiff of Magic to make three Golden Thread; the wheel needs a valid nearby altar.
+- [triggers: tormented twine|make tormented twine|get tormented twine] Targeted fact: Spin four Disturbed Cotton with String and Reek of Misfortune to make Tormented Twine; the wheel needs a valid nearby altar.
 - Do not claim it makes ordinary cloth unless the visible recipe says so.
 
 ## Altar
