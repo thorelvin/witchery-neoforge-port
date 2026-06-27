@@ -125,6 +125,59 @@ function Find-Ollama {
     return $null
 }
 
+function Get-OllamaInstallRoot {
+    Join-Path $env:LOCALAPPDATA "Programs\Ollama"
+}
+
+function Stop-OllamaProcesses {
+    $installRoot = Get-OllamaInstallRoot
+    $candidates = Get-Process -ErrorAction SilentlyContinue | Where-Object {
+        $_.ProcessName -like "ollama*" -or $_.ProcessName -like "llama*"
+    }
+    foreach ($process in $candidates) {
+        $path = ""
+        try {
+            $path = $process.Path
+        } catch {
+            $path = ""
+        }
+        $isOllamaProcess = $process.ProcessName -like "ollama*" `
+            -or ($path -and $path.StartsWith($installRoot, [System.StringComparison]::OrdinalIgnoreCase))
+        if (-not $isOllamaProcess) {
+            continue
+        }
+        Write-SetupLog "Stopping existing Ollama process $($process.ProcessName) ($($process.Id))."
+        try {
+            Stop-Process -Id $process.Id -Force -ErrorAction Stop
+        } catch {
+            Write-SetupLog "Could not stop process $($process.Id): $($_.Exception.Message)"
+        }
+    }
+}
+
+function Move-StaleOllamaInstall {
+    $installRoot = Get-OllamaInstallRoot
+    if (-not (Test-Path -LiteralPath $installRoot)) {
+        return
+    }
+
+    $exe = Join-Path $installRoot "ollama.exe"
+    if (Test-Path -LiteralPath $exe) {
+        return
+    }
+
+    $parent = Split-Path -Parent $installRoot
+    $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $backup = Join-Path $parent "Ollama.stale-$stamp"
+    Write-SetupLog "Found stale Ollama install directory without ollama.exe; moving it aside."
+    try {
+        Move-Item -LiteralPath $installRoot -Destination $backup -ErrorAction Stop
+        Write-SetupLog "Moved stale Ollama directory to $backup"
+    } catch {
+        throw "Residual Ollama files are locked at $installRoot. Restart Windows, then run the launcher again. Cleanup failed: $($_.Exception.Message)"
+    }
+}
+
 function Test-OllamaEndpoint {
     param([string]$Endpoint)
 
@@ -212,6 +265,9 @@ function Invoke-LoggedCommand {
 }
 
 function Install-OllamaWithWinget {
+    Stop-OllamaProcesses
+    Move-StaleOllamaInstall
+
     $winget = Get-Command "winget.exe" -ErrorAction SilentlyContinue
     if (-not $winget) {
         throw "Ollama is not installed and winget.exe was not found. Install Ollama from https://ollama.com/download and run the launcher again."
